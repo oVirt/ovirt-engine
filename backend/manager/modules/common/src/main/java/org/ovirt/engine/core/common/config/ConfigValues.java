@@ -968,6 +968,7 @@ public enum ConfigValues {
     IPTablesConfig(319),
 
     @TypeConverterAttribute(String.class)
+
     @DefaultValueAttribute("")
     CustomPublicConfig_AppsWebSite(320),
 
@@ -1010,6 +1011,14 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ovirtmgmt")
     ManagementNetwork(328),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("5.8")
+    OvirtInitialSupportedIsoVersion(329),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("rhevh")
+    OvirtIsoPrefix(330),
 
     Invalid(65535);
 

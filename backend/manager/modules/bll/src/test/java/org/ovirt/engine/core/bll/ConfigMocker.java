@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
+
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 
@@ -30,4 +31,17 @@ public class ConfigMocker {
     public void mockConfigLowDiskPct(final int pctOfSpaceRequired) {
         when(Config.GetValue(ConfigValues.FreeSpaceLow)).thenReturn(pctOfSpaceRequired);
     }
+
+    public void mockOVirtISOsRepositoryPath(final String path) {
+        when(Config.resolveOVirtISOsRepositoryPath()).thenReturn(path);
+    }
+
+    public void mockConfigOvirtIsoPrefix(final String oVirtIsoPrefix) {
+        when(Config.GetValue(ConfigValues.OvirtIsoPrefix)).thenReturn(oVirtIsoPrefix);
+    }
+
+    public void mockConfigOvirtInitialSupportedIsoVersion(final String oVirtIsoVersion) {
+        when(Config.GetValue(ConfigValues.OvirtInitialSupportedIsoVersion)).thenReturn(oVirtIsoVersion);
+    }
+
 }

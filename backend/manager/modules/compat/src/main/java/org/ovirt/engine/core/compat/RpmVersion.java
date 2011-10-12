@@ -83,7 +83,7 @@ public class RpmVersion extends Version {
     }
 
     public void setRpmName(String rpmName) {
-        // for wsdl purpose only
+        this.rpmName = rpmName;
     }
 
     /**
