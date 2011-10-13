@@ -1084,4 +1084,9 @@ public interface AppErrors extends ConstantsWithLookup {
     String STORAGE_DOMAIN_NOT_ATTACHED_TO_STORAGE_POOL();
 
     String VDS_APPROVE_VDS_NOT_FOUND();
+
+    String VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION();
+
+    String VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE();
+
 }

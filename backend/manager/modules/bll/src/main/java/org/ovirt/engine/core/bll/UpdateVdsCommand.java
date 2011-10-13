@@ -1,12 +1,15 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -23,6 +26,8 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.UpdateSpmHostNameVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.LogCompat;
+import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -37,6 +42,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
         initializer.AddParameter(VdsStatic.class, "mVds");
     }
 
+    private static LogCompat log = LogFactoryCompat.getLog(UpdateVdsCommand.class);
     private VDS _oldVds;
 
     public UpdateVdsCommand(T parameters) {
@@ -145,10 +151,30 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
             tempVar.setIsReinstallOrUpgrade(getParameters().getIsReinstallOrUpgrade());
             tempVar.setoVirtIsoFile(getParameters().getoVirtIsoFile());
             tempVar.setOverrideFirewall(getParameters().getOverrideFirewall());
-            Backend.getInstance().runInternalMultipleActions(
+            ArrayList<VdcReturnValueBase> resultList = Backend.getInstance().runInternalMultipleActions(
                     VdcActionType.InstallVds,
                     new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays
                             .asList(new VdcActionParametersBase[] { tempVar })));
+
+            // Since Host status is set to "Installing", failure of InstallVdsCommand will hang the Host to in that
+            // status, therefore needed to fail the command to revert the status.
+            if (!resultList.isEmpty()) {
+                VdcReturnValueBase vdcReturnValueBase = resultList.get(0);
+                if (vdcReturnValueBase != null && !vdcReturnValueBase.getCanDoAction()) {
+                    ArrayList<String> canDoActionMessages = vdcReturnValueBase.getCanDoActionMessages();
+                    if (!canDoActionMessages.isEmpty()) {
+                        log.errorFormat("Installation/upgrade of Host {0},{1} failed due to: {2} ",
+                                getVdsId(),
+                                getVdsName(),
+                                StringUtils.join(Backend.getInstance()
+                                        .getErrorsTranslator()
+                                        .TranslateErrorText(canDoActionMessages),
+                                        ","));
+                    }
+                    setSucceeded(false);
+                    return;
+                }
+            }
         }
 
         // set clusters network to be operational (if needed)

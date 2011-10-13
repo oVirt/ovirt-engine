@@ -1,20 +1,29 @@
 package org.ovirt.engine.core.bll;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 @NonTransactiveCommandAttribute
 public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsCommand<T> {
+
+    private static LogCompat log = LogFactoryCompat.getLog(InstallVdsCommand.class);
     protected VdsInstaller _vdsInstaller;
     private static final String GENERIC_ERROR = "Please refer to log files for further details.";
 
@@ -28,8 +37,29 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         if (getVdsId() == null || getVdsId().equals(Guid.Empty)) {
             addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
             retValue = false;
+        } else if (getVds() == null) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+            retValue = false;
+        } else if (isOvirtReInstallOrUpgrade()) {
+            String isoFile = getParameters().getoVirtIsoFile();
+            if (!isIsoFileValid(isoFile)) {
+                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
+                retValue = false;
+            } else {
+                RpmVersion ovirtHostOsVersion = VdsHandler.getOvirtHostOsVersion(getVds());
+                if (ovirtHostOsVersion != null && !isIsoVersionCompatible(ovirtHostOsVersion, isoFile)) {
+                    addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION);
+                    addCanDoActionMessage(String.format("$IsoVersion %1$s", ovirtHostOsVersion.getMajor()));
+                    retValue = false;
+                }
+            }
         }
         return retValue;
+    }
+
+    private boolean isIsoFileValid(String isoFile) {
+        return StringUtils.isNotBlank(isoFile)
+                && FileUtil.fileExists(Path.Combine(Config.resolveOVirtISOsRepositoryPath(), isoFile));
     }
 
     @Override
@@ -66,7 +96,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.SetVdsStatus,
                                new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Installing));
-                if (getParameters().getIsReinstallOrUpgrade() && getVds().getvds_type() == VDSType.oVirtNode) {
+                if (isOvirtReInstallOrUpgrade()) {
                     _vdsInstaller = new OVirtInstaller(getVds(), getParameters().getoVirtIsoFile());
                 } else {
                     _vdsInstaller = new CBCInstaller(getVds());
@@ -100,8 +130,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.SetVdsStatus,
                                new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Reboot));
-                if (getVds().getvds_type() == VDSType.VDS
-                        || (getVds().getvds_type() == VDSType.oVirtNode && getParameters().getIsReinstallOrUpgrade())) {
+                if (getVds().getvds_type() == VDSType.VDS || isOvirtReInstallOrUpgrade()) {
                     RunSleepOnReboot();
                 } else if (getVds().getvds_type() == VDSType.PowerClient || getVds().getvds_type() == VDSType.oVirtNode) {
                     ThreadPoolUtil.execute(new Runnable() {
@@ -113,6 +142,39 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 }
             }
         }
+    }
+
+    private boolean isOvirtReInstallOrUpgrade() {
+        return getParameters().getIsReinstallOrUpgrade() && getVds().getvds_type() == VDSType.oVirtNode;
+    }
+
+    /**
+     * Upgrade of image version is allowed only between the same major version of operating system. Both oVirt node OS
+     * version and suggested ISO file version are compared to validate version compatibility.
+     *
+     * @param ovirtOsVersion
+     *            the version of the RHEV-H host
+     * @param isoFile
+     *            the ISO file for upgrade
+     * @return true if ISO is compatible with oVirt node OS version or if failed to resolve Host or RHEV-H version
+     */
+    public boolean isIsoVersionCompatible(RpmVersion ovirtOsVersion, String isoFile) {
+        boolean retValue = true;
+        if (ovirtOsVersion != null) {
+            try {
+                RpmVersion isoVersion =
+                        new RpmVersion(isoFile, Config.<String> GetValue(ConfigValues.OvirtIsoPrefix), true);
+
+                if (!VdsHandler.isIsoVersionCompatibleForUpgrade(ovirtOsVersion, isoVersion)) {
+                    retValue = false;
+                }
+            } catch (RuntimeException e) {
+                log.warnFormat("Failed to parse ISO file version {0} with error {1}",
+                        isoFile,
+                        ExceptionUtils.getMessage(e));
+            }
+        }
+        return retValue;
     }
 
     private void CBCSetStatus() {
@@ -131,5 +193,4 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         );
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(InstallVdsCommand.class);
 }
