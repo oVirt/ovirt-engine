@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.*;
 
 import org.ovirt.engine.ui.uicommonweb.models.*;
 import org.ovirt.engine.ui.uicommonweb.models.vms.*;
+import org.ovirt.engine.core.common.businessentities.*;
 
 /**
  Provides configuration values for client side.
@@ -145,6 +146,11 @@ public class Configurator
 		setBackendPort("8080");
 		setLogLevel("INFO");
 		setPollingTimerInterval(5000);
+	}
+
+	public boolean IsDisplayTypeSupported(DisplayType displayType)
+	{
+		return true;
 	}
 
 	public void Configure(SearchableListModel searchableListModel)

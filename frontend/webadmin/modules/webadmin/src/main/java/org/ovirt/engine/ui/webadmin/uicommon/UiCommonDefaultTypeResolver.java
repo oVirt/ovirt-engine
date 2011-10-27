@@ -12,11 +12,11 @@ import com.google.inject.Inject;
 
 public class UiCommonDefaultTypeResolver implements ITypeResolver {
 
-    private final Configurator configurator;
+    private final WebAdminConfigurator configurator;
     private final ILogger logger;
 
     @Inject
-    public UiCommonDefaultTypeResolver(Configurator configurator, ILogger logger) {
+    public UiCommonDefaultTypeResolver(WebAdminConfigurator configurator, ILogger logger) {
         this.configurator = configurator;
         this.logger = logger;
     }

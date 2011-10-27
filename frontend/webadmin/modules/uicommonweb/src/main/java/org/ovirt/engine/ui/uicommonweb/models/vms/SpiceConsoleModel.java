@@ -187,7 +187,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 	{
 		super.UpdateActionAvailability();
 
-		getConnectCommand().setIsExecutionAllowed(!getIsConnected() && getEntity() != null && getEntity().getdisplay_type() != DisplayType.vnc && IsVmConnectReady());
+		getConnectCommand().setIsExecutionAllowed(getConfigurator().IsDisplayTypeSupported(DisplayType.qxl) && !getIsConnected() && getEntity() != null && getEntity().getdisplay_type() != DisplayType.vnc && IsVmConnectReady());
 	}
 
 	private void ExecuteQuery(VM vm)

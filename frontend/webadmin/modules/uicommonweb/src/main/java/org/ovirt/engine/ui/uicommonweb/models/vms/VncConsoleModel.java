@@ -87,6 +87,6 @@ public class VncConsoleModel extends ConsoleModel
 	{
 		super.UpdateActionAvailability();
 
-		getConnectCommand().setIsExecutionAllowed(getEntity() != null && getEntity().getdisplay_type() == DisplayType.vnc && (getEntity().getstatus() == VMStatus.PoweringUp || getEntity().getstatus() == VMStatus.Up || getEntity().getstatus() == VMStatus.RebootInProgress || getEntity().getstatus() == VMStatus.PoweringDown || getEntity().getstatus() == VMStatus.Paused));
+		getConnectCommand().setIsExecutionAllowed(getConfigurator().IsDisplayTypeSupported(DisplayType.vnc) && getEntity() != null && getEntity().getdisplay_type() == DisplayType.vnc && (getEntity().getstatus() == VMStatus.PoweringUp || getEntity().getstatus() == VMStatus.Up || getEntity().getstatus() == VMStatus.RebootInProgress || getEntity().getstatus() == VMStatus.PoweringDown || getEntity().getstatus() == VMStatus.Paused));
 	}
 }
