@@ -1,0 +1,90 @@
+# This file is a sample file for the configuration needed for the LDAP Tester
+# The first section is a configuration section, where you specify the IPA and AD server, the BASE DN and USER DN, and the password
+#
+# The second and third section is the users and groups section respectively. The tester inserts these users to the ldap servers.
+# Note that the user details should be the same as in this file, but only the domain and dc fields should be changed, according to the chosen domain.
+#
+# Once you create a file with the correct configuration, you have to set the LDAP_TESTER_PROPERTIES_FILE environment variable with the path of the properties file
+# and run the tester:
+# 1. export LDAP_TESTER_PROPERTIES_FILE=/path/to/properties/file
+# 2. mvn test -Dtest=LdapTester
+
+# Configuration section
+configuration.TEST_IPA_LDAP_SERVER=ipa-ldap
+configuration.TEST_IPA_LDAP_BASE_DN=dc=example\,dc=com
+configuration.TEST_IPA_LDAP_USER_DN=uid=admin\,cn=users\,cn=accounts\,dc=example\,dc=com
+configuration.TEST_IPA_LDAP_PASSWORD=password
+configuration.TEST_AD_LDAP_SERVER=ad-ldap
+configuration.TEST_AD_LDAP_BASE_DN=dc=example\,dc=com
+configuration.TEST_AD_LDAP_USER_DN=cn=administrator\,cn=users\,dc=example\,dc=com
+configuration.TEST_AD_LDAP_PASSWORD=password
+
+# Users section
+users.userA.username=ggray
+users.userA.name=Gandalf
+users.userA.domain=example.com
+users.userA.dc=dc=example\,dc=com
+users.userA.givenName=Gandalf
+users.userA.surname=the gray
+users.userA.displayName=Gandalf the gray
+users.userA.homeDirectory=/home/ggray
+users.userA.gidNumber=283800004
+users.userA.uidNumber=283800004
+
+users.userB.username=ksoze
+users.userB.name=Kaizer
+users.userB.domain=example.com
+users.userB.dc=dc=example\,dc=com
+users.userB.givenName=Kaizer
+users.userB.surname=Soze
+users.userB.displayName=Kaizer Soze
+users.userB.homeDirectory=/home/ksoze
+users.userB.gidNumber=283800005
+users.userB.uidNumber=283800005
+
+users.userC.username=bman
+users.userC.name=Bat
+users.userC.domain=example.com
+users.userC.dc=dc=example\,dc=com
+users.userC.givenName=Bat
+users.userC.surname=Man
+users.userC.displayName=Batman
+users.userC.homeDirectory=/home/bman
+users.userC.gidNumber=283800006
+users.userC.uidNumber=283800006
+
+# Groups section
+groups.groupA.name=batman
+groups.groupA.dc=dc=example\,dc=com
+groups.groupA.domain=example.com
+groups.groupA.gidNumber=283800009
+groups.groupA.userMembers=bman
+
+groups.groupB.name=usual
+groups.groupB.dc=dc=example\,dc=com
+groups.groupB.domain=example.com
+groups.groupB.gidNumber=283800010
+groups.groupB.userMembers=ksoze
+
+groups.groupC.name=superstars
+groups.groupC.dc=dc=example\,dc=com
+groups.groupC.domain=example.com
+groups.groupC.gidNumber=283800011
+groups.groupC.groupMembers=batman
+
+groups.groupD.name=others
+groups.groupD.dc=dc=example\,dc=com
+groups.groupD.domain=example.com
+groups.groupD.gidNumber=283800012
+groups.groupD.userMembers=ggray
+groups.groupD.groupMembers=usual
+
+groups.groupE.name=movies
+groups.groupE.dc=dc=example\,dc=com
+groups.groupE.domain=example.com
+groups.groupE.gidNumber=283800013
+groups.groupE.groupMembers=superstars\,others
+
+
+
+

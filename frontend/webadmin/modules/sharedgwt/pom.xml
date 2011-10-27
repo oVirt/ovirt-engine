@@ -1,0 +1,172 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.ovirt.engine.ui</groupId>
+    <artifactId>webadmin-modules</artifactId>
+    <version>3.0.0-0001</version>
+  </parent>
+
+  <artifactId>sharedgwt</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Shared GWT code</name>
+
+  <properties>
+    <sourceDir>${project.basedir}/src/main/java</sourceDir>
+    <gwt-plugin.extraJvmArgs>-Xms1024M -Xmx1024M -XX:PermSize=256M -XX:MaxPermSize=256M</gwt-plugin.extraJvmArgs>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <version>${gwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- ====================================================================== -->
+    <!-- might be required for compilation priority but commented out since     -->
+    <!-- gwt-maven plugin packs those dependencies within the war.              -->
+    <!-- ====================================================================== -->
+    <!--
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>compat</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>common</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>searchbackend</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    -->
+
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.ejb</groupId>
+      <artifactId>ejb-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>4.0.2.GA</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-annotations</artifactId>
+      <version>3.4.0.GA</version>
+      <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.ovirt.engine.core</groupId>
+                  <artifactId>common</artifactId>
+                  <version>${engine.version}</version>
+                  <type>jar</type>
+                  <classifier>sources</classifier>
+                  <outputDirectory>${sourceDir}</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.ovirt.engine.core</groupId>
+                  <artifactId>compat</artifactId>
+                  <version>${engine.version}</version>
+                  <type>jar</type>
+                  <classifier>sources</classifier>
+                  <outputDirectory>${sourceDir}</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.ovirt.engine.core</groupId>
+                  <artifactId>searchbackend</artifactId>
+                  <version>${engine.version}</version>
+                  <type>jar</type>
+                  <classifier>sources</classifier>
+                  <outputDirectory>${sourceDir}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+              <!--
+              <classifier>sources</classifier>
+	      <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+	      <outputDirectory>${project.build.directory}/sources</outputDirectory>
+	      -->
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${sourceDir}/org/ovirt/engine/ui</directory>
+              <includes>
+                <include>common*</include>
+                <include>compat*</include>
+                <include>searchbackend*</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+        <executions>
+          <execution>
+            <id>auto-clean</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <executions>
+          <!-- GWT version should be detected from dependencyManagement -->
+          <execution>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs>
+          <debugSuspend>false</debugSuspend>
+          <module>org.ovirt.engine.SharedGwt</module>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

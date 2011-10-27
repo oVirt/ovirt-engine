@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "REST_API_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter id="chap-REST_API_Guide-Monitoring">
+	<title>Monitoring</title>
+ 	<para>The API has the ability to retrieve performance and status information from Red Hat Enterprise Virtualisation Manager's data warehouse. This includes system events and statistical data for virtualisation resources such as hosts, virtual machines and storage.</para>
+
+	<section id="sect-REST_API_Guide-Monitoring-Events">
+		<title>Events</title>
+		<para>The <literal>rel="events"</literal> link obtained from the entry point URI allows a user to query information on system events from Red Hat Enterprise Virtualisation Manager. The following table lists the events specific elements:</para>
+
+		<informaltable frame="none">
+		  <tgroup cols="2">
+		    <colspec colwidth="2*"/>
+		    <colspec colwidth="5*"/>
+		    <tbody>
+		      <row>
+		        <entry><literal>id=</literal></entry>
+		        <entry>An opaque identifier for the event entry</entry>
+		      </row>
+		      <row>
+		        <entry><literal>description</literal></entry>
+		        <entry>A description of the system event</entry>
+		      </row>
+		      <row>
+		        <entry><literal>code</literal></entry>
+		        <entry>The integer event code. See <xref linkend="appe-REST_API_Guide-Event_Codes"/> for a full list of event codes with descriptions.</entry>
+		      </row>
+		      <row>
+		        <entry><literal>severity</literal></entry>
+		        <entry>The level of severity for the event. One of <literal>NORMAL</literal>, <literal>WARNING</literal>, <literal>ERROR</literal> or <literal>ALERT</literal>.</entry>
+		      </row>
+		      <row>
+		        <entry><literal>time</literal></entry>
+		        <entry>The timestamp indicating when the event happened</entry>
+		      </row>
+		      <row>
+		        <entry><literal>user id=</literal></entry>
+		        <entry>The identification code for the user who triggered the event</entry>
+		      </row>
+		    </tbody>
+		  </tgroup>
+		</informaltable>
+		<para>For example:</para>
+		<screen>
+&lt;events&gt;
+    &lt;event id="537" href="/restapi-definition/events/537"&gt;
+        &lt;description&gt;User vdcadmin logged in.&lt;/description&gt;
+        &lt;code&gt;30&lt;/code&gt;
+        &lt;severity&gt;NORMAL&lt;/severity&gt;
+        &lt;time&gt;2011-01-12T10:48:27.827+02:00&lt;/time&gt;
+        &lt;user id="9b9002d1-ec33-4083-8a7b-31f6b8931648"
+          href="/restapi-definition/users/9b9002d1-ec33-4083-8a7b-31f6b8931648"/&gt;
+    &lt;/event&gt;
+    ...
+&lt;/events&gt;</screen>
+	</section>
+
+	<section id="sect-REST_API_Guide-Monitoring-Statistics">
+		<title>Statistics</title>
+		<para>The <literal>rel="statistics"</literal> link obtained from the entry point URI allows a user to query information on system events from Red Hat Enterprise Virtualisation Manager. The following table lists the statistics specific elements:</para>
+
+		<informaltable frame="none">
+		  <tgroup cols="2">
+		    <colspec colwidth="2*"/>
+		    <colspec colwidth="5*"/>
+		    <tbody>
+		      <row>
+		        <entry><literal>name</literal></entry>
+		        <entry>The unique identifier for the statistic entry</entry>
+		      </row>
+		      <row>
+		        <entry><literal>description</literal></entry>
+		        <entry>A plain text description of the statistic</entry>
+		      </row>
+		      <row>
+		        <entry><literal>unit</literal></entry>
+		        <entry>The unit or rate to measure the statistical values</entry>
+		      </row>
+		      <row>
+		        <entry><literal>type</literal></entry>
+		        <entry>The type of statistic measures. Either <literal>GAUGE</literal> or <literal>COUNTER</literal>.</entry>
+		      </row>
+		      <row>
+		        <entry><literal>values type=</literal></entry>
+		        <entry>The data type for the statistical values that follow. Either <literal>INTEGER</literal> or <literal>DECIMAL</literal>.</entry>
+		      </row>
+		      <row>
+		        <entry><literal>value</literal></entry>
+		        <entry>A data set that contains <literal>datum</literal></entry>
+		      </row>
+		      <row>
+		        <entry><literal>datum</literal></entry>
+		        <entry>An individual piece of data from a <literal>value</literal></entry>
+		      </row>
+		    </tbody>
+		  </tgroup>
+		</informaltable>
+		<para>For example:</para>
+		<screen>
+&lt;statistics&gt;
+    &lt;statistic&gt;
+        &lt;name&gt;bytes.current.rx&lt;/name&gt;
+        &lt;description&gt;Receive rate&lt;/description&gt;
+        &lt;unit&gt;BITS_PER_SECOND&lt;/unit&gt;
+        &lt;type&gt;GUAGE&lt;/type&gt;
+        &lt;values type="DECIMAL"&gt;
+            &lt;value&gt;
+                &lt;datum&gt;131072.0&lt;datum&gt;
+            &lt;/value&gt;
+        &lt;/values&gt;
+    &lt;/statistic&gt;
+    &lt;statistic&gt;
+        &lt;name&gt;errors.total.rx&lt;/name&gt;
+        &lt;description&gt;Receive error rate&lt;/description&gt;
+        &lt;unit&gt;NONE&lt;/unit&gt;
+        &lt;type&gt;COUNTER&lt;/type&gt;
+        &lt;values type="INTEGER"&gt;
+            &lt;value&gt;
+                &lt;datum&gt;1.0&lt;datum&gt;
+            &lt;/value&gt;
+        &lt;/values&gt;
+    &lt;/statistic&gt;
+    ...
+&lt;/statistics&gt;</screen>
+	</section>
+
+</chapter>

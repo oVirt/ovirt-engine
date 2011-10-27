@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+		
+	<ui:style type="org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable.Style">
+		.panel {
+			overflow: auto;
+			height: 100%;
+		}
+		
+		.bar {
+			padding-top: 7px;
+			height: 24px;
+		}
+		
+		.linkButton {
+			float: right;
+			font-size: 12px;
+			margin-right: 5px;
+			background: transparent;
+			border: 0px;
+		}
+		
+		.refreshButton {
+			float: right;
+			font-size: 12px;
+			height: 14px;
+			width: 12px;
+			margin-right: 5px;
+			background: transparent;
+			border: 1px solid transparent;
+		}
+		
+		.content {
+			overflow-y: scroll;
+			position: absolute !important;
+			top: 59px;
+			bottom: 0px;
+			left: 0px;
+			right: 0px;
+		}
+		
+		.contentWithDefaultHeader {
+		}
+		
+		.headerContainer {
+			position: absolute;
+			height: 28px;
+			top: 34px;			
+			bottom: 0px;
+			left: 0px;
+			right: 0px;
+			padding-right: 17px;
+			background-color: #F0F2FF;
+		}
+	</ui:style>
+
+	<g:FlowPanel addStyleNames="{style.panel}">
+		<g:HTMLPanel addStyleNames="{style.bar}">
+			<g:FlowPanel ui:field="actionPanel" />
+			<g:PushButton ui:field="nextPageButton" addStyleNames="{style.linkButton}" />
+			<g:PushButton ui:field="prevPageButton" addStyleNames="{style.linkButton}" />			
+			<g:PushButton ui:field="refreshPageButton" addStyleNames="{style.refreshButton}">
+				<g:upFace image='{resources.refreshButtonImage}'/>
+			</g:PushButton>
+			<div style="clear: both;" />
+		</g:HTMLPanel>
+		<g:SimplePanel ui:field="tableHeaderContainer" addStyleNames="{style.headerContainer}" />
+		<g:SimplePanel ui:field="tableContainer" addStyleNames="{style.content}" />
+	</g:FlowPanel>
+
+</ui:UiBinder>

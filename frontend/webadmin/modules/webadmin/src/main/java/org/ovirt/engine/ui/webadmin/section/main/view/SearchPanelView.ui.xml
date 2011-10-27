@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.SearchPanelView.Style">
+		@external gwt-SuggestBoxPopup .suggestPopupMiddleCenterInner;
+		@external gwt-SuggestBoxPopup .suggestPopupContent;
+		@external gwt-SuggestBoxPopup .suggestPopupTop;
+		@external gwt-SuggestBoxPopup .suggestPopupBottom;
+		@external gwt-SuggestBoxPopup .suggestPopupMiddleLeft;
+		@external gwt-SuggestBoxPopup .suggestPopupMiddleRight;
+		
+		.gwt-SuggestBoxPopup {
+			z-index: 1;
+		}
+		
+		.gwt-SuggestBoxPopup .suggestPopupMiddleCenterInner {
+			height: 220px;
+			width: 1000px;
+			overflow-y: auto;
+			border-style: solid;
+			border-width: 1px;
+		}
+		
+		.gwt-SuggestBoxPopup .suggestPopupContent {
+			overflow-y: auto;
+			padding: 1px;
+		}
+		
+		.gwt-SuggestBoxPopup .suggestPopupTop,
+		.gwt-SuggestBoxPopup .suggestPopupBottom,
+		.gwt-SuggestBoxPopup .suggestPopupMiddleLeft,
+		.gwt-SuggestBoxPopup .suggestPopupMiddleRight {
+			display: none;
+		}
+		
+		.wrapper {
+			padding: 11px;
+			height: 24px;
+			color: black;
+		}
+		
+		.label {
+			font-size: 15px;
+			font-weight: bold;
+			color: #333333;
+		}
+		
+		.searchLabel {
+			float: left;
+			margin-left: 20px;
+			line-height:24px;
+		}
+		
+		.searchLabelSeparator {
+			float: left;
+			line-height:24px;
+		}
+		
+		.searchBoxLeft {
+			float: left;
+			margin-left: 10px;
+			background-image: url(images/search_bar_left.png);
+			background-repeat: no-repeat;
+			width: 13px;
+			height: 24px;
+		}
+						
+		.searchBoxRight {
+			float: left;
+			background-image: url(images/search_bar_right.png);
+			background-repeat: no-repeat;
+			width: 13px;
+			height: 24px;
+		}		
+		
+		.searchBoxPanel {
+			background-image: url(images/search_bar_middle.png);
+			background-repeat: repeat-x;
+			width: 1000px;
+			height: 24px;
+		}		
+		
+		.searchBoxBookmark {
+			float: left;
+			padding-top: 2px;
+			background-image: url(images/search_bar_middle.png);
+			background-repeat: repeat-x;
+			width: 20px;
+			height: 24px;
+			cursor: pointer;
+		}	
+		
+		.searchBoxLeft_HasSelectedTags {
+			background-image: url(images/search_bar_left_HasSelectedTags.png);
+		}
+		
+		.searchBoxRight_HasSelectedTags {
+			background-image: url(images/search_bar_right_HasSelectedTags.png);
+		}
+		
+		.searchBoxPanel_HasSelectedTags {
+			background-image: url(images/search_bar_middle_HasSelectedTags.png);
+		}
+		
+		.searchBoxBookmark_HasSelectedTags {
+			background-image: url(images/search_bar_middle_HasSelectedTags.png);
+		}
+		
+		.searchBoxMiddleSearchPrefix {
+			float: left;
+			height: 24px;
+		}
+		
+		.searchBoxMiddleSearchString {
+			float: left;		
+			height: 24px;
+		}		
+		
+		.searchStringPrefixLabel {
+			border: none;
+			outline: none;
+			font-size: 14px;
+			color: grey;
+			height: 24px;
+			line-height: 24px;
+			padding-right: 6px;
+			white-space: nowrap;
+		}
+		
+		.searchSuggestBox {
+			padding: 0px;
+			margin: 0px;			
+			border: none;
+			outline: none;
+			background-color: transparent;
+			font-size: 14px;			
+			height: 24px;
+			line-height: 24px;
+		}
+		
+		.searchButton {
+			float: left;
+			margin-left: 10px;
+			width: 25px;
+			height: 24px;
+			cursor: pointer;
+		}
+	</ui:style>
+
+	<g:HTMLPanel addStyleNames="{style.wrapper}">
+		<g:InlineLabel ui:field="searchLabel" addStyleNames="{style.label} {style.searchLabel}" />
+		<g:InlineLabel text=":" addStyleNames="{style.label} {style.searchLabelSeparator}" />
+
+		<g:HorizontalPanel>	
+			<g:HTML ui:field="searchBoxLeft" addStyleNames="{style.searchBoxLeft}" />
+				
+			<g:VerticalPanel ui:field="searchBoxPanel" verticalAlignment="middle" addStyleNames="{style.searchBoxPanel}">
+				<g:HorizontalPanel>
+					<g:HorizontalPanel addStyleNames="{style.searchBoxMiddleSearchPrefix}">
+						<g:Label ui:field="searchStringPrefixLabel" addStyleNames="{style.searchStringPrefixLabel}" />
+					</g:HorizontalPanel>
+					<g:HorizontalPanel addStyleNames="{style.searchBoxMiddleSearchString}">
+						<g:SuggestBox ui:field="searchStringInput" addStyleNames="{style.searchSuggestBox}" />
+					</g:HorizontalPanel>
+				</g:HorizontalPanel>
+			</g:VerticalPanel>
+	
+			<g:FlowPanel ui:field="searchBoxBookmark" addStyleNames="{style.searchBoxBookmark}">
+				<g:Image ui:field="bookmarkButton" />
+			</g:FlowPanel>
+	
+			<g:HTML ui:field="searchBoxRight" addStyleNames="{style.searchBoxRight}" />
+	
+			<g:FlowPanel addStyleNames="{style.searchButton}">
+				<g:Image ui:field="searchButton" />
+			</g:FlowPanel>
+		</g:HorizontalPanel>
+		
+		<div style="clear: both;" />	
+		
+	</g:HTMLPanel>
+
+</ui:UiBinder>

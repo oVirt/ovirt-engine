@@ -1,0 +1,1082 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "REST_API_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter id="chap-REST_API_Guide-VMs">
+  <title>Virtual Machines</title>
+  <para>
+    The <literal>vms</literal> collection provides information about virtual machines in a Red Hat Enterprise Virtualization environment. An API user accesses this information through the <literal>rel="vms"</literal> link obtained from the entry point URI (see <xref linkend="chap-REST_API_Guide-Entry_Point"/>).
+  </para>
+  <para>
+    The following table shows specific elements contained in a virtual machine resource representation.
+  </para>
+  <note>
+    <title>Element property icons</title>
+    <para>
+      The icons used in the properties column of this table are described in <xref linkend="table-Property_Icons" />
+    </para>
+  </note>
+  <informaltable frame="none">
+    <tgroup cols="4">
+      <colspec colwidth="5*"/>
+      <colspec colwidth="3*"/>
+      <colspec colwidth="6*"/>
+      <colspec colwidth="2*" colname="prop"/>
+      <thead>
+        <row>
+          <entry>Element</entry>
+          <entry>Type</entry>
+          <entry>Description</entry>
+          <entry>Properties</entry>
+        </row>
+      </thead>
+      <tbody>
+<!--
+        <row>
+          <entry><literal>name</literal></entry>
+          <entry>string</entry>
+          <entry>	A user-supplied human readable name for the virtual machine. The <literal>name</literal> is unique across all virtual machine resources in a data center.</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>description</literal></entry>
+          <entry>string</entry>
+          <entry>A free-form user-supplied human readable description of the virtual machine</entry>
+          <entry></entry>
+        </row>
+-->
+        <row>
+          <entry><literal>link rel="disks"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the disks sub-collection for virtual machine resources</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>link rel="nics"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the network interface sub-collection for virtual machine resources</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>link rel="cdroms"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the CD-ROMs sub-collection for virtual machine resources</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>link rel="snapshots"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the snapshots sub-collection for virtual machine resources</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>link rel="tags"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the tags sub-collection for virtual machine resources</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>link rel="permissions"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the sub-collection for virtual machine permissions. See <xref linkend="sect-REST_API_Guide-Common_Features-Resources-Permissions"/></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>link rel="statistics"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the statistics sub-collection for virtual machine resources</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>type</literal></entry>
+          <entry>enumerated</entry>
+          <entry>The virtual machine type. A list of enumerated values are available in <literal>capabilities</literal>. See <xref linkend="sect-REST_API_Guide-Capabilities-Version-VM_Types"/></entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>status</literal></entry>
+          <entry>See below</entry>
+          <entry>The virtual machine status</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>memory</literal></entry>
+          <entry>integer</entry>
+          <entry>The amount of memory allocated to the guest in bytes</entry>
+          <entry> </entry>
+        </row>
+        <row>
+          <entry><literal>cpu</literal></entry>
+          <entry>complex</entry>
+          <entry>The CPU <literal>topology</literal> i.e. number of <literal>sockets</literal> and <literal>cores</literal> available to the guest</entry>
+          <entry> </entry>
+        </row>
+        <row>
+          <entry><literal>os</literal> <literal>type=</literal></entry>
+          <entry>string, e.g. <literal>RHEL5</literal> or <literal>WindowsXP</literal></entry>
+          <entry>The guest operating system type</entry>
+          <entry> </entry>
+        </row>
+        <row>
+          <entry><literal>os</literal> <literal>boot dev=</literal></entry>
+          <entry>enumerated</entry>
+          <entry>A list of boot devices described by a <literal>dev</literal> attribute on a <literal>boot</literal> element. A list of enumerated values are available in <literal>capabilities</literal>. See <xref linkend="sect-REST_API_Guide-Capabilities-Version-Boot_Devices"/></entry>
+          <entry> </entry>
+        </row>
+        <row>
+          <entry><literal>os</literal> <literal>kernel</literal></entry>
+          <entry>string</entry>
+          <entry>A path to a kernel image the virtual machine is configured to boot. This option supports booting a Linux kernel directly rather than through the BIOS bootloader.</entry>
+          <entry> </entry>
+        </row>
+        <row>
+          <entry><literal>os</literal> <literal>initrd</literal></entry>
+          <entry>string</entry>
+          <entry>A path to an initrd image to be used with the previously specified kernel. This option supports booting a Linux kernel directly rather than through the BIOS bootloader.</entry>
+          <entry> </entry>
+        </row>
+        <row>
+          <entry><literal>os</literal> <literal>cmdline</literal></entry>
+          <entry>string</entry>
+          <entry>A kernel command line parameter string to be used with the defined kernel. This option supports booting a Linux kernel directly rather than through the BIOS bootloader.</entry>
+          <entry> </entry>
+        </row>
+        <row>
+          <entry><literal>high_availability</literal></entry>
+          <entry>complex</entry>
+          <entry>Set <literal>enabled</literal> to <literal>true</literal> if the virtual machine should be automatically restarted if the virtual machine or its host crashes. A <literal>priority</literal> element controls the order in which Virtual Machines are re-started</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>display</literal></entry>
+          <entry>complex</entry>
+          <entry>The display <literal>type</literal> (either <literal>vnc</literal> or <literal>spice</literal>), port, and the number of <literal>monitors</literal></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>cluster id=</literal></entry>
+          <entry>GUID</entry>
+          <entry>A reference to the virtual machine's host cluster. See <xref linkend="chap-REST_API_Guide-Clusters"/></entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>template id=</literal></entry>
+          <entry>GUID</entry>
+          <entry>A reference to the template on which this virtual machine is based.</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>domain id=</literal></entry>
+          <entry>GUID</entry>
+          <entry>A reference to the virtual machine's domain.</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>start_time</literal></entry>
+          <entry><literal>xsd:dateTime</literal> format: <literal>YYYY-MM-DDThh:mm:ss</literal></entry>
+          <entry>The date and time at which this virtual machine was started</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>creation_time</literal></entry>
+          <entry><literal>xsd:dateTime</literal> format: <literal>YYYY-MM-DDThh:mm:ss</literal></entry>
+          <entry>The date and time at which this virtual machine was created</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>timezone</literal></entry>
+          <entry>tz database format: <literal>Area/Location</literal></entry>
+          <entry>The timezone for this virtual machine. Only certain timezones are allowed as specified in <xref linkend="appe-REST_API_Guide-Timezones"/></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>origin</literal></entry>
+          <entry>One of <literal>rhev</literal>, <literal>vmware</literal> or <literal>xen</literal></entry>
+          <entry>The system from which this virtual machine originated</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>stateless</literal></entry>
+          <entry>boolean: true or false</entry>
+          <entry><literal>true</literal> if the virtual machine is stateless. A stateless virtual machine contains a snapshot of its disk image taken at boot and deleted at shutdown. This means state changes do not persist after a reboot.</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>placement_policy</literal></entry>
+          <entry>complex</entry>
+          <entry>Sets the placement policy for virtual machine migration. Requires a default <literal>host=</literal> and an <literal>affinity</literal> (one of <literal>migratable</literal>, <literal>user_migratable</literal> or <literal>pinned</literal>).</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>memory_policy</literal></entry>
+          <entry>complex</entry>
+          <entry>Sets the memory policy for virtual machines. Defines the minimum amount of <literal>guaranteed</literal> memory on a host in order for the virtual machine to run.</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>custom_properties</literal></entry>
+          <entry>complex</entry>
+          <entry>A set of user-defined environment variable passed as parameters to custom scripts. Each <literal>custom_property</literal> contains <literal>name</literal> and <literal>value</literal> attributes. A list of enumerated values are available in <literal>capabilities</literal>. See <xref linkend="sect-REST_API_Guide-Capabilities-Version-Custom_Properties"/></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>usb</literal></entry>
+          <entry>complex</entry>
+          <entry>Defines the USB policy for a virtual machine. Requires an <literal>enabled</literal> element set to a boolean value.</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>guest_info</literal></entry>
+          <entry>complex</entry>
+          <entry>A reference to the guest client information. Includes an <literal>ip</literal> element with an <literal>address=</literal> attribute.</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>vmpool</literal></entry>
+          <entry>complex</entry>
+          <entry>A reference to the virtual machine pool. This element only appears for virtual machines part of a pool.</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <para>
+    The <literal>status</literal> contains one of the following enumerative values: <literal>UNASSIGNED</literal>, <literal>DOWN</literal>, <literal>UP</literal>, <literal>POWERING_UP</literal>, <literal>POWERED_DOWN</literal>, <literal>PAUSED</literal>, <literal>MIGRATING_FROM</literal>, <literal>MIGRATING_TO</literal>, <literal>UNKNOWN</literal>, <literal>NOT_RESPONDING</literal>, <literal>WAIT_FOR_LAUNCH</literal>, <literal>REBOOT_IN_PROGRESS</literal>, <literal>SAVING_STATE</literal>, <literal>RESTORING_STATE</literal>, <literal>SUSPENDED</literal>, <literal>IMAGE_ILLEGAL</literal>, <literal>IMAGE_LOCKED</literal> or <literal>POWERING_DOWN</literal>.
+  </para>
+  <example>
+    <title>An XML representation of a virtual machine</title>
+    <screen>
+&lt;vm id="082c794b-771f-452f-83c9-b2b5a19c0399"
+  href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399"&gt;
+    &lt;name&gt;vm1&lt;/name&gt;
+    &lt;description&gt;Virtual Machine 1&lt;/description&gt;
+    &lt;actions&gt;
+        &lt;link rel="start"
+          href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/start"/&gt;
+        &lt;link rel="stop"
+          href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/stop"/&gt;
+        &lt;link rel="shutdown"
+          href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/shutdown"/&gt;
+        &lt;link rel="suspend"
+          href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/suspend"/&gt;
+        &lt;link rel="detach"
+          href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/detach"/&gt;
+        &lt;link rel="migrate"
+          href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/migrate"/&gt;
+        &lt;link rel="export"
+          href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/export"/&gt;
+        &lt;link rel="import"
+          href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/import"/&gt;
+        &lt;link rel="move"
+          href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/move"/&gt;
+        &lt;link rel="ticket"
+          href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/ticket"/&gt;
+    &lt;/actions&gt;
+    &lt;link rel="disks"
+      href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/disks"/&gt;
+    &lt;link rel="nics"
+      href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/nics"/&gt;
+    &lt;link rel="cdroms"
+      href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/cdroms"/&gt;
+    &lt;link rel="snapshots"
+      href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/snapshots"/&gt;
+    &lt;link rel="users"
+      href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/users"/&gt;
+    &lt;link rel="tags"
+      href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/tags"/&gt;
+    &lt;link rel="permissions"
+      href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/permissions"/&gt;
+    &lt;link rel="statistics"
+      href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/statistics"/&gt;
+    &lt;type&gt;desktop&lt;/type&gt;
+    &lt;status&gt;UP&lt;/status&gt;
+    &lt;memory&gt;536870912&lt;/memory&gt;
+    &lt;cpu&gt;
+        &lt;topology cores="1" sockets="1"/&gt;
+    &lt;/cpu&gt;
+    &lt;os type="RHEL5"&gt;
+        &lt;boot dev="hd"/&gt;
+        &lt;kernel/&gt;
+        &lt;initrd/&gt;
+        &lt;cmdline/&gt;
+    &lt;/os&gt;
+    &lt;highly_available&gt;
+        &lt;enabled&gt;true&lt;/enabled&gt;
+        &lt;priority&gt;20&lt;/priority&gt;
+    &lt;/highly_available&gt;
+    &lt;display&gt;
+        &lt;type&gt;vnc&lt;/type&gt;
+        &lt;port&gt;5910&lt;/port&gt;
+        &lt;monitors&gt;1&lt;/monitors&gt;
+    &lt;/display&gt;
+    &lt;cluster id="99408929-82cf-4dc7-a532-9d998063fa95"
+      href="/restapi-definition/clusters/99408929-82cf-4dc7-a532-9d998063fa95"/&gt;
+    &lt;template id="00000000-0000-0000-0000-000000000000"
+      href="/restapi-definition/templates/00000000-0000-0000-0000-000000000000"/&gt;
+    &lt;start_time&gt;2010-18-16T13:14:15&lt;/start_time&gt;
+    &lt;creation_time&gt;2010-08-16T14:24:29&lt;/creation_time&gt;
+    &lt;origin&gt;rhev&lt;/origin&gt;
+    &lt;stateless&gt;false&lt;/stateless&gt;
+    &lt;placement_policy&gt;
+        &lt;host id="2ab5e1da-b726-4274-bbf7-0a42b16a0fc3"/&gt;
+        &lt;affinity&gt;migratable&lt;/affinity&gt;
+    &lt;/placement_policy&gt;
+    &lt;memory_policy&gt;
+        &lt;guaranteed&gt;536870912&lt;/guaranteed&gt;
+    &lt;/memory_policy&gt;
+    &lt;usb&gt;
+        &lt;enabled&gt;true&lt;/enabled&gt;
+    &lt;/usb&gt;
+    &lt;custom_properties&gt;
+        &lt;custom_property value="124" name="sndbuf"/&gt;
+    &lt;/custom_properties&gt;
+    &lt;guest_info&gt;
+        &lt;ip address="192.168.0.25"/&gt;
+    &lt;/guest_info&gt;
+    &lt;timezone&gt;Europe/London&lt;/timezone&gt;
+&lt;/vm&gt;
+    </screen>
+  </example>
+  <para>
+    Creation of a new virtual machine requires the <literal>name</literal>, <literal>template</literal> and <literal>cluster</literal> properties. Identify the <literal>template</literal> and <literal>cluster</literal> elements with the <literal>id</literal> attribute or <literal>name</literal> element. See <xref linkend="sect-REST_API_Guide-Common_Features-Resources-Creating_Resources"/> for more information.
+  </para>
+  <example>
+    <title>Creating a virtual machine with 512&nbsp;MB and boots from the virtual hard disk</title>
+    <screen>
+POST /restapi-definition/vms HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;vm&gt;
+    &lt;name&gt;vm2&lt;/name&gt;
+    &lt;description&gt;Virtual Machine 2&lt;/description&gt;
+    &lt;type&gt;desktop&lt;/type&gt;
+    &lt;memory&gt;536870912&lt;/memory&gt;
+    &lt;cluster&gt;
+        &lt;name&gt;default&lt;/name&gt;
+    &lt;/cluster&gt;
+    &lt;template&gt;
+        &lt;name&gt;Blank&lt;/name&gt;
+    &lt;/template&gt;
+    &lt;os&gt;
+      &lt;boot dev="hd"/&gt;
+    &lt;/os&gt;
+&lt;/vm&gt;
+    </screen>
+  </example>
+  <para>
+    The <literal>name</literal>, <literal>description</literal>, <literal>type</literal>, <literal>memory</literal>, <literal>cpu topology</literal>, <literal>os</literal>, <literal>high_availability</literal>, <literal>display</literal>, <literal>timezone</literal>, <literal>stateless</literal>, <literal>placement_policy</literal>, <literal>memory_policy</literal>, <literal>usb</literal> and <literal>custom_properties</literal> elements are updatable post-creation. See <xref linkend="sect-REST_API_Guide-Common_Features-Resources-Updating_Resources"/> for more information.
+  </para>
+  <example>
+    <title>Updating a virtual machine to contain 1&nbsp;GB of memory</title>
+    <screen>
+PUT /restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399 HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;vm&gt;
+    &lt;memory&gt;1073741824&lt;/memory&gt;
+&lt;/vm&gt;
+    </screen>
+  </example>
+  <para>
+    Removal of a virtual machine requires a <literal>DELETE</literal> request.
+  </para>
+  <example>
+    <title>Removing a virtual machine</title>
+    <screen>
+DELETE /restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399 HTTP/1.1
+
+HTTP/1.1 204 No Content
+    </screen>
+  </example>  
+  <section id="sect-REST_API_Guide-VMs-Disks">
+    <title>Disks Sub-Collection</title>
+    <para>
+      The <literal>disks</literal> sub-collection represents all virtual hard disk devices on a virtual machine. A <literal>disks</literal> representation contains the following properties:
+    </para>
+    <note>
+      <title>Element property icons</title>
+      <para>
+        The icons used in the properties column of this table are described in <xref linkend="table-Property_Icons" />
+      </para>
+    </note>
+    <informaltable frame="none">
+      <tgroup cols="4">
+        <colspec colwidth="4*"/>
+        <colspec colwidth="4*"/>
+        <colspec colwidth="6*"/>
+        <colspec colwidth="2*" colname="prop"/>
+        <thead>
+          <row>
+            <entry>Element</entry>
+            <entry>Type</entry>
+            <entry>Description</entry>
+            <entry>Properties</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry><literal>size</literal></entry>
+            <entry>integer</entry>
+            <entry>Size of the disk in bytes</entry>
+            <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+          </row>
+          <row>
+            <entry><literal>type</literal></entry>
+            <entry>enumerated</entry>
+            <entry>The type (function) of the disk device. A list of enumerated values is available in <literal>capabilities</literal>. See <xref linkend="sect-REST_API_Guide-Capabilities-Version-Disk_Types"/></entry>
+            <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+          </row>
+          <row>
+            <entry><literal>status</literal></entry>
+            <entry>One of <literal>ILLEGAL</literal>, <literal>INVALID</literal>, <literal>LOCKED</literal> or <literal>OK</literal></entry>
+            <entry>The status of the disk device</entry>
+            <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+          </row>
+          <row>
+            <entry><literal>interface</literal></entry>
+            <entry>enumerated</entry>
+            <entry>The type of interface driver used to connect to the disk device. A list of enumerated values is available in <literal>capabilities</literal>. See <xref linkend="sect-REST_API_Guide-Capabilities-Version-Disk_Interfaces"/></entry>
+            <entry></entry>
+          </row>
+          <row>
+            <entry><literal>format</literal></entry>
+            <entry>enumerated</entry>
+            <entry>The underlying storage format. A list of enumerated values is available in <literal>capabilities</literal>. See <xref linkend="sect-REST_API_Guide-Capabilities-Version-Disk_Formats"/>. Copy On Write (COW) allows snapshots, with a small performance overhead. Raw does not allow snapshots, but offers improved performance.</entry>
+            <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+          </row>
+          <row>
+            <entry><literal>sparse</literal></entry>
+            <entry>boolean: true or false</entry>
+            <entry><literal>true</literal> if the physical storage for the disk should not be preallocated</entry>
+            <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+          </row>
+          <row>
+            <entry><literal>bootable</literal></entry>
+            <entry>boolean: true or false</entry>
+            <entry><literal>true</literal> if this disk is to be marked as bootable</entry>
+            <entry></entry>
+          </row>
+          <row>
+            <entry><literal>wipe_after_delete</literal></entry>
+            <entry>boolean: true or false</entry>
+            <entry><literal>true</literal> if the underlying physical storage for the disk should be zeroed when the disk is deleted</entry>
+            <entry></entry>
+          </row>
+          <row>
+            <entry><literal>propagate_errors</literal></entry>
+            <entry>boolean: true or false</entry>
+            <entry><literal>true</literal> if disk errors should not cause virtual machine to be paused and, instead, disk errors should be propagated to the guest OS</entry>
+            <entry></entry>
+          </row>
+          <row>
+            <entry><literal>vm id=</literal></entry>
+            <entry>GUID</entry>
+            <entry>The ID of the containing virtual machine</entry>
+            <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+          </row>        
+          <row>
+            <entry><literal>storage_domain id=</literal></entry>
+            <entry>GUID</entry>
+            <entry>The ID of the associated storage domain, only used when adding the first disk to a virtual machine that was not itself created from a template</entry>
+            <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject><footnote><para>Only required when the first disk is   being added to a virtual machine that was not itself created from a template.</para></footnote><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+    <example>
+      <title>An XML representation of a disk device</title>
+      <screen>
+&lt;disk id="ed7feafe-9aaf-458c-809a-ed789cdbd5b4"
+  href="/restapi-definition/vms/cdc0b102-fbfe-444a-b9cb-57d2af94f401/disks/
+  ed7feafe-9aaf-458c-809a-ed789cdbd5b4"&gt;
+    &lt;size&gt;10737418240&lt;/size&gt;
+    &lt;type&gt;system&lt;/type&gt;
+    &lt;status&gt;OK&lt;/status&gt;
+    &lt;interface&gt;virtio&lt;/interface&gt;
+    &lt;format&gt;raw&lt;/format&gt;
+    &lt;bootable&gt;true&lt;/bootable&gt;
+    &lt;vm id="cdc0b102-fbfe-444a-b9cb-57d2af94f401"
+      href="/restapi-definition/vms/cdc0b102-fbfe-444a-b9cb-57d2af94f401"/&gt;
+    &lt;storage_domain id="fabe0451-701f-4235-8f7e-e20e458819ed"
+      href="/restapi-definition/storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed"/&gt;
+&lt;/disk&gt;
+      </screen>
+    </example>
+    <para>
+      When adding a new disk, the <literal>size</literal> property is required. Also the <literal>storage_domain</literal> ID is needed in the case of the first disk being added to a virtual machine that was not itself created from a template.
+    </para>
+  </section>
+  
+  <section id="sect-REST_API_Guide-VMs-NICs">
+    <title>Network Interfaces Sub-Collection</title>
+    <para>
+      The <literal>nics</literal> sub-collection represents all network interface devices on a virtual machine. A <literal>nics</literal> representation contains the following properties:
+    </para>
+    <note>
+      <title>Element property icons</title>
+      <para>
+        The icons used in the properties column of this table are described in <xref linkend="table-Property_Icons" />
+      </para>
+    </note>
+    <para>
+      <informaltable frame="none">
+        <tgroup cols="4">
+          <colspec colwidth="4*"/>
+          <colspec colwidth="4*"/>
+          <colspec colwidth="6*"/>
+          <colspec colwidth="2*" colname="prop"/>
+          <thead>
+            <row>
+              <entry>Element</entry>
+              <entry>Type</entry>
+              <entry>Description</entry>
+              <entry>Properties</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry><literal>name</literal></entry>
+              <entry>string</entry>
+              <entry>The name of the guest network device, e.g. <literal>eth0</literal></entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+            <row>
+              <entry><literal>network id=</literal></entry>
+              <entry>GUID</entry>
+              <entry>A reference to the network which the interface should be connected</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+            <row>
+              <entry><literal>type</literal></entry>
+              <entry>enumerated</entry>
+              <entry>The type of driver used for the nic. A list of enumerated values is available in <literal>capabilities</literal>. See <xref linkend="sect-REST_API_Guide-Capabilities-Version-NIC_Types"/></entry>
+              <entry></entry>
+            </row>
+            <row>
+              <entry><literal>mac address=</literal></entry>
+              <entry>string</entry>
+              <entry>The MAC address of the interface</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </para>
+    <example>
+      <title>An XML representation of a network interface</title>
+      <screen>
+&lt;nic id="7a3cff5e-3cc4-47c2-8388-9adf16341f5e" 
+  ref="/restapi-definition/vms/cdc0b102-fbfe-444a-b9cb-57d2af94f401/nics/
+  7a3cff5e-3cc4-47c2-8388-9adf16341f5e"&gt;
+    &lt;name&gt;nic1&lt;/name&gt;
+    &lt;type&gt;virtio&lt;/type&gt;
+    &lt;mac address="00:1a:4a:16:84:07"/&gt;
+    &lt;network id="00000000-0000-0000-0000-000000000009"
+      href="/restapi-definition/networks/00000000-0000-0000-0000-000000000009"/&gt;
+    &lt;vm id="cdc0b102-fbfe-444a-b9cb-57d2af94f401"
+      href="/restapi-definition/vms/cdc0b102-fbfe-444a-b9cb-57d2af94f401"/&gt;
+&lt;/nic&gt;
+      </screen>
+    </example>
+    <para>
+      When adding a new network interface, the <literal>name</literal> and <literal>network id</literal> properties are required.
+    </para>
+  </section>
+
+  <section id="sect-REST_API_Guide-VMs-CDROMs">
+    <title>CD-ROMs Sub-Collection</title>
+    <para>
+      The <literal>cdroms</literal> sub-collection represents the CD-ROM device on a virtual machine. A <literal>cdroms</literal> representation contains the following properties:
+    </para>
+    <informaltable frame="none">
+      <tgroup cols="4">
+        <colspec colwidth="4*"/>
+        <colspec colwidth="4*"/>
+        <colspec colwidth="6*"/>
+        <colspec colwidth="2*" colname="prop"/>
+        <thead>
+          <row>
+            <entry>Element</entry>
+            <entry>Type</entry>
+            <entry>Description</entry>
+            <entry>Properties</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry><literal>file id=</literal></entry>
+            <entry>string/filename</entry>
+            <entry>A reference to an ISO image. See <xref linkend="sect-REST_API_Guide-Storage_Domains-Files"/></entry>
+            <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+    <example>
+      <title>An XML representation of a CD-ROM device</title>
+      <screen>
+&lt;cdrom id="00000000-0000-0000-0000-000000000000"
+  href="/restapi-definition/vms/cdc0b102-fbfe-444a-b9cb-57d2af94f401/cdroms/
+  00000000-0000-0000-0000-000000000000"&gt;
+    &lt;file id="en_winxp_pro_with_sp2.iso"/&gt;
+    &lt;vm id="cdc0b102-fbfe-444a-b9cb-57d2af94f401"
+      href="/restapi-definition/vms/cdc0b102-fbfe-444a-b9cb-57d2af94f401"/&gt;
+&lt;/cdrom&gt;
+      </screen>
+    </example>
+    <para>
+      When adding a new CD-ROM, the <literal>file id</literal> property is required.
+    </para>
+    <note>
+      <para>
+        A virtual machine only contains a single CD-ROM device. It is not possible to modify the CD-ROM properties with <literal>PUT</literal>.
+      </para>
+    </note>
+  </section>
+
+  <section id="sect-REST_API_Guide-VMs-Snapshots">
+    <title>Snapshots Sub-Collection</title>
+    <para>
+      A virtual machine saves and restores disk state as a number of snapshots. These are represented and managed through a <literal>rel="snapshot"</literal> sub-collection that behaves similar to other collections, as described in <xref linkend="chap-REST_API_Guide-Common_Features"/>.
+    </para>
+    <para>
+      Virtual machine snapshots are represented with <literal>snapshot</literal> elements that contain the following properties:
+    </para>
+    <note>
+      <title>Element property icons</title>
+      <para>
+        The icons used in the properties column of this table are described in <xref linkend="table-Property_Icons" />
+      </para>
+    </note>
+    <para>
+      <informaltable frame="none">
+        <tgroup cols="4">
+          <colspec colwidth="4*"/>
+          <colspec colwidth="4*"/>
+          <colspec colwidth="6*"/>
+          <colspec colwidth="2*" colname="prop"/>
+          <thead>
+            <row>
+              <entry>Element</entry>
+              <entry>Type</entry>
+              <entry>Description</entry>
+              <entry>Properties</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry><literal>description</literal></entry>
+              <entry>string</entry>
+              <entry>A free-form user-supplied human readable description of the snapshot</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+            <row>
+              <entry><literal>vm id=</literal></entry>
+              <entry>GUID</entry>
+              <entry>The ID and URI of the virtual machine to which this snapshot pertains</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+            <row>
+              <entry><literal>date</literal></entry>
+              <entry><literal>xsd:dateTime</literal> format: <literal>YYYY-MM-DDThh:mm:ss</literal></entry>
+              <entry>The date and time at which this snapshot was created.</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+            <row>
+              <entry><literal>link rel="prev"</literal></entry>
+              <entry>relationship</entry>
+              <entry>A link to the previous snapshot of this virtual machine</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </para>
+    <para>
+      When adding a new snapshot, only the <literal>description</literal> property is specified.
+    </para>
+    <note>
+      <para>
+        Note that it is not possible to modify snapshot properties using <literal>PUT</literal>.
+      </para>
+    </note>
+    <example>
+      <title>An XML representation of a virtual machine snapshot</title>
+      <screen>
+&lt;snapshot id="f5288fd5-5178-4b7d-b87c-c01a40e40168"
+  href="/restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/snapshots/
+  f5288fd5-5178-4b7d-b87c-c01a40e40168"&gt;
+    &lt;description&gt;Virtual Machine 1 - Snapshot A&lt;/description&gt;
+    &lt;actions&gt;
+        &lt;link rel="restore"
+        href="/restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/snapshots/
+        f5288fd5-5178-4b7d-b87c-c01a40e40168/restore"/&gt;
+    &lt;/actions&gt;
+    &lt;link rel="prev"
+      href="/restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/snapshots/
+      ce411b3e-e4e0-4482-8b2f-d1ed998b9130"/&gt;
+    &lt;vm id="5114bb3e-a4e6-44b2-b783-b3eea7d84720"
+      href="/restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720"/&gt;
+    &lt;date&gt;2010-08-16T14:24:29&lt;/date&gt;
+&lt;/snapshot&gt;
+      </screen>
+    </example>
+    <para>
+      An API user restores to a virtual machine snapshot using the <literal>rel="restore"</literal> action link in the snapshot representation.
+    </para>
+    <screen>
+POST /restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/snapshots/f5288fd5-5178-4b7d-b87c-c01a40e40168/restore HTTP/1.1
+Content-type: application/xml
+    </screen>
+  </section>
+
+  <section id="sect-REST_API_Guide-VMs-Statistics">    
+  <title>Statistics Sub-Collection</title>
+  <para>
+    Each virtual machine resource exposes a <literal>statistics</literal> sub-collection for virtual machine-specific statistics. Each <literal>statistic</literal> contains the following properties.
+  </para>
+  <informaltable frame="none">
+    <tgroup cols="3">
+      <colspec colwidth="2*"/>
+      <colspec colwidth="2*"/>
+      <colspec colwidth="5*"/>
+      <thead>
+        <row>
+          <entry>Element</entry>
+          <entry>Type</entry>          
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry><literal>name</literal></entry>
+          <entry>string</entry>
+          <entry>The unique identifier for the statistic entry</entry>
+        </row>
+        <row>
+          <entry><literal>description</literal></entry>
+          <entry>string</entry>
+          <entry>A plain text description of the statistic</entry>
+        </row>
+        <row>
+          <entry><literal>unit</literal></entry>
+          <entry>string</entry>
+          <entry>The unit or rate to measure the statistical values</entry>
+        </row>
+        <row>
+          <entry><literal>type</literal></entry>
+          <entry>One of <literal>GAUGE</literal> or <literal>COUNTER</literal></entry>
+          <entry>The type of statistic measures</entry>
+        </row>
+        <row>
+          <entry><literal>values type=</literal></entry>
+          <entry>One of <literal>INTEGER</literal> or <literal>DECIMAL</literal></entry>
+          <entry>The data type for the statistical values that follow</entry>
+        </row>
+        <row>
+          <entry><literal>value</literal></entry>
+          <entry>complex</entry>
+          <entry>A data set that contains <literal>datum</literal></entry>
+        </row>
+        <row>
+          <entry><literal>datum</literal></entry>
+          <entry>see <literal>values type</literal></entry>
+          <entry>An individual piece of data from a <literal>value</literal></entry>
+        </row>
+        <row>
+          <entry><literal>vm id=</literal></entry>
+          <entry>relationship</entry>
+          <entry>A relationship to the containing <literal>vm</literal> resource</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <example>
+    <title>An XML representation of ta virtual machine;s statistics sub-collection</title>
+    <screen>
+&lt;statistics&gt;
+    &lt;statistic id="ef802239-b74a-329f-9955-be8fea6b50a4"
+      href="/restapi-definition/vms/cdc0b102-fbfe-444a-b9cb-57d2af94f401/
+      statistics/ef802239-b74a-329f-9955-be8fea6b50a4"&gt;
+        &lt;name&gt;memory.installed&lt;/name&gt;
+        &lt;description&gt;Total memory configured&lt;/description&gt;
+        &lt;unit&gt;BYTES&lt;/unit&gt;
+        &lt;type&gt;GUAGE&lt;/type&gt;
+        &lt;values type="DECIMAL"&gt;
+            &lt;value&gt;
+                &lt;datum&gt;1073741824&lt;datum&gt;
+            &lt;/value&gt;
+        &lt;/values&gt;
+        &lt;vm id="cdc0b102-fbfe-444a-b9cb-57d2af94f401"
+          href="/restapi-definition/vms/cdc0b102-fbfe-444a-b9cb-57d2af94f401"/&gt;
+    &lt;/statistic&gt;
+    &lt;statistic id="d849a55f-0049-36f8-ae65-face541473ac"
+      href="/restapi-definition/vms/cdc0b102-fbfe-444a-b9cb-57d2af94f401/
+      statistics/d849a55f-0049-36f8-ae65-face541473ac"&gt;
+        &lt;name&gt;cpu.current.guest&lt;/name&gt;
+        &lt;description&gt;CPU used by guest&lt;/description&gt;
+        &lt;unit&gt;PERCENT&lt;/unit&gt;
+        &lt;type&gt;GAUGE&lt;/type&gt;
+        &lt;values type="DECIMAL"&gt;
+            &lt;value&gt;
+                &lt;datum&gt;12&lt;datum&gt;
+            &lt;/value&gt;
+        &lt;/values&gt;
+        &lt;vm id="cdc0b102-fbfe-444a-b9cb-57d2af94f401"
+          href="/restapi-definition/vms/cdc0b102-fbfe-444a-b9cb-57d2af94f401"/&gt;
+    &lt;/statistic&gt;
+    ...
+&lt;/statistics&gt;
+    </screen>
+  </example>
+  <note>
+    <para>A virtual machine's <literal>statistics</literal> sub-collection is read-only.</para>
+  </note>
+  </section>
+
+  <section id="sect-REST_API_Guide-VMs-Actions">    
+    <title>Actions</title>
+    <para>
+      The following sections describe the actions associated with <literal>vm</literal> resources. 
+    </para>
+    <para>
+      The API contains a number of possible actions for virtual machines: <literal>start</literal>, <literal>stop</literal>, <literal>shutdown</literal>, <literal>suspend</literal>, <literal>detach</literal>, <literal>migrate</literal>, <literal>export</literal>, <literal>move</literal> and <literal>ticket</literal>.
+    </para>
+    <para>
+      Information on the action for importing virtual machines is found in <xref linkend="sect-REST_API_Guide-Storage_Domains-Listing"/>.
+    </para>
+    <section id="sect-REST_API_Guide-VMs-Start">
+      <title>
+        Start Action
+      </title>
+      <para>
+        The start action launches a virtual machine.
+      </para>
+      <example>
+        <title>Action to start a virtual machine</title>
+        <screen>
+POST /restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/start HTTP/1.1
+Content-type: application/xml
+
+&lt;action/&gt;
+        </screen>
+      </example>
+      <para>
+        The start action allows a <literal>vm</literal> element to be provided as a parameter. If a <literal>vm</literal> element is provided, the virtual machine uses the values from the provided element and overrides properties at start time. These properties persist until a user stops the virtual machine.
+      </para>
+      <example>
+        <title>Action to start a virtual machine with overridden parameters</title>
+        <screen>
+POST /restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/start HTTP/1.1
+Content-type: application/xml
+
+&lt;action&gt;
+    &lt;pause&gt;true&lt;/pause&gt;
+    &lt;vm&gt;
+        &lt;host id="02447ac6-bcba-448d-ba2b-f0f453544ed2"/&gt;
+        &lt;stateless&gt;true&lt;/stateless&gt;
+        &lt;display&gt;
+            &lt;type&gt;spice&lt;/type&gt;
+        &lt;/display&gt;
+        &lt;os&gt;
+            &lt;boot dev="cdrom"/&gt;
+        &lt;/os&gt;
+        &lt;cdroms&gt;
+            &lt;cdrom&gt;
+                &lt;file id="foo.iso"/&gt;
+            &lt;/cdrom&gt;
+        &lt;/cdroms&gt;
+        &lt;floppies&gt;
+            &lt;floppy&gt;
+                &lt;file id="bar.vfd"/&gt;
+            &lt;/floppy&gt;
+        &lt;/floppies&gt;
+    &lt;/vm&gt;
+&lt;/action&gt;
+        </screen>
+      </example>
+    </section>
+
+    <section id="sect-REST_API_Guide-VMs-Stop">
+      <title>
+        Stop Action
+      </title>
+      <para>
+        The stop action forces a virtual machine to power-off.
+      </para>
+      <example>
+        <title>Action to stop a virtual machine</title>
+        <screen>
+POST /restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/stop HTTP/1.1
+Content-type: application/xml
+
+&lt;action/&gt;
+        </screen>
+      </example>
+    </section>
+
+    <section id="sect-REST_API_Guide-VMs-Shutdown">
+      <title>
+        Shutdown Action
+      </title>
+      <para>
+        The shutdown action sends a shutdown request to a virtual machine.
+      </para>
+      <example>
+        <title>Action to send a shutdown request to a virtual machine</title>
+        <screen>
+POST /restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/shutdown HTTP/1.1
+Content-type: application/xml
+
+&lt;action/&gt;
+        </screen>
+      </example>
+    </section>
+
+    <section id="sect-REST_API_Guide-VMs-Suspend">
+      <title>
+        Suspend Action
+      </title>
+      <para>
+        The suspend action saves the virtual machine state to disk and stops it. The virtual machine state is restored with the start action.
+      </para>
+      <example>
+        <title>Action to save virtual machine state and suspend the machine</title>
+        <screen>
+POST /restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/suspend HTTP/1.1
+Content-type: application/xml
+
+&lt;action/&gt;
+        </screen>
+      </example>
+    </section>
+
+    <section id="sect-REST_API_Guide-VMs-Detach">
+      <title>
+        Detach Action
+      </title>
+      <para>
+        The detach action detaches a virtual machine from a pool.
+      </para>
+      <example>
+        <title>Action to detach a virtual machine</title>
+        <screen>
+POST /restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/detach HTTP/1.1
+Content-type: application/xml
+
+&lt;action/&gt;
+        </screen>
+      </example>
+    </section>
+
+    <section id="sect-REST_API_Guide-VMs-Migrate">
+      <title>
+        Migrate Action
+      </title>
+      <para>
+        The migrate action migrates a virtual machine to another physical host. The destination <literal>host</literal> element is an optional element as Red Hat Enterprise Virtualization Manager automatically selects a default host for migration. If an API user requires a specific <literal>host</literal>, the user can specify the host with either an <literal>id</literal> or <literal>name</literal> parameter.
+      </para>
+      <example>
+        <title>Action to migrate a virtual machine to another host</title>
+        <screen>
+POST /restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/migrate HTTP/1.1
+Content-type: application/xml
+
+&lt;action&gt;
+    &lt;host id="2ab5e1da-b726-4274-bbf7-0a42b16a0fc3"/&gt;
+&lt;/action&gt;
+        </screen>
+      </example>
+    </section>
+
+    <section id="sect-REST_API_Guide-VMs-Export">
+      <title>
+        Export Action
+      </title>
+      <para>
+        The export action exports a virtual machine to an <literal>export</literal> storage domain. A destination storage domain must be specified with a <literal>storage_domain</literal> reference. By default, the export action overwrites any existing virtual machine of the same name in the destination domain. An API user changes this behaviour by setting the <literal>overwrite</literal> parameter to <literal>true</literal>. Finally, if snapshots of the virtual machine are not included with the exported virtual machine, the <literal>discard_snapshots</literal> parameter is set to <literal>true</literal>.
+      </para>
+      <example>
+        <title>Action to export a virtual machine to an export storage domain</title>
+        <screen>
+POST /restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/export HTTP/1.1
+Content-type: application/xml
+
+&lt;action&gt;
+    &lt;storage_domain&gt;
+        &lt;name&gt;export1&lt;/name&gt;
+    &lt;/storage_domain&gt;
+    &lt;overwrite&gt;true&lt;overwrite/&gt;
+    &lt;discard_snapshots&gt;true&lt;discard_snapshots/&gt;
+&lt;/action&gt;
+        </screen>
+      </example>
+    </section>
+    
+    <section id="sect-REST_API_Guide-VMs-Move">
+      <title>
+        Move Action
+      </title>
+      <para>
+        The move action moves virtual machine disks to a different storage domain. The destination storage domain is specified via a <literal>storage_domain</literal> reference to either a <literal>name</literal> or an <literal>id</literal>.
+      </para>
+      <example>
+        <title>Action to move virtual machine disks to a different storage domain</title>
+        <screen>
+POST /restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399/move HTTP/1.1
+Content-type: application/xml
+
+&lt;action&gt;
+    &lt;storage_domain&gt;
+        &lt;name&gt;images2&lt;/name&gt;
+    &lt;/storage_domain&gt;
+&lt;/action&gt;
+        </screen>
+      </example>
+    </section>
+
+    <section id="sect-REST_API_Guide-VMs-Ticket">
+      <title>
+        Ticket Action
+      </title>
+      <para>
+        The ticket action generates a time-sensitive authentication token for accessing a virtual machine's display. The client-provided <literal>action</literal> optionally includes a <literal>ticket</literal> representation containing a <literal>value</literal> (if the token string needs to take on a particular form), and/or an <literal>expiry</literal> time in minutes. In any case, the completion response specifies the actual ticket value and expiry used.
+      </para>
+      <example>
+        <title>Action to generate authentication token for a virtual machine</title>
+        <screen>
+POST /restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/ticket HTTP/1.1
+Content-type: application/xml
+
+&lt;action&gt;
+    &lt;ticket&gt;
+        &lt;expiry&gt;120&lt;/expiry&gt;
+    &lt;/ticket&gt;
+&lt;/action&gt;
+
+200 OK
+Content-Type: application/xml
+
+&lt;action id="94e07552-14ba-4c27-8ce6-2cc75190d3ef"
+  href="/restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/ticket/
+  94e07552-14ba-4c27-8ce6-2cc75190d3ef"&gt;
+    &lt;status&gt;COMPLETE&lt;/status&gt;
+    &lt;ticket&gt;
+        &lt;value&gt;5c7CSzK8Sw41&lt;/value&gt;
+        &lt;expiry&gt;120&lt;/expiry&gt;
+    &lt;/ticket&gt;
+    &lt;link rel="parent"
+      href="/restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720"/&gt;
+    &lt;link rel="replay"
+      href="/restapi-definition/vms/5114bb3e-a4e6-44b2-b783-b3eea7d84720/ticket"/&gt;
+&lt;/action&gt;
+        </screen>
+      </example>
+    </section>
+
+  </section>
+
+</chapter>

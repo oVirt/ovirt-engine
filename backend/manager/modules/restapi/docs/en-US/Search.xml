@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "REST_API_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter id="chap-REST_API_Guide-Search">
+	<title>Search Queries</title>
+ 	<para>The API searches for values in the properties of virtualisation resources. This provides API users with the ability to filter long lists of resources into a managable selection based upon a defined criteria.</para>
+
+	<section id="sect-REST_API_Guide-Syntax">
+		<title>Search Syntax</title>
+	 	<para>The API uses the following syntax to perform search queries with a <literal>GET</literal> request:</para>
+	 	<screen>GET /restapi-definition/{resource_collection}?search={criteria} HTTP/1.1
+Accept: application/xml
+Content-Type: application/xml</screen>
+		<para>The <literal>resource_collection</literal> refers to any virtualisation resource collection as specified in <xref linkend="sect-REST_API_Guide-Entry_Point-Link"/>. This collection becomes the target for the search query. For example, to search through the virtual machine collection requires <literal>vms</literal> as the specified <literal>resource_collection</literal>:</para>
+	 	<screen>GET /restapi-definition/vms?search={criteria} HTTP/1.1
+Accept: application/xml
+Content-Type: application/xml</screen>
+		<para>The <literal>criteria</literal> refers to the search query the API directs to the <literal>resource_collection</literal>. This query takes the following form:</para>
+		<para><literal>{property} {operator} {value}</literal></para>		
+		<para>The <literal>property</literal> refers to any property within the <literal>resource_collection</literal> and contains a searchable value. For example, to search for a virtual machine name in the <literal>vms</literal> resource collection, use the <literal>name</literal> property.</para>
+		<para>The <literal>operator</literal> is a comparison operation between your chosen <literal>value</literal> and the <literal>property</literal> value. The API requires this operator to be URL encoded. The following table lists the API's supported operators and their URL encoded equivalents:</para>
+ 		<informaltable frame="none">
+    		<tgroup cols="3">
+				<colspec colwidth="6*"/>
+				<colspec colwidth="2*"/>
+				<colspec colwidth="2*"/>
+				<thead>
+					<row>
+						<entry>Description</entry>
+						<entry>Operator</entry>
+						<entry>URL Encoded</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>is equal to</entry>
+						<entry><literal>=</literal></entry>
+						<entry><literal>%3D</literal></entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</informaltable>
+		<para>The <literal>value</literal> refers to the value contained within the chosen <literal>property</literal>. For example, to search for a virtual machine named "vm1", the value would need to be <literal>vm1</literal>.</para>
+		<para>The combined <literal>resource_collection</literal> and <literal>criteria</literal>  examples produce the following search query:</para>
+	 	<screen>GET /restapi-definition/vms?search=name%3Dvm1 HTTP/1.1
+Accept: application/xml
+Content-Type: application/xml</screen>
+
+	</section>
+
+	<section id="sect-REST_API_Guide-Simple_String_Searches">
+		<title>Simple Searches</title>
+		<para>Simple search queries use text strings to match property values within a resource collection. This section provides some simple search examples and the XML output that follows.</para>
+		<example>
+			<title>Search for a virtual machine named "vm1"</title>
+	 		<screen>GET /restapi-definition/vms?search=name%3Dvm1 HTTP/1.1
+Accept: application/xml
+Content-Type: application/xml
+
+HTTP/1.1 200 OK
+Content-Type: application/xml
+
+&lt;vms&gt;
+  &lt;vm id="082c794b-771f-452f-83c9-b2b5a19c0399" href="/restapi-definition/vms/082c794b-771f-452f-83c9-b2b5a19c0399"&gt;
+    &lt;name&gt;vm1&lt;/name&gt;
+    ...
+  &lt;/vm&gt;
+&lt;/vms&gt;</screen>
+ 		</example>
+ 		<example>
+			<title>List all hosts that are down</title>
+	 		<screen>GET /restapi-definition/vms?search=status%3DDOWN HTTP/1.1
+Accept: application/xml
+Content-Type: application/xml
+
+HTTP/1.1 200 OK
+Content-Type: application/xml
+
+&lt;hosts&gt;
+  &lt;host id="2ab5e1da-b726-4274-bbf7-0a42b16a0fc3" href="/restapi-definition/hosts/2ab5e1da-b726-4274-bbf7-0a42b16a0fc3"&gt;
+    &lt;name&gt;zig&lt;/name&gt;
+    &lt;status&gt;DOWN&lt;/status&gt;
+    ...
+  &lt;/host&gt;
+  &lt;host id="t845j375-r463-9485-ry7e-3h5n6usg374t" href="/restapi-definition/hosts/t845j375-r463-9485-ry7e-3h5n6usg374t"&gt;
+    &lt;name&gt;zag&lt;/name&gt;
+    &lt;status&gt;DOWN&lt;/status&gt;
+    ...
+  &lt;/host&gt;
+&lt;/hosts&gt;</screen>
+ 		</example>
+ 		<example>
+			<title>List data centers using NFS storage</title>
+	 		<screen>GET /restapi-definition/vms?search=datacenters%3DNFS HTTP/1.1
+Accept: application/xml
+Content-Type: application/xml
+
+HTTP/1.1 200 OK
+Content-Type: application/xml
+
+&lt;data_center id="d70d5e2d-b8ad-494a-a4d2-c7a5631073c4" href="/restapi-definition/datacenters/d70d5e2d-b8ad-494a-a4d2-c7a5631073c4"&gt;
+  &lt;name&gt;Default&lt;/name&gt;
+  &lt;description&gt;The default Data Center&lt;/description&gt;
+  &lt;storage_type&gt;NFS&lt;/storage_type&gt;
+  ...
+&lt;/data_center&gt;
+</screen>
+ 		</example>
+	</section>
+
+	<section id="sect-REST_API_Guide-Wildcard_Searches">
+		<title>Wildcard Searches</title>
+		<para>Search queries can substitute part of a value with an asterisk as a wildcard. For example:</para>
+<screen>GET /restapi-definition/vms?search=name%3Dvm* HTTP/1.1
+Accept: application/xml
+Content-Type: application/xml</screen>
+		<para>This query would result in all virtual machines with names beginning with <literal>vm</literal>, such as <literal>vm1</literal>, <literal>vm2</literal>, <literal>vma</literal> or <literal>vm-webserver</literal>.</para>
+		
+<screen>GET /restapi-definition/vms?search=name%3Dv*1 HTTP/1.1
+Accept: application/xml
+Content-Type: application/xml</screen>
+		<para>This query would result in all virtual machines with names beginning with <literal>v</literal> and ending with <literal>1</literal>, such as <literal>vm1</literal>, <literal>vr1</literal> or <literal>virtualmachine1</literal>.</para>
+	</section>
+
+</chapter>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style>
+		.viewButtonPanel {
+			padding: 10px;
+		}
+		
+		.viewButton {
+			margin-right: 10px;
+		}
+	</ui:style>
+
+	<g:FlowPanel>
+		<g:FlowPanel addStyleNames="{style.viewButtonPanel}">
+			<g:RadioButton ui:field="basicViewButton" name="view" addStyleNames="{style.viewButton}" />
+			<g:RadioButton ui:field="advancedViewButton" name="view" addStyleNames="{style.viewButton}" />
+		</g:FlowPanel>
+		<g:SimplePanel ui:field="tablePanel" />
+	</g:FlowPanel>
+
+</ui:UiBinder>

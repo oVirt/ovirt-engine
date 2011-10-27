@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+
+	<ui:style>
+		.content {
+		}		
+		
+		.descriptionEditor {
+			width: 100%;
+		}
+		
+		.errorMessageLabel {
+			color: #CD2127;
+			margin-top: 10px;
+			margin-left: 5px;
+		}
+		
+		.tree {
+			overflow: auto;
+		}
+		
+	</ui:style>
+	
+	<d:SimpleDialogPanel width="350px" height="400px">
+		<d:content>
+			<e:EntityModelCellTree ui:field="tree" addStyleNames="{style.tree}"/>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

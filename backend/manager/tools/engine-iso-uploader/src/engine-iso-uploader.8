@@ -1,0 +1,135 @@
+.\" engine-iso-uploader - oVirt Engine Tool for Uploading ISO Images
+.TH "engine-iso-uploader" "8" "" "Keith Robertson" ""
+.SH "NAME"
+engine\-iso\-uploader \- oVirt Enterprise Virtualization Engine Manager (RHEV\-M) ISO Uploader
+.SH "SYNOPSIS"
+\fBengine\-iso\-uploader\fP [options] list
+.PP
+\fBengine\-iso\-uploader\fP [options] upload [file]...
+.SH "DESCRIPTION"
+.PP
+The \fBengine\-iso\-uploader\fP can be used to list the names of ISO storage domains (not the images stored in those domains) and upload files to storage domains associated with a RHEV\-M. The upload operation supports multiple files (separated by spaces) and wildcarding.\&
+.PP
+The \fBengine\-iso\-uploader\fP will, by default, attempt to interact with the RHEV\-M REST API.  This command typically gets the RHEV\-M's hostname and port number (engine=) and user name (user=) from the \fB/etc/engine/logcollector.conf\fP file. Alternatively, you can provide the user name and password from the command line. The user name and password are authenticated by the authentication service associated with the RHEV\-M.  Currently, a special local account (admin), Red Hat IPA server, and Microsoft Active Directory server is supported for this task.
+.PP
+The reason \fBengine\-iso\-uploader\fP needs to interact with the REST API is so it can discover metadata (the IP address and path information) for the NFS server hosting the ISO storage domain. The only way to bypass the REST API (and not require a user name and password) is if you provide the fully qualified address and path to the NFS server. This can be useful if JBoss is off\-line or if you know the full path to the domain on the NFS server. However, keep in mind that the path names are not intuitive. You cannot bypass the REST API if you are using SSH to copy files to the server.\&
+.PP
+The default transport is NFS. However, you can use SSH as the transport instead.\&
+.PP
+.SH "GENERAL OPTIONS"
+The following are general options you can use with this command:\&
+.IP "\fB\-\-version\fP"
+Show the program's version number and exit.\&
+.IP "\fB\-h, \-\-help\fP"
+Show the help message and exit.\&
+.IP "\fB\-\-quiet\fP"
+Intended to be used with \fBupload\fP operations to reduce console output (default=False).\&
+.IP "\fB\-\-log\-file=PATH\fP"
+Path to engine\-iso\-uploader log file (default=/var/log/engine\-iso\-uploader.log).\&
+.IP "\fB\-\-config\-file=PATH\fP"
+Path to the configuration file (default=/etc/engine/isouploader.conf).\&
+.IP "\fB\-v, \-\-verbose\fP"
+Display verbose output.\&
+.IP "\fB\-f, \-\-force\fP"
+Replace like-named files on the target file server (default=off).\&
+.SH "oVirt Engine CONFIGURATION OPTIONS"
+The options in the RHEV\-M group are used by the tool to gain authorization to the RHEV\-M REST API. The options in this group are available for both list and upload commands.\&
+.IP "\fB\-u user@engine.example.com, \-\-user=user@engine.example.com\fP"
+Sets the user name to use with the REST API. This should be in UPN format.\&
+.IP "\fB\-r engine.example.com, \-\-engine=engine.example.com\fP"
+Hostname or IP address of the RHEV\-M (default=localhost:8443).\&
+.SH "ISO STORAGE DOMAIN CONFIGURATION OPTIONS"
+The options in the upload configuration group let you specify the ISO storage domain to which files should be uploaded.\&
+.IP "\fB\-i ISODOMAIN, \-\-iso\-domain=ISODOMAIN\fP"
+The ISO domain to which the file(s) should be uploaded.\&
+.IP "\fB\-n NFSSERVER, \-\-nfs\-server=NFSSERVER\fP"
+The NFS server to which the file(s) should be uploaded. This option is an alternative to \-\-iso\-domain and should not be combined with \-\-iso\-domain. Use this when you want to upload files to a specific NFS server (e.g.\-\-nfs\-server=example.com:/path/to/some/dir)\&
+.SH "CONNECTION CONFIGURATION OPTIONS"
+By default the program uses NFS to copy files to the ISO storage domain. To use SSH file transfer, instead of NFS, provide a ssh\-user.\&
+.IP "\fB\-\-ssh\-user=root\fP"
+The SSH user that the program will use for SSH file transfers. This user must either be root or a user with a UID and GID of 36 (vdsm)  on the target file server.\&
+.IP "\fB\-\-ssh\-port=PORT\fP"
+The SSH port to connect on (default=22).\&
+.IP "\fB\-k KEYFILE, \-\-key\-file=KEYFILE\fP"
+The identity file (private key) to be used for accessing the file server. If an identity file is not supplied, the program prompts for a password. It is strongly recommended to use key based authentication with SSH because the program may make multiple SSH connections, resulting in multiple requests for the SSH password.\&
+.SH "EXAMPLES"
+Using the default local RHEV\-M and ISO Domain, there are simple ways to run \fBengine\-iso\-uploader\fP to work with the ISO images associated with the RHEV\-M. To list the names of your ISO domains, just add the \fBlist\fP option, then provide the username and password, when prompted:\&
+.PP
+# \fBengine\-iso\-uploader\fP list
+.br
+Please provide the REST API username for RHEV\-M (CTRL+D to abort): \fBmyadmin\fP
+.br
+Please provide the REST API password for RHEV\-M (CTRL+D to abort): \fB********\fP
+.br
+ISO Storage Domain Name   | Datacenter                | ISO Domain Status
+.br
+LegacyISO                 | Legacy                    | active
+.br
+LegacyISO2                | Legacy2                   | inactive
+.br
+.PP
+To upload an ISO image (for example, abc.iso), you could use the following command:\&
+.PP
+# \fBengine\-iso\-uploader\fP upload /mnt/stuff/abc.iso
+.PP
+This next example uploads a file to the domain named ISO, indicating the username, name of the ISO domain (ISO), location of the RHEV\-M (192.168.0.1) and the user name (root) used by the ssh command to transfer the files (/tmp/files/*.vfd).\&
+.PP
+# \fBengine\-iso\-uploader\fP \-u joe@a.example.com \-\-iso\-domain=ISO \\
+     \-r 192.168.0.1 \-\-ssh\-user=root upload /tmp/files/*.vfd
+.PP
+If the files you are uploading currently exist in the ISO domain, you can force the old ones to be overwritten using the \fB\-\-force\fP option:\&
+.PP
+# \fBengine\-iso\-uploader\fP  \-u joe@a.example.com \-\-iso\-domain=ISO \\
+     \-r 192.168.0.1 \-\-ssh\-user=root \-\-force upload /tmp/files/*.vfd
+.PP
+If you don't use \fB\-\-force\fP and files you are uploading already exist on the server, you'll see messages that look like the following:\&
+.PP
+# \fBengine\-iso\-uploader\fP  \-u joe@a.example.com \-\-iso\-domain=ISO \\
+     \-r 192.168.0.1 \-\-ssh\-user=root upload /tmp/files/*.vfd
+.br
+ERROR: /tmp/files/a.vfd exists on 192.168.0.1.  Either remove it or supply the --force option to overwrite it.
+.PP
+If you know the full path to the NFS upload directory, you may specify that. Note that no password is required:
+.PP
+# \fBengine-iso-uploader\fP -u joe@a.example.com \\
+    --nfs-server=192.168.0.1:/virt/iso/a0b9ecf0-6bed-4a64-8d2f-85b7dea3ab31/images/11111111-1111-1111-1111-111111111111 \\
+    upload  /tmp/files/*.vfd
+.SH "CONFIGURATION FILE"
+For configuration information, \fBengine\-iso\-uploader\fP always first pulls in any options set in the \fB/etc/engine/isouploader.conf\fP configuration file. By default, all options are commented out. Any options you set in that file can later be overridden from the \fBengine\-iso\-uploader\fP command line. To set defaults for any of the options described in this man page, uncomment the option lines you want in this file and add the desired values. Here are examples of a few lines from that file:\&
+.PP
+[ISOUploader]\&
+.br
+###  RHEV\-M Configuration:\&
+.br
+## username to use with the REST API\&
+.br
+user=joe@example.com\&
+.br
+#  the RHEV\-M REST API password.\&
+.br
+passwd=L1ghtNingFst1!\&
+.br
+## hostname or IP address of the RHEV\-M\&
+.br
+engine=myengine.example.com:8443\&
+.SH "RETURN VALUES"
+.IP "\fB0\fP"
+The program ran to completion with no errors.\&
+.IP "\fB1\fP"
+The program encountered a critical failure and stopped.\&
+.IP "\fB2\fP"
+The program did not discover any ISO domains.\&
+.IP "\fB3\fP"
+The program encountered a problem uploading to an ISO domain.\&
+.IP "\fB4\fP"
+The program encountered a problem un\-mounting and removing the temporary directory.\&
+.PP
+.SH "FILES"
+.nf
+/etc/engine/isouploader.conf\&
+/var/log/engine-iso-uploader.log\&
+.fi
+.SH "SEE ALSO"
+.SH "AUTHOR"
+.nf
+Keith Robertson\&

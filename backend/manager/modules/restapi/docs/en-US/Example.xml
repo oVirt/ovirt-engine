@@ -1,0 +1,874 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "REST_API_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter id="chap-REST_API_Guide-Example">
+  <title>Example</title>
+  <para>
+    This chapter provides an example to demonstrate the REST API's ability to create virtual machine within a basic Red Hat Enterprise Virtualization environment. This example is intended for users with some proficiency with REST architectural style and some experience with Red Hat Enterprise Virtualization infrastructure.
+  </para>
+  <para>
+    In addition to the standard prerequisites (see <xref linkend="sect-REST_API_Guide-Introduction-Prerequisites"/>), this example requires the following:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>A networked and configured host containing Red Hat Enterprise Virtualization Hypervisor;</para>
+    </listitem>
+    <listitem>
+      <para>An ISO file containing a desired virtual machine operating system to install. This chapter uses Red Hat Enterprize Linux Server&nbsp;6 for our installation ISO example; and</para>
+    </listitem>
+    <listitem>
+      <para>Red Hat Enterprise Virtualization Platform's uploader tool to upload your chosen operating system ISO file.</para>
+    </listitem>
+  </itemizedlist>
+  <note>
+    <title>Globally Unique Identifier Codes</title>
+    <para>
+      Red Hat Enterprise Virtualization Manager generates a globally unique identifier (GUID) for the <literal>id</literal> attribute for each resource. Identifier codes in this example might appear different to the identifier codes in your Red Hat Enterprise Virtualization environment.
+    </para>
+  </note>
+  
+  <note>
+    <title>Headers</title>
+    <para>
+      For simplicity, the HTTP request headers in this example omit the <literal>Host:</literal> and <literal>Authorization:</literal> fields. However, these fields are mandatory and require data specific to your installation of Red Hat Enterprise Virtualization Manager.
+    </para>
+  </note>  
+
+  <section id="sect-REST_API_Guide-Example-Access_API_Entry_Point">
+    <title>Access API Entry Point</title>
+    <para>
+       The following request retrieves a representation of the main entry point of the API.
+    </para>
+    <example>
+      <title>Access the API entry point</title>
+   		<screen>
+GET /restapi-definition HTTP/1.1
+Accept: application/xml
+      </screen>
+    </example>
+    <para>
+      The API returns the following representation:
+    </para>
+    <screen>
+HTTP/1.1 200 OK
+Content-Type: application/xml
+
+&lt;api&gt;
+    &lt;link rel="capabilities" href="/restapi-definition/capabilities"/&gt;
+    &lt;link rel="clusters" href="/restapi-definition/clusters"/&gt;
+    &lt;link rel="clusters/search" href="/restapi-definition/clusters?search={query}"/&gt;
+    &lt;link rel="datacenters" href="/restapi-definition/datacenters"/&gt;
+    &lt;link rel="datacenters/search" href="/restapi-definition/datacenters?search={query}"/&gt;
+    &lt;link rel="events" href="/restapi-definition/events"/&gt;
+    &lt;link rel="events/search" href="/restapi-definition/events?search={query}"/&gt;
+    &lt;link rel="hosts" href="/restapi-definition/hosts"/&gt;
+    &lt;link rel="hosts/search" href="/restapi-definition/hosts?search={query}"/&gt;
+    &lt;link rel="networks" href="/restapi-definition/networks"/&gt;
+    &lt;link rel="roles" href="/restapi-definition/roles"/&gt;
+    &lt;link rel="storagedomains" href="/restapi-definition/storagedomains"/&gt;
+    &lt;link rel="storagedomains/search" href="/restapi-definition/storagedomains?search={query}"/&gt;
+    &lt;link rel="tags" href="/restapi-definition/tags"/&gt;
+    &lt;link rel="templates" href="/restapi-definition/templates"/&gt;
+    &lt;link rel="templates/search" href="/restapi-definition/templates?search={query}"/&gt;
+    &lt;link rel="users" href="/restapi-definition/users"/&gt;
+    &lt;link rel="groups" href="/restapi-definition/groups"/&gt;
+    &lt;link rel="domains" href="/restapi-definition/domains"/&gt;
+    &lt;link rel="vmpools" href="/restapi-definition/vmpools"/&gt;
+    &lt;link rel="vmpools/search" href="/restapi-definition/vmpools?search={query}"/&gt;
+    &lt;link rel="vms" href="/restapi-definition/vms"/&gt;
+    &lt;link rel="vms/search" href="/restapi-definition/vms?search={query}"/&gt;
+    &lt;special_objects&gt;
+        &lt;link rel="templates/blank"
+          href="/restapi-definition/templates/00000000-0000-0000-0000-000000000000"/&gt;
+        &lt;link rel="tags/root"
+          href="/restapi-definition/tags/00000000-0000-0000-0000-000000000000"/&gt;
+    &lt;/special_objects&gt;
+    &lt;system_version revision="0" build="0" minor="0" major="3"/&gt;
+    &lt;summary&gt;
+        &lt;vms&gt;
+            &lt;total&gt;5&lt;/total&gt;
+            &lt;active&gt;0&lt;/active&gt;
+        &lt;/vms&gt;
+        &lt;hosts&gt;
+            &lt;total&gt;1&lt;/total&gt;
+            &lt;active&gt;1&lt;/active&gt;
+        &lt;/hosts&gt;
+        &lt;users&gt;
+            &lt;total&gt;1&lt;/total&gt;
+            &lt;active&gt;1&lt;/active&gt;
+        &lt;/users&gt;
+        &lt;storage_domains&gt;
+            &lt;total&gt;2&lt;/total&gt;
+            &lt;active&gt;2&lt;/active&gt;
+        &lt;/storage_domains&gt;
+    &lt;/summary&gt;
+&lt;/api&gt;
+    </screen>
+    <para>
+      The entry point provides a user with links to the collections in a virtualization environment. The <literal>rel=</literal> attribute of each collection link provides a reference point for each link. The next step in this example examines the <literal>datacenter</literal> collection, which is available through the <literal>rel="datacenter"</literal> link.
+    </para>
+    <para>
+      The entry point also contains other data such as <literal>special_objects</literal> and <literal>summary</literal>. This data is covered in chapters outside this example.
+    </para>
+  </section>
+  
+  
+  <section id="sect-REST_API_Guide-Example-List_Data_Centers">
+    <title>List Data Center Collection</title>
+    <para>
+      Red Hat Enteprise Virtualization Manager creates a <literal>Default</literal> data center on installation. This example uses the <literal>Default</literal> data center as the basis for our virtual environment.
+    </para>
+    <para>
+       The following request retrieves a representation of the data center collection:
+    </para>
+    <example>
+      <title>List data center collection</title>
+   		<screen>
+GET /restapi-definition/datacenters HTTP/1.1
+Accept: application/xml
+      </screen>
+      <para>
+        The API returns the following representation:
+      </para>
+      <screen>
+HTTP/1.1 200 OK
+Content-Type: application/xml
+
+&lt;data_centers&gt;
+    &lt;data_center id="01a45ff0-915a-11e0-8b87-5254004ac988"
+      href="/restapi-definition/datacenters/01a45ff0-915a-11e0-8b87-5254004ac988"&gt;
+        &lt;name&gt;Default&lt;/name&gt;
+        &lt;description&gt;The default Data Center&lt;/description&gt;
+        &lt;link rel="storagedomains"
+          href="/restapi-definition/datacenters/01a45ff0-915a-11e0-8b87-5254004ac988/
+          storagedomains"/&gt;
+        &lt;link rel="permissions"
+          href="/restapi-definition/datacenters/01a45ff0-915a-11e0-8b87-5254004ac988/permissions"/&gt;
+        &lt;storage_type&gt;nfs&lt;/storage_type&gt;
+        &lt;storage_format&gt;v1&lt;/storage_format&gt;
+        &lt;version minor="0" major="3"/&gt;
+        &lt;supported_versions&gt;
+            &lt;version minor="0" major="3"/&gt;
+        &lt;/supported_versions&gt;
+        &lt;status&gt;UP&lt;/status&gt;
+    &lt;/data_center&gt;
+&lt;/data_centers&gt;
+      </screen>
+    </example>
+
+    <para>
+      Note the <literal>id</literal> code of your <literal>Default</literal> data center. This code indentifies this data center in relation to other resources of your virtual environment.
+    </para>
+  </section>
+    
+    
+  <section id="sect-REST_API_Guide-Example-List_Clusters">
+    <title>List Host Cluster Collection</title>
+    <para>
+      Red Hat Enteprise Virtualization Manager creates a <literal>Default</literal> host cluster on installation. This example uses the <literal>Default</literal> cluster to group resources in your Red Hat Enteprise Virtualization environment.
+    </para>
+    <para>
+      The following request retrieves a representation of the cluster collection:
+    </para>
+    <example>
+      <title>List host clusters collection</title>
+   		<screen>
+GET /restapi-definition/clusters HTTP/1.1
+Accept: application/xml
+      </screen>
+      <para>
+        The API returns the following representation:
+      </para>
+      <screen>
+HTTP/1.1 200 OK
+Content-Type: application/xml
+
+&lt;clusters&gt;
+    &lt;cluster id="99408929-82cf-4dc7-a532-9d998063fa95"
+      href="/restapi-definition/clusters/99408929-82cf-4dc7-a532-9d998063fa95"&gt;
+        &lt;name&gt;Default&lt;/name&gt;
+        &lt;description&gt;The default server cluster&lt;/description&gt;
+        &lt;link rel="networks"
+          href="/restapi-definition/clusters/99408929-82cf-4dc7-a532-9d998063fa95/networks"/&gt;
+        &lt;link rel="permissions"
+          href="/restapi-definition/clusters/99408929-82cf-4dc7-a532-9d998063fa95/permissions"/&gt;
+        &lt;cpu id="Intel Penryn Family"/&gt;
+        &lt;data_center id="01a45ff0-915a-11e0-8b87-5254004ac988"
+          href="/restapi-definition/datacenters/01a45ff0-915a-11e0-8b87-5254004ac988"/&gt;
+        &lt;memory_policy&gt;
+            &lt;overcommit percent="100"/&gt;
+            &lt;transparent_hugepages&gt;
+                &lt;enabled&gt;false&lt;/enabled&gt;
+            &lt;/transparent_hugepages&gt;
+        &lt;/memory_policy&gt;
+        &lt;scheduling_policy/&gt;
+        &lt;version minor="0" major="3"/&gt;
+        &lt;error_handling&gt;
+            &lt;on_error&gt;migrate&lt;/on_error&gt;
+        &lt;/error_handling&gt;
+    &lt;/cluster&gt;
+&lt;/clusters&gt;
+      </screen>
+    </example>
+    <para>
+      Note the <literal>id</literal> code of your <literal>Default</literal> host cluster. This code indentifies this host cluster in relation to other resources of your virtual environment.
+    </para>
+    <para>
+      The <literal>Default</literal> cluster is associated with the <literal>Default</literal> data center through athrough a relationship using the <literal>id</literal> and <literal>href</literal> attributes of the <literal>data_center</literal> element.
+    </para>
+    <para>
+      The <literal>networks</literal> sub-collection contains a list of associated network resources for this cluster. The next section examines the <literal>networks</literal> collection in more detail.
+    </para>
+  </section>
+
+  <section id="sect-REST_API_Guide-Example-List_Logical_Networks">
+    <title>List Logical Networks Collection</title>
+    <para>
+      Red Hat Enteprise Virtualization Manager creates a default <literal>rhevm</literal> network on installation. This network acts as the management network for Red Hat Enterprise Virtualization Manager to access hypervisor hosts.
+    </para>
+    <para>
+      This network is associated with our <literal>Default</literal> cluster and is a member of the <literal>Default</literal> data center. This example uses the <literal>rhevm</literal> network to connect our virtual machines.
+    </para>
+    <para>
+      The following request retrieves a representation of the logical networks collection:
+    </para>
+    <example>
+      <title>List logical networks collection</title>
+   		<screen>
+GET /restapi-definition/networks HTTP/1.1
+Accept: application/xml
+      </screen>
+      <para>
+        The API returns the following representation:
+      </para>
+      <screen>
+HTTP/1.1 200 OK
+Content-Type: application/xml
+
+&lt;networks&gt;
+    &lt;network id="00000000-0000-0000-0000-000000000009"
+      href="/restapi-definition/networks/00000000-0000-0000-0000-000000000009"&gt;
+        &lt;name&gt;rhevm&lt;/name&gt;
+        &lt;description&gt;Management Network&lt;/description&gt;
+        &lt;data_center id="01a45ff0-915a-11e0-8b87-5254004ac988"
+          href="/restapi-definition/datacenters/01a45ff0-915a-11e0-8b87-5254004ac988"/&gt;
+        &lt;stp&gt;false&lt;/stp&gt;
+        &lt;status&gt;OPERATIONAL&lt;/status&gt;
+        &lt;display&gt;false&lt;/display&gt;
+    &lt;/network&gt;
+&lt;/networks&gt;
+      </screen>
+    </example>
+    <para>
+      The <literal>rhevm</literal> network is attached to the <literal>Default</literal> data center through a relationship using the data center's <literal>id</literal> code.
+    </para>
+    <para>
+      The <literal>rhevm</literal> network is also attached to the <literal>Default</literal> cluster through a relationship in the cluster's <literal>network</literal> sub-collection.
+    </para>
+  </section>
+
+  <section id="sect-REST_API_Guide-Example-List_Hosts">
+    <title>List Host Collection</title>
+    <para>
+      This example uses a Red Hat Enteprise Virtualization Hypervisor host. Red Hat Enteprise Virtualization Manager automatically registers any configured Red Hat Enteprise Virtualization Hypervisor. This example retrieves a representation of the hosts collection and shows a Red Hat Enteprise Virtualization Hypervisor host named <literal>hypervisor</literal> registered with the virtualization environment.
+    </para>
+    <example>
+      <title>List hosts collection</title>
+   		<screen>
+GET /restapi-definition/hosts HTTP/1.1
+Accept: application/xml
+      </screen>
+      <para>
+        The API returns the following representation:
+      </para>
+      <screen>
+HTTP/1.1 200 OK
+Accept: application/xml
+
+&lt;hosts&gt;
+    &lt;host id="0656f432-923a-11e0-ad20-5254004ac988"
+      href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988"&gt;
+        &lt;name&gt;hypervisor&lt;/name&gt;
+        &lt;actions&gt;
+            &lt;link rel="install"
+              href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988/install"/&gt;
+            &lt;link rel="activate"
+              href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988/activate"/&gt;
+            &lt;link rel="fence"
+              href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988/fence"/&gt;
+            &lt;link rel="deactivate"
+              href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988/deactivate"/&gt;
+            &lt;link rel="approve"
+              href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988/approve"/&gt;
+            &lt;link rel="iscsilogin"
+              href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988/iscsilogin"/&gt;
+            &lt;link rel="iscsidiscover"
+              href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988/iscsidiscover"/&gt;
+            &lt;link rel="commitnetconfig"
+              href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988/
+              commitnetconfig"/&gt;
+        &lt;/actions&gt;
+        &lt;link rel="storage"
+          href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988/storage"/&gt;
+        &lt;link rel="nics"
+          href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988/nics"/&gt;
+        &lt;link rel="tags"
+          href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988/tags"/&gt;
+        &lt;link rel="permissions"
+          href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988/permissions"/&gt;
+        &lt;link rel="statistics"
+          href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988/statistics"/&gt;
+        &lt;address&gt;10.64.14.110&lt;/address&gt;
+        &lt;status&gt;NON OPERATIONAL&lt;/status&gt;
+        &lt;cluster id="99408929-82cf-4dc7-a532-9d998063fa95"
+          href="/restapi-definition/clusters/99408929-82cf-4dc7-a532-9d998063fa95"/&gt;
+        &lt;port&gt;54321&lt;/port&gt;
+        &lt;storage_manager&gt;true&lt;/storage_manager&gt;
+        &lt;power_management&gt;
+            &lt;enabled&gt;false&lt;/enabled&gt;
+            &lt;options/&gt;
+        &lt;/power_management&gt;
+        &lt;ksm&gt;
+            &lt;enabled&gt;false&lt;/enabled&gt;
+        &lt;/ksm&gt;
+        &lt;transparent_hugepages&gt;
+            &lt;enabled&gt;true&lt;/enabled&gt;
+        &lt;/transparent_hugepages&gt;
+        &lt;iscsi&gt;
+            &lt;initiator&gt;iqn.1994-05.com.example:644949fe81ce&lt;/initiator&gt;
+        &lt;/iscsi&gt;
+        &lt;cpu&gt;
+            &lt;topology cores="2"/&gt;
+            &lt;name&gt;Intel(R) Core(TM)2 Duo CPU E8400 @ 3.00GHz&lt;/name&gt;
+            &lt;speed&gt;2993&lt;/speed&gt;
+        &lt;/cpu&gt;
+        &lt;summary&gt;
+            &lt;active&gt;0&lt;/active&gt;
+            &lt;migrating&gt;0&lt;/migrating&gt;
+            &lt;total&gt;0&lt;/total&gt;
+        &lt;/summary&gt;
+    &lt;/host&gt;
+&lt;/hosts&gt;
+      </screen>
+    </example>
+    <para>
+      Note the <literal>id</literal> code of your <literal>Default</literal> host. This code identifies this host in relation to other resources of your virtual environment.
+    </para>
+    <para>
+      This host is a member of the <literal>Default</literal> cluster and accessing the <literal>nics</literal> sub-collection shows this host has a connection to the <literal>rhevm</literal> network.
+    </para>
+  </section>
+  
+  
+  <section id="sect-REST_API_Guide-Example-Approve_Host">
+    <title>Approve Host</title>
+    <para>  
+      The <literal>hypervisor</literal> host resource contains an <literal>approve</literal> action. A user accesses this action's URI with a <literal>POST</literal> request.
+    </para>
+    <example>
+      <title>Approve a pre-configured Red Hat Enterprise Virtualization Hypervisor host</title>
+   		<screen>
+POST /restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988/approve HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;action/&gt;
+      </screen>
+    </example>
+    <para>
+      The POST request requires a body for the message entities to initiate an action. Since the action does not require additional parameters, the body contains an empty <literal>action</literal> element.
+    </para>
+    <para>
+      Use the <literal>approve</literal> action only for Red Hat Enterprise Virtualization Hypervisor hosts. Red Hat Enterprise Linux hosts require a different process to connect to the virtualization environment.
+    </para>    
+    <para>
+      This approves and activates the host for use in your virtual environment. The <literal>status</literal> for <literal>hypervisor</literal> changes from <literal>NON OPERATIONAL</literal> to <literal>UP</literal>. 
+    </para>
+  </section>
+
+  <section id="sect-REST_API_Guide-Example-Create_NFS_Data_Storage_Domain">
+    <title>Create NFS Data Storage</title>
+    <para>
+      An NFS data storage domain is an exported NFS share attached to a data center and provides storage for virtualized guest images. Creation of a new storage domain requires a <literal>POST</literal> request, with the storage domain representation included, sent to the URL of the storage domain collection.
+    </para>
+    <example>
+      <title>Create an NFS data storage domain</title>
+   		<screen>
+POST /restapi-definition/storagedomains HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;storage_domain&gt;
+  &lt;name&gt;data1&lt;/name&gt;
+  &lt;type&gt;data&lt;/type&gt;
+  &lt;storage&gt;
+    &lt;type&gt;nfs&lt;/type&gt;
+    &lt;address&gt;192.168.0.10&lt;/address&gt;
+    &lt;path&gt;/data1&lt;/path&gt;
+  &lt;/storage&gt;
+  &lt;host&gt;
+    &lt;name&gt;hypervisor&lt;/name&gt;
+  &lt;/host&gt;
+&lt;/storage_domain&gt;
+      </screen>
+      <para>
+        The API creates a NFS data storage domain called <literal>data1</literal> with an export path of <uri>192.168.0.10:/data1</uri> and sets access to the storage domain through the <literal>hypervisor</literal> host. The API also returns the following representation of the newly created storage domain resource:
+      </para>
+      <screen>
+HTTP/1.1 200 OK
+Accept: application/xml
+
+&lt;storage_domain id="9ca7cb40-9a2a-4513-acef-dc254af57aac"
+  href="/restapi-definition/storagedomains/9ca7cb40-9a2a-4513-acef-dc254af57aac"&gt;
+    &lt;name&gt;data1&lt;/name&gt;
+    &lt;link rel="permissions"
+      href="/restapi-definition/storagedomains/9ca7cb40-9a2a-4513-acef-dc254af57aac/
+      permissions"/&gt;
+    &lt;link rel="files"
+      href="/restapi-definition/storagedomains/9ca7cb40-9a2a-4513-acef-dc254af57aac/files"/&gt;
+    &lt;type&gt;data&lt;/type&gt;
+    &lt;master&gt;false&lt;/master&gt;
+    &lt;storage&gt;
+        &lt;type&gt;nfs&lt;/type&gt;
+        &lt;address&gt;192.168.0.10&lt;/address&gt;
+        &lt;path&gt;/data1&lt;/path&gt;
+    &lt;/storage&gt;
+    &lt;available&gt;175019917312&lt;/available&gt;
+    &lt;used&gt;27917287424&lt;/used&gt;
+    &lt;committed&gt;10737418240&lt;/committed&gt;
+    &lt;storage_format&gt;v1&lt;/storage_format&gt;
+    &lt;host id="0656f432-923a-11e0-ad20-5254004ac988"
+      href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988"&gt;
+&lt;/storage_domain&gt;
+
+      </screen>
+    </example>
+  </section>
+  
+  <section id="sect-REST_API_Guide-Example-Create_NFS_ISO_Storage_Domain">
+    <title>Create NFS ISO Storage</title>
+    <para>
+      An NFS ISO storage domain is a mounted NFS share attached to a data center and provides storage for DVD/CD-ROM ISO and virtual floppy disk (VFD) image files. Creation of a new storage domain requires a <literal>POST</literal> request, with the storage domain representation included, sent to the URL of the storage domain collection.
+    </para>
+    <example>
+      <title>Create an NFS ISO storage domain</title>
+   		<screen>
+POST /restapi-definition/storagedomains HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;storage_domain&gt;
+  &lt;name&gt;iso1&lt;/name&gt;
+  &lt;type&gt;iso&lt;/type&gt;
+  &lt;storage&gt;
+    &lt;type&gt;nfs&lt;/type&gt;
+    &lt;address&gt;192.168.0.10&lt;/address&gt;
+    &lt;path&gt;/iso1&lt;/path&gt;
+  &lt;/storage&gt;
+  &lt;host&gt;
+    &lt;name&gt;hypervisor&lt;/name&gt;
+  &lt;/host&gt;
+&lt;/storage_domain&gt;
+      </screen>
+      <para>
+        The API creates a NFS data storage domain called <literal>iso1</literal> with an export path of <uri>192.168.0.10:/iso1</uri> and gets access to the storage domain through the <literal>hypervisor</literal> host. The API also returns the following representation of the newly created storage domain resource:
+      </para>
+      <screen>
+HTTP/1.1 200 OK
+Accept: application/xml
+
+&lt;storage_domain id="00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da"
+  href="/restapi-definition/storagedomains/00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da"&gt;
+    &lt;name&gt;iso1&lt;/name&gt;
+    &lt;link rel="permissions"
+      href="/restapi-definition/storagedomains/00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da/
+      permissions"/&gt;
+    &lt;link rel="files"
+      href="/restapi-definition/storagedomains/00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da/files"/&gt;
+    &lt;type&gt;iso&lt;/type&gt;
+    &lt;host id="" href=""&gt;
+    &lt;master&gt;false&lt;/master&gt;
+    &lt;storage&gt;
+        &lt;type&gt;nfs&lt;/type&gt;
+        &lt;address&gt;192.168.0.10&lt;/address&gt;
+        &lt;path&gt;/iso1&lt;/path&gt;
+    &lt;/storage&gt;
+    &lt;available&gt;82678120448&lt;/available&gt;
+    &lt;used&gt;18253611008&lt;/used&gt;
+    &lt;committed&gt;0&lt;/committed&gt;
+    &lt;storage_format&gt;v1&lt;/storage_format&gt;
+    &lt;host id="0656f432-923a-11e0-ad20-5254004ac988"
+      href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988"&gt;        
+&lt;/storage_domain&gt;
+      </screen>
+    </example>
+  </section>
+ 
+ 
+  <section id="sect-REST_API_Guide-Example-Attach_NFS_Data_Storage_Domain">
+    <title>Attach Storage Domains to Data Center</title>
+    <para>
+      The following example attaches the <literal>data1</literal> and <literal>iso1</literal> storage domains to the <literal>Default</literal> data center. 
+    </para>
+    <example>
+      <title>Attach data1 storage domain to the Default data center</title>
+ 	  	<screen>
+POST /restapi-definition/datacenters/01a45ff0-915a-11e0-8b87-5254004ac988/storagedomains HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;storage_domain&gt;
+  &lt;name&gt;data1&lt;/name&gt;
+&lt;/storage_domain&gt;
+      </screen>
+    </example>
+    <example>
+      <title>Attach iso1 storage domain to the Default data center</title>
+ 	  	<screen>
+POST /restapi-definition/datacenters/01a45ff0-915a-11e0-8b87-5254004ac988/storagedomains HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;storage_domain&gt;
+  &lt;name&gt;iso1&lt;/name&gt;
+&lt;/storage_domain&gt;
+      </screen>
+    </example>
+    <para>
+      These <literal>POST</literal> requests places our two new <literal>storage_domain</literal> resources in the <literal>storagedomains</literal> sub-collection of the <literal>Default</literal> data center. This means the <literal>storagedomain</literal> sub-collection contains attached storage domains of the data center. 
+    </para>
+  </section>
+  
+  <section id="sect-REST_API_Guide-Example-Activate_Data_Storage">
+    <title>Activate Storage Domains</title>
+    <para>
+      This example activates the <literal>data1</literal> and <literal>iso1</literal> storage domains for the Red Hat Enterprise Virtualization Manager's use.
+    </para>
+    <example>
+      <title>Activate data1 storage domain</title>
+ 	  	<screen>
+POST /restapi-definition/datacenters/d70d5e2d-b8ad-494a-a4d2-c7a5631073c4/storagedomains/
+9ca7cb40-9a2a-4513-acef-dc254af57aac/activate HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;/action&gt;
+      </screen>
+    </example>
+    <example>
+      <title>Activate iso1 storage domain</title>
+ 	  	<screen>
+POST /restapi-definition/datacenters/d70d5e2d-b8ad-494a-a4d2-c7a5631073c4/storagedomains/
+00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da/activate HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;/action&gt;
+      </screen>
+    </example>
+    <para>
+      This activates both storage domains for use with the data center.
+    </para>
+  </section>
+
+  <section id="sect-REST_API_Guide-Example-Create_VM">
+    <title>Create Virtual Machine</title>
+    <para>
+      The following example creates a virtual machine called <literal>vm1</literal> on the <literal>Default</literal> cluster using the virtualization environment's <literal>Blank</literal> template as a basis. The request also defines the virtual machine's <literal>memory</literal> as 512&nbsp;MB and sets the <literal>boot</literal> device to a virtual hard disk.
+    </para>
+    <example>
+      <title>Create a virtual machine</title>
+ 	  	<screen>
+POST /restapi-definition/vms HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;vm&gt;
+  &lt;name&gt;vm1&lt;/name&gt;
+  &lt;cluster&gt;
+    &lt;name&gt;default&lt;/name&gt;
+  &lt;/cluster&gt;
+  &lt;template&gt;
+    &lt;name&gt;Blank&lt;/name&gt;
+  &lt;/template&gt;
+  &lt;memory&gt;536870912&lt;/memory&gt; 
+  &lt;os&gt;
+    &lt;boot dev="hd"/&gt;
+  &lt;/os&gt;
+&lt;/vm&gt;
+      </screen>
+      <para>
+        The API returns the following representation of the newly created virtual machine resource:
+      </para>
+      <screen>
+HTTP/1.1 200 OK
+Accept: application/xml    
+
+&lt;vm id="6efc0cfa-8495-4a96-93e5-ee490328cf48"
+  href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48"&gt;
+    &lt;name&gt;vm1&lt;/name&gt;
+    &lt;actions&gt;
+        &lt;link rel="shutdown"
+          href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/shutdown"/&gt;
+        &lt;link rel="start"
+          href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/start"/&gt;
+        &lt;link rel="stop"
+          href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/stop"/&gt;
+        &lt;link rel="suspend"
+          href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/suspend"/&gt;
+        &lt;link rel="detach"
+          href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/detach"/&gt;
+        &lt;link rel="export"
+          href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/export"/&gt;
+        &lt;link rel="move"
+          href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/move"/&gt;
+        &lt;link rel="ticket"
+          href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/ticket"/&gt;
+        &lt;link rel="migrate"
+          href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/migrate"/&gt;
+    &lt;/actions&gt;
+    &lt;link rel="disks"
+      href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/disks"/&gt;
+    &lt;link rel="nics"
+      href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/nics"/&gt;
+    &lt;link rel="cdroms"
+      href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/cdroms"/&gt;
+    &lt;link rel="snapshots"
+      href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/snapshots"/&gt;
+    &lt;link rel="tags"
+      href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/tags"/&gt;
+    &lt;link rel="permissions"
+      href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/permissions"/&gt;
+    &lt;link rel="statistics"
+      href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/statistics"/&gt;
+    &lt;type&gt;desktop&lt;/type&gt;
+    &lt;status&gt;DOWN&lt;/status&gt;
+    &lt;memory&gt;536870912&lt;/memory&gt;
+    &lt;cpu&gt;
+        &lt;topology cores="1" sockets="1"/&gt;
+    &lt;/cpu&gt;
+    &lt;os type="Unassigned"&gt;
+        &lt;boot dev="cdrom"/&gt;
+    &lt;/os&gt;
+    &lt;high_availability&gt;
+        &lt;enabled&gt;false&lt;/enabled&gt;
+        &lt;priority&gt;0&lt;/priority&gt;
+    &lt;/high_availability&gt;
+    &lt;display&gt;
+        &lt;type&gt;spice&lt;/type&gt;
+        &lt;monitors&gt;1&lt;/monitors&gt;
+    &lt;/display&gt;
+    &lt;cluster id="99408929-82cf-4dc7-a532-9d998063fa95"
+      href="/restapi-definition/clusters/99408929-82cf-4dc7-a532-9d998063fa95"/&gt;
+    &lt;template id="00000000-0000-0000-0000-000000000000"
+      href="/restapi-definition/templates/00000000-0000-0000-0000-000000000000"/&gt;
+    &lt;start_time&gt;2011-06-15T04:48:02.167Z&lt;/start_time&gt;
+    &lt;creation_time&gt;2011-06-15T14:48:02.078+10:00&lt;/creation_time&gt;
+    &lt;origin&gt;rhevm&lt;/origin&gt;
+    &lt;stateless&gt;false&lt;/stateless&gt;
+    &lt;placement_policy&gt;
+        &lt;affinity&gt;MIGRATABLE&lt;/affinity&gt;
+    &lt;/placement_policy&gt;
+    &lt;memory_policy&gt;
+        &lt;guaranteed&gt;536870912&lt;/guaranteed&gt;
+    &lt;/memory_policy&gt;
+&lt;/vm&gt;
+      </screen>
+    </example>
+  </section>
+
+  <section id="sect-REST_API_Guide-Example-Attach_NIC">
+    <title>Create Virtual Machine NIC</title>
+    <para>
+      The following example creates a virtual network interface to connect the example virtual machine to the <literal>rhevm</literal> network.
+    </para>
+    <example>
+      <title>Create a virtual machine NIC</title>
+ 	  	<screen>
+POST /restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/nics HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;nic&gt;
+  &lt;name&gt;nic1&lt;/name&gt;
+  &lt;network&gt;
+    &lt;name&gt;rhevm&lt;/name&gt;
+  &lt;/network&gt;
+&lt;/nic&gt;
+ 	  	</screen>
+ 	  </example>
+  </section>
+  
+  <section id="sect-REST_API_Guide-Example-Attach_Disk">
+    <title>Create Virtual Machine Storage Disk</title>
+    <para>
+      The following example creates an 8&nbsp;GB Copy-On-Write storage disk for the example virtual machine.
+    </para>
+    <example>
+      <title>Create a virtual machine storage disk</title>
+ 	  	<screen>
+POST /restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/disks HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;disk&gt;
+  &lt;size&gt;8589934592&lt;/size&gt;
+  &lt;type&gt;system&lt;/type&gt;
+  &lt;interface&gt;virtio&lt;/interface&gt;
+  &lt;format&gt;cow&lt;/format&gt;
+  &lt;bootable&gt;true&lt;/bootable&gt;
+&lt;/disk&gt;
+ 	  	</screen>
+ 	  </example>
+  </section>
+
+
+  <section id="sect-REST_API_Guide-Example-Attach_CDROM">
+    <title>Attach ISO Image to Virtual Machine</title>
+    <para>
+      The boot media for our example virtual machine requires an CD-ROM or DVD ISO image for an operating system installation. This example uses a Red Hat Enterprise Server&nbsp;6 ISO image for installation.
+    </para>
+    <para>
+      ISO images must be available in the <literal>iso1</literal> ISO domain for the virtual machines to use. Red Hat Enterprise Virtualization Platform provides an uploader tool that ensures that the ISO images are uploaded into the correct directory path with the correct user permissions.
+    </para>
+    <para>
+      Once the ISO is uploaded, an API user requests the ISO storage domain's <literal>files</literal> sub-collection to view the file resource:
+    </para>
+    <example>
+      <title>View the files sub-collection in an ISO storage domain</title>
+ 	  	<screen>
+GET /restapi-definition/storagedomains/00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da/files HTTP/1.1
+Accept: application/xml
+ 	  	</screen>
+      <para>
+        The API returns the following representation of the files sub-collection:
+      </para>
+      <screen>
+&lt;files&gt;
+    &lt;file id="rhel-server-6.0-x86_64-dvd.iso"
+      href="/restapi-definition/storagedomains/00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da/
+      files/rhel-server-6.0-x86_64-dvd.iso.iso"&gt;
+        &lt;name&gt;rhel-server-6.0-x86_64-dvd.iso.iso&lt;/name&gt;
+        &lt;storage_domain id="00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da"
+          href="/restapi-definition/storagedomains/00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da"/&gt;
+    &lt;/file&gt;
+&lt;/files&gt;
+      </screen>
+ 	  </example>
+    <para>
+      An API user attaches the <literal>rhel-server-6.0-x86_64-dvd.iso</literal> to our example virtual machine.
+    </para>
+    <example>
+      <title>Attach an ISO image to the virtual machine</title>
+ 	  	<screen>
+POST /restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/cdroms HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;cdrom&gt;
+  &lt;file id="rhel-server-6.0-x86_64-dvd.iso"/&gt;
+&lt;/cdrom&gt;
+ 	  	</screen>
+ 	  </example>
+  </section>
+
+  <section id="sect-REST_API_Guide-Example-Start_VM">
+    <title>Start Virtual Machine</title>
+    <para>The virtual environment is complete and the virtual machine contains all necessary components to function. This example starts the virtual machine using the <literal>start</literal> action.</para>
+    <example>
+      <title>Start the virtual machine</title>
+ 	  	<screen>
+POST /restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48/start HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;action&gt;
+  &lt;vm&gt;
+    &lt;os&gt;
+      &lt;boot dev="cdrom"/&gt;
+    &lt;/os&gt;
+  &lt;/vm&gt;
+&lt;/action&gt;  
+ 	  	</screen>
+ 	  </example>
+    <para>
+      The additional message entity sets the virtual machine's boot device to CD-ROM for this boot only. This enables the virtual machine to install Red Hat Enterprise Server&nbsp;6 from the attached ISO image. The boot device reverts back to <literal>disk</literal> for all future boots.
+    </para>
+  </section>
+
+  <section id="sect-REST_API_Guide-Example-Events">
+    <title>Check System Events</title>
+    <para>The <literal>start</literal> action for the <literal>vm1</literal> creates several entries in the <literal>events</literal> collection. This example lists the events collection and identifies events specific to the API starting a virtual machine.</para>
+    <example>
+      <title>List the events collection</title>
+ 	  	<screen>
+GET /restapi-definition/events HTTP/1.1
+Accept: application/xml
+ 	  	</screen>
+ 	  	<para>
+        The API returns a representation that includes the following:
+      </para>
+ 	  	<screen>
+&lt;events&gt;
+    ...
+    &lt;event id="103" href="/restapi-definition/events/103"&gt;
+        &lt;description&gt;User admin logged out.&lt;/description&gt;
+        &lt;code&gt;31&lt;/code&gt;
+        &lt;severity&gt;NORMAL&lt;/severity&gt;
+        &lt;time&gt;2011-06-29T17:42:41.544+10:00&lt;/time&gt;
+        &lt;user id="80b71bae-98a1-11e0-8f20-525400866c73" 
+          href="/restapi-definition/users/80b71bae-98a1-11e0-8f20-525400866c73"/&gt;
+    &lt;/event&gt;
+    &lt;event id="102" href="/restapi-definition/events/102"&gt;
+        &lt;description&gt;vm1 was started by admin (Host: hypervisor).&lt;/description&gt;
+        &lt;code&gt;153&lt;/code&gt;
+        &lt;severity&gt;NORMAL&lt;/severity&gt;
+        &lt;time&gt;2011-06-29T17:42:41.499+10:00&lt;/time&gt;
+        &lt;user id="80b71bae-98a1-11e0-8f20-525400866c73"
+          href="/restapi-definition/users/80b71bae-98a1-11e0-8f20-525400866c73"/&gt;
+        &lt;vm id="6efc0cfa-8495-4a96-93e5-ee490328cf48"
+          href="/restapi-definition/vms/6efc0cfa-8495-4a96-93e5-ee490328cf48"/&gt;
+        &lt;host id="0656f432-923a-11e0-ad20-5254004ac988"
+          href="/restapi-definition/hosts/0656f432-923a-11e0-ad20-5254004ac988"/&gt;
+    &lt;/event&gt;
+    &lt;event id="101" href="/restapi-definition/events/101"&gt;
+        &lt;description&gt;User admin logged in.&lt;/description&gt;
+        &lt;code&gt;30&lt;/code&gt;
+        &lt;severity&gt;NORMAL&lt;/severity&gt;
+        &lt;time&gt;2011-06-29T17:42:40.505+10:00&lt;/time&gt;
+        &lt;user id="80b71bae-98a1-11e0-8f20-525400866c73"
+          href="/restapi-definition/users/80b71bae-98a1-11e0-8f20-525400866c73"/&gt;
+    &lt;/event&gt;
+    ...
+&lt;/events&gt;
+ 	  	</screen>
+   	  <para>
+   	    The following events have occured:
+   	  </para>
+   	  <itemizedlist>
+        <listitem>
+          <para>
+            <literal>id="101"</literal> - The API authenticates with the <literal>admin</literal> user's username and password.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            <literal>id="102"</literal> - The API, acting as the <literal>admin</literal> user, starts <literal>vm1</literal> on the <literal>hypervisor</literal> host.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            <literal>id="103"</literal> - The API logs out of the <literal>admin</literal> user account.
+          </para>
+        </listitem>
+      </itemizedlist>
+ 	  </example>
+  </section>
+
+  <section id="sect-REST_API_Guide-Example-Completion">
+    <title>Example Completion</title>
+    <para>This example demonstrates how the API creates a virtual machine within a basic virtualization environment. The remainder of this guide provides specific details on the complete REST API featureset, including virtualization tasks of a higher complexity.</para>
+  </section>
+</chapter>

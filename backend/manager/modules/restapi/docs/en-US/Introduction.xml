@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "REST_API_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter id="chap-REST_API_Guide-Introduction">
+  <title>Introduction</title>
+  <para>
+    Red Hat Enterprise Virtualization Manager provides a <emphasis role="bold">Representational State Transfer (REST)</emphasis> API. The API provides software developers and system administrators with control over their Red Hat Enterprise Virtualization environment outside of the standard web interface. The REST API is useful for developers and administrators who aim to integrate the functionality of a Red Hat Enterprise Virtualization environment with custom scripts or external applications that access the API via the standard Hypertext Transfer Protocol (HTTP).
+  </para>
+  <para>The benefits of a RESTful API are:</para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Broad client support - Any programming language, framework, or system  with supports for HTTP protocol can use the API;
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Self descriptive - Client applications require minimal knowledge of the virtualization infrastructure as many details are discovered at runtime;
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Resource-based model - The resource-based REST model provides a natural way to manage a virtualization platform.
+      </para>
+    </listitem>        
+  </itemizedlist>
+  <para>This provides developers and administrators with the ability to:</para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Integrate with enterprise IT systems.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Integrate with third party virtualization software.
+      </para>
+    </listitem>    
+    <listitem>
+      <para>
+        Perform automated maintenance or error checking tasks.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Automate repetitive tasks in a Red Hat Enterprise Virtualization environment with scripts.
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    This documentation acts as a reference to the Red Hat Enterprise Virtualization Manager REST API. It aims to provide developers and administrators with instructions and examples to help harness the functionality of their Red Hat Enterprise Virtualization environment through the REST API.
+  </para>
+
+  <section id="sect-REST_API_Guide-Introduction-Representational_State_Transfer">
+    <title>Representational State Transfer</title>
+    <para>
+      Representational State Transfer (REST) is a design architecture that focuses on resources for a specific service and their representations. A resource representation is a key abstraction of information that corresponds to one specific managed element on a server. A client sends a request to a server element located at a Uniform Resource Identifier (URI) and performs operations with standard HTTP methods, such as <literal>GET</literal>, <literal>POST</literal>, <literal>PUT</literal>, and <literal>DELETE</literal>. This provides a stateless communication between the client and server where each request acts independent of any other request and contains all necessary information to complete the request.
+    </para>
+  </section>
+  
+  <section id="sect-REST_API_Guide-Introduction-Prerequisites">
+    <title>Prerequisites</title>  
+    <para>This guide requires the following:</para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          A networked installation of Red Hat Enterprise Virtualization Manager 3.0, which includes the REST API; 
+        </para>
+      </listitem>
+      <listitem>
+        <para>    
+          A client or programming library that initiates and receives HTTP requests from the REST API;
+        </para>
+      </listitem>      
+      <listitem>
+        <para>      
+          Knowledge of Hypertext Transfer Protocol (HTTP), which is the protocol used for REST API interactions. The Internet Engineering Task Force provides an RFC explaining the Hypertext Transfer Protocol at <ulink url="http://www.ietf.org/rfc/rfc2616.txt">http://www.ietf.org/rfc/rfc2616.txt</ulink>; and,
+        </para>
+      </listitem>
+      <listitem>
+        <para>    
+          Knowledge of Extensible Markup Language (XML), which the API uses to construct resource representations. The W3C provides a full specification on XML at <ulink url="http://www.w3.org/TR/xml/">http://www.w3.org/TR/xml/</ulink>.
+        </para>
+      </listitem>
+    </itemizedlist>    
+  </section>
+
+</chapter>

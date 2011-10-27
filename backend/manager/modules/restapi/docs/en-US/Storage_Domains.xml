@@ -1,0 +1,616 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "REST_API_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter id="chap-REST_API_Guide-Storage_Domains">
+  <title>Storage Domains</title>
+  <para>
+    The <literal>storagedomains</literal> collection provides information about the storage domains in a Red Hat Enterprise Virtualization environment. An API user accesses this information through the <literal>rel="storagedomains"</literal> link obtained from the entry point URI (see <xref linkend="chap-REST_API_Guide-Entry_Point"/>).
+  </para>
+  <para>
+    The following table shows specific elements contained in a storage domain resource representation.
+  </para>
+  <note>
+    <title>Element property icons</title>
+    <para>
+      The icons used in the properties column of this table are described in <xref linkend="table-Property_Icons" />
+    </para>
+  </note> 
+  <informaltable frame="none">
+    <tgroup cols="4">
+      <colspec colwidth="4*"/>
+      <colspec colwidth="4*"/>
+      <colspec colwidth="6*"/>
+      <colspec colwidth="2*" colname="prop"/>
+      <thead>
+        <row>
+          <entry>Element</entry>
+          <entry>Type</entry>
+          <entry>Description</entry>
+          <entry>Properties</entry>
+        </row>
+      </thead>
+      <tbody>
+<!--
+        <row>
+          <entry><literal>name</literal></entry>
+          <entry>string</entry>
+          <entry>	A user-supplied human readable name for the storage domain. The <literal>name</literal> is unique across all storage domain resources.</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+-->
+        <row>
+          <entry><literal>link rel="permissions"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the sub-collection for storage domain permissions. See <xref linkend="sect-REST_API_Guide-Common_Features-Resources-Permissions"/></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>link rel="files"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the files sub-collection for this storage domains</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>link rel="vms"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the <literal>vms</literal> sub-collection for a storage domain with <literal>type</literal> set to <literal>export</literal></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>link rel="templates"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the <literal>templates</literal> sub-collection for a storage domain with <literal>type</literal> set to <literal>export</literal></entry>
+          <entry></entry>
+        </row>        
+        <row>
+          <entry><literal>type</literal></entry>
+          <entry>enumerated</entry>
+          <entry>The storage domain type. A list of enumerated values are available in <literal>capabilities</literal>. See <xref linkend="sect-REST_API_Guide-Capabilities-Version-Storage_Domain_Types"/>.</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>master</literal></entry>
+          <entry>boolean: true or false</entry>
+          <entry><literal>true</literal> if this is the master storage domain of a data center</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>host</literal></entry>
+          <entry>complex</entry>
+          <entry>A reference to the host on which this storage domain should be initialized. The only restriction on this host is that it should have access to the physical storage specified.</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>        
+        <row>
+          <entry><literal>storage</literal></entry>
+          <entry>complex</entry>
+          <entry>Describes the underlying storage of the storage domain. For more information see <xref linkend="sect-REST_API_Guide-Storage_Domains-Storage_Types"/>.</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>available</literal></entry>
+          <entry>integer</entry>
+          <entry>Space available in bytes</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>used</literal></entry>
+          <entry>integer</entry>
+          <entry>Space used in bytes</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>committed</literal></entry>
+          <entry>integer</entry>
+          <entry>Space committed in bytes</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>storage_format</literal></entry>
+          <entry>enumerated</entry>
+          <entry>Describes the storage format version for the storage domain. A list of enumerated values are available in <literal>capabilities</literal>. See <xref linkend="sect-REST_API_Guide-Capabilities-Version-Storage_Formats"/></entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <example>
+    <title>
+      An XML representation of a storage domain
+    </title>
+    <screen>
+&lt;storage_domain id="fabe0451-701f-4235-8f7e-e20e458819ed"
+  href="/restapi-definition/storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed"&gt;
+    &lt;name&gt;data0&lt;/name&gt;
+    &lt;link rel="permissions"
+      href="/restapi-definition/storagedomains/be24cd98-8e23-49c7-b425-1a12bd12abb0/permissions"/&gt;
+    &lt;link rel="files"
+      href="/restapi-definition/storagedomains/be24cd98-8e23-49c7-b425-1a12bd12abb0/files"/&gt;
+    &lt;type&gt;data&lt;/type&gt;
+    &lt;master&gt;true&lt;/master&gt;
+    &lt;storage&gt;
+        &lt;type&gt;nfs&lt;/type&gt;
+        &lt;address&gt;172.31.0.6&lt;/address&gt;
+        &lt;path&gt;/exports/RHEVX/images/0&lt;/path&gt;
+    &lt;/storage&gt;
+    &lt;available&gt;156766306304&lt;/available&gt;
+    &lt;used&gt;433791696896&lt;/used&gt;
+    &lt;committed&gt;617401548800&lt;/committed&gt;
+    &lt;storage_format&gt;v1&lt;/storage_format&gt;
+&lt;/storage_domain&gt;
+    </screen>
+  </example>
+  <para>
+      Creation of a new storage domain requires the <literal>name</literal>, <literal>type</literal> and <literal>storage</literal> properties. See <xref linkend="sect-REST_API_Guide-Common_Features-Resources-Creating_Resources"/> for more information.
+  </para>
+  <example>
+    <title>
+      Creating a storage domain
+    </title>
+    <screen>
+POST /restapi-definition/storagedomains HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+    
+&lt;storage_domain&gt;
+    &lt;name&gt;data1&lt;/name&gt;
+    &lt;type&gt;data&lt;/type&gt;
+    &lt;storage&gt;
+        &lt;type&gt;nfs&lt;/type&gt;
+        &lt;address&gt;172.31.0.6&lt;/address&gt;
+        &lt;path&gt;/exports/RHEVX/images/0&lt;/path&gt;
+    &lt;/storage&gt;
+&lt;/storage_domain&gt;
+    </screen>
+  </example>
+  <para>
+    Only the <literal>name</literal> element is updatable post-creation. See <xref linkend="sect-REST_API_Guide-Common_Features-Resources-Updating_Resources"/> for more information.
+  </para>
+  <example>
+    <title>
+      Updating a storage domain
+    </title>
+    <screen>
+PUT /restapi-definition/storagedomains HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+    
+&lt;storage_domain&gt;
+    &lt;name&gt;data2&lt;/name&gt;
+    ...
+&lt;/storage_domain&gt;
+    </screen>
+  </example>
+  
+  <para>
+    Removal of a storage domain requires a <literal>DELETE</literal> request.
+  </para>
+  <example>
+    <title>Removing a storage domain</title>
+    <screen>
+DELETE /restapi-definition/storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed HTTP/1.1
+
+HTTP/1.1 204 No Content
+    </screen>
+  </example>  
+  
+  <para>
+    The API user attaches the storage domain to a data center after creation. See <xref linkend="sect-REST_API_Guide-Data_Centers-Attached_Storage_Domains"/> for instructions.
+  </para>
+    
+  <section id="sect-REST_API_Guide-Storage_Domains-Storage_Types">
+    <title>
+      Storage types
+    </title>
+    <para>
+      The <literal>storage</literal> element contains a <literal>type</literal> element, which is an enumerated value found under the <literal>capabilities</literal> collection. See <xref linkend="sect-REST_API_Guide-Capabilities-Version-Storage_Types"/>.
+    </para>
+    <para>
+       The storage element also contains additional elements specific to each storage <literal>type</literal>. The next few section examine these additional storage <literal>type</literal>  elements.
+    </para>
+
+    <section id="sect-REST_API_Guide-Storage_Domains-Storage_Types-NFS">
+      <title>
+        NFS
+      </title>
+      <para>
+        The <literal>nfs</literal> specific elements in a <literal>storage</literal> description are:
+      </para>
+      <informaltable frame="none">
+        <tgroup cols="4">
+          <colspec colwidth="4*"/>
+          <colspec colwidth="4*"/>
+          <colspec colwidth="6*"/>
+          <colspec colwidth="2*" colname="prop"/>
+          <thead>
+            <row>
+              <entry>Element</entry>
+              <entry>Type</entry>
+              <entry>Description</entry>
+              <entry>Properties</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry><literal>address</literal></entry>
+              <entry>string</entry>
+              <entry>The host name or IP address of the NFS server</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+            <row>
+              <entry><literal>path</literal></entry>
+              <entry>string</entry>
+              <entry>The path of NFS mountable directory on the server</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </section>
+  
+    <section id="sect-REST_API_Guide-Storage_Domains-Storage_Types-iSCSI_and_FCP">
+      <title>
+        iSCSI and FCP
+      </title>
+      <para>
+        The <literal>iscsi</literal> and <literal>fcp</literal> specific elements in a <literal>storage</literal> description are:
+      </para>
+
+      <informaltable frame="none">
+        <tgroup cols="4">
+          <colspec colwidth="4*"/>
+          <colspec colwidth="4*"/>
+          <colspec colwidth="6*"/>
+          <colspec colwidth="2*" colname="prop"/>
+          <thead>
+            <row>
+              <entry>Element</entry>
+              <entry>Type</entry>
+              <entry>Description</entry>
+              <entry>Properties</entry>
+            </row>
+          </thead>
+          <tbody>          
+
+            <row>
+              <entry><literal>logical_unit id=</literal></entry>
+              <entry>complex</entry>
+              <entry>The <literal>id</literal> of the logical unit. A storage domain also accepts multiple iSCSI or FCP logical units</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+<!--        <row>
+              <entry><literal>volume_group id=</literal></entry>
+              <entry>complex</entry>
+              <entry>Alternatively, a single LVM Volume Group acts as a storage domain, which is composed of multiple iSCSI or FCP <literal>logical_unit</literal> entities</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row> -->
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        The <literal>logical_unit</literal> contains the following elements:
+      </para>
+
+    <informaltable frame="none">
+      <tgroup cols="4">
+        <colspec colwidth="4*"/>
+        <colspec colwidth="4*"/>
+        <colspec colwidth="6*"/>
+        <colspec colwidth="2*" colname="prop"/>
+        <thead>
+          <row>
+            <entry>Element</entry>
+            <entry>Type</entry>
+            <entry>Description</entry>
+            <entry>Properties</entry>
+          </row>
+        </thead>
+        <tbody>
+            <row>
+              <entry><literal>address</literal></entry>
+              <entry>string</entry>
+              <entry>The address of the server containing the storage device</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+            <row>
+              <entry><literal>port</literal></entry>
+              <entry>integer</entry>
+              <entry>The port number of the server</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+            <row>
+              <entry><literal>target</literal></entry>
+              <entry>string</entry>
+              <entry>The target IQN for the storage device</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+            <row>
+              <entry><literal>username</literal></entry>
+              <entry>string</entry>
+              <entry>A CHAP user name for logging into a target</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+            <row>
+              <entry><literal>password</literal></entry>
+              <entry>string</entry>
+              <entry>A CHAP password for logging into a target</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+            <row>
+              <entry><literal>serial</literal></entry>
+              <entry>string</entry>
+              <entry>The serial ID for the target</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+            <row>
+              <entry><literal>vendor_id</literal></entry>
+              <entry>string</entry>
+              <entry>The vendor name for the target</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+            <row>
+              <entry><literal>product_id</literal></entry>
+              <entry>string</entry>
+              <entry>The product code for the target</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+            <row>
+              <entry><literal>lun_mapping</literal></entry>
+              <entry>integer</entry>
+              <entry>The Logical Unit Number device mapping for the target</entry>
+              <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        In the case of iSCSI, if a <literal>logical_unit</literal> description also contains details of the iSCSI target with the LUN in question, the target performs an automatic login when the storage domain is created.
+      </para>
+    </section>
+  
+    <section id="sect-REST_API_Guide-Storage_Domains-Storage_Types-LOCAL">
+      <title>
+        LocalFS
+      </title>
+      <para>
+        The <literal>localfs</literal> specific elements in a <literal>storage</literal> description are:
+      </para>
+      <informaltable frame="none">
+        <tgroup cols="4">
+          <colspec colwidth="4*"/>
+          <colspec colwidth="4*"/>
+          <colspec colwidth="6*"/>
+          <colspec colwidth="2*" colname="prop"/>
+          <thead>
+            <row>
+              <entry>Element</entry>
+              <entry>Type</entry>
+              <entry>Description</entry>
+              <entry>Properties</entry>
+            </row>
+          </thead>
+          <tbody>
+              <row>
+                <entry><literal>path</literal></entry>
+                <entry>string</entry>
+                <entry>The path of local storage domain on the host</entry>
+                <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </informaltable>
+        <para>
+          A <literal>localfs</literal> storage domain requires a data center with <literal>storage_type</literal> set to <literal>localfs</literal> (see <xref linkend="chap-REST_API_Guide-Data_Centers"/>). This data center only contains a single host cluster, and the host cluster only contains a single host.
+        </para>
+    </section>
+  </section>
+  
+      <section id="sect-REST_API_Guide-Storage_Domains-Listing">
+      <title>
+        Export Storage Domains
+      </title>
+      <para>
+        Storage domains with <literal>type</literal> set to <literal>export</literal> contain <literal>vms</literal> and <literal>templates</literal> sub-collections, which list the import candidate VMs and templates stored on that particular storage domain.
+      </para>
+      <example>
+        <title>Listing the virtual machines sub-collection of an export storage domain</title>
+        <screen>
+GET /restapi-definition/storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed/vms
+Accept: application/xml
+
+&lt;vms&gt;
+    &lt;vm id="082c794b-771f-452f-83c9-b2b5a19c0399"
+      href="/restapi-definition/storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed/
+      vms/082c794b-771f-452f-83c9-b2b5a19c0399"&gt;
+        &lt;name&gt;vm1&lt;/name&gt;
+        ...
+        &lt;storage_domain id="fabe0451-701f-4235-8f7e-e20e458819ed"
+          href="/restapi-definition/storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed"/&gt;
+        &lt;actions&gt;
+            &lt;link rel="import" href="/restapi-definition/storagedomains/
+              fabe0451-701f-4235-8f7e-e20e458819ed/vms/
+              082c794b-771f-452f-83c9-b2b5a19c0399/import"/&gt;
+        &lt;/actions&gt;
+    &lt;/vm&gt;
+&lt;/vms&gt;
+        </screen>
+      </example>
+      <para>
+        VMs and templates in these collections have a similar representation to their counterparts in the top-level VMs and templates collection, except they also contain a <literal>storage_domain</literal> reference and an <literal>import</literal> action.
+      </para>
+      <para>
+        The <literal>import</literal> action imports a virtual machine or a template from an <literal>export</literal> storage domain. The destination cluster and storage domain is specified with <literal>cluster</literal> and <literal>storage_domain</literal> references.
+      </para>
+      <example>
+        <title>Action to import a virtual machine from an export storage domain</title>
+        <screen>
+POST /restapi-definition/storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed/vms/
+082c794b-771f-452f-83c9-b2b5a19c0399/import HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;action&gt;
+    &lt;storage_domain&gt;
+        &lt;name&gt;images0&lt;/name&gt;
+    &lt;/storage_domain&gt;
+    &lt;cluster&gt;
+        &lt;name&gt;Default&lt;/name&gt;
+    &lt;/cluster&gt;
+&lt;/action&gt;
+        </screen>
+      </example>
+      
+      <example>
+        <title>Action to import a template from an export storage domain</title>
+        <screen>
+POST /restapi-definition/storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed/templates/
+082c794b-771f-452f-83c9-b2b5a19c0399/import HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;action&gt;
+    &lt;storage_domain&gt;
+        &lt;name&gt;images0&lt;/name&gt;
+    &lt;/storage_domain&gt;
+    &lt;cluster&gt;
+        &lt;name&gt;Default&lt;/name&gt;
+    &lt;/cluster&gt;
+&lt;/action&gt;
+        </screen>
+      </example>
+
+      <para>
+        Delete a virtual machine or template from an <literal>export</literal> storage domain with a <literal>DELETE</literal> request.
+      </para>
+
+      <example>
+        <title>Delete virtual machine from an export storage domain</title>
+        <screen>
+DELETE /restapi-definition/storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed/vms/
+082c794b-771f-452f-83c9-b2b5a19c0399 HTTP/1.1
+Accept: application/xml
+
+HTTP/1.1 204 No Content
+        </screen>
+      </example>
+      
+    </section>
+  
+  <section id="sect-REST_API_Guide-Storage_Domains-Files">
+    <title>
+      Files Sub-Collection
+    </title>
+    <para>
+       The <literal>files</literal> sub-collection under each storage domain provides a way for clients to list available files. This sub-collection is specifically targeted to ISO storage domains, which contain ISO images and virtual floppy disks (VFDs) that an administrator uploads through Red Hat Enterprise Virtualization Manager.
+    </para>
+    <para>
+      The addition of a CD-ROM device to a VM requires an ISO image from the <literal>files</literal> sub-collection of an ISO storage domain.
+    </para>
+    <example>
+      <title>Listing the files sub-collection of an ISO storage domain</title>
+      <screen>
+GET /restapi-definition/storagedomains/00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da/files HTTP/1.1
+Accept: application/xml
+
+&lt;files&gt;
+    &lt;file id="en_winxp_pro_with_sp2.iso"
+      href="/restapi-definition/storagedomains/00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da/files/
+      en_winxp_pro_with_sp2.iso"&gt;
+        &lt;name&gt;en_winxp_pro_with_sp2.iso&lt;/name&gt;
+        &lt;type&gt;iso&lt;/type&gt;
+        &lt;storage_domain id="00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da"
+          href="/restapi-definition/storagedomains/00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da"/&gt;
+    &lt;/file&gt;
+    &lt;file id="boot.vfd"
+      href="/restapi-definition/storagedomains/00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da/files/
+      boot.vfd"&gt;
+        &lt;name&gt;boot.vfd&lt;/name&gt;
+        &lt;type&gt;vfd&lt;/type&gt;
+        &lt;storage_doman id="00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da"
+          href="/restapi-definition/storagedomains/00f0d9ce-da15-4b9e-9e3e-3c898fa8b6da"/&gt;
+    &lt;/file&gt;
+&lt;/files&gt;
+      </screen>
+    </example>
+    <para>
+      Like other resources, files have opaque <literal>id</literal> and <literal>href</literal> attributes. The <literal>name</literal> element contains the filename.
+    </para>
+  </section>
+
+  <section id="sect-REST_API_Guide-Storage_Domains-Import_Existing">
+    <title>
+      Import Existing Storage Domain
+    </title>
+    <para>
+      The API provides a user with the ability to remove an ISO or Export storage domain from one Red Hat Enterprise Virtualization Manager instance without re-formatting the underlying storage and import it into another instance. Importing is achieved similarly to adding a new storage domain, except the <literal>name</literal> is not specified.
+    </para>
+    <example>
+      <title>Importing an Exisiting Export Storage Domain</title>
+      <screen>
+POST /restapi-definition/storagedomains HTTP/1.1
+Accept: application/xml
+Content-Type: application/xml
+
+&lt;storage_domain&gt;
+    &lt;type&gt;export&lt;/type&gt;
+    &lt;storage&gt;
+        &lt;type&gt;nfs&lt;/type&gt;
+        &lt;address&gt;172.31.0.6&lt;/address&gt;
+        &lt;path&gt;/exports/RHEVX/export-domain&lt;/path&gt;
+    &lt;/storage&gt;
+    &lt;host id="2ab5e1da-b726-4274-bbf7-0a42b16a0fc3"/&gt;
+&lt;/storage_domain&gt;
+
+HTTP/1.1 201 Created
+Location: http://{host}/storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed
+Content-Type: application/xml
+
+&lt;storage_domain id="fabe0451-701f-4235-8f7e-e20e458819ed"
+  href="/restapi-definition/storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed"&gt;
+    &lt;name&gt;export1&lt;/name&gt;
+    ...
+&lt;/storage_domain&gt;
+      </screen>
+    </example>
+  </section>
+
+  <section id="sect-REST_API_Guide-Storage_Domains-Delete">
+    <title>
+      Delete Storage Domain
+    </title>
+    <para>
+      A <literal>storage_domain</literal> reference is passed in the body of a <literal>DELETE</literal> request for a storage domain. The <literal>storage_domain</literal> reference is in the following form:
+    </para>
+    <screen>
+&lt;storage_domain&gt;
+    &lt;host id="..."/&gt;
+&lt;/storage_domain&gt;
+    </screen>
+    <para>
+      OR
+    </para>
+    <screen>
+&lt;storage_domain&gt;
+    &lt;host&gt;
+        &lt;name&gt;...&lt;/name&gt;
+    &lt;/host&gt;
+&lt;/storage_domain&gt;
+    </screen>
+    <para>
+      The API user provides a optional <literal>format</literal> element to specify whether or not to format the storage domain after deletion.
+    </para>
+    <example>
+      <title>Formating a Storage Domain after Deletion</title>
+      <screen>
+&lt;storage_domain&gt;
+    &lt;host id="..."/&gt;
+    &lt;format&gt;true&lt;/format&gt;
+&lt;/storage_domain&gt;
+      </screen>
+    </example>
+    <para>  
+      If no <literal>format</literal> element is passed, the storage domain remains unformatted.
+    </para>
+  </section>
+</chapter>

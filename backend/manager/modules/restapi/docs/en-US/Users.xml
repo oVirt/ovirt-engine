@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "REST_API_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter id="chap-REST_API_Guide-Users">
+  <title>Users</title>
+  <para>
+    Users are exposed in a top-level collection and are referenced with the <literal>rel="users"</literal> link. Individual <literal>user</literal> elements contain the following:
+  </para>
+  <note>
+    <title>Element property icons</title>
+    <para>
+      The icons used in the properties column of this table are described in <xref linkend="table-Property_Icons" />
+    </para>
+  </note>
+  <para>
+    <informaltable frame="none">
+      <tgroup cols="4">
+        <colspec colwidth="4*"/>
+        <colspec colwidth="4*"/>
+        <colspec colwidth="6*"/>
+        <colspec colwidth="2*" colname="prop"/>
+        <thead>
+          <row>
+            <entry>Element</entry>
+            <entry>Type</entry>
+            <entry>Description</entry>
+            <entry>Properties</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry><literal>user_name</literal></entry>
+            <entry>string</entry>
+            <entry>The user principal name (used as a more convenient identifier when adding a new user)</entry>
+            <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+          </row>
+          <row>
+            <entry><literal>link rel="tags"</literal></entry>
+            <entry>relationship</entry>
+            <entry>A link to the tags sub-collection for user resources</entry>
+            <entry></entry>
+          </row>
+          <row>
+            <entry><literal>link rel="roles"</literal></entry>
+            <entry>relationship</entry>
+            <entry>A link to the roles sub-collection for user resources</entry>
+            <entry></entry>
+          </row>
+          <row>
+            <entry><literal>name</literal></entry>
+            <entry>string</entry>
+            <entry>A free-text name for the user</entry>
+            <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+          </row>
+          <row>
+            <entry><literal>description</literal></entry>
+            <entry>string</entry>
+            <entry>A free-text description of the user</entry>
+            <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+          </row>
+          <row>
+            <entry><literal>domain</literal></entry>
+            <entry>string</entry>
+            <entry>The containing directory service domain</entry>
+            <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+          </row>
+          <row>
+            <entry><literal>groups</literal></entry>
+            <entry>complex</entry>
+            <entry>A list of Active Directory groups for this user</entry>
+            <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </para>
+  <example>
+    <title>An XML representation of a user resource</title>
+    <screen>
+GET /restapi-definition/users HTTP/1.1
+Accept: application/xml
+
+&lt;user id="225f15cd-e891-434d-8262-a66808fcb9b1"
+  href="/restapi-definition/users/225f15cd-e891-434d-8262-a66808fcb9b1"&gt;
+    &lt;name&gt;RHEV-M Admin&lt;/name&gt;
+    &lt;actions/&gt;
+    &lt;link rel="roles"
+      href="/restapi-definition/users/225f15cd-e891-434d-8262-a66808fcb9b1/roles"/&gt;
+    &lt;link rel="tags"
+      href="/restapi-definition/users/225f15cd-e891-434d-8262-a66808fcb9b1/tags"/&gt;
+    &lt;domain&gt;domain.example.com&lt;/domain&gt;
+    &lt;logged_in&gt;false&lt;/logged_in&gt;
+    &lt;user_name&gt;rhevmadmin@domain.example.com&lt;/user_name&gt;
+    &lt;groups&gt;
+        &lt;group&gt;Group Policy Creator Owners@domain.example.com/Users&lt;/group&gt;
+        &lt;group&gt;Domain Admins@domain.example.com/Users&lt;/group&gt;
+        &lt;group&gt;Enterprise Admins@domain.example.com/Users&lt;/group&gt;
+        &lt;group&gt;Schema Admins@domain.example.com/Users&lt;/group&gt;
+        &lt;group&gt;Administrators@domain.example.com/Builtin&lt;/group&gt;
+    &lt;/groups&gt;
+&lt;/user&gt;
+    </screen>
+  </example>
+  <para>
+    The API adds an existing directory service user to the Red Hat Enterprise Virtualization Manager database with a <literal>POST</literal> request to the <literal>users</literal> collection. The client-provided new user representation includes an embedded <literal>roles</literal> list with at least one initial <literal>role</literal> to assign to the user. For example, the following request assigns two initial roles to the user <literal>joe@domain.example.com</literal>:
+  </para>
+  <example>
+    <title>Adding a user from directory service and assigning two roles</title>
+    <screen>
+POST /restapi-definition/users HTTP/1.1
+Content-Type: application/xml
+Accept: application/xml
+
+&lt;user&gt;
+    &lt;user_name&gt;joe@domain.example.com&lt;/user_name&gt;
+    &lt;roles&gt;
+        &lt;role&gt;
+            &lt;name&gt;RHEVMPowerUser&lt;/name&gt;
+        &lt;/role&gt;
+        &lt;role id="00000000-0000-0000-0001-000000000003"/&gt;
+    &lt;/roles&gt;
+&lt;/user&gt;
+    </screen>
+  </example>
+  <para>
+      The new user is identified either by Red Hat Enterprise Virtualization Manager user ID or via the Active Directory user principal name (UPN). The user ID format reported from the directory service domain might be different to the expected Red Hat Enterprise Virtualization Manager format, such as in LDIF
+    <footnote>
+      <para>
+        The LDAP Data Interchange Format is described in <ulink url="http://tools.ietf.org/html/rfc2849">RFC 2849</ulink>.
+      </para>
+    </footnote>
+    , the ID has the opposite byte order and is base-64 encoded. Hence it is usually more convenient to refer to the new user by UPN.
+  </para>
+  <note>
+    <para>
+       The user exists in the directory service domain before it is added to the Red Hat Enterprise Virtualization Manager database. An API user has the option to query this domain through the <literal>domains</literal> collection prior to creation of the user.
+    </para>
+  </note>
+  <para>
+    Roles are identified either by name or ID. The example above shows both approaches.
+  </para>
+  <para>
+    Further roles are attached or detached with <literal>POST</literal> or <literal>DELETE</literal> requests to the roles sub-collection of an individual user. The example below illustrates how the API adds the <literal>RHEVMVDIUser</literal> role to the role assignments for a particular user.
+  </para>
+  <note>
+    <para>
+      The embedded user roles list of the user element is only used for the initial creation. All interactions post-creation with the user's role assignments go through the roles sub-collection.
+    </para>
+  </note>
+  <example>
+    <title>Adding roles to a user</title>
+    <screen>
+POST /restapi-definition/users/225f15cd-e891-434d-8262-a66808fcb9b1/roles HTTP/1.1
+Content-Type: application/xml
+Accept: application/xml
+
+&lt;role&gt;
+    &lt;name&gt;RHEVMVDIUser&lt;/name&gt;
+&lt;/role&gt;
+    </screen>
+  </example>
+  <note>
+    <para>
+      Users are not updated with the <literal>PUT</literal> verb. The only changes allowed post-creation are in the user's role assignments.
+    </para>
+  </note>
+  <para>
+    The API removes users from the Red Hat Enterprise Virtualization Manager database with a <literal>DELETE</literal> request on the <literal>users</literal> collection. The directory service domain remains unchanged after such a deletion.
+  </para>
+</chapter>

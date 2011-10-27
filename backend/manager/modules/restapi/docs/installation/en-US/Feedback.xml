@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE preface PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+
+<section id="sect-REST_API_Guide-We_Need_Feedback">
+  <title>We Need Feedback!</title>
+  <para>
+    If you find a typographical error in this manual, or if you have thought of a way to make this manual better, we would love to hear from you! Please submit a ticket in Track: <ulink url="https://fedorahosted.org/restapi-definition/newticket/">https://fedorahosted.org/restapi-definition/newticket/</ulink> or send a report by email to the project mailing list (<email>restapi-definition@lists.fedorahosted.org</email>).
+  </para>
+
+</section>

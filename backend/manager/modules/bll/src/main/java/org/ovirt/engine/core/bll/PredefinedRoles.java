@@ -1,0 +1,29 @@
+package org.ovirt.engine.core.bll;
+
+import org.ovirt.engine.core.compat.Guid;
+
+public enum PredefinedRoles {
+    SUPER_USER(new Guid("00000000-0000-0000-0000-000000000001")),
+    ENGINE_USER(new Guid("00000000-0000-0000-0001-000000000001")),
+    POWER_USER(new Guid("00000000-0000-0000-0001-000000000002")),
+    CLUSTER_ADMIN(new Guid("DEF00001-0000-0000-0000-DEF000000001")),
+    DATA_CENTER_ADMIN(new Guid("DEF00002-0000-0000-0000-DEF000000002")),
+    STORAGE_ADMIN(new Guid("DEF00003-0000-0000-0000-DEF000000003")),
+    HOST_ADMIN(new Guid("DEF00004-0000-0000-0000-DEF000000004")),
+    NETWORK_ADMIN(new Guid("DEF00005-0000-0000-0000-DEF000000005")),
+    VM_OPERATOR(new Guid("DEF00006-0000-0000-0000-DEF000000006")),
+    VM_POOL_ADMIN(new Guid("DEF00007-0000-0000-0000-DEF000000007")),
+    TEMPLATE_ADMIN(new Guid("DEF00008-0000-0000-0000-DEF000000008")),
+    TEMPLATE_USER(new Guid("DEF00009-0000-0000-0000-DEF000000009"));
+
+    private Guid id;
+
+    private PredefinedRoles(Guid value) {
+        id = value;
+    }
+
+    public Guid getId() {
+        return id;
+    }
+
+}

@@ -1,0 +1,6 @@
+This API guide needs the publican and publican-redhat packages to be
+built e.g.
+
+ $> $ rpm -q publican publican-redhat
+ publican-1.6.3-0.fc12.noarch
+ publican-redhat-1.1-1.el6.i686

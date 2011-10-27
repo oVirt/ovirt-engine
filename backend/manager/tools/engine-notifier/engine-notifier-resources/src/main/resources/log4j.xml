@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+    <!-- Log levels:DEBUG,INFO,WARN,ERROR,FATAL -->
+    <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="/var/log/engine/notifier/notifier.log" />
+        <param name="Append" value="true" />
+        <param name="MaxFileSize" value="10000KB" />
+        <param name="MaxBackupIndex" value="5" />
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p [%c] %m%n" />
+            <!--  <param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%c{1}] %m%n" /> -->
+
+        </layout>
+    </appender>
+
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <!-- The default pattern: Date Priority [Category] Message\n -->
+            <param name="ConversionPattern" value="%d %-5p [%c] (%t) %m%n" />
+        </layout>
+    </appender>
+
+    <root>
+        <priority value="INFO" />
+        <!-- appender-ref ref="CONSOLE" /-->
+        <appender-ref ref="FILE" />
+    </root>
+
+</log4j:configuration>
+

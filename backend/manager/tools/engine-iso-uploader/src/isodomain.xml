@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<storage_domains>
+	<storage_domain id="f349f3f3-ebf0-4c18-816f-c723a3ecf4ec"
+		href="/api/storagedomains/f349f3f3-ebf0-4c18-816f-c723a3ecf4ec">
+		<name>iso</name>
+		<link rel="permissions"
+			href="/api/storagedomains/f349f3f3-ebf0-4c18-816f-c723a3ecf4ec/permissions" />
+		<link rel="files"
+			href="/api/storagedomains/f349f3f3-ebf0-4c18-816f-c723a3ecf4ec/files" />
+		<type>iso</type>
+		<master>true</master>
+		<storage>
+			<type>nfs</type>
+			<address>192.168.122.15</address>
+			<path>/virt/iso</path>
+		</storage>
+		<available>2147483648</available>
+		<used>3221225472</used>
+		<committed>0</committed>
+		<storage_format>v1</storage_format>
+	</storage_domain>
+    <storage_domain id="f349f3f3-ebf0-4c18-816f-c723a3ecf4ec"
+        href="/api/storagedomains/f349f3f3-ebf0-4c18-816f-c723a3ecf4ec">
+        <name>ziso</name>
+        <link rel="permissions"
+            href="/api/storagedomains/f349f3f3-ebf0-4c18-816f-c723a3ecf4ec/permissions" />
+        <link rel="files"
+            href="/api/storagedomains/f349f3f3-ebf0-4c18-816f-c723a3ecf4ec/files" />
+        <type>iso</type>
+        <master>true</master>
+        <storage>
+            <type>nfs</type>
+            <address>192.168.122.15</address>
+            <path>/virt/iso</path>
+        </storage>
+        <available>2147483648</available>
+        <used>3221225472</used>
+        <committed>0</committed>
+        <storage_format>v1</storage_format>
+    </storage_domain>
+    	   <storage_domain id="f349f3f3-ebf0-4c18-816f-c723a3ecf4ec"
+        href="/api/storagedomains/f349f3f3-ebf0-4c18-816f-c723a3ecf4ec">
+        <name>aiso</name>
+        <link rel="permissions"
+            href="/api/storagedomains/f349f3f3-ebf0-4c18-816f-c723a3ecf4ec/permissions" />
+        <link rel="files"
+            href="/api/storagedomains/f349f3f3-ebf0-4c18-816f-c723a3ecf4ec/files" />
+        <type>iso</type>
+        <master>true</master>
+        <storage>
+            <type>nfs</type>
+            <address>192.168.122.15</address>
+            <path>/virt/iso</path>
+        </storage>
+        <available>2147483648</available>
+        <used>3221225472</used>
+        <committed>0</committed>
+        <storage_format>v1</storage_format>
+    </storage_domain>
+</storage_domains>

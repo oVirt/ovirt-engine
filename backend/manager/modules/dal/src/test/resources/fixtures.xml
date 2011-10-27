@@ -1,0 +1,2535 @@
+<dataset>
+    <table name="vdc_options">
+        <column>option_name</column>
+        <column>option_value</column>
+        <column>version</column>
+        <row>
+            <value>UserDefinedVmPropertiesKey1</value>
+            <value></value>
+            <value>general</value>
+        </row>
+        <row>
+            <value>UserDefinedVmPropertiesKey2</value>
+            <value></value>
+            <value>general</value>
+        </row>
+        <row>
+            <value>UserDefinedVmPropertiesKey3</value>
+            <value></value>
+            <value>general</value>
+        </row>
+        <row>
+            <value>UserDefinedVmPropertiesKey4</value>
+            <value></value>
+            <value>general</value>
+        </row>
+        <row>
+            <value>UserDefinedVmPropertiesKey5</value>
+            <value></value>
+            <value>general</value>
+        </row>
+    </table>
+
+    <table name="storage_server_connections">
+        <column>id</column>
+        <column>connection</column>
+        <column>user_name</column>
+        <column>password</column>
+        <column>iqn</column>
+        <column>port</column>
+        <column>portal</column>
+        <column>storage_type</column>
+        <row>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c297f</value>
+            <value>10.35.64.25</value>
+            <null />
+            <null />
+            <value>iqn.2008-09.com.hateya:server.target9</value>
+            <value>3260</value>
+            <value>1</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c297e</value>
+            <value>10.35.64.25</value>
+            <null />
+            <null />
+            <value>iqn.2008-09.com.hateya:server.targeta</value>
+            <value>3260</value>
+            <value>1</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c297d</value>
+            <value>10.35.64.25</value>
+            <null />
+            <null />
+            <value>iqn.2008-09.com.hateya:server.targetb</value>
+            <value>3260</value>
+            <value>1</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c297c</value>
+            <value>10.35.64.25</value>
+            <null />
+            <null />
+            <value>iqn.2008-09.com.hateya:server.targetc</value>
+            <value>3260</value>
+            <value>1</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c297b</value>
+            <value>10.35.64.25</value>
+            <null />
+            <null />
+            <value>iqn.2008-09.com.hateya:server.targetd</value>
+            <value>3260</value>
+            <value>1</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c297a</value>
+            <value>10.35.64.25</value>
+            <null />
+            <null />
+            <value>iqn.2008-09.com.hateya:server.targete</value>
+            <value>3260</value>
+            <value>1</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c2979</value>
+            <value>10.35.64.25</value>
+            <null />
+            <null />
+            <value>iqn.2008-09.com.hateya:server.targetf</value>
+            <value>3260</value>
+            <value>1</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+            <value>10.35.64.25</value>
+            <null />
+            <null />
+            <value>iqn.2008-09.com.hateya:server.targetf</value>
+            <value>3260</value>
+            <value>1</value>
+            <value>3</value>
+        </row>
+    </table>
+
+    <table name="LUNS">
+        <column>phisical_volume_id</column>
+        <column>LUN_id</column>
+        <column>volume_group_id</column>
+        <column>serial</column>
+        <column>lun_mapping</column>
+        <column>vendor_id</column>
+        <column>product_id</column>
+        <row>
+            <value></value>
+            <value>1IET_00180001</value>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+            <value>VIRTUAL-DISK-1</value>
+            <value>1</value>
+            <value>IET</value>
+            <value>VIRTUAL-DISK</value>
+        </row>
+        <row>
+            <value></value>
+            <value>1IET_00180002</value>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+            <value>VIRTUAL-DISK-1</value>
+            <value>1</value>
+            <value>IET</value>
+            <value>VIRTUAL-DISK</value>
+        </row>
+    </table>
+
+    <table name="LUN_storage_server_connection_map">
+        <column>LUN_id</column>
+        <column>storage_server_connection</column>
+        <row>
+            <value>1IET_00180001</value>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c297f</value>
+        </row>
+    </table>
+
+    <table name="tags">
+        <column>tag_id</column>
+        <column>tag_name</column>
+        <column>description</column>
+        <column>parent_id</column>
+        <column>readonly</column>
+        <column>type</column>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0c</value>
+            <value>farkle1</value>
+            <value></value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>true</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0d</value>
+            <value>farkle2</value>
+            <value></value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>true</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0e</value>
+            <value>farkle3</value>
+            <value></value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>true</value>
+            <value>0</value>
+        </row>
+    </table>
+
+    <table name="ad_groups">
+        <column>id</column>
+        <column>name</column>
+        <column>status</column>
+        <column>domain</column>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>administrators</value>
+            <value>1</value>
+            <value>rhel</value>
+        </row>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
+            <value>qa-membersgroup@testportal.redhat.com/test-all-users</value>
+            <value>1</value>
+            <value>rhel</value>
+        </row>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
+            <value>qb-membersgroup@testportal.redhat.com/test-all-users</value>
+            <value>1</value>
+            <value>rhel</value>
+        </row>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d4</value>
+            <value>qc-membersgroup@testportal.redhat.com/test-all-users</value>
+            <value>1</value>
+            <value>rhel</value>
+        </row>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d5</value>
+            <value>qd-membersgroup@testportal.redhat.com/test-all-users</value>
+            <value>1</value>
+            <value>rhel</value>
+        </row>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d6</value>
+            <value>qe-membersgroup@testportal.redhat.com/test-all-users</value>
+            <value>1</value>
+            <value>rhel</value>
+        </row>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d7</value>
+            <value>qf-membersgroup@testportal.redhat.com/test-all-users</value>
+            <value>1</value>
+            <value>rhel</value>
+        </row>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d8</value>
+            <value>qg-membersgroup@testportal.redhat.com/test-all-users</value>
+            <value>1</value>
+            <value>rhel</value>
+        </row>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d9</value>
+            <value>qh-membersgroup@testportal.redhat.com/test-all-users</value>
+            <value>1</value>
+            <value>rhel</value>
+        </row>
+        <row>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>philosophers</value>
+            <value>1</value>
+            <value>rhel</value>
+        </row>
+    </table>
+
+    <table name="bookmarks">
+        <column>bookmark_id</column>
+        <column>bookmark_name</column>
+        <column>bookmark_value</column>
+        <row>
+            <value>a4affabf-7b45-4a6c-b0a9-107d0bbe265e</value>
+            <value>vms: cluster = rhel6.iscsi</value>
+            <value>vms: cluster = rhel6.iscsi</value>
+        </row>
+        <row>
+            <value>5c988320-29d6-4601-9f4a-fa19528b20f8</value>
+            <value>vms: cluster = local.storage</value>
+            <value>vms: cluster = local.storage</value>
+        </row>
+    </table>
+
+    <table name="storage_pool">
+        <column>id</column>
+        <column>name</column>
+        <column>description</column>
+        <column>storage_pool_type</column>
+        <column>status</column>
+        <column>master_domain_version</column>
+        <column>spm_vds_id</column>
+        <column>compatibility_version</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>rhel6.iscsi</value>
+            <value></value>
+            <value>3</value>
+            <value>1</value>
+            <value>1127</value>
+            <value>787c5473-9a82-4191-930b-814db3451531</value>
+            <value>2.3</value>
+            <value>2010-10-21 03:38:22</value>
+            <value>2010-11-29 15:57:10</value>
+        </row>
+        <row>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105e</value>
+            <value>rhel6.iscsi2</value>
+            <value></value>
+            <value>3</value>
+            <value>1</value>
+            <value>1127</value>
+            <value>787c5473-9a82-4191-930b-814db3451531</value>
+            <value>2.3</value>
+            <value>2010-10-21 03:38:22</value>
+            <value>2010-11-29 15:57:10</value>
+        </row>
+        <row>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <value>rhel6.NFS</value>
+            <value></value>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>2.3</value>
+            <value>2011-03-21 03:38:22</value>
+            <value>2011-03-21 15:57:10</value>
+        </row>
+        <row>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <value>rhel6.NFS2</value>
+            <value></value>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>2.3</value>
+            <value>2011-03-21 03:38:22</value>
+            <value>2011-03-21 15:57:10</value>
+        </row>
+        <row>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a1</value>
+            <value>rhel6.NFS3</value>
+            <value></value>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>2.3</value>
+            <value>2011-03-21 03:38:22</value>
+            <value>2011-03-21 15:57:10</value>
+        </row>
+    </table>
+
+    <table name="vds_groups">
+        <column>vds_group_id</column>
+        <column>name</column>
+        <column>description</column>
+        <column>cpu_name</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <column>selection_algorithm</column>
+        <column>high_utilization</column>
+        <column>low_utilization</column>
+        <column>cpu_over_commit_duration_minutes</column>
+        <column>hypervisor_type</column>
+        <column>storage_pool_id</column>
+        <column>max_vds_memory_over_commit</column>
+        <column>compatibility_version</column>
+        <column>transparent_hugepages</column>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>rhel6.iscsi</value>
+            <null />
+            <value>Intel Xeon Core2</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+            <value>0</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>200</value>
+            <value>2.3</value>
+            <value>0</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
+            <value>rhel6.iscsi2</value>
+            <null />
+            <value>Intel Xeon Core2</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+            <value>0</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>200</value>
+            <value>2.3</value>
+            <value>0</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
+            <value>rhel6.iscsi3</value>
+            <null />
+            <value>Intel Xeon Core2</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+            <value>0</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>200</value>
+            <value>2.3</value>
+            <value>0</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
+            <value>rhel6.nfs</value>
+            <null />
+            <value>Intel Conroe Family</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>0</value>
+            <value>-1</value>
+            <value>-1</value>
+            <value>2</value>
+            <value>0</value>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <value>1</value>
+            <value>100</value>
+            <value>2.3</value>
+            <value>0</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
+            <value>rhel6.nfs2</value>
+            <null />
+            <value>Intel Conroe Family</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>0</value>
+            <value>-1</value>
+            <value>-1</value>
+            <value>2</value>
+            <value>0</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <value>1</value>
+            <value>100</value>
+            <value>2.3</value>
+            <value>0</value>
+            <value>2</value>
+        </row>
+		<row>
+            <value>eba797fb-8e3b-4777-b63c-92e7a5957d7d</value>
+            <value>rhel6.nfs3</value>
+            <null />
+            <value>Intel Conroe Family</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>0</value>
+            <value>-1</value>
+            <value>-1</value>
+            <value>2</value>
+            <value>0</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a1</value>
+            <value>1</value>
+            <value>100</value>
+            <value>2.3</value>
+            <value>0</value>
+            <value>2</value>
+        </row>
+    </table>
+
+    <table name="network">
+        <column>id</column>
+        <column>name</column>
+        <column>description</column>
+        <column>type</column>
+        <column>addr</column>
+        <column>subnet</column>
+        <column>gateway</column>
+        <column>vlan_id</column>
+        <column>stp</column>
+        <column>storage_pool_id</column>
+        <row>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
+            <value>engine</value>
+            <value>Management Network</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+        </row>
+        <row>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607189</value>
+            <value>engine2</value>
+            <value>Management Network</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+        </row>
+        <row>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607190</value>
+            <value>engine3</value>
+            <value>Management Network</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+        </row>
+    </table>
+
+    <table name="network_cluster">
+        <column>network_id</column>
+        <column>cluster_id</column>
+        <column>status</column>
+        <column>is_display</column>
+        <row>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>1</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607189</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
+            <value>1</value>
+            <value>0</value>
+        </row>
+    </table>
+
+    <table name="vm_pools">
+        <column>vm_pool_id</column>
+        <column>vm_pool_name</column>
+        <column>vm_pool_description</column>
+        <column>vm_pool_type</column>
+        <column>parameters</column>
+        <column>vds_group_id</column>
+        <row>
+            <value>103cfd1d-18b1-4790-8a0c-1e52621b0076</value>
+            <value>fedora13-pool</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+        </row>
+        <row>
+            <value>103cfd1d-18b1-4790-8a0c-1e52621b0077</value>
+            <value>fedora14-pool</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+        </row>
+        <row>
+            <value>103cfd1d-18b1-4790-8a0c-1e52621b0078</value>
+            <value>fedora15-pool</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+        </row>
+    </table>
+
+    <table name="image_templates">
+        <column>it_guid</column>
+        <column>creation_date</column>
+        <column>size</column>
+        <column>os</column>
+        <column>os_version</column>
+        <column>bootable</column>
+        <column>description</column>
+        <row>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>2010-11-12 19:49:24</value>
+            <value>85899345920</value>
+            <value></value>
+            <value></value>
+            <null />
+            <value>Blank image</value>
+        </row>
+        <row>
+            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
+            <value>2010-11-17 19:49:24</value>
+            <value>1073741824</value>
+            <value></value>
+            <value></value>
+            <null />
+            <value>_rhel5-guest_Wed Nov 17 19:49:23 IST 2010_template</value>
+        </row>
+    </table>
+
+    <table name="vm_templates">
+        <column>vmt_guid</column>
+        <column>name</column>
+        <column>mem_size_mb</column>
+        <column>os</column>
+        <column>creation_date</column>
+        <column>child_Count</column>
+        <column>num_of_sockets</column>
+        <column>cpu_per_socket</column>
+        <column>description</column>
+        <column>vds_group_id</column>
+        <column>domain</column>
+        <column>num_of_monitors</column>
+        <column>status</column>
+        <column>usb_policy</column>
+        <column>time_zone</column>
+        <column>is_auto_suspend</column>
+        <column>fail_back</column>
+        <column>vm_type</column>
+        <column>hypervisor_type</column>
+        <column>operation_mode</column>
+        <column>nice_level</column>
+        <column>default_boot_sequence</column>
+        <column>default_display_type</column>
+        <column>priority</column>
+        <column>auto_startup</column>
+        <column>is_stateless</column>
+        <column>iso_path</column>
+        <column>initrd_url</column>
+        <column>kernel_url</column>
+        <column>kernel_params</column>
+        <column>origin</column>
+        <row>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>1</value>
+            <value>512</value>
+            <value>1</value>
+            <value>2010-11-21 16:39:27</value>
+            <value>0</value>
+            <value>1</value>
+            <value>1</value>
+            <null />
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value></value>
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>GMT standard time</value>
+            <value>0</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>12</value>
+            <value>0</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>1</value>
+            <value>512</value>
+            <value>1</value>
+            <value>2010-11-21 16:39:27</value>
+            <value>0</value>
+            <value>1</value>
+            <value>1</value>
+            <null />
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value></value>
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>GMT standard time</value>
+            <value>0</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>12</value>
+            <value>0</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
+            <value>1</value>
+            <value>512</value>
+            <value>1</value>
+            <value>2010-11-21 16:39:27</value>
+            <value>0</value>
+            <value>1</value>
+            <value>1</value>
+            <null />
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value></value>
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>GMT standard time</value>
+            <value>0</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>12</value>
+            <value>0</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+        </row>
+    </table>
+
+    <table name="vds_static">
+        <column>vds_id</column>
+        <column>vds_name</column>
+        <column>ip</column>
+        <column>vds_unique_id</column>
+        <column>host_name</column>
+        <column>port</column>
+        <column>vds_group_id</column>
+        <column>server_SSL_enabled</column>
+        <column>vds_type</column>
+        <column>vds_strength</column>
+        <column>pm_type</column>
+        <column>pm_user</column>
+        <column>pm_password</column>
+        <column>pm_port</column>
+        <column>pm_options</column>
+        <column>pm_enabled</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>magenta-vdsc</value>
+            <value>192.168.122.17</value>
+            <value>farkle</value>
+            <value>magenta-vdsc.redhat.com</value>
+            <value>54321</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <value></value>
+            <value>0</value>
+            <value>2010-11-17 17:25:39</value>
+            <value>2010-12-01 09:52:57</value>
+            <value>21</value>
+        </row>
+        <row>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>purple-vdsc</value>
+            <value>192.168.122.17</value>
+            <value>farkle</value>
+            <value>magenta-vdsc.redhat.com</value>
+            <value>54321</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <value></value>
+            <value>0</value>
+            <value>2010-11-17 17:25:39</value>
+            <value>2010-12-01 09:52:57</value>
+            <value>21</value>
+        </row>
+    </table>
+
+    <table name="vm_static">
+        <column>vm_guid</column>
+        <column>vm_name</column>
+        <column>mem_size_mb</column>
+        <column>vmt_guid</column>
+        <column>os</column>
+        <column>description</column>
+        <column>vds_group_id</column>
+        <column>domain</column>
+        <column>creation_date</column>
+        <column>num_of_monitors</column>
+        <column>is_initialized</column>
+        <column>is_auto_suspend</column>
+        <column>num_of_sockets</column>
+        <column>cpu_per_socket</column>
+        <column>usb_policy</column>
+        <column>time_zone</column>
+        <column>is_stateless</column>
+        <column>fail_back</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <column>dedicated_vm_for_vds</column>
+        <column>auto_startup</column>
+        <column>vm_type</column>
+        <column>hypervisor_type</column>
+        <column>operation_mode</column>
+        <column>nice_level</column>
+        <column>default_boot_sequence</column>
+        <column>default_display_type</column>
+        <column>priority</column>
+        <column>iso_path</column>
+        <column>origin</column>
+        <column>initrd_url</column>
+        <column>kernel_url</column>
+        <column>kernel_params</column>
+        <column>migration_support</column>
+        <column>userdefined_properties</column>
+        <column>predefined_properties</column>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>rhel5-pool-50</value>
+            <value>512</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>0</value>
+            <null />
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value></value>
+            <value>2010-11-18 11:13:24</value>
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <value></value>
+            <value>0</value>
+            <value>0</value>
+            <value>2010-11-18 11:13:24</value>
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+            <null />
+            <null />
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>rhel5-pool-57</value>
+            <value>512</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>0</value>
+            <null />
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value></value>
+            <value>2010-11-18 11:13:24</value>
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <value></value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-18 11:13:24</value>
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>2</value>
+            <null />
+            <null />
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
+            <value>rhel5-pool-51</value>
+            <value>512</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>0</value>
+            <null />
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value></value>
+            <value>2010-11-18 11:13:24</value>
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <value></value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-18 11:13:24</value>
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+            <null />
+            <null />
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
+            <value>rhel5-pool-50</value>
+            <value>512</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>0</value>
+            <null />
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value></value>
+            <value>2010-11-18 11:13:24</value>
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <value></value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-18 11:13:24</value>
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+            <null />
+            <null />
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f5001</value>
+            <value>rhel5-pool-50</value>
+            <value>512</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>0</value>
+            <null />
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value></value>
+            <value>2010-11-18 11:13:24</value>
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <value></value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-18 11:13:24</value>
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+            <null />
+            <null />
+        </row>
+    </table>
+
+    <table name="vds_dynamic">
+        <column>vds_id</column>
+        <column>status</column>
+        <column>cpu_cores</column>
+        <column>cpu_model</column>
+        <column>cpu_speed_mh</column>
+        <column>if_total_speed</column>
+        <column>kvm_enabled</column>
+        <column>physical_mem_mb</column>
+        <column>mem_commited</column>
+        <column>vm_active</column>
+        <column>vm_count</column>
+        <column>vm_migrating</column>
+        <column>reserved_mem</column>
+        <column>guest_overhead</column>
+        <column>software_version</column>
+        <column>version_name</column>
+        <column>build_name</column>
+        <column>previous_status</column>
+        <column>cpu_flags</column>
+        <column>cpu_over_commit_time_stamp</column>
+        <column>hypervisor_type</column>
+        <column>vms_cores_count</column>
+        <column>pending_vcpus_count</column>
+        <column>cpu_sockets</column>
+        <column>net_config_dirty</column>
+        <column>supported_cluster_levels</column>
+        <column>supported_engines</column>
+        <column>host_os</column>
+        <column>kvm_version</column>
+        <column>spice_version</column>
+        <column>kernel_version</column>
+        <column>iscsi_initiator_name</column>
+        <column>transparent_hugepages_state</column>
+        <column>anonymous_hugepages</column>
+        <column>_update_date</column>
+        <column>hooks</column>
+        <column>non_operational_reason</column>
+        <row>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>3</value>
+            <value>8</value>
+            <value>Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz</value>
+            <value>2494</value>
+            <null />
+            <value>1</value>
+            <value>15952</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>256</value>
+            <value>65</value>
+            <value>4.9.0.25</value>
+            <value>Snow Man</value>
+            <null />
+            <value>12</value>
+            <value>fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1</value>
+            <value>2010-11-17 17:26:10</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>2</value>
+            <value>0</value>
+            <value>2.3</value>
+            <value>2.3</value>
+            <value>RHEL - 6Server - 6.0.0.37.el6</value>
+            <null />
+            <null />
+            <value>2.6.32 - 71.el6</value>
+            <value>iqn.1994-05.com.redhat:3d9116b4c11f</value>
+            <value>0</value>
+            <value>0</value>
+            <value>2010-12-01 14:13:10</value>
+            <value>{}</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>3</value>
+            <value>8</value>
+            <value>Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz</value>
+            <value>2494</value>
+            <null />
+            <value>1</value>
+            <value>15952</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>256</value>
+            <value>65</value>
+            <value>4.9.0.25</value>
+            <value>Snow Man</value>
+            <null />
+            <value>12</value>
+            <value>fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1</value>
+            <value>2010-11-17 17:26:10</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>2</value>
+            <value>0</value>
+            <value>2.3</value>
+            <value>2.3</value>
+            <value>RHEL - 6Server - 6.0.0.37.el6</value>
+            <null />
+            <null />
+            <value>2.6.32 - 71.el6</value>
+            <value>iqn.1994-05.com.redhat:3d9116b4c11f</value>
+            <value>0</value>
+            <value>0</value>
+            <value>2010-12-01 14:13:10</value>
+            <value>{}</value>
+            <value>0</value>
+        </row>
+    </table>
+
+    <table name="vds_statistics">
+        <column>vds_id</column>
+        <column>cpu_idle</column>
+        <column>cpu_load</column>
+        <column>cpu_sys</column>
+        <column>cpu_user</column>
+        <column>usage_mem_percent</column>
+        <column>usage_cpu_percent</column>
+        <column>usage_network_percent</column>
+        <column>mem_available</column>
+        <column>mem_shared</column>
+        <column>swap_free</column>
+        <column>swap_total</column>
+        <column>ksm_cpu_percent</column>
+        <column>ksm_pages</column>
+        <column>ksm_state</column>
+        <row>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>100</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>6</value>
+            <value>0</value>
+            <value>0</value>
+            <value>14741</value>
+            <value>0</value>
+            <value>15999</value>
+            <value>15999</value>
+            <value>0</value>
+            <value>64</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>100</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>6</value>
+            <value>0</value>
+            <value>0</value>
+            <value>14741</value>
+            <value>0</value>
+            <value>15999</value>
+            <value>15999</value>
+            <value>0</value>
+            <value>64</value>
+            <value>0</value>
+        </row>
+    </table>
+
+    <table name="vm_dynamic">
+        <column>vm_guid</column>
+        <column>status</column>
+        <column>vm_ip</column>
+        <column>vm_host</column>
+        <column>vm_pid</column>
+        <column>vm_last_up_time</column>
+        <column>vm_last_boot_time</column>
+        <column>guest_cur_user_name</column>
+        <column>guest_cur_user_id</column>
+        <column>guest_last_login_time</column>
+        <column>guest_last_logout_time</column>
+        <column>guest_os</column>
+        <column>run_on_vds</column>
+        <column>migrating_to_vds</column>
+        <column>app_list</column>
+        <column>display</column>
+        <column>acpi_enable</column>
+        <column>session</column>
+        <column>display_ip</column>
+        <column>display_type</column>
+        <column>kvm_enable</column>
+        <column>display_secure_port</column>
+        <column>utc_diff</column>
+        <column>last_vds_run_on</column>
+        <column>client_ip</column>
+        <column>guest_requested_memory</column>
+        <column>hibernation_vol_handle</column>
+        <column>boot_sequence</column>
+        <column>exit_status</column>
+        <column>pause_status</column>
+        <column>exit_message</column>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
+            <value>5</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <null />
+            <value></value>
+            <value>5900</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <value></value>
+            <null />
+            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <null />
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>5</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <null />
+            <value></value>
+            <value>5900</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <value></value>
+            <null />
+            <value>42058975-3d5e-484a-80c1-01c31207f579</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <null />
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>1</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <null />
+            <value></value>
+            <value>5900</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <value></value>
+            <null />
+            <value>42058975-3d5e-484a-80c1-01c31207f57a</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <null />
+        </row>
+    </table>
+
+    <table name="vm_statistics">
+        <column>vm_guid</column>
+        <column>cpu_user</column>
+        <column>cpu_sys</column>
+        <column>elapsed_time</column>
+        <column>usage_network_percent</column>
+        <column>usage_mem_percent</column>
+        <column>usage_cpu_percent</column>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
+            <value>17</value>
+            <value>0</value>
+            <value>267308</value>
+            <value>0</value>
+            <value>0</value>
+            <value>17</value>
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>17</value>
+            <value>0</value>
+            <value>267308</value>
+            <value>0</value>
+            <value>0</value>
+            <value>17</value>
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>17</value>
+            <value>0</value>
+            <value>267308</value>
+            <value>0</value>
+            <value>0</value>
+            <value>17</value>
+        </row>
+    </table>
+
+    <table name="storage_domain_static">
+        <column>id</column>
+        <column>storage</column>
+        <column>storage_name</column>
+        <column>storage_domain_type</column>
+        <column>storage_type</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+            <value>scale_sd5</value>
+            <value>0</value>
+            <value>3</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+        </row>
+        <row>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ac</value>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePz</value>
+            <value>scale_sd6</value>
+            <value>0</value>
+            <value>3</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+        </row>
+        <row>
+            <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
+            <value>7fe9a439-a68e-4c15-8885-29d34eb6cabf</value>
+            <value>nfs_master</value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+        </row>
+        <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
+            <value>c6d12efe-f0c5-4ce8-b755-21c7aac09c5b</value>
+            <value>nfs_master2</value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+        </row>
+        <row>
+            <value>17e7489d-d490-4681-a322-073ca19bd33d</value>
+            <value>12bd6d9a-84e0-47af-85cd-91fcc038ce06</value>
+            <value>nfs_iso</value>
+            <value>2</value>
+            <value>1</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+        </row>
+        <row>
+            <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
+            <value>ce955502-e8c7-4539-a260-c1d1fc00afe4</value>
+            <value>nfs_Iso2</value>
+            <value>2</value>
+            <value>1</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+        </row>
+        <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa32</value>
+            <value>c6d12efe-f0c5-4ce8-b755-21c7aac09c5c</value>
+            <value>nfs_master3</value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-23 10:47:55</value>
+            <value>2010-11-23 10:48:10</value>
+        </row>
+    </table>
+
+    <table name="storage_domain_dynamic">
+        <column>id</column>
+        <column>available_disk_size</column>
+        <column>used_disk_size</column>
+        <row>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>196</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ac</value>
+            <value>196</value>
+            <value>3</value>
+        </row>
+		<row>
+            <value>17e7489d-d490-4681-a322-073ca19bd33d</value>
+            <value>14</value>
+            <value>14</value>
+        </row>
+        <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
+            <value>14</value>
+            <value>14</value>
+        </row>
+        <row>
+            <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
+            <value>14</value>
+            <value>14</value>
+        </row>
+        <row>
+            <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
+            <value>14</value>
+            <value>14</value>
+        </row>
+        
+    </table>
+
+    <table name="storage_pool_iso_map">
+        <column>storage_id</column>
+        <column>storage_pool_id</column>
+        <column>status</column>
+        <column>owner</column>
+        <row>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>3</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>17e7489d-d490-4681-a322-073ca19bd33d</value>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <value>3</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
+        	<value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <value>3</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
+        	<value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <value>3</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <value>3</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa32</value>
+        	<value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a1</value>
+            <value>3</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a1</value>
+            <value>3</value>
+            <value>0</value>
+        </row>
+    </table>
+
+    <table name="images">
+        <column>image_guid</column>
+        <column>creation_date</column>
+        <column>size</column>
+        <column>it_guid</column>
+        <column>internal_drive_mapping</column>
+        <column>description</column>
+        <column>ParentId</column>
+        <column>imageStatus</column>
+        <column>lastModified</column>
+        <column>app_list</column>
+        <column>storage_id</column>
+        <column>vm_snapshot_id</column>
+        <column>volume_type</column>
+        <column>volume_format</column>
+        <column>disk_type</column>
+        <column>image_group_id</column>
+        <column>disk_interface</column>
+        <column>boot</column>
+        <column>wipe_after_delete</column>
+        <column>propagate_errors</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
+            <value>2010-11-18 11:03:50</value>
+            <value>2147483648</value>
+            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
+            <value>2</value>
+            <value>_rhel5-pool-40_Thu Nov 18 11:11:33 IST 2010</value>
+            <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
+            <value>1</value>
+            <value>2010-11-18 11:03:50</value>
+            <value></value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
+            <value>2</value>
+            <value>4</value>
+            <value>1</value>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
+            <value>2</value>
+            <value>0</value>
+            <value>1</value>
+            <value>0</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>2010-12-01 14:13:07</value>
+        </row>
+        <row>
+            <value>42058975-3d5e-484a-80c1-01c31207f579</value>
+            <value>2010-11-18 11:03:50</value>
+            <value>2147483648</value>
+            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
+            <value>2</value>
+            <value>_rhel5-pool-40_Thu Nov 18 11:11:33 IST 2010</value>
+            <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
+            <value>1</value>
+            <value>2010-11-18 11:03:50</value>
+            <value></value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
+            <value>2</value>
+            <value>4</value>
+            <value>1</value>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
+            <value>2</value>
+            <value>0</value>
+            <value>1</value>
+            <value>0</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>2010-12-01 14:13:07</value>
+        </row>
+        <row>
+            <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
+            <value>2010-11-18 11:03:50</value>
+            <value>2147483648</value>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>2</value>
+            <value>ancestor</value>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>1</value>
+            <value>2010-11-18 11:03:50</value>
+            <value></value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
+            <value>2</value>
+            <value>4</value>
+            <value>1</value>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
+            <value>2</value>
+            <value>0</value>
+            <value>1</value>
+            <value>0</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>2010-12-01 14:13:07</value>
+        </row>
+    </table>
+
+    <table name="users">
+      <column>user_id</column>
+      <column>name</column>
+      <column>surname</column>
+      <column>domain</column>
+      <column>username</column>
+      <column>groups</column>
+      <column>department</column>
+      <column>role</column>
+      <column>user_icon_path</column>
+      <column>desktop_device</column>
+      <column>email</column>
+      <column>note</column>
+      <column>status</column>
+      <column>session_count</column>
+      <column>last_admin_check_status</column>
+      <column>group_ids</column>
+      <row>
+          <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+          <value>userportal2</value>
+          <null />
+          <value>testportal.redhat.com</value>
+          <value>userportal2@testportal.redhat.com</value>
+          <value>qa-membersgroup@testportal.redhat.com/test-all-users</value>
+          <null />
+          <null />
+          <null />
+          <null />
+          <null />
+          <null />
+          <value>2</value>
+          <value>0</value>
+          <value>0</value>
+          <value>35487601-05ef-43b0-932d-8663ea4c9495,fa63c7e0-d9d4-492f-9e4e-6ed8c4719364</value>
+      </row>
+      <row>
+          <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+          <value>userportal3</value>
+          <null />
+          <value>testportal.redhat.com</value>
+          <value>userportal3@testportal.redhat.com</value>
+          <value>qa-membersgroup@testportal.redhat.com/test-all-users,qb-membersgroup@testportal.redhat.com/test-all-users,qc-membersgroup@testportal.redhat.com/test-all-users,qd-membersgroup@testportal.redhat.com/test-all-users,qe-membersgroup@testportal.redhat.com/test-all-users,qf-membersgroup@testportal.redhat.com/test-all-users,qg-membersgroup@testportal.redhat.com/test-all-users,qh-membersgroup@testportal.redhat.com/test-all-users,qi-membersgroup@testportal.redhat.com/test-all-users</value>
+          <null />
+          <null />
+          <null />
+          <null />
+          <null />
+          <null />
+          <value>2</value>
+          <value>0</value>
+          <value>0</value>
+          <value>26df4393-659b-4b8a-b0f6-3ee94d32e82f,08963ba9-b1c8-498d-989f-75cf8142eab7</value>
+      </row>
+    </table>
+
+    <table name="user_sessions">
+        <column>session_id</column>
+        <column>user_id</column>
+        <column>os</column>
+        <column>browser</column>
+        <column>client_type</column>
+        <column>login_time</column>
+        <row>
+            <value>12345678901234567890123456789012</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>2010-12-31 07:33</value>
+        </row>
+        <row>
+            <value>12345678901234567890123456789013</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>2010-12-31 07:33</value>
+        </row>
+        <row>
+            <value>12345678901234567890123456789014</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>2010-12-31 07:33</value>
+        </row>
+        <row>
+            <value>12345678901234567890123456789015</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>2010-12-31 07:33</value>
+        </row>
+        <row>
+            <value>12345678901234567890123456789016</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>2010-12-31 07:33</value>
+        </row>
+    </table>
+
+    <table name="tags_user_map">
+        <column>tag_id</column>
+        <column>user_id</column>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0c</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+        </row>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0d</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+        </row>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0e</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+        </row>
+    </table>
+
+    <table name="roles">
+        <column>id</column>
+        <column>name</column>
+        <column>description</column>
+        <column>is_readonly</column>
+        <column>role_type</column>
+        <row>
+            <value>119caae6-5c1b-4a82-9858-dd9e5d2e1400</value>
+            <value>role1</value>
+            <null />
+            <value>0</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
+            <value>role1</value>
+            <null />
+            <value>0</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>f5972bfa-7102-4d33-ad22-9dd421bfba78</value>
+            <value>jUnitTestRole</value>
+            <value>role for tests</value>
+            <value>0</value>
+            <value>1</value>
+        </row>
+    </table>
+
+    <table name="permissions">
+        <column>id</column>
+        <column>role_id</column>
+        <column>ad_element_id</column>
+        <column>object_id</column>
+        <column>object_type_id</column>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e8d</value>
+            <value>119caae6-5c1b-4a82-9858-dd9e5d2e1400</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e8e</value>
+            <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>3</value>
+        </row>
+        <row>
+            <value>9304ce01-2f5f-41b5-92c7-9d69ef0bcfbc</value>
+            <value>f5972bfa-7102-4d33-ad22-9dd421bfba78</value>
+            <value>88d4301a-17af-496c-a793-584640853d4b</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>4</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e90</value>
+            <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>103cfd1d-18b1-4790-8a0c-1e52621b0076</value>
+            <value>5</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e91</value>
+            <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>9</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e92</value>
+            <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>103cfd1d-18b1-4790-8a0c-1e52621b0077</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e93</value>
+            <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>103cfd1d-18b1-4790-8a0c-1e52621b0078</value>
+            <value>14</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e94</value>
+            <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>103cfd1d-18b1-4790-8a0c-1e52621b0079</value>
+            <value>11</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e95</value>
+            <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>15</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e96</value>
+            <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>119caae6-5c1b-4a82-9858-dd9e5d2e1400</value>
+            <value>16</value>
+        </row>
+    </table>
+
+    <table name="event_notification_methods">
+        <column>method_id</column>
+        <column>method_type</column>
+        <row>
+            <value>1</value>
+            <value>Email</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>Pidgeon</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>Aldis Lamp</value>
+        </row>
+    </table>
+
+    <table name="event_map">
+        <column>event_up_name</column>
+        <column>event_down_name</column>
+        <row>
+            <value>TestRun</value>
+            <value>TestStop</value>
+        </row>
+    </table>
+
+    <table name="event_subscriber">
+        <column>subscriber_id</column>
+        <column>event_up_name</column>
+        <column>method_id</column>
+        <column>method_address</column>
+        <column>tag_name</column>
+        <row>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>TestRun</value>
+            <value>1</value>
+            <null />
+            <value>testrun</value>
+        </row>
+    </table>
+
+    <table name="disk_image_dynamic">
+        <column>image_id</column>
+        <column>read_rate</column>
+        <column>write_rate</column>
+        <column>actual_size</column>
+        <row>
+            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1073741824</value>
+        </row>
+        <row>
+            <value>42058975-3d5e-484a-80c1-01c31207f579</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1073741824</value>
+        </row>
+        <row>
+            <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1073741824</value>
+        </row>
+    </table>
+
+    <table name="image_vm_map">
+      <column>image_id</column>
+      <column>vm_id</column>
+      <column>active</column>
+      <row>
+        <value>42058975-3d5e-484a-80c1-01c31207f578</value>
+        <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+        <value>1</value>
+      </row>
+      <row>
+        <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
+        <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+        <value>0</value>
+      </row>
+    </table>
+
+    <table name="tags_user_group_map">
+        <column>tag_id</column>
+        <column>group_id</column>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0c</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+        </row>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0d</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+        </row>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0e</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+        </row>
+    </table>
+
+    <table name="tags_vds_map">
+        <column>tag_id</column>
+        <column>vds_id</column>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0c</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+        </row>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0d</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+        </row>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0e</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+        </row>
+    </table>
+
+    <table name="tags_vm_map">
+        <column>tag_id</column>
+        <column>vm_id</column>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0c</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+        </row>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0d</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+        </row>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0e</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+        </row>
+    </table>
+
+    <table name="vm_interface">
+        <column>id</column>
+        <column>network_name</column>
+        <column>vm_guid</column>
+        <column>vmt_guid</column>
+        <column>mac_addr</column>
+        <column>name</column>
+        <column>speed</column>
+        <column>type</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>e2817b12-f873-4046-b0da-0098293c14fd</value>
+            <value>engine</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>00:1a:4a:16:87:d9</value>
+            <value>nic1</value>
+            <value>1000</value>
+            <value>3</value>
+            <value>2010-11-18 11:14:08</value>
+            <null />
+        </row>
+        <row>
+            <value>14550e82-1e1f-47b5-ae41-b009348dabfa</value>
+            <value>engine2</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>00:1a:4a:16:87:da</value>
+            <value>nic2</value>
+            <value>1000</value>
+            <value>3</value>
+            <value>2010-11-18 11:14:09</value>
+            <null />
+        </row>
+    </table>
+
+    <table name="vm_interface_statistics">
+        <column>id</column>
+        <column>vm_id</column>
+        <column>rx_rate</column>
+        <column>tx_rate</column>
+        <column>rx_drop</column>
+        <column>tx_drop</column>
+        <column>iface_status</column>
+        <row>
+            <value>e2817b12-f873-4046-b0da-0098293c14fd</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>e2817b12-f873-4046-b0da-0098293c14fe</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+        </row>
+    </table>
+
+    <table name="vds_interface">
+        <column>id</column>
+        <column>name</column>
+        <column>network_name</column>
+        <column>vds_id</column>
+        <column>mac_addr</column>
+        <column>is_bond</column>
+        <column>bond_name</column>
+        <column>bond_type</column>
+        <column>vlan_id</column>
+        <column>speed</column>
+        <column>addr</column>
+        <column>subnet</column>
+        <column>gateway</column>
+        <column>boot_protocol</column>
+        <column>type</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <column>bond_opts</column>
+        <row>
+            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9db</value>
+            <value>eth0</value>
+            <value>engine</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>78:E7:D1:E4:8C:70</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>1000</value>
+            <value>10.35.110.10</value>
+            <value>255.255.255.0</value>
+            <null />
+            <value>1</value>
+            <value>2</value>
+            <value>2010-11-12 10:12:41</value>
+            <value>2010-11-12 15:57:01</value>
+            <null />
+        </row>
+        <row>
+            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9dc</value>
+            <value>eth0</value>
+            <value>engine</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>78:E7:D1:E4:8C:70</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>1000</value>
+            <value>10.35.110.10</value>
+            <value>255.255.255.0</value>
+            <null />
+            <value>1</value>
+            <value>2</value>
+            <value>2010-11-12 10:12:41</value>
+            <value>2010-11-12 15:57:01</value>
+            <null />
+        </row>
+    </table>
+
+    <table name="vds_interface_statistics">
+        <column>id</column>
+        <column>vds_id</column>
+        <column>rx_rate</column>
+        <column>tx_rate</column>
+        <column>rx_drop</column>
+        <column>tx_drop</column>
+        <column>iface_status</column>
+        <row>
+            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9db</value>
+            <null />
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9dc</value>
+            <null />
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+        </row>
+    </table>
+
+    <table name="roles_groups">
+        <column>role_id</column>
+        <column>action_group_id</column>
+        <row>
+            <value>f5972bfa-7102-4d33-ad22-9dd421bfba78</value>
+            <value>4</value>
+        </row>
+    </table>
+
+    <table name="vm_pool_map">
+        <column>vm_pool_id</column>
+        <column>vm_guid</column>
+        <row>
+            <value>103cfd1d-18b1-4790-8a0c-1e52621b0076</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+        </row>
+        <row>
+            <value>103cfd1d-18b1-4790-8a0c-1e52621b0076</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+        </row>
+    </table>
+
+    <table name="vm_template_image_map">
+        <column>it_guid</column>
+        <column>vmt_guid</column>
+        <column>internal_drive_mapping</column>
+        <row>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>2</value>
+        </row>
+    </table>
+
+    <table name="stateless_vm_image_map">
+        <column>vm_guid</column>
+        <column>image_guid</column>
+        <column>internal_drive_mapping</column>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
+            <value>q</value>
+        </row>
+    </table>
+
+    <table name="image_group_storage_domain_map">
+        <column>image_group_id</column>
+        <column>storage_domain_id</column>
+        <row>
+            <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+        </row>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+        </row>
+    </table>
+
+    <table name="time_lease_vm_pool_map">
+        <column>vm_pool_id</column>
+        <column>id</column>
+        <column>start_time</column>
+        <column>end_time</column>
+        <column>type</column>
+        <row>
+            <value>103cfd1d-18b1-4790-8a0c-1e52621b0076</value>
+            <value>87c27aec-0ae8-4071-ba64-4c8fba70b2a4</value>
+            <value>2011-02-09 14:46:51</value>
+            <value>2011-02-10 14:46:51</value>
+            <value>1</value>
+        </row>
+    </table>
+
+    <table name="action_version_map">
+        <column>action_type</column>
+        <column>cluster_minimal_version</column>
+        <column>storage_pool_minimal_version</column>
+        <row>
+            <value>1</value>
+            <value>2.3</value>
+            <value>2.3</value>
+        </row>
+    </table>
+
+    <table name="vds_spm_id_map">
+        <column>storage_pool_id</column>
+        <column>vds_spm_id</column>
+        <column>vds_id</column>
+        <row>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>1</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+        </row>
+    </table>
+
+    <table name="async_tasks">
+        <column>task_id</column>
+        <column>action_type</column>
+        <column>status</column>
+        <column>result</column>
+        <column>action_parameters</column>
+        <row>
+            <value>340FD52B-3400-4CDD-8D3F-C9D03704B0AA</value>
+            <value>1</value> <!--  Add VM -->
+            <value>2</value> <!--  Running -->
+            <value>0</value> <!--  Success -->
+            <null />
+        </row>
+        <row>
+            <value>340FD52B-3400-4CDD-8D3F-C9D03704B0AB</value>
+            <value>1</value> <!--  Add VM -->
+            <value>2</value> <!--  Running -->
+            <value>0</value> <!--  Success -->
+            <null />
+        </row>
+    </table>
+
+    <table name="image_vm_pool_map">
+        <column>vm_guid</column>
+        <column>image_guid</column>
+        <column>internal_drive_mapping</column>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
+            <value>c</value>
+        </row>
+    </table>
+
+    <table name="audit_log">
+        <column>audit_log_id</column>
+        <column>user_id</column>
+        <column>user_name</column>
+        <column>vm_id</column>
+        <column>vm_name</column>
+        <column>vm_template_id</column>
+        <column>vm_template_name</column>
+        <column>vds_id</column>
+        <column>vds_name</column>
+        <column>log_time</column>
+        <column>log_type_name</column>
+        <column>log_type</column>
+        <column>severity</column>
+        <column>message</column>
+        <column>processed</column>
+        <column>storage_pool_id</column>
+        <column>storage_pool_name</column>
+        <column>storage_domain_id</column>
+        <column>storage_domain_name</column>
+        <row>
+            <value>44291</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>userportal2</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>rhel5-pool-50</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>1</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>magenta-vdsc</value>
+            <value>2010-12-20 13:07:29</value>
+            <value>IRS_DISK_SPACE_LOW</value>
+            <value>26</value>
+            <value>1</value>
+            <value>Critical, Low disk space.  domain has 1 GB of free space</value>
+            <value>true</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>rhel6.iscsi</value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+        </row>
+        <row>
+            <value>44292</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>userportal2</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>rhel5-pool-50</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>1</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>magenta-vdsc</value>
+            <value>2010-12-20 13:08:29</value>
+            <value>IRS_DISK_SPACE_LOW</value>
+            <value>26</value>
+            <value>1</value>
+            <value>Critical, Low disk space.  domain has 1 GB of free space</value>
+            <value>true</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>rhel6.iscsi</value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+        </row>
+        <row>
+            <value>44293</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>userportal2</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>rhel5-pool-50</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>1</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>magenta-vdsc</value>
+            <value>2010-12-20 13:09:29</value>
+            <value>IRS_DISK_SPACE_LOW_ERROR</value>
+            <value>201</value>
+            <value>0</value>  <!--  Set processed to 0 for testing event_notification_hist link -->
+            <value>Critical, Low disk space.  domain has 1 GB of free space</value>
+            <value>true</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>rhel6.iscsi</value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+        </row>
+        <row>
+            <value>44294</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>userportal2</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>rhel5-pool-50</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>1</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>magenta-vdsc</value>
+            <value>2010-12-20 13:10:29</value>
+            <value>IRS_DISK_SPACE_LOW_ERROR</value>
+            <value>201</value>
+            <value>10</value>
+            <value>Critical, Low disk space.  domain has 1 GB of free space</value>
+            <value>true</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>rhel6.iscsi</value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+        </row>
+        <row>
+            <value>44295</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>userportal2</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>rhel5-pool-50</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>1</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>magenta-vdsc</value>
+            <value>2010-12-20 13:11:29</value>
+            <value>IRS_DISK_SPACE_LOW_ERROR</value>
+            <value>201</value>
+            <value>10</value>
+            <value>Critical, Low disk space.  domain has 1 GB of free space</value>
+            <value>true</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>rhel6.iscsi</value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+        </row>
+    </table>
+
+    <table name="event_notification_hist">
+        <column>status</column>
+        <column>subscriber_id</column>
+        <column>event_name</column>
+        <column>audit_log_id</column>
+        <column>method_type</column>
+        <column>sent_at</column>
+        <column>reason</column>
+        <row>
+            <value>true</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>event_name</value>
+            <value>44293</value>
+            <value>email</value>
+            <value>2010-12-20 13:09:29</value>
+            <value>reason</value>
+        </row>
+        <row>
+            <value>true</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>event_name</value>
+            <value>44294</value>
+            <value>email</value>
+            <value>2010-12-20 13:10:29</value>
+            <value>reason</value>
+        </row>
+        <row>
+            <value>true</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>event_name</value>
+            <value>44295</value>
+            <value>email</value>
+            <value>2010-12-20 13:11:29</value>
+            <value>reason</value>
+        </row>
+    </table>
+
+    <table name="tags_vm_pool_map">
+        <column>tag_id</column>
+        <column>vm_pool_id</column>
+        <row>
+            <value>d3ec3e01-ca89-48e1-8b43-a9b38f873b0c</value>
+            <value>103cfd1d-18b1-4790-8a0c-1e52621b0076</value>
+        </row>
+    </table>
+    
+    <table name="repo_file_meta_data">
+        <column>repo_domain_id</column>
+        <column>repo_file_name</column>
+        <column>size</column>
+        <column>last_refreshed</column>
+        <column>file_type</column>
+        <row>
+            <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
+            <value>iso1.iso</value>
+            <value>0</value>
+            <value>1300701900174</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
+            <value>floppy.vfd</value>
+            <value>0</value>
+            <value>1300701900174</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
+            <value>floppy2.vfd</value>
+            <value>0</value>
+            <value>1300701900172</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
+            <value>unknown.unknown</value>
+            <value>0</value>
+            <value>1300701900171</value>
+            <value>0</value>
+        </row>        
+    </table>
+
+    <table name="business_entity_snapshot">
+        <column>id</column>
+        <column>command_id</column>
+        <column>command_type</column>
+        <column>entity_id</column>
+        <column>entity_type</column>
+	<column>entity_snapshot</column>
+        <column>snapshot_class</column>
+		<column>snapshot_type</column>
+		<column>insertion_order</column>
+	
+        <row>
+            <value>1f5c320e-b46b-414b-8fbd-ad1c0c9e71c4</value>
+            <value>48e85ac4-17cc-40d1-8b4e-37edcea8d78a</value>
+            <value>org.ovirt.engine.core.bll.UpdateVmCommand</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>org.ovirt.engine.core.common.businessentities.VmStatic</value>
+            <null />
+            <value>org.ovirt.engine.core.common.businessentities.VmStatic</value>
+            <value>1</value>
+			<value>1</value>
+        </row>
+        <row>
+            <value>d2353f5f-3af3-4a7f-ba87-85a3a45c7bd2</value>
+            <value>48e85ac4-17cc-40d1-8b4e-37edcea8d78a</value>
+            <value>org.ovirt.engine.core.bll.UpdateVmCommand</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>org.ovirt.engine.core.common.businessentities.VmStatic</value>
+            <null />
+            <value>org.ovirt.engine.core.common.businessentities.VmStatic</value>
+            <value>1</value>
+			<value>2</value>
+        </row>
+        <row>
+            <value>021e0490-6d01-4fcf-b369-ed91565e3030</value>
+            <value>0dcaa6a5-16fe-4270-8614-5dd249a057e0</value>
+            <value>org.ovirt.engine.core.bll.UpdateVdsGroupCommand</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>org.ovirt.engine.core.common.businessentities.VdsGroup</value>
+	    <null />
+	    <value>org.ovirt.engine.core.common.businessentities.VdsGroup</value>
+            <value>1</value>
+			<value>1</value>
+        </row>
+    </table>
+
+
+</dataset>

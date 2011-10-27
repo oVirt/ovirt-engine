@@ -1,0 +1,61 @@
+.cellTableWidget {
+}
+
+.cellTableFirstColumn {
+	padding: 2px 15px;
+}
+
+.cellTableLastColumn {
+	
+}
+
+.cellTableFooter {
+}
+
+.cellTableHeader {
+	border-top: 1px solid #E3EDF6;
+	border-bottom: 1px solid #E3EDF6;
+	border-left: 1px solid #D7D7E1;
+	padding: 0px 0px;
+	padding-left: 3px;
+	text-align: left;
+	color: #111111;
+	font-family: Arial,sans-serif;
+	font-size: 11px;
+	background-color: #F0F2FF;
+	height: 28px;	
+}
+
+.cellTableCell {
+	padding: 0px 3px;
+	height: 26px !important;
+	border-top: 0px;
+	border-bottom: 1px solid #EDEEF0;
+	border-right: 0px;
+	border-left: 0px;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.cellTableEvenRow {
+	background-color: #ffffff;
+}
+
+.cellTableOddRow {
+	background-color: #f3f7fb;
+}
+
+.cellTableHoveredRow {
+	background-color: #eee;
+}
+
+.cellTableSelectedRow {
+	background-color: #C3D0E0;
+	color: white;
+	overflow: auto;
+}
+
+@sprite .cellTableLoading {
+	gwt-image: 'cellTableLoading';
+	margin: 3px;
+}

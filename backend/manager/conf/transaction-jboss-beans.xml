@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+    <bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jta.TransactionManagerService">
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss:service=TransactionManager", exposedInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation>
+        <annotation>@org.jboss.managed.api.annotation.ManagementObject(name="TransactionManager",componentType=@org.jboss.managed.api.annotation.ManagementComponent(type = "MCBean", subtype = "JTA"),targetInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class)</annotation>
+
+        <property name="transactionTimeout">600</property>
+        <property name="objectStoreDir">${jboss.server.data.dir}/tx-object-store</property>
+        <property name="mbeanServer"><inject bean="JMXKernel" property="mbeanServer"/></property>
+
+        <property name="transactionStatusManagerInetAddress">
+            <value-factory bean="ServiceBindingManager"
+                           method="getInetAddressBinding">
+                <parameter>TransactionManager</parameter>
+                <parameter>transactionStatusManager</parameter>
+            </value-factory>
+        </property>
+        <property name="transactionStatusManagerPort">
+            <value-factory bean="ServiceBindingManager"
+                           method="getIntBinding" >
+                <parameter>TransactionManager</parameter>
+                <parameter>transactionStatusManager</parameter>
+            </value-factory>
+        </property>
+
+        <property name="recoveryInetAddress">
+            <value-factory bean="ServiceBindingManager"
+                           method="getInetAddressBinding">
+                <parameter>TransactionManager</parameter>
+                <parameter>recoveryManager</parameter>
+            </value-factory>
+        </property>
+        <property name="recoveryPort">
+            <value-factory bean="ServiceBindingManager"
+                           method="getIntBinding" >
+                <parameter>TransactionManager</parameter>
+                <parameter>recoveryManager</parameter>
+            </value-factory>
+        </property>
+
+        <property name="socketProcessIdPort">0</property>
+
+    </bean>
+
+    <!-- Make javax.transaction.TransactionManager available for injection -->
+    <bean name="RealTransactionManager">
+      <constructor factoryMethod="getTransactionManager">
+        <factory bean="TransactionManager"/>
+      </constructor>
+    </bean>
+
+    <!-- Handles user transaction providers and listeners -->
+    <bean name="UserTransactionRegistry" class="org.jboss.tm.usertx.UserTransactionRegistry">
+      <!-- Register providers -->
+      <incallback method="addProvider"/>
+      <uncallback method="removeProvider"/>
+      <!-- Register listeners -->
+      <incallback method="addListener"/>
+      <uncallback method="removeListener"/>
+    </bean>
+
+    <!-- The provider for default in process UserTransactions -->
+    <bean name="DefaultUserTransactionprovider" class="org.jboss.tm.usertx.client.ServerVMClientUserTransaction">
+       <constructor factoryClass="org.jboss.tm.usertx.client.ServerVMClientUserTransaction" factoryMethod="getSingleton"/>
+       <demand>TransactionManager</demand>
+    </bean>
+
+</deployment>

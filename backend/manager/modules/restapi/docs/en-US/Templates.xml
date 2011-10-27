@@ -1,0 +1,331 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "REST_API_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter id="chap-REST_API_Guide-Templates">
+  <title>Templates</title>
+  <para>
+    The <literal>templates</literal> collection provides information about the virtual machine templates in a Red Hat Enterprise Virtualization environment. An API user accesses this information through the <literal>rel="templates"</literal> link obtained from the entry point URI (see <xref linkend="chap-REST_API_Guide-Entry_Point"/>).
+  </para>
+  <para>
+    The following table shows specific elements contained in a virtual machine template resource representation.
+  </para>
+  <note>
+    <title>Element property icons</title>
+    <para>
+      The icons used in the properties column of this table are described in <xref linkend="table-Property_Icons" />
+    </para>
+  </note> 
+  <informaltable frame="none">
+    <tgroup cols="4">
+      <colspec colwidth="5*"/>
+      <colspec colwidth="3*"/>
+      <colspec colwidth="6*"/>
+      <colspec colwidth="2*" colname="prop"/>
+      <thead>
+        <row>
+          <entry>Element</entry>
+          <entry>Type</entry>
+          <entry>Description</entry>
+          <entry>Properties</entry>
+        </row>
+      </thead>
+      <tbody>
+<!--
+        <row>
+          <entry><literal>name</literal></entry>
+          <entry>string</entry>
+          <entry>	A user-supplied human readable name for the template. The <literal>name</literal> is unique across all template resources.</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>description</literal></entry>
+          <entry>string</entry>
+          <entry>A free-form user-supplied human readable description of the template</entry>
+          <entry></entry>
+        </row>
+-->
+        <row>
+          <entry><literal>link rel="disks"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the disks sub-collection for virtual machine resources</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>link rel="nics"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the network interface sub-collection for virtual machine resources</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>link rel="cdroms"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the cdroms sub-collection for virtual machine resources</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>link rel="permissions"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the sub-collection for virtual machine permissions. See <xref linkend="sect-REST_API_Guide-Common_Features-Resources-Permissions"/></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>type</literal></entry>
+          <entry>enumerated</entry>
+          <entry>The type of virtual machine the template provides. A list of enumerated values are available in <literal>capabilities</literal>. See <xref linkend="sect-REST_API_Guide-Capabilities-Version-VM_Types"/></entry>
+          <entry> </entry>
+        </row>
+        <row>
+          <entry><literal>status</literal></entry>
+          <entry>One of <literal>ILLEGAL</literal>, <literal>LOCKED</literal> or <literal>OK</literal></entry>
+          <entry>The template status</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>memory</literal></entry>
+          <entry>integer</entry>
+          <entry>The amount of memory allocated to the guest, in bytes</entry>
+          <entry> </entry>
+        </row>
+        <row>
+          <entry><literal>cpu</literal></entry>
+          <entry>complex</entry>
+          <entry>The CPU <literal>topology</literal> (i.e. number of <literal>sockets</literal> and <literal>cores</literal>) available to the guest</entry>
+          <entry> </entry>
+        </row>
+        <row>
+          <entry><literal>os</literal> <literal>type=</literal></entry>
+          <entry>string, e.g. <literal>RHEL5</literal> or <literal>WindowsXP</literal></entry>
+          <entry>The guest operating system type</entry>
+          <entry> </entry>
+        </row>
+        <row>
+          <entry><literal>os</literal> <literal>boot dev=</literal></entry>
+          <entry>enumerated</entry>
+          <entry>A list of boot devices, described by a <literal>dev</literal> attribute on a <literal>boot</literal> element. A list of enumerated values are available in <literal>capabilities</literal>. See <xref linkend="sect-REST_API_Guide-Capabilities-Version-Boot_Devices"/></entry>
+          <entry> </entry>
+        </row>
+        <row>
+          <entry><literal>os</literal> <literal>kernel</literal></entry>
+          <entry>string</entry>
+          <entry>A path to a kernel image which the template is configured to boot from</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>os</literal> <literal>initrd</literal></entry>
+          <entry>string</entry>
+          <entry>A path to an initrd image to be used with the kernel above</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>os</literal> <literal>cmdline</literal></entry>
+          <entry>string</entry>
+          <entry>A kernel command line parameter string to be used with the kernel above</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>cluster id=</literal></entry>
+          <entry>GUID</entry>
+          <entry>A reference to the template's host cluster. See <xref linkend="chap-REST_API_Guide-Clusters"/></entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>vm id=</literal></entry>
+          <entry>GUID</entry>
+          <entry>A reference to the VM on which this template is based. See <xref linkend="chap-REST_API_Guide-VMs"/></entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>domain id=</literal></entry>
+          <entry>GUID</entry>
+          <entry>A reference to the template's domain.</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>creation_time</literal></entry>
+          <entry><literal>xsd:dateTime</literal> format: <literal>YYYY-MM-DDThh:mm:ss</literal></entry>
+          <entry>The date and time at which this template was created</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>origin</literal></entry>
+          <entry>One of <literal>rhev</literal>, <literal>vmware</literal> or <literal>xen</literal></entry>
+          <entry>The system from which this template originated</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>high_availability</literal></entry>
+          <entry>complex</entry>
+          <entry>Set <literal>enabled</literal> to <literal>true</literal> if the VM should be automatically restarted if the host crashes. A <literal>priority</literal> element controls the order in which VMs are re-started</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>display</literal></entry>
+          <entry>complex</entry>
+          <entry>The display <literal>type</literal> (either <literal>vnc</literal> or <literal>spice</literal>), port, and the number of <literal>monitors</literal></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>stateless</literal></entry>
+          <entry>boolean: true or false</entry>
+          <entry>A stateless template contains a snapshot of its disk image taken at boot and deleted at shutdown. This means state changes do not persist after a reboot</entry>
+          <entry> </entry>
+        </row>
+        <row>
+          <entry><literal>usb</literal></entry>
+          <entry>complex</entry>
+          <entry>Defines the USB policy for a virtual machine template. Requires an <literal>enabled</literal> element set to a boolean value.</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>timezone</literal></entry>
+          <entry>tz database format: <literal>Area/Location</literal></entry>
+          <entry>The timezone for this VM. Only certain timezones are allowed as specified in <xref linkend="appe-REST_API_Guide-Timezones"/></entry>
+          <entry></entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <example>
+    <title>An XML representation of a virtual machine template</title>
+    <screen>
+&lt;template id="00000000-0000-0000-0000-000000000000"
+  href="/restapi-definition/templates/00000000-0000-0000-0000-000000000000"&gt;
+    &lt;name&gt;Blank&lt;/name&gt;
+    &lt;description&gt;Blank template&lt;/description&gt;
+    &lt;actions&gt;
+        &lt;link rel="export"
+          href="/restapi-definition/templates/00000000-0000-0000-0000-000000000000/export"/&gt;
+    &lt;/actions&gt;
+    &lt;link rel="disks"
+      href="/restapi-definition/templates/00000000-0000-0000-0000-000000000000/disks"/&gt;
+    &lt;link rel="nics"
+      href="/restapi-definition/templates/00000000-0000-0000-0000-000000000000/nics"/&gt;
+    &lt;link rel="cdroms"
+      href="/restapi-definition/templates/00000000-0000-0000-0000-000000000000/cdroms"/&gt;
+    &lt;link rel="permissions"
+      href="/restapi-definition/templates/00000000-0000-0000-0000-000000000000/permissions"/&gt;
+    &lt;type&gt;server&lt;/type&gt;
+    &lt;status&gt;OK&lt;/status&gt;
+    &lt;memory&gt;536870912&lt;/memory&gt;
+    &lt;cpu&gt;
+        &lt;topology cores="1" sockets="1"/&gt;
+    &lt;/cpu&gt;
+    &lt;os&gt;
+        &lt;boot dev="hd"/&gt;
+        &lt;kernel/&gt;
+        &lt;initrd/&gt;
+        &lt;cmdline/&gt;
+    &lt;/os&gt;
+    &lt;cluster id="99408929-82cf-4dc7-a532-9d998063fa95"
+      href="/restapi-definition/clusters/99408929-82cf-4dc7-a532-9d998063fa95"/&gt;
+    &lt;creation_time&gt;2010-08-16T14:24:29&lt;/creation_time&gt;
+    &lt;origin&gt;rhev&lt;/origin&gt;
+    &lt;highly_available&gt;
+        &lt;enabled&gt;true&lt;/enabled&gt;
+        &lt;priority&gt;100&lt;/priority&gt;
+    &lt;/highly_available&gt;
+    &lt;display&gt;
+        &lt;type&gt;vnc&lt;/type&gt;
+        &lt;port&gt;5910&lt;/port&gt;
+        &lt;monitors&gt;1&lt;/monitors&gt;
+    &lt;/display&gt;
+    &lt;stateless&gt;false&lt;/stateless&gt;
+    &lt;usb&gt;
+        &lt;enabled&gt;true&lt;/enabled&gt;
+    &lt;/usb&gt;
+    &lt;timezone&gt;Europe/London&lt;/timezone&gt;
+&lt;/template&gt;
+    </screen>
+  </example>
+  <para>
+    Creation of a new template requires the <literal>name</literal> and <literal>vm</literal> elements. Identify the <literal>vm</literal> with the <literal>id</literal> attribute or <literal>name</literal> element. See <xref linkend="sect-REST_API_Guide-Common_Features-Resources-Creating_Resources"/> for more information.
+  </para>
+  <example>
+    <title>Creating a template from a virtual machine</title>
+    <screen>
+POST /restapi-definition/templates HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;template&gt;
+    &lt;name&gt;template1&lt;/name&gt;
+    &lt;vm id="082c794b-771f-452f-83c9-b2b5a19c0399"/&gt;
+&lt;/template&gt;
+    </screen>
+  </example>
+  <para>
+    The <literal>name</literal>, <literal>description</literal>, <literal>type</literal>, <literal>memory</literal>, <literal>cpu topology</literal>, <literal>os</literal>, <literal>high_availaility</literal>, <literal>display</literal>, <literal>stateless</literal>, <literal>usb</literal> and <literal>timezone</literal> properties are updatable post-creation. See <xref linkend="sect-REST_API_Guide-Common_Features-Resources-Updating_Resources"/> for more information.
+  </para>
+  <example>
+    <title>Updating a virtual machine template to contain 1&nbsp;GB of memory</title>
+    <screen>
+PUT /restapi-definition/templates/284t367e-332y-935u-26u9-u9n3l56e8429 HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;template&gt;
+    &lt;memory&gt;1073741824&lt;/memory&gt;
+&lt;/template&gt;
+    </screen>
+  </example>
+  <para>
+    Removal of a virtual machine template requires a <literal>DELETE</literal> request.
+  </para>
+  <example>
+    <title>Removing a virtual machine template</title>
+    <screen>
+DELETE /restapi-definition/templates/284t367e-332y-935u-26u9-u9n3l56e8429 HTTP/1.1
+
+HTTP/1.1 204 No Content
+    </screen>
+  </example>    
+  <para>
+    Templates contains a number of read-only device collections that follow the same XML representation structure as devices in the <literal>vms</literal> collection:
+  </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          <literal>disks</literal> - See <xref linkend="sect-REST_API_Guide-VMs-Disks"/>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>nics</literal> - See <xref linkend="sect-REST_API_Guide-VMs-NICs"/>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>cdroms</literal> - See <xref linkend="sect-REST_API_Guide-VMs-CDROMs"/>.
+        </para>
+      </listitem>
+    </itemizedlist>
+
+
+  <section id="sect-REST_API_Guide-Templates-Export">
+    <title>
+      Export Action
+    </title>
+ <para>
+    The <literal>templates</literal> collection contains an <literal>export</literal> action. Information on the action for importing templates is found in <xref linkend="sect-REST_API_Guide-Storage_Domains-Listing"/>.
+  </para>
+    <para>
+      The export action exports a template to an <literal>Export</literal> storage domain. A destination storage domain is specified with a <literal>storage_domain</literal> reference. By default, the export action overwrites any existing template with the same name in the destination domain. The <literal>exclusive</literal> parameter set to <literal>true</literal> avoids this.
+    </para>
+
+    <example>
+      <title>Action to export a template to an export storage domain</title>
+      <screen>
+POST /restapi-definition/templates/00000000-0000-0000-0000-000000000000/export HTTP/1.1
+Content-type: application/xml
+
+&lt;action&gt;
+    &lt;storage_domain id="fabe0451-701f-4235-8f7e-e20e458819ed"/&gt;
+    &lt;exclusive&gt;true&lt;exclusive/&gt;
+&lt;/action&gt;
+      </screen>
+    </example>
+  </section>
+
+</chapter>

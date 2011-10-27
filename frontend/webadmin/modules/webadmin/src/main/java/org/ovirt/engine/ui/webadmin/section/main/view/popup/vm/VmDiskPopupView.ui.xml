@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+
+	<ui:style>
+		.macExample {
+			color: gray;
+			float: right;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="400px" height="340px">
+		<d:content>
+			<g:FlowPanel>
+				<e:EntityModelTextBoxEditor ui:field="sizeEditor"/>
+				<e:ListModelListBoxEditor ui:field="storageDomainEditor" />
+				<e:ListModelListBoxEditor ui:field="presetEditor" />
+				<e:ListModelListBoxEditor ui:field="interfaceEditor" />
+				<e:ListModelListBoxEditor ui:field="volumeTypeEditor" />
+				<e:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor"/>
+				<e:EntityModelCheckBoxEditor ui:field="isBootableEditor"/>
+			</g:FlowPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

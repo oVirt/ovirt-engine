@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data_centers>
+    <data_center id="610cee6b-fb02-4a1b-b155-a19da36e7d20" href="/api/datacenters/610cee6b-fb02-4a1b-b155-a19da36e7d20">
+        <name>Datacenter1</name>
+        <description>Data Center 1 Description</description>
+        <link rel="files" href="/api/datacenters/610cee6b-fb02-4a1b-b155-a19da36e7d20/files"/>
+        <link rel="storagedomains" href="/api/datacenters/610cee6b-fb02-4a1b-b155-a19da36e7d20/storagedomains"/>
+        <link rel="permissions" href="/api/datacenters/610cee6b-fb02-4a1b-b155-a19da36e7d20/permissions"/>
+        <storage_type>nfs</storage_type>
+        <version minor="3" major="2"/>
+        <supported_versions>
+            <version minor="3" major="2"/>
+        </supported_versions>
+        <status>UNINITIALIZED</status>
+    </data_center>
+    <data_center id="73353357-93be-4098-87b2-16bafbbfa0ac" href="/api/datacenters/73353357-93be-4098-87b2-16bafbbfa0ac">
+        <name>Default</name>
+        <description>The default Data Center</description>
+        <link rel="files" href="/api/datacenters/73353357-93be-4098-87b2-16bafbbfa0ac/files"/>
+        <link rel="storagedomains" href="/api/datacenters/73353357-93be-4098-87b2-16bafbbfa0ac/storagedomains"/>
+        <link rel="permissions" href="/api/datacenters/73353357-93be-4098-87b2-16bafbbfa0ac/permissions"/>
+        <storage_type>nfs</storage_type>
+        <version minor="2" major="2"/>
+        <supported_versions>
+            <version minor="2" major="2"/>
+        </supported_versions>
+        <status>UNINITIALIZED</status>
+    </data_center>
+</data_centers>

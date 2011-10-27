@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+
+	<ui:style>
+		.content {
+		}		
+				
+		.errorMessageLabel {
+			color: #CD2127;
+			margin-top: 15px;
+			margin-left: 5px;
+		}
+				
+		.isTemplatePrivateEditor {
+			margin-top: 10px;
+		}
+		
+	</ui:style>
+	
+	<d:SimpleDialogPanel width="400px" height="320px">
+		<d:content>
+			<g:FlowPanel>
+				<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+				<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+				<e:ListModelListBoxEditor ui:field="clusterEditor" />
+				<e:ListModelListBoxEditor ui:field="storageDomainEditor" />
+				<e:EntityModelCheckBoxEditor ui:field="isTemplatePrivateEditor" addStyleNames="isTemplatePrivateEditor" />
+				<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
+			</g:FlowPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

@@ -1,0 +1,18 @@
+.cellTableCell {
+	background-color: white;
+	text-align: left;
+	cursor: hand;
+}
+
+.cellTableOddRowCell,.cellTableEvenRowCell {
+	background-color: white;
+	border: 0px;
+}
+
+.cellTableSelectedRow,.cellTableSelectedRowCell,.cellTableKeyboardSelectedRowCell {
+	background-color: #C3D0E0;
+}
+
+.cellTableHoveredRow .cellTableHoveredRowCell {
+	background-color: #F0F0F0;
+}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<datasources>
+    <local-tx-datasource>
+         <jndi-name>ENGINEDataSource</jndi-name>
+         <connection-url>jdbc:postgresql://localhost/engine</connection-url>
+         <driver-class>org.postgresql.Driver</driver-class>
+         <security-domain>EncryptDBPassword</security-domain>
+         <check-valid-connection-sql>select 1</check-valid-connection-sql>
+    </local-tx-datasource>
+</datasources>

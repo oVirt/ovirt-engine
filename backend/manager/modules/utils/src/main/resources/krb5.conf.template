@@ -1,0 +1,16 @@
+
+[libdefaults]
+
+#default_realm = EXAMPLE.COM
+dns_lookup_realm = false
+dns_lookup_kdc = false
+ticket_lifetime = 24h
+renew_lifetime = 7d
+forwardable = no
+#default_tkt_enctypes = arcfour-hmac-md5
+udp_preference_limit = 1
+
+#realms
+
+#domain_realm
+

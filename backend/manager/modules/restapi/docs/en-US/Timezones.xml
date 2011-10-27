@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE appendix PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "REST_API_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<appendix id="appe-REST_API_Guide-Timezones">
+	<title>Timezones</title>
+		<para>The API maps Windows Standard Format timezone names to tz database format when specifying a timezone for a virtual machine or VM template. This means the API only accepts certain tz database codes, which the following table lists:</para>
+    <informaltable frame="none">
+      <tgroup cols="2">
+        <colspec colwidth="5*"/>
+        <colspec colwidth="5*"/>
+        <thead>
+          <row>
+            <entry>tz database Format</entry>
+            <entry>Windows Standard Format</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row><entry>Africa/Cairo</entry><entry>Egypt Standard Time</entry></row>
+          <row><entry>Africa/Casablanca</entry><entry>Morocco Standard Time</entry></row>
+          <row><entry>Africa/Johannesburg</entry><entry>South Africa Standard Time</entry></row>
+          <row><entry>Africa/Lagos</entry><entry>W. Central Africa Standard Time</entry></row>
+          <row><entry>Africa/Nairobi</entry><entry>E. Africa Standard Time</entry></row>
+          <row><entry>Africa/Reykjavik</entry><entry>Greenwich Standard Time</entry></row>
+          <row><entry>Africa/Windhoek</entry><entry>Namibia Standard Time</entry></row>
+          <row><entry>America/Anchorage</entry><entry>Alaskan Standard Time</entry></row>
+          <row><entry>America/Bogota</entry><entry>SA Pacific Standard Time</entry></row>
+          <row><entry>America/Buenos_Aires</entry><entry>Argentina Standard Time</entry></row>
+          <row><entry>America/Caracas</entry><entry>Venezuela Standard Time</entry></row>
+          <row><entry>America/Chicago</entry><entry>Central Standard Time</entry></row>
+          <row><entry>America/Chihuahua</entry><entry>Mexico Standard Time</entry></row>
+          <row><entry>America/Chihuahua</entry><entry>Mountain Standard Time</entry></row>
+          <row><entry>America/Denver</entry><entry>Mountain Standard Time</entry></row>
+          <row><entry>America/Godthab</entry><entry>Greenland Standard Time</entry></row>
+          <row><entry>America/Guatemala</entry><entry>Central America Standard Time</entry></row>
+          <row><entry>America/Halifax</entry><entry>Atlantic Standard Time</entry></row>
+          <row><entry>America/La_Paz</entry><entry>SA Western Standard Time</entry></row>
+          <row><entry>America/Los_Angeles</entry><entry>Pacific Standard Time</entry></row>
+          <row><entry>America/Manaus</entry><entry>Central Brazilian Standard Time</entry></row>
+          <row><entry>America/Mexico_City</entry><entry>Central Standard Time</entry></row>
+          <row><entry>America/Mexico_City</entry><entry>Mexico Standard Time</entry></row>
+          <row><entry>America/Montevideo</entry><entry>Montevideo Standard Time</entry></row>
+          <row><entry>America/New_York</entry><entry>Eastern Standard Time</entry></row>
+          <row><entry>America/Phoenix</entry><entry>US Mountain Standard Time</entry></row>
+          <row><entry>America/Regina</entry><entry>Canada Central Standard Time</entry></row>
+          <row><entry>America/Santiago</entry><entry>Pacific SA Standard Time</entry></row>
+          <row><entry>America/Sao_Paulo</entry><entry>E. South America Standard Time</entry></row>
+          <row><entry>America/St_Johns</entry><entry>Newfoundland Standard Time</entry></row>
+          <row><entry>America/Tijuana</entry><entry>Pacific Standard Time</entry></row>
+          <row><entry>Asia/Amman</entry><entry>Jordan Standard Time</entry></row>
+          <row><entry>Asia/Baghdad</entry><entry>Arabic Standard Time</entry></row>
+          <row><entry>Asia/Baku</entry><entry>Azerbaijan Standard Time</entry></row>
+          <row><entry>Asia/Bangkok</entry><entry>SE Asia Standard Time</entry></row>
+          <row><entry>Asia/Beirut</entry><entry>Middle East Standard Time</entry></row>
+          <row><entry>Asia/Calcutta</entry><entry>India Standard Time</entry></row>
+          <row><entry>Asia/Colombo</entry><entry>Sri Lanka Standard Time</entry></row>
+          <row><entry>Asia/Dhaka</entry><entry>Central Asia Standard Time</entry></row>
+          <row><entry>Asia/Dubai</entry><entry>Arabian Standard Time</entry></row>
+          <row><entry>Asia/Irkutsk</entry><entry>North Asia East Standard Time</entry></row>
+          <row><entry>Asia/Jerusalem</entry><entry>Israel Standard Time</entry></row>
+          <row><entry>Asia/Kabul</entry><entry>Afghanistan Standard Time</entry></row>
+          <row><entry>Asia/Karachi</entry><entry>Pakistan Standard Time</entry></row>
+          <row><entry>Asia/Katmandu</entry><entry>Nepal Standard Time</entry></row>
+          <row><entry>Asia/Krasnoyarsk</entry><entry>North Asia Standard Time</entry></row>
+          <row><entry>Asia/Novosibirsk</entry><entry>N. Central Asia Standard Time</entry></row>
+          <row><entry>Asia/Rangoon</entry><entry>Myanmar Standard Time</entry></row>
+          <row><entry>Asia/Riyadh</entry><entry>Arab Standard Time</entry></row>
+          <row><entry>Asia/Seoul</entry><entry>Korea Standard Time</entry></row>
+          <row><entry>Asia/Shanghai</entry><entry>China Standard Time</entry></row>
+          <row><entry>Asia/Singapore</entry><entry>Singapore Standard Time</entry></row>
+          <row><entry>Asia/Taipei</entry><entry>Taipei Standard Time</entry></row>
+          <row><entry>Asia/Tashkent</entry><entry>West Asia Standard Time</entry></row>
+          <row><entry>Asia/Tehran</entry><entry>Iran Standard Time</entry></row>
+          <row><entry>Asia/Tokyo</entry><entry>Tokyo Standard Time</entry></row>
+          <row><entry>Asia/Vladivostok</entry><entry>Vladivostok Standard Time</entry></row>
+          <row><entry>Asia/Yakutsk</entry><entry>Yakutsk Standard Time</entry></row>
+          <row><entry>Asia/Yekaterinburg</entry><entry>Ekaterinburg Standard Time</entry></row>
+          <row><entry>Asia/Yerevan</entry><entry>Armenian Standard Time</entry></row>
+          <row><entry>Asia/Yerevan</entry><entry>Caucasus Standard Time</entry></row>
+          <row><entry>Atlantic/Azores</entry><entry>Azores Standard Time</entry></row>
+          <row><entry>Atlantic/Cape_Verde</entry><entry>Cape Verde Standard Time</entry></row>
+          <row><entry>Atlantic/South_Georgia</entry><entry>Mid-Atlantic Standard Time</entry></row>
+          <row><entry>Australia/Adelaide</entry><entry>Cen. Australia Standard Time</entry></row>
+          <row><entry>Australia/Brisbane</entry><entry>E. Australia Standard Time</entry></row>
+          <row><entry>Australia/Darwin</entry><entry>AUS Central Standard Time</entry></row>
+          <row><entry>Australia/Hobart</entry><entry>Tasmania Standard Time</entry></row>
+          <row><entry>Australia/Perth</entry><entry>W. Australia Standard Time</entry></row>
+          <row><entry>Australia/Sydney</entry><entry>AUS Eastern Standard Time</entry></row>
+          <row><entry>Etc/GMT-3</entry><entry>Georgian Standard Time</entry></row>
+          <row><entry>Etc/GMT+12</entry><entry>Dateline Standard Time</entry></row>
+          <row><entry>Etc/GMT+3</entry><entry>SA Eastern Standard Time</entry></row>
+          <row><entry>Etc/GMT+5</entry><entry>US Eastern Standard Time</entry></row>
+          <row><entry>Europe/Berlin</entry><entry>W. Europe Standard Time</entry></row>
+          <row><entry>Europe/Budapest</entry><entry>Central Europe Standard Time</entry></row>
+          <row><entry>Europe/Istanbul</entry><entry>GTB Standard Time</entry></row>
+          <row><entry>Europe/Kiev</entry><entry>FLE Standard Time</entry></row>
+          <row><entry>Europe/London</entry><entry>GMT Standard Time</entry></row>
+          <row><entry>Europe/Minsk</entry><entry>E. Europe Standard Time</entry></row>
+          <row><entry>Europe/Moscow</entry><entry>Russian Standard Time</entry></row>
+          <row><entry>Europe/Paris</entry><entry>Romance Standard Time</entry></row>
+          <row><entry>Europe/Warsaw</entry><entry>Central European Standard Time</entry></row>
+          <row><entry>Indian/Mauritius</entry><entry>Mauritius Standard Time</entry></row>
+          <row><entry>Pacific/Apia</entry><entry>Samoa Standard Time</entry></row>
+          <row><entry>Pacific/Auckland</entry><entry>New Zealand Standard Time</entry></row>
+          <row><entry>Pacific/Fiji</entry><entry>Fiji Standard Time</entry></row>
+          <row><entry>Pacific/Guadalcanal</entry><entry>Central Pacific Standard Time</entry></row>
+          <row><entry>Pacific/Honolulu</entry><entry>Hawaiian Standard Time</entry></row>
+          <row><entry>Pacific/Port_Moresby</entry><entry>West Pacific Standard Time</entry></row>
+          <row><entry>Pacific/Tongatapu</entry><entry>Tonga Standard Time</entry></row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+</appendix>

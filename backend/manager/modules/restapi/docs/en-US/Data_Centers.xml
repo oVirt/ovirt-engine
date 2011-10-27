@@ -1,0 +1,257 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "REST_API_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter id="chap-REST_API_Guide-Data_Centers">
+  <title>Data Centers</title>
+  <para>
+    The <literal>datacenters</literal> collection provides information about the data centers in a Red Hat Enterprise Virtualization environment. An API user accesses this information through the <literal>rel="datacenters"</literal> link obtained from the entry point URI (see <xref linkend="chap-REST_API_Guide-Entry_Point"/>).
+  </para>
+  <para>
+    The following table shows specific elements contained in a data center resource representation.
+  </para>
+  <note>
+    <title>Element property icons</title>
+    <para>
+      The icons used in the properties column of this table are described in <xref linkend="table-Property_Icons" />
+    </para>
+  </note>
+  <informaltable frame="none">
+    <tgroup cols="4">
+      <colspec colwidth="5*"/>
+      <colspec colwidth="3*"/>
+      <colspec colwidth="6*"/>
+      <colspec colwidth="2*" colname="prop"/>
+      <thead>
+        <row>
+          <entry>Element</entry>
+          <entry>Type</entry>
+          <entry>Description</entry>
+          <entry>Properties</entry>
+        </row>
+      </thead>
+      <tbody>
+<!--
+        <row>
+          <entry><literal>name</literal></entry>
+          <entry>string</entry>
+          <entry>	A user-supplied human readable name for the data center. The <literal>name</literal> is unique across all data center resources.</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>description</literal></entry>
+          <entry>string</entry>
+          <entry>A free-form user-supplied human readable description of the data center</entry>
+          <entry></entry>
+        </row>
+-->
+        <row>
+          <entry><literal>link rel="storagedomains"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the sub-collection for storage domains attached to this data center</entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>link rel="permissions"</literal></entry>
+          <entry>relationship</entry>
+          <entry>A link to the sub-collection for data center permissions. See <xref linkend="sect-REST_API_Guide-Common_Features-Resources-Permissions"/></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry><literal>storage_type</literal></entry>
+          <entry>enumerated</entry>
+          <entry>Describes the storage type in this datacenter. A list of enumerated values is available in <literal>capabilities</literal>. See <xref linkend="sect-REST_API_Guide-Capabilities-Version-Storage_Types"/></entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>storage_format</literal></entry>
+          <entry>enumerated</entry>
+          <entry>Describes the storage format version for the data center. A list of enumerated values are available in <literal>capabilities</literal>. See <xref linkend="sect-REST_API_Guide-Capabilities-Version-Storage_Formats"/></entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>version major= minor=</literal></entry>
+          <entry>complex</entry>
+          <entry>The compatibility level of the data center. See <xref linkend="chap-REST_API_Guide-Cluster_Level_Versions"/></entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/required.png" format="PNG" /></imageobject></inlinemediaobject><inlinemediaobject><imageobject><imagedata fileref="images/locked.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>supported_versions</literal></entry>
+          <entry>complex</entry>
+          <entry>A list of possible <literal>version</literal> levels for the data center. See <xref linkend="chap-REST_API_Guide-Cluster_Level_Versions"/></entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>
+        <row>
+          <entry><literal>status</literal></entry>
+          <entry>see below</entry>
+          <entry>The data center status</entry>
+          <entry><inlinemediaobject><imageobject><imagedata fileref="images/readonly.png" format="PNG" /></imageobject></inlinemediaobject></entry>
+        </row>         
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <para>
+    The <literal>status</literal> contains one of the following enumerative values: <literal>DOWN</literal>, <literal>ERROR</literal>, <literal>INITIALIZING</literal>, <literal>INSTALLING</literal>, <literal>INSTALL_FAILED</literal>, <literal>MAINTENANCE</literal>, <literal>NON_OPERATIONAL</literal>, <literal>NON_RESPONSIVE</literal>, <literal>PENDING_APPROVAL</literal>, <literal>PREPARING_FOR_MAINTENANCE</literal>, <literal>PROBLEMATIC</literal>, <literal>REBOOT</literal>, <literal>UNASSIGNED</literal> or <literal>UP</literal>.
+  </para>
+  <example>
+    <title>An XML representation of a data center</title>
+    <screen>
+&lt;data_centers&gt;
+    &lt;data_center id="01a45ff0-915a-11e0-8b87-5254004ac988"
+      href="/restapi-definition/datacenters/01a45ff0-915a-11e0-8b87-5254004ac988"&gt;
+        &lt;name&gt;Default&lt;/name&gt;
+        &lt;description&gt;The default Data Center&lt;/description&gt;
+        &lt;link rel="storagedomains"
+          href="/restapi-definition/datacenters/01a45ff0-915a-11e0-8b87-5254004ac988/
+          storagedomains"/&gt;
+        &lt;link rel="permissions"
+          href="/restapi-definition/datacenters/01a45ff0-915a-11e0-8b87-5254004ac988/permissions"/&gt;
+        &lt;storage_type&gt;nfs&lt;/storage_type&gt;
+        &lt;storage_format&gt;v1&lt;/storage_format&gt;
+        &lt;version minor="0" major="3"/&gt;
+        &lt;supported_versions&gt;
+            &lt;version minor="0" major="3"/&gt;
+        &lt;/supported_versions&gt;
+        &lt;status&gt;UP&lt;/status&gt;
+    &lt;/data_center&gt;
+&lt;/data_centers&gt;
+    </screen>
+  </example>
+  <para>
+    Creation of a new data center requires the <literal>name</literal>, <literal>storage_type</literal> and <literal>version</literal> properties. See <xref linkend="sect-REST_API_Guide-Common_Features-Resources-Creating_Resources"/> for more information.
+  </para>
+  <example>
+    <title>Creating a data center</title>
+    <screen>
+POST /restapi-definition/datacenters HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;data_center&gt;
+    &lt;name&gt;NewDatacenter&lt;/name&gt;
+    &lt;storage_type&gt;nfs&lt;/storage_type&gt;
+    &lt;version minor="0" major="3"/&gt;
+&lt;/data_centers&gt;
+    </screen>
+  </example>
+  <para>
+    The <literal>name</literal> and <literal>description</literal> elements are updatable post-creation. See <xref linkend="sect-REST_API_Guide-Common_Features-Resources-Updating_Resources"/> for more information.
+  </para>
+  <example>
+    <title>Updating a data center</title>
+    <screen>
+PUT /restapi-definition/datacenters/01a45ff0-915a-11e0-8b87-5254004ac988 HTTP/1.1
+Accept: application/xml
+Content-type: application/xml
+
+&lt;data_center&gt;
+    &lt;name&gt;UpdatedName&lt;/name&gt;
+    &lt;description&gt;An updated description for the data center&lt;/description&gt;
+&lt;/data_centers&gt;
+    </screen>
+  </example>
+  <para>
+    Removal of a data center requires a <literal>DELETE</literal> request.
+  </para>
+  <example>
+    <title>Removing a data center</title>
+    <screen>
+DELETE /restapi-definition/datacenters/01a45ff0-915a-11e0-8b87-5254004ac988 HTTP/1.1
+
+HTTP/1.1 204 No Content
+    </screen>
+  </example>  
+  <section id="sect-REST_API_Guide-Data_Centers-Attached_Storage_Domains">
+    <title>
+      Storage Domains Sub-Collection
+    </title>
+    <para>
+      Each data center contains a sub-collection for attached storages domain. A data center is only ready for use when at least one storage domain is attached, which an API user <literal>POST</literal>s to the data center's storage domains sub-collection.
+    </para>
+    <para>
+      An attached storage domain has a similar representation to a top-level storage domain, with the exception that it has a data center specific status and set of actions.
+    </para>
+    <para>
+      When attaching a storage domain, its ID or name must be supplied. An example of attaching a storage domain to a data center:
+    </para>
+    <example>
+      <title>Attach a storage domain to a data center</title>
+      <screen>
+POST /restapi-definition/datacenters/d70d5e2d-b8ad-494a-a4d2-c7a5631073c4/storagedomains HTTP/1.1
+Content-type: application/xml
+
+&lt;storage_domain id="fabe0451-701f-4235-8f7e-e20e458819ed"/&gt;
+
+HTTP/1.1 201 Created
+Location: /datacenters/d70d5e2d-b8ad-494a-a4d2-c7a5631073c4/storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed
+Content-Type: application/xml
+
+&lt;storage_domain id="fabe0451-701f-4235-8f7e-e20e458819ed"
+  href="/restapi-definition/datacenters/d70d5e2d-b8ad-494a-a4d2-c7a5631073c4/storagedomains/
+  fabe0451-701f-4235-8f7e-e20e458819ed"&gt;
+    &lt;name&gt;images0&lt;/name&gt;
+    &lt;type&gt;data&lt;/type&gt;
+    &lt;status&gt;INACTIVE&lt;/status&gt;
+    &lt;master&gt;true&lt;/master&gt;
+    &lt;storage&gt;
+        &lt;type&gt;nfs&lt;/type&gt;
+        &lt;address&gt;172.31.0.6&lt;/address&gt;
+        &lt;path&gt;/exports/RHEVX/images/0&lt;/path&gt;
+    &lt;/storage&gt;
+    &lt;data_center id="d70d5e2d-b8ad-494a-a4d2-c7a5631073c4"
+      href="/restapi-definition/datacenters/d70d5e2d-b8ad-494a-a4d2-c7a5631073c4"/&gt;
+    &lt;actions&gt;
+        &lt;link rel="activate"
+          href="/restapi-definition/datacenters/d70d5e2d-b8ad-494a-a4d2-c7a5631073c4/
+          storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed/activate"/&gt;
+        &lt;link rel="deactivate"
+          href="/restapi-definition/datacenters/d70d5e2d-b8ad-494a-a4d2-c7a5631073c4/
+          storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed/deactivate"/&gt;
+    &lt;/actions&gt;
+&lt;/storage_domain&gt;
+      </screen>
+    </example>
+    <para>
+      There are two possible actions for attached storage domains: <literal>activate</literal> and <literal>deactivate</literal>.
+    </para>
+
+    <section id="sect-REST_API_Guide-Data_Center-Attached_Storage_Domains-Activate">
+      <title>
+        Activate Action
+      </title>
+      <para>
+        An attached storage domain requires activatation on a data center before use. The activate action does not take any action specific parameters.
+      </para>
+      <example>
+        <title>Action to active a storage domain on a datacenter</title>
+        <screen>
+POST /restapi-definition/datacenters/d70d5e2d-b8ad-494a-a4d2-c7a5631073c4/storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed/activate HTTP/1.1
+Content-type: application/xml
+
+&lt;action/&gt;
+        </screen>
+      </example>
+    </section>
+
+    <section id="sect-REST_API_Guide-Data_Center-Attached_Storage_Domains-Deactivate">
+      <title>
+        Deactivate Action
+      </title>
+      <para>
+        An attached storage domain is deactivated on a data center before removal. The deactivate action does not take any action specific parameters.
+      </para>
+      <example>
+        <title>Action to deactive a storage domain on a datacenter</title>
+        <screen>
+POST /restapi-definition/datacenters/d70d5e2d-b8ad-494a-a4d2-c7a5631073c4/storagedomains/fabe0451-701f-4235-8f7e-e20e458819ed/deactivate HTTP/1.1
+Content-type: application/xml
+
+&lt;action/&gt;
+        </screen>
+      </example>
+    </section>
+    
+  </section>
+
+</chapter>

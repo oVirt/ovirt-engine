@@ -1,0 +1,22 @@
+RANDFILE = .rnd
+
+[ req ]
+default_bits = rsa:1024
+default_keyfile = keys/cert.pem
+distinguished_name = req_distinguished_name
+attributes = req_attributes
+x509_extensions	= v3_ca
+prompt = no
+output_password = NoSoup4U
+
+[ req_attributes ]
+
+[ v3_ca ]
+subjectKeyIdentifier=hash
+authorityInfoAccess = caIssuers;URI:http://my.ca/ca.crt
+authorityKeyIdentifier=keyid:always,issuer:always
+basicConstraints = CA:false
+keyUsage=critical,digitalSignature,keyEncipherment
+extendedKeyUsage=critical,serverAuth,clientAuth
+
+[ req_distinguished_name ]

@@ -1,0 +1,755 @@
+/** UserPortal css rules */
+
+.engine-masterhead-logo {
+  padding-top: 14px;
+}
+
+.masterhead {
+  padding-left: 22px;
+}
+
+.engine-masterhead-header-productname {
+  padding-top: 30px;
+  padding-left: 10px;
+}
+
+.engine-productname-label {
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  text-decoration: underline;
+  font-family: Verdana, sans-serif;
+  padding-left: 10px;
+  vertical-align: top;
+  padding-top: 25px;
+}
+
+.engine-footer-text {
+  color: #BFBBBC;
+}
+
+.header-link-style a:link, a:visited {
+  text-decoration: none;
+  font-family: Verdana, sans-serif;
+  color: white;
+  font-size: 13px;
+}
+
+.header-link-style a:hover {
+  text-decoration: underline;
+  font-family: Verdana, sans-serif;
+  color: white;
+  font-size: 13px;
+}
+
+.header-text-style {
+  color: white;
+  font-size: 13px;
+}
+
+.links-style {
+  padding-left: 9px;
+}
+
+.vmGridRowStyleDark,
+.vmGridRowStyleOverDark,
+.vmGridRowStyleSelectedDark,
+.vmGridRowStyleSelectedOverDark,
+.vmGridRowStyle,
+.vmGridRowStyleOver,
+.vmGridRowStyleSelected,
+.vmGridRowStyleSelectedOver,
+.vmGridRowStyleDisabled
+{
+  border-bottom: 1px solid #D0DAE6;
+  font-family:Arial,sans-serif; font-size:11px;
+}
+
+.vmGridRowStyleDark {
+  background-color:#E1E8F2;
+}
+
+.vmGridRowStyleOverDark {
+  background-color:#EAEDF3;
+}
+
+.vmGridRowStyleSelectedDark {
+  background-color:#9DB2CF;
+}
+
+.vmGridRowStyleSelectedOverDark {
+  background-color:#9DB2CF;
+}
+
+.vmGridRowStyle {
+  background-color:#F6F7F9;
+}
+
+.vmGridRowStyleOver {
+  background-color:#D5DEE9;
+}
+
+.vmGridRowStyleSelected {
+  background-color:#9DB2CF;
+}
+
+.vmGridRowStyleSelectedOver {
+  background-color:#9DB2CF;
+}
+
+.selectBoxInvalid,
+.selectBoxInvalidFocused {
+  border: solid 1px red;
+  font-family:Arial,Verdana,sans-serif; font-size:11px;
+  padding-top: 3px;
+  padding-left: 3px;
+}
+
+.textBoxInvalid,
+.textBoxInvalidFocused {
+  border: solid 1px red;
+  font-family:Arial,Verdana,sans-serif; font-size:11px;
+  padding-top: 3px;
+  padding-left: 3px;
+}
+
+.newVmTabButtonInvalid {
+  border: solid 1px red;
+}
+
+.details-tab-pane-top-border {
+  border-top-style: solid;
+  border-top-width: 3px;
+  border-top-color: #3A5F7C;
+}
+
+.login-panel-header {
+  padding-top:3px;
+  padding-left: 2px;
+}
+
+.login-panel-header-title {
+  padding-left: 4px;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  font-family:Arial,Verdana, sans-serif;
+}
+
+.dialog-header {
+  padding-top:3px;
+  padding-left: 1px;
+}
+
+.dialog-header-title {
+  color: white;
+  font-size: 14px;
+  font-family: Arial;
+  font-weight:bold;
+}
+
+.engineTextItem {
+  border: solid 1px #CFCFCF;
+  font-family:Arial,Verdana, sans-serif; font-size:11px;
+  padding-top: 3px;
+  padding-left: 3px;
+}
+
+.engineTextItemFocused {
+  border: solid 1px #AEAEAE;
+  font-family:Arial,Verdana, sans-serif; font-size:11px;
+  padding-top: 3px;
+  padding-left: 3px;
+}
+
+.engineTextItemDisabled {
+  background-color: #EEEEEE;
+  border: 1px solid #A6ABB4;
+  font-family:Arial,Verdana, sans-serif; font-size:11px;
+  padding-top: 3px;
+  padding-left: 3px;
+}
+
+.engineSelectItem {
+  border: solid 1px #CFCFCF;
+  font-family:Arial,Verdana, sans-serif; font-size:11px;
+  padding-top: 3px;
+  padding-left: 3px;
+}
+
+.engineSelectItemFocused {
+  border: solid 1px #AEAEAE;
+  font-family:Arial,Verdana, sans-serif; font-size:11px;
+  padding-top: 3px;
+  padding-left: 3px;
+}
+
+.engineSelectItemDisabled {
+  background-color: #EEEEEE;
+  border: solid 1px #CFCFCF;
+  font-family:Arial,Verdana, sans-serif; font-size:11px;
+  padding-top: 3px;
+  padding-left: 3px;
+}
+
+.removePanelLabel {
+  font-size: 12px;
+  font-family: Arial;
+}
+
+.removePanelItems {
+  font-size: 12px;
+  font-family: Arial;
+  font-weight: bold;
+  padding-left: 10px;
+}
+
+.generalLabel {
+  font-size: 11px;
+  font-weight: bold;
+  color: #333333;
+}
+
+.generalLabelRemark {
+  font-size: 9px;
+}
+
+.warningLabel {
+  font-size: 11px;
+  font-family: Arial,Verdana, sans-serif;
+  color: #FF0000;
+}
+
+.gridToolTipStyle {
+  background-color: #CDD7E3;
+  border: 1px solid gray;
+  color: black;
+  font-family: Verdana;
+  font-size: 11px;
+  padding: 5px;	
+}
+
+.tabButton,
+.tabButtonDown,
+.tabButtonOver,
+.tabButtonFocused,
+.tabButtonFocusedDown,
+.tabButtonFocusedOver,
+.tabButtonSelected,
+.tabButtonSelectedFocused,
+.tabButtonSelectedDown,
+.tabButtonSelectedFocusedDown,
+.tabButtonSelectedOver,
+.tabButtonSelectedFocusedOver,
+.tabButtonSelectedDisabled,
+.tabButtonDisabled {
+  text-align: left;
+  padding: 5px;
+  font-family: Arial,sans-serif;
+  font-size: 13px;
+}
+
+.tabButton,
+.tabButtonDown,
+.tabButtonOver,
+.tabButtonFocused,
+.tabButtonFocusedDown,
+.tabButtonFocusedOver {
+  background-color: #F3F3F3;
+  border: 1px solid #E5E5E5
+}
+
+.tabButtonSelected,
+.tabButtonSelectedFocused,
+.tabButtonSelectedDown,
+.tabButtonSelectedFocusedDown,
+.tabButtonSelectedOver,
+.tabButtonSelectedFocusedOver {
+  background-color: #345B7A;
+  color: white;
+  font-weight:bold;
+}
+
+.tabButtonSelectedDisabled,
+.tabButtonDisabled {
+  background-color: #EEEEEE;
+  border: 1px solid #E5E5E5;
+  color: #C0C0C0;
+} 	
+
+.vmConsoleConnectWidget {
+  border-left-style:solid;
+  border-left-color:#A2A2A2;
+  border-left-width: 1px;
+  border-right-style:solid;
+  border-right-color:#A2A2A2;
+  border-right-width: 1px;
+}
+
+.vmConsoleSelectLabel {
+  font-family:Arial, sans-serif; 
+  font-size:12px;
+}
+
+.errorDialogDescription {
+  padding: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.errorDialogText {
+  padding-left: 15px;
+  padding-bottom: 15px;
+  font-size: 12px;
+  font-family: sans-serif;
+}
+
+.monitorBarTitle {
+  font-family:Arial,sans-serif; 
+  font-size:14px;
+  padding-bottom: 3px;
+}
+
+.monitorBarPercentage {
+  font-family: Arial,sans-serif; 
+  font-size: 11px;
+  padding-top: 3px;
+}
+
+.permissionsRoleBox {
+  border-top: 1px solid #CED8DF
+}
+
+.vmActionStatusLabel {
+  font-family: Arial,sans-serif; 
+  font-size: 12px;
+  color: #333333;
+  padding-left: 3px;
+  padding-bottom: 1px;
+}
+
+.mainTabButton,
+.mainTabButtonDown,
+.mainTabButtonOver,
+.mainTabButtonFocused,
+.mainTabButtonFocusedDown,
+.mainTabButtonFocusedOver,
+.mainTabButtonSelected,
+.mainTabButtonSelectedFocused,
+.mainTabButtonSelectedDown,
+.mainTabButtonSelectedFocusedDown,
+.mainTabButtonSelectedOver,
+.mainTabButtonSelectedFocusedOver,
+.mainTabButtonSelectedDisabled,
+.mainTabButtonDisabled {
+  text-align: left;
+  padding: 5px;
+  font-family: Arial,sans-serif;
+  font-size: 13px;
+  font-weight:bold;
+  border-bottom: 1px solid #D5D5D5;
+}
+
+.mainTabButton,
+.mainTabButtonDown,
+.mainTabButtonOver,
+.mainTabButtonFocused,
+.mainTabButtonFocusedDown,
+.mainTabButtonFocusedOver {
+  background-color: #FFFFFF;
+  color: #719823;
+}
+
+.mainTabButtonSelected,
+.mainTabButtonSelectedFocused,
+.mainTabButtonSelectedDown,
+.mainTabButtonSelectedFocusedDown,
+.mainTabButtonSelectedOver,
+.mainTabButtonSelectedFocusedOver {
+  background-color: #719823;
+  color: white;
+}
+
+.mainTabButtonSelectedDisabled,
+.mainTabButtonDisabled {
+  background-color: #EEEEEE;
+  border: 1px solid #E5E5E5;
+  color: #C0C0C0;
+}
+
+.mainTabSection {
+  padding-top: 5px;
+  border-top: 1px solid #D5D5D5;
+  margin-top: 15px;
+  background-color: #F1F1F1;
+}
+
+.resourcesLabel {
+  text-align: left;
+  color: #3A5F7D;
+  font-family: Arial,sans-serif;
+  font-size: 13px;	
+}
+
+.resourcesValue {
+  color: black;
+  font-family: Arial,sans-serif;
+  font-size: 13px;	
+  padding-left: 7px;
+}
+
+.resourcesGeneralLabel {
+  color: black;
+  font-family: Arial,sans-serif;
+  font-size: 14px;	
+  font-weight: bold;
+}
+
+.runOncePrimaryLabel {
+  font-size: 12px;
+  font-weight: bold;
+  color: #333333;
+}
+
+.runOnceSecondaryLabel {
+  font-size: 12px;
+  color: #333333;
+}
+.modeTab {
+  font-family: Arial,sans-serif;
+  color: #ffe0e0;
+}
+.modeTabOver {
+  font-family: Arial,sans-serif;
+  color: white;
+}
+.modeTabSelected {
+  font-family: Arial,sans-serif;
+  color: #719823;
+}
+.modeTabSelectedOver {
+  font-family: Arial,sans-serif;
+  color: #689017;
+}
+
+.basicInfoVmNameLabel {
+  font-family: Arial,sans-serif;
+  color: #3A5F7C;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.basicInfoVncMessage {
+  font-family: Arial,sans-serif;
+  color: #ff6600;
+  font-size: 12px;
+  padding-left: 40px;
+}
+
+.basicInfoVmDescriptionLabel {
+  font-family: Arial,sans-serif;
+  color: #728FAD;
+  font-size: 15px;
+}
+
+.basicInfoDetailsTitleDisabled,
+.basicInfoDetailsTitle {
+  font-family: Arial,sans-serif;
+  color: #3A5F7C;
+  font-size: 19px;
+  font-weight: bold;
+  text-align: left;
+  padding-left: 10px;
+}
+
+.basicInfoDetailsLinkDisabled,
+.basicInfoDetailsValueBold,
+.basicInfoDetailsLink,
+.basicInfoDetailsValueLeft,
+.basicInfoDetailsValue {
+  font-family: Arial,sans-serif;
+  color: #3A5F7C;
+  font-size: 15px;
+  text-align: right;
+}
+
+.basicInfoDetailsLinkDisabled {
+  text-decoration: underline;
+  color: #AAAAAA;
+}
+
+.basicInfoDetailsValueLeft {
+  padding-left: 5px;
+}
+
+.basicInfoDetailsValueBold {
+  font-weight: bold;
+}
+
+.basicInfoDetailsLink {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.vmTvNameLabel {
+  font-family: Arial,sans-serif;
+  color: #3A5F7C;
+  font-size: 14px;
+}
+
+.vmTvStatusLabelSelected,
+.vmTvStatusLabel {
+  font-family: Arial,sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.vmTvStatusLabelSelected {
+  color: white;
+}
+
+.vmTvStatusLabel {
+  color: #666666;
+}
+
+.vmTvConsoleBanner {
+  font-family: Arial,sans-serif;
+  color: #3A5F7C;
+  font-size: 13px;
+}
+
+.vmTvLayout {
+  background-color: #E1E1E1;
+}
+
+.vmTvLayoutRunning {
+  background-color: white;
+}
+
+.vmTvLayoutSelected {
+  background-color: #3A5F7C;
+}
+
+.vmTvLayoutOver {
+  background-color: #B5C5D7;
+}
+
+.mainGrid-VMname {
+  font-weight: bold;
+  font-family: Arial,sans-serif; font-size:14px;
+}
+
+.mainGrid-VMdescription {
+  font-family: Arial,sans-serif; font-size:14px;
+}
+
+.mainGrid-rowSelected,
+.mainGrid-rowRunning,
+.mainGrid-rowOver,
+.mainGrid-row {
+  border-bottom: 1px solid #D4D4D4;
+}
+
+.mainGrid-row {
+  background-color: #E1E1E1;
+}
+
+.mainGrid-rowSelected {
+  background-color: #3A5F7C;
+}
+
+.mainGrid-rowRunning {
+  background-color: white;
+}
+
+.mainGrid-rowOver {
+  background-color: #B5C5D7;
+}
+
+.mainGrid-actionButtons {
+  margin-left: 25px;
+  margin-right: 25px;
+}
+
+.mainGrid-Toolbar {
+  border-bottom: 2px solid #719823;
+}
+
+.checkBoxWrapIndent {
+  padding-left: 20px;
+}
+
+.tabTitle,
+.tabTitleDown,
+.tabTitleOver,
+.tabTitleDisabled,
+.tabTitleSelected,
+.tabTitleSelectedDown,
+.tabTitleSelectedOver,
+.tabTitleSelectedDisabled {
+    color: #333333;
+    font-family: Arial, sans-serif;
+    font-size:11px;
+    padding-bottom:1px;
+}
+
+.refreshMenuTitle,
+.refreshRateOption  {
+	font-family: Arial,sans-serif; 
+	font-size:11px;
+	color: black;
+	width: 90px;
+	height: 16px;
+	background-color: #97B8D7;
+	text-align: center;
+	vertical-align: middle;
+	display: table-cell;
+}
+
+.refreshRateOption {
+	color: gray;
+	background-color: white;
+	text-align: right;
+	cursor: hand;
+	cursor: pointer;
+}
+
+.refreshRateOption .checkitem {	
+	cursor: hand;
+	cursor: pointer;
+	margin-right: 10px;
+}
+
+.refreshRateOption .textItem {	
+	font-family: Arial,sans-serif; 
+	font-size: 11px;
+	color: gray;
+	width: 40px;
+	background: transparent;
+	cursor: hand;
+	cursor: pointer;
+	border: 0px;
+	padding: 0px;
+	outline: none;
+	margin-right: 15px;
+}
+
+.refreshRateOption-selected  {
+	background-color: E1E8F2;
+}
+
+.refreshRateMenu {
+	background-color: white;
+	border: 1px solid #96B7D6;
+}
+
+.refreshPanel {
+	cursor: hand;
+	cursor: pointer;
+	border: 1px solid transparent;
+	display: table-cell;
+}
+
+.refreshPanel-over{
+	border: 1px solid #96B7D6;
+}
+
+.refreshRateMenuPopup {
+	z-index: 500000;
+	margin-left: 10px;
+	margin-top: 3px;
+}
+
+.refreshRateMenuPopup .gwt-MenuItemSeparator {
+	background-color: #E0E9F2;
+}
+
+.refreshRateMenuPopup .popupTopCenter {
+  background: url(images/edges/refreshMenu_T.png) repeat-x;
+}
+.refreshRateMenuPopup .popupBottomCenter {
+  background: url(images/edges/refreshMenu_B.png) repeat-x;
+}
+.refreshRateMenuPopup .popupMiddleLeft {
+  background: url(images/edges/refreshMenu_L.png) repeat-y;
+}
+.refreshRateMenuPopup .popupMiddleRight {
+  background: url(images/edges/refreshMenu_R.png) repeat-y;
+}
+
+.refreshRateMenuPopup .popupTopLeft {
+  background: url(images/edges/refreshMenu_TL.png) no-repeat;
+}
+.refreshRateMenuPopup .popupTopRight {
+  background: url(images/edges/refreshMenu_TR.png) no-repeat;
+}
+.refreshRateMenuPopup .popupBottomLeft {
+  background: url(images/edges/refreshMenu_BL.png) no-repeat;
+}
+.refreshRateMenuPopup .popupBottomRight {
+  background: url(images/edges/refreshMenu_BR.png) no-repeat;
+}
+
+.refreshRateMenuPopup .popupTopLeftInner {
+  width: 4px;
+  height: 4px;
+  overflow: hidden;
+}
+.refreshRateMenuPopup .popupTopRightInner {
+  width: 6px;
+  height: 4px;
+  overflow: hidden;
+}
+.refreshRateMenuPopup .popupBottomLeftInner {
+  width: 4px;
+  height: 6px;
+  overflow: hidden;
+}
+.refreshRateMenuPopup .popupBottomRightInner {
+  width: 6px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.refreshButton,
+.refreshMenuButton {
+	display: table-cell;
+	cursor: hand;
+	cursor: pointer;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.refreshButton-down-hovering {
+	padding-top: 1px;
+	padding-left: 1px;
+}
+
+.refreshIcon {
+	display: table-cell;
+	vertical-align: middle;	
+	margin-top: 2px\9;
+}
+
+.basicViewInfoLayout {
+	border-top: 1px solid #97B7D6;
+    background-color: #E1E8F2;
+}
+
+.basicViewInfoLayoutSeparator {
+    background-color: #B5C5D5;
+}
+.basicViewLayout .splitbar {
+	background-image: url(images/edges/basicViewSlider_T.png);
+	background-repeat: no-repeat;
+	margin-top: 5px;
+}
+
+.tabPanelTabsSection {
+  background-color: #B5C5D7;
+}
+
+.newVmDialogTabButtons {
+  background-color: #E5E5E5;
+}

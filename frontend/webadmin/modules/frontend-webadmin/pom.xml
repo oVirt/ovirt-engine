@@ -1,0 +1,105 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.ovirt.engine.ui</groupId>
+    <artifactId>webadmin-modules</artifactId>
+    <version>3.0.0-0001</version>
+  </parent>
+
+  <artifactId>frontend-webadmin</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Frontend for WebAdmin</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>sharedgwt</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>uicompat</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>genericapi</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+      <version>${gwt.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <version>${gwt.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.ejb</groupId>
+      <artifactId>ejb-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.java</include>
+          <include>**/*.gwt.xml</include>
+        </includes>
+      </resource>
+
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+    </resources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <configuration>
+          <servicePattern>**/gwtservices/*GWTService.java</servicePattern>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generateAsync</goal>
+              <goal>resources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>eclipse</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

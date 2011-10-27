@@ -1,0 +1,50 @@
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+   version="2.5">
+
+        <!-- Name the application -->
+        <display-name>oVirt WPF WebApp</display-name>
+        <description>oVirt WPF WebApp</description>
+
+        <!-- Set timeout to 120 minutes -->
+        <session-config>
+                <session-timeout>120</session-timeout>
+        </session-config>
+
+        <mime-mapping>
+                <extension>msi</extension>
+                <mime-type>application/octet-stream</mime-type>
+        </mime-mapping>
+        <mime-mapping>
+                <extension>xaml</extension>
+                <mime-type>application/xaml+xml</mime-type>
+        </mime-mapping>
+        <mime-mapping>
+                <extension>xap</extension>
+                <mime-type>application/x-silverlight-app</mime-type>
+        </mime-mapping>
+        <mime-mapping>
+                <extension>xbap</extension>
+                <mime-type>application/x-ms-xbap</mime-type>
+        </mime-mapping>
+
+	<mime-mapping>
+        	<extension>crt</extension>
+	        <mime-type>application/x-x509-ca-cert</mime-type>
+	</mime-mapping>
+
+        <!-- Define, in order of preference, which file to show when no filename is defined in the path -->
+        <!-- eg: when user goes to http://yoursite.com/ or http://yoursite.com/somefolder -->
+        <!-- Defaults are provided in the server-wide web.xml file, such as index.jsp, index.htm -->
+        <!-- Note: using this tag overrides the defaults, so don't forget to add them here -->
+        <welcome-file-list>
+                <!-- Use index.swf if present, or splash.jsp, otherwise just look for the normal defaults -->
+                <welcome-file>index.swf</welcome-file>
+                <welcome-file>splash.jsp</welcome-file>
+                <welcome-file>index.html</welcome-file>
+                <welcome-file>index.htm</welcome-file>
+                <welcome-file>index.jsp</welcome-file>
+                <welcome-file>Default.htm</welcome-file>
+        </welcome-file-list>
+</web-app>

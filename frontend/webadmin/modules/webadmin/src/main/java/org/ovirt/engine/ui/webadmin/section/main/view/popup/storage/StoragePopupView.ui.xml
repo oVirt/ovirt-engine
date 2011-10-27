@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+
+	<ui:style src='../../../../../defines.css' type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StoragePopupView.WidgetStyle">
+		.content {
+			font-color: white;
+		}
+		
+		.formatContentWidget {
+			width: 70px;
+		}
+		
+		.storageContentWidget {
+			width: 200px;
+		}
+		
+		.storageTypePanel {
+			background-color: mainBackgroundColor;
+			width: 100%;
+			height: 20px;
+			margin-top: 5px;
+			margin-bottom: 5px;
+		}
+		
+		.label {
+			color: #FFFFFF;
+			font-size: 12px;
+			font-weight: bold;
+			font-family: Arial,sans-serif;
+			line-height: 30px;
+		}
+		
+		.nameEditor {
+			width: 300px;
+		}
+		
+		.datacenterListEditor,
+		.hostListEditor {
+			width: 300px;
+		}
+		
+		.formatListEditor {
+			width: 130px;
+		}
+		
+		.storageTypeListEditor {
+			width: 400px;
+			padding-left: 5px;
+		}
+		
+		.storageTypeLabel {
+			color: black;
+			font-size: 12px;			
+			padding-left: 40px;
+		}
+		
+		.storageDomainTypeLabel {			
+			color: black;
+			font-size: 12px;
+			font-weight: bold;
+		}
+		
+		.specificStorageTypePanel {			
+			width: 100%;
+			margin-top: 40px;
+		}
+		
+	</ui:style>
+	
+	<d:SimpleDialogPanel width="640px" height="540px">
+		<d:content>
+			<g:FlowPanel addStyleNames="{style.content}">
+				<e:EntityModelTextBoxEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}"/>
+				<e:ListModelListBoxEditor ui:field="datacenterListEditor" addStyleNames="{style.datacenterListEditor}"/>
+				<g:HorizontalPanel addStyleNames="{style.storageTypePanel}">
+					<e:ListModelListBoxEditor ui:field="storageTypeListEditor" addStyleNames="{style.storageTypeListEditor}"/>
+					<e:ListModelListBoxEditor ui:field="formatListEditor" addStyleNames="{style.formatListEditor}"/>
+				</g:HorizontalPanel>				
+				<e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.hostListEditor}"/>
+				<g:FlowPanel ui:field="specificStorageTypePanel" addStyleNames="{style.specificStorageTypePanel}"></g:FlowPanel>				
+			</g:FlowPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

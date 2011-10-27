@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE preface PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "REST_API_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<preface id="pref-REST_API_Guide-Preface">
+	<title>Preface</title>
+	<para>The Red Hat Enterprise Virtualization platform is a richly featured virtualization solution providing fully integrated management across virtual machines with multiple hosts. It is based on Kernel-based Virtual Machine (KVM), the leading open source virtualization platform, and provides superior technical capabilities. The platform offers scalability in the management of a large number of physical hosts and virtual machines.</para>
+	<section id="pref-REST_API_Guide-Preface-About-This_Guide">
+  <title>About This Guide</title>
+	<para>
+	  This guide explains how to use Red Hat Enterprise Virtualization Manager's Representational State Transfer (REST) API. This document covers the fundamentals of the REST architectual concepts in the context of a virtualization environment and provides examples of the API in operation.
+	</para>
+	</section>
+	<section id="pref-REST_API_Guide-Preface-Audience">
+  <title>Audience</title>
+	<para>
+	  The target audience for this guide includes <emphasis role="bold">developers</emphasis> and <emphasis role="bold">system administrators</emphasis> who aim to integrate their Red Hat Enterprise Virtualization environment with third-party applications and scripts.
+	</para>
+	</section>	
+	<xi:include href="Common_Content/Conventions.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include href="Feedback.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+</preface>

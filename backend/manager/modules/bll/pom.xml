@@ -1,0 +1,293 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.ovirt.engine.core</groupId>
+    <artifactId>manager-modules</artifactId>
+    <version>3.0.0-0001</version>
+  </parent>
+
+  <artifactId>bll</artifactId>
+  <packaging>ejb</packaging>
+
+  <name>Backend Logic @Service bean</name>
+
+  <properties>
+    <engine.ejb3.connector.port>3873</engine.ejb3.connector.port>
+    <engine.bisocket.connector.port>4457</engine.bisocket.connector.port>
+    <engine.db>postgres</engine.db>
+    <engine.schema>engine</engine.schema>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>compat</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>common</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>utils</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>dal</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>searchbackend</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+
+    <!--
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>licensecominstaller</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>licensemanager</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    -->
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>vdsbroker</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>vdsbrokerbean</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+      <type>ejb</type>
+    </dependency>
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>scheduler</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+      <type>ejb</type>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.ejb</groupId>
+      <artifactId>ejb-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.ejb3</groupId>
+      <artifactId>jboss-ejb3-ext-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymockclassextension</artifactId>
+      <version>${easymock.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.powermock.modules</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.powermock.api</groupId>
+      <artifactId>powermock-api-easymock</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+<!--   
+       <dependency>
+       <groupId>org.powermock</groupId>
+	<artifactId>powermock-mockito-release-full</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+   </dependency>
+    
+    -->
+
+    <dependency>
+      <groupId>javassist</groupId>
+      <artifactId>javassist</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- logging implementation used for unit tests -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-jdk14.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.embedded</groupId>
+      <artifactId>jboss-embedded-all</artifactId>
+      <version>beta3.SP9</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-log4j</artifactId>
+      <version>2.1.0.GA</version> 
+      <scope>test</scope>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.jboss.embedded</groupId>
+      <artifactId>jboss-embedded</artifactId>
+      <version>beta3.SP9</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.embedded</groupId>
+      <artifactId>hibernate-all</artifactId>
+      <version>beta3.SP9</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.embedded</groupId>
+      <artifactId>thirdparty-all</artifactId>
+      <version>beta3.SP9</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>MS-SQL-JDBC</groupId>
+      <artifactId>JDBC4-DRIVER</artifactId>
+      <version>1.0</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+      <version>1.6</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+   <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+ 	 <includes>
+          <include>log4j.xml</include>
+        </includes>
+      </testResource>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>false</filtering>
+        <excludes>
+          <exclude>log4j.xml</exclude>
+        </excludes>
+      </testResource>
+
+    </testResources>
+
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+	      <outputDirectory>${project.build.testOutputDirectory}/deploy/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/test/${engine.db}-resources/</directory>
+                </resource>
+              </resources>
+
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>${forkTests}</forkMode>
+          <systemProperties>
+            <property>
+	      <name>jboss.server.log.dir</name>
+	      <value>${project.build.directory}/logs/engine/</value>
+            </property>
+	    <property>
+              <name>postgres.schema.name</name>
+              <value>${engine.schema}</value>
+            </property>
+	 </systemProperties>
+          <argLine>-Dengine.ejb3.connector.port=${engine.ejb3.connector.port} -Dengine.bisocket.connector.port=${engine.bisocket.connector.port} -Dsun.lang.ClassLoader.allowArraySyntax=true -Djava.endorsed.dirs="${settings.localRepository}/org/codehaus/woodstox/wstx-asl/3.2.9/"</argLine>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${basedir}/src/test/java</additionalClasspathElement>
+          </additionalClasspathElements>
+          <excludes>
+            <exclude>**/itests/*Test.java</exclude>
+	    <exclude>**/TestHelper*.java</exclude>
+	    <exclude>**/AbstractLdapTest.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>enable-bll-itests</id>
+      <properties>
+        <test>**/itests/*Test.java</test>
+      </properties>
+    </profile>
+    <profile>
+    <id>mssql</id>
+      <properties>
+        <engine.db>mssql</engine.db>
+      </properties>
+    </profile>
+  </profiles>
+
+</project>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style>
+		
+	.border {
+			height: 20px;
+			background-color: grey;	
+			width: 8px;
+		}
+	</ui:style>
+	<g:FlowPanel>
+		<g:SimplePanel>
+			<g:SplitLayoutPanel ui:field="slider" addStyleNames="{style.border}">
+			</g:SplitLayoutPanel>
+		</g:SimplePanel>
+		<g:Label ui:field="percentLabel"/>
+	</g:FlowPanel>
+</ui:UiBinder>

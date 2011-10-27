@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.ovirt.engine.core</groupId>
+    <artifactId>beans</artifactId>
+    <version>3.0.0-0001</version>
+  </parent>
+
+  <artifactId>scheduler</artifactId>
+  <packaging>ejb</packaging>
+
+  <name>engine scheduler bean</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>utils</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+
+    <!-- external dependencies -->
+    <dependency>
+      <groupId>javax.ejb</groupId>
+      <artifactId>ejb-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.ejb3</groupId>
+      <artifactId>jboss-ejb3-ext-api</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${basedir}/src/test/java</additionalClasspathElement>
+          </additionalClasspathElements>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

@@ -1,0 +1,476 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.ovirt.engine</groupId>
+    <artifactId>root</artifactId>
+    <version>3.0.0-0001</version>
+  </parent>
+
+  <artifactId>engine-server-ear</artifactId>
+  <packaging>ear</packaging>
+
+  <name>oVirt Server EAR</name>
+  <description>oVirt server EAR</description>
+
+  <distributionManagement>
+    <repository>
+      <id>engine.redhat.com</id>
+      <url>file://${maven.repository.root}</url>
+    </repository>
+  </distributionManagement>
+
+  <properties>
+    <earDirectory>${project.build.directory}/${project.build.finalName}</earDirectory>
+    <backendConfFiles>${project.parent.basedir}/backend/manager/conf</backendConfFiles>
+    <thirdPartyConfFiles>${project.parent.basedir}/backend/manager/3rdparty</thirdPartyConfFiles>
+  </properties>
+
+  <dependencies>
+    <!-- Internal Deps -->
+    <!-- ** JARs -->
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>compat</artifactId>
+      <version>${engine.version}</version>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>common</artifactId>
+      <version>${engine.version}</version>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>dal</artifactId>
+      <version>${engine.version}</version>
+      <type>jar</type>
+    </dependency>
+
+    <!-- WARS -->
+    <dependency>
+      <groupId>org.ovirt.engine.ui</groupId>
+      <artifactId>rmw-war</artifactId>
+      <version>${engine.version}</version>
+      <type>war</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.ui</groupId>
+      <artifactId>rm-war</artifactId>
+      <version>${engine.version}</version>
+      <type>war</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.ui</groupId>
+      <artifactId>components-war</artifactId>
+      <version>${engine.version}</version>
+      <type>war</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.ui</groupId>
+      <artifactId>components-war</artifactId>
+      <version>${engine.version}</version>
+      <type>war</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.api</groupId>
+      <artifactId>restapi-webapp</artifactId>
+      <version>${engine.version}</version>
+      <type>war</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.ui</groupId>
+      <artifactId>userportal</artifactId>
+      <version>${engine.version}</version>
+      <type>war</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.ui</groupId>
+      <artifactId>webadmin</artifactId>
+      <version>${engine.version}</version>
+      <type>war</type>
+    </dependency>
+
+    <!-- ** EJB-JARs -->
+    <dependency>
+      <groupId>org.ovirt.engine.ui</groupId>
+      <artifactId>genericapi</artifactId>
+      <version>${engine.version}</version>
+      <type>ejb</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>scheduler</artifactId>
+      <version>${engine.version}</version>
+      <type>ejb</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>vdsbrokerbean</artifactId>
+      <version>${engine.version}</version>
+      <type>ejb</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>bll</artifactId>
+      <version>${engine.version}</version>
+      <type>ejb</type>
+    </dependency>
+
+    <!-- ** WARs -->
+    <!-- 3rd Party Deps -->
+    <!-- ** WARs -->
+    <!-- ** JARs -->
+	 <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-core</artifactId>
+		<version>${spring.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-beans</artifactId>
+		<version>${spring.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-context</artifactId>
+		<version>${spring.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-agent</artifactId>
+		<version>${spring.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-aop</artifactId>
+		<version>${spring.version}</version>
+	</dependency>
+  </dependencies>
+
+  <build>
+    <finalName>engine</finalName>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-ear-plugin</artifactId>
+        <configuration>
+          <!-- params common to ear:ear and ear:generate-application-xml -->
+          <defaultLibBundleDir>lib</defaultLibBundleDir>
+          <workDirectory>${earDirectory}</workDirectory>
+          <version>1.4</version>
+          <!-- J2EE version -->
+
+          <!-- params for ear:ear -->
+          <resourcesDir>${basedir}/target/classes</resourcesDir>
+          <unpackTypes>war,ejb,sar</unpackTypes>
+
+          <!-- params for ear:generate-application-xml -->
+          <displayName>ENGINE</displayName>
+
+          <modules>
+            <!-- ** JARs -->
+            <jarModule>
+              <groupId>org.ovirt.engine.core</groupId>
+              <artifactId>common</artifactId>
+              <bundleFileName>engine-common.jar</bundleFileName>
+            </jarModule>
+
+            <jarModule>
+              <groupId>org.ovirt.engine.core</groupId>
+              <artifactId>compat</artifactId>
+              <bundleFileName>engine-compat.jar</bundleFileName>
+            </jarModule>
+
+            <jarModule>
+              <groupId>org.ovirt.engine.core</groupId>
+              <artifactId>dal</artifactId>
+              <bundleFileName>engine-dal.jar</bundleFileName>
+            </jarModule>
+
+            <!-- ** WARs -->
+            <webModule>
+              <groupId>org.ovirt.engine.ui</groupId>
+              <artifactId>rmw-war</artifactId>
+              <bundleFileName>engineanagerweb.war</bundleFileName>
+              <contextRoot>/ENGINEanagerWeb</contextRoot>
+            </webModule>
+
+            <webModule>
+              <groupId>org.ovirt.engine.ui</groupId>
+              <artifactId>rm-war</artifactId>
+              <bundleFileName>engineanager.war</bundleFileName>
+              <contextRoot>/ENGINEanager</contextRoot>
+            </webModule>
+
+            <webModule>
+              <groupId>org.ovirt.engine.ui</groupId>
+              <artifactId>components-war</artifactId>
+              <bundleFileName>components.war</bundleFileName>
+              <contextRoot>/Components</contextRoot>
+            </webModule>
+
+            <webModule>
+              <groupId>org.ovirt.engine.ui</groupId>
+              <artifactId>components-war</artifactId>
+              <bundleFileName>components.war</bundleFileName>
+              <contextRoot>/rhev-docs</contextRoot>
+            </webModule>
+
+            <webModule>
+              <groupId>org.ovirt.engine.api</groupId>
+              <artifactId>restapi-webapp</artifactId>
+              <bundleFileName>restapi.war</bundleFileName>
+              <contextRoot>/api</contextRoot>
+            </webModule>
+
+            <webModule>
+              <groupId>org.ovirt.engine.ui</groupId>
+              <artifactId>userportal</artifactId>
+              <bundleFileName>userportal.war</bundleFileName>
+              <contextRoot>/UserPortal</contextRoot>
+            </webModule>
+
+            <webModule>
+              <groupId>org.ovirt.engine.ui</groupId>
+              <artifactId>webadmin</artifactId>
+              <bundleFileName>webadmin.war</bundleFileName>
+              <contextRoot>/webadmin</contextRoot>
+            </webModule>
+
+            <!-- ** EJB-JARs -->
+            <ejbModule>
+              <groupId>org.ovirt.engine.core</groupId>
+              <artifactId>vdsbrokerbean</artifactId>
+              <bundleFileName>engine-vdsbroker.jar</bundleFileName>
+              <unpack>true</unpack>
+            </ejbModule>
+
+            <ejbModule>
+              <groupId>org.ovirt.engine.ui</groupId>
+              <artifactId>genericapi</artifactId>
+              <bundleFileName>engine-genericapi.jar</bundleFileName>
+              <unpack>true</unpack>
+            </ejbModule>
+
+            <ejbModule>
+              <groupId>org.ovirt.engine.core</groupId>
+              <artifactId>scheduler</artifactId>
+              <bundleFileName>engine-scheduler.jar</bundleFileName>
+              <unpack>true</unpack>
+            </ejbModule>
+
+            <ejbModule>
+              <groupId>org.ovirt.engine.core</groupId>
+              <artifactId>bll</artifactId>
+              <bundleFileName>engine-bll.jar</bundleFileName>
+              <unpack>true</unpack>
+            </ejbModule>
+
+          </modules>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>remoteServer</id>
+      <properties>
+        <jbossServer>/var/autofs/suzuki</jbossServer>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>dep</id>
+
+      <properties>
+        <engine.rootDir>..</engine.rootDir>
+        <engine.deploymentName>${project.build.finalName}.ear</engine.deploymentName>
+        <engine.deploymentDir>${jbossServer}/deploy/${engine.deploymentName}</engine.deploymentDir>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>deploy</id>
+                <phase>package</phase>
+
+                <configuration>
+                  <tasks>
+                    <property name="deployment.dir" location="${engine.deploymentDir}"/>
+                    <echo>*** Copying updated files from target${file.separator}${project.build.finalName}${file.separator} to ${deployment.dir}${file.separator}...</echo>
+                    <copy todir="${deployment.dir}" verbose="true">
+                      <fileset dir="${basedir}/target/${project.build.finalName}"/>
+                    </copy>
+                    <property name="deployment.descriptor.file" location="${deployment.dir}/META-INF/application.xml"/>
+                    <echo>*** Touching ${deployment.descriptor.file} to force redeployment of ${engine.deploymentName}...</echo>
+                    <touch file="${deployment.descriptor.file}"/>
+                  </tasks>
+                </configuration>
+
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+
+              <execution>
+                <id>deploy-ear-meta-inf</id>
+                <phase>package</phase>
+
+                <configuration>
+                  <tasks>
+                    <unjar src="${project.build.directory}/${project.build.finalName}.ear" dest="${engine.deploymentDir}">
+                      <patternset>
+                        <include name="META-INF/**"/>
+                      </patternset>
+                    </unjar>
+                  </tasks>
+                </configuration>
+
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+
+              <execution>
+                <id>undeploy</id>
+                <phase>clean</phase>
+
+                <configuration>
+                  <tasks>
+                    <property name="deployment.dir" location="${engine.deploymentDir}"/>
+                    <echo>*** Deleting ${deployment.dir}${file.separator}...</echo>
+                    <delete dir="${deployment.dir}"/>
+                  </tasks>
+                </configuration>
+
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+
+              <execution>
+                <id>cleanJBossQuartz</id>
+                <phase>install</phase>
+
+                <configuration>
+                  <tasks>
+                    <delete file="${jbossHome}/common/lib/quartz.jar"/>
+                  </tasks>
+                </configuration>
+
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-dependencies</id>
+                <phase>install</phase>
+
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.quartz-scheduler</groupId>
+                      <artifactId>quartz</artifactId>
+                      <version>${quartz.version}</version>
+                      <type>jar</type>
+                      <overWrite>true</overWrite>
+                      <outputDirectory>${jbossHome}/common/lib/</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>setup_postgres</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>setup</id>
+                <phase>install</phase>
+
+                <configuration>
+                  <tasks>
+                    <echo>*** Copying configuration file from ${backendConfFiles}/jboss-log4j.xml to ${jbossServer}/conf/</echo>
+                    <copy overwrite="true" file="${backendConfFiles}/jboss-log4j.xml" todir="${jbossServer}/conf"/>
+                    <echo>*** Copying configuration file from ${backendConfFiles}/postgres-ds.xml to ${jbossServer}/deploy/</echo>
+                    <copy overwrite="true" file="${backendConfFiles}/postgres-ds.xml" todir="${jbossServer}/deploy"/>
+                    <echo>*** Copying configuration file from ${backendConfFiles}/transaction-jboss-beans.xml to ${jbossServer}/deploy/</echo>
+                    <copy overwrite="true" file="${backendConfFiles}/transaction-jboss-beans.xml" todir="${jbossServer}/deploy"/>
+                    <echo>*** Copying configuration file from ${backendConfFiles}/login-config.xml to ${jbossServer}/conf/</echo>
+                    <copy overwrite="true" file="${backendConfFiles}/login-config.xml" todir="${jbossServer}/conf"/>
+                  </tasks>
+                </configuration>
+
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-dependencies</id>
+                <phase>install</phase>
+
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>postgresql</groupId>
+                      <artifactId>postgresql</artifactId>
+                      <version>8.4-701.jdbc4</version>
+                      <type>jar</type>
+                      <overWrite>true</overWrite>
+                      <outputDirectory>${jbossHome}/common/lib/</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>	  
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

@@ -1,0 +1,80 @@
+/* Core GWT widget styles */
+a.gwt-InlineHyperlink,a.gwt-Anchor {
+	outline: none;
+	text-decoration: none;
+	font-family: Arial,sans-serif;
+}
+
+.gwt-PushButton {
+	outline: none;
+}
+
+.gwt-Label {
+	font-family: Arial,sans-serif;
+}
+
+/* oVirt legacy styles */
+.rhev-Masthead {
+	background-image: url(images/tbl_middle.gif);
+	background-repeat: repeat-x;
+	cellpadding: 0px;
+}
+
+.rhev-Masthead-Logo { /* height: 48px;
+  width: 48px; */
+	padding-top: 4px;
+	padding-left: 8px;
+}
+
+.rhev-MastHead-Name {
+	color: #FFFFFF;
+	font-family: Tahoma, Verdana, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	overflow: hidden;
+	padding-top: 12px;
+	padding-left: 2px;
+	text-align: left;
+}
+
+.engine-MasterHead-Right {
+	background-image: url(images/tbl_right.gif);
+}
+
+.rhev-MastHead-SignedInUser {
+	color: #FFFFFF;
+	font-family: Tahoma, Verdana, sans-serif;
+	font-size: 10px;
+	font-weight: normal;
+	overflow: hidden;
+	padding-right: 4px;
+	text-align: right;
+}
+
+.engine-footer-text {
+	color: white;
+}
+
+.engine-progress-box {
+	border: 1px solid #AAAAAA;
+	width: 60%;
+	height: 1em;	
+	margin: auto;
+}
+
+.engine-progress-text {
+    bottom: 1.3em;
+    text-align: center;
+    font-family: Verdana,Arial,sans-serif;
+    font-size: 0.8em;
+    position: relative;
+}
+
+.subTabPanelContainer {
+	border-top: 1px dashed #7C7C7C;
+	border-left: 1px dashed #7C7C7C;
+}
+
+.subTabGeneralItemValue {
+	color: #777777
+}

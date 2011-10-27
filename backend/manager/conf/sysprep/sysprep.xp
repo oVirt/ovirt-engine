@@ -1,0 +1,47 @@
+;SetupMgrTag
+[Unattended]
+    InstallFilesPath=C:\i386
+    OemSkipEula=Yes
+    TargetPath=\WINDOWS
+
+[GuiUnattended]
+    AdminPassword=$AdminPassword$
+    EncryptedAdminPassword=NO
+    OEMSkipRegional=1
+    TimeZone=$TimeZone$
+    OemSkipWelcome=1
+
+[UserData]
+    ProductKey=$ProductKey$
+    FullName="user"
+    OrgName=$OrgName$
+    ComputerName=$ComputerName$
+
+[Display]
+    BitsPerPel=32
+    Xresolution=800
+    YResolution=600
+    Vrefresh=75
+
+[RegionalSettings]
+    LanguageGroup=1
+    Language=00000409
+
+[Identification]
+    JoinDomain=$JoinDomain$
+    DomainAdmin=$DomainAdmin$
+    DomainAdminPassword=$DomainAdminPassword$
+
+[Networking]
+    InstallDefaultComponents=Yes
+
+[Branding]
+    BrandIEUsingUnattended=Yes
+
+[Proxy]
+    Proxy_Enable=0
+    Use_Same_Proxy=0
+
+[GuiRunOnce]
+    
+

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+        targetNamespace="http://www.jboss.com/eap/jbossds" 
+        xmlns:tns="http://www.jboss.com/eap/jbossds" 
+        elementFormDefault="qualified">
+        
+    <xs:element name="datasources">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="local-tx-datasource" 
+                            type="tns:local-tx-datasource" 
+                            minOccurs="1" 
+                            maxOccurs="unbounded">
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+	<xs:complexType name="local-tx-datasource">
+		<xs:sequence>
+			<xs:element name="jndi-name" type="xs:string" minOccurs="1"></xs:element>
+			<xs:element name="connection-url" type="xs:string" minOccurs="1"></xs:element>
+            <xs:element name="driver-class" type="xs:string" minOccurs="1"></xs:element>
+            <xs:element name="max-pool-size" type="xs:string"></xs:element>
+            <xs:element name="check-valid-connection-sql" type="xs:string"></xs:element>
+            <xs:element name="security-domain" type="xs:string"></xs:element>
+            <xs:element name="user-name" type="xs:string" minOccurs="1"></xs:element>
+            <xs:element name="password" type="xs:string" ></xs:element>
+        </xs:sequence>
+	</xs:complexType>
+</xs:schema>

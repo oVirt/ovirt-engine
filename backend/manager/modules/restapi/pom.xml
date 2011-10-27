@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.ovirt.engine.core</groupId>
+    <artifactId>manager-modules</artifactId>
+    <version>3.0.0-0001</version>
+  </parent>
+
+  <artifactId>restapi-parent</artifactId>
+  <groupId>org.ovirt.engine.api</groupId>
+  <packaging>pom</packaging>
+  <name>oVirt RESTful API Backend Integration</name>
+
+  <modules>
+    <module>types</module>
+    <module>jaxrs</module>
+    <module>webapp</module>
+    <module>interface</module>
+  </modules>
+
+  <properties>
+    <engine.api.version>3.0.0-0001</engine.api.version>
+    <resteasy.version>2.2.2.GA</resteasy.version>
+    <spring.version>2.5.6</spring.version>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>sonatype.oss.snapshot.repo</id>
+      <name>Sonatype OSS Snapshot Respository</name>
+      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+
+    <repository>
+      <id>jboss.repo</id>
+      <url>https://repository.jboss.org/nexus/content/repositories/releases</url>
+    </repository>
+
+	<repository>
+      <id>thirdparty-releases</id>
+      <name>JBoss Thirdparty Releases</name>
+      <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
+    </repository>
+  </repositories>
+
+</project>

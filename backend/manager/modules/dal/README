@@ -1,0 +1,156 @@
+= Database Access Layer =
+
+This module defines an API for accessing the database.
+
+The main entry point is the DbFacade class which is a singleton factory
+for accessing Database Access Objects (DAO) e.g.
+
+  VDS vds = DbFacade.getInstance().getVdsDAO().get(vdsId);
+
+There are two implementations for each of the DAO interfaces:
+
+  1) The DbFacadeImpl classes access the database using stored procedures
+     via JDBC calls.
+
+  2) The HibernateImpl classes map the database contents to business
+     entities using Hibernate
+
+== Current Status ==
+
+Accessing a Microsoft SQL Server database using the JDBC implementation
+is the default mode.
+
+A conversion of this DB schema to Postgres is underway in the
+dbscripts_posgres directory. The initial conversion was done using the
+proprietary SQLWays tool but the schema is now kept in sync manually.
+
+When this conversion is complete, the JDBC implementation should work
+equally well with Postgres and MS-SQL.
+
+In parallel, the HibernateImpl is being developed. This too will work
+equally well with Postgres and MS-SQL when finished.
+
+== Unit Tests ==
+
+WARNING: the unit tests empty the database tables before running.
+Please do not run these tests against a database with valuable
+data. Please also make sure that the database has been updated
+to the latest schema before running the tests.
+
+The DAO interfaces have a significant number of unit tests. These are
+disabled by default because they require a local database to be
+configured and take over 5 minutes to run. However, the tests are run in
+our Hudson continuous integration builds and reports are emailed if a
+regression is introduced.
+
+To run the unit tests manually you can either do:
+
+  $> mvn -P enable-dao-tests test
+
+or enable them using your ~/.m2/settings.xml:
+
+   <activeProfiles>
+     <activeProfile>enable-dao-tests</activeProfile>
+   </activeProfiles>
+
+You can also choose to run individual tests:
+
+  $> mv -D test=VdcOptionDAOTest test
+
+By default, this will run the tests using the JDBC implementation
+against an MS-SQL database called 'engine' on the 'engine-test-db' using
+the username 'sa' and password 'ENGINEadmin2009'.
+
+To run the tests against and postgres DB, you can run:
+
+  $> mvn -P postgres clean test
+
+This will default to using a database called 'engine' on localhost using
+the username 'engine' and password 'redhat'.
+
+You can also run the tests using the hibernate implementation using:
+
+  $> mvn -P hibernate clean test
+
+You can change the database configuration in ~/.m2/settings.xml e.g.
+
+  <profile>
+    <id>my-engine-db</id>
+    <activation>
+      <activeByDefault>true</activeByDefault>
+    </activation>
+    <properties>
+      <engine.db.username>foo</engine.db.username>
+      <engine.db.password>bar</engine.db.password>
+      <engine.db.url>jdbc:postgresql://my-db-host/mydb</engine.db.url>
+      <engine.db.url.escaped>jdbc:postgresql://localhost/mydb</engine.db.url.escaped>
+      <engine.db.driver>com.p6spy.engine.spy.P6SpyDriver</engine.db.driver>
+    </properties>
+  </profile>
+
+== More on DbFacadeImpl DAOs ==
+
+Most methods in these classes execute a stored procedure (see
+backend/manager/dbscripts*_sp.sql) using the supplied parameters and
+return the results from the stored procedure.
+
+These methods are implemented Spring Framework's JDBC library.
+
+There are four parts to each Java method:
+
+ 1) The parameter source:
+
+      public VDS get(NGuid id) {
+          MapSqlParameterSource parameterSource = new CustomMapSqlParameterSource()
+                  .addValue("vds_id", vds_id);
+
+     which adds the parameters required by the GetVdsByVdsId SP in
+     vds_sp.sql:
+
+       ALTER PROCEDURE [dbo].[GetVdsByVdsId]
+            @vds_id int
+
+ 2) The row mapper:
+
+        ParameterizedRowMapper<VDS> mapper = new ParameterizedRowMapper<VDS>() {
+            public VDS mapRow(ResultSet rs, int rowNum) throws SQLException {
+                VDS entity = new VDS();
+                entity.setvds_id(rs.getInt("vds_id"));
+                entity.setvds_group_id(rs.getInt("vds_group_id"));
+                entity.setvds_group_name(rs.getString("vds_group_name"));
+                entity.setvds_group_description(rs.getString("vds_group_description"));
+                ...
+                return entity;
+            }
+        };
+
+    which maps a row of result parameters to a new business entity
+    instance. The result parameters in the mapper must match the results
+    from the stored procedure:
+
+                SELECT
+                distinct([vds].[vds_id]) AS 'vds_id',
+                [vds].[vds_group_id] AS 'vds_group_id',
+                [vds].[vds_group_name] AS 'vds_group_name',
+                [vds].[vds_group_description] AS 'vds_group_description',
+
+    CustomMapSqlParameterSource is a variant of MapSqlParameterSource
+    which converts enums to ints and guids to strings.
+
+ 3) The JDBC call:
+
+        Map<String, Object> dbResults = new SimpleJdbcCall(dataSource)
+                .withProcedureName("GetVdsByVdsId")
+                .returningResultSet("RETURN_VALUE", mapper)
+                .execute(parameterSource);
+
+    which executes the stored procedure with the supplied parameters
+    using the mapper to map the results to business entities.
+
+ 4) Finally, returning the results either as a single object:
+
+        return (VDS) DbFacadeUtils.asSingleResult((List) (dbResults.values().iterator().next()));
+
+    or, more commonly, a list:
+
+        return (ArrayList<VDS>) dbResults.values().iterator().next();

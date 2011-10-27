@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+
+	<ui:style>
+		.dock {
+			border-right: 1px solid #BBBBBB;
+			padding-right: 5px;
+		}
+		
+		.checkbox {
+			margin-left: 25px;
+		}
+		
+		.tag {
+			margin-left: 50px;
+		}
+		
+		.mainLabel {
+			font-weight: bold;
+			padding: 5px;
+		}
+		
+		.subLabel {
+			font-size: 9pt;
+			padding: 5px;
+		}
+		
+		.message {
+			color: red;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="700px" height="400px">
+		<d:content>
+			<g:DockLayoutPanel unit="PCT">
+				<g:center>
+					<g:FlowPanel addStyleNames="{style.dock}">
+						<g:Label ui:field="mainLabel" addStyleNames="{style.mainLabel}" />
+						<g:Label ui:field="subLabel" addStyleNames="{style.subLabel}" />
+						<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+						<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+						<e:EntityModelCheckBoxEditor ui:field="stpSupport" addStyleNames="{style.checkbox}" />
+						<e:EntityModelCheckBoxEditor ui:field="vlanTagging" addStyleNames="{style.checkbox}" />
+						<e:EntityModelTextBox ui:field="vlanTag" addStyleNames="{style.tag}" />
+					</g:FlowPanel>
+				</g:center>
+				<g:east size="50">
+					<g:VerticalPanel spacing="10">				
+						<g:Label ui:field="assignLabel" addStyleNames="{style.mainLabel}"/>
+						<e:EntityModelCellTree ui:field="tree" />
+						<g:Label ui:field="messageLabel" addStyleNames="{style.message}"/>
+						<g:PushButton ui:field="detachAll" text="Detach ALL Clusters" visible="false" />
+					</g:VerticalPanel>
+				</g:east>
+			</g:DockLayoutPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

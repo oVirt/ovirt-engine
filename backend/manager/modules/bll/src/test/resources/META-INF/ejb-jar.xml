@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar
+        xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                            http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
+        version="3.0">
+	<description>Partial deployment descriptors for EJB in JBoss</description>
+   	<display-name>Partial deployment descriptors</display-name>
+   	<enterprise-beans>
+   	<session>
+   	<ejb-name>Backend</ejb-name>
+         <ejb-class>org.ovirt.engine.core.bll.Backend</ejb-class>
+         <session-type>Stateless</session-type>
+         <transaction-type>Container</transaction-type>
+         <ejb-ref>
+            <ejb-ref-name>ejb/Backend</ejb-ref-name>
+            <ejb-ref-type>Session</ejb-ref-type>
+         </ejb-ref>
+         <post-construct>
+         	<lifecycle-callback-method>setup</lifecycle-callback-method>
+         </post-construct>
+
+         <security-identity>
+            <run-as>
+               <role-name>admin</role-name>
+            </run-as>
+         </security-identity>
+   	</session>
+   	</enterprise-beans>
+</ejb-jar>
