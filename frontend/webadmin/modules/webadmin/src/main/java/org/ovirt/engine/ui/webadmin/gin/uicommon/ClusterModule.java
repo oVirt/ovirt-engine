@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterNewNetworkPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPolicyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
@@ -98,7 +99,8 @@ public class ClusterModule extends AbstractGinModule {
     @Provides
     @Singleton
     public SearchableDetailModelProvider<network, ClusterListModel, ClusterNetworkListModel> getClusterNetworkListProvider(ClientGinjector ginjector,
-            final Provider<ClusterNewNetworkPopupPresenterWidget> popupProvider) {
+    		final Provider<ClusterNewNetworkPopupPresenterWidget> popupProvider,
+    		final Provider<ClusterManageNetworkPopupPresenterWidget> managePopupProvider) {
         return new SearchableDetailTabModelProvider<network, ClusterListModel, ClusterNetworkListModel>(ginjector,
                 ClusterListModel.class,
                 ClusterNetworkListModel.class) {
@@ -106,6 +108,8 @@ public class ClusterModule extends AbstractGinModule {
             protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getNewNetworkCommand()) {
                     return popupProvider.get();
+                }else if (lastExecutedCommand == getModel().getManageCommand()) {
+                    return managePopupProvider.get();
                 }
                 else {
                     return super.getModelPopup(lastExecutedCommand);

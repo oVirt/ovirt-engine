@@ -172,8 +172,21 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 M list = (M) sender;
-                list.getSelectedItem();
-                getSelectionModel().setSelected((EntityModel) list.getSelectedItem(), true);
+                getSelectionModel().setSelected((EntityModel)list.getSelectedItem(),true);
+            }
+        });
+
+        object.getSelectedItemsChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                M list = (M) sender;
+
+                if (list.getSelectedItems() != null) {
+                    for (Object item : list.getSelectedItems()) {
+                        EntityModel entityModel = (EntityModel) item;
+                        getSelectionModel().setSelected(entityModel, true);
+                    }
+                }
             }
         });
     }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+    
+    <ui:style>
+		.mainLabel {
+			font-weight: bold;
+			padding: 5px;
+		}
+		.dock { /*border-right: 1px solid #BBBBBB;*/ /*padding-right: 5px;*/
+			border-bottom: 1px solid #BBBBBB;
+			border-top: 1px solid #BBBBBB;
+		}
+		.checkbox {
+			margin-left: 25px;
+		}		
+    </ui:style>
+
+    <d:SimpleDialogPanel width="500px" height="400px">
+        <d:content>
+            <g:FlowPanel>
+				<g:Label ui:field="networksLabel" addStyleNames="{style.mainLabel}"/>
+				<g:ScrollPanel  addStyleNames="{style.dock}">				
+					<e:EntityModelCellTable ui:field="networks" />
+				</g:ScrollPanel>
+            </g:FlowPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
+
+</ui:UiBinder>

@@ -159,6 +159,7 @@ public class ClusterNetworkListModel extends SearchableListModel
 			{
 				EntityModel tempVar = new EntityModel();
 				tempVar.setEntity(a);
+				tempVar.setTitle(a.getname());
 				items.add(tempVar);
 			}
 		}
@@ -167,6 +168,7 @@ public class ClusterNetworkListModel extends SearchableListModel
 		boolean noItems = items.isEmpty();
 
 		java.util.ArrayList<network> networks = Linq.<network>Cast(getItems());
+		java.util.ArrayList<EntityModel> selectedItems = new java.util.ArrayList<EntityModel>();
 		for (EntityModel item : items)
 		{
 			network net = (network)item.getEntity();
@@ -180,8 +182,12 @@ public class ClusterNetworkListModel extends SearchableListModel
 				}
 			}
 			item.setIsSelected(value);
+			if (value) {
+			    selectedItems.add(item);
+			}
 		}
 
+		model.setSelectedItems(selectedItems);
 
 		UICommand tempVar2 = new UICommand("Cancel", this);
 		tempVar2.setTitle("Cancel");

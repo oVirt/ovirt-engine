@@ -69,6 +69,14 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                 return getDetailModel().getNewNetworkCommand();
             }
         });
+
+        getTable().addActionButton(new UiCommandButtonDefinition<network>("Assign/Detach Networks") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getManageCommand();
+            }
+        });
+
         getTable().addActionButton(new UiCommandButtonDefinition<network>("Set as Display") {
             @Override
             protected UICommand resolveCommand() {

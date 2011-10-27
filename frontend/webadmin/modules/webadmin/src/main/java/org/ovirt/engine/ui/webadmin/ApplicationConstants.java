@@ -104,6 +104,9 @@ public interface ApplicationConstants extends Constants {
     @DefaultStringValue("VLAN tag")
     String clusterNewNetworkPopupVlanIdLabel();
 
+    @DefaultStringValue("Networks")
+    String clusterManageNetworkPopupLabel();
+
     @DefaultStringValue("Clusters")
     String dataCenterClusterSubTabLabel();
 
