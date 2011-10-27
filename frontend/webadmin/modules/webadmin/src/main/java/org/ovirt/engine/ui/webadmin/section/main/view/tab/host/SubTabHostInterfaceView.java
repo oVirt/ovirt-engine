@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -23,7 +20,7 @@ import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.ListDataProvider;
 
 public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostListModel, HostInterfaceListModel>
         implements SubTabHostInterfacePresenter.ViewDef {
@@ -41,14 +38,12 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
     /**
      * A Provider for an empty grid
      */
-    private class EmptyProvider implements ActionTableDataProvider<HostInterfaceLineModel> {
-
-        private final List<HasData<HostInterfaceLineModel>> displays = new ArrayList<HasData<HostInterfaceLineModel>>();
-        private final List<HostInterfaceLineModel> values = new ArrayList<HostInterfaceLineModel>();
+    private class EmptyProvider extends ListDataProvider<HostInterfaceLineModel>
+            implements ActionTableDataProvider<HostInterfaceLineModel> {
 
         @Override
-        public void addDataDisplay(HasData<HostInterfaceLineModel> display) {
-            displays.add(display);
+        public boolean canGoForward() {
+            return false;
         }
 
         @Override
@@ -57,65 +52,46 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         }
 
         @Override
-        public boolean canGoForward() {
-            return false;
-        }
-
-        @Override
-        public Object getKey(HostInterfaceLineModel item) {
-            return null;
+        public void goForward() {
         }
 
         @Override
         public void goBack() {
         }
 
-        @Override
-        public void goForward() {
-
-        }
-
-        @Override
-        public void refresh() {
-        }
-
-        public void setEmptyData() {
-            for (HasData<HostInterfaceLineModel> display : displays) {
-                display.setRowCount(0);
-                display.setRowData(0, values);
-            }
-        }
     }
 
-    private EmptyProvider dataProvider;
+    private final SimpleActionTable<HostInterfaceLineModel> table;
 
-    private final VerticalPanel panel;
-
-    private SimpleActionTable<HostInterfaceLineModel> table;
+    private final VerticalPanel contentPanel;
 
     @Inject
     public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> modelProvider) {
         super(modelProvider);
+        this.table = createEmptyTable(createEmptyProvider());
         initTable();
-        panel = new VerticalPanel();
-        panel.add(table);
-        panel.add(new Label("Empty"));
-        initWidget(panel);
+
+        contentPanel = new VerticalPanel();
+        contentPanel.add(table);
+        contentPanel.add(new Label("Empty"));
+        initWidget(contentPanel);
     }
 
-    @Override
-    public void setMainTabSelectedItem(VDS selectedItem) {
-        HostInterfaceForm hostInterfaceForm = new HostInterfaceForm(getDetailModel());
-        panel.remove(panel.getWidgetCount() - 1);
-        panel.add(hostInterfaceForm);
-        dataProvider.setEmptyData();
+    EmptyProvider createEmptyProvider() {
+        return new EmptyProvider() {
+            @Override
+            public void refresh() {
+                getDetailModel().getForceRefreshCommand().Execute();
+            }
+        };
+    }
+
+    SimpleActionTable<HostInterfaceLineModel> createEmptyTable(EmptyProvider dataProvider) {
+        Resources resources = GWT.<Resources> create(SubTableResources.class);
+        return new SimpleActionTable<HostInterfaceLineModel>(dataProvider, resources);
     }
 
     void initTable() {
-        Resources resources = GWT.<Resources> create(SubTableResources.class);
-        dataProvider = new EmptyProvider();
-        table = new SimpleActionTable<HostInterfaceLineModel>(dataProvider, resources);
-
         table.addColumn(new EmptyColumn(), "", "10%");
         table.addColumn(new EmptyColumn(), "Name", "20%");
         table.addColumn(new EmptyColumn(), "Address", "20%");
@@ -144,4 +120,12 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
 
         table.showRefreshButton();
     }
+
+    @Override
+    public void setMainTabSelectedItem(VDS selectedItem) {
+        HostInterfaceForm hostInterfaceForm = new HostInterfaceForm(getDetailModel());
+        contentPanel.remove(contentPanel.getWidgetCount() - 1);
+        contentPanel.add(hostInterfaceForm);
+    }
+
 }

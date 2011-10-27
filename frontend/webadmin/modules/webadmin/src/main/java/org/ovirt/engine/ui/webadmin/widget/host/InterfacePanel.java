@@ -37,6 +37,7 @@ class InterfaceElementPanel extends TogglePanel {
         Grid row = new Grid(1, 8);
         row.setHeight("100%");
         row.setWidth("100%");
+
         Style gridStyle = row.getElement().getStyle();
         gridStyle.setBorderColor("white");
         gridStyle.setBorderWidth(1, Unit.PX);

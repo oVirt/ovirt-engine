@@ -16,6 +16,7 @@ public class BondPanel extends TogglePanel {
     public BondPanel(HostInterfaceLineModel lineModel) {
         super(lineModel);
         clear();
+
         Style style = getElement().getStyle();
         style.setBorderColor("white");
         style.setBorderWidth(1, Unit.PX);
@@ -30,7 +31,7 @@ public class BondPanel extends TogglePanel {
             // Bond name
             add(new Label(new HostInterfaceBondNameRenderer().render(lineModel)));
         } else {
-            add(new Label("    "));
+            add(new Label(""));
         }
     }
 

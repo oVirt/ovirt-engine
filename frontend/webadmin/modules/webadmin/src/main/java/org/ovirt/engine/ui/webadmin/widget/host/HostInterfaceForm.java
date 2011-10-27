@@ -10,26 +10,14 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.Widget;
 
-// TODO list
-// - Host NIC subtab modify as form-based
-// - use this widget within Host NIC subtab
 public class HostInterfaceForm extends Composite {
 
     private final Grid grid;
 
     @SuppressWarnings("unchecked")
     public HostInterfaceForm(HostInterfaceListModel listModel) {
-        listModel.getItemsChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                HostInterfaceListModel model = (HostInterfaceListModel) sender;
-                List<HostInterfaceLineModel> interfaceLineModels = (List<HostInterfaceLineModel>) model.getItems();
-                showModels(interfaceLineModels);
-            }
-        });
-
         grid = new Grid(1, 3);
         grid.getColumnFormatter().setWidth(0, "65%");
         grid.getColumnFormatter().setWidth(1, "11%");
@@ -42,6 +30,15 @@ public class HostInterfaceForm extends Composite {
         if (interfaceLineModels != null) {
             showModels(interfaceLineModels);
         }
+
+        listModel.getItemsChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                HostInterfaceListModel model = (HostInterfaceListModel) sender;
+                List<HostInterfaceLineModel> interfaceLineModels = (List<HostInterfaceLineModel>) model.getItems();
+                showModels(interfaceLineModels);
+            }
+        });
     }
 
     InterfacePanel createInterfacePanel(HostInterfaceLineModel lineModel) {
@@ -67,18 +64,21 @@ public class HostInterfaceForm extends Composite {
         return panel;
     }
 
-    private void showModels(List<HostInterfaceLineModel> interfaceLineModels) {
-        int row = 0;
+    void showModels(List<HostInterfaceLineModel> interfaceLineModels) {
         grid.resizeRows(interfaceLineModels.size());
+        int row = 0;
+
         for (HostInterfaceLineModel lineModel : interfaceLineModels) {
-            grid.setWidget(row, 0, createInterfacePanel(lineModel));
-            grid.getCellFormatter().setHeight(row, 0, "100%");
-            grid.setWidget(row, 1, createBondPanel(lineModel));
-            grid.getCellFormatter().setHeight(row, 1, "100%");
-            grid.setWidget(row, 2, createVLanPanel(lineModel));
-            grid.getCellFormatter().setHeight(row, 2, "100%");
+            setGridWidget(row, 0, createInterfacePanel(lineModel));
+            setGridWidget(row, 1, createBondPanel(lineModel));
+            setGridWidget(row, 2, createVLanPanel(lineModel));
             row++;
         }
+    }
+
+    void setGridWidget(int row, int col, Widget widget) {
+        grid.setWidget(row, col, widget);
+        grid.getCellFormatter().setHeight(row, col, "100%");
     }
 
 }

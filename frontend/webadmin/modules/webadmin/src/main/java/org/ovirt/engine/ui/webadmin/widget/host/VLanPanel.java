@@ -53,6 +53,7 @@ class VLanElementPanel extends TogglePanel {
         row.getCellFormatter().setHeight(0, 1, "100%");
         row.setWidth("100%");
         row.setHeight("100%");
+
         Style gridStyle = row.getElement().getStyle();
         gridStyle.setBorderColor("white");
         gridStyle.setBorderWidth(1, Unit.PX);
@@ -95,8 +96,6 @@ class VLanElementPanel extends TogglePanel {
         }
 
         row.setWidget(0, 1, networkName);
-        row.getCellFormatter().setHeight(0, 0, "100%");
-        row.getCellFormatter().setHeight(0, 1, "100%");
 
         return row;
     }

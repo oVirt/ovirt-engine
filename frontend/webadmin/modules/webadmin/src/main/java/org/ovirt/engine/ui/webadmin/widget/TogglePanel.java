@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.widget;
 
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -17,11 +16,11 @@ public class TogglePanel extends HorizontalPanel {
 
     public TogglePanel(Model model) {
         super();
+
         checkBox = new ModelBoundCheckBox(model);
         checkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
-                GWT.log("Checkbox value changed to " + event.getValue());
                 setChecked(event.getValue());
             }
         });
@@ -46,8 +45,7 @@ public class TogglePanel extends HorizontalPanel {
     }
 
     void updateToggleStyle() {
-        GWT.log("Updating Style to " + checked);
-        getElement().getStyle().setBackgroundColor(checked ? "gray" : "#F3F7FB");
+        getElement().getStyle().setBackgroundColor(checked ? "#C3D0E0" : "#F3F7FB");
     }
 
     protected ModelBoundCheckBox getCheckBox() {
