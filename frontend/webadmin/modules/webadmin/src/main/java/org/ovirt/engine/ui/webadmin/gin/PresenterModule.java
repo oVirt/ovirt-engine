@@ -33,14 +33,16 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSin
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateNewPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmAssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vms.VmNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter;
@@ -133,13 +135,15 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindSingleDc
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.tag.TagPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmAssignTagsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmChangeCDPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDesktopNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMakeTemplatePopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRunOncePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmServerNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotCreatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabClusterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabDataCenterView;
@@ -615,11 +619,15 @@ public class PresenterModule extends AbstractPresenterModule {
                 StorageRemovePopupPresenterWidget.ViewDef.class,
                 StorageRemovePopupView.class);
 
-        // VM Snapshot Create
-        bindPresenterWidget(VmNewPopupPresenterWidget.class,
-                VmNewPopupPresenterWidget.ViewDef.class,
-                VmNewPopupView.class);
+        bindPresenterWidget(VmDesktopNewPopupPresenterWidget.class,
+                VmDesktopNewPopupPresenterWidget.ViewDef.class,
+                VmDesktopNewPopupView.class);
+        
+        bindPresenterWidget(VmServerNewPopupPresenterWidget.class,
+                VmServerNewPopupPresenterWidget.ViewDef.class,
+                VmServerNewPopupView.class);
 
+     // VM Snapshot Create
         bindPresenterWidget(VmSnapshotCreatePopupPresenterWidget.class,
                 VmSnapshotCreatePopupPresenterWidget.ViewDef.class,
                 VmSnapshotCreatePopupView.class);
@@ -644,15 +652,20 @@ public class PresenterModule extends AbstractPresenterModule {
                 VmChangeCDPopupPresenterWidget.ViewDef.class,
                 VmChangeCDPopupView.class);
 
-        //VM Add/Edit Interface
+        // VM Add/Edit Interface
         bindPresenterWidget(VmInterfacePopupPresenterWidget.class,
                 VmInterfacePopupPresenterWidget.ViewDef.class,
                 VmInterfacePopupView.class);
-        
-      //VM Add/Edit Disk
+
+        // VM Add/Edit Disk
         bindPresenterWidget(VmDiskPopupPresenterWidget.class,
                 VmDiskPopupPresenterWidget.ViewDef.class,
                 VmDiskPopupView.class);
+
+        // Edit Template
+        bindPresenterWidget(TemplateNewPresenterWidget.class,
+                TemplateNewPresenterWidget.ViewDef.class,
+                TemplateNewPopupView.class);
     }
 
 }

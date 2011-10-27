@@ -4,12 +4,14 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
@@ -23,12 +25,13 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmAssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vms.VmNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
@@ -52,7 +55,8 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmMakeTemplatePopupPresenterWidget> makeTemplatePopupProvider,
             final Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider,
             final Provider<VmChangeCDPopupPresenterWidget> changeCDPopupProvider,
-            final Provider<VmNewPopupPresenterWidget> newVmPopupProvider,
+            final Provider<VmDesktopNewPopupPresenterWidget> newDesktopVmPopupProvider,
+            final Provider<VmServerNewPopupPresenterWidget> newServerVmPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new MainTabModelProvider<VM, VmListModel>(ginjector, VmListModel.class) {
             @Override
@@ -67,10 +71,17 @@ public class VirtualMachineModule extends AbstractGinModule {
                     return changeCDPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
-                } else if ((lastExecutedCommand == getModel().getNewDesktopCommand())
-                        || (lastExecutedCommand == getModel().getNewServerCommand())
-                        || (lastExecutedCommand == getModel().getEditCommand())) {
-                    return newVmPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getNewDesktopCommand()) {
+                    return newDesktopVmPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getNewServerCommand()) {
+                    return newServerVmPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getEditCommand()) {
+                    UnitVmModel vm = (UnitVmModel)getModel().getWindow();
+                    if (vm.getVmType().equals(VmType.Desktop)) {
+                        return newDesktopVmPopupProvider.get();
+                    } else {
+                        return newServerVmPopupProvider.get();
+                    }
                 } else {
                     return super.getModelPopup(lastExecutedCommand);
                 }

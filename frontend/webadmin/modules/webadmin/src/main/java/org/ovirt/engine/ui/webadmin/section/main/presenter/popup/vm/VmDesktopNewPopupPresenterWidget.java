@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vms;
+package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm;
 
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBoundPopupPresenterWidget;
@@ -6,13 +6,13 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBo
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class VmNewPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<UnitVmModel, VmNewPopupPresenterWidget.ViewDef> {
+public class VmDesktopNewPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<UnitVmModel, VmDesktopNewPopupPresenterWidget.ViewDef> {
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<UnitVmModel> {
 
     }
 
     @Inject
-    public VmNewPopupPresenterWidget(EventBus eventBus, ViewDef view) {
+    public VmDesktopNewPopupPresenterWidget(EventBus eventBus, ViewDef view) {
         super(eventBus, view);
     }
 }

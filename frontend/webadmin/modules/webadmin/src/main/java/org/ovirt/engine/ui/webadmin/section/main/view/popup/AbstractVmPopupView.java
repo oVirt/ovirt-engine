@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
+package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
 import java.util.ArrayList;
 import java.util.Map.Entry;
@@ -18,8 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vms.VmNewPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.Align;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.widget.dialog.tab.DialogTab;
@@ -51,12 +49,12 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.inject.Inject;
 
-public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> implements VmNewPopupPresenterWidget.ViewDef {
-    interface Driver extends SimpleBeanEditorDriver<UnitVmModel, VmNewPopupView> {
+public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel> {
+    interface Driver extends SimpleBeanEditorDriver<UnitVmModel, AbstractVmPopupView> {
         Driver driver = GWT.create(Driver.class);
     }
 
-    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VmNewPopupView> {
+    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AbstractVmPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -69,7 +67,7 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
 
     // ==General Tab==
     @UiField
-    DialogTab generalTab;
+    protected DialogTab generalTab;
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
     ListModelListBoxEditor<Object> dataCenterEditor;
@@ -88,7 +86,7 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
 
     @UiField(provided = true)
     @Path(value = "template.selectedItem")
-    ListModelListBoxEditor<Object> templateEditor;
+    protected ListModelListBoxEditor<Object> templateEditor;
 
     @UiField(provided = true)
     @Path(value = "memSize.entity")
@@ -108,7 +106,7 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
 
     // ==Windows Prep Tab==
     @UiField
-    DialogTab windowsSysPrepTab;
+    protected DialogTab windowsSysPrepTab;
 
     @UiField(provided = true)
     @Path(value = "domain.selectedItem")
@@ -132,15 +130,15 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
 
     @UiField(provided = true)
     @Path(value = "numOfMonitors.selectedItem")
-    ListModelListBoxEditor<Object> numOfMonitorsEditor;
+    protected ListModelListBoxEditor<Object> numOfMonitorsEditor;
 
     @UiField(provided = true)
     @Path(value = "isStateless.entity")
-    EntityModelCheckBoxEditor isStatelessEditor;
+    protected EntityModelCheckBoxEditor isStatelessEditor;
 
     // ==Host Tab==
     @UiField
-    DialogTab hostTab;
+    protected DialogTab hostTab;
 
     @UiField(provided = true)
     @Path(value = "runVMOnSpecificHost.entity")
@@ -164,7 +162,7 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
 
     // ==High Availability Tab==
     @UiField
-    DialogTab highAvailabilityTab;
+    protected DialogTab highAvailabilityTab;
 
     @UiField(provided = true)
     @Path(value = "isHighlyAvailable.entity")
@@ -177,7 +175,7 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
 
     // ==Resource Allocation Tab==
     @UiField
-    DialogTab resourceAllocationTab;
+    protected DialogTab resourceAllocationTab;
 
     @UiField(provided = true)
     @Path(value = "storageDomain.selectedItem")
@@ -215,7 +213,7 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
     CheckBox cdImageIsChangable;
 
     @UiField
-    FlowPanel linuxBootOptionsPanel;
+    protected FlowPanel linuxBootOptionsPanel;
 
     @UiField
     @Path(value = "kernel_path.entity")
@@ -235,14 +233,14 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
 
     // ==Custom Properties Tab==
     @UiField
-    DialogTab customPropertiesTab;
+    protected DialogTab customPropertiesTab;
 
     @UiField
     @Path(value = "customProperties.entity")
     EntityModelTextBoxEditor customPropertiesEditor;
 
     @Inject
-    public VmNewPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public AbstractVmPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
         initListBoxEditors();
 
@@ -478,18 +476,6 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
                     } else {
                         consoleTab.markAsInvalid(null);
                     }
-                } else if ("IsHostAvailable".equals(propName)) {
-                    if (vm.getIsHostAvailable()) {
-                        hostTab.setVisible(true);
-                    } else {
-                        hostTab.setVisible(false);
-                    }
-                } else if ("IsHostAvailable".equals(propName)) {
-                    if (vm.getIsHostTabValid()) {
-                        hostTab.markAsValid();
-                    } else {
-                        hostTab.markAsInvalid(null);
-                    }
                 } else if ("IsAllocationTabValid".equals(propName)) {
                     if (vm.getIsAllocationTabValid()) {
                         resourceAllocationTab.markAsValid();
@@ -497,11 +483,7 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
                         resourceAllocationTab.markAsInvalid(null);
                     }
                 } else if ("IsHighlyAvailable".equals(propName)) {
-                    if ((Boolean) vm.getIsHighlyAvailable().getEntity()) {
-                        highAvailabilityTab.setVisible(true);
-                    } else {
-                        highAvailabilityTab.setVisible(false);
-                    }
+                    highAvailabilityTab.setVisible((Boolean) vm.getIsHighlyAvailable().getEntity());
                 } else if ("IsBootSequenceTabValid".equals(propName)) {
                     if ((Boolean) vm.getIsHighlyAvailable().getEntity()) {
                         bootOptionsTab.markAsValid();

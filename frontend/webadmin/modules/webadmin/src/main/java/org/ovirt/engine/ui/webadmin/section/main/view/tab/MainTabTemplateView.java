@@ -73,8 +73,8 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         };
         getTable().addColumn(descriptionColumn, "Description");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>(getMainModel().getEditCommand(),false,true));
-        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>(getMainModel().getRemoveCommand(),false,true));
+        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>(getMainModel().getEditCommand()));
+        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>(getMainModel().getRemoveCommand()));
         // TODO: separator
         getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>(getMainModel().getExportCommand(),false,false));
         getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>(getMainModel().getCopyCommand(),false,false));

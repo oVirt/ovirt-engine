@@ -4,7 +4,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"	xmlns:t="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog.tab">
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmNewPopupView.Style">
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractVmPopupView.Style">
 		.generalTabTopDecorator {
 			background-color: #D3D3D3;
 			margin-bottom: 20px;
