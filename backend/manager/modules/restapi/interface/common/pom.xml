@@ -10,7 +10,7 @@
   <artifactId>common-parent</artifactId>
   <packaging>pom</packaging>
 
-  <name>RHEV-M API Commom Parent POM</name>
+  <name>oVirt Engine API Commom Parent POM</name>
 
   <modules>
     <module>jaxrs</module>

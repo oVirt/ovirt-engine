@@ -10,7 +10,7 @@
   <artifactId>interface-common-jaxrs</artifactId>
   <packaging>jar</packaging>
 
-  <name>RHEV-M API Common JAX-RS</name>
+  <name>oVirt Engine API Common JAX-RS</name>
 
   <dependencies>
 

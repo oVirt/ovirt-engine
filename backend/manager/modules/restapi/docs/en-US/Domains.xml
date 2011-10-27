@@ -112,7 +112,7 @@
 &lt;user id="225f15cd-e891-434d-8262-a66808fcb9b1"
   href="/restapi-definition/domains/77696e32-6b38-7268-6576-2e656e676c61/users/
   d3b4e7be-5f57-4dac-b937-21e1771a501f"&gt;
-    &lt;name&gt;RHEV-M Admin&lt;/name&gt;
+    &lt;name&gt;oVirt Engine Admin&lt;/name&gt;
     &lt;user_name&gt;rhevmadmin@domain.example.com&lt;/user_name&gt;
     &lt;domain id="77696e32-6b38-7268-6576-2e656e676c61"
       href="/restapi-definition/domains/77696e32-6b38-7268-6576-2e656e676c61"/&gt;

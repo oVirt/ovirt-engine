@@ -10,7 +10,7 @@
   <artifactId>restapi-definition</artifactId>
   <packaging>jar</packaging>
 
-  <name>RHEV-M API Definition</name>
+  <name>oVirt Engine API Definition</name>
 
   <dependencies>
 

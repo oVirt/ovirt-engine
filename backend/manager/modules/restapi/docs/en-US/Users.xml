@@ -84,7 +84,7 @@ Accept: application/xml
 
 &lt;user id="225f15cd-e891-434d-8262-a66808fcb9b1"
   href="/restapi-definition/users/225f15cd-e891-434d-8262-a66808fcb9b1"&gt;
-    &lt;name&gt;RHEV-M Admin&lt;/name&gt;
+    &lt;name&gt;oVirt Engine Admin&lt;/name&gt;
     &lt;actions/&gt;
     &lt;link rel="roles"
       href="/restapi-definition/users/225f15cd-e891-434d-8262-a66808fcb9b1/roles"/&gt;
