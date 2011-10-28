@@ -70,31 +70,6 @@
           </additionalClasspathElements>
         </configuration>
       </plugin>
-
-      <plugin>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-java2ws-plugin</artifactId>
-        <configuration>
-          <className>org.ovirt.engine.ui.genericapi.GenericApiService</className>
-        </configuration>
-        <executions>
-          <execution>
-            <id>process-classes</id>
-            <phase>process-classes</phase>
-            <configuration>
-              <className>org.ovirt.engine.ui.genericapi.GenericApiService</className>
-              <!--<genClient>true</genClient-->
-              <outputFile>${basedir}/target/genericapi.wsdl</outputFile>
-              <genWsdl>true</genWsdl>
-              <verbose>true</verbose>
-            </configuration>
-            <goals>
-              <goal>java2ws</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
-
 </project>

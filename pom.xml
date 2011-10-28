@@ -284,26 +284,6 @@
 
   <repositories>
     <repository>
-      <id>engine</id>
-      <name>engine local</name>
-      <url>http://fivehole.eng.lab.tlv.redhat.com:8081/artifactory/rhevx</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-
-    <repository>
-      <id>gwt-local</id>
-      <name>gwt local</name>
-      <url>http://fivehole.eng.lab.tlv.redhat.com:8081/artifactory/gwt-local</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-
-    <repository>
       <id>jboss</id>
       <name>Jboss Repo</name>
       <layout>default</layout>
