@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSin
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateNewPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmAssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
@@ -135,6 +136,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindSingleDc
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.tag.TagPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmAssignTagsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmChangeCDPopupView;
@@ -666,6 +668,11 @@ public class PresenterModule extends AbstractPresenterModule {
         bindPresenterWidget(TemplateNewPresenterWidget.class,
                 TemplateNewPresenterWidget.ViewDef.class,
                 TemplateNewPopupView.class);
+        
+        // Add/Edit Template's NIC
+        bindPresenterWidget(TemplateInterfacePopupPresenterWidget.class,
+                TemplateInterfacePopupPresenterWidget.ViewDef.class,
+                TemplateInterfacePopupView.class);
     }
 
 }
