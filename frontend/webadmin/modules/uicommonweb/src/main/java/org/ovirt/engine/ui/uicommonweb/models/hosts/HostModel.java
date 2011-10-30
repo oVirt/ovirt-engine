@@ -421,16 +421,27 @@ public class HostModel extends Model implements ITaskTarget
 				{
 					HostModel hostModel = (HostModel)model;
 					java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>)result;
-					hostModel.getCluster().setItems(clusters);
 					VDSGroup oldCluster = (VDSGroup)hostModel.getCluster().getSelectedItem();
-					if (oldCluster != null)
-					{
-						hostModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(oldCluster.getID())));
-					}
+					storage_pool selectedDataCenter = (storage_pool) getDataCenter().getSelectedItem();
 
-					if (hostModel.getCluster().getSelectedItem() == null)
+					// Update selected cluster only if the returned cluster list is indeed the selected datacenter's clusters
+					if (clusters.size() > 0 && clusters.get(0).getstorage_pool_id().getValue().equals(selectedDataCenter.getId().getValue()))
 					{
-						hostModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+						hostModel.getCluster().setItems(clusters);
+
+						if (oldCluster != null)
+						{
+							VDSGroup newSelectedItem = Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(oldCluster.getID()));
+							if (newSelectedItem != null)
+							{
+								hostModel.getCluster().setSelectedItem(newSelectedItem);
+							}
+						}
+
+						if (hostModel.getCluster().getSelectedItem() == null)
+						{
+							hostModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+						}
 					}
 				}};
 
