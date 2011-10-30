@@ -1,0 +1,307 @@
+%define py_site_pkgs %(python -c "from distutils.sysconfig import get_python_lib as f;print f()")
+%define __os_install_post %{nil}
+
+Name: ovirt-engine
+Version: $version
+Release: 0%{?dist}
+License: ASL 2.0
+Summary: Management server for Open Virtualization
+Group: Virtualization/Management
+URL: http://www.ovirt.org
+
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
+BuildArch: x86_64
+BuildRequires: unzip
+#BuildRequires: openssl-devel
+BuildRequires: gcc-c++
+Requires: java-1.6.0-openjdk
+Requires: policycoreutils-python
+Requires: cracklib-python
+Requires: ntp
+Requires: postgresql-server >= 8.4.7
+Requires: postgresql-contrib >= 8.4.7
+Requires: postgresql-jdbc
+Requires: %{name}-jboss-deps
+Requires: %{name}-backend
+Requires: %{name}-restapi
+Requires: %{name}-genericapi
+Requires: %{name}-userportal
+#Requires: %{name}-admin-portal-wpf
+#Requires: %{name}-spice-client-x86-msi
+#Requires: %{name}-spice-client-x64-msi
+#Requires: %{name}-spice-client-x86-cab
+#Requires: %{name}-spice-client-x64-cab
+Requires: %{name}-config
+Requires: %{name}-notification-service
+Requires: %{name}-iso-uploader
+Requires: %{name}-log-collector
+Requires: %{name}-dbscripts
+Requires: %{name}-webadmin-portal
+Requires: vdsm-bootstrap
+#Requires: openssl
+Requires: virtio-win
+
+%description
+Open Virtualization Manager is a feature-rich
+server virtualization management system that provides advanced capabilities
+for managing the Open virtualization infrastructure for Servers and Desktops.
+
+%package jboss-deps
+Summary: Jboss dependencies of Open Virtualization Manager
+Group: Virtualization/Management
+Requires: ovirt-engine-jbossas
+Requires: %{name} = %{version}-%{release}
+Requires: hsqldb >= 1:1.8.0.10-9
+Requires: jakarta-commons-discovery >= 1:0.4-7
+
+%description jboss-deps
+The JBOSS dependencies of Open Virtualization Manager
+
+%package backend
+Summary: Engine core of Open Virtualization Manager
+Group: Virtualization/Management
+Requires: %{name} = %{version}-%{release}
+
+%description backend
+The backend engine of Open Virtualization Manager
+
+%package restapi
+Summary: Open API for Red Hat Enterprise Virtualization Manager
+Group: Virtualization/Management
+Requires: %{name} = %{version}-%{release}
+
+%description restapi
+The Open API for Red Hat Enterprise Virtualization Manager
+
+%package genericapi
+Summary: Generic API for Open Virtualization Manager
+Group: Virtualization/Management
+Requires: %{name} = %{version}-%{release}
+
+%description genericapi
+The generic API for Open Virtualization Manager
+
+%package iso-uploader
+Summary: ISO Uploader tool for Open Virtualization Manager
+Group: Virtualization/Management
+Requires: %{name}
+
+%description iso-uploader
+ISO Uploader tool for Open Virtualization Manager
+
+%package log-collector
+Summary: Log Collector tool for Open Virtualization Manager
+Group: Virtualization/Management
+Requires: %{name}
+Requires: sos
+
+%description log-collector
+Log Collector tool for Open Virtualization Manager
+
+%package dbscripts
+Summary: Database scripts for Open Virtualization Manager
+Group: Virtualization/Management
+Requires: %{name}
+
+%description dbscripts
+Database scripts for Open Virtualization Manager
+
+%package userportal
+Summary: User Portal of Open Virtualization Manager
+Group: Virtualization/Management
+Requires: %{name} = %{version}-%{release}
+
+%description userportal
+The user portal interface to Open Virtualization Manager
+
+%package webadmin-portal
+Summary: Web Admin Portal of Open Virtualization Manager
+Group: Virtualization/Management
+Requires: %{name}
+
+%description webadmin-portal
+The web administration interface to Open Virtualization Manager
+
+%package tools-common
+Summary: Common libraries for  Open Virtualization Manager Tools
+Group: Virtualization/Management
+Requires: %{name} = %{version}-%{release}
+Requires: jakarta-commons-collections
+Requires: jakarta-commons-logging
+Requires: jakarta-commons-lang
+Requires: jakarta-commons-codec
+Requires: log4j
+Requires: jakarta-commons-configuration
+Requires: jakarta-commons-jxpath
+
+%description tools-common
+The common libraries used by Open Virtualization Manager Tools
+
+%package notification-service
+Summary: Notification service for Open Virtualization Manager Tools
+Group: Virtualization/Management
+Requires: %{name} = %{version}-%{release}
+Requires: %{name}-tools-common = %{version}-%{release}
+Requires: classpathx-mail
+
+%description notification-service
+The notification service used by Open Virtualization Manager
+
+%package config
+Summary: Configuration tool for  Open Virtualization Manager
+Group: Virtualization/Management
+Requires: %{name}-tools-common = %{version}-%{release}
+
+%description config
+The configuration tool for Open Virtualization Manager
+
+%prep
+
+%build
+
+%install
+rm -rf %{buildroot}/*
+make -C ../../ PREFIX=%{buildroot}/ install
+
+
+%preun
+
+%post
+ln -s /usr/share/vdsm-bootstrap /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/components.war/vds &> /dev/null || /bin/true
+
+%postun
+
+%pre
+/usr/bin/getent group kvm > /dev/null || /usr/sbin/groupadd -g 36 -r kvm
+/usr/bin/getent passwd vdsm > /dev/null || /usr/sbin/useradd -u 36 -g kvm -o -r vdsm -c "Ovirt node manager" -d / -s /sbin/nologin
+
+/usr/bin/getent group ovirt > /dev/null || /usr/sbin/groupadd -g 108 ovirt
+/usr/bin/getent passwd ovirt > /dev/null || /usr/sbin/useradd -u 108 -g ovirt -o -r ovirt -c "Ovirt Manager" -d /var/lib/ovirt -s /sbin/nologin
+/usr/bin/getent passwd jboss > /dev/null && /usr/sbin/usermod -a -G jboss ovirt > /dev/null
+
+%pre notification-service
+/usr/bin/getent group ovirt > /dev/null || /usr/sbin/groupadd -g 108 ovirt
+/usr/bin/getent passwd ovirt > /dev/null || /usr/sbin/useradd -u 108 -g ovirt -o -r ovirt -c "Ovirt Manager" -d /var/lib/ovirt -s /sbin/nologin
+/usr/bin/getent passwd jboss > /dev/null && /usr/sbin/usermod -a -G jboss ovirt > /dev/null
+
+%post notification-service
+/bin/chown ovirt:ovirt /etc/ovirt-engine/notifier/notifier.conf > /dev/null || /bin/true
+
+%clean
+rm -rf %{buildroot}
+
+%files
+%defattr(-,root,root,-)
+%dir %{_datadir}/%{name}
+%dir %{_datadir}/%{name}/resources
+%dir %{_datadir}/%{name}/ovirt-isos
+%dir %{_datadir}/%{name}/db-backups
+%dir %{_datadir}/%{name}/scripts
+%dir %{_localstatedir}/run/%{name}
+%dir %attr (755,jboss,jboss) %{_var}/log/%{name}
+%dir %attr (755,jboss,jboss) %{_var}/lock/%{name}
+%dir %{_datadir}/%{name}/sysprep
+%attr (755,root,root) %{_datadir}/%{name}/kerberos
+%{_datadir}/%{name}/conf
+%{_datadir}/%{name}/3rd-party-lib
+%attr (755,root,root) %{_datadir}/%{name}/scripts/vds_installer.py*
+#%attr (755,jboss,jboss) %{_datadir}/%{name}/resources/jboss
+%dir %{_sysconfdir}/%{name}
+#%attr (755,jboss,jboss) %{_sysconfdir}/pki/%{name}
+%attr (640,jboss,jboss) %config(noreplace) %{_sysconfdir}/%{name}/engine.conf
+
+#%config(noreplace) %{_sysconfdir}/pki/%{name}/database.txt
+#%config(noreplace) %{_sysconfdir}/pki/%{name}/serial.txt
+#%config(noreplace) %{_sysconfdir}/pki/%{name}/cacert.template
+#%config(noreplace) %{_sysconfdir}/pki/%{name}/cert.template
+#%config(noreplace) %{_sysconfdir}/%{name}/web-conf.js
+%config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.2k3
+%config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.2k8
+%config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.2k8x86
+%config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.w7
+%config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.w7x64
+%config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.xp
+/usr/local/jboss-5.1.0.GA/common/lib/quartz.jar
+/usr/local/jboss-5.1.0.GA/server/default/conf/jboss-log4j.xml
+/usr/local/jboss-5.1.0.GA/server/default/conf/login-config.xml
+/usr/local/jboss-5.1.0.GA/server/default/deploy/postgres-ds.xml
+/usr/local/jboss-5.1.0.GA/server/default/deploy/transaction-jboss-beans.xml
+/usr/local/jboss-5.1.0.GA/common/lib/postgresql-jdbc.jar
+
+#/var/lib/jbossas/common/lib/quartz-1.8.3.jar
+#/var/lib/jbossas/common/lib/postgresql-jdbc.jar
+
+%files backend
+%dir /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear
+/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/META-INF
+/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/lib
+/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/engine-bll.jar
+/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/engine-scheduler.jar
+/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/engine-vdsbroker.jar
+/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/engineanagerweb.war
+/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/engineanager.war
+/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/components.war
+%dir /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/webadmin.war
+
+%files dbscripts
+%attr (755,root,root) %{_datadir}/%{name}/dbscripts
+
+%files jboss-deps
+%defattr(-,root,root,-)
+
+%files restapi
+%dir /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear
+/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/restapi.war
+
+%files genericapi
+%dir /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear
+/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/engine-genericapi.jar
+
+%files userportal
+%dir /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear
+/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/userportal.war
+
+%files webadmin-portal
+%dir /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear
+/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/webadmin.war
+
+%files iso-uploader
+%{_datadir}/%{name}/iso-uploader
+%{_bindir}/engine-iso-uploader
+%config(noreplace) %{_sysconfdir}/%{name}/isouploader.conf
+%doc  %{_mandir}/man8/engine-iso-uploader.8.gz
+
+%files log-collector
+%attr (755,root,root) %{_datadir}/%{name}/log-collector
+%attr (755,root,root) %{py_site_pkgs}/sos/plugins/engine.py*
+%attr (755,root,root) %{py_site_pkgs}/sos/plugins/jboss.py*
+%attr (755,root,root) %{py_site_pkgs}/sos/plugins/postgresql.py*
+%{_bindir}/engine-log-collector
+%config(noreplace) %{_sysconfdir}/%{name}/logcollector.conf
+%doc  %{_mandir}/man8/engine-log-collector.8.gz
+
+%files tools-common
+%{_datadir}/java/engine-tools-common-3.0.0-0001.jar
+%{_datadir}/java/engine-tools-common.jar
+
+%files config
+%{_datadir}/%{name}/engine-config
+%{_sysconfdir}/%{name}/engine-config
+%{_bindir}/engine-config
+%{_datadir}/%{name}/engine-manage-domains
+%{_sysconfdir}/%{name}/engine-manage-domains
+%{_bindir}/engine-manage-domains
+
+%files notification-service
+%defattr(-,ovirt,ovirt,-)
+%dir %attr (755,ovirt,ovirt) %{_var}/log/%{name}/notifier
+%dir %attr (755,ovirt,ovirt) %{_localstatedir}/run/%{name}/notifier
+%{_datadir}/%{name}/notifier
+%{_sysconfdir}/%{name}/notifier
+%attr (755,root,root) %{_sysconfdir}/init.d/engine-notifierd
+%config(noreplace) %{_sysconfdir}/%{name}/notifier/notifier.conf
+
+%changelog
+* Wed Oct 26 2011 Ronen Angluster <ranglust@redhat.com> - 3.0.0
+- Initial build
+- Cloned from RHEVM spec file

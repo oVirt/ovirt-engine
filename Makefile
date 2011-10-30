@@ -1,0 +1,199 @@
+# Copyright 2008 Red Hat, Inc. and/or its affiliates.
+#
+# Licensed to you under the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.  See the files README and
+# LICENSE_GPL_v2 which accompany this distribution.
+#
+MVN=/usr/bin/mvn
+BUILD_FLAGS=-P gwt-admin,gwt-user
+DEPLOY_FLAGS=-f deploy.xml
+JBOSS_HOME=/usr/local/jboss-5.1.0.GA
+EAR_DIR=${JBOSS_HOME}/server/default/deploy/engine.ear
+EAR_SRC_DIR=ear/target/engine
+PY_SITE_PKGS:=$(shell python -c "from distutils.sysconfig import get_python_lib as f;print f()")
+APP_VERSION:=$(shell cat pom.xml | grep '<engine.version>' | awk -F\> '{print $$2}' | awk -F\< '{print $$1}')
+RPM_VERSION:=$(shell echo $(APP_VERSION) | sed "s/-/_/")
+#RPM_RELEASE:=$(shell echo $(APP_VERSION) | awk -F\. '{print $$3"%{?dist}"}')
+SPEC_FILE_IN=packaging/fedora/ovirt-engine.spec.in
+SPEC_FILE=ovirt-engine.spec
+RPMBUILD=$(shell bash -c "pwd -P")/rpmbuild
+TARBALL=ovirt-engine-$(RPM_VERSION)-$(RPM_RELEASE).tar.gz
+CURR_DIR=$(shell bach -c "pwd -P")
+all: build
+
+build:
+	$(MVN) install $(BUILD_FLAGS) -D skipTests
+
+clean:
+	$(MVN) clean
+	rm -rf $(RPMBUILD) $(SPEC_FILE)
+
+test:
+	$(MVN) install $(BUILD_FLAGS)
+
+install: create_dirs install_ear install_quartz install_tools install_config \
+		install_log_collector install_iso_uploader install_sysprep \
+		install_notification_service install_db_scripts install_misc
+
+# TODO: unmark and veirfy that "make srpm" once files in the front has been aligned.
+#tarball: $(TARBALL)
+#$(TARBALL):
+#	tar zcf $(TARBALL) `git ls-files | sed -e "s/\s/_/g"`
+
+#srpm: tarball
+#	sed 's/^Version:.*/Version: $(RPM_VERSION)/;s/^Release:.*/Release: $(RPM_RELEASE)/' $(SPEC_FILE_IN) > $(SPEC_FILE)
+#	mkdir -p $(RPMBUILD)/{RPMS,SRPMS,SOURCES,BUILD}
+#	rpmbuild -bs --define="_topdir $(RPPBUILD)" --define="_sourcedir ." $(SPEC_FILE)
+
+rpm:
+	rm -rf $(RPMBUILD)
+	sed 's/^Version:.*/Version: $(RPM_VERSION)/' $(SPEC_FILE_IN) > $(SPEC_FILE)
+	mkdir -p $(RPMBUILD)/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
+	cp -f $(SPEC_FILE) $(RPMBUILD)/SPECS/
+	rpmbuild -bb --define="_topdir $(RPMBUILD)" \
+	--define="_sourcedir ." $(SPEC_FILE) \
+	 $(RPMBUILD)/SPECS/$(SPEC_FILE)
+	rm -f ovirt-engine.spec
+
+create_dirs:
+	@echo "*** Creating Directories"
+	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/{sysprep,kerberos,scripts,3rd-party-lib,engine.ear,conf,dbscripts,resources,ovirt-isos,iso-uploader,log-collector,db-backups}
+	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/engine-config/lib
+	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/notifier/lib
+	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/lib
+	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/log-collector/schemas
+	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/iso-uploader/schemas
+	@mkdir -p $(PREFIX)/usr/share/java
+	@mkdir -p $(PREFIX)/usr/bin
+	@mkdir -p $(PREFIX)/usr/share/man/man8
+	@mkdir -p $(PREFIX)$(PY_SITE_PKGS)/sos/plugins
+	@mkdir -p $(PREFIX)/etc/ovirt-engine/notifier
+	@mkdir -p $(PREFIX)/var/log/ovirt-engine/notifier
+	@mkdir -p $(PREFIX)/var/log/ovirt-engine/engine-manage-domains
+	@mkdir -p $(PREFIX)/var/run/ovirt-engine/notifier
+	@mkdir -p $(PREFIX)/var/lock/ovirt-engine
+	@mkdir -p $(PREFIX)/etc/init.d/
+	@mkdir -p $(PREFIX)/etc/ovirt-engine/{engine-config,engine-manage-domains}
+	@mkdir -p $(PREFIX)$(EAR_DIR)
+	@mkdir -p $(PREFIX)$(JBOSS_HOME)/common/lib
+	@mkdir -p $(PREFIX)$(JBOSS_HOME)/server/default/deploy
+	@mkdir -p $(PREFIX)$(JBOSS_HOME)/server/default/conf
+
+install_ear:
+	@echo "*** Deploying EAR to $(PREFIX)"
+	mkdir -p $(PREFIX)$(EAR_DIR)
+	cp -rf $(EAR_SRC_DIR)/* $(PREFIX)$(EAR_DIR)
+
+install_quartz:
+	@echo "*** Deploying quartz.jar to $(PREFIX)"
+	cp -f ear/target/quartz/quartz.jar $(PREFIX)$(JBOSS_HOME)/common/lib/
+
+install_tools:
+	@echo "*** Installing Common Tools"
+	cp -f ./backend/manager/tools/engine-tools-common/target/engine-tools-common-$(APP_VERSION).jar $(PREFIX)/usr/share/java/
+	rm -f $(PREFIX)/usr/share/java/engine-tools-common.jar
+	ln -s /usr/share/java/engine-tools-common-$(APP_VERSION).jar $(PREFIX)/usr/share/java/engine-tools-common.jar
+
+install_config:
+	@echo "*** Deploying engine-config & engine-manage-domains"
+	cp -f ./backend/manager/tools/engine-config/src/main/resources/engine-config $(PREFIX)/usr/share/ovirt-engine/engine-config/
+	chmod 750 $(PREFIX)/usr/share/ovirt-engine/engine-config/engine-config
+	cp -f ./backend/manager/tools/engine-config/src/main/resources/engine-config.conf $(PREFIX)/etc/ovirt-engine/engine-config/
+	chmod 755 $(PREFIX)/etc/ovirt-engine/engine-config/engine-config.conf
+	cp -f ./backend/manager/tools/engine-config/src/main/resources/engine-config.*properties $(PREFIX)/etc/ovirt-engine/engine-config/
+	chmod 644 $(PREFIX)/etc/ovirt-engine/engine-config/engine-config.*properties
+	cp -f ./backend/manager/tools/engine-config/src/main/resources/log4j.xml $(PREFIX)/etc/ovirt-engine/engine-config/
+	chmod 644 $(PREFIX)/etc/ovirt-engine/engine-config/log4j.xml
+	cp -f ./backend/manager/tools/engine-config/target/engine-config-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/
+	rm -f $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/engine-config.jar
+	ln -s /usr/share/ovirt-engine/engine-config/lib/engine-config-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/engine-config.jar
+	cp -f ./backend/manager/modules/engineencryptutils/target/engineencryptutils-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/
+	cp -f ./ear/target/engine/lib/engine-compat.jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/
+	rm -f $(PREFIX)/usr/bin/engine-config
+	ln -s /usr/share/ovirt-engine/engine-config/engine-config $(PREFIX)/usr/bin/engine-config
+
+	cp -f ./backend/manager/conf/kerberos/engine-manage-domains $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/
+	chmod 750 $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/engine-manage-domains
+	cp -f ./backend/manager/modules/utils/src/main/resources/engine-manage-domains.conf $(PREFIX)/etc/ovirt-engine/engine-manage-domains/
+	chmod 755 $(PREFIX)/etc/ovirt-engine/engine-manage-domains/engine-manage-domains.conf
+	cp -f ./backend/manager/modules/utils/src/main/resources/engine-manage-domains/log4j.xml $(PREFIX)/etc/ovirt-engine/engine-manage-domains/
+	chmod 644 $(PREFIX)/etc/ovirt-engine/engine-manage-domains/log4j.xml
+	cp -f ./ear/target/engine/lib/engine-compat.jar $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/lib/
+	rm -f $(PREFIX)/usr/bin/engine-manage-domains
+	ln -s /usr/share/ovirt-engine/engine-manage-domains/engine-manage-domains $(PREFIX)/usr/bin/engine-manage-domains
+
+install_log_collector:
+	@echo "*** Deploying log collector"
+	cp -f ./backend/manager/tools/engine-logcollector/src/rhev/logcollector.py $(PREFIX)/usr/share/ovirt-engine/log-collector/
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/log-collector/logcollector.py
+	/usr/bin/gzip -c ./backend/manager/tools/engine-logcollector/src/rhev/engine-log-collector.8 > $(PREFIX)/usr/share/man/man8/engine-log-collector.8.gz
+	chmod 644 $(PREFIX)/usr/share/man/man8/engine-log-collector.8.gz
+	cp -f ./backend/manager/tools/engine-logcollector/src/rhev/logcollector.conf $(PREFIX)/etc/ovirt-engine/
+	chmod 600 $(PREFIX)/etc/ovirt-engine/logcollector.conf
+	cp -f ./backend/manager/tools/engine-tools-common-lib/src/rhev/schemas/api.py $(PREFIX)/usr/share/ovirt-engine/log-collector/schemas
+	cp -f ./backend/manager/tools/engine-tools-common-lib/src/rhev/schemas/hypervisors.py $(PREFIX)/usr/share/ovirt-engine/log-collector/schemas
+	cp -f ./backend/manager/tools/engine-tools-common-lib/src/rhev/schemas/__init__.py $(PREFIX)/usr/share/ovirt-engine/log-collector/schemas
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/log-collector/schemas/*
+	cp -f ./backend/manager/tools/engine-logcollector/src/sos/plugins/jboss.py $(PREFIX)$(PY_SITE_PKGS)/sos/plugins
+	cp -f ./backend/manager/tools/engine-logcollector/src/sos/plugins/engine.py $(PREFIX)$(PY_SITE_PKGS)/sos/plugins
+	cp -f ./backend/manager/tools/engine-logcollector/src/sos/plugins/postgresql.py $(PREFIX)$(PY_SITE_PKGS)/sos/plugins
+	chmod 755 $(PREFIX)$(PY_SITE_PKGS)/sos/plugins/*
+	rm -f $(PREFIX)/usr/bin/engine-log-collector
+	ln -s /usr/share/ovirt-engine/log-collector/logcollector.py $(PREFIX)/usr/bin/engine-log-collector	
+
+install_iso_uploader:
+	@echo "*** Deploying iso uploader"
+	cp -f ./backend/manager/tools/engine-iso-uploader/src/engine-iso-uploader.py $(PREFIX)/usr/share/ovirt-engine/iso-uploader/
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/iso-uploader/engine-iso-uploader.py
+	/usr/bin/gzip -c ./backend/manager/tools/engine-iso-uploader/src/engine-iso-uploader.8 > $(PREFIX)/usr/share/man/man8/engine-iso-uploader.8.gz
+	chmod 644 $(PREFIX)/usr/share/man/man8/engine-iso-uploader.8.gz
+	cp -f ./backend/manager/tools/engine-iso-uploader/src/isouploader.conf $(PREFIX)/etc/ovirt-engine/
+	chmod 600 $(PREFIX)/etc/ovirt-engine/isouploader.conf
+	cp -f ./backend/manager/tools/engine-tools-common-lib/src/rhev/schemas/api.py $(PREFIX)/usr/share/ovirt-engine/iso-uploader/schemas
+	cp -f ./backend/manager/tools/engine-tools-common-lib/src/rhev/schemas/__init__.py $(PREFIX)/usr/share/ovirt-engine/iso-uploader/schemas
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/iso-uploader/schemas/*
+	rm -f $(PREFIX)/usr/bin/engine-iso-uploader
+	ln -s /usr/share/ovirt-engine/iso-uploader/engine-iso-uploader.py $(PREFIX)/usr/bin/engine-iso-uploader
+
+install_sysprep:
+	@echo "*** Deploying sysperp"
+	cp -f ./backend/manager/conf/sysprep/* $(PREFIX)/usr/share/ovirt-engine/sysprep
+	chmod 644 $(PREFIX)/usr/share/ovirt-engine/sysprep/*
+
+install_notification_service:
+	@echo "*** Deploying notification service"
+	cp -f ./backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/log4j.xml $(PREFIX)/etc/ovirt-engine/notifier/
+	chmod 644 $(PREFIX)/etc/ovirt-engine/notifier/log4j.xml
+	cp -f ./backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/notifier.conf $(PREFIX)/etc/ovirt-engine/notifier/
+	chmod 640 $(PREFIX)/etc/ovirt-engine/notifier/notifier.conf
+	cp -f ./backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/notifier.sh $(PREFIX)/usr/share/ovirt-engine/notifier/
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/notifier/notifier.sh
+	cp -f ./backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/engine-notifierd $(PREFIX)/etc/init.d/
+	chmod 755 $(PREFIX)/etc/init.d/engine-notifierd
+	cp -f ./backend/manager/tools/engine-notifier/engine-notifier-service/target/engine-notifier-service-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/notifier/engine-notifier.jar
+	chmod 644 $(PREFIX)/usr/share/ovirt-engine/notifier/engine-notifier.jar
+
+install_db_scripts:
+	@echo "*** Deploying Database scripts"
+	cp -a ./backend/manager/dbscripts/* $(PREFIX)/usr/share/ovirt-engine/dbscripts
+
+install_misc:
+	@echo "*** Copying additional files"
+	cp -f ./backend/manager/conf/jaas.conf $(PREFIX)/usr/share/ovirt-engine/conf
+	chmod 644 $(PREFIX)/usr/share/ovirt-engine/conf/jaas.conf
+	cp -f ./backend/manager/conf/engine.conf $(PREFIX)/etc/ovirt-engine/
+	chmod 640 $(PREFIX)/etc/ovirt-engine/engine.conf
+	cp -f ./backend/manager/conf/jboss-log4j.xml $(PREFIX)/usr/share/ovirt-engine/conf
+	chmod 644 $(PREFIX)/usr/share/ovirt-engine/conf/jboss-log4j.xml
+	cp -f ./backend/manager/conf/kerberos/* $(PREFIX)/usr/share/ovirt-engine/kerberos
+	chmod 644 $(PREFIX)/usr/share/ovirt-engine/kerberos/*
+	rm -rf $(PREFIX)/usr/share/ovirt-engine/keberos/*.bat
+	cp -f ./backend/manager/conf/vds_installer.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/vds_installer.py
+	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)$(JBOSS_HOME)/common/lib/postgresql-jdbc.jar
+	cp -f ./backend/manager/conf/jboss-log4j.xml $(PREFIX)$(JBOSS_HOME)/server/default/conf
+	cp -f ./backend/manager/conf/login-config.xml $(PREFIX)$(JBOSS_HOME)/server/default/conf
+	cp -f ./backend/manager/conf/postgres-ds.xml $(PREFIX)$(JBOSS_HOME)/server/default/deploy
+	cp -f ./backend/manager/conf/transaction-jboss-beans.xml $(PREFIX)$(JBOSS_HOME)/server/default/deploy
+
