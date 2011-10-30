@@ -1318,9 +1318,10 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		model.getIsVmFirstRun().setEntity(!vm.getis_initialized());
 		model.getSysPrepDomainName().setSelectedItem(vm.getvm_domain());
 
-		RunOnceUpdateDisplayProtocols(model, vm);
+		RunOnceUpdateDisplayProtocols(vm);
+		RunOnceUpdateFloppy(vm, new java.util.ArrayList<String>());
 		RunOnceUpdateImages(vm);
-		RunOnceUpdateDomains(model);
+		RunOnceUpdateDomains();
 		RunOnceUpdateBootSequence(vm);
 
 		UICommand tempVar = new UICommand("OnRunOnce", this);
@@ -1333,8 +1334,10 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		model.getCommands().add(tempVar2);
 	}
 
-	private void RunOnceUpdateDisplayProtocols(RunOnceModel model, VM vm)
+	private void RunOnceUpdateDisplayProtocols(VM vm)
 	{
+		RunOnceModel model = (RunOnceModel)getWindow();
+
 		EntityModel tempVar = new EntityModel();
 		tempVar.setTitle("VNC");
 		tempVar.setEntity(DisplayType.vnc);
@@ -1378,8 +1381,10 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getvm_guid()), _asyncQuery);
 	}
 
-	private void RunOnceUpdateDomains(RunOnceModel model)
+	private void RunOnceUpdateDomains()
 	{
+		RunOnceModel model = (RunOnceModel)getWindow();
+
 		// Update Domain list
 		AsyncDataProvider.GetDomainList(new AsyncQuery(model,
 		new INewAsyncCallback() {
@@ -1404,6 +1409,32 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		}), true);
 	}
 
+	public void RunOnceUpdateFloppy(VM vm, java.util.ArrayList<String> images)
+	{
+		RunOnceModel model = (RunOnceModel)getWindow();
+
+		if (DataProvider.IsWindowsOsType(vm.getvm_os()))
+		{
+			// Add a pseudo floppy disk image used for Windows' sysprep.
+			if (!vm.getis_initialized())
+			{
+				images.add(0, "[sysprep]");
+				model.getAttachFloppy().setEntity(true);
+			}
+			else
+			{
+				images.add("[sysprep]");
+			}
+		}
+
+		model.getFloppyImage().setItems(images);
+
+		if (model.getFloppyImage().getIsChangable() && model.getFloppyImage().getSelectedItem() == null)
+		{
+			model.getFloppyImage().setSelectedItem(Linq.FirstOrDefault(images));
+		}
+	}
+
 	private void RunOnceUpdateImages(VM vm)
 	{
 		AsyncQuery _asyncQuery0 = new AsyncQuery();
@@ -1424,8 +1455,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 					VmListModel vmListModel1 = (VmListModel)model1;
 					RunOnceModel runOnceModel = (RunOnceModel)vmListModel1.getWindow();
 					java.util.ArrayList<String> images = (java.util.ArrayList<String>)result;
-					runOnceModel.getIsoImage().setItems(images);
 
+					runOnceModel.getIsoImage().setItems(images);
 					if (runOnceModel.getIsoImage().getIsChangable() && runOnceModel.getIsoImage().getSelectedItem() == null)
 					{
 						runOnceModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));
@@ -1440,28 +1471,9 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 				{
 					VmListModel vmListModel2 = (VmListModel)model2;
 					VM selectedVM = (VM)vmListModel2.getSelectedItem();
-					RunOnceModel runOnceModel = (RunOnceModel)vmListModel2.getWindow();
 					java.util.ArrayList<String> images = (java.util.ArrayList<String>)result;
 
-					if (DataProvider.IsWindowsOsType(selectedVM.getvm_os()))
-					{
-						// Add a pseudo floppy disk image used for Windows' sysprep.
-						if (!selectedVM.getis_initialized())
-						{
-							images.add(0, "[sysprep]");
-							runOnceModel.getAttachFloppy().setEntity(true);
-						}
-						else
-						{
-							images.add("[sysprep]");
-						}
-					}
-					runOnceModel.getFloppyImage().setItems(images);
-
-					if (runOnceModel.getFloppyImage().getIsChangable() && runOnceModel.getFloppyImage().getSelectedItem() == null)
-					{
-						runOnceModel.getFloppyImage().setSelectedItem(Linq.FirstOrDefault(images));
-					}
+					vmListModel2.RunOnceUpdateFloppy(selectedVM, images);
 				}};
 				AsyncDataProvider.GetFloppyImageList(_asyncQuery2, isoDomain.getid(), false);
 			}
