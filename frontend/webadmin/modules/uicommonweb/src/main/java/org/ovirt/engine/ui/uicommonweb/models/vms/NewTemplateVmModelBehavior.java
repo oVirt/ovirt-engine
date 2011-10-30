@@ -219,30 +219,26 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
 					activeStorageDomainList.add(storageDomain);
 				}
 			}
-			if (activeStorageDomainList.size() > 0)
+			if (activeStorageDomainList.size() > 0 && vmStorageDomain != null)
 			{
-				if (vmStorageDomain != null)
+				if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
 				{
-					if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
-					{
-						storage_domains selectStorage = (storage_domains)getSystemTreeSelectedItem().getEntity();
-						storage_domains s = Linq.FirstOrDefault(activeStorageDomainList, new Linq.StoragePredicate(selectStorage.getid()));
-						behavior.getModel().getStorageDomain().setItems(new java.util.ArrayList<storage_domains>(java.util.Arrays.asList(new storage_domains[] { s })));
-						behavior.getModel().getStorageDomain().setIsChangable(false);
-						behavior.getModel().getStorageDomain().setSelectedItem(s);
-					}
-					else
-					{
-						behavior.getModel().getStorageDomain().setItems(activeStorageDomainList);
-						behavior.getModel().getStorageDomain().setIsChangable(true);
-						behavior.getModel().getStorageDomain().setSelectedItem(vmStorageDomain);
-					}
+					storage_domains selectStorage = (storage_domains)getSystemTreeSelectedItem().getEntity();
+					storage_domains s = Linq.FirstOrDefault(activeStorageDomainList, new Linq.StoragePredicate(selectStorage.getid()));
+					behavior.getModel().getStorageDomain().setItems(new java.util.ArrayList<storage_domains>(java.util.Arrays.asList(new storage_domains[] { s })));
+					behavior.getModel().getStorageDomain().setIsChangable(false);
+					behavior.getModel().getStorageDomain().setSelectedItem(s);
 				}
 				else
 				{
-					behavior.DisableNewTemplateModel("VM's Storage Domain (" + currentStorageDomain.getstorage_name() + ") is not accessible.");
-					return;
+					behavior.getModel().getStorageDomain().setItems(activeStorageDomainList);
+					behavior.getModel().getStorageDomain().setIsChangable(true);
+					behavior.getModel().getStorageDomain().setSelectedItem(vmStorageDomain);
 				}
+			}
+			else
+			{
+				behavior.DisableNewTemplateModel("VM's Storage Domain (" + currentStorageDomain.getstorage_name() + ") is not accessible.");
 			}
 
 			}
@@ -258,5 +254,6 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
 		getModel().getCluster().setIsChangable(false);
 		getModel().getStorageDomain().setIsChangable(false);
 		getModel().getIsTemplatePublic().setIsChangable(false);
+		getModel().getIsTemplatePrivate().setIsChangable(false);
 	}
 }
