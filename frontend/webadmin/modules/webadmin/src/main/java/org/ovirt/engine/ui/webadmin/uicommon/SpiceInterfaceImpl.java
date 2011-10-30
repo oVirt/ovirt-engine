@@ -7,8 +7,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 
-import com.google.gwt.core.client.GWT;
-
 public class SpiceInterfaceImpl implements ISpice {
     private static Logger logger = Logger.getLogger(SpiceInterfaceImpl.class
             .getName());
@@ -333,9 +331,9 @@ public class SpiceInterfaceImpl implements ISpice {
     public String getSpiceCabURL() {
         // According to the OS type, return the appropriate CAB URL
         if (cat.getPlatform().equalsIgnoreCase("win32")) {
-            return GWT.getModuleBaseURL() + "SpiceX.cab";
+            return WebAdminConfigurator.getSpiceBaseURL() + "SpiceX.cab";
         } else if (cat.getPlatform().equalsIgnoreCase("win64")) {
-            return GWT.getModuleBaseURL() + "SpiceX_x64.cab";
+            return WebAdminConfigurator.getSpiceBaseURL() + "SpiceX_x64.cab";
         } else {
             return null;
         }

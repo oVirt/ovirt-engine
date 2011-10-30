@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -19,6 +20,11 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 
 public class WebAdminConfigurator extends Configurator implements IEventListener {
+
+    // Temporarily save the locations of webadmin and userportal.
+    // TODO: create a new SPICE RPM for webadmin
+    private static final String WEBADMIN_ROOT_FOLDER = "/webadmin/webadmin/";
+    private static final String USERPORTAL_ROOT_FOLDER = "/UserPortal/org.ovirt.engine.ui.userportal.UserPortal/";
 
     public EventDefinition spiceVersionFileFetchedEvent_Definition =
             new EventDefinition("spiceVersionFileFetched", WebAdminConfigurator.class);
@@ -84,10 +90,14 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
                 }));
     }
 
+    public static String getSpiceBaseURL() {
+        return GWT.getModuleBaseURL().replace(WEBADMIN_ROOT_FOLDER, USERPORTAL_ROOT_FOLDER);
+    }
+
     // Fetch file from a specified path
     public void fetchFile(String filePath, final Event onFetched) {
 
-        RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, filePath);
+        RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, getSpiceBaseURL() + filePath);
         try {
             requestBuilder.sendRequest(null, new RequestCallback() {
                 @Override
