@@ -1,0 +1,30 @@
+# ovirt-engine global ignore list
+###########################
+
+# mvn folders
+###########################
+target
+
+# build-time files
+###########################
+.metadata
+*.class
+*.swp
+*.iws
+
+# IDE files
+###########################
+.settings
+.project
+.classpath
+*.ipr
+*.iml
+
+# UI folders
+###########################
+/frontend/webadmin/modules/sharedgwt/src/main/java/META-INF
+/frontend/webadmin/modules/sharedgwt/src/main/java/org/ovirt/engine/core/common
+/frontend/webadmin/modules/sharedgwt/src/main/java/org/ovirt/engine/core/compat
+/frontend/webadmin/modules/sharedgwt/src/main/java/org/ovirt/engine/core/searchbackend
+/frontend/webadmin/modules/webadmin/gen
+/frontend/webadmin/modules/webadmin/war
