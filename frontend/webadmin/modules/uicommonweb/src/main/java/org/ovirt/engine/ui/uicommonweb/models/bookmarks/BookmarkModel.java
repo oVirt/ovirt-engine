@@ -60,7 +60,9 @@ public class BookmarkModel extends Model
 
 	public boolean Validate()
 	{
-		getName().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+		LengthValidation tempVar = new LengthValidation();
+		tempVar.setMaxLength(40);
+		getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
 
 		getSearchString().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
 

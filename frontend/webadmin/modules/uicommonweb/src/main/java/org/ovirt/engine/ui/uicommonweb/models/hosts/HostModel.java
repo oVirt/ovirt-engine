@@ -569,17 +569,21 @@ public class HostModel extends Model implements ITaskTarget
 		String hostNameRegex = StringFormat.format("^[0-9a-zA-Z-_\\.]{1,%1$s}$", HostNameMaxLength);
 		String hostNameMessage = StringFormat.format("This field can't contain blanks or special characters, must " + "be at least one character long, legal values are 0-9, a-z, '_', '.' " + "and a length of up to %1$s characters.", HostNameMaxLength);
 
-		RegexValidation tempVar = new RegexValidation();
-		tempVar.setExpression(hostNameRegex);
-		tempVar.setMessage(hostNameMessage);
-		getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+		LengthValidation tempVar = new LengthValidation();
+		tempVar.setMaxLength(255);
+		RegexValidation tempVar2 = new RegexValidation();
+		tempVar2.setExpression(hostNameRegex);
+		tempVar2.setMessage(hostNameMessage);
+		getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
 
-		getHost().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new HostAddressValidation() });
+		LengthValidation tempVar3 = new LengthValidation();
+		tempVar3.setMaxLength(255);
+		getHost().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar3, new HostAddressValidation() });
 
-		IntegerValidation tempVar2 = new IntegerValidation();
-		tempVar2.setMinimum(1);
-		tempVar2.setMaximum(65535);
-		getPort().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar2 });
+		IntegerValidation tempVar4 = new IntegerValidation();
+		tempVar4.setMinimum(1);
+		tempVar4.setMaximum(65535);
+		getPort().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar4 });
 
 
 		getDataCenter().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });

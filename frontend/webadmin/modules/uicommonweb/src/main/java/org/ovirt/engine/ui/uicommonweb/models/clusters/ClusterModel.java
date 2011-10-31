@@ -677,10 +677,12 @@ public class ClusterModel extends Model
 
 	public boolean Validate(boolean validateStoragePool)
 	{
-		RegexValidation tempVar = new RegexValidation();
-		tempVar.setExpression("^[A-Za-z0-9_-]+$");
-		tempVar.setMessage("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters.");
-		getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new NoSpacesValidation(), tempVar });
+		LengthValidation tempVar = new LengthValidation();
+		tempVar.setMaxLength(40);
+		RegexValidation tempVar2 = new RegexValidation();
+		tempVar2.setExpression("^[A-Za-z0-9_-]+$");
+		tempVar2.setMessage("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters.");
+		getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new NoSpacesValidation(), tempVar, tempVar2 });
 		if (validateStoragePool)
 		{
 			getDataCenter().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });

@@ -1397,11 +1397,17 @@ public class UnitVmModel extends Model
 				nameMsg = "Name cannot contain blanks or special characters. Maximum length: " + NON_WINDOWS_VM_NAME_MAX_LIMIT + ".";
 			}
 
-			RegexValidation tempVar = new RegexValidation();
-			tempVar.setExpression(nameExpr);
-			tempVar.setMessage(nameMsg);
-			getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+			LengthValidation tempVar = new LengthValidation();
+			tempVar.setMaxLength((this.getBehavior() instanceof TemplateVmModelBehavior ? 40 : 64));
+			RegexValidation tempVar2 = new RegexValidation();
+			tempVar2.setExpression(nameExpr);
+			tempVar2.setMessage(nameMsg);
+			getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
+					//for template dialog, name max length is 40 chars, otherwise it's 40 chars
 
+			LengthValidation tempVar3 = new LengthValidation();
+			tempVar3.setMaxLength(255);
+			getDescription().ValidateEntity(new IValidation[] { tempVar3 });
 
 			boolean is64OsType = (osType == VmOsType.Other || osType == VmOsType.OtherLinux || DataProvider.Is64bitOsType(osType));
 			int maxMemSize = is64OsType ? get_MaxMemSize64() : get_MaxMemSize32();

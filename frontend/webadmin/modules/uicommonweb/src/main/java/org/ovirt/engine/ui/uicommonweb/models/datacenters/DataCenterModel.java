@@ -237,10 +237,12 @@ public class DataCenterModel extends Model
 		String nameRegex = StringFormat.format("^[A-Za-z0-9_-]{1,%1$s}$", getMaxNameLength());
 		String nameMessage = StringFormat.format("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters, max length: %1$s", getMaxNameLength());
 
-		RegexValidation tempVar = new RegexValidation();
-		tempVar.setExpression(nameRegex);
-		tempVar.setMessage(nameMessage);
-		getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+		LengthValidation tempVar = new LengthValidation();
+		tempVar.setMaxLength(40);
+		RegexValidation tempVar2 = new RegexValidation();
+		tempVar2.setExpression(nameRegex);
+		tempVar2.setMessage(nameMessage);
+		getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
 		getStorageTypeList().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
 		getVersion().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });

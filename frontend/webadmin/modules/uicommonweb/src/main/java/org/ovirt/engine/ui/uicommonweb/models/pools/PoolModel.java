@@ -220,15 +220,23 @@ public class PoolModel extends VmModel
 			nameMsg = StringFormat.format("Name cannot contain special characters. Maximum length: %1$s.", maxAllowedChars_nonWindows);
 		}
 
-		RegexValidation tempVar = new RegexValidation();
-		tempVar.setExpression(nameExpr);
-		tempVar.setMessage(nameMsg);
-		getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+		LengthValidation tempVar = new LengthValidation();
+		tempVar.setMaxLength(64);
+		RegexValidation tempVar2 = new RegexValidation();
+		tempVar2.setExpression(nameExpr);
+		tempVar2.setMessage(nameMsg);
+		getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
 
-		IntegerValidation tempVar2 = new IntegerValidation();
-		tempVar2.setMinimum(1);
-		tempVar2.setMaximum(getIsNew() ? maxAlowedVms : maxAlowedVms - getAssignedVms());
-		getNumOfDesktops().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar2 });
+		LengthValidation tempVar3 = new LengthValidation();
+		tempVar3.setMaxLength(255);
+		getDescription().ValidateEntity(new IValidation[] { tempVar3 });
+
+		LengthValidation tempVar4 = new LengthValidation();
+		tempVar4.setMaxLength(4);
+		IntegerValidation tempVar5 = new IntegerValidation();
+		tempVar5.setMinimum(1);
+		tempVar5.setMaximum(getIsNew() ? maxAlowedVms : maxAlowedVms - getAssignedVms());
+		getNumOfDesktops().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar4, tempVar5 });
 
 		setIsGeneralTabValid(getIsGeneralTabValid() && getName().getIsValid() && getNumOfDesktops().getIsValid());
 
