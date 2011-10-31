@@ -29,8 +29,14 @@
 			color: red;
 		}
 		.goButton {
+			margin-left: 5px;
 			width: 40px;
 			float: left;
+		}
+		
+		.searchItemsPanel {
+			width: 100%;
+			height: 100%;
 		}
 	</ui:style>
 
@@ -43,8 +49,8 @@
  						<g:RadioButton name="everyoneOrSpecific" ui:field="everyoneRadio">Everyone</g:RadioButton>
 					</g:HorizontalPanel>
 				</g:north>
-				<g:north size="10">
-					<g:HorizontalPanel>
+				<g:north size="12">
+					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
 						<g:Label>Search:</g:Label>
 						<e:ListModelListBoxEditor ui:field="domainSelection" />
 						<e:TextBoxChanger ui:field="searchStringEditor" />
@@ -54,7 +60,7 @@
 				</g:north>
 				<g:center>
 					<g:FlowPanel addStyleNames="{style.dock}">
-						<g:ScrollPanel>
+						<g:ScrollPanel addStyleNames="{style.searchItemsPanel}">
 							<e:EntityModelCellTable ui:field="searchItems" />
 						</g:ScrollPanel>
 					</g:FlowPanel>

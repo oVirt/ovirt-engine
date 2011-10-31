@@ -51,7 +51,7 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
     @UiField
     @Ignore
     Label roleToAssignLabel;
-    
+
     @UiField(provided = true)
     @Path("role.selectedItem")
     ListModelListBoxEditor<Object> roleSelection;
@@ -59,11 +59,11 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
     @UiField(provided = true)
     @Ignore
     EntityModelCellTable<ListModel> searchItems;
-    
+
     @UiField
     @Ignore
     RadioButton everyoneRadio;
-    
+
     @UiField
     @Ignore
     RadioButton specificUserOrGroupRadio;
@@ -107,7 +107,7 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
             @Override
             public String getValue(EntityModel model) {
                 if (model.getEntity() instanceof DbUser)
-                    return ((DbUser)model.getEntity()).getname();
+                    return ((DbUser) model.getEntity()).getname();
                 else {
                     Window.alert("shit: " + model.getEntity().toString());
                     return model.getEntity().toString();
@@ -119,7 +119,7 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
             @Override
             public String getValue(EntityModel model) {
                 if (model.getEntity() instanceof DbUser)
-                    return ((DbUser)model.getEntity()).getsurname();
+                    return ((DbUser) model.getEntity()).getsurname();
                 else {
                     return "";
                 }
@@ -130,7 +130,7 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
             @Override
             public String getValue(EntityModel model) {
                 if (model.getEntity() instanceof DbUser)
-                    return ((DbUser)model.getEntity()).getusername();
+                    return ((DbUser) model.getEntity()).getusername();
                 else {
                     return "";
                 }

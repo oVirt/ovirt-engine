@@ -50,7 +50,7 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
      * @return
      */
     @Template("<span style='position: relative; border: 1px solid {3}; " +
-            "bottom: 4px; padding: 0 3px; margin: 0 1px; background-color: {2};'>" +
+            "bottom: 4px; padding: 0 3px; margin: 0 1px;  white-space: nowrap; background-color: {2};'>" +
             "<span style='position: relative; top: 1px;'>{0}</span> {1}</span>")
     SafeHtml tagItem(SafeHtml imageHtml, String text, String backgroundColor, String borderColor);
 

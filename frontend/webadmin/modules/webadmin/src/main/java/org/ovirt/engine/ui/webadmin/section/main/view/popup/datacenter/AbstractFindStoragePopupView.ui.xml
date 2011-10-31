@@ -11,13 +11,20 @@
 			top: 40px;
 			left: 10px;
 		}
+		
+		.tablePanel {
+			height: 100%;
+			width: 100%;
+		}
 	</ui:style>
 	
 	<d:SimpleDialogPanel width="400px" height="300px">
 		<d:content>
 			<g:FlowPanel>
 				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
-				<e:EntityModelCellTable ui:field="table" />
+				<g:ScrollPanel addStyleNames="{style.tablePanel}">
+					<e:EntityModelCellTable ui:field="table"/>
+				</g:ScrollPanel>
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

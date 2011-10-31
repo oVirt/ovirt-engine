@@ -7,6 +7,8 @@
 		.items {
 			margin-top: 20px;
 			line-height: 20px;
+			height: 85%;
+			overflow: auto;
 		}
 		
 		.noteLabel {

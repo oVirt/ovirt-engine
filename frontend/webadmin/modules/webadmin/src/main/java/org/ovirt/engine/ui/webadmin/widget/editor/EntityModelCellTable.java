@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.webadmin.widget.HasEditorDriver;
 import org.ovirt.engine.ui.webadmin.widget.table.column.RadioboxCell;
 
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -25,7 +26,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
  * A CellTable of a {@link ListModel} of {@link EntityModel}s
- *
+ * 
  * @param <M>
  */
 public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityModel> implements HasEditorDriver<M> {
@@ -40,20 +41,48 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
      */
     private final boolean multiSelection;
 
+    private static final int DEFAULT_PAGESIZE = 1000;
+    private static Resources DEFAULT_RESOURCES = GWT.create(CellTable.Resources.class);
+
     /**
      * Create a new {@link EntityModelCellTable} with Single Selection
      */
     public EntityModelCellTable() {
-        this(false);
+        this(false, (Resources) GWT.create(EntityModelCellTableResources.class));
+    }
+
+    /**
+     * Create a new {@link EntityModelCellTable} with Single Selection
+     * 
+     * @param resources
+     *            table's resources
+     */
+    public EntityModelCellTable(Resources resources) {
+        this(false, resources);
     }
 
     /**
      * Create a new {@link EntityModelCellTable}
-     *
+     * 
      * @param multiSelection
      *            Whether to allow multi/single selection
      */
     public EntityModelCellTable(boolean multiSelection) {
+        this(multiSelection, (Resources) GWT.create(EntityModelCellTableResources.class));
+    }
+
+    /**
+     * Create a new {@link EntityModelCellTable}
+     * 
+     * @param multiSelection
+     *            Whether to allow multi/single selection
+     * 
+     * @param resources
+     *            table's resources
+     */
+    public EntityModelCellTable(boolean multiSelection, Resources resources) {
+        super(DEFAULT_PAGESIZE, resources);
+
         this.multiSelection = multiSelection;
 
         if (!multiSelection) {
@@ -116,7 +145,7 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
 
     /**
      * Ad an EntityModelColumn to the Grid
-     *
+     * 
      * @param column
      * @param headerString
      */
@@ -144,7 +173,7 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 M list = (M) sender;
                 list.getSelectedItem();
-                getSelectionModel().setSelected((EntityModel)list.getSelectedItem(),true);
+                getSelectionModel().setSelected((EntityModel) list.getSelectedItem(), true);
             }
         });
     }
@@ -152,6 +181,15 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
     @Override
     public M flush() {
         return listModel;
+    }
+
+    public interface EntityModelCellTableResources extends CellTable.Resources {
+        interface TableStyle extends CellTable.Style {
+        }
+
+        @Override
+        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/PopupCellTable.css" })
+        TableStyle cellTableStyle();
     }
 
 }

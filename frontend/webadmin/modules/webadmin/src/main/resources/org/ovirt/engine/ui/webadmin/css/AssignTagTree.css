@@ -12,7 +12,7 @@
 	cursor: hand;
 	cursor: pointer;
 	zoom: 1;
-	height: 19px;
+	height: 21px;
 }
 
 .cellTreeItemImage {
@@ -64,7 +64,7 @@
 	color: black;
 	height: auto;
 	overflow: visible;
-	height: 19px;
+	height: 21px;
 }
 
 .cellTreeShowMoreButton {

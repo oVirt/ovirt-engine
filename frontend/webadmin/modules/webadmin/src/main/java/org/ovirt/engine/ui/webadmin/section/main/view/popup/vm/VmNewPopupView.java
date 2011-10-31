@@ -44,6 +44,8 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -254,12 +256,12 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
         isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
-
-        priorityEditor = new EntityModelCellTable<ListModel>(false);
+        priorityEditor =
+                new EntityModelCellTable<ListModel>((Resources) GWT.create(ButtonCellTableResources.class));
         priorityEditor.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel model) {
-                return ((EntityModel)model).getTitle();
+                return model.getTitle();
             }
         }, "");
 
@@ -518,7 +520,7 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
             }
         });
 
-        //High Availability only avail in server mode
+        // High Availability only avail in server mode
         highAvailabilityTab.setVisible(vm.getVmType().equals(VmType.Server));
 
         // TODO: Move to a more appropriate method
@@ -532,7 +534,7 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
             }
         });
 
-        //only avail for desktop mode
+        // only avail for desktop mode
         isStatelessEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
         numOfMonitorsEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
 
@@ -552,7 +554,7 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
             }
         });
 
-        //TODO: This is a hack and should be handled cleanly via model property availability
+        // TODO: This is a hack and should be handled cleanly via model property availability
         isAutoAssignEditor.addDomHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -565,5 +567,14 @@ public class VmNewPopupView extends AbstractModelBoundPopupView<UnitVmModel> imp
     public UnitVmModel flush() {
         priorityEditor.flush();
         return Driver.driver.flush();
+    }
+
+    public interface ButtonCellTableResources extends CellTable.Resources {
+        interface TableStyle extends CellTable.Style {
+        }
+
+        @Override
+        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/ButtonCellTable.css" })
+        TableStyle cellTableStyle();
     }
 }
