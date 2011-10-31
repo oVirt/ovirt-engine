@@ -9,9 +9,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 
-public class RhevConfigTest {
+public class EngineConfigTest {
 
-    public static final Logger log = Logger.getLogger(RhevConfigTest.class);
+    private static final Logger log = Logger.getLogger(EngineConfigTest.class);
 
     @BeforeClass
     public static void setConfigFilePathProperty() {

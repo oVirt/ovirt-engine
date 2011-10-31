@@ -12,7 +12,7 @@ import org.ovirt.engine.core.config.validation.ConfigActionType;
 
 public class EngineConfigLogicTest {
 
-    public static final Logger log = Logger.getLogger(RhevConfigTest.class);
+    private static final Logger log = Logger.getLogger(EngineConfigLogicTest.class);
     private EngineConfigCLIParser parser;
     private EngineConfigLogic engineConfigLogic;
 
