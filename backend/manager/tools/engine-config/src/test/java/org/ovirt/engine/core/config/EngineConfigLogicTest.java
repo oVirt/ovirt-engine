@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
@@ -13,18 +13,19 @@ import org.ovirt.engine.core.config.validation.ConfigActionType;
 public class EngineConfigLogicTest {
 
     private static final Logger log = Logger.getLogger(EngineConfigLogicTest.class);
-    private EngineConfigCLIParser parser;
-    private EngineConfigLogic engineConfigLogic;
+    private static EngineConfigCLIParser parser = mock(EngineConfigCLIParser.class);
+    // Is static so that it can be initiated just once in @BeforeClass, cannot be initiated
+    // here since c'tor throws an exception
+    private static EngineConfigLogic engineConfigLogic;
 
-    @Before
-    public void setUpEngineConfigLogicTest() throws Exception {
-        parser = mock(EngineConfigCLIParser.class);
+    @BeforeClass
+    public static void setUpEngineConfigLogicTest() throws Exception {
         engineConfigLogic = new EngineConfigLogic(parser);
     }
 
     @Test
     public void testGetValue() throws Exception {
-        String key = "MaxNumberOfHostsInStoragePool";
+        final String key = "MaxNumberOfHostsInStoragePool";
         log.info("getValue: Testing fetch of " + key);
         ConfigKey configKey = engineConfigLogic.fetchConfigKey(key, null);
         log.info("getValue: got: " + configKey);
@@ -40,8 +41,8 @@ public class EngineConfigLogicTest {
 
     @Test
     public void testSetIntValue() throws Exception {
-        String key = "VdsRefreshRate";
-        String newValue = "15";
+        final String key = "VdsRefreshRate";
+        final String newValue = "15";
         String oldValue = getOldValue(key);
 
         log.info(key + " old value: " + oldValue);
@@ -59,8 +60,8 @@ public class EngineConfigLogicTest {
 
     @Test
     public void testSetStringValue() throws Exception {
-        String key = "DomainName";
-        String newValue = "EXAMPLE.COM,DOMAIN.COM";
+        final String key = "DefaultWorkgroup";
+        final String newValue = "ExampleWorkGroup";
         String oldValue = getOldValue(key);
 
         log.info(key + " old value: " + oldValue);
@@ -78,14 +79,14 @@ public class EngineConfigLogicTest {
 
     @Test
     public void testGetNonExitingKey() throws Exception {
-        String key = "NonExistignKeyDB";
+        final String key = "NonExistignKeyDB";
         ConfigKey configKey = engineConfigLogic.fetchConfigKey(key, null);
         Assert.assertTrue(configKey == null || configKey.getKey() == null);
     }
 
     @Test(expected = IllegalAccessException.class)
     public void testSetInvalidIntValue() throws Exception {
-        String key = "VdsRefreshRate";
+        final String key = "VdsRefreshRate";
         // An exception should be thrown
         engineConfigLogic.persist(key, "Not A Number", "");
     }
@@ -97,7 +98,7 @@ public class EngineConfigLogicTest {
         engineConfigLogic.persist("AdUserPassword", "123456");
     }
 
-    private String getOldValue(String key) {
+    private String getOldValue(final String key) {
         ConfigKey configKey = engineConfigLogic.fetchConfigKey(key, null);
         return configKey.getValue();
     }
