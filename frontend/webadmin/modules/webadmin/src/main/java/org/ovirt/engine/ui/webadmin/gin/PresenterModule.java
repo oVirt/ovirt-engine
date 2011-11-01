@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DefaultConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
@@ -22,7 +23,10 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.Data
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindMultiStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindSingleStoragePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
@@ -108,6 +112,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.MainTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.SearchPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.DefaultConfirmationPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.DetachConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.PermissionsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.RemoveConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.bookmark.BookmarkPopupView;
@@ -118,7 +123,10 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCente
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindMultiStoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindSingleStoragePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostBondPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInstallPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInterfacePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindMultiDcPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindSingleDcPopupView;
@@ -528,6 +536,7 @@ public class PresenterModule extends AbstractPresenterModule {
         bindPresenterWidget(RemoveConfirmationPopupPresenterWidget.class,
                 RemoveConfirmationPopupPresenterWidget.ViewDef.class,
                 RemoveConfirmationPopupView.class);
+
         // Permissions
         bindPresenterWidget(PermissionsPopupPresenterWidget.class,
                 PermissionsPopupPresenterWidget.ViewDef.class,
@@ -577,6 +586,18 @@ public class PresenterModule extends AbstractPresenterModule {
         bindPresenterWidget(HostInstallPopupPresenterWidget.class,
                 HostInstallPopupPresenterWidget.ViewDef.class,
                 HostInstallPopupView.class);
+        bindPresenterWidget(HostInterfacePopupPresenterWidget.class,
+                HostInterfacePopupPresenterWidget.ViewDef.class,
+                HostInterfacePopupView.class);
+        bindPresenterWidget(HostManagementPopupPresenterWidget.class,
+                HostManagementPopupPresenterWidget.ViewDef.class,
+                HostManagementPopupView.class);
+        bindPresenterWidget(HostBondPopupPresenterWidget.class,
+                HostBondPopupPresenterWidget.ViewDef.class,
+                HostBondPopupView.class);
+        bindPresenterWidget(DetachConfirmationPopupPresenterWidget.class,
+                DetachConfirmationPopupPresenterWidget.ViewDef.class,
+                DetachConfirmationPopupView.class);
 
         // Storage
         bindPresenterWidget(StoragePopupPresenterWidget.class,

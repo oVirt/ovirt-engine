@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.Collections;
+import java.util.List;
+
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.ui.uicompat.*;
 import org.ovirt.engine.core.common.businessentities.*;
@@ -799,21 +801,7 @@ public class HostInterfaceListModel extends SearchableListModel
 			hostInterfaceModel.setNetworks(hostInterfaceListModel.getSelectedItemsWithVlans());
 
 			hostInterfaceModel.setNoneBootProtocolAvailable(!item.getIsManagement());
-			NetworkBootProtocol tempBootProtocol = !hostInterfaceModel.getNoneBootProtocolAvailable() && item.getBootProtocol() == NetworkBootProtocol.None ? NetworkBootProtocol.Dhcp : item.getBootProtocol();
-			switch (tempBootProtocol)
-			{
-				case None:
-					hostInterfaceModel.getNetworkBootProtocol_None().setEntity(true);
-					break;
-				case Dhcp:
-					hostInterfaceModel.getNetworkBootProtocol_Dhcp().setEntity(true);
-					break;
-				case StaticIp:
-					hostInterfaceModel.getNetworkBootProtocol_StaticIp().setEntity(true);
-					break;
-				default:
-					break;
-			}
+			hostInterfaceModel.setBootProtocol(!hostInterfaceModel.getNoneBootProtocolAvailable() && item.getBootProtocol() == NetworkBootProtocol.None ? NetworkBootProtocol.Dhcp : item.getBootProtocol());
 
 			hostInterfaceModel.getAddress().setEntity(item.getAddress());
 			hostInterfaceModel.getSubnet().setEntity(item.getSubnet());
@@ -920,22 +908,8 @@ public class HostInterfaceListModel extends SearchableListModel
 			managementModel.setEntity(networkToEdit);
 
 			managementModel.setNoneBootProtocolAvailable(!item.getIsManagement());
-			NetworkBootProtocol tempBootProtocol = !managementModel.getNoneBootProtocolAvailable() && item.getBootProtocol() == NetworkBootProtocol.None ? NetworkBootProtocol.Dhcp : item.getBootProtocol();
-
-			switch (tempBootProtocol)
-			{
-				case None:
-					managementModel.getNetworkBootProtocol_None().setEntity(true);
-					break;
-				case Dhcp:
-					managementModel.getNetworkBootProtocol_Dhcp().setEntity(true);
-					break;
-				case StaticIp:
-					managementModel.getNetworkBootProtocol_StaticIp().setEntity(true);
-					break;
-				default:
-					break;
-			}
+			managementModel.setBootProtocol(!managementModel.getNoneBootProtocolAvailable() && item.getBootProtocol() == NetworkBootProtocol.None ? NetworkBootProtocol.Dhcp : item.getBootProtocol());
+			
 
 			managementModel.getAddress().setEntity(item.getAddress());
 			managementModel.getSubnet().setEntity(item.getSubnet());
@@ -1118,19 +1092,7 @@ public class HostInterfaceListModel extends SearchableListModel
 			parameters.setOldNetworkName(network.getname());
 		}
 		parameters.setCheckConnectivity((Boolean)model.getCheckConnectivity().getEntity());
-
-		if ((Boolean)model.getNetworkBootProtocol_None().getEntity())
-		{
-			parameters.setBootProtocol(NetworkBootProtocol.None);
-		}
-		else if ((Boolean)model.getNetworkBootProtocol_Dhcp().getEntity())
-		{
-			parameters.setBootProtocol(NetworkBootProtocol.Dhcp);
-		}
-		else if ((Boolean)model.getNetworkBootProtocol_StaticIp().getEntity())
-		{
-			parameters.setBootProtocol(NetworkBootProtocol.StaticIp);
-		}
+		parameters.setBootProtocol(model.getBootProtocol());
 
 		if (model.getIsStaticAddress())
 		{
@@ -1362,7 +1324,7 @@ public class HostInterfaceListModel extends SearchableListModel
 					{
 						HostInterfaceListModel innerHostInterfaceListModel = (HostInterfaceListModel)model1;
 						HostBondInterfaceModel bModel = (HostBondInterfaceModel)innerHostInterfaceListModel.getWindow();
-						java.util.ArrayList<VdsNetworkInterface> bonds = (java.util.ArrayList<VdsNetworkInterface>)((VdcQueryReturnValue)ReturnValue1).getReturnValue();
+						List<VdsNetworkInterface> bonds = (List<VdsNetworkInterface>)((VdcQueryReturnValue)ReturnValue1).getReturnValue();
 
 						bModel.getBond().setItems(bonds);
 						//((List<Interface>)model.Bond.Options).Sort(a => a.name);
@@ -1398,30 +1360,14 @@ public class HostInterfaceListModel extends SearchableListModel
 
 		if (interfaceWithNetwork != null)
 		{
-			NetworkBootProtocol tempBootProtocol = !innerBondModel.getNoneBootProtocolAvailable() && interfaceWithNetwork.getBootProtocol() == NetworkBootProtocol.None ? NetworkBootProtocol.Dhcp : interfaceWithNetwork.getBootProtocol();
-			switch (tempBootProtocol)
-			{
-				case None:
-					innerBondModel.getNetworkBootProtocol_None().setEntity(true);
-					break;
-				case Dhcp:
-					innerBondModel.getNetworkBootProtocol_Dhcp().setEntity(true);
-					break;
-				case StaticIp:
-					innerBondModel.getNetworkBootProtocol_StaticIp().setEntity(true);
-					break;
-				default:
-					break;
-			}
-
-
+		    innerBondModel.setBootProtocol(!innerBondModel.getNoneBootProtocolAvailable() && interfaceWithNetwork.getBootProtocol() == NetworkBootProtocol.None ? NetworkBootProtocol.Dhcp : interfaceWithNetwork.getBootProtocol());
 			innerBondModel.getAddress().setEntity(interfaceWithNetwork.getAddress());
 			innerBondModel.getSubnet().setEntity(interfaceWithNetwork.getSubnet());
 			innerBondModel.getGateway().setEntity(interfaceWithNetwork.getGateway());
 		}
 		else
 		{
-			innerBondModel.getNetworkBootProtocol_Dhcp().setEntity(true);
+		    innerBondModel.setBootProtocol(NetworkBootProtocol.Dhcp);
 		}
 
 		innerBondModel.getGateway().setIsAvailable(isAnyManagement);
@@ -1519,19 +1465,7 @@ public class HostInterfaceListModel extends SearchableListModel
 				}
 			}
 
-			if ((Boolean)model.getNetworkBootProtocol_None().getEntity())
-			{
-				parameters.setBootProtocol(NetworkBootProtocol.None);
-			}
-			else if ((Boolean)model.getNetworkBootProtocol_Dhcp().getEntity())
-			{
-				parameters.setBootProtocol(NetworkBootProtocol.Dhcp);
-			}
-			else if ((Boolean)model.getNetworkBootProtocol_StaticIp().getEntity())
-			{
-				parameters.setBootProtocol(NetworkBootProtocol.StaticIp);
-			}
-
+			parameters.setBootProtocol(model.getBootProtocol());
 			parameters.setBondName(((VdsNetworkInterface)model.getBond().getSelectedItem()).getName());
 
 			if (model.getIsStaticAddress())
@@ -1611,19 +1545,7 @@ public class HostInterfaceListModel extends SearchableListModel
 					}
 				}
 			}
-
-			if ((Boolean)model.getNetworkBootProtocol_None().getEntity())
-			{
-				parameters.setBootProtocol(NetworkBootProtocol.None);
-			}
-			else if ((Boolean)model.getNetworkBootProtocol_Dhcp().getEntity())
-			{
-				parameters.setBootProtocol(NetworkBootProtocol.Dhcp);
-			}
-			else if ((Boolean)model.getNetworkBootProtocol_StaticIp().getEntity())
-			{
-				parameters.setBootProtocol(NetworkBootProtocol.StaticIp);
-			}
+            parameters.setBootProtocol(model.getBootProtocol());
 
 			if (model.getIsStaticAddress())
 			{
@@ -1909,19 +1831,7 @@ public class HostInterfaceListModel extends SearchableListModel
 				}
 			}
 
-			if ((Boolean)model.getNetworkBootProtocol_None().getEntity())
-			{
-				parameters.setBootProtocol(NetworkBootProtocol.None);
-			}
-			else if ((Boolean)model.getNetworkBootProtocol_Dhcp().getEntity())
-			{
-				parameters.setBootProtocol(NetworkBootProtocol.Dhcp);
-			}
-			else if ((Boolean)model.getNetworkBootProtocol_StaticIp().getEntity())
-			{
-				parameters.setBootProtocol(NetworkBootProtocol.StaticIp);
-			}
-
+	        parameters.setBootProtocol(model.getBootProtocol());
 
 			if (model.getIsStaticAddress())
 			{

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog"
+	xmlns:t="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog.tab"
+	xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
+	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget">
+
+	<ui:style>
+		
+	</ui:style>
+
+	<d:SimpleDialogPanel width="400px" height="600px">
+		<d:content>
+			<g:DockLayoutPanel>
+				<g:north size="300">
+					<g:VerticalPanel>
+						<e:ListModelListBoxEditor ui:field="bondEditor" />
+						<e:ListModelListBoxEditor ui:field="networkEditor" />
+						<e:ListModelListBoxEditor ui:field="bondingModeEditor" />
+						<e:EntityModelTextBoxEditor ui:field="customEditor" visible="false" />
+						<e:EnumRadioEditor ui:field="bootProtocol" />
+						<e:EntityModelTextBoxEditor ui:field="address" />
+						<e:EntityModelTextBoxEditor ui:field="subnet" />
+						<e:EntityModelTextBoxEditor ui:field="gateway" />
+						<e:EntityModelCheckBoxEditor ui:field="checkConnectivity" />
+						<g:Label ui:field="message" />
+					</g:VerticalPanel>
+				</g:north>
+				<g:south size="80">
+					<g:VerticalPanel>
+						<g:HTML ui:field="info" />
+						<e:EntityModelCheckBoxEditor ui:field="commitChanges" />
+					</g:VerticalPanel>
+				</g:south>
+			</g:DockLayoutPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

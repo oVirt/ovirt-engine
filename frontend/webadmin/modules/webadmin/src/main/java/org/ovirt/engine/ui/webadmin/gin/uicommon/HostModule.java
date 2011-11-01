@@ -19,9 +19,13 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmAssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
@@ -102,11 +106,33 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> getHostInterfaceListProvider(ClientGinjector ginjector) {
+    public SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> getHostInterfaceListProvider(ClientGinjector ginjector,
+            final Provider<DetachConfirmationPopupPresenterWidget> detachConfirmPopupProvider,
+            final Provider<HostInterfacePopupPresenterWidget> hostInterfacePopupProvider,
+            final Provider<HostManagementPopupPresenterWidget> hostManagementPopupProvider,
+            final Provider<HostBondPopupPresenterWidget> hostBondPopupProvider) {
         return new SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel>(ginjector,
                 HostListModel.class,
-                HostInterfaceListModel.class);
-    }
+                HostInterfaceListModel.class) {
+
+            @Override
+            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getEditCommand()) {
+                    return hostInterfacePopupProvider.get();
+                }
+                if (lastExecutedCommand == getModel().getEditManagementNetworkCommand()) {
+                    return hostManagementPopupProvider.get();
+                }
+                if (lastExecutedCommand == getModel().getBondCommand()) {
+                    return hostBondPopupProvider.get();
+                }
+                if (lastExecutedCommand == getModel().getDetachCommand()) {
+                    return detachConfirmPopupProvider.get();
+                }
+                return super.getModelPopup(lastExecutedCommand);
+            }
+        };
+    };
 
     @Provides
     @Singleton

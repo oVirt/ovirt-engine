@@ -85,42 +85,21 @@ public class HostManagementNetworkModel extends EntityModel
 		privateBondingOptions = value;
 	}
 
-	private EntityModel privateNetworkBootProtocol_None;
-	public EntityModel getNetworkBootProtocol_None()
-	{
-		return privateNetworkBootProtocol_None;
-	}
-	public void setNetworkBootProtocol_None(EntityModel value)
-	{
-		privateNetworkBootProtocol_None = value;
-	}
-	private EntityModel privateNetworkBootProtocol_Dhcp;
-	public EntityModel getNetworkBootProtocol_Dhcp()
-	{
-		return privateNetworkBootProtocol_Dhcp;
-	}
-	public void setNetworkBootProtocol_Dhcp(EntityModel value)
-	{
-		privateNetworkBootProtocol_Dhcp = value;
-	}
-	private EntityModel privateNetworkBootProtocol_StaticIp;
-	public EntityModel getNetworkBootProtocol_StaticIp()
-	{
-		return privateNetworkBootProtocol_StaticIp;
-	}
-	public void setNetworkBootProtocol_StaticIp(EntityModel value)
-	{
-		privateNetworkBootProtocol_StaticIp = value;
-	}
-	private EntityModel privateCommitChanges;
-	public EntityModel getCommitChanges()
-	{
-		return privateCommitChanges;
-	}
-	public void setCommitChanges(EntityModel value)
-	{
-		privateCommitChanges = value;
-	}
+    private NetworkBootProtocol bootProtocol = NetworkBootProtocol.values()[0];
+    public NetworkBootProtocol getBootProtocol()
+    {
+        return bootProtocol;
+    }
+
+    public void setBootProtocol(NetworkBootProtocol value)
+    {
+        if (bootProtocol != value)
+        {
+            bootProtocol = value;
+            BootProtocolChanged();
+            OnPropertyChanged(new PropertyChangedEventArgs("BootProtocol"));
+        }
+    }
 
 	private boolean noneBootProtocolAvailable = true;
 	public boolean getNoneBootProtocolAvailable()
@@ -139,9 +118,19 @@ public class HostManagementNetworkModel extends EntityModel
 
 	public boolean getIsStaticAddress()
 	{
-		return (Boolean)getNetworkBootProtocol_StaticIp().getEntity() == true;
+        return getBootProtocol() == NetworkBootProtocol.StaticIp;
 	}
 
+    private EntityModel privateCommitChanges;
+    public EntityModel getCommitChanges()
+    {
+        return privateCommitChanges;
+    }
+    public void setCommitChanges(EntityModel value)
+    {
+        privateCommitChanges = value;
+    }
+	
 	private boolean privatebondingOptionsOverrideNotification;
 	private boolean getbondingOptionsOverrideNotification()
 	{
@@ -176,20 +165,6 @@ public class HostManagementNetworkModel extends EntityModel
 		EntityModel tempVar = new EntityModel();
 		tempVar.setEntity(false);
 		setCommitChanges(tempVar);
-
-		EntityModel tempVar2 = new EntityModel();
-		tempVar2.setEntity(true);
-		setNetworkBootProtocol_None(tempVar2);
-		getNetworkBootProtocol_None().getEntityChangedEvent().addListener(this);
-		EntityModel tempVar3 = new EntityModel();
-		tempVar3.setEntity(false);
-		setNetworkBootProtocol_Dhcp(tempVar3);
-		getNetworkBootProtocol_Dhcp().getEntityChangedEvent().addListener(this);
-		EntityModel tempVar4 = new EntityModel();
-		tempVar4.setEntity(false);
-		setNetworkBootProtocol_StaticIp(tempVar4);
-		getNetworkBootProtocol_StaticIp().getEntityChangedEvent().addListener(this);
-
 		UpdateFieldsByEntity();
 	}
 
@@ -222,37 +197,6 @@ public class HostManagementNetworkModel extends EntityModel
 		getAddress().setIsChangable(getIsStaticAddress());
 		getSubnet().setIsChangable(getIsStaticAddress());
 		getGateway().setIsChangable(getIsStaticAddress());
-	}
-
-	@Override
-	public void eventRaised(Event ev, Object sender, EventArgs args)
-	{
-		super.eventRaised(ev, sender, args);
-		if (ev.equals(EntityModel.EntityChangedEventDefinition) && sender instanceof EntityModel)
-		{
-			EntityModel senderEntityModel = (EntityModel)sender;
-			if ((Boolean)senderEntityModel.getEntity())
-			{
-				if (senderEntityModel.equals(getNetworkBootProtocol_None()))
-				{
-					getNetworkBootProtocol_Dhcp().setEntity(false);
-					getNetworkBootProtocol_StaticIp().setEntity(false);
-					BootProtocolChanged();
-				}
-				else if (senderEntityModel.equals(getNetworkBootProtocol_Dhcp()))
-				{
-					getNetworkBootProtocol_None().setEntity(false);
-					getNetworkBootProtocol_StaticIp().setEntity(false);
-					BootProtocolChanged();
-				}
-				else if (senderEntityModel.equals(getNetworkBootProtocol_StaticIp()))
-				{
-					getNetworkBootProtocol_None().setEntity(false);
-					getNetworkBootProtocol_Dhcp().setEntity(false);
-					BootProtocolChanged();
-				}
-			}
-		}
 	}
 
 	public boolean Validate()
