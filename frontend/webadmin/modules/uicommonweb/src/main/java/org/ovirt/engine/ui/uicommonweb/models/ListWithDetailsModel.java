@@ -141,17 +141,6 @@ public class ListWithDetailsModel extends SearchableListModel
 		{
 			for (EntityModel detailModel : getDetailModels())
 			{
-				if (getSelectedItem() instanceof IVdcQueryable && detailModel.getEntity() instanceof IVdcQueryable)
-				{
-					IVdcQueryable newSelectedItem = (IVdcQueryable) getSelectedItem();
-					IVdcQueryable oldSelectedItem = (IVdcQueryable) detailModel.getEntity();
-
-					if (newSelectedItem.getQueryableId().equals(oldSelectedItem.getQueryableId()))
-					{
-						continue;
-					}
-				}
-
 				if (detailModel instanceof HostInterfaceListModel)
 				{
 					((HostInterfaceListModel)detailModel).setEntity((VDS)ProvideDetailModelEntity(getSelectedItem()));

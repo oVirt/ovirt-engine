@@ -425,7 +425,7 @@ public class HostModel extends Model implements ITaskTarget
 					storage_pool selectedDataCenter = (storage_pool) getDataCenter().getSelectedItem();
 
 					// Update selected cluster only if the returned cluster list is indeed the selected datacenter's clusters
-					if (clusters.size() > 0 && clusters.get(0).getstorage_pool_id().getValue().equals(selectedDataCenter.getId().getValue()))
+					if (clusters.isEmpty() || clusters.size() > 0 && clusters.get(0).getstorage_pool_id().getValue().equals(selectedDataCenter.getId().getValue()))
 					{
 						hostModel.getCluster().setItems(clusters);
 

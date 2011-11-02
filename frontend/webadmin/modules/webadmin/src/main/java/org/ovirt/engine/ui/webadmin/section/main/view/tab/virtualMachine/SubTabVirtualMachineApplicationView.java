@@ -26,6 +26,6 @@ public class SubTabVirtualMachineApplicationView extends AbstractSubTabTableView
                 return appName;
             }
         };
-        getTable().addColumn(appNameColumn, "Name");
+        getTable().addColumn(appNameColumn, "Installed Applications");
     }
 }
