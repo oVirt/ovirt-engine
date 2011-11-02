@@ -282,6 +282,32 @@
           </modules>
         </configuration>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-quartz-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.quartz-scheduler</groupId>
+                  <artifactId>quartz</artifactId>
+                  <version>${quartz.version}</version>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <destFileName>quartz.jar</destFileName>
+                  <outputDirectory>${project.build.directory}/quartz</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -364,56 +390,15 @@
                   <goal>run</goal>
                 </goals>
               </execution>
-
-              <execution>
-                <id>cleanJBossQuartz</id>
-                <phase>install</phase>
-
-                <configuration>
-                  <tasks>
-                    <delete file="${jbossHome}/common/lib/quartz.jar"/>
-                  </tasks>
-                </configuration>
-
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
             </executions>
           </plugin>
 
-          <plugin>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-dependencies</id>
-                <phase>install</phase>
-
-                <goals>
-                  <goal>copy</goal>
-                </goals>
-
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.quartz-scheduler</groupId>
-                      <artifactId>quartz</artifactId>
-                      <version>${quartz.version}</version>
-                      <type>jar</type>
-                      <overWrite>true</overWrite>
-                      <outputDirectory>${jbossHome}/common/lib/</outputDirectory>
-                    </artifactItem>
-                  </artifactItems>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
         </plugins>
       </build>
     </profile>
 
     <profile>
-      <id>setup_postgres</id>
+      <id>setup</id>
       <build>
         <plugins>
           <plugin>
@@ -440,13 +425,30 @@
                   <goal>run</goal>
                 </goals>
               </execution>
+
+              <execution>
+                <id>updateJBossQuartz</id>
+                <phase>install</phase>
+                <configuration>
+                  <tasks>
+                    <delete file="${jbossHome}/common/lib/quartz.jar"/>
+                    <echo>*** Copying quartz.jar from ${project.build.directory}/quartz/quartz.jar to ${jbossHome}/common/lib/</echo>
+                    <copy file="${project.build.directory}/quartz/quartz.jar" tofile="${jbossHome}/common/lib/quartz.jar" verbose="true" overwrite="true"/>
+                  </tasks>
+                </configuration>
+
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+
             </executions>
           </plugin>
           <plugin>
             <artifactId>maven-dependency-plugin</artifactId>
             <executions>
               <execution>
-                <id>copy-dependencies</id>
+                <id>copy-postgresql-jdbc-jar</id>
                 <phase>install</phase>
 
                 <goals>
@@ -458,19 +460,19 @@
                     <artifactItem>
                       <groupId>postgresql</groupId>
                       <artifactId>postgresql</artifactId>
-                      <version>8.4-701.jdbc4</version>
+                      <version>${postgres.jdbc.version}</version>
                       <type>jar</type>
                       <overWrite>true</overWrite>
                       <outputDirectory>${jbossHome}/common/lib/</outputDirectory>
+                      <destFileName>postgresql-jdbc.jar</destFileName>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
               </execution>
             </executions>
-          </plugin>	  
-        </plugins>
+          </plugin>
+       </plugins>
       </build>
     </profile>
   </profiles>
-
 </project>
