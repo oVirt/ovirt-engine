@@ -642,12 +642,19 @@ public class HostGeneralModel extends EntityModel
 		param.setoVirtIsoFile(isOVirt ? (String)model.getOVirtISO().getSelectedItem() : null);
 		param.setOverrideFirewall((Boolean)model.getOverrideIpTables().getEntity());
 
-		VdcReturnValueBase returnValue = Frontend.RunAction(VdcActionType.UpdateVds, param);
-
-		if (returnValue != null && returnValue.getSucceeded())
-		{
-			Cancel();
-		}
+		Frontend.RunAction(
+			VdcActionType.UpdateVds,
+			param,
+			new IFrontendActionAsyncCallback() {
+				@Override
+				public void Executed(FrontendActionAsyncResult result) {
+					VdcReturnValueBase returnValue = result.getReturnValue();
+					if (returnValue != null && returnValue.getSucceeded()) {
+						Cancel();
+					}
+				}
+			}
+		);
 	}
 
 	private VdsVersion GetHostVersion(Guid hostId)
