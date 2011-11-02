@@ -18,11 +18,11 @@
       <artifactId>compat</artifactId>
       <version>${engine.version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.jboss.security</groupId>
       <artifactId>jbosssx-bare</artifactId>
-      <version>2.0.4</version>
+      <version>${jbosssx-bare.version}</version>
       <scope>provided</scope>
       <!-- excluding artifacts that are explicitly loaded elsewhere -->
       <exclusions>
@@ -42,7 +42,18 @@
           <groupId>org.hibernate</groupId>
           <artifactId>hibernate-validator</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>sun-jaxb</groupId>
+          <artifactId>jaxb-impl</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>sun-jaxb</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>${jaxb-impl.version}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

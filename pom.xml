@@ -68,6 +68,8 @@
     <jackson-mapper-asl.version>1.6.3</jackson-mapper-asl.version>
     <commons-configuration.version>1.6</commons-configuration.version>
     <commons-jxpath.version>1.3</commons-jxpath.version>
+    <jaxb-impl.version>2.2</jaxb-impl.version>
+    <jbosssx-bare.version>2.0.4</jbosssx-bare.version>
   </properties>
 
   <dependencyManagement>
@@ -273,40 +275,47 @@
       <scope>test</scope>
     </dependency>
 
-
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>${commons-logging.version}</version>
       <scope>provided</scope>
     </dependency>
+
   </dependencies>
 
   <repositories>
     <repository>
-      <id>jboss</id>
-      <name>Jboss Repo</name>
+      <id>maven.repo1</id>
+      <name>maven repo1</name>
       <layout>default</layout>
-      <url>http://repository.jboss.com/maven2</url>
+      <url>http://repo1.maven.org/maven2</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
     </repository>
 
     <repository>
-      <id>jboss.org</id>
-      <name>Jboss Repo ORG</name>
+      <id>maven.search.repo</id>
+      <name>maven search repo</name>
       <layout>default</layout>
-      <url>https://repository.jboss.org/nexus/content/repositories/releases</url>
+      <url>http://mvnsearch.org/maven2</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
+    </repository>
+
+    <repository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Maven Repository Group</name>
+      <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+      <layout>default</layout>
       <releases>
         <enabled>true</enabled>
       </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
 
     <repository>
@@ -314,16 +323,6 @@
       <name>Java.net repo</name>
       <layout>default</layout>
       <url>http://download.java.net/maven/2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-
-    <repository>
-      <id>maven.repo1</id>
-      <name>maven repo1</name>
-      <layout>default</layout>
-      <url>http://repo1.maven.org/maven2</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -341,25 +340,16 @@
     </repository>
 
     <repository>
-      <id>sonatype.oss.release.repo</id>
-      <name>Sonatype OSS Release Repository</name>
-      <url>http://oss.sonatype.org/content/repositories/releases</url>
+      <id>atlassian.public.repo</id>
+      <name>The Atlassian public repo</name>
+      <url>https://maven.atlassian.com/content/groups/public</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
       <releases>
         <enabled>true</enabled>
       </releases>
-    </repository>
-
-    <repository>
-      <id>apache-snapshots</id>
-      <name>Apache Snapshots</name>
-      <url>https://repository.apache.org/content/repositories/snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
+   </repository>
 
     <repository>
       <id>smartgwt</id>
@@ -382,14 +372,24 @@
     <repository>
       <id>gwt-crypto repo</id>
       <url>http://gwt-crypto.googlecode.com/svn/trunk/repo/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
   </repositories>
 
   <pluginRepositories>
     <pluginRepository>
-      <id>gwt-plugin-repo</id>
-      <url>http://google-web-toolkit.googlecode.com/svn/2.1.0.M3/gwt/maven</url>
-      <name>Google Web Toolkit Plugin Repository</name>
+      <id>central</id>
+      <name>Maven Plugin Repository</name>
+      <url>http://repo1.maven.org/maven2</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </pluginRepository>
   </pluginRepositories>
 
