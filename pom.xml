@@ -639,29 +639,6 @@
         </pluginManagement>
       </build>
     </profile>
-
-    <profile>
-      <id>svn</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <excludes>
-                <!--<exclude>**/DateEnumValueAutoCompleterTest.java</exclude>-->
-                <exclude>**/SchedulerUtilQuartsImplTest.java</exclude>
-                <exclude>**/DbFacadeTest.java</exclude>
-                <exclude>**/bll/*Test.java</exclude>
-                <exclude>**/dal/adbroker/AdBrokerTest.java</exclude>
-              </excludes>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
 
   <!-- ====================================================================== -->
