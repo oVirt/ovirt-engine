@@ -155,12 +155,6 @@
       </properties>
     </profile>
     <profile>
-      <id>mssql</id>
-      <properties>
-        <engine.db>mssql</engine.db>
-      </properties>
-    </profile>
-    <profile>
       <id>enable-dao-tests</id>
       <properties>
         <test>*DAOTest.java</test>
