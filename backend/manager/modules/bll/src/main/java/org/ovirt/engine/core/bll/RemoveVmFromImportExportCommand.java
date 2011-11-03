@@ -2,10 +2,12 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -62,6 +64,13 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
 
         setVm(vms.get(0));
 
+        VM vm = getVmDAO().getById(vms.get(0).getvm_guid());
+        if (vm != null && vm.getstatus() == VMStatus.ImageLocked) {
+            if(AsyncTaskManager.getInstance().hasTasksForEntityIdAndAction(vm.getvm_guid(), VdcActionType.ExportVm)) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_DURING_EXPORT);
+                return false;
+            }
+        }
         return true;
     }
 

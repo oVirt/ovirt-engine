@@ -148,6 +148,26 @@ public final class AsyncTaskManager {
         return retVal;
     }
 
+    public synchronized boolean hasTasksForEntityIdAndAction(Guid id, VdcActionType type) {
+        boolean retVal = false;
+        if (_tasks != null) {
+            for (SPMAsyncTask task : _tasks.values()) {
+                if (isCurrentTaskLookedFor(id, task)
+                        && type.equals(task.getParameters().getDbAsyncTask().getaction_type())) {
+                    retVal = true;
+                    break;
+                }
+            }
+        }
+        return retVal;
+    }
+
+    private boolean isCurrentTaskLookedFor(Guid id, SPMAsyncTask task) {
+        return (task instanceof EntityAsyncTask) && id.equals(task.getParameters().getEntityId())
+                && (task.getState() != AsyncTaskState.Cleared)
+                && (task.getState() != AsyncTaskState.ClearFailed);
+    }
+
     private void CleanZombieTasks() {
         long maxTime = DateTime.getNow()
                 .AddMinutes((-1) * Config.<Integer> GetValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes)).getTime();
@@ -398,20 +418,6 @@ public final class AsyncTaskManager {
         }
     }
 
-    private java.util.ArrayList<EntityAsyncTask> GetEntityTasks(Guid id) {
-        java.util.ArrayList<EntityAsyncTask> returnValue = new java.util.ArrayList<EntityAsyncTask>();
-        for (SPMAsyncTask task : _tasks.values()) {
-            if (task instanceof EntityAsyncTask) {
-                EntityAsyncTask entityTask = (EntityAsyncTask) task;
-                if (id.equals(entityTask.getContainerId())) {
-                    returnValue.add(entityTask);
-                }
-            }
-        }
-
-        return returnValue;
-    }
-
     /**
      * Adds new task to _tasks map , and set the log status to true. We set the
      * indication to true for logging _tasks status on next quartz execution.
@@ -611,13 +617,11 @@ public final class AsyncTaskManager {
     }
 
     public synchronized boolean EntityHasTasks(Guid id) {
-        java.util.ArrayList<EntityAsyncTask> entityAsyncTasks = GetEntityTasks(id);
-        for (EntityAsyncTask task : entityAsyncTasks) {
-            if (task.getState() != AsyncTaskState.Cleared && task.getState() != AsyncTaskState.ClearFailed) {
+        for (SPMAsyncTask task : _tasks.values()) {
+            if (isCurrentTaskLookedFor(id, task)) {
                 return true;
             }
         }
-
         return false;
     }
 
