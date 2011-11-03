@@ -661,6 +661,7 @@ public final class AuditLogDirector {
 
     /**
      * Update the logged object timeout attribute by log type definition
+     *
      * @param auditLogable
      *            the logable object to be updated
      * @param logType
@@ -681,6 +682,7 @@ public final class AuditLogDirector {
 
     /**
      * Composes an object id from all log id's to identify uniquely each instance.
+     *
      * @param logable
      *            the object to log
      * @param logType
@@ -738,8 +740,8 @@ public final class AuditLogDirector {
                 if (value == null || value.isEmpty())
                     value = token; // replace value with token if value not
                                    // defined
-                matcher.appendReplacement(buffer, value); // put the value into
-                                                          // message
+                matcher.appendReplacement(buffer, Matcher.quoteReplacement(value)); // put the value into
+                // message
             }
 
             matcher.appendTail(buffer); // append the rest of the message
