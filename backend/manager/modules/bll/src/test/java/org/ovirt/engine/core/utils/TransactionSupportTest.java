@@ -10,6 +10,7 @@ import junit.framework.Assert;
 import org.jboss.embedded.Bootstrap;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.utils.ejb.JBossEmbeddedEJBUtilsStrategy;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@Ignore("Running these tests requires manual configuration of timeouts. They should be revisited when TransactionSupport is changed")
 public class TransactionSupportTest {
 
     private static TransactionManager tm;
