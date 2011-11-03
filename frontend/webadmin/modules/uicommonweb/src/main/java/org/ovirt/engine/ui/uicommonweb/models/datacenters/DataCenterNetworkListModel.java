@@ -397,6 +397,7 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
 		}
 		else
 		{
+		    networkModel.StopProgress();
 			return;
 		}
 		networkModel.StopProgress();

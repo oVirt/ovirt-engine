@@ -44,7 +44,7 @@
 						<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
 						<e:EntityModelCheckBoxEditor ui:field="stpSupport" addStyleNames="{style.checkbox}" />
 						<e:EntityModelCheckBoxEditor ui:field="vlanTagging" addStyleNames="{style.checkbox}" />
-						<e:EntityModelTextBox ui:field="vlanTag" addStyleNames="{style.tag}" />
+						<e:EntityModelTextBoxEditor ui:field="vlanTag" addStyleNames="{style.tag}" />
 					</g:FlowPanel>
 				</g:center>
 				<g:east size="50">

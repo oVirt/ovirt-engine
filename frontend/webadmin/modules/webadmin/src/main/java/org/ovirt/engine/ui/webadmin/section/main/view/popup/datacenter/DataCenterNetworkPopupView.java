@@ -7,6 +7,7 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkModel;
@@ -20,7 +21,6 @@ import org.ovirt.engine.ui.webadmin.widget.Align;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTree;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBox;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
 
 import com.google.gwt.core.client.GWT;
@@ -75,7 +75,7 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
 
     @UiField
     @Path(value = "vLanTag.entity")
-    EntityModelTextBox vlanTag;
+    EntityModelTextBoxEditor vlanTag;
 
     @UiField
     @Ignore
@@ -102,8 +102,11 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
     }
 
     @Override
-    public void edit(final DataCenterNetworkModel object) {
+    public void edit(DataCenterNetworkModel object) {
         Driver.driver.edit(object);
+
+        final UICommand detachAllCommand = object.getDetachAllCommand();
+        vlanTag.setEnabled((Boolean) object.getHasVLanTag().getEntity());
 
         // Listen to Properties
         object.getPropertyChangedEvent().addListener(new IEventListener() {
@@ -111,7 +114,8 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 DataCenterNetworkModel model = (DataCenterNetworkModel) sender;
-                if ("ClusterTreeNodes".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
+                if ("ClusterTreeNodes".equals(propertyName)) {
                     // update tree data
                     ArrayList<SelectionTreeNodeModel> clusterTreeNodes = model.getClusterTreeNodes();
                     @SuppressWarnings("unchecked")
@@ -125,7 +129,7 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
                     asyncTreeDataProvider.updateRowCount(rootNodes.size(), true);
                     asyncTreeDataProvider.updateRowData(0, rootNodes);
                 }
-                if ("Message".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                if ("Message".equals(propertyName)) {
                     messageLabel.setText(model.getMessage());
                 }
             }
@@ -152,7 +156,18 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                detachAll.setVisible((Boolean) object.getDetachAllAvailable().getEntity());
+                EntityModel entity = (EntityModel) sender;
+                detachAll.setVisible((Boolean) entity.getEntity());
+            }
+        });
+
+        // Listen to "HasVLanTag" property
+        object.getHasVLanTag().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                EntityModel entity = (EntityModel) sender;
+                vlanTag.setEnabled((Boolean) entity.getEntity());
             }
         });
 
@@ -160,7 +175,7 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
 
             @Override
             public void onClick(ClickEvent event) {
-                object.getDetachAllCommand().Execute();
+                detachAllCommand.Execute();
             }
         });
 
