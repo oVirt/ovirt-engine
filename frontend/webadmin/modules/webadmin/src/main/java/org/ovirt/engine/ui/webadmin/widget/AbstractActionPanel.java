@@ -87,9 +87,9 @@ public abstract class AbstractActionPanel<T> extends Composite {
                     .addListener(new IEventListener() {
                         @Override
                         public void eventRaised(org.ovirt.engine.core.compat.Event ev, Object sender, EventArgs args) {
-                            // update the command if it is dynamic
+                            // Update the button if it is dynamic
                             if (buttonDef instanceof DynamicUiCommandButtonDefinition) {
-                                ((DynamicUiCommandButtonDefinition<T, ?>) buttonDef).updateCommand();
+                                ((DynamicUiCommandButtonDefinition<T>) buttonDef).updateCommand();
                             }
                         }
                     });
@@ -127,7 +127,6 @@ public abstract class AbstractActionPanel<T> extends Composite {
      * Ensures that the specified action button is visible or hidden and enabled or disabled as it should.
      */
     void updateActionButton(ActionButton button, ActionButtonDefinition<T> buttonDef) {
-
         button.asWidget().setVisible(buttonDef.isAccessible());
         button.setEnabled(buttonDef.isEnabled(getSelectedList()));
     }

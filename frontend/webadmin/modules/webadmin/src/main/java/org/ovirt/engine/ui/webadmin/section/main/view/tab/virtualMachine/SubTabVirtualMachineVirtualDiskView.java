@@ -5,6 +5,7 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineVirtualDiskPresenter;
@@ -91,15 +92,27 @@ public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableView
             }
         };
         getTable().addColumn(dateCreatedColumn, "Date Created");
-        
-        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getDetailModel().getNewCommand(),
-                "New"));
 
-        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getDetailModel().getEditCommand(),
-                "Edit"));
+        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>("New") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getNewCommand();
+            }
+        });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getDetailModel().getRemoveCommand(),
-                "Remove"));
+        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>("Edit") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getEditCommand();
+            }
+        });
+
+        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRemoveCommand();
+            }
+        });
     }
 
 }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.bookmark;
 
 import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
@@ -37,16 +38,30 @@ public class BookmarkList extends AbstractActionStackPanelItem<bookmarks> {
         return display;
     }
 
-    static SimpleActionPanel<bookmarks> getActionPanel(BookmarkModelProvider modelProvider) {
+    static SimpleActionPanel<bookmarks> getActionPanel(final BookmarkModelProvider modelProvider) {
         SimpleActionPanel<bookmarks> actionPanel = new SimpleActionPanel<bookmarks>(
                 modelProvider, modelProvider.getSelectionModel());
 
-        actionPanel.addActionButton(new UiCommandButtonDefinition<bookmarks>(
-                modelProvider.getModel().getNewCommand(), "New"));
-        actionPanel.addActionButton(new UiCommandButtonDefinition<bookmarks>(
-                modelProvider.getModel().getEditCommand(), "Edit"));
-        actionPanel.addActionButton(new UiCommandButtonDefinition<bookmarks>(
-                modelProvider.getModel().getRemoveCommand(), "Remove"));
+        actionPanel.addActionButton(new UiCommandButtonDefinition<bookmarks>("New") {
+            @Override
+            protected UICommand resolveCommand() {
+                return modelProvider.getModel().getNewCommand();
+            }
+        });
+
+        actionPanel.addActionButton(new UiCommandButtonDefinition<bookmarks>("Edit") {
+            @Override
+            protected UICommand resolveCommand() {
+                return modelProvider.getModel().getEditCommand();
+            }
+        });
+
+        actionPanel.addActionButton(new UiCommandButtonDefinition<bookmarks>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return modelProvider.getModel().getRemoveCommand();
+            }
+        });
 
         return actionPanel;
     }

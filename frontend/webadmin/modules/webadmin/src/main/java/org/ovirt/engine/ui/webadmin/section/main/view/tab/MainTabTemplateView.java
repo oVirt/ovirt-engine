@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -73,11 +74,31 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         };
         getTable().addColumn(descriptionColumn, "Description");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>(getMainModel().getEditCommand()));
-        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>(getMainModel().getRemoveCommand()));
+        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>("Edit") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getEditCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRemoveCommand();
+            }
+        });
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>(getMainModel().getExportCommand(),false,false));
-        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>(getMainModel().getCopyCommand(),false,false));
+        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>("Export", false, false) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getExportCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>("Copy", false, false) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getCopyCommand();
+            }
+        });
     }
 
 }

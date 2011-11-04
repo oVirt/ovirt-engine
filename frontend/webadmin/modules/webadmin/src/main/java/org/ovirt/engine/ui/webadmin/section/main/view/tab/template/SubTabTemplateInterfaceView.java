@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.template;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateInterfacePresenter;
@@ -57,14 +58,26 @@ public class SubTabTemplateInterfaceView extends AbstractSubTabTableView<VmTempl
         };
         getTable().addColumn(macAddressColumn, "MAC");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getDetailModel().getNewCommand(),
-                "New"));
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>("New") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getNewCommand();
+            }
+        });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getDetailModel().getEditCommand(),
-                "Edit"));
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>("Edit") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getEditCommand();
+            }
+        });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getDetailModel().getRemoveCommand(),
-                "Remove"));
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRemoveCommand();
+            }
+        });
     }
 
 }

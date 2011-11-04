@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -44,9 +45,24 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         };
         getTable().addColumn(descColumn, "Description");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VDSGroup>(getMainModel().getNewCommand()));
-        getTable().addActionButton(new UiCommandButtonDefinition<VDSGroup>(getMainModel().getEditCommand()));
-        getTable().addActionButton(new UiCommandButtonDefinition<VDSGroup>(getMainModel().getRemoveCommand()));
+        getTable().addActionButton(new UiCommandButtonDefinition<VDSGroup>("New") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getNewCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VDSGroup>("Edit") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getEditCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VDSGroup>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRemoveCommand();
+            }
+        });
     }
 
 }

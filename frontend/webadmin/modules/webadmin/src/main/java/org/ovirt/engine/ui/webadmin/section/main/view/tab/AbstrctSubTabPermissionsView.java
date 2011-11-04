@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
@@ -48,9 +49,18 @@ public abstract class AbstrctSubTabPermissionsView<I, M extends ListWithDetailsM
         };
         getTable().addColumn(permissionColumn, "Inherited Permission");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<permissions>(getDetailModel().getAddCommand(), "Add"));
-        getTable().addActionButton(new UiCommandButtonDefinition<permissions>(getDetailModel().getRemoveCommand(),
-                "Remove"));
+        getTable().addActionButton(new UiCommandButtonDefinition<permissions>("Add") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getAddCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<permissions>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRemoveCommand();
+            }
+        });
     }
 
 }

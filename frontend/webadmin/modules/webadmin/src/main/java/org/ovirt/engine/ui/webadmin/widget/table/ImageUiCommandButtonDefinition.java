@@ -8,16 +8,18 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
- * A Button Definition for UICommands that have an Image
+ * {@link UICommand} button definition that has an image associated with it.
  * 
  * @param <T>
+ *            Table row data type.
  */
-public class ImageUiCommandButtonDefinition<T> extends UiCommandButtonDefinition<T> {
+public abstract class ImageUiCommandButtonDefinition<T> extends UiCommandButtonDefinition<T> {
+
     private final SafeHtml enabledImage;
     private final SafeHtml disabledImage;
 
     /**
-     * create a new UICommand button, with the provided title and images.
+     * Creates a new button with the given title and images.
      * 
      * @param command
      *            The UiCommand
@@ -28,17 +30,17 @@ public class ImageUiCommandButtonDefinition<T> extends UiCommandButtonDefinition
      * @param disabledImage
      *            The Image to display when the command is Disabled
      */
-    public ImageUiCommandButtonDefinition(UICommand command,
-            String title,
-            ImageResource enabledImage,
-            ImageResource disabledImage) {
-        super(command, title);
-        this.enabledImage =
-                enabledImage != null ? SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(enabledImage)
-                        .getHTML()) : null;
-        this.disabledImage =
-                disabledImage != null ? SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(disabledImage)
-                        .getHTML()) : null;
+    public ImageUiCommandButtonDefinition(String title, ImageResource enabledImage, ImageResource disabledImage) {
+        super(title);
+        this.enabledImage = enabledImage != null
+                ? SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(enabledImage).getHTML()) : null;
+        this.disabledImage = disabledImage != null
+                ? SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(disabledImage).getHTML()) : null;
+    }
+
+    @Override
+    public SafeHtml getEnabledHtml() {
+        return enabledImage;
     }
 
     @Override
@@ -46,8 +48,4 @@ public class ImageUiCommandButtonDefinition<T> extends UiCommandButtonDefinition
         return disabledImage;
     }
 
-    @Override
-    public SafeHtml getEnabledHtml() {
-        return enabledImage;
-    }
 }

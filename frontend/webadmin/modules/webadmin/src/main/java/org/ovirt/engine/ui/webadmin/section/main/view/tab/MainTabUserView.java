@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabUserPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -59,9 +60,24 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
             }
         }, "e-mail");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<DbUser>(getMainModel().getAddCommand(), "Add"));
-        getTable().addActionButton(new UiCommandButtonDefinition<DbUser>(getMainModel().getRemoveCommand(), "Remove"));
-        getTable().addActionButton(new UiCommandButtonDefinition<DbUser>(getMainModel().getAssignTagsCommand(),
-                "Assign Tags"));
+        getTable().addActionButton(new UiCommandButtonDefinition<DbUser>("Add") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getAddCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<DbUser>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRemoveCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<DbUser>("Assign Tags") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getAssignTagsCommand();
+            }
+        });
     }
+
 }

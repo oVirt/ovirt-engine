@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserEventNotifierListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserEventNotifierPresenter;
@@ -35,8 +36,12 @@ public class SubTabUserEventNotifierView extends AbstractSubTabTableView<DbUser,
         };
         getTable().addColumn(eventNameColumn, "Event Name");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<event_subscriber>(getDetailModel().getManageEventsCommand(),
-                "Manage Events"));
+        getTable().addActionButton(new UiCommandButtonDefinition<event_subscriber>("Manage Events") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getManageEventsCommand();
+            }
+        });
     }
 
 }

@@ -102,7 +102,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             protected DisplayType getRawValue(VM object) {
                 return object.getdisplay_type();
             }
-            
+
             @Override
             public String getValue(VM object) {
                 if ((object.getstatus() == VMStatus.Down) || (object.getstatus() == VMStatus.ImageLocked))
@@ -140,44 +140,112 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(loggedInUserColumn, "Logged-in User", "90px");
 
-        // Action BUttons
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getMainModel().getNewServerCommand(), "New Server"));
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getMainModel().getNewDesktopCommand(),
-                "New Desktop"));
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getMainModel().getEditCommand(), "Edit"));
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getMainModel().getRemoveCommand(), "Remove"));
-        // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getMainModel().getRunOnceCommand(), "Run Once"));
-        getTable().addActionButton(new ImageUiCommandButtonDefinition<VM>(getMainModel().getRunCommand(), "Run",
-                resources.runVmImage(), resources.runVmDisabledImage()));
-        getTable().addActionButton(new ImageUiCommandButtonDefinition<VM>(getMainModel().getPauseCommand(), "Suspend",
-                resources.pauseVmImage(), resources.pauseVmDisabledImage()));
-        getTable().addActionButton(new ImageUiCommandButtonDefinition<VM>(getMainModel().getShutdownCommand(),
-                "Shut down", resources.stopVmImage(), resources.stopVmDisabledImage()));
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getMainModel().getStopCommand(), "Stop", true));
-        // TODO: separator
-        getTable().addActionButton(new DynamicUiCommandButtonDefinition<VM, VmListModel>(getMainModel(), "Console",
-                resources.consoleImage(), resources.consoleDisabledImage()) {
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("New Server") {
             @Override
-            protected UICommand getUpdatedCommand(VmListModel target) {
-                ConsoleModel defaultConsoleModel = target.getDefaultConsoleModel();
-                return defaultConsoleModel == null ? null : defaultConsoleModel.getConnectCommand();
+            protected UICommand resolveCommand() {
+                return getMainModel().getNewServerCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("New Desktop") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getNewDesktopCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Edit") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getEditCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRemoveCommand();
             }
         });
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getMainModel().getMigrateCommand(),
-                "Migrate", false, false));
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Run Once") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRunOnceCommand();
+            }
+        });
+        getTable().addActionButton(new ImageUiCommandButtonDefinition<VM>("Run",
+                resources.runVmImage(), resources.runVmDisabledImage()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRunCommand();
+            }
+        });
+        getTable().addActionButton(new ImageUiCommandButtonDefinition<VM>("Suspend",
+                resources.pauseVmImage(), resources.pauseVmDisabledImage()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getPauseCommand();
+            }
+        });
+        getTable().addActionButton(new ImageUiCommandButtonDefinition<VM>("Shut down",
+                resources.stopVmImage(), resources.stopVmDisabledImage()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getShutdownCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Stop", true) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getStopCommand();
+            }
+        });
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getMainModel().getNewTemplateCommand(),
-                "Make Template"));
+        getTable().addActionButton(new DynamicUiCommandButtonDefinition<VM>("Console",
+                resources.consoleImage(), resources.consoleDisabledImage()) {
+            @Override
+            protected UICommand resolveCommand() {
+                ConsoleModel defaultConsoleModel = getMainModel().getDefaultConsoleModel();
+                return defaultConsoleModel != null ? defaultConsoleModel.getConnectCommand() : null;
+            }
+        });
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getMainModel().getExportCommand(),
-                "Export", false, false));
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getMainModel().getMoveCommand(),
-                "Move", false, false));
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getMainModel().getChangeCdCommand(),
-                "Change CD"));
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getMainModel().getAssignTagsCommand(),
-                "Assign Tags"));
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Migrate", false, false) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getMigrateCommand();
+            }
+        });
+        // TODO: separator
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Make Template") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getNewTemplateCommand();
+            }
+        });
+        // TODO: separator
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Export", false, false) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getExportCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Move", false, false) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getMoveCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Change CD") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getChangeCdCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Assign Tags") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getAssignTagsCommand();
+            }
+        });
     }
+
 }

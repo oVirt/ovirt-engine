@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterNetworkPresenter;
@@ -62,8 +63,18 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
         };
         getTable().addColumn(descColumn, "Description");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<network>(getDetailModel().getNewNetworkCommand(), "Add Network"));
-        getTable().addActionButton(new UiCommandButtonDefinition<network>(getDetailModel().getSetAsDisplayCommand(), "Set as Display"));
+        getTable().addActionButton(new UiCommandButtonDefinition<network>("Add Network") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getNewNetworkCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<network>("Set as Display") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getSetAsDisplayCommand();
+            }
+        });
     }
 
 }

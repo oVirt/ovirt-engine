@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -77,14 +78,30 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
         };
         getTable().addColumn(freeSpaceColumn, "Free Space");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>(getMainModel().getNewDomainCommand(),
-                "New Domain"));
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>(getMainModel().getImportDomainCommand(),
-                "Import Domain"));
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>(getMainModel().getEditCommand(),
-                "Edit"));
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>(getMainModel().getRemoveCommand(),
-                "Remove"));
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("New Domain") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getNewDomainCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Import Domain") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getImportDomainCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Edit") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getEditCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRemoveCommand();
+            }
+        });
     }
 
 }

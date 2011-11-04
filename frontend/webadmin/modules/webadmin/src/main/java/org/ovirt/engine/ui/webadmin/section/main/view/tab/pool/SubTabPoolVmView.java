@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolVmPresenter;
@@ -29,7 +30,6 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<vm_pools, VM, Pool
     }
 
     void initTable() {
-
         getTable().addColumn(new VmStatusColumn(), "", "30px");
 
         TextColumn<VM> nameColumn = new TextColumn<VM>() {
@@ -82,7 +82,12 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<vm_pools, VM, Pool
         };
         getTable().addColumn(loggedInUserColumn, "Logged-in User");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getDetailModel().getDetachCommand(), "Detach"));
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Detach") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getDetachCommand();
+            }
+        });
     }
 
 }

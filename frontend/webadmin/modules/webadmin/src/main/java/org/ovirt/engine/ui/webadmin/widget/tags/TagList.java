@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.tags;
 
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.AbstractActionStackPanelItem;
@@ -41,19 +42,31 @@ public class TagList extends AbstractActionStackPanelItem<TagListModel> {
         return display;
     }
 
-    static SimpleActionPanel<TagListModel> getActionPanel(TagModelProvider modelProvider) {
+    static SimpleActionPanel<TagListModel> getActionPanel(final TagModelProvider modelProvider) {
         @SuppressWarnings({ "unchecked", "rawtypes" })
         SimpleActionPanel<TagListModel> simpleActionPanel =
                 new SimpleActionPanel(modelProvider, modelProvider.getSelectionModel());
 
-        simpleActionPanel.addActionButton(new UiCommandButtonDefinition<TagListModel>(
-                modelProvider.getModel().getNewCommand(), "New"));
+        simpleActionPanel.addActionButton(new UiCommandButtonDefinition<TagListModel>("New") {
+            @Override
+            protected UICommand resolveCommand() {
+                return modelProvider.getModel().getNewCommand();
+            }
+        });
 
-        simpleActionPanel.addActionButton(new UiCommandButtonDefinition<TagListModel>(
-                modelProvider.getModel().getEditCommand(), "Edit"));
+        simpleActionPanel.addActionButton(new UiCommandButtonDefinition<TagListModel>("Edit") {
+            @Override
+            protected UICommand resolveCommand() {
+                return modelProvider.getModel().getEditCommand();
+            }
+        });
 
-        simpleActionPanel.addActionButton(new UiCommandButtonDefinition<TagListModel>(
-                modelProvider.getModel().getRemoveCommand(), "Remove"));
+        simpleActionPanel.addActionButton(new UiCommandButtonDefinition<TagListModel>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return modelProvider.getModel().getRemoveCommand();
+            }
+        });
 
         return simpleActionPanel;
     }

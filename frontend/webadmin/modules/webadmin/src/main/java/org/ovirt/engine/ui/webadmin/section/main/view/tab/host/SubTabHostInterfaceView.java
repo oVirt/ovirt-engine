@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
@@ -103,20 +104,39 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         table.addColumn(new EmptyColumn(), "Bond", "20%");
         table.addColumn(new EmptyColumn(), "Vlan", "20%");
         table.addColumn(new EmptyColumn(), "Network Name", "20%");
-        table.addActionButton(
-                new UiCommandButtonDefinition<HostInterfaceLineModel>(getDetailModel().getEditCommand(), "Add / Edit"));
-        table.addActionButton(
-                new UiCommandButtonDefinition<HostInterfaceLineModel>(getDetailModel().getEditManagementNetworkCommand(),
-                        "Edit Management Network"));
+
+        table.addActionButton(new UiCommandButtonDefinition<HostInterfaceLineModel>("Add / Edit") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getEditCommand();
+            }
+        });
+        table.addActionButton(new UiCommandButtonDefinition<HostInterfaceLineModel>("Edit Management Network") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getEditManagementNetworkCommand();
+            }
+        });
         // TODO: separator
-        table.addActionButton(
-                new UiCommandButtonDefinition<HostInterfaceLineModel>(getDetailModel().getBondCommand(), "Bond"));
-        table.addActionButton(
-                new UiCommandButtonDefinition<HostInterfaceLineModel>(getDetailModel().getDetachCommand(), "Detach"));
+        table.addActionButton(new UiCommandButtonDefinition<HostInterfaceLineModel>("Bond") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getBondCommand();
+            }
+        });
+        table.addActionButton(new UiCommandButtonDefinition<HostInterfaceLineModel>("Detach") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getDetachCommand();
+            }
+        });
         // TODO: separator
-        table.addActionButton(
-                new UiCommandButtonDefinition<HostInterfaceLineModel>(getDetailModel().getSaveNetworkConfigCommand(),
-                        "Save Network Configuration"));
+        table.addActionButton(new UiCommandButtonDefinition<HostInterfaceLineModel>("Save Network Configuration") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getSaveNetworkConfigCommand();
+            }
+        });
 
         table.showRefreshButton();
     }

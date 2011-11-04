@@ -8,6 +8,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
@@ -131,16 +132,36 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableView<VM
         };
         getTable().addColumn(diskColumn, "Disks");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>(getDetailModel().getNewCommand(),
-                "Create"));
-        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>(getDetailModel().getPreviewCommand(),
-                "Preview"));
-        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>(getDetailModel().getCommitCommand(),
-                "Commit"));
-        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>(getDetailModel().getUndoCommand(),
-                "Undo"));
-        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>(getDetailModel().getRemoveCommand(),
-                "Delete"));
+        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>("Create") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getNewCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>("Preview") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getPreviewCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>("Commit") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getCommitCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>("Undo") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getUndoCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>("Delete") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRemoveCommand();
+            }
+        });
     }
 
     private void initApplicationsTable() {

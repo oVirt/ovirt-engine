@@ -28,6 +28,7 @@ public class TagItemCell extends CompositeCell<TagModel> {
     private static String TAG_BORDER_UNSELECTED = "transparent";
     private static String TAG_INNER_BORDER_COLOR = "#A9A9A7";
 
+    @SuppressWarnings("unchecked")
     public TagItemCell(ApplicationResources resources, ApplicationTemplates templates) {
         super(new ArrayList<HasCell<TagModel, ?>>(
                 Arrays.asList(getTagPanel(resources, templates), getTagButton(resources, templates))));

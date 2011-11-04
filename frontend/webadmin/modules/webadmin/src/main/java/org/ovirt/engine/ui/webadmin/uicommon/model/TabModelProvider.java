@@ -38,7 +38,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
         this.eventBus = ginjector.getEventBus();
         this.defaultConfirmPopupProvider = ginjector.getDefaultConfirmationPopupProvider();
 
-        // Add CommonModel change handler to be notified when the CommonModel instance changes
+        // Add handler to be notified when the CommonModel instance changes
         eventBus.addHandler(CommonModelChangeEvent.getType(), new CommonModelChangeHandler() {
             @Override
             public void onCommonModelChange(CommonModelChangeEvent event) {

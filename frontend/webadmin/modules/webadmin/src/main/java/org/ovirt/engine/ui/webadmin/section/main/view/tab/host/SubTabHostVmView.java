@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostVmPresenter;
@@ -30,7 +31,6 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
     }
 
     void initTable() {
-
         getTable().addColumn(new VmStatusColumn(), "", "30px");
 
         TextColumn<VM> nameColumn = new TextColumn<VM>() {
@@ -99,11 +99,26 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         };
         getTable().addColumn(hostColumn, "Uptime");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getDetailModel().getPauseCommand(), "Suspend"));
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getDetailModel().getShutdownCommand(), "Shut down"));
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Suspend") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getPauseCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Shut down") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getShutdownCommand();
+            }
+        });
         // getTable().addActionButton(new UiCommandButtonDefinition<VM>(getListModel().getStopCommand(), "Stop"));
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>(getDetailModel().getMigrateCommand(), "Migrate"));
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Migrate") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getMigrateCommand();
+            }
+        });
     }
 
 }

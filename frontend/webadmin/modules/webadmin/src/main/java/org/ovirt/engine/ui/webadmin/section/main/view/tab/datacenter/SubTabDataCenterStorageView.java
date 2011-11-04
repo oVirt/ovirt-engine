@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStoragePresenter;
@@ -78,21 +79,44 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(totalColumn, "Total Space");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>(getDetailModel().getAttachStorageCommand(),
-                "Attach Data"));
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>(getDetailModel().getAttachISOCommand(),
-                "Attach ISO"));
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>(getDetailModel().getAttachBackupCommand(),
-                "Attach Export"));
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Attach Data") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getAttachStorageCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Attach ISO") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getAttachISOCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Attach Export") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getAttachBackupCommand();
+            }
+        });
         // TODO: Separator
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>(getDetailModel().getDetachCommand(),
-                "Detach"));
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Detach") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getDetachCommand();
+            }
+        });
         // TODO: Separator
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>(getDetailModel().getActivateCommand(),
-                "Activate"));
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>(getDetailModel().getMaintenanceCommand(),
-                "Maintenance"));
-
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Activate") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getActivateCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Maintenance") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getMaintenanceCommand();
+            }
+        });
     }
 
 }

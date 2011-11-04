@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -66,9 +67,24 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
         };
         getTable().addColumn(descColumn, "Description");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_pool>(getMainModel().getNewCommand()));
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_pool>(getMainModel().getEditCommand()));
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_pool>(getMainModel().getRemoveCommand()));
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_pool>("New") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getNewCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_pool>("Edit") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getEditCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_pool>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRemoveCommand();
+            }
+        });
     }
 
 }

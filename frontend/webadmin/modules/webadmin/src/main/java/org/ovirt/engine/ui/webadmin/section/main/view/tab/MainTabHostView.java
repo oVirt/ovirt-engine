@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -106,17 +107,56 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         };
         getTable().addColumn(spmColumn, "SpmStatus");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>(getMainModel().getNewCommand()));
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>(getMainModel().getEditCommand()));
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>(getMainModel().getRemoveCommand()));
+        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("New") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getNewCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Edit") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getEditCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRemoveCommand();
+            }
+        });
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>(getMainModel().getActivateCommand()));
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>(getMainModel().getMaintenanceCommand()));
+        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Activate") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getActivateCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Maintenance") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getMaintenanceCommand();
+            }
+        });
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>(getMainModel().getApproveCommand()));
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>(getMainModel().getConfigureLocalStorageCommand()));
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>(getMainModel().getAssignTagsCommand(),
-                "Assign Tags"));
+        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Approve") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getApproveCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Configure Local Storage") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getConfigureLocalStorageCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Assign Tags") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getAssignTagsCommand();
+            }
+        });
     }
 
 }

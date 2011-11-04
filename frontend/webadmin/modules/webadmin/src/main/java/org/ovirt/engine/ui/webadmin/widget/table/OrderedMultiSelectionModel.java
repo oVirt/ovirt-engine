@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.cellview.client.AbstractHasData;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -122,7 +121,7 @@ public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
         for (T visible : dataDisplay.getVisibleItems()) {
             visibleKeys.add(getKey(visible));
         }
-        
+
         if (!visibleKeys.containsAll(selectedKeys)) {
             for (Object selectedKey : selectedKeys) {
                 if (!visibleKeys.contains(selectedKey))
@@ -130,7 +129,6 @@ public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
             }
         }
 
-        
         if (selectionChanges.isEmpty()) {
             return;
         }

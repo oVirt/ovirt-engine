@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserPermissionPresenter;
@@ -54,9 +55,13 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, pe
             }
         };
         getTable().addColumn(groupColumn, "Inherited Permission");
-        
-        getTable().addActionButton(new UiCommandButtonDefinition<permissions>(getDetailModel().getRemoveCommand(),
-                "Remove"));
+
+        getTable().addActionButton(new UiCommandButtonDefinition<permissions>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRemoveCommand();
+            }
+        });
     }
 
 }

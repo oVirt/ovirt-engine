@@ -29,7 +29,6 @@ import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 import com.google.gwt.user.cellview.client.TextHeader;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -123,7 +122,7 @@ public abstract class AbstractActionTable<T> extends Composite {
                 super.setRowData(start, values);
 
                 selectionModel.resolveChanges();
-                
+
                 // Ensure that paging buttons are updated whenever new data is set
                 prevPageButton.setEnabled(dataProvider.canGoBack());
                 nextPageButton.setEnabled(dataProvider.canGoForward());
@@ -312,9 +311,9 @@ public abstract class AbstractActionTable<T> extends Composite {
                     .addListener(new IEventListener() {
                         @Override
                         public void eventRaised(org.ovirt.engine.core.compat.Event ev, Object sender, EventArgs args) {
-                            // update the command if it is dynamic
+                            // Update the button if it is dynamic
                             if (buttonDef instanceof DynamicUiCommandButtonDefinition) {
-                                ((DynamicUiCommandButtonDefinition<T, ?>) buttonDef).updateCommand();
+                                ((DynamicUiCommandButtonDefinition<T>) buttonDef).updateCommand();
                             }
                         }
                     });

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -62,9 +63,24 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
         };
         getTable().addColumn(descColumn, "Description");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<vm_pools>(getMainModel().getNewCommand(),false,false));
-        getTable().addActionButton(new UiCommandButtonDefinition<vm_pools>(getMainModel().getEditCommand(),false,false));
-        getTable().addActionButton(new UiCommandButtonDefinition<vm_pools>(getMainModel().getRemoveCommand(),false,false));
+        getTable().addActionButton(new UiCommandButtonDefinition<vm_pools>("New", false, false) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getNewCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<vm_pools>("Edit", false, false) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getEditCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<vm_pools>("Remove", false, false) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRemoveCommand();
+            }
+        });
     }
 
 }

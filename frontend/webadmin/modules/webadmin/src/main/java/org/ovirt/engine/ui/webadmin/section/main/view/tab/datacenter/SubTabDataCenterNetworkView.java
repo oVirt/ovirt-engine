@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterNetworkPresenter;
@@ -40,10 +41,24 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(typeColumn, "Description");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<network>(getDetailModel().getNewCommand(), "New"));
-        getTable().addActionButton(new UiCommandButtonDefinition<network>(getDetailModel().getEditCommand(), "Edit"));
-        getTable().addActionButton(new UiCommandButtonDefinition<network>(getDetailModel().getRemoveCommand(), "Remove"));
-
+        getTable().addActionButton(new UiCommandButtonDefinition<network>("New") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getNewCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<network>("Edit") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getEditCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<network>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRemoveCommand();
+            }
+        });
     }
 
 }

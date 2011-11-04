@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineNetworkInterfacePresenter;
@@ -112,15 +113,27 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
             }
         };
         getTable().addColumn(dropsColumn, "Drops (Pkts)");
-        
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getDetailModel().getNewCommand(),
-                "New"));
-        
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getDetailModel().getEditCommand(),
-                "Edit"));
-        
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getDetailModel().getRemoveCommand(),
-                "Remove"));
+
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>("New") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getNewCommand();
+            }
+        });
+
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>("Edit") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getEditCommand();
+            }
+        });
+
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>("Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRemoveCommand();
+            }
+        });
     }
 
 }

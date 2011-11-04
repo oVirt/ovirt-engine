@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDataCenterPresenter;
@@ -43,14 +44,30 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(domainStatusColumn, "Domain Status in Data-Center", "300px");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>(getDetailModel().getAttachCommand(),
-                "Attach"));
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>(getDetailModel().getDetachCommand(),
-                "Detach"));
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>(getDetailModel().getActivateCommand(),
-                "Activate"));
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>(getDetailModel().getMaintenanceCommand(),
-                "Maintenance"));
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Attach") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getAttachCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Detach") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getDetachCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Activate") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getActivateCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Maintenance") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getMaintenanceCommand();
+            }
+        });
     }
 
 }

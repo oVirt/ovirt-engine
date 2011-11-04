@@ -7,6 +7,8 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelChangeEvent;
+import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelChangeEvent.CommonModelChangeHandler;
 
 import com.google.gwt.event.logical.shared.HasInitializeHandlers;
 import com.google.gwt.event.logical.shared.InitializeEvent;
@@ -15,80 +17,125 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
- * A Button Definition for UICommands that have a text label
+ * Button definition that adapts to UiCommon {@link UICommand commands}.
  * 
  * @param <T>
+ *            Table row data type.
  */
-public class UiCommandButtonDefinition<T> implements ActionButtonDefinition<T>, HasInitializeHandlers {
+public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefinition<T>, HasInitializeHandlers {
+
+    /**
+     * Null object singleton that represents an empty (no-op) command.
+     */
+    private static final UICommand EMPTY_COMMAND = new UICommand("Empty", null) {
+        {
+            setIsAvailable(false);
+            setIsExecutionAllowed(false);
+        }
+    };
+
     private UICommand command;
 
     private final SafeHtml title;
+    private final EventBus eventBus;
 
-    private boolean implemented = true;
+    // Indicates whether the given feature is implemented in WebAdmin
+    private final boolean implInWebAdmin;
 
-    private boolean implInUserPortal;
+    // Indicates whether the given feature is implemented in UserPortal
+    private final boolean implInUserPortal;
 
-    private boolean isAvailableOnlyFromContext;
+    // Indicates whether the given feature is available only from a context menu
+    private final boolean availableOnlyFromContext;
 
-    private final EventBus bus;
-
-    /**
-     * create a new UICommand button, with default title
-     */
-    public UiCommandButtonDefinition(UICommand command) {
-        this(command, command.getName());
-    }
-
-    /**
-     * TODO: This constructor should be cleaned up when webadmin will be fully implemented
-     * 
-     * @param command
-     * @param implemented
-     * @param implInUserPortal
-     */
-    public UiCommandButtonDefinition(UICommand command, boolean implemented, boolean implInUserPortal) {
-        this(command, command.getName());
-        this.implemented = implemented;
+    protected UiCommandButtonDefinition(String title, boolean implInWebAdmin,
+            boolean implInUserPortal, boolean availableOnlyFromContext) {
+        this.title = SafeHtmlUtils.fromSafeConstant(title);
+        this.eventBus = ClientGinjectorProvider.instance().getEventBus();
+        this.implInWebAdmin = implInWebAdmin;
         this.implInUserPortal = implInUserPortal;
+        this.availableOnlyFromContext = availableOnlyFromContext;
+        updateCommand();
+
+        // Add handler to be notified when the CommonModel instance changes
+        eventBus.addHandler(CommonModelChangeEvent.getType(), new CommonModelChangeHandler() {
+            @Override
+            public void onCommonModelChange(CommonModelChangeEvent event) {
+                updateCommand();
+            }
+        });
     }
 
     /**
-     * create a new UICommand button, with the provided title
+     * Creates a new button with the given title.
      */
-    public UiCommandButtonDefinition(UICommand command, String title) {
-        this.title = new SafeHtmlBuilder().appendEscaped(title).toSafeHtml();
-        this.bus = ClientGinjectorProvider.instance().getEventBus();
-        setCommand(command);
+    public UiCommandButtonDefinition(String title) {
+        this(title, true, false, false);
     }
 
     /**
-     * create a new UICommand button, with the provided title and 'isAvailableOnlyFromContext' flag
+     * Creates a new button with the given title.
+     * <p>
+     * If {@code availableOnlyFromContext} is {@code true}, the button will only be available from the corresponding
+     * context menu.
      */
-    public UiCommandButtonDefinition(UICommand command, String title, boolean isAvailableOnlyFromContext) {
-        this(command, title);
-        this.isAvailableOnlyFromContext = isAvailableOnlyFromContext;
+    public UiCommandButtonDefinition(String title, boolean availableOnlyFromContext) {
+        this(title, true, false, availableOnlyFromContext);
     }
 
     /**
-     * TODO: This constructor should be cleaned up when webadmin will be fully implemented
-     * 
-     * @param command
-     * @param title
-     * @param implemented
-     * @param implInUserPortal
+     * TODO This constructor will be removed when all WebAdmin features are implemented.
      */
-    public UiCommandButtonDefinition(UICommand command, String title, boolean implemented, boolean implInUserPortal) {
-        this(command, title);
-        this.implemented = implemented;
-        this.implInUserPortal = implInUserPortal;
+    public UiCommandButtonDefinition(String title, boolean implInWebAdmin, boolean implInUserPortal) {
+        this(title, implInWebAdmin, implInUserPortal, false);
+    }
+
+    /**
+     * Assigns the given command with this button definition.
+     * <p>
+     * Triggers {@link InitializeEvent} when the provided command reference or its property changes.
+     * <p>
+     * If the given {@code command} is {@code null}, an empty command will be used.
+     */
+    protected void setCommand(UICommand command) {
+        UICommand newCommand = command != null ? command : EMPTY_COMMAND;
+
+        if (this.command != newCommand) {
+            this.command = newCommand;
+            InitializeEvent.fire(UiCommandButtonDefinition.this);
+
+            // Register property change handler
+            if (newCommand != EMPTY_COMMAND) {
+                newCommand.getPropertyChangedEvent().addListener(new IEventListener() {
+                    @Override
+                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+                        InitializeEvent.fire(UiCommandButtonDefinition.this);
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * Returns the command associated with this button definition.
+     * <p>
+     * Returning {@code null} is equivalent to returning an empty command.
+     */
+    protected abstract UICommand resolveCommand();
+
+    /**
+     * Updates the command associated with this button definition.
+     */
+    protected void updateCommand() {
+        setCommand(resolveCommand());
     }
 
     @Override
     public HandlerRegistration addInitializeHandler(InitializeHandler handler) {
-        return bus.addHandler(InitializeEvent.getType(), handler);
+        return eventBus.addHandler(InitializeEvent.getType(), handler);
     }
 
     @Override
@@ -126,27 +173,9 @@ public class UiCommandButtonDefinition<T> implements ActionButtonDefinition<T>, 
         // No-op since UICommand availability is managed by UiCommon models
     }
 
-    protected UICommand getCommand() {
-        return command;
-    }
-
-    protected void setCommand(UICommand command) {
-        if (!command.equals(this.command)) {
-            this.command = command;
-            InitializeEvent.fire(UiCommandButtonDefinition.this);
-            // register init events
-            command.getPropertyChangedEvent().addListener(new IEventListener() {
-                @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
-                    InitializeEvent.fire(UiCommandButtonDefinition.this);
-                }
-            });
-        }
-    }
-
     @Override
     public boolean isImplemented() {
-        return implemented;
+        return implInWebAdmin;
     }
 
     @Override
@@ -156,11 +185,12 @@ public class UiCommandButtonDefinition<T> implements ActionButtonDefinition<T>, 
 
     @Override
     public boolean isAvailableOnlyFromContext() {
-        return isAvailableOnlyFromContext;
+        return availableOnlyFromContext;
     }
 
     @Override
     public void fireEvent(GwtEvent<?> event) {
-        bus.fireEvent(event);
+        eventBus.fireEvent(event);
     }
+
 }
