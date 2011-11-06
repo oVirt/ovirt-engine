@@ -88,7 +88,7 @@ public final class BackendCallBacksDirector {
                 // }
                 else if (refreshCyclesSinceLastPolling == Config
                         .<Integer> GetValue(ConfigValues.AsyncPollingCyclesBeforeRefreshSuspend))
-                    log.warnFormat(
+                    log.debugFormat(
                             "Client did not poll async queries updates for {1} cycles, suspending server side updates for session id = {0}",
                             callBackData.getSessionId(),
                             Config.<Integer> GetValue(ConfigValues.AsyncPollingCyclesBeforeRefreshSuspend));
@@ -99,7 +99,7 @@ public final class BackendCallBacksDirector {
                                                                                                    // is
                                                                                                    // gone
                 {
-                    log.warnFormat(
+                    log.debugFormat(
                             "Client did not poll async queries updates for {1} cycles sessionId = {0}. Callback will be removed.",
                             callBackData.getSessionId(),
                             Config.<Integer> GetValue(ConfigValues.AsyncPollingCyclesBeforeCallbackCleanup));
