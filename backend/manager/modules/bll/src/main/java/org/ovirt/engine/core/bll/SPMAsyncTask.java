@@ -485,11 +485,8 @@ public class SPMAsyncTask {
                 OnTaskCleanFailure();
             } else {
                 setState(AsyncTaskState.Cleared);
+                RemoveTaskFromDB();
             }
-
-            // In any case, remove task from DB (we don't need its info
-            // anymore):
-            RemoveTaskFromDB();
         }
     }
 
