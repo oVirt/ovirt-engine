@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import static org.ovirt.engine.core.common.config.ConfigValues.UknownTaskPrePollingLapse;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -196,7 +195,7 @@ public class SPMAsyncTask {
                             "BaseAsyncTask::PollAndUpdateTask: Handling task '%1$s' (State: %2$s, Parent Command: %3$s, Parameters Type: %4$s) threw an exception",
                             getTaskID(),
                             getState(),
-                            (VdcActionType) (getParameters().getDbAsyncTask()
+                            (getParameters().getDbAsyncTask()
                                     .getaction_type()),
                             getParameters()
                                     .getClass().getName()),
@@ -265,7 +264,7 @@ public class SPMAsyncTask {
         log.infoFormat(
                 "BaseAsyncTask::OnTaskEndSuccess: Task '{0}' (Parent Command {1}, Parameters Type {2}) ended successfully.",
                 getTaskID(),
-                (VdcActionType) (getParameters().getDbAsyncTask().getaction_type()),
+                (getParameters().getDbAsyncTask().getaction_type()),
                 getParameters()
                         .getClass().getName());
     }
@@ -280,7 +279,7 @@ public class SPMAsyncTask {
                 "BaseAsyncTask::LogEndTaskFailure: Task '{0}' (Parent Command {1}, Parameters Type {2}) ended with failure:"
                         + "\r\n" + "-- Result: '{3}'" + "\r\n" + "-- Message: '{4}'," + "\r\n" + "-- Exception: '{5}'",
                 getTaskID(),
-                (VdcActionType) (getParameters().getDbAsyncTask().getaction_type()),
+                (getParameters().getDbAsyncTask().getaction_type()),
                 getParameters()
                         .getClass().getName(),
                 getLastTaskStatus().getResult(),
@@ -298,7 +297,7 @@ public class SPMAsyncTask {
         log.errorFormat(
                 "BaseAsyncTask::LogTaskDoesntExist: Task '{0}' (Parent Command {1}, Parameters Type {2}) does not exist.",
                 getTaskID(),
-                (VdcActionType) (getParameters().getDbAsyncTask().getaction_type()),
+                (getParameters().getDbAsyncTask().getaction_type()),
                 getParameters()
                         .getClass().getName());
     }
@@ -327,7 +326,7 @@ public class SPMAsyncTask {
             if (getLastTaskStatus().getStatus() != returnedStatusTask.getStatus()) {
                 log.errorFormat("SPMAsyncTask::PollTask: Task '{0}' (Parent Command {1}, Parameters Type {2}) " +
                         "was not found in VDSM, will change its status to running.",
-                        getTaskID(), (VdcActionType) (getParameters().getDbAsyncTask().getaction_type()),
+                        getTaskID(), (getParameters().getDbAsyncTask().getaction_type()),
                         getParameters().getClass().getName());
             }
         } else {
@@ -353,7 +352,7 @@ public class SPMAsyncTask {
             log.warnFormat(
                     formatString,
                     getTaskID(),
-                    (VdcActionType) (getParameters().getDbAsyncTask()
+                    (getParameters().getDbAsyncTask()
                             .getaction_type()),
                     getParameters().getClass().getName(),
                     cachedStatusTask.getStatus(),
@@ -366,7 +365,7 @@ public class SPMAsyncTask {
             log.infoFormat(
                     formatString,
                     getTaskID(),
-                    (VdcActionType) (getParameters().getDbAsyncTask()
+                    (getParameters().getDbAsyncTask()
                             .getaction_type()),
                     getParameters().getClass().getName(),
                     cachedStatusTask.getStatus(),
@@ -393,7 +392,7 @@ public class SPMAsyncTask {
                     String.format(
                             "SPMAsyncTask::PollTask: Polling task '%1$s' (Parent Command %2$s, Parameters Type %3$s) threw an exception, task is still considered running.",
                             getTaskID(),
-                            (VdcActionType) (getParameters().getDbAsyncTask().getaction_type()),
+                            (getParameters().getDbAsyncTask().getaction_type()),
                             getParameters().getClass().getName()),
                     e);
         }
@@ -402,7 +401,7 @@ public class SPMAsyncTask {
             log.errorFormat(
                     "SPMAsyncTask::PollTask: Polling task '{0}' (Parent Command {1}, Parameters Type {2}) failed, task is still considered running.",
                     getTaskID(),
-                    (VdcActionType) (getParameters().getDbAsyncTask().getaction_type()),
+                    (getParameters().getDbAsyncTask().getaction_type()),
                     getParameters()
                             .getClass().getName());
 
@@ -418,7 +417,7 @@ public class SPMAsyncTask {
             log.warnFormat(
                     formatString,
                     getTaskID(),
-                    (VdcActionType) (getParameters().getDbAsyncTask().getaction_type()),
+                    (getParameters().getDbAsyncTask().getaction_type()),
                     getParameters().getClass().getName(),
                     returnValue.getStatus(),
                     ((returnValue.getStatus() == AsyncTaskStatusEnum.finished) ? (String.format(", result '%1$s'",
@@ -429,7 +428,7 @@ public class SPMAsyncTask {
             log.infoFormat(
                     formatString,
                     getTaskID(),
-                    (VdcActionType) (getParameters().getDbAsyncTask().getaction_type()),
+                    (getParameters().getDbAsyncTask().getaction_type()),
                     getParameters().getClass().getName(),
                     returnValue.getStatus(),
                     ((returnValue.getStatus() == AsyncTaskStatusEnum.finished) ? (String.format(", result '%1$s'",
@@ -446,7 +445,7 @@ public class SPMAsyncTask {
                 log.infoFormat(
                         "SPMAsyncTask::StopTask: Attempting to stop task '{0}' (Parent Command {1}, Parameters Type {2}).",
                         getTaskID(),
-                        (VdcActionType) (getParameters().getDbAsyncTask().getaction_type()),
+                        (getParameters().getDbAsyncTask().getaction_type()),
                         getParameters().getClass().getName());
 
                 Backend.getInstance()
