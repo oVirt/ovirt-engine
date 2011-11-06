@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -19,9 +18,9 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
@@ -136,7 +135,7 @@ public final class AsyncTaskManager {
                         .currentTimeMillis() - SubtractMinutesAsMills);
     }
 
-    public boolean HasTasksByStoragePoolId(Guid storagePoolID) {
+    public synchronized boolean HasTasksByStoragePoolId(Guid storagePoolID) {
         boolean retVal = false;
         if (_tasks != null) {
             for (SPMAsyncTask task : _tasks.values()) {
