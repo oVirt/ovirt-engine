@@ -89,6 +89,8 @@ public class JndiAction implements PrivilegedAction {
                     controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
                     // Adding all the three attributes possible, as RHDS doesn't return the nsUniqueId by default
                     controls.setReturningAttributes(new String[]{"nsUniqueId", "ipaUniqueId","objectGuid"});
+                    // Added this in order to prevent a warning saying: "the returning obj flag wasn't set, setting it to true"
+                    controls.setReturningObjFlag(true);
                     currentLdapServer = ldapQueryPath.toString();
                     env.put(Context.PROVIDER_URL, currentLdapServer);
 

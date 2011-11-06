@@ -148,12 +148,7 @@
       <priority value="WARN"/>
    </category>
 
-   <!-- Limit the org.apache.cxf categories -->
-   <category name="org.apache.cxf">
-      <priority value="WARN"/>
-   </category>
-
-   <!-- Limit the org.apache.cxf categories -->
+   <!-- Limit the org.springframework categories -->
    <category name="org.springframework">
       <priority value="WARN"/>
    </category>

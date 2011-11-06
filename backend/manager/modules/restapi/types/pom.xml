@@ -19,6 +19,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-vfs</artifactId>
+      <version>3.0.1.GA</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>interface-common-jaxrs</artifactId>
       <version>${engine.api.version}</version>

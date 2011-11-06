@@ -226,11 +226,10 @@ public final class BackendCallBacksDirector {
                     Guid[] guidArray = callBack.getQueryIDs();
                     if (guidArray.length > 0) {
                         AsyncQueryResults results = CallbackServer.Instance.GetAsyncQueryResults(guidArray);
-                        for (int i = 0; i < results.getQueryData().length; i++) {
-                            if (results.getQueryData()[i].getValue().length == 1
-                                    && results.getQueryData()[i].getValue()[0]
-                                            .getFaulted() != null) {
-                                UnregisterQuery(results.getQueryIDs()[i]);
+                        for (int i = 0; i < results.getQueryData().size(); i++) {
+                            if (results.getQueryData().get(i).getValue().size() == 1
+                                    && results.getQueryData().get(i).getValue().get(0).getFaulted() != null) {
+                                UnregisterQuery(results.getQueryIDs().get(i));
                             }
                         }
                         return results;

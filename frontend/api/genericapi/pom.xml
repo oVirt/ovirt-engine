@@ -14,6 +14,16 @@
 
   <dependencies>
     <dependency>
+     <groupId>org.ovirt.engine.core</groupId>
+     <artifactId>bll</artifactId>
+     <version>${engine.version}</version>
+     <scope>provided</scope>
+    </dependency>
+    <dependency>
+     <groupId>org.jboss.ejb3</groupId>
+     <artifactId>jboss-ejb3-ext-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>common</artifactId>
       <version>${engine.version}</version>
@@ -27,8 +37,8 @@
 
     <!-- external dependencies -->
     <dependency>
-      <groupId>javax.ejb</groupId>
-      <artifactId>ejb-api</artifactId>
+      <groupId>org.jboss.spec.javax.ejb</groupId>
+      <artifactId>jboss-ejb-api_3.1_spec</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>

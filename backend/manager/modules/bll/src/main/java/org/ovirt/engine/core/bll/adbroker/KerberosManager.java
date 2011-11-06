@@ -2,9 +2,6 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import java.io.File;
 
-import org.jboss.ejb3.annotation.Depends;
-import org.jboss.ejb3.annotation.Management;
-import org.jboss.ejb3.annotation.Service;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
@@ -12,14 +9,29 @@ import org.ovirt.engine.core.compat.LogFactoryCompat;
 import sun.security.krb5.Config;
 import sun.security.krb5.KrbException;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.ejb.DependsOn;
+import javax.ejb.Startup;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
+
 /**
  * Manage the container's Kerberos initialization.
  *
  */
+// Here we use a Singleton bean
+// The @Startup annotation is to make sure the bean is initialized on startup.
+// @ConcurrencyManagement - we use bean managed concurrency:
+// Singletons that use bean-managed concurrency allow full concurrent access to all the
+// business and timeout methods in the singleton.
+// The developer of the singleton is responsible for ensuring that the state of the singleton is synchronized across all clients.
+// The @DependsOn annotation is in order to make sure it is started after the Backend bean is initialized
 @SuppressWarnings("restriction")
-@Service
-@Depends("jboss.j2ee:ear=engine.ear,jar=engine-bll.jar,name=Backend,service=EJB3")
-@Management(KerberosManagerSericeManagmentMBean.class)
+@Singleton
+@Startup
+@DependsOn("Backend")
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class KerberosManager implements KerberosManagerSericeManagmentMBean {
 
     private static LogCompat log = LogFactoryCompat.getLog(KerberosManager.class);
@@ -43,6 +55,11 @@ public class KerberosManager implements KerberosManagerSericeManagmentMBean {
         return isKerberosAuth;
     }
 
+    @PostConstruct
+    public void postConstruct() {
+        create();
+    }
+
     /**
      * This method is called upon the bean creation as part
      * of the management Service bean lifecycle.
@@ -51,8 +68,8 @@ public class KerberosManager implements KerberosManagerSericeManagmentMBean {
         if (!isKerberosAuth()) {
             return;
         }
-        String serverHomeDir = System.getProperty("jboss.server.home.dir");
-        File krb5File = new File(serverHomeDir, "conf/krb5.conf");
+        String serverHomeDir = System.getProperty("jboss.server.config.dir");
+        File krb5File = new File(serverHomeDir, "krb5.conf");
         if (krb5File.exists()) {
             if (log.isDebugEnabled()) {
                 log.debug("Loading kerberos settings from " + krb5File.getAbsolutePath());

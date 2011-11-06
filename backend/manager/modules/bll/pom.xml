@@ -86,8 +86,8 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.ejb</groupId>
-      <artifactId>ejb-api</artifactId>
+      <groupId>org.jboss.spec.javax.ejb</groupId>
+      <artifactId>jboss-ejb-api_3.1_spec</artifactId>
     </dependency>
 
     <dependency>
@@ -194,6 +194,12 @@
       <scope>test</scope>
     </dependency>
 
+     <dependency>
+       <groupId>org.jboss.spec.javax.ejb</groupId>
+       <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+       <version>${javax.ejb.api.version}</version>
+     </dependency>
+
   </dependencies>
 
   <build>
@@ -271,6 +277,21 @@
           </excludes>
         </configuration>
       </plugin>
+        <plugin>
+          <artifactId>maven-ejb-plugin</artifactId>
+          <configuration>
+            <ejbVersion>3.1</ejbVersion>
+            <generateClient>true</generateClient>
+            <archive>
+              <manifest>
+                <addClasspath>false</addClasspath>
+              </manifest>
+              <manifestEntries>
+                <Dependencies>org.slf4j, org.jboss.interceptor, org.jboss.interceptor.spi,javax.interceptor.api, javax.ejb.api, sun.jdk</Dependencies>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
     </plugins>
   </build>
 

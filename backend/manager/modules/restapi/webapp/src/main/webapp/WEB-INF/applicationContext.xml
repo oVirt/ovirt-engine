@@ -92,7 +92,13 @@
       <ref bean="jndiTemplate"/>
     </property>
     <property name="jndiName">
-      <value>engine/Backend/local</value>
+      <value>java:global/engine/engine-bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal</value>
+    </property>
+    <property name="lookupOnStartup">
+      <value>false</value>
+    </property>
+    <property name="expectedType">
+      <value>org.ovirt.engine.core.common.interfaces.BackendLocal</value>
     </property>
   </bean>
 
@@ -114,7 +120,7 @@
   </bean>
 
   <bean id="jndiTemplate" class="org.springframework.jndi.JndiTemplate">
-    <property name="environment">
+    <!--property name="environment">
       <props>
         <prop key="java.naming.factory.initial">
           org.jnp.interfaces.NamingContextFactory
@@ -126,7 +132,7 @@
           org.jboss.naming:org.jnp.interfaces
         </prop>
       </props>
-    </property>
+    </property-->
   </bean>
 
   <!-- BASIC Auth infrastructure -->
@@ -158,7 +164,7 @@
   <bean id="messageBundle"
         class="org.ovirt.engine.api.restapi.logging.MessageBundle"
         init-method="populate">
-    <property name="path" value="org/ovirt/engine/api/restapi/logging/Messages"/>
+    <property name="path" value="org.ovirt.engine.api.restapi.logging.Messages"/>
   </bean>
 
 </beans>

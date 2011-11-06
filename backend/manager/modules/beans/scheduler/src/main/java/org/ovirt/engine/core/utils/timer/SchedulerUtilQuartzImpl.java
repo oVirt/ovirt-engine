@@ -4,14 +4,17 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.ejb3.annotation.Management;
-import org.jboss.ejb3.annotation.Service;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
@@ -25,9 +28,16 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
-@Service(name = "Scheduler")
-@Management(SchedulerUtil.class)
+// Here we use a Singleton bean, names Scheduler.
+// The @Startup annotation is to make sure the bean is initialized on startup.
+// @ConcurrencyManagement - we use bean managed concurrency:
+// Singletons that use bean-managed concurrency allow full concurrent access to all the
+// business and timeout methods in the singleton.
+// The developer of the singleton is responsible for ensuring that the state of the singleton is synchronized across all clients.
+@Singleton(name = "Scheduler")
+@Startup
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class SchedulerUtilQuartzImpl implements SchedulerUtil {
 
     // consts
@@ -45,10 +55,12 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
 
     private final AtomicLong sequenceNumber = new AtomicLong(Long.MIN_VALUE);
 
+
     /**
      * This method is called upon the bean creation as part
      * of the management Service bean lifecycle.
      */
+    @PostConstruct
     public void create(){
         setup();
     }

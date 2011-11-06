@@ -16,6 +16,8 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 public class DiskImageBase extends IVdcQueryable implements Serializable {
 
     private static final long serialVersionUID = 4913899921353163969L;
+
+    @NotNull(message = "VALIDATION.VOLUME_TYPE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private VolumeType volumeType = VolumeType.Sparse;
     private String internalDriveMapping;
     private PropagateErrors propagateErrors = PropagateErrors.Off;
@@ -38,7 +40,6 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
         propagateErrors = PropagateErrors.Off;
     }
 
-    @NotNull(message = "VALIDATION.VOLUME_TYPE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     @XmlElement
     public VolumeType getvolume_type() {
         return volumeType;

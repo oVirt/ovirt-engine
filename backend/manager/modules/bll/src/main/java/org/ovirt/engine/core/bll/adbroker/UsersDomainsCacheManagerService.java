@@ -7,13 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Local;
+import javax.ejb.Singleton;
+import javax.ejb.DependsOn;
+import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 
-import org.jboss.ejb3.annotation.Depends;
-import org.jboss.ejb3.annotation.Management;
-import org.jboss.ejb3.annotation.Service;
 import org.ovirt.engine.core.bll.DbUserCacheManager;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.config.Config;
@@ -30,14 +33,20 @@ import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.kerberos.KerberosUtils;
 
-@Service
-@Management(UsersDomainsCacheManager.class)
+
+// Here we use a Singleton bean
+// The @Startup annotation is to make sure the bean is initialized on startup.
+// @ConcurrencyManagement - we use bean managed concurrency:
+// Singletons that use bean-managed concurrency allow full concurrent access to all the
+// business and timeout methods in the singleton.
+// The developer of the singleton is responsible for ensuring that the state of the singleton is synchronized across all clients.
+// The @DependsOn annotation is in order to make sure it is started after the stated beans are initialized
+@Singleton
+@Startup
+@DependsOn({"Backend","Scheduler","KerberosManager","VdsBroker"})
 @Local(UsersDomainsCacheManager.class)
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-@Depends({"jboss.j2ee:ear=engine.ear,jar=engine-bll.jar,name=Backend,service=EJB3",
-    "jboss.j2ee:ear=engine.ear,jar=engine-scheduler.jar,name=Scheduler,service=EJB3",
-    "jboss.j2ee:ear=engine.ear,jar=engine-bll.jar,name=KerberosManager,service=EJB3",
-    "jboss.j2ee:ear=engine.ear,jar=engine-vdsbroker.jar,name=VdsBroker,service=EJB3"})
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager {
 
     private static LogCompat log = LogFactoryCompat.getLog(UsersDomainsCacheManagerService.class);
@@ -117,6 +126,11 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
                 ldapSecurityAuthenticationPerDomain.put(domain, authMode);
             }
         }
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        create();
     }
 
     /**

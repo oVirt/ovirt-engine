@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.utils.vdshooks;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,8 +65,8 @@ public class TestVdsHooks {
         // Prepare data structures for testing the internal data of the value objects map
 
         ValueObjectMap result = VdsHooksParser.parseHooks(hooksStr);
-        ValueObjectPair[] eventsValuePairs = result.getValuePairs();
-        assertEquals(3, eventsValuePairs.length);
+        ArrayList<ValueObjectPair> eventsValuePairs = result.getValuePairs();
+        assertEquals(3, eventsValuePairs.size());
 
         for (ValueObjectPair eventsValuePair : eventsValuePairs) {
             String event = (String) eventsValuePair.getKey();
@@ -85,11 +89,11 @@ public class TestVdsHooks {
     }
 
     private void testProperties(ValueObjectMap properties, Map<String, String> expectedProperties) {
-        ValueObjectPair[] valuePairs = properties.getValuePairs();
+        ArrayList<ValueObjectPair> valuePairs = properties.getValuePairs();
         for (ValueObjectPair pair : valuePairs) {
             String key = (String) pair.getKey();
             String value = (String) pair.getValue();
-            String expectedValue = (String) expectedProperties.get(key);
+            String expectedValue = expectedProperties.get(key);
             assertEquals(expectedValue, value);
         }
         // TODO Auto-generated method stub

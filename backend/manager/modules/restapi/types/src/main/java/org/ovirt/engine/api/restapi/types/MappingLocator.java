@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.types;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -91,11 +90,11 @@ public class MappingLocator {
         try {
             Enumeration<URL> resources = classLoader.getResources(toPath(packageName));
             List<File> dirs = new ArrayList<File>();
-            List<InputStream> jars = new ArrayList<InputStream>();
+            List<JarInputStream> jars = new ArrayList<JarInputStream>();
             while (resources.hasMoreElements()) {
                 URL resource = resources.nextElement();
                 if (isJar(resource)) {
-                    jars.add(new FileInputStream(getJarName(resource)));
+                    jars.add(new JarInputStream(new FileInputStream(getJarName(resource))));
                 } else if (containsJar(resource)) {
                     jars.add(getContainingResource(classLoader, resource));
                 } else {
@@ -110,26 +109,24 @@ public class MappingLocator {
         return ret;
     }
 
-    private static InputStream getContainingResource(ClassLoader classLoader, URL resource)
+    private static JarInputStream getContainingResource(ClassLoader classLoader, URL resource)
             throws Exception {
-        InputStream ret = null;
+        JarInputStream ret = null;
         Enumeration<URL> globals = classLoader.getResources("/");
         while (globals.hasMoreElements()) {
             URL global = globals.nextElement();
             if (resource.toString().startsWith(global.toString())) {
-                ret = global.openStream();
+                ret = (JarInputStream)global.openStream();
                 break;
             }
         }
         return ret;
     }
 
-    private void walkJars(List<Class<?>> classList, String packageName, List<InputStream> jars)
+    private void walkJars(List<Class<?>> classList, String packageName, List<JarInputStream> jars)
             throws Exception {
-        for (InputStream jar : jars) {
-            JarInputStream jarFile = null;
+        for (JarInputStream jarFile : jars) {
             try {
-                jarFile = new JarInputStream(jar);
                 JarEntry entry = null;
                 while ((entry = jarFile.getNextJarEntry()) != null) {
                     String name = toPackage(entry.getName());

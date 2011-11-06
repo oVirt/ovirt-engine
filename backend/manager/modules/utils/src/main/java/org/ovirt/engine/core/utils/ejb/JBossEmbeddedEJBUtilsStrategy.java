@@ -20,4 +20,9 @@ public class JBossEmbeddedEJBUtilsStrategy extends EJBUtilsStrategy {
         addBeanJNDIName(BeanType.VDS_EVENT_LISTENER, "VdsEventListener");
     }
 
+    @Override
+    protected String getBeanSuffix(BeanType beanType, BeanProxyType proxyType) {
+        return "";
+    }
+
 }

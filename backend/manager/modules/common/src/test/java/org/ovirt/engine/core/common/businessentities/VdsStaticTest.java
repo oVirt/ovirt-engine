@@ -15,7 +15,7 @@ public class VdsStaticTest {
     }
 
     private void mapIsEmpty(final ValueObjectMap map) {
-        assertEquals(0, map.getValuePairs().length);
+        assertEquals(0, map.getValuePairs().size());
     }
 
 }

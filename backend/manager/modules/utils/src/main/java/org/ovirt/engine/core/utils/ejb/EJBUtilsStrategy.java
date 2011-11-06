@@ -37,8 +37,10 @@ public abstract class EJBUtilsStrategy {
 
     protected abstract void addJNDIBeans();
 
+    protected abstract String getBeanSuffix(BeanType beanType, BeanProxyType proxyType);
+
     protected void addJNDIResources() {
-        addResourceJNDIName(ContainerManagedResourceType.TRANSACTION_MANAGER, "java:/TransactionManager");
+        addResourceJNDIName(ContainerManagedResourceType.TRANSACTION_MANAGER, "java:jboss/TransactionManager");
         addResourceJNDIName(ContainerManagedResourceType.DATA_SOURCE, "java:/ENGINEDataSource");
     }
 
@@ -90,7 +92,7 @@ public abstract class EJBUtilsStrategy {
 
             jndiNameSB = new StringBuilder();
             jndiNameSB.append(jndiNameFromMap);
-            jndiNameSB.append(proxyType.toString());
+            jndiNameSB.append(getBeanSuffix(beanType, proxyType));
 
             if (proxyType == BeanProxyType.LOCAL) {
                 context = new InitialContext();
@@ -100,6 +102,7 @@ public abstract class EJBUtilsStrategy {
                 // provider URL should be specified
                 context = createRemoteContext();
             }
+
 
             // appends "local" or "remote" to the jndi name, depends on the
             // proxy type

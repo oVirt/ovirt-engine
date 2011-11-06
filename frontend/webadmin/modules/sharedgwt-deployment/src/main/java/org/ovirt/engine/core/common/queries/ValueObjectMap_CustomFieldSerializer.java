@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.queries;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamReader;
 import com.google.gwt.user.client.rpc.SerializationStreamWriter;
+import java.util.ArrayList;
 
 public class ValueObjectMap_CustomFieldSerializer {
 	public static void deserialize(SerializationStreamReader streamReader,
@@ -15,7 +16,7 @@ public class ValueObjectMap_CustomFieldSerializer {
 			throws SerializationException {
 		// occur first
 		ValueObjectMap r = new ValueObjectMap();
-		r.setValuePairs((ValueObjectPair[])streamReader.readObject());
+		r.setValuePairs((ArrayList<ValueObjectPair>)streamReader.readObject());
 
 		return r;
 	}

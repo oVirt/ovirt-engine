@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2010, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+<module xmlns="urn:jboss:module:1.1" name="sun.jdk">
+    <resources>
+        <!-- currently jboss modules has not way of importing services from
+        classes.jar so we duplicate them here -->
+        <resource-root path="service-loader-resources"/>
+    </resources>
+    <dependencies>
+        <system export="true">
+            <paths>
+                <path name="com/sun/script/javascript"/>
+                <path name="com/sun/jndi/dns"/>
+                <path name="com/sun/jndi/ldap"/>
+                <path name="com/sun/security/auth"/>
+                <path name="com/sun/security/auth/login"/>
+                <path name="com/sun/security/auth/module"/>
+                <path name="sun/misc"/>
+                <path name="sun/security"/>
+                <path name="sun/security/krb5"/>
+                <path name="sun/nio"/>
+                <path name="sun/nio/ch"/>
+                <path name="sun/util"/>
+                <path name="sun/util/calendar"/>
+                <path name="sun/security/provider"/>
+                <path name="META-INF/services"/>
+            </paths>
+            <exports>
+                <include-set>
+                    <path name="META-INF/services"/>
+                </include-set>
+            </exports>
+        </system>
+    </dependencies>
+</module>

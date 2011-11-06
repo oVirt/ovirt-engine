@@ -54,6 +54,8 @@ public class GetRootDSE {
             SearchControls searchControls = new SearchControls();
             searchControls.setReturningAttributes(queryExecution.getReturningAttributes());
             searchControls.setSearchScope(queryExecution.getSearchScope());
+            // Added this in order to prevent a warning saying: "the returning obj flag wasn't set, setting it to true"
+            searchControls.setReturningObjFlag(true);
             NamingEnumeration<SearchResult> search =
                     ctx.search(queryExecution.getBaseDN(), queryExecution.getFilter(), searchControls);
 

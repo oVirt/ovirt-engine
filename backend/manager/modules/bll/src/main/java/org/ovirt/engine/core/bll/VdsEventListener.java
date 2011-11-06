@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.ejb.DependsOn;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -53,6 +54,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 @Stateless(name = "VdsEventListener")
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Local(IVdsEventListener.class)
+@DependsOn("Backend")
 public class VdsEventListener implements IVdsEventListener {
 
     @Override

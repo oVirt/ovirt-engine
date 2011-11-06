@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.utils.serialization.json;
 
+import java.util.ArrayList;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.annotate.JsonTypeInfo.As;
@@ -15,5 +17,5 @@ public abstract class JsonValueObjectMapMixIn extends ValueObjectMap {
      */
     @JsonIgnore
     @Override
-    public abstract ValueObjectPair[] getValuePairs();
+    public abstract ArrayList<ValueObjectPair> getValuePairs();
 }

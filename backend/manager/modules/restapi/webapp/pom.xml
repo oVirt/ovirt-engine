@@ -13,72 +13,90 @@
 
   <properties>
 	<webapp.name>restapi</webapp.name>
-</properties>
+  </properties>
+<dependencies>
+     <dependency>
+	<groupId>org.ovirt.engine.api</groupId>
+	<artifactId>restapi-jaxrs</artifactId>
+	<version>${engine.version}</version>
+     </dependency>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.ovirt.engine.api</groupId>
-			<artifactId>restapi-jaxrs</artifactId>
-			<version>${engine.version}</version>
-		</dependency>
+     <dependency>
+	<groupId>org.jboss.resteasy</groupId>
+	<artifactId>resteasy-jaxrs</artifactId>
+	<version>${resteasy.version}</version>
+	<scope>provided</scope>
+     </dependency>
 
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<version>${resteasy.version}</version>
-		</dependency>
+     <dependency>
+	<groupId>org.jboss.resteasy</groupId>
+	<artifactId>resteasy-spring</artifactId>
+	<version>${resteasy.version}</version>
+     </dependency>
 
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-spring</artifactId>
-			<version>${resteasy.version}</version>
-		</dependency>
+     <dependency>
+	<groupId>org.springframework</groupId>
+	<artifactId>spring</artifactId>
+	<version>${spring.version}</version>
+     </dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
+     <dependency>
+	<groupId>org.springframework</groupId>
+	<artifactId>spring-test</artifactId>
+	<version>${spring.version}</version>
+     </dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-			<!-- <scope>provided</scope> -->
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${spring.version}</version>
-			<!-- <scope>provided</scope> -->
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-agent</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-
-	</dependencies>
+     <dependency>
+	<groupId>org.springframework</groupId>
+	<artifactId>spring-webmvc</artifactId>
+	<version>${spring.version}</version>
+     </dependency>
+     <dependency>
+	<groupId>org.springframework</groupId>
+	<artifactId>spring-core</artifactId>
+	<version>${spring.version}</version>
+	<!-- <scope>provided</scope> -->
+     </dependency>
+     <dependency>
+	<groupId>org.springframework</groupId>
+	<artifactId>spring-beans</artifactId>
+	<version>${spring.version}</version>
+	<!-- <scope>provided</scope> -->
+     </dependency>
+     <dependency>
+	<groupId>org.springframework</groupId>
+	<artifactId>spring-context</artifactId>
+	<version>${spring.version}</version>
+     </dependency>
+     <dependency>
+	<groupId>org.springframework</groupId>
+	<artifactId>spring-agent</artifactId>
+	<version>${spring.version}</version>
+     </dependency>
+     <dependency>
+	<groupId>org.springframework</groupId>
+	<artifactId>spring-aop</artifactId>
+	<version>${spring.version}</version>
+     </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <ejbVersion>2.1.1</ejbVersion>
+          <generateClient>true</generateClient>
+          <archive>
+            <manifest>
+              <addClasspath>false</addClasspath>
+            </manifest>
+            <manifestEntries>
+              <Dependencies>org.jboss.resteasy.resteasy-jaxb-provider, org.jboss.resteasy.resteasy-jaxrs, org.jboss.resteasy.resteasy-jackson-provider, org.codehaus.jackson.jackson-mapper-asl, deployment.engine.ear.engine-bll.jar</Dependencies>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

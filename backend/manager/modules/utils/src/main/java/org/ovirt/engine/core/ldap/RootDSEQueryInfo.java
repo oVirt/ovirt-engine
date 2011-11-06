@@ -23,6 +23,8 @@ public class RootDSEQueryInfo {
     public static SearchControls createSearchControls() {
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(SearchControls.OBJECT_SCOPE);
+        // Added this in order to prevent a warning saying: "the returning obj flag wasn't set, setting it to true"
+        searchControls.setReturningObjFlag(true);
         return searchControls;
     }
 

@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.interfaces.IBackendCallBackServer;
@@ -60,18 +58,17 @@ public class CallbackServer implements IBackendCallBackServer {
     }
 
     public AsyncQueryResults GetAsyncQueryResults(Guid[] queryIDs) {
-        java.util.ArrayList<KeyValuePairCompat<Guid, ListIVdcQueryableUpdatedData[]>> allResults =
-                new ArrayList<KeyValuePairCompat<Guid, ListIVdcQueryableUpdatedData[]>>();
+        java.util.ArrayList<KeyValuePairCompat<Guid, ArrayList<ListIVdcQueryableUpdatedData>>> allResults =
+                new ArrayList<KeyValuePairCompat<Guid, ArrayList<ListIVdcQueryableUpdatedData>>>();
         synchronized (queries) {
             for (Guid queryId : queryIDs) {
-                List<ListIVdcQueryableUpdatedData> result = new LinkedList<ListIVdcQueryableUpdatedData>();
+                ArrayList<ListIVdcQueryableUpdatedData> result = new ArrayList<ListIVdcQueryableUpdatedData>();
                 if (queries.containsKey(queryId)) {
                     result = queries.get(queryId);
                     queries.put(queryId, new java.util.ArrayList<ListIVdcQueryableUpdatedData>());
                 }
-                allResults.add(new KeyValuePairCompat<Guid, ListIVdcQueryableUpdatedData[]>(queryId,
-                                                                                            result
-                                                                                                    .toArray(new ListIVdcQueryableUpdatedData[0])));
+                allResults.add(new KeyValuePairCompat<Guid, ArrayList<ListIVdcQueryableUpdatedData>>(queryId, result));
+
             }
         }
 

@@ -179,7 +179,7 @@ public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements
 		return backend;
 	}
 
-	@EJB(beanInterface = BackendLocal.class, mappedName = "engine/Backend/local")
+	@EJB(beanInterface = BackendLocal.class, mappedName = "java:global/engine/engine-bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal")
 	public void setBackend(BackendLocal backend) {
 		this.backend = backend;
 	}

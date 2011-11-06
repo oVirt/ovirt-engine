@@ -4,8 +4,13 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.EJB;
 import javax.ejb.Local;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.ExcludeClassInterceptors;
@@ -13,8 +18,6 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.jboss.ejb3.annotation.Management;
-import org.jboss.ejb3.annotation.Service;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
@@ -56,11 +59,18 @@ import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
+// Here we use a Singleton bean
+// The @Startup annotation is to make sure the bean is initialized on startup.
+// @ConcurrencyManagement - we use bean managed concurrency:
+// Singletons that use bean-managed concurrency allow full concurrent access to all the
+// business and timeout methods in the singleton.
+// The developer of the singleton is responsible for ensuring that the state of the singleton is synchronized across all clients.
 @Local({ BackendLocal.class, BackendInternal.class })
 @Interceptors({ ThreadLocalSessionCleanerInterceptor.class })
-@Service
-@Management(BackendLocal.class)
+@Singleton
+@Startup
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class Backend implements BackendInternal, BackendRemote {
 
     @SuppressWarnings("unused")
@@ -92,11 +102,11 @@ public class Backend implements BackendInternal, BackendRemote {
         return _resourceManger;
     }
 
-
     /**
      * This method is called upon the bean creation as part
      * of the management Service bean lifecycle.
      */
+    @PostConstruct
     public void create() {
         checkDBConnectivity();
         Initialize();
