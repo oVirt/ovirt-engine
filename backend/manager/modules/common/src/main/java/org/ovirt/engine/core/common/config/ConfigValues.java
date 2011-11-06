@@ -1400,6 +1400,20 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     CustomPublicConfig_AppsWebSite(320),
 
+    /**
+     * Lower threshold for disk space on host to be considered low, in MB.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("500")
+    VdsLocalDisksLowFreeSpace(321),
+
+    /**
+     * Lower threshold for disk space on host to be considered critically low (almost out of space), in MB.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("100")
+    VdsLocalDisksCriticallyLowFreeSpace(322),
+
     Invalid(65535);
 
     private int intValue;

@@ -52,6 +52,8 @@ public enum AuditLogType {
     VDS_SET_NONOPERATIONAL_DOMAIN(522, AuditLogTimeInterval.MINUTE.getValue()),
     VDS_SET_NONOPERATIONAL_DOMAIN_FAILED(523, AuditLogTimeInterval.MINUTE.getValue()),
     VDS_DOMAIN_DELAY_INTERVAL(524, AuditLogTimeInterval.HOUR.getValue()),
+    VDS_LOW_DISK_SPACE(23, AuditLogTimeInterval.HOUR.getValue() * 12),
+    VDS_LOW_DISK_SPACE_ERROR(24, AuditLogTimeInterval.MINUTE.getValue() * 15),
     USER_VDS_MAINTENANCE(600), // When VDS is transferred to
     CPU_FLAGS_NX_IS_MISSING(601),
     // maintenance mode

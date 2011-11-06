@@ -2,10 +2,12 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
@@ -34,6 +36,12 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
     // to .NET attributes:
     @XmlElement(name = "NetworkList")
     private java.util.ArrayList<network> mNetworkList;
+
+    /**
+     * This map holds the disk usage reported by the host. The mapping is path to usage (in MB).
+     */
+    @XmlTransient
+    private Map<String, Long> localDisksUsage;
 
     public VDS() {
         mVdsStatic = new VdsStatic();
@@ -1277,5 +1285,13 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setNonOperationalReason(NonOperationalReason nonOperationalReason) {
         this.mVdsDynamic.setNonOperationalReason(nonOperationalReason);
+    }
+
+    public Map<String, Long> getLocalDisksUsage() {
+        return localDisksUsage;
+    }
+
+    public void setLocalDisksUsage(Map<String, Long> localDiskUsage) {
+        this.localDisksUsage = localDiskUsage;
     }
 }

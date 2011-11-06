@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -15,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,6 +32,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest({ DbFacade.class })
 public class VdsBrokerObjectBuilderTest {
 
+    private static final int SIZE_FOR_DISK_STATS = 100;
     private final Guid imageId = Guid.createGuidFromString("ed185868-3f9e-4040-a340-e1a64726ebc0");
     private final Guid vmId = Guid.createGuidFromString("71ca53fb-c223-4b31-926d-de1c2ab0b0a9");
     private final String WRITE_LATENCY = "writeLatency";
@@ -185,10 +189,64 @@ public class VdsBrokerObjectBuilderTest {
         assertEquals(vmDynamic.getDisks().get(0).getFlushLatency(), new Double(DEFAULT_VALUE));
     }
 
+    @Test
+    public void testDiskStats() {
+        Map<String, Object> disksStats = new HashMap<String, Object>();
+        Map<String, Object> disk = new HashMap<String, Object>();
+        disk.put(VdsProperties.DISK_STATS_FREE, SIZE_FOR_DISK_STATS);
+
+        disksStats.put("a", disk);
+        disksStats.put("b", disk);
+        XmlRpcStruct xml = setDisksStatsInXmlRpc(disksStats);
+
+        validateDisksStatsList(getVds(), xml, false);
+    }
+
+    @Test
+    public void testEmptyDiskStats() {
+        Map<String, Object> disksStats = new HashMap<String, Object>();
+        XmlRpcStruct xml = setDisksStatsInXmlRpc(disksStats);
+
+        validateDisksStatsList(getVds(), xml, false);
+    }
+
+    @Test
+    public void testNoDiskStats() {
+        VDS vds = getVds();
+        VdsBrokerObjectsBuilder.updateLocalDisksUsage(vds, new XmlRpcStruct());
+
+        assertNull(vds.getLocalDisksUsage());
+    }
+
+    @Test
+    public void testNoDiskStatsDataForDisks() {
+        Map<String, Object> disksStats = new HashMap<String, Object>();
+        Map<String, Object> disk = new HashMap<String, Object>();
+
+        disksStats.put("a", disk);
+        disksStats.put("b", disk);
+        XmlRpcStruct xml = setDisksStatsInXmlRpc(disksStats);
+
+        validateDisksStatsList(getVds(), xml, true);
+    }
+
     private void validateDisksUsagesList(VmStatistics vmStatistics, Object[] disksUsages, XmlRpcStruct xml) {
         VdsBrokerObjectsBuilder.updateVMStatisticsData(vmStatistics, xml);
         assertEquals(Arrays.asList(disksUsages),
                 new JsonObjectDeserializer().deserialize(vmStatistics.getDisksUsage(), ArrayList.class));
+    }
+
+    private void validateDisksStatsList(VDS vds, XmlRpcStruct xml, boolean assertNullValues) {
+        VdsBrokerObjectsBuilder.updateLocalDisksUsage(vds, xml);
+        assertNotNull(vds.getLocalDisksUsage());
+
+        for (Long usage : vds.getLocalDisksUsage().values()) {
+            if (assertNullValues) {
+                assertNull(usage);
+            } else {
+                assertEquals(SIZE_FOR_DISK_STATS, usage.longValue());
+            }
+        }
     }
 
     private XmlRpcStruct setMockForTesting(Map<String, Object> diskData) {
@@ -197,6 +255,10 @@ public class VdsBrokerObjectBuilderTest {
         XmlRpcStruct xml = setDisksInXmlRpc(disksData);
         mockDiskImageDao();
         return xml;
+    }
+
+    private VDS getVds() {
+        return new VDS();
     }
 
     private VmStatistics getVmStatistics() {
@@ -238,6 +300,13 @@ public class VdsBrokerObjectBuilderTest {
         XmlRpcStruct xml = new XmlRpcStruct();
         Map<String, Object> innerMap = xml.getInnerMap();
         innerMap.put(VdsProperties.VM_DISKS_USAGE, disksUsageData);
+        return xml;
+    }
+
+    private XmlRpcStruct setDisksStatsInXmlRpc(Object disksStatsData) {
+        XmlRpcStruct xml = new XmlRpcStruct();
+        Map<String, Object> innerMap = xml.getInnerMap();
+        innerMap.put(VdsProperties.DISK_STATS, disksStatsData);
         return xml;
     }
 

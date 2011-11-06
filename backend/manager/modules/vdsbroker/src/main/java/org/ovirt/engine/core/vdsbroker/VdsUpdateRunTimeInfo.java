@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -65,6 +67,10 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
 
 public class VdsUpdateRunTimeInfo {
+    private static final Integer LOW_SPACE_THRESHOLD = Config.<Integer> GetValue(ConfigValues.VdsLocalDisksLowFreeSpace);
+    private static final Integer LOW_SPACE_CRITICAL_THRESHOLD =
+            Config.<Integer> GetValue(ConfigValues.VdsLocalDisksCriticallyLowFreeSpace);
+
     private java.util.HashMap<Guid, java.util.Map.Entry<VmDynamic, VmStatistics>> _runningVms;
     private final java.util.HashMap<Guid, VmDynamic> _vmDynamicToSave = new java.util.HashMap<Guid, VmDynamic>();
     private final java.util.HashMap<Guid, VmStatistics> _vmStatisticsToSave =
@@ -410,10 +416,59 @@ public class VdsUpdateRunTimeInfo {
         _saveVdsDynamic = true;
         _saveVdsStatistics = true;
 
+        alertIfLowDiskSpaceOnHost();
         checkVdsInterfaces();
 
         if (Config.<Boolean> GetValue(ConfigValues.DebugTimerLogging)) {
             log.debugFormat("vds::refreshVdsStats\n{0}", toString());
+        }
+    }
+
+    /**
+     * Log to the audit log in case one/some of the paths monitored by VDSM are low on disk space.
+     */
+    private void alertIfLowDiskSpaceOnHost() {
+        Map<String, Long> disksUsage = _vds.getLocalDisksUsage();
+        if (disksUsage == null || disksUsage.isEmpty()) {
+            return;
+        }
+
+        List<String> disksWithLowSpace = new ArrayList<String>();
+        List<String> disksWithCriticallyLowSpace = new ArrayList<String>();
+        for (Entry<String, Long> diskUsage : disksUsage.entrySet()) {
+            if (diskUsage.getValue() != null) {
+                if (diskUsage.getValue() <= LOW_SPACE_CRITICAL_THRESHOLD) {
+                    disksWithCriticallyLowSpace.add(diskUsage.getKey());
+                } else if (diskUsage.getValue() <= LOW_SPACE_THRESHOLD) {
+                    disksWithLowSpace.add(diskUsage.getKey());
+                }
+            }
+        }
+
+        logLowDiskSpaceOnHostDisks(disksWithLowSpace, LOW_SPACE_THRESHOLD, AuditLogType.VDS_LOW_DISK_SPACE);
+        logLowDiskSpaceOnHostDisks(disksWithCriticallyLowSpace,
+                LOW_SPACE_CRITICAL_THRESHOLD,
+                AuditLogType.VDS_LOW_DISK_SPACE_ERROR);
+    }
+
+    /**
+     * Log that the disks have low space, if the disks list is not empty.
+     *
+     * @param disksWithLowSpace
+     *            The disks with the low space.
+     * @param lowSpaceThreshold
+     *            The low space threshold that below it we log.
+     * @param logType
+     *            The type of log to use.
+     */
+    private void logLowDiskSpaceOnHostDisks(List<String> disksWithLowSpace,
+            final Integer lowSpaceThreshold,
+            AuditLogType logType) {
+        if (!disksWithLowSpace.isEmpty()) {
+            AuditLogableBase logable = new AuditLogableBase(_vds.getvds_id());
+            logable.AddCustomValue("DiskSpace", lowSpaceThreshold.toString());
+            logable.AddCustomValue("Disks", StringUtils.join(disksWithLowSpace, ", "));
+            AuditLogDirector.log(logable, logType);
         }
     }
 

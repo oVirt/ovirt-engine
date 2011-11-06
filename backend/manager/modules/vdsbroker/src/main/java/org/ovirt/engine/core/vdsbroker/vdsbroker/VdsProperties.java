@@ -201,10 +201,14 @@ public final class VdsProperties {
     public static final String domains = "storageDomains";
     public static final String hooks = "hooks";
 
+
     // storage domains
     public static final String code = "code";
     public static final String lastCheck = "lastCheck";
     public static final String delay = "delay";
+
+    public static final String DISK_STATS = "diskStats";
+    public static final String DISK_STATS_FREE = "free";
 
     public static String MigrationMethostoString(MigrationMethod method) {
         if (method == MigrationMethod.OFFLINE) {

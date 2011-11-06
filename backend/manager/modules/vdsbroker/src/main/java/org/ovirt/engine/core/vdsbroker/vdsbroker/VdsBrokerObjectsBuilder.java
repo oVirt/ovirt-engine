@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,7 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
  * This class encapsulate the knowlage of how to create objects from the VDS Rpc protocol responce. This class has
  * methods that receive XmlRpcStruct and construct the following Classes: VmDynamic VdsDynamic VdsStatic
  */
+@SuppressWarnings({ "unchecked", "unchecked", "unchecked" })
 public class VdsBrokerObjectsBuilder {
     private final static int VNC_START_PORT = 5900;
     private final static double NANO_SECONDS = 1000000000;
@@ -544,6 +546,31 @@ public class VdsBrokerObjectsBuilder {
         vds.setvm_active(AssignIntValue(xmlRpcStruct, VdsProperties.vm_active));
         vds.setvm_migrating(AssignIntValue(xmlRpcStruct, VdsProperties.vm_migrating));
         updateVDSDomainData(vds, xmlRpcStruct);
+        updateLocalDisksUsage(vds, xmlRpcStruct);
+    }
+
+    /**
+     * Update {@link VDS#setLocalDisksUsage(Map)} with map of paths usage extracted from the returned returned value. The
+     * usage is reported in MB.
+     *
+     * @param vds
+     *            The VDS object to update.
+     * @param xmlRpcStruct
+     *            The XML/RPC to extract the usage from.
+     */
+    protected static void updateLocalDisksUsage(VDS vds, XmlRpcStruct xmlRpcStruct) {
+        if (xmlRpcStruct.containsKey(VdsProperties.DISK_STATS)) {
+            Map<String, Object> diskStatsStruct = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.DISK_STATS);
+            Map<String, Long> diskStats = new HashMap<String, Long>();
+
+            vds.setLocalDisksUsage(diskStats);
+
+            for (String path : diskStatsStruct.keySet()) {
+                XmlRpcStruct pathStatsStruct = new XmlRpcStruct((Map<String, Object>) diskStatsStruct.get(path));
+
+                diskStats.put(path, AssignLongValue(pathStatsStruct, VdsProperties.DISK_STATS_FREE));
+            }
+        }
     }
 
     private static void updateVDSDomainData(VDS vds, XmlRpcStruct xmlRpcStruct) {
