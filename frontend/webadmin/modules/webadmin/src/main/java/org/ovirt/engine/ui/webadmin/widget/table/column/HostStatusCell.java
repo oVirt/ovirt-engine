@@ -49,7 +49,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
             statusImage = resources.hostInstallingImage();
             break;
         case Reboot:
-            statusImage = resources.playImage();
+            statusImage = resources.waitImage();
             break;
         case NonOperational:
             statusImage = resources.nonOperationalImage();
