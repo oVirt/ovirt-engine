@@ -77,7 +77,7 @@ public abstract class ConsoleModel extends EntityModel
 
 	public VM getEntity()
 	{
-		return (VM)((super.getEntity() instanceof VM) ? super.getEntity() : null);
+		return (VM)super.getEntity();
 	}
 	public void setEntity(VM value)
 	{

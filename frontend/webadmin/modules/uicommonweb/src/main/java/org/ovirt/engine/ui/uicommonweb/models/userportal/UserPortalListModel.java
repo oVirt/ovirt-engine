@@ -1540,6 +1540,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 			java.util.ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getvm_guid());
 			for (ConsoleModel cachedModel : cachedModels)
 			{
+				cachedModel.setEntity(null);
 				cachedModel.setEntity(vm);
 			}
 

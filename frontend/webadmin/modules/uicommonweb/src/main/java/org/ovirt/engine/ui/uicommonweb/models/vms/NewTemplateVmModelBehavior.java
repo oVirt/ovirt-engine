@@ -256,4 +256,12 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
 		getModel().getIsTemplatePublic().setIsChangable(false);
 		getModel().getIsTemplatePrivate().setIsChangable(false);
 	}
+
+	@Override
+	public boolean Validate()
+	{
+		getModel().getStorageDomain().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+
+		return super.Validate() && getModel().getStorageDomain().getIsValid();
+	}
 }

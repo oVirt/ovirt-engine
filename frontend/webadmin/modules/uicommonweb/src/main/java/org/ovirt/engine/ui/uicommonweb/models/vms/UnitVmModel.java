@@ -1510,7 +1510,7 @@ public class UnitVmModel extends Model
 		setIsBootSequenceTabValid(getCdImage().getIsValid() && getKernel_path().getIsValid());
 		setIsCustomPropertiesTabValid(getCustomProperties().getIsValid());
 
-		return getName().getIsValid() && getDescription().getIsValid() && getDataCenter().getIsValid() && getStorageDomain().getIsValid() && getTemplate().getIsValid() && getCluster().getIsValid() && getDefaultHost().getIsValid() && getMemSize().getIsValid() && getMinAllocatedMemory().getIsValid() && getNumOfMonitors().getIsValid() && getDomain().getIsValid() && getUsbPolicy().getIsValid() && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid() && getKernel_path().getIsValid() && getCustomProperties().getIsValid();
+		return getName().getIsValid() && getDescription().getIsValid() && getDataCenter().getIsValid() && getStorageDomain().getIsValid() && getTemplate().getIsValid() && getCluster().getIsValid() && getDefaultHost().getIsValid() && getMemSize().getIsValid() && getMinAllocatedMemory().getIsValid() && getNumOfMonitors().getIsValid() && getDomain().getIsValid() && getUsbPolicy().getIsValid() && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid() && getKernel_path().getIsValid() && getCustomProperties().getIsValid() && behavior.Validate();
 	}
 
 	private void ValidateMemorySize(EntityModel memorySizeEntityModel, int maxMemSize, int minMemSize)

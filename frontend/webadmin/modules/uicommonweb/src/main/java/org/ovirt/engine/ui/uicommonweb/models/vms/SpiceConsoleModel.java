@@ -322,10 +322,17 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 		getspice().setHostSubject(certificateSubject);
 		getspice().setTrustStore(caCertificate);
 
-		String toggleFullScreenKeys = DataProvider.GetComplexValueFromSpiceRedKeysResource((((String)returnValues.get(7).getReturnValue()) != null) ? (String)returnValues.get(7).getReturnValue() : "shift+f11");
-		String releaseCursorKeys = DataProvider.GetComplexValueFromSpiceRedKeysResource((((String)returnValues.get(8).getReturnValue()) != null) ? (String)returnValues.get(8).getReturnValue() : "shift+f12");
+		String toggleFullScreenKeys = (String) returnValues.get(7).getReturnValue();
+		String releaseCursorKeys = (String) returnValues.get(8).getReturnValue();
+		String ctrlAltDel = "ctrl+alt+del";
+		String ctrlAltEnd = "ctrl+alt+end";
 
-		getspice().setTitle(getEntity().getvm_name() + ":%d" + (StringHelper.isNullOrEmpty(releaseCursorKeys) ? "" : (" - Press " + releaseCursorKeys + " to Release Cursor")));
+		String toggleFullScreenKeysTranslated = DataProvider.GetComplexValueFromSpiceRedKeysResource((toggleFullScreenKeys != null) ? toggleFullScreenKeys : "shift+f11");
+		String releaseCursorKeysTranslated = DataProvider.GetComplexValueFromSpiceRedKeysResource((releaseCursorKeys != null) ? releaseCursorKeys : "shift+f12");
+		String ctrlAltDelTranslated = DataProvider.GetComplexValueFromSpiceRedKeysResource(ctrlAltDel);
+		String ctrlAltEndTranslated = DataProvider.GetComplexValueFromSpiceRedKeysResource(ctrlAltEnd);
+
+		getspice().setTitle(getEntity().getvm_name() + ":%d" + (StringHelper.isNullOrEmpty(releaseCursorKeysTranslated) ? "" : (" - Press " + releaseCursorKeysTranslated + " to Release Cursor")));
 
 		// In 'Admin' mode, set fullscreen by the configurator value; otherwise, true (force fullscreen in the UserPortal)
 		getspice().setFullScreen(getConfigurator().getIsAdmin() ? getConfigurator().getSpiceFullScreen() : true);
@@ -360,15 +367,15 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 		int id = 1;
 		menu = new SpiceMenu();
 
-		menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_DEL, "S&end Ctrl+Alt+Del\tCtrl+Alt+End", ""));
-		menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_TOGGLE_FULL_SCREEN, "&Toggle Full Screen\t" + toggleFullScreenKeys, ""));
+		menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_DEL, "S&end " + ctrlAltDelTranslated + "\t" + ctrlAltEndTranslated, ""));
+		menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_TOGGLE_FULL_SCREEN, "&Toggle Full Screen\t" + toggleFullScreenKeysTranslated, ""));
 
 		SpiceMenuContainerItem specialKes = new SpiceMenuContainerItem(id, "&Special Keys");
 		menu.getItems().add(specialKes);
 
-		specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F11, "&" + toggleFullScreenKeys, ""));
-		specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F12, "&" + releaseCursorKeys, ""));
-		specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_END, "&Ctrl+Alt+End", ""));
+		specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F11, "&" + toggleFullScreenKeysTranslated, ""));
+		specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F12, "&" + releaseCursorKeysTranslated, ""));
+		specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_END, "&" + ctrlAltEndTranslated, ""));
 		menu.getItems().add(new SpiceMenuSeparatorItem(id));
 		id++;
 
