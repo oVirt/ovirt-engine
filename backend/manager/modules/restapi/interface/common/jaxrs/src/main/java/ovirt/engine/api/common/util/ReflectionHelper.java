@@ -16,8 +16,22 @@
 
 package org.ovirt.engine.api.common.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 import org.ovirt.engine.api.common.resource.AbstractUpdatableResource;
 import org.ovirt.engine.api.model.BaseResource;
@@ -166,6 +180,97 @@ public class ReflectionHelper {
             }
         }
         return ret;
+    }
+
+    /**
+     * Locates all classes in given package
+     *
+     * @param  packageName
+     * @return array of the classes
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
+    public static List<Class<?>> getClasses(String packageName) throws ClassNotFoundException,
+            IOException {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        assert classLoader != null;
+        String path = packageName.replace('.', '/');
+        Enumeration<URL> resources = classLoader.getResources(path);
+        Map<URL, File> dirs = new HashMap<URL, File>();
+        while (resources.hasMoreElements()) {
+            URL url = resources.nextElement();
+            dirs.put(url, new File(url.getFile()));
+        }
+        ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+        ClassLoader loader = URLClassLoader.newInstance(dirs.keySet().toArray(new URL[0]),
+                                                        Thread.currentThread().getContextClassLoader());
+
+        for (Entry<URL, File> directory : dirs.entrySet()) {
+            String resource = directory.getKey().getPath().replace("/"+path+"/", "");
+            if (resource.endsWith(".jar")) {
+                classes.addAll(getClassNamesInJarPackage(loader, resource, packageName));
+            } else {
+                classes.addAll(getClassNamesInPackage(directory.getValue(), packageName));
+            }
+        }
+        return classes;
+    }
+
+    /**
+     * Locates all classes in given package
+     *
+     * @param  directory
+     * @param  packageName
+     * @return List of classes
+     * @throws ClassNotFoundException
+     */
+    private static List<Class<?>> getClassNamesInPackage(File directory, String packageName)
+            throws ClassNotFoundException {
+        List<Class<?>> classes = new ArrayList<Class<?>>();
+        if (!directory.exists()) {
+            return classes;
+        }
+        File[] files = directory.listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                assert !file.getName().contains(".");
+                classes.addAll(getClassNamesInPackage(file, packageName + "." + file.getName()));
+            } else if (file.getName().endsWith(".class")) {
+                classes.add(Class.forName(packageName + '.'
+                        + file.getName().substring(0, file.getName().length() - 6)));
+            }
+        }
+        return classes;
+    }
+
+    /**
+     * Locates all classes in given jar package
+     *
+     * @param  jarName
+     * @param  url
+     * @param  packageName
+     * @return List of classes
+     * @throws MalformedURLException
+     */
+    private static List<Class<?>> getClassNamesInJarPackage(ClassLoader loader, String jarName, String packageName) throws MalformedURLException {
+        ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+
+        packageName = packageName.replaceAll("\\.", "/");
+
+        try {
+            JarInputStream jarFileInputStream = new JarInputStream(new FileInputStream(jarName));
+            JarEntry jarEntry;
+            while (true) {
+                jarEntry = jarFileInputStream.getNextJarEntry();
+                if (jarEntry == null) break;
+                if ((jarEntry.getName().startsWith(packageName)) && (jarEntry.getName().endsWith(".class"))) {
+                    classes.add(loader.loadClass(jarEntry.getName().replaceAll("/", "\\.").replace(".class", "")));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return classes;
     }
 }
 

@@ -134,6 +134,10 @@ public class QueryHelper {
         return queries != null && queries.containsKey(constraint) ? true : false;
     }
 
+    public static boolean hasConstraint(UriInfo uriInfo, String constraint) {
+            return hasConstraint(uriInfo.getQueryParameters(), constraint);
+    }
+
     public static HashMap<String, String> getConstraints(MultivaluedMap<String, String> queries, String... constraints) {
         HashMap<String, String> params = new HashMap<String, String>();
         if (constraints != null && constraints.length >0) {
