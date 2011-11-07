@@ -78,6 +78,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         boolean retValue = false;
         String event;
         String runningPmOp;
+        if (getVds() == null) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+            return false;
+        }
         // get the event to look for , if we requested to start Host then we should look when we stopped it and vice versa.
         if (getParameters().getAction() == FenceActionType.Start) {
             event = AuditLogType.USER_VDS_STOP.name();
