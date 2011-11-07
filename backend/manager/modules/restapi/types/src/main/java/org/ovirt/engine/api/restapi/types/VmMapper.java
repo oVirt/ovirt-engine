@@ -22,6 +22,7 @@ import org.ovirt.engine.api.model.GuestInfo;
 import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.IP;
+import org.ovirt.engine.api.model.IPs;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.Template;
@@ -330,11 +331,15 @@ public class VmMapper {
             model.setDomain(domain);
         }
         if (entity.getvm_ip()!=null && !entity.getvm_ip().isEmpty()) {
-            IP ip = new IP();
-            ip.setAddress(entity.getvm_ip());
-            GuestInfo guestInfo = new GuestInfo();
-            guestInfo.setIp(ip);
-            model.setGuestInfo(guestInfo);
+            model.setGuestInfo(new GuestInfo());
+            model.getGuestInfo().setIps(new IPs());
+            for (String item : entity.getvm_ip().split(" ")) {
+                if (!item.equals("")) {
+                    IP ip = new IP();
+                    ip.setAddress(item.trim());
+                    model.getGuestInfo().getIps().getIPs().add(ip);
+                }
+            }
         }
         VmMemoryPolicy policy = new VmMemoryPolicy();
         policy.setGuaranteed(new Long(entity.getMinAllocatedMem()) * BYTES_PER_MB);

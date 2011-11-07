@@ -114,7 +114,22 @@ public class VmMapperTest extends
         vm.setDynamicData(vmDynamic);
 
         VM map = VmMapper.map(vm, null);
-        assertEquals(map.getGuestInfo().getIp().getAddress(), "2.2.2.2");
+        assertNotNull(map.getGuestInfo().getIps().getIPs().get(0));
+        assertEquals(map.getGuestInfo().getIps().getIPs().get(0).getAddress(), "2.2.2.2");
+    }
+
+    @Test
+    public void testGustIps() {
+        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
+        VmDynamic vmDynamic = new VmDynamic();
+        vmDynamic.setvm_ip("2.2.2.2 2.2.2.3 2.2.2.4");
+        vm.setDynamicData(vmDynamic);
+
+        VM map = VmMapper.map(vm, null);
+        assertNotNull(map.getGuestInfo().getIps().getIPs().get(0));
+        assertEquals(map.getGuestInfo().getIps().getIPs().get(0).getAddress(), "2.2.2.2");
+        assertEquals(map.getGuestInfo().getIps().getIPs().get(1).getAddress(), "2.2.2.3");
+        assertEquals(map.getGuestInfo().getIps().getIPs().get(2).getAddress(), "2.2.2.4");
     }
 
     @Test

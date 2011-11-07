@@ -1280,6 +1280,23 @@
     <xs:attribute name="gateway" type="xs:string"/>
   </xs:complexType>
 
+  <xs:element name="ips" type="IPs"/>
+
+  <xs:complexType name="IPs">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="IPs"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="ip" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="mac" type="MAC"/>
 
   <xs:complexType name="MAC">
@@ -1604,7 +1621,7 @@
 
   <xs:complexType name="GuestInfo">
     <xs:sequence>
-      <xs:element name="ip" type="IP" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="ips" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -2088,5 +2105,5 @@
       <xs:element name="enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
-
+  
 </xs:schema>
