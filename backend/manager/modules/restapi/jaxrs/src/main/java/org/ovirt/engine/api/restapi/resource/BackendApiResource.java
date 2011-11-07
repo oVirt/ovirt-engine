@@ -1,10 +1,22 @@
 /*
- * Copyright Â© 2010 Red Hat, Inc.
- *
- * @Placeholder for License boilerplate@
- */
+* Copyright © 2010 Red Hat, Inc.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*           http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +32,7 @@ import org.ovirt.engine.api.model.LinkHeader;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.ObjectFactory;
 import org.ovirt.engine.api.model.ProductInfo;
+import org.ovirt.engine.api.model.RSDL;
 import org.ovirt.engine.api.model.SpecialObjects;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.Users;
@@ -28,10 +41,12 @@ import org.ovirt.engine.api.resource.ApiResource;
 import org.ovirt.engine.api.common.util.JAXBHelper;
 import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.common.util.LinkHelper.LinkFlags;
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.api.restapi.util.RsdlBuilder;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
 
 public class BackendApiResource
@@ -39,6 +54,12 @@ public class BackendApiResource
     implements ApiResource {
 
     private static final String SYSTEM_STATS_ERROR = "Unknown error querying system statistics";
+
+    private static final String RSDL_CONSTRAINT_PARAMETER = "rsdl";
+    private static final String RSDL_DESCRIPTION = "The oVirt RESTful API description language.";
+    private static RSDL rsdl = null;
+
+    private static final String QUERY_PARAMETER = "?";
 
     protected final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
 
@@ -64,6 +85,15 @@ public class BackendApiResource
                 new String[]{getTemplateBlankUri(), getTagRootUri()});
 
         return api;
+    }
+
+    public String[] getRels() {
+        final API api = addLinks(new API());
+        ArrayList<String> rels = new ArrayList<String>();
+        for (Link link : api.getLinks()) {
+            rels.add(link.getRel());
+        }
+        return rels.toArray(new String[0]);
     }
 
     private BaseResource getSpecialObjects(API api) {
@@ -118,14 +148,14 @@ public class BackendApiResource
         return LinkHeader.format(link);
     }
 
-    private void addHeader(API api, Response.ResponseBuilder responseBuilder, UriBuilder uriBuilder) {
+    private void addHeader(BaseResource response, Response.ResponseBuilder responseBuilder, UriBuilder uriBuilder) {
         // concantenate links in a single header with a comma-separated value,
         // which is the canonical form according to:
         // http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
         //
         StringBuffer header = new StringBuffer();
 
-        for (Link l : api.getLinks()) {
+        for (Link l : response.getLinks()) {
             header.append(addPath(uriBuilder, l)).append(",");
         }
 
@@ -134,12 +164,14 @@ public class BackendApiResource
         responseBuilder.header("Link", header);
     }
 
-    private Response.ResponseBuilder getResponseBuilder(API api) {
+    private Response.ResponseBuilder getResponseBuilder(BaseResource response) {
         UriBuilder uriBuilder = getUriInfo().getBaseUriBuilder();
 
         Response.ResponseBuilder responseBuilder = Response.ok();
 
-        addHeader(api, responseBuilder, uriBuilder);
+        if(response instanceof API) {
+            addHeader(response, responseBuilder, uriBuilder);
+        }
 
         return responseBuilder;
     }
@@ -152,8 +184,27 @@ public class BackendApiResource
 
     @Override
     public Response get() {
-        API api = addSummary(addSystemVersion(addLinks(new API())));
-        return getResponseBuilder(api).entity(api).build();
+        BaseResource response = null;
+        if (QueryHelper.hasConstraint(getUriInfo(), RSDL_CONSTRAINT_PARAMETER)) {
+            response = addSystemVersion(getRSDL());
+        } else {
+            response = addSummary(addSystemVersion(addLinks(new API())));
+        }
+        return getResponseBuilder(response).entity(response).build();
+    }
+
+    private RSDL addSystemVersion(RSDL rsdl) {
+            rsdl.setVersion(VersionHelper.parseVersion(getConfigurationValue(String.class, ConfigurationValues.VdcVersion, null)));
+            return rsdl;
+    }
+
+    private synchronized RSDL getRSDL() {
+        if (rsdl == null) {
+            rsdl =  new RsdlBuilder(this).description(RSDL_DESCRIPTION).
+                                          href(getUriInfo().getBaseUri().getPath() + QUERY_PARAMETER + RSDL_CONSTRAINT_PARAMETER).
+                                          build();
+        }
+        return rsdl;
     }
 
     private API addSystemVersion(API api) {
