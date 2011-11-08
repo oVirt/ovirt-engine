@@ -19,7 +19,6 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.spi.NamingManager;
 
-
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -175,7 +174,11 @@ public class DnsSRVLocator {
         try {
             return getService(dnsQuery.toString());
         } catch (Exception ex) {
-            log.errorFormat("Error in getting SRV list for protocol {0} and domain {1} Exception message is {2} ",
+            log.errorFormat("Error: could not find DNS SRV record name: {0}.{1}.{2}.\nException message is: {3}\n" +
+                    "Possible causes: missing DNS entries in the DNS server or DNS resolving" +
+                    " issues from engine-core machine.\nPlease Ensure correct DNS entries exist in the DNS server" +
+                    " and ensure the DNS server is reachable from the engine-core machine.",
+                    service,
                     protocol,
                     domain,
                     ex.getMessage());
@@ -183,7 +186,7 @@ public class DnsSRVLocator {
         }
     }
 
-    public DnsSRVResult getService(String dnsUrl) throws NamingException {
+    private DnsSRVResult getService(String dnsUrl) throws NamingException {
         Context ctx = NamingManager.getURLContext("dns", new Hashtable(0));
 
         if (!(ctx instanceof DirContext)) {
