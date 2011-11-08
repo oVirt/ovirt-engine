@@ -36,7 +36,7 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
                 } else if (cause instanceof InterruptedException) {
                     handleInterruptException(response, cause);
                 } else {
-                    response.setTranslatedException(e);
+                    handleGeneralException(response, e);
                 }
             } else {
                 for (Throwable throwable : ExceptionUtils.getThrowables(e)) {
@@ -50,6 +50,10 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
         }
         return response;
 
+    }
+
+    private void handleGeneralException(LdapSearchExceptionHandlingResponse response, Exception e) {
+        response.setTranslatedException(e).setServerScore(Score.HIGH);
     }
 
     private void handleSaslException(LdapSearchExceptionHandlingResponse response, Throwable cause) {
