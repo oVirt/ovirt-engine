@@ -157,7 +157,7 @@ public class SpiceInterfaceImpl implements ISpice {
 	}
 
 	public int getSecurePort() {
-		return securePort;
+		return securePort & 0xffff;
 	}
 
 	public void setSecurePort(int securePort) {
