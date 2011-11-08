@@ -303,7 +303,7 @@
 						</dependencies>
 						<configuration>
 							<logLevel>INFO</logLevel>
-							<style>PRETTY</style>
+							<style>OBF</style>
 							<runTarget>/webadmin/webadmin/WebAdmin.html</runTarget>
 							<port>8080</port>
 							<noServer>true</noServer>
