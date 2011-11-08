@@ -2764,7 +2764,7 @@ public final class DataProvider
 		java.util.ArrayList<java.util.Map.Entry<String, EntityModel>> list = new java.util.ArrayList<java.util.Map.Entry<String, EntityModel>>();
 		EntityModel entityModel = new EntityModel();
 		entityModel.setEntity("(Mode 1) Active-Backup");
-		list.add(new KeyValuePairCompat<String, EntityModel>("mode=1", entityModel));
+		list.add(new KeyValuePairCompat<String, EntityModel>("mode=1 miimon=100", entityModel));
 		entityModel = new EntityModel();
 		entityModel.setEntity("(Mode 2) Load balance (balance-xor)");
 		list.add(new KeyValuePairCompat<String, EntityModel>("mode=2", entityModel));

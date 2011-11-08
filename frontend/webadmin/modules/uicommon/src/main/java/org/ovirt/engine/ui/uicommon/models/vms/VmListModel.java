@@ -609,9 +609,9 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
 
 			java.util.ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getvm_guid());
-			//cachedModels.Each(a => a.Entity = vm);
 			for (ConsoleModel a : cachedModels)
 			{
+				a.setEntity(null);
 				a.setEntity(vm);
 			}
 
@@ -619,7 +619,6 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
 			if (DataProvider.IsWindowsOsType(vm.getvm_os()))
 			{
-				//AdditionalConsoleModel = cachedModels.First(a => a is RdpConsoleModel);
 				for (ConsoleModel a : cachedModels)
 				{
 					if (a instanceof RdpConsoleModel)

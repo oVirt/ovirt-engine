@@ -52,6 +52,11 @@ public abstract class IVmModelBehavior
 	public abstract void Provisioning_SelectedItemChanged();
 	public abstract void UpdateMinAllocatedMemory();
 
+	public boolean Validate()
+	{
+		return true;
+	}
+
 	protected void UpdateCdImage()
 	{
 		storage_pool dataCenter = (storage_pool)getModel().getDataCenter().getSelectedItem();

@@ -69,7 +69,6 @@ public class VmImportDiskListModel extends VmDiskListModel
 				tempVar.setEntity(img.getSizeInGigabytes());
 				model.setSize(tempVar);
 				model.getVolumeType().setSelectedItem(img.getvolume_type());
-				//model.VolumeType.SelectedItemChanged += new EventHandler(VolumeType_SelectedItemChanged);
 				model.getVolumeType().getSelectedItemChangedEvent().addListener(this);
 				model.setDiskType(img.getdisk_type());
 				model.setVolumeFormat(img.getvolume_format());
@@ -108,7 +107,7 @@ public class VmImportDiskListModel extends VmDiskListModel
 			for (Object item : getItems())
 			{
 				DiskModel model = (DiskModel)item;
-				//Entity.DiskMap.Values.FirstOrDefault(a => a.internal_drive_mapping == model.Name).volume_type = (VolumeType)model.VolumeType.getSelectedItem();
+
 				for (java.util.Map.Entry<String, DiskImage> kvp : vm.getDiskMap().entrySet())
 				{
 					DiskImage disk = kvp.getValue();
@@ -132,11 +131,6 @@ public class VmImportDiskListModel extends VmDiskListModel
 			{
 				if (!getCollapseSnapshots())
 				{
-					//list.Each(a =>
-					// {
-					//     AvailabilityDecorator.GetChangeProhibitionReasons(a.VolumeType).Add("Allocation can be modified only when 'Collapse Snapshots' is check");
-					//     AvailabilityDecorator.IsChangable = a.VolumeType, false);
-					// });
 					for (DiskModel a : list)
 					{
 						a.getVolumeType().getChangeProhibitionReasons().add("Allocation can be modified only when 'Collapse Snapshots' is check");
@@ -145,7 +139,6 @@ public class VmImportDiskListModel extends VmDiskListModel
 				}
 				else
 				{
-					//list.Each(a => AvailabilityDecorator.IsChangable = a.VolumeType, true));
 					for (DiskModel a : list)
 					{
 						a.getVolumeType().setIsChangable(true);
@@ -154,11 +147,6 @@ public class VmImportDiskListModel extends VmDiskListModel
 			}
 			else
 			{
-				//list.Each(a =>
-				//{
-				//    AvailabilityDecorator.GetChangeProhibitionReasons(a.VolumeType).Add("Allocation can be modified only when importing a single VM");
-				//    AvailabilityDecorator.IsChangable = a.VolumeType, false);
-				//});
 				for (DiskModel a : list)
 				{
 					a.getVolumeType().getChangeProhibitionReasons().add("Allocation can be modified only when importing a single VM");

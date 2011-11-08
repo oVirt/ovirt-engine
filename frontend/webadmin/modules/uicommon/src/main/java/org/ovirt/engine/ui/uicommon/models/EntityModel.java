@@ -39,12 +39,21 @@ public class EntityModel extends Model
 	}
 	public void setEntity(Object value)
 	{
-		if (entity != value)
+		boolean isNewValue = false;
+		if (entity != null)
+		{
+			isNewValue = !entity.equals(value);
+		}
+		else if (value != null)
+		{
+			isNewValue = true;
+		}
+
+		if (isNewValue)
 		{
 			EntityChanging(value, entity);
 			entity = value;
 			OnEntityChanged();
-				//EntityChanged(this, EventArgs.Empty);
 			getEntityChangedEvent().raise(this, EventArgs.Empty);
 			OnPropertyChanged(new PropertyChangedEventArgs("Entity"));
 		}

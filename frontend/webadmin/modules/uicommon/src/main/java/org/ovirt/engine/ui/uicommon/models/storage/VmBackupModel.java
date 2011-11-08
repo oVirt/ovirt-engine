@@ -151,7 +151,7 @@ public class VmBackupModel extends ManageBackupModel implements ITaskTarget
 		model.setStoragePool(DataProvider.GetFirstStoragePoolByStorageDomain(getEntity().getStorageStaticData().getId()));
 
 		model.setItems(getSelectedItems());
-		model.OnCollapseSnapshotsChanged();
+		model.CollapseSnapshots_EntityChanged();
 
 		if (((java.util.List)model.getDestinationStorage().getItems()).size() == 0)
 		{
@@ -194,43 +194,49 @@ public class VmBackupModel extends ManageBackupModel implements ITaskTarget
 			return;
 		}
 
-		java.util.ArrayList<VdcActionParametersBase> prms = new java.util.ArrayList<VdcActionParametersBase>();
+		java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
 
 		for (Object item : getSelectedItems())
 		{
 			VM vm = (VM)item;
-			ImportVmParameters tempVar = new ImportVmParameters(vm, model.getSourceStorage().getId(), ((storage_domains)model.getDestinationStorage().getSelectedItem()).getid(), model.getStoragePool().getId(), ((VDSGroup)model.getCluster().getSelectedItem()).getID());
-			tempVar.setForceOverride(true);
-			ImportVmParameters prm = tempVar;
 
+			boolean collapseSnapshots = (Boolean)model.getCollapseSnapshots().getEntity();
 
+			//If no collapse snapshots specified drop problematic VMs.
+			if (!collapseSnapshots && model.getProblematicItems() != null)
+			{
+				if (Linq.FirstOrDefault(model.getProblematicItems(), new Linq.VmPredicate(vm.getvm_guid())) != null)
+			{
+					continue;
+				}
+			}
 
-			prm.setCopyCollapse(model.getCollapseSnapshots());
-			java.util.HashMap<String, DiskImageBase> diskDictionary = new java.util.HashMap<String, DiskImageBase>();
+			VDSGroup cluster = (VDSGroup)model.getCluster().getSelectedItem();
+			storage_domains destinationStorage = (storage_domains)model.getDestinationStorage().getSelectedItem();
 
-			//vm.DiskMap.Each(a => prm.DiskInfoList.Add(a.getKey(), a.Value));
+			java.util.HashMap<String, DiskImageBase> disks = new java.util.HashMap<String, DiskImageBase>();
 			for (java.util.Map.Entry<String, DiskImage> a : vm.getDiskMap().entrySet())
 			{
-				diskDictionary.put(a.getKey(), a.getValue());
+				DiskImage disk = a.getValue();
+				//Assign a right volume format for each disk.
+				disk.setvolume_format(DataProvider.GetDiskVolumeFormat(disk.getvolume_type(), destinationStorage.getstorage_type()));
+
+				disks.put(a.getKey(), a.getValue());
 			}
 
-			prm.setDiskInfoList(diskDictionary);
+			ImportVmParameters tempVar = new ImportVmParameters(vm, model.getSourceStorage().getId(), destinationStorage.getid(), model.getStoragePool().getId(), cluster.getID());
+			tempVar.setForceOverride(true);
+			tempVar.setCopyCollapse(collapseSnapshots);
+			tempVar.setDiskInfoList(disks);
+			ImportVmParameters parameter = tempVar;
 
-			//prm.DiskInfoList.Each(a=>a.Value.volume_format = DataProvider.GetDiskVolumeFormat(a.Value.volume_type,  model.DestinationStorage.ValueAs<storage_domains>().storage_type));
-			for (java.util.Map.Entry<String, DiskImageBase> a : prm.getDiskInfoList().entrySet())
-			{
-				DiskImageBase disk = a.getValue();
-				storage_domains domain = (storage_domains)model.getDestinationStorage().getSelectedItem();
-				disk.setvolume_format(DataProvider.GetDiskVolumeFormat(disk.getvolume_type(), domain.getstorage_type()));
-			}
-
-			prms.add(prm);
-
+			parameters.add(parameter);
 		}
+
 
 		model.StartProgress(null);
 
-		Frontend.RunMultipleAction(VdcActionType.ImportVm, prms,
+		Frontend.RunMultipleAction(VdcActionType.ImportVm, parameters,
 		new IFrontendMultipleActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendMultipleActionAsyncResult  result) {
@@ -265,7 +271,7 @@ public class VmBackupModel extends ManageBackupModel implements ITaskTarget
 			}
 
 			}
-		},this);
+		}, this);
 	}
 
 	@Override

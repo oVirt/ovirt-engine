@@ -865,6 +865,21 @@ public final class Linq
 		}
 	}
 
+	public final static class VmPredicate implements IPredicate<VM>
+	{
+		private Guid id = new Guid();
+
+		public VmPredicate(Guid id)
+		{
+			this.id = id;
+		}
+
+		public boolean Match(VM source)
+		{
+			return source.getvm_guid().equals(id);
+		}
+	}
+
 	public final static class HostStatusPredicate implements IPredicate<VDS>
 	{
 		private VDSStatus status = VDSStatus.values()[0];

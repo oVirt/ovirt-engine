@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicommon.validation.*;
 import org.ovirt.engine.core.common.businessentities.*;
 
 import org.ovirt.engine.core.common.queries.*;
+import org.ovirt.engine.ui.uicompat.*;
 import org.ovirt.engine.ui.uicommon.*;
 import org.ovirt.engine.ui.uicommon.models.*;
 
@@ -77,20 +78,14 @@ public class ImportVmModel extends ListWithDetailsModel
 	{
 		privateDataDiskFormat = value;
 	}
-
-	private boolean collapseSnapshots;
-	public boolean getCollapseSnapshots()
+	private EntityModel privateCollapseSnapshots;
+	public EntityModel getCollapseSnapshots()
 	{
-		return collapseSnapshots;
+		return privateCollapseSnapshots;
 	}
-	public void setCollapseSnapshots(boolean value)
+	private void setCollapseSnapshots(EntityModel value)
 	{
-		if (collapseSnapshots != value)
-		{
-			collapseSnapshots = value;
-			OnCollapseSnapshotsChanged();
-			OnPropertyChanged(new PropertyChangedEventArgs("CollapseSnapshots"));
-		}
+		privateCollapseSnapshots = value;
 	}
 
 	private String nameAndDescription;
@@ -107,27 +102,149 @@ public class ImportVmModel extends ListWithDetailsModel
 		}
 	}
 
+	private java.util.List<VM> problematicItems;
+	public java.util.List<VM> getProblematicItems()
+	{
+		return problematicItems;
+	}
+	public void setProblematicItems(java.util.List<VM> value)
+	{
+		if (problematicItems != value)
+		{
+			problematicItems = value;
+			OnPropertyChanged(new PropertyChangedEventArgs("ProblematicItems"));
+		}
+	}
+
+	private boolean hasCollapseSnapshotsWarning;
+	public boolean getHasCollapseSnapshotsWarning()
+	{
+		return hasCollapseSnapshotsWarning;
+	}
+	public void setHasCollapseSnapshotsWarning(boolean value)
+	{
+		if (hasCollapseSnapshotsWarning != value)
+		{
+			hasCollapseSnapshotsWarning = value;
+			OnPropertyChanged(new PropertyChangedEventArgs("HasCollapseSnapshotsWarning"));
+		}
+	}
+
 
 	public ImportVmModel()
 	{
-		setCollapseSnapshots(false);
+		EntityModel tempVar = new EntityModel();
+		tempVar.setEntity(false);
+		setCollapseSnapshots(tempVar);
+		getCollapseSnapshots().getEntityChangedEvent().addListener(this);
 		setDestinationStorage(new ListModel());
+		getDestinationStorage().getSelectedItemChangedEvent().addListener(this);
 		setCluster(new ListModel());
 		setSystemDiskFormat(new ListModel());
 		setDataDiskFormat(new ListModel());
 	}
 
-	public void OnCollapseSnapshotsChanged()
+	@Override
+	public void eventRaised(Event ev, Object sender, EventArgs args)
 	{
-		if (this.getItems() == null)
+		super.eventRaised(ev, sender, args);
+
+		if (ev.equals(EntityChangedEventDefinition) && sender == getCollapseSnapshots())
+		{
+			CollapseSnapshots_EntityChanged();
+		}
+		else if (ev.equals(getSelectedItemChangedEvent()) && sender == getDestinationStorage())
+		{
+			DestinationStorage_SelectedItemChanged();
+		}
+	}
+
+	private void DestinationStorage_SelectedItemChanged()
+	{
+		UpdateImportWarnings();
+	}
+
+	@Override
+	protected void ItemsChanged()
+	{
+		super.ItemsChanged();
+		UpdateImportWarnings();
+	}
+
+	private void UpdateImportWarnings()
+	{
+		//Clear problematic state.
+		setProblematicItems(null);
+
+		if (getItems() == null)
 		{
 			return;
 		}
+
+
+		storage_domains destinationStorage = (storage_domains)getDestinationStorage().getSelectedItem();
+
+		//Determine which items are problematic.
+		java.util.ArrayList<VM> problematicItems = new java.util.ArrayList<VM>();
+
+		for (Object item : getItems())
+		{
+			VM vm = (VM)item;
+
+			if (vm.getDiskMap() != null)
+			{
+				for (java.util.Map.Entry<String, DiskImage> pair : vm.getDiskMap().entrySet())
+				{
+					DiskImage disk = pair.getValue();
+
+					if (disk.getvolume_type() == VolumeType.Sparse && disk.getvolume_format() == VolumeFormat.RAW && destinationStorage != null && (destinationStorage.getstorage_type() == StorageType.ISCSI || destinationStorage.getstorage_type() == StorageType.FCP))
+					{
+						problematicItems.add(vm);
+					}
+				}
+			}
+		}
+
+		//Decide what to do with the CollapseSnapshots option.
+		if (problematicItems.size() > 0)
+	{
+			if (problematicItems.size() == Linq.Count(getItems()))
+			{
+				//All items are problematic.
+				getCollapseSnapshots().setIsChangable(false);
+				getCollapseSnapshots().setEntity(true);
+				getCollapseSnapshots().setMessage("Note that all snapshots will be collapsed due to different storage types");
+				setHasCollapseSnapshotsWarning(true);
+			}
+			else
+			{
+				//Some items are problematic.
+				getCollapseSnapshots().setMessage("Use a separate import operation for the marked VMs or\nApply \"Collapse Snapshots\" for all VMs");
+				setHasCollapseSnapshotsWarning(!(Boolean)getCollapseSnapshots().getEntity());
+				setProblematicItems((Boolean)getCollapseSnapshots().getEntity() ? null : problematicItems);
+			}
+		}
+		else
+		{
+			//No problematic items.
+			getCollapseSnapshots().setIsChangable(true);
+			getCollapseSnapshots().setMessage(null);
+			setHasCollapseSnapshotsWarning(false);
+		}
+	}
+
+	public void CollapseSnapshots_EntityChanged()
+	{
+		if (getItems() == null)
+		{
+			return;
+		}
+
 		storage_domains selectedDestinationStorage = null;
 		boolean sameSelectedDestinationStorage = false;
-		if(getDestinationStorage().getSelectedItem() != null)
+		if (getDestinationStorage().getSelectedItem() != null)
 		{
-			selectedDestinationStorage = (storage_domains) getDestinationStorage().getSelectedItem();
+			selectedDestinationStorage = (storage_domains)getDestinationStorage().getSelectedItem();
 		}
 		java.util.ArrayList<storage_domains> destStorages = new java.util.ArrayList<storage_domains>();
 		java.util.HashMap<Guid, java.util.ArrayList<storage_domains>> templateGuidStorageDomainDic = new java.util.HashMap<Guid, java.util.ArrayList<storage_domains>>();
@@ -164,7 +281,7 @@ public class ImportVmModel extends ListWithDetailsModel
 						addStorage = false;
 						for (storage_domains storageDomain : keyValuePair.getValue())
 						{
-							if (storageDomain.getid().equals(domain.getid()) || getCollapseSnapshots() == true)
+							if (storageDomain.getid().equals(domain.getid()) || (Boolean)getCollapseSnapshots().getEntity())
 							{
 								addStorage = true;
 								break;
@@ -180,7 +297,7 @@ public class ImportVmModel extends ListWithDetailsModel
 			if (addStorage)
 			{
 				destStorages.add(domain);
-				if(sameSelectedDestinationStorage == false && domain.equals(selectedDestinationStorage))
+				if (sameSelectedDestinationStorage == false && domain.equals(selectedDestinationStorage))
 				{
 					sameSelectedDestinationStorage = true;
 					selectedDestinationStorage = domain;
@@ -188,7 +305,7 @@ public class ImportVmModel extends ListWithDetailsModel
 			}
 		}
 		getDestinationStorage().setItems(destStorages);
-		if(sameSelectedDestinationStorage)
+		if (sameSelectedDestinationStorage)
 		{
 			getDestinationStorage().setSelectedItem(selectedDestinationStorage);
 		}
@@ -200,15 +317,18 @@ public class ImportVmModel extends ListWithDetailsModel
 		if (getDetailModels() != null && getActiveDetailModel() instanceof VmImportDiskListModel)
 		{
 			VmImportDiskListModel detailModel = (VmImportDiskListModel)getActiveDetailModel();
-			detailModel.setCollapseSnapshots(getCollapseSnapshots());
+			detailModel.setCollapseSnapshots((Boolean)getCollapseSnapshots().getEntity());
 		}
+
+
+		UpdateImportWarnings();
 	}
 
 	@Override
 	protected void ActiveDetailModelChanged()
 	{
 		super.ActiveDetailModelChanged();
-		OnCollapseSnapshotsChanged();
+		CollapseSnapshots_EntityChanged();
 	}
 
 	@Override
@@ -250,6 +370,5 @@ public class ImportVmModel extends ListWithDetailsModel
 		{
 			setNameAndDescription("");
 		}
-
 	}
 }
