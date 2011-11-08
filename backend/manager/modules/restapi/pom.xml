@@ -22,7 +22,6 @@
   <properties>
     <engine.api.version>3.0.0-0001</engine.api.version>
     <resteasy.version>2.2.2.GA</resteasy.version>
-    <spring.version>2.5.6</spring.version>
   </properties>
 
   <repositories>
