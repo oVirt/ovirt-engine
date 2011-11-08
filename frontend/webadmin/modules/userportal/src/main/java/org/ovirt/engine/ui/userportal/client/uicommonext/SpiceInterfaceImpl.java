@@ -413,7 +413,7 @@ public class SpiceInterfaceImpl implements ISpice {
 	public native boolean detectXpiPlugin() /*-{
 		var pluginsFound = false;
 		if (navigator.plugins && navigator.plugins.length > 0) {
-			var daPlugins = "Spice";
+			var daPlugins = ["Spice"];
 			var pluginsAmount = navigator.plugins.length;
 			for (counter=0; counter < pluginsAmount; counter++) {
 				var numFound = 0;
