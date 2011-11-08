@@ -208,7 +208,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>${maven-war-plugin.version}</version>
-				<!-- <configuration> <webXml>target/web.xml</webXml> </configuration> -->
+				<configuration>
+					<packagingExcludes>WEB-INF/deploy/**,WEB-INF/classes/**</packagingExcludes>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
