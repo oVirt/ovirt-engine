@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.common.AuditLogType.SYSTEM_FAILED_VDS_RESTART;
+import static org.ovirt.engine.core.common.AuditLogType.SYSTEM_VDS_RESTART;
+import static org.ovirt.engine.core.common.AuditLogType.USER_FAILED_VDS_RESTART;
+import static org.ovirt.engine.core.common.AuditLogType.USER_VDS_RESTART;
+
 import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
@@ -64,7 +69,6 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         FenceVdsManualyParameters fenceVdsManuallyParams = new FenceVdsManualyParameters(false);
         fenceVdsManuallyParams.setStoragePoolId(getVds().getstorage_pool_id());
         fenceVdsManuallyParams.setVdsId(vdsId);
-        fenceVdsManuallyParams.setShouldBeLogged(false);
         fenceVdsManuallyParams.setSessionId(sessionId);
 
         // if fencing succeeded, call to reset irs in order to try select new spm
@@ -111,7 +115,11 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_VDS_RESTART : AuditLogType.USER_FAILED_VDS_RESTART;
+        if (getSucceeded()) {
+            return isInternalExecution() ? SYSTEM_VDS_RESTART : USER_VDS_RESTART;
+        } else {
+            return isInternalExecution() ? SYSTEM_FAILED_VDS_RESTART : USER_FAILED_VDS_RESTART;
+        }
     }
 
     private static LogCompat log = LogFactoryCompat.getLog(RestartVdsCommand.class);
