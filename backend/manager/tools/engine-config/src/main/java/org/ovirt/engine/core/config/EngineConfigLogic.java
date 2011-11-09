@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
-import java.security.GeneralSecurityException;
 import java.security.InvalidParameterException;
 import java.sql.SQLException;
 import java.text.MessageFormat;
@@ -109,7 +108,7 @@ public class EngineConfigLogic {
 
     /**
      * Prints the values of the given key from the DB.
-     * 
+     *
      * @throws Exception
      */
     private void printAllValuesForKey(String key) throws Exception {
@@ -183,7 +182,7 @@ public class EngineConfigLogic {
 
     /**
      * Fetches the given key with the given version from the DB and prints it.
-     * 
+     *
      * @param key
      * @param version
      * @throws Exception
@@ -282,10 +281,7 @@ public class EngineConfigLogic {
                     (configKey.getValidValues().isEmpty() ? "" : "Valid values are " + configKey.getValidValues())
             );
         } catch (Exception e) {
-            message = (
-                    "Error setting " + key +
-                    "'s value. No such entry with version '" + version + "'."
-            );
+            message = "Error setting " + key + "'s value. " + e.getMessage();
             log.debug("Error details: ", e);
         }
         if (message != null) {
