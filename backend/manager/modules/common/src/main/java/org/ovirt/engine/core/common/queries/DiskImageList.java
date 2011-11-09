@@ -6,11 +6,13 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlElement;
+
+import java.io.Serializable;
 import java.util.List;
 
 @XmlType(name = "DiskImageList")
 @XmlAccessorType(XmlAccessType.NONE)
-public class DiskImageList {
+public class DiskImageList implements Serializable {
     private DiskImage[] diskImages;
     private String csharpworkaround; // without this, C# wsdl processing will
                                      // auto-convert this class to [] and
