@@ -618,6 +618,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         vmStaticFromOvf.setMigrationSupport(vmStaticForDefaultValues.getMigrationSupport());
     }
 
+    protected boolean macAdded = false;
     protected void AddVmNetwork() {
         // Add interfaces from template
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
@@ -626,6 +627,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 logable.AddCustomValue("MACAddr", iface.getMacAddress());
                 logable.AddCustomValue("VmName", getVm().getvm_name());
                 AuditLogDirector.log(logable, AuditLogType.MAC_ADDRESS_IS_IN_USE);
+            }
+            else {
+                macAdded = MacPoolManager.getInstance().AddMac(iface.getMacAddress());
             }
             iface.setId(Guid.NewGuid());
             iface.setVmTemplateId(null);
@@ -689,7 +693,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 .getAllForVm(getVmId());
         if (interfaces != null) {
             for (VmNetworkInterface iface : interfaces) {
-                MacPoolManager.getInstance().freeMac(iface.getMacAddress());
+                if (macAdded) {
+                    MacPoolManager.getInstance().freeMac(iface.getMacAddress());
+                }
                 DbFacade.getInstance().getVmNetworkInterfaceDAO().remove(iface.getId());
                 DbFacade.getInstance().getVmNetworkStatisticsDAO().remove(iface.getId());
             }
