@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+	<ui:style type="org.ovirt.engine.ui.webadmin.widget.footer.AlertsEventsFooterView.Style">
+		.barStyle {
+			height: 0px;
+		}
+		.tablePanel {
+			height: 100%;
+			width: 100%;
+			overflow: auto;
+			position: absolute;
+		}
+		.firstRowTablePanel {
+			width: 100%;
+		}
+		.label {
+			white-space: nowrap;
+			color: white;
+			height: 20px;
+			padding: 5px;
+			float: left;
+			width: 100px;
+		}
+		.backgroundColor {
+			background-color: grey;
+			vertical-align: center;
+			margin-bottom: 3px;
+		}
+		.eventButtonStyle {
+			height: 19px;
+			padding-left: 3px;
+			width: 100px;
+		}
+		.widgetPanel {
+			width: 100%;
+		}
+		.alertButtonStyle {
+			width: 100px;
+		}
+		.expandButtonStyle {
+			width: 10px;
+		}
+		
+	</ui:style>
+	
+	<g:SimplePanel ui:field="widgetPanel">
+		<g:VerticalPanel addStyleNames="{style.widgetPanel}">
+			<g:HorizontalPanel addStyleNames="{style.backgroundColor}">
+				<g:Label text="Last Message:" addStyleNames="{style.label}"/>
+				<g:SimplePanel ui:field="firstRowTablePanel" addStyleNames="{style.firstRowTablePanel}"/>
+				<g:ToggleButton ui:field="alertButton"  addStyleNames="{style.alertButtonStyle}"/>
+				<g:ToggleButton text="Events" ui:field="eventButton" addStyleNames="{style.eventButtonStyle}"/>
+				<g:PushButton ui:field="expandButton" addStyleNames="{style.expandButtonStyle}"> 
+					<g:upFace image='{resources.enlargeFooterPanelImage}'/>
+				</g:PushButton>
+			</g:HorizontalPanel>			
+			<g:SimplePanel ui:field="tablePanel" addStyleNames="{style.tablePanel}"/>
+		</g:VerticalPanel>
+	</g:SimplePanel>
+</ui:UiBinder>

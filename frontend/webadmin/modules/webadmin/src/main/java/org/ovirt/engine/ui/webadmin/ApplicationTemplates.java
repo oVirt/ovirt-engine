@@ -65,4 +65,7 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
             " bottom: 4px; padding: 0 3px; background-color: {1};'>{0}</span>")
     SafeHtml tagButton(SafeHtml imageHtml, String backgroundColor, String borderColor, String visibility);
 
+    @Template("<span  style='position: relative; white-space: nowrap;' > <span>{0}</span> {1} Alerts</span>")
+    SafeHtml alertFooterHeader(SafeHtml imageHtml, String text);
+
 }

@@ -5,15 +5,20 @@ import java.util.Arrays;
 import javax.inject.Inject;
 
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabBarOffsetUiHandlers;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
 import org.ovirt.engine.ui.webadmin.uicommon.ClientAgentType;
+import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 import org.ovirt.engine.ui.webadmin.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.widget.bookmark.BookmarkList;
+import org.ovirt.engine.ui.webadmin.widget.footer.AlertsEventsFooterView;
 import org.ovirt.engine.ui.webadmin.widget.tags.TagList;
 import org.ovirt.engine.ui.webadmin.widget.tree.SystemTree;
 
@@ -40,6 +45,9 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     @UiField
     SimplePanel headerPanel;
 
+    @UiField
+    SimplePanel alertEventFooterPanel;
+
     @UiField(provided = true)
     final StackLayoutPanel westStackPanel;
 
@@ -49,13 +57,27 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     @UiField
     Label footerMessage;
 
+    private final ApplicationResources applicationResources;
+
+    private final ApplicationTemplates applicationTemplates;
+
     @Inject
-    public MainSectionView(SystemTreeModelProvider treeModelProvider, BookmarkModelProvider bookmarkModelProvider,
-            TagModelProvider tagModelProvider, ClientAgentType clientAgentType, InternalConfiguration intConf,
-            ApplicationMessages appMessages) {
+    public MainSectionView(SystemTreeModelProvider treeModelProvider,
+            BookmarkModelProvider bookmarkModelProvider,
+            TagModelProvider tagModelProvider,
+            ClientAgentType clientAgentType,
+            InternalConfiguration intConf,
+            ApplicationMessages appMessages,
+            AlertModelProvider alertsModelProvider,
+            EventModelProvider eventsModelProvider,
+            ApplicationResources applicationResources,
+            ApplicationTemplates applicationTemplates) {
+        this.applicationTemplates = applicationTemplates;
+        this.applicationResources = applicationResources;
         this.westStackPanel = createWestStackPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider);
         Widget widget = ViewUiBinder.uiBinder.createAndBindUi(this);
         initWidget(widget);
+        createAlertsEventsFooter(alertsModelProvider, eventsModelProvider);
         headerPanel.getElement().getParentElement().getStyle().setOverflow(Overflow.VISIBLE);
 
         if ((!intConf.getSupportedBrowsers().containsKey(clientAgentType.browser))
@@ -68,6 +90,14 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             DockLayoutPanel layout = (DockLayoutPanel) widget;
             layout.remove(footerMessage);
         }
+    }
+
+    private void createAlertsEventsFooter(AlertModelProvider alertsModelProvider,
+            EventModelProvider eventsModelProvider) {
+        this.alertEventFooterPanel.add(new AlertsEventsFooterView(alertsModelProvider,
+                eventsModelProvider,
+                applicationResources,
+                applicationTemplates));
     }
 
     StackLayoutPanel createWestStackPanel(SystemTreeModelProvider treeModelProvider,

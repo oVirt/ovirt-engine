@@ -37,6 +37,7 @@
 			height: 20px;			
 			background-color: #666666;
 			border-top: mainSectionFooterPanelBorderTop;
+			position: relative;
 		}
 		
 		.footerMessage {
@@ -47,6 +48,11 @@
 		.mainSplitLayoutPanel {
 			border-left: 5px solid transparent;
 			border-right: 5px solid transparent;
+		}
+		
+		.alertEventFooterPanel {
+			position: relative;
+			margin-bottom: 30px;
 		}		
 	</ui:style>
 
@@ -56,20 +62,24 @@
 		</g:north>
 
 		<g:center>
-			<g:SplitLayoutPanel addStyleNames="{style.mainSplitLayoutPanel}">
-				<g:west size="235">
-					<g:StackLayoutPanel ui:field="westStackPanel" />
-				</g:west>
-
+			<g:SplitLayoutPanel>
 				<g:center>
-					<g:LayoutPanel ui:field="mainContentPanel" />
+					<g:SplitLayoutPanel addStyleNames="{style.mainSplitLayoutPanel}">
+						<g:west size="235">
+							<g:StackLayoutPanel ui:field="westStackPanel" />
+						</g:west>
+		
+						<g:center>
+							<g:LayoutPanel ui:field="mainContentPanel" />
+						</g:center>
+					</g:SplitLayoutPanel>
 				</g:center>
+				<g:south width="100%" size="30">
+					<g:SimplePanel ui:field="alertEventFooterPanel" addStyleNames="{style.alertEventFooterPanel}"/>
+				</g:south>
 			</g:SplitLayoutPanel>
 		</g:center>
 
-		<g:south size="20">
-			<g:SimplePanel addStyleNames="{style.footerPanel}"></g:SimplePanel>
-		</g:south>
 		<g:south size="20">
 			<g:Label ui:field="footerMessage" addStyleNames="{style.footerMessage}"/>
 		</g:south>

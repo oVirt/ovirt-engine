@@ -90,7 +90,7 @@ public class EventListModel extends SearchableListModel
 	{
 		return searchString.trim().toLowerCase().startsWith("event");
 	}
-
+	
 	@Override
 	protected void SyncSearch()
 	{
@@ -179,7 +179,7 @@ public class EventListModel extends SearchableListModel
 
 			list.add(0, item);
 		}
-
+		getItemsChangedEvent().raise(this, EventArgs.Empty);
 		setLastEvent(Linq.FirstOrDefault(list));
 	}
 

@@ -86,7 +86,7 @@ public class AlertListModel extends SearchableListModel
 	{
 		setNewAlertEvent(new Event(NewAlertEventDefinition));
 
-		setIsTimerDisabled(true);
+		setIsTimerDisabled(false);
 
 		setDefaultSearchString("Events: severity=alert");
 		setSearchString(getDefaultSearchString());
@@ -112,13 +112,26 @@ public class AlertListModel extends SearchableListModel
 		{
 			notifier.getCollectionChangedEvent().addListener(this);
 		}
-	}
+	}	
 
 	@Override
 	protected void SyncSearch()
 	{
-		super.SyncSearch();
-		//AsyncSearch();
+		AsyncQuery _asyncQuery = new AsyncQuery();
+		_asyncQuery.setModel(this);
+		_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object ReturnValue)
+		{
+			AlertListModel alertListModel = (AlertListModel)model;
+			java.util.ArrayList<AuditLog> list = (java.util.ArrayList<AuditLog>)((VdcQueryReturnValue)ReturnValue).getReturnValue();
+			alertListModel.setItems(list);
+		}};
+
+		SearchParameters tempVar = new SearchParameters("Events: severity=alert", SearchType.AuditLog);
+		tempVar.setMaxCount(getSearchPageSize());
+		tempVar.setRefresh(false);
+		SearchParameters searchParameters = tempVar;
+
+		Frontend.RunQuery(VdcQueryType.Search, searchParameters, _asyncQuery);
 	}
 
 	@Override

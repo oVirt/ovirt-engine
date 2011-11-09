@@ -12,6 +12,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleActionTable<T> extends AbstractActionTable<T> {
@@ -22,6 +23,9 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
 
     @UiField
     Style style;
+
+    @UiField
+    HTMLPanel barPanel;
 
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider) {
         this(dataProvider, null, null);
@@ -59,6 +63,10 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     public void showPagingButtons() {
         prevPageButton.setVisible(true);
         nextPageButton.setVisible(true);
+    }
+
+    public void setBarStyle(String barStyle) {
+        barPanel.setStyleName(barStyle);
     }
 
     @Override

@@ -281,6 +281,9 @@ public interface ApplicationResources extends ClientBundle {
     @Source("images/wrench.png")
     ImageResource wrenchImage();
 
+    @Source("images/enlarge_bottom_panel.png")
+    ImageResource enlargeFooterPanelImage();
+
     @Source("css/DialogBox.css")
     CssResource dialogBoxStyle();
 }

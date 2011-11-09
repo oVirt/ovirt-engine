@@ -58,7 +58,7 @@
 	</ui:style>
 
 	<g:FlowPanel addStyleNames="{style.panel}">
-		<g:HTMLPanel addStyleNames="{style.bar}">
+		<g:HTMLPanel ui:field="barPanel" addStyleNames="{style.bar}">
 			<g:FlowPanel ui:field="actionPanel" />
 			<g:PushButton ui:field="nextPageButton" addStyleNames="{style.linkButton}" />
 			<g:PushButton ui:field="prevPageButton" addStyleNames="{style.linkButton}" />			
