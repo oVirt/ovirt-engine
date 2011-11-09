@@ -250,10 +250,19 @@ public class ClusterNetworkListModel extends SearchableListModel
 		java.util.ArrayList<VdcActionParametersBase> prms2 = new java.util.ArrayList<VdcActionParametersBase>();
 		for (EntityModel a : items)
 		{
-			if (!a.getIsSelected())
-			{
-				prms2.add(new AttachNetworkToVdsGroupParameter(getEntity(), (network)a.getEntity()));
-			}
+		    boolean value = true;
+		    for (network b : networks)
+		    {
+		        if (b.getId().equals(((network)a.getEntity()).getId()))
+		        {
+		            value = false;
+		            break;
+		        }
+		    }
+		    if (!a.getIsSelected()  && !value )
+		    {
+		        prms2.add(new AttachNetworkToVdsGroupParameter(getEntity(), (network)a.getEntity()));
+		    }
 		}
 
 		// Call the command only if necessary (i.e. only if there are paramters):
