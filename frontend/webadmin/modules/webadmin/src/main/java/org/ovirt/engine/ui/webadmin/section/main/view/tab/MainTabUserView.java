@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabUserPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.table.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PopupTextColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UserStatusColumn;
 

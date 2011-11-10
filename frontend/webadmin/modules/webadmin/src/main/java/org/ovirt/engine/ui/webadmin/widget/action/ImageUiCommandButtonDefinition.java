@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.table;
+package org.ovirt.engine.ui.webadmin.widget.action;
 
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  * {@link UICommand} button definition that has an image associated with it.
  * 
  * @param <T>
- *            Table row data type.
+ *            Action panel item type.
  */
 public abstract class ImageUiCommandButtonDefinition<T> extends UiCommandButtonDefinition<T> {
 
@@ -21,8 +21,6 @@ public abstract class ImageUiCommandButtonDefinition<T> extends UiCommandButtonD
     /**
      * Creates a new button with the given title and images.
      * 
-     * @param command
-     *            The UiCommand
      * @param title
      *            The Command Text title
      * @param enabledImage

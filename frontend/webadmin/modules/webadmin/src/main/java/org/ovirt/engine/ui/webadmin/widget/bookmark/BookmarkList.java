@@ -5,9 +5,9 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.AbstractActionStackPanelItem;
-import org.ovirt.engine.ui.webadmin.widget.SimpleActionPanel;
-import org.ovirt.engine.ui.webadmin.widget.table.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.AbstractActionStackPanelItem;
+import org.ovirt.engine.ui.webadmin.widget.action.SimpleActionPanel;
+import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;

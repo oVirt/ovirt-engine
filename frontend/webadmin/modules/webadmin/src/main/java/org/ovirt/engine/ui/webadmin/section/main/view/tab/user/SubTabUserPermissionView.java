@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.table.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GroupNameColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ObjectNameColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PermissionTypeColumn;

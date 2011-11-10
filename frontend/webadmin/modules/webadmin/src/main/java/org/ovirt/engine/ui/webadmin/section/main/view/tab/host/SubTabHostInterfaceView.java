@@ -11,23 +11,21 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostIn
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView.SubTableResources;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.host.HostInterfaceForm;
-import org.ovirt.engine.ui.webadmin.widget.table.ActionTableDataProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.webadmin.widget.table.UiCommandButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.view.client.ListDataProvider;
 
 public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostListModel, HostInterfaceListModel>
         implements SubTabHostInterfacePresenter.ViewDef {
 
     /**
-     * A Column for an empty Grid
+     * An empty column, used to render Host NIC table header.
      */
     private class EmptyColumn extends TextColumn<HostInterfaceLineModel> {
         @Override
@@ -36,40 +34,13 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         }
     }
 
-    /**
-     * A Provider for an empty grid
-     */
-    private class EmptyProvider extends ListDataProvider<HostInterfaceLineModel>
-            implements ActionTableDataProvider<HostInterfaceLineModel> {
-
-        @Override
-        public boolean canGoForward() {
-            return false;
-        }
-
-        @Override
-        public boolean canGoBack() {
-            return false;
-        }
-
-        @Override
-        public void goForward() {
-        }
-
-        @Override
-        public void goBack() {
-        }
-
-    }
-
     private final SimpleActionTable<HostInterfaceLineModel> table;
-
     private final VerticalPanel contentPanel;
 
     @Inject
     public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> modelProvider) {
         super(modelProvider);
-        this.table = createEmptyTable(createEmptyProvider());
+        this.table = new SimpleActionTable<HostInterfaceLineModel>(modelProvider, getTableResources());
         initTable();
 
         contentPanel = new VerticalPanel();
@@ -78,18 +49,8 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         initWidget(contentPanel);
     }
 
-    EmptyProvider createEmptyProvider() {
-        return new EmptyProvider() {
-            @Override
-            public void refresh() {
-                getDetailModel().getForceRefreshCommand().Execute();
-            }
-        };
-    }
-
-    SimpleActionTable<HostInterfaceLineModel> createEmptyTable(EmptyProvider dataProvider) {
-        Resources resources = GWT.<Resources> create(SubTableResources.class);
-        return new SimpleActionTable<HostInterfaceLineModel>(dataProvider, resources);
+    Resources getTableResources() {
+        return GWT.<Resources> create(SubTableResources.class);
     }
 
     void initTable() {
@@ -143,6 +104,7 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
 
     @Override
     public void setMainTabSelectedItem(VDS selectedItem) {
+        // TODO(vszocs) possible performance optimization: don't create HostInterfaceForm upon each selection
         HostInterfaceForm hostInterfaceForm = new HostInterfaceForm(getDetailModel());
         contentPanel.remove(contentPanel.getWidgetCount() - 1);
         contentPanel.add(hostInterfaceForm);

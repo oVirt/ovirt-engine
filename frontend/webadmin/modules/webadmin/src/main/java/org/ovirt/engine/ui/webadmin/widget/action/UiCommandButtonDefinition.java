@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.table;
+package org.ovirt.engine.ui.webadmin.widget.action;
 
 import java.util.List;
 
@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelChangeEvent;
 import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelChangeEvent.CommonModelChangeHandler;
 
-import com.google.gwt.event.logical.shared.HasInitializeHandlers;
 import com.google.gwt.event.logical.shared.InitializeEvent;
 import com.google.gwt.event.logical.shared.InitializeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -23,9 +22,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  * Button definition that adapts to UiCommon {@link UICommand commands}.
  * 
  * @param <T>
- *            Table row data type.
+ *            Action panel item type.
  */
-public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefinition<T>, HasInitializeHandlers {
+public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefinition<T> {
 
     /**
      * Null object singleton that represents an empty (no-op) command.
@@ -58,13 +57,13 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
         this.implInWebAdmin = implInWebAdmin;
         this.implInUserPortal = implInUserPortal;
         this.availableOnlyFromContext = availableOnlyFromContext;
-        updateCommand();
+        update();
 
         // Add handler to be notified when the CommonModel instance changes
         eventBus.addHandler(CommonModelChangeEvent.getType(), new CommonModelChangeHandler() {
             @Override
             public void onCommonModelChange(CommonModelChangeEvent event) {
-                updateCommand();
+                update();
             }
         });
     }
@@ -127,9 +126,12 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
     protected abstract UICommand resolveCommand();
 
     /**
-     * Updates the command associated with this button definition.
+     * {@inheritDoc}
+     * <p>
+     * The implementation updates the command associated with this button definition.
      */
-    protected void updateCommand() {
+    @Override
+    public void update() {
         setCommand(resolveCommand());
     }
 

@@ -15,9 +15,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineSnapshotPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.ActionCellTable;
 import org.ovirt.engine.ui.webadmin.widget.table.OrderedMultiSelectionModel;
-import org.ovirt.engine.ui.webadmin.widget.table.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.SafeHtmlColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -92,7 +92,7 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableView<VM
         // Set selection mode, disable multiselection and first row ('current' snapshot)
         OrderedMultiSelectionModel<SnapshotModel> selectionModel = getTable().getSelectionModel();
         selectionModel.setDisabledRows(0);
-        getTable().setSelectionModel(selectionModel, selectionEventManager);
+        getTable().setTableSelectionModel(selectionModel, selectionEventManager);
         getTable().setMultiSelectionDisabled(true);
 
         TextColumn<SnapshotModel> nameColumn = new TextColumn<SnapshotModel>() {
@@ -165,12 +165,11 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableView<VM
     }
 
     private void initApplicationsTable() {
-
         applicationsTable = new ActionCellTable<String>(new AbstractDataProvider<String>() {
             @Override
             protected void onRangeChanged(HasData<String> display) {
             }
-        }, (Resources) GWT.create(SubTableResources.class));
+        }, GWT.<Resources> create(SubTableResources.class));
 
         TextColumn<String> nameColumn = new TextColumn<String>() {
             @Override
@@ -193,6 +192,6 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableView<VM
                 }
             }
         });
-
     }
+
 }

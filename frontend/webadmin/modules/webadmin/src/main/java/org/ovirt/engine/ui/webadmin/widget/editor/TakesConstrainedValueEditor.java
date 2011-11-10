@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.widget.editor;
 
 import java.util.Collection;
 
-import org.ovirt.engine.ui.webadmin.widget.table.TakesValueWithChangeHandlersEditor;
 
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.user.client.TakesValue;

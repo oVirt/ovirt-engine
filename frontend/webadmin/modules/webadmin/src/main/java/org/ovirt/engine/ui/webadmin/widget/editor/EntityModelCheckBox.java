@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.widget.editor;
 
-import org.ovirt.engine.ui.webadmin.widget.table.TakesValueWithChangeHandlersEditor;
 
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.event.dom.client.KeyDownHandler;

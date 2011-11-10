@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.table;
+package org.ovirt.engine.ui.webadmin.widget.editor;
 
 import com.google.gwt.editor.client.adapters.TakesValueEditor;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;

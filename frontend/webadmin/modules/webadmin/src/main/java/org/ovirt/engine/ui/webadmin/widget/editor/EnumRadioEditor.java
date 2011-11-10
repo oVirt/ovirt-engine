@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.webadmin.widget.table.TakesValueWithChangeHandlersEditor;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.RadioboxCell;
 

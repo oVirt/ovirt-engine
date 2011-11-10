@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.webadmin.widget.tags;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.AbstractActionStackPanelItem;
-import org.ovirt.engine.ui.webadmin.widget.SimpleActionPanel;
-import org.ovirt.engine.ui.webadmin.widget.table.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.AbstractActionStackPanelItem;
+import org.ovirt.engine.ui.webadmin.widget.action.SimpleActionPanel;
+import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;

@@ -35,11 +35,11 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
     }
 
     protected Resources getTableHeaderlessResources() {
-        return (Resources) GWT.create(SubTableHeaderlessResources.class);
+        return GWT.<Resources> create(SubTableHeaderlessResources.class);
     }
 
     protected Resources getTableResources() {
-        return (Resources) GWT.create(SubTableResources.class);
+        return GWT.<Resources> create(SubTableResources.class);
     }
 
     @Override

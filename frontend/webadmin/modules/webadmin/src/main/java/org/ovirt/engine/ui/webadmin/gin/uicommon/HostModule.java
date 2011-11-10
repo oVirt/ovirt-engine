@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -114,7 +115,6 @@ public class HostModule extends AbstractGinModule {
         return new SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel>(ginjector,
                 HostListModel.class,
                 HostInterfaceListModel.class) {
-
             @Override
             protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getEditCommand()) {
@@ -130,6 +130,12 @@ public class HostModule extends AbstractGinModule {
                     return detachConfirmPopupProvider.get();
                 }
                 return super.getModelPopup(lastExecutedCommand);
+            }
+
+            @Override
+            protected void updateData() {
+                // Pass empty data to data provider, since Host NIC table is used as header-only table
+                updateDataProvider(new ArrayList<HostInterfaceLineModel>());
             }
         };
     };

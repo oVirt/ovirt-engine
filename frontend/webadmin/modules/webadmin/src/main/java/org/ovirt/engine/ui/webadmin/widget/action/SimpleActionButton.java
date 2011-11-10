@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.table;
+package org.ovirt.engine.ui.webadmin.widget.action;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

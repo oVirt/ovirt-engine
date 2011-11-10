@@ -10,9 +10,8 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVirtualMachinePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.table.DynamicUiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.ImageUiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.ImageUiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
@@ -199,7 +198,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         });
         // TODO: separator
-        getTable().addActionButton(new DynamicUiCommandButtonDefinition<VM>("Console",
+        getTable().addActionButton(new ImageUiCommandButtonDefinition<VM>("Console",
                 resources.consoleImage(), resources.consoleDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
