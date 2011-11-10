@@ -145,6 +145,8 @@ public class BackendApiResourceTest extends Assert {
 
     @Before
     public void setUp() {
+        resource.setUriInfo(setUpUriInfo(URI_BASE + "/"));
+
         current = createMock(Current.class);
         principal = new Principal(USER, SECRET, DOMAIN);
         expect(current.get(Principal.class)).andReturn(principal).anyTimes();
@@ -183,7 +185,6 @@ public class BackendApiResourceTest extends Assert {
     }
 
     protected void doTestGet(String base) {
-        resource.setUriInfo(setUpUriInfo(base));
         setUpGetSystemVersionExpectations();
         setUpGetSystemStatisticsExpectations();
 
@@ -262,6 +263,7 @@ public class BackendApiResourceTest extends Assert {
         UriInfo uriInfo = createMock(UriInfo.class);
         expect(uriInfo.getBaseUri()).andReturn(URI.create(base)).anyTimes();
         expect(uriInfo.getBaseUriBuilder()).andReturn(uriBuilder);
+        expect(uriInfo.getQueryParameters()).andReturn(null);
 
         return uriInfo;
     }
