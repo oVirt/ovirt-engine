@@ -32,7 +32,6 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         implements SubTabClusterGeneralPresenter.ViewDef, Editor<ClusterPolicyModel> {
 
     private static final String MAX_COLOR = "#4E9FDD";
-
     private static final String MIN_COLOR = "#AFBF27";
 
     interface Driver extends SimpleBeanEditorDriver<ClusterPolicyModel, SubTabClusterGeneralView> {
@@ -87,19 +86,24 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
             ApplicationConstants constants) {
         super(modelProvider);
         this.constants = constants;
+
         initSliders();
         initLabels();
         initButton();
         initDummyPanel();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        modelProvider.getModel().getEntityChangedEvent().addListener(new IEventListener() {
 
+        modelProvider.getModel().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                setMainTabSelectedItem(modelProvider.getModel().getEntity());
+                VDSGroup entity = modelProvider.getModel().getEntity();
 
+                if (entity != null) {
+                    setMainTabSelectedItem(entity);
+                }
             }
         });
+
         localize(constants);
         Driver.driver.initialize(this);
     }
@@ -126,9 +130,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
 
     private void initButton() {
         editPolicyButton = new UiCommandButton();
-
         editPolicyButton.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 getDetailModel().ExecuteCommand(getDetailModel().getEditCommand());
@@ -161,8 +163,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
             policyTimeLabel.setText(constants.clusterPolicyForTimeLabel() + " "
                     + selectedItem.getcpu_over_commit_duration_minutes() + " " + constants.clusterPolicyMinTimeLabel());
             policyFieldLabel.setText(constants.clusterPolicyPowSaveLabel());
-        }
-        else if (selectedItem.getselection_algorithm().equals(VdsSelectionAlgorithm.EvenlyDistribute)) {
+        } else if (selectedItem.getselection_algorithm().equals(VdsSelectionAlgorithm.EvenlyDistribute)) {
             setVisibility(true);
             leftSlider.setVisible(false);
             leftDummySlider.setVisible(true);
@@ -170,10 +171,10 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
             policyTimeLabel.setText(constants.clusterPolicyForTimeLabel() + " "
                     + selectedItem.getcpu_over_commit_duration_minutes() + " " + constants.clusterPolicyMinTimeLabel());
             policyFieldLabel.setText(constants.clusterPolicyEvenDistLabel());
-        }
-        else { // also for VdsSelectionAlgorithm.None
+        } else { // also for VdsSelectionAlgorithm.None
             setVisibility(false);
             policyFieldLabel.setText(constants.clusterPolicyNoneLabel());
         }
     }
+
 }
