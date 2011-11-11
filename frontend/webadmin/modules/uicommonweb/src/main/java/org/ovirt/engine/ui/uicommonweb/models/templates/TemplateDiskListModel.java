@@ -52,6 +52,11 @@ public class TemplateDiskListModel extends SearchableListModel
 	@Override
 	protected void SyncSearch()
 	{
+		if (getEntity() == null)
+		{
+			return;
+		}
+
 		super.SyncSearch(VdcQueryType.GetVmTemplatesDisks, new GetVmTemplatesDisksParameters(getEntityStronglyTyped().getId()));
 	}
 

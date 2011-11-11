@@ -74,6 +74,11 @@ public class TemplateStorageListModel extends SearchableListModel
 	@Override
 	protected void SyncSearch()
 	{
+		if (getEntity() == null)
+		{
+			return;
+		}
+
 		super.SyncSearch();
 
 		VmTemplate template = (VmTemplate)getEntity();

@@ -95,6 +95,11 @@ public class TemplateInterfaceListModel extends SearchableListModel
 	@Override
 	protected void SyncSearch()
 	{
+		if (getEntity() == null)
+		{
+			return;
+		}
+
 		super.SyncSearch(VdcQueryType.GetTemplateInterfacesByTemplateId, new GetVmTemplateParameters(getEntityStronglyTyped().getId()));
 	}
 
