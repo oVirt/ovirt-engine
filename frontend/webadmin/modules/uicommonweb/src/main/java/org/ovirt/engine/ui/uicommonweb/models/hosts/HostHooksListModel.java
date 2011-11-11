@@ -69,6 +69,11 @@ public class HostHooksListModel extends SearchableListModel
 	@Override
 	protected void SyncSearch()
 	{
+		if (getEntity() == null)
+		{
+			return;
+		}
+
 		if (!getEntity().getContainingHooks())
 		{
 			setIsEmpty(true);
