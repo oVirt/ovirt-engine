@@ -116,6 +116,11 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
 	@Override
 	protected void SyncSearch()
 	{
+		if (getEntity() == null)
+		{
+			return;
+		}
+
 		super.SyncSearch();
 
 		AsyncQuery _asyncQuery = new AsyncQuery();
