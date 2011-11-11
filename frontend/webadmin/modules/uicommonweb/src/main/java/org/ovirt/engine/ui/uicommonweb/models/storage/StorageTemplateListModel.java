@@ -61,6 +61,11 @@ public class StorageTemplateListModel extends SearchableListModel
 	@Override
 	protected void SyncSearch()
 	{
+		if (getEntity() == null)
+		{
+			return;
+		}
+
 		super.SyncSearch();
 
 		AsyncQuery _asyncQuery = new AsyncQuery();
