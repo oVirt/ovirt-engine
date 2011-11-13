@@ -342,7 +342,7 @@ public class VdsBrokerObjectsBuilder {
         Object[] vmDisksUsage = (Object[]) vmStruct.getItem(VdsProperties.VM_DISKS_USAGE);
         if (vmDisksUsage != null) {
             ArrayList<Object> disksUsageList = new ArrayList<Object>(Arrays.asList(vmDisksUsage));
-            vm.setDisksUsage(new JsonObjectSerializer().serialize(disksUsageList));
+            vm.setDisksUsage(new JsonObjectSerializer().serializeUnformattedJson(disksUsageList));
         }
     }
 

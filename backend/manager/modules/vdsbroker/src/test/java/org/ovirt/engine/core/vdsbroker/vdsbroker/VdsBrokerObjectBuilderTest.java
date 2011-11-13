@@ -233,7 +233,7 @@ public class VdsBrokerObjectBuilderTest {
     private void validateDisksUsagesList(VmStatistics vmStatistics, Object[] disksUsages, XmlRpcStruct xml) {
         VdsBrokerObjectsBuilder.updateVMStatisticsData(vmStatistics, xml);
         assertEquals(Arrays.asList(disksUsages),
-                new JsonObjectDeserializer().deserialize(vmStatistics.getDisksUsage(), ArrayList.class));
+                new JsonObjectDeserializer().deserializeUnformattedJson(vmStatistics.getDisksUsage(), ArrayList.class));
     }
 
     private void validateDisksStatsList(VDS vds, XmlRpcStruct xml, boolean assertNullValues) {

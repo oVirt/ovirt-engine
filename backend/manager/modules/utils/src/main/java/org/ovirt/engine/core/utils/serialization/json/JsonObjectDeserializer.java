@@ -29,6 +29,10 @@ public class JsonObjectDeserializer implements Deserializer {
         mapper.getDeserializationConfig().addMixInAnnotations(Guid.class, JsonNGuidMixIn.class);
         mapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.enableDefaultTyping();
+        return readJsonString(source, type, mapper);
+    }
+
+    private <T> T readJsonString(Object source, Class<T> type, ObjectMapper mapper) {
         try {
             return mapper.readValue(source.toString(), type);
         } catch (JsonParseException e) {
@@ -38,5 +42,18 @@ public class JsonObjectDeserializer implements Deserializer {
         } catch (IOException e) {
             throw new SerializationException(e);
         }
+    }
+
+    /**
+     * Deserialize unformatted Json content.
+     *
+     * @param source
+     *            - The object which supposed to be deserialize.
+     * @return The serialized object.
+     * @throws SerializationExeption
+     */
+    public <T extends Serializable> T deserializeUnformattedJson(Object source, Class<T> type) throws SerializationExeption {
+        ObjectMapper mapper = new ObjectMapper();
+        return readJsonString(source, type, mapper);
     }
 }
