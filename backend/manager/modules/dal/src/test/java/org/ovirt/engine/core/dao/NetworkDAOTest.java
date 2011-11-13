@@ -124,6 +124,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
         network_cluster clusterFromDB = clustersFromDB.get(0);
         assertNotNull(clusterFromDB);
         new_net.setCluster(clusterFromDB);
+        new_net.setId(Guid.NewGuid());
         dao.save(new_net);
 
         network result = dao.getByName(new_net.getname());
