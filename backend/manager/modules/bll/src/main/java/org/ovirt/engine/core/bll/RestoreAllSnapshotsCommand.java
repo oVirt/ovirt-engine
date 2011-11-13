@@ -88,13 +88,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         case EXECUTE:
             return getSucceeded() ? AuditLogType.USER_RESTORE_FROM_SNAPSHOT_START
                     : AuditLogType.USER_FAILED_RESTORE_FROM_SNAPSHOT;
-
-        case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_RESTORE_FROM_SNAPSHOT_FINISH_SUCCESS
-                    : AuditLogType.USER_RESTORE_FROM_SNAPSHOT_FINISH_FAILURE;
-
         default:
-            return AuditLogType.USER_RESTORE_FROM_SNAPSHOT_FINISH_FAILURE;
+            return AuditLogType.USER_RESTORE_FROM_SNAPSHOT_FINISH_SUCCESS;
         }
     }
 
