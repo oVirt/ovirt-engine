@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -161,15 +162,18 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         boolean result = true;
 
         if (vdsStatic.getpm_enabled()) {
-            if (StringHelper.isNullOrEmpty(vdsStatic.getpm_type())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT);
-                result = false;
-            }
-            // check if pm_type is in the supported fence types by version
-            else if (!Regex.IsMatch(Config.<String> GetValue(ConfigValues.VdsFenceType,
+            // check if pm_type is not null and if it in the supported fence types by version
+            if (StringHelper.isNullOrEmpty(vdsStatic.getpm_type())
+                    || !Regex.IsMatch(Config.<String> GetValue(ConfigValues.VdsFenceType,
                     clsuterCompatibilityVersion), String.format("(,|^)%1$s(,|$)",
                     vdsStatic.getpm_type()))) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_AGENT_NOT_SUPPORTED);
+                result = false;
+            }
+            // Do not allow to pass empty/null value as the user/password agent credentials
+            else if (StringUtils.isEmpty(vdsStatic.getpm_user()) ||
+                    StringUtils.isEmpty(vdsStatic.getpm_password())) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT_CREDENTIALS);
                 result = false;
             }
         }
