@@ -1404,14 +1404,14 @@ public enum ConfigValues {
      * Lower threshold for disk space on host to be considered low, in MB.
      */
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("500")
+    @DefaultValueAttribute("1000")
     VdsLocalDisksLowFreeSpace(321),
 
     /**
      * Lower threshold for disk space on host to be considered critically low (almost out of space), in MB.
      */
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("100")
+    @DefaultValueAttribute("500")
     VdsLocalDisksCriticallyLowFreeSpace(322),
 
     Invalid(65535);
