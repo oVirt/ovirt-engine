@@ -50,7 +50,7 @@ if [ $? -ne 0 ]
 fi
 createlang --dbname=${DATABASE} --echo --username=${USERNAME} plpgsql >& /dev/null
 #set database min error level
-CMD="ALTER DATABASE ${DATABASE} SET client_min_messages=ERROR;"
+CMD="ALTER DATABASE \"${DATABASE}\" SET client_min_messages=ERROR;"
 execute_command "${CMD}"  ${DATABASE} > /dev/null
 printf "Inserting UUID functions...\n"
 
