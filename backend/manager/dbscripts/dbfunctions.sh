@@ -106,11 +106,14 @@ pg_version() {
 }
 
 check_and_install_uuid_osspa_pg8() {
-    if [ -e /usr/share/pgsql/contrib/uuid-ossp.sql ] ; then
+    if [ $1 ]; then
+        psql -d ${DATABASE} -U ${USERNAME} -f "$1"
+        return $?
+    elif [ ! -f /usr/share/pgsql/contrib/uuid-ossp.sql ] ; then
+        return 1
+    else
         psql -d ${DATABASE} -U ${USERNAME} -f /usr/share/pgsql/contrib/uuid-ossp.sql
         return $?
-    else
-        return 1
     fi
 }
 
@@ -137,11 +140,12 @@ check_and_install_uuid_osspa() {
     fi
 
     if [ $? -ne 0 ]; then
-        printf "\nThe uuid-ossp extension is not available. It is possible the postgresql-contrib package was not installed\n"
-        printf "In order to install the package please perform:\n"
-        printf "\nyum provides postgresql-contrib\nThis will determine which package should be installed. For example, for fedora 14 it should be: postgresql-contrib-8.4.7-1.fc14.x86_64\n"
-        printf "\nyum install package-name\nFor example, for fedora 14 it should be: yum install postgresql-contrib-8.4.7-1.fc14.x86_64\n"
-        printf "After installation is done, please run create_db.sh script again\n"
+        printf "\nThe uuid-ossp extension is not available."
+        printf "\nIt is possible the 'postgresql-contrib' package was not installed.\n"
+        printf "In order to install the package in Fedora please perform: "
+        printf "yum install postgresql-contrib\n"
+        printf "After installation is done, please run create_db.sh script again.\n"
+        printf "\nAlternatively, specify the location of the file with -f parameter\n"
         exit 1
     fi
 }

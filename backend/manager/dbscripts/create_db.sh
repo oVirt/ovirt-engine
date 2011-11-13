@@ -13,6 +13,7 @@ usage() {
     printf "\t-d DATABASE   - The database name                        (def. ${DATABASE})\n"
     printf "\t-u USERNAME   - The username for the database.\n"
     printf "\t-l LOGFILE    - The logfile for capturing output         (def. ${LOGFILE}\n"
+    printf "\t-f UUID    - The [optional] location of uuid-ossp.sql file\n"
     printf "\t-v            - Turn on verbosity (WARNING: lots of output)\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
@@ -26,12 +27,13 @@ DEBUG () {
     fi
 }
 
-while getopts hs:d:u:p:l:v option; do
+while getopts :hs:d:u:p:l:f:v option; do
     case $option in
         s) SERVERNAME=$OPTARG;;
         d) DATABASE=$OPTARG;;
         u) USERNAME=$OPTARG;;
 	l) LOGFILE=$OPTARG;;
+        f) UUID=$OPTARG;;
         v) VERBOSE=true;;
         h) usage;;
     esac
@@ -54,7 +56,7 @@ printf "Inserting UUID functions...\n"
 
 echo user name is: ${USERNAME} 
 
-check_and_install_uuid_osspa
+check_and_install_uuid_osspa ${UUID}
 
 printf "Creating tables...\n"
 execute_file "create_tables.sql" ${DATABASE} > /dev/null
