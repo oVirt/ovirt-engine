@@ -93,7 +93,6 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
     private network_cluster cluster = new network_cluster();
 
     public network() {
-        id = Guid.NewGuid();
     }
     //Because the webadmin uses the same BE as backend, the constructor of these BEs
     //should not contain any logic that refer only to backend side.

@@ -19,6 +19,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     @Override
     protected void executeCommand() {
+        getParameters().getNetwork().setId(Guid.NewGuid());
         DbFacade.getInstance().getNetworkDAO().save(getParameters().getNetwork());
         getReturnValue().setActionReturnValue(getParameters().getNetwork().getId());
         setSucceeded(true);
