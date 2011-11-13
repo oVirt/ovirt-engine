@@ -4,8 +4,8 @@ import java.sql.Types;
 
 import org.hibernate.dialect.PostgreSQLDialect;
 
-public class ENGINEPostgreSQLDialect extends PostgreSQLDialect {
-    public ENGINEPostgreSQLDialect() {
+public class EnginePostgreSQLDialect extends PostgreSQLDialect {
+    public EnginePostgreSQLDialect() {
         super();
 
         this.registerColumnType(Types.OTHER, "uuid");
