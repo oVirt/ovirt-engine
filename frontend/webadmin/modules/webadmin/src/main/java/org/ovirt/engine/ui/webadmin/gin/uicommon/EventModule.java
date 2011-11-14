@@ -17,7 +17,12 @@ public class EventModule extends AbstractGinModule {
     @Provides
     @Singleton
     public MainModelProvider<AuditLog, EventListModel> getEventListProvider(ClientGinjector ginjector) {
-        return new MainTabModelProvider<AuditLog, EventListModel>(ginjector, EventListModel.class);
+        return new MainTabModelProvider<AuditLog, EventListModel>(ginjector, EventListModel.class) {
+            @Override
+            protected boolean handleNullDataAsEmpty() {
+                return true;
+            }
+        };
     }
 
     @Override
