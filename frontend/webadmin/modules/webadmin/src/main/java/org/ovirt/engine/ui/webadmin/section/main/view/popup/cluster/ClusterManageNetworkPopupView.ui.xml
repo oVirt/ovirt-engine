@@ -13,9 +13,10 @@
 			font-weight: bold;
 			padding: 5px;
 		}
-		.dock { /*border-right: 1px solid #BBBBBB;*/ /*padding-right: 5px;*/
+		.dock {
 			border-bottom: 1px solid #BBBBBB;
 			border-top: 1px solid #BBBBBB;
+			height: 90%;
 		}
 		.checkbox {
 			margin-left: 25px;
