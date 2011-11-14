@@ -19,6 +19,7 @@ target
 .classpath
 *.ipr
 *.iml
+.idea
 
 # UI folders
 ###########################
