@@ -662,6 +662,7 @@ class ISOUploader(object):
         Method to upload a designated file to an ISO storage domain.
         """
         remote_path = ''
+        id = None
         # Did the user give us enough info to do our work?
         if self.configuration.get('iso_domain') and self.configuration.get('nfs_server'):
             raise Exception(_("iso-domain and nfs-server are mutually exclusive options"))
@@ -765,7 +766,8 @@ class ISOUploader(object):
                                                      NUMERIC_VDSM_ID,
                                                      NUMERIC_VDSM_ID)
                                     # Force oVirt Engine to refresh the list of files in the ISO domain
-                                    self.refresh_iso_domain(id)
+                                    if id is not None:
+                                        self.refresh_iso_domain(id)
                             else:
                                 logging.error(_('There is not enough space in %s (%s bytes) for %s (%s bytes)' %
                                               (path, dir_size, file, file_size)))
