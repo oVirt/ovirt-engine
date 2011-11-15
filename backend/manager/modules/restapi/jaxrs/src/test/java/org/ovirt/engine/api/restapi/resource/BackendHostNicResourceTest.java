@@ -177,19 +177,6 @@ public class BackendHostNicResourceTest
     }
 
     @Test
-    public void testIncompleteDetach() throws Exception {
-        Action action = new Action();
-        setUriInfo(setUpBasicUriExpectations());
-        control.replay();
-        try {
-            resource.detach(action);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Action", "detach", "network.id|name");
-        }
-    }
-
-    @Test
     public void testUpdate() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setGetVdsQueryExpectations(1);

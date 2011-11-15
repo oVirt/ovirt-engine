@@ -52,11 +52,9 @@ public class BackendHostNicResource
     }
 
     protected Response doAttachAction(Action action, VdcActionType actionType) {
-        validateParameters(action, "network.id|name");
-
         VdsNetworkInterface hostInterface = parent.lookupInterface(id);
         AttachNetworkToVdsParameters params = new AttachNetworkToVdsParameters(asGuid(parent.getHostId()),
-                                                                               parent.lookupNetwork(action.getNetwork()),
+                                                                               action.getNetwork()==null ? null : parent.lookupNetwork(action.getNetwork()),
                                                                                hostInterface);
         params.setBondingOptions(hostInterface.getBondOptions());
         params.setBootProtocol(hostInterface.getBootProtocol());
@@ -74,7 +72,6 @@ public class BackendHostNicResource
 
     @Override
     public Response detach(Action action) {
-        validateParameters(action, "network.id|name");
         return doAttachAction(action, VdcActionType.DetachNetworkFromVdsInterface);
     }
 
