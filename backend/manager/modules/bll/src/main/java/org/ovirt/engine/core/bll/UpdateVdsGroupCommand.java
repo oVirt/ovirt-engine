@@ -32,7 +32,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extends
-        VdsGroupOperationCommandBase<T> {
+VdsGroupOperationCommandBase<T> {
     public UpdateVdsGroupCommand(T parameters) {
         super(parameters);
     }
@@ -133,7 +133,9 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         if (oldGroup == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
             result = false;
-        } else {
+        }
+        // If both original Cpu and new Cpu are null, don't check Cpu validity
+        if (result && (oldGroup.getcpu_name() != null || getVdsGroup().getcpu_name() != null)) {
             // Check that cpu exist
             if (!CpuFlagsManagerHandler.CheckIfCpusExist(getVdsGroup().getcpu_name(), getVdsGroup()
                     .getcompatibility_version())) {
@@ -152,140 +154,140 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                                 .size() > 0) {
                     addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_ILLEGAL);
                     result = false;
-                } else {
-                    if (!VersionSupport.checkVersionSupported(getVdsGroup()
-                            .getcompatibility_version())) {
-                        addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
-                        result = false;
-                    }
-                    // decreasing of compatibility version is not allowed
-                    else if (getVdsGroup().getcompatibility_version().compareTo(
-                            oldGroup.getcompatibility_version()) < 0) {
-                        result = false;
-                        getReturnValue()
-                                .getCanDoActionMessages()
-                                .add(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION
-                                        .toString());
-                    } else {
-                        SearchParameters p = new SearchParameters(MessageFormat.format(
-                                StorageHandlingCommandBase.UpVdssInCluster, oldGroup.getname()),
-                                SearchType.VDS);
-                        p.setMaxCount(Integer.MAX_VALUE);
-                        Iterable<VDS> clusterUpVdss = (Iterable<VDS>) Backend.getInstance()
-                                .runInternalQuery(VdcQueryType.Search, p).getReturnValue();
-                        for (VDS vds : clusterUpVdss) {
-                            if (!VersionSupport.checkClusterVersionSupported(
-                                    getVdsGroup().getcompatibility_version(), vds)) {
-                                result = false;
-                                getReturnValue()
-                                        .getCanDoActionMessages()
-                                        .add(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS
-                                                .toString());
-                                break;
-                            } else if (CpuFlagsManagerHandler.missingServerCpuFlags(getVdsGroup()
-                                    .getcpu_name(), vds.getcpu_flags(), getVdsGroup()
-                                    .getcompatibility_version()) != null) {
-                                getReturnValue().getCanDoActionMessages().add(
-                                        VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS
-                                                .toString());
-                                result = false;
-                                break;
-                            }
-                        }
-                    }
                 }
             }
-            if (oldGroup.getstorage_pool_id() != null
-                    && !oldGroup.getstorage_pool_id().equals(getVdsGroup().getstorage_pool_id())) {
-                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL);
-                result = false;
-            }
-            if (result) {
-                SearchParameters searchParams = new SearchParameters("vms: cluster = "
-                        + oldGroup.getname(), SearchType.VM);
-                searchParams.setMaxCount(Integer.MAX_VALUE);
-
-                List<VM> vmList = (List) Backend.getInstance()
-                        .runInternalQuery(VdcQueryType.Search, searchParams).getReturnValue();
-                int notDownVms = 0;
-                int suspendedVms = 0;
-                for (VM vm : vmList) {
-                    // the search can return vm from cluster with similar name
-                    // so it's critical to check that
-                    // the vm cluster id is the same as the cluster.id
-                    if (!vm.getvds_group_id().equals(oldGroup.getID())) {
-                        continue;
-                    }
-                    VMStatus vmStatus = vm.getstatus();
-                    if (vmStatus == VMStatus.Suspended) {
-                        suspendedVms++;
-                    }
-                    if (vmStatus != VMStatus.Down) {
-                        notDownVms++;
-                    }
-                }
-                if (notDownVms > 0
-                        && !oldGroup.getcompatibility_version().equals(getVdsGroup().getcompatibility_version())) {
+        }
+        if (result && !VersionSupport.checkVersionSupported(getVdsGroup()
+                .getcompatibility_version())) {
+            addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
+            result = false;
+        }
+        // decreasing of compatibility version is not allowed
+        if (result && getVdsGroup().getcompatibility_version().compareTo(
+                oldGroup.getcompatibility_version()) < 0) {
+            result = false;
+            getReturnValue()
+            .getCanDoActionMessages()
+            .add(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION
+                    .toString());
+        }
+        if (result) {
+            SearchParameters p = new SearchParameters(MessageFormat.format(
+                    StorageHandlingCommandBase.UpVdssInCluster, oldGroup.getname()),
+                    SearchType.VDS);
+            p.setMaxCount(Integer.MAX_VALUE);
+            Iterable<VDS> clusterUpVdss = (Iterable<VDS>) Backend.getInstance()
+            .runInternalQuery(VdcQueryType.Search, p).getReturnValue();
+            for (VDS vds : clusterUpVdss) {
+                if (!VersionSupport.checkClusterVersionSupported(
+                        getVdsGroup().getcompatibility_version(), vds)) {
                     result = false;
-                    addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_RUNNING_VMS);
-                }
-                boolean sameCpuNames = StringHelper.EqOp(oldGroup.getcpu_name(), getVdsGroup().getcpu_name());
-                if (result && !sameCpuNames) {
-                    if (suspendedVms > 0) {
-                        addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_SUSPENDED_VMS);
-                        result = false;
-                    } else if (notDownVms > 0) {
-                        int compareResult =
-                                CpuFlagsManagerHandler.compareCpuLevels(getVdsGroup().getcpu_name(),
-                                        oldGroup.getcpu_name(),
-                                        oldGroup.getcompatibility_version());
-                        if (compareResult < 0) {
-                            addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_LOWER_CPU_LEVEL);
-                            result = false;
-                        } else if (compareResult > 0) {// Upgrade of CPU in same compability level is allowed if there
-                                                       // are running VMs - but we should warn they
-                            // cannot not be hibernated
-                            AuditLogableBase logable = new AuditLogableBase();
-                            logable.AddCustomValue("VdsGroup", getParameters().getVdsGroup().getname());
-                            AuditLogDirector.log(logable,
-                                    AuditLogType.CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE);
-                        }
-                    }
+                    getReturnValue()
+                    .getCanDoActionMessages()
+                    .add(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS
+                            .toString());
+                    break;
+                } else if (CpuFlagsManagerHandler.missingServerCpuFlags(getVdsGroup()
+                        .getcpu_name(), vds.getcpu_flags(), getVdsGroup()
+                        .getcompatibility_version()) != null) {
+                    getReturnValue().getCanDoActionMessages().add(
+                            VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS
+                            .toString());
+                    result = false;
+                    break;
                 }
             }
-            if (result && getVdsGroup().getstorage_pool_id() != null) {
-                storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().get(
-                        getVdsGroup().getstorage_pool_id().getValue());
-                if (oldGroup.getstorage_pool_id() == null && storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
-                    // we allow only one cluster in localfs data center
-                    if (!DbFacade
-                            .getInstance()
-                            .getVdsGroupDAO().getAllForStoragePool(
-                                    getVdsGroup().getstorage_pool_id().getValue()).isEmpty()) {
-                        getReturnValue()
-                                .getCanDoActionMessages()
-                                .add(VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE
-                                        .toString());
-                        result = false;
-                    }
-                    // selection algorithm must be set to none in localfs
-                    else if (getVdsGroup().getselection_algorithm() != VdsSelectionAlgorithm.None) {
-                        getReturnValue()
-                                .getCanDoActionMessages()
-                                .add(VdcBllMessages.VDS_GROUP_SELECTION_ALGORITHM_MUST_BE_SET_TO_NONE_ON_LOCAL_STORAGE
-                                        .toString());
-                        result = false;
-                    }
-                    else if(VDSGroup.DEFAULT_VDS_GROUP_ID.equals(getVdsGroup().getID())) {
-                        addCanDoActionMessage(VdcBllMessages.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
-                        result = false;
-                    }
-                }
-            }
+        }
 
-            if (result) {
-                result = validateMetrics();
+        if (result && (oldGroup.getstorage_pool_id() != null
+                && !oldGroup.getstorage_pool_id().equals(getVdsGroup().getstorage_pool_id()))) {
+            addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL);
+            result = false;
+        }
+        if (result) {
+            SearchParameters searchParams = new SearchParameters("vms: cluster = "
+                    + oldGroup.getname(), SearchType.VM);
+            searchParams.setMaxCount(Integer.MAX_VALUE);
+
+            List<VM> vmList = (List) Backend.getInstance()
+            .runInternalQuery(VdcQueryType.Search, searchParams).getReturnValue();
+            int notDownVms = 0;
+            int suspendedVms = 0;
+            for (VM vm : vmList) {
+                // the search can return vm from cluster with similar name
+                // so it's critical to check that
+                // the vm cluster id is the same as the cluster.id
+                if (!vm.getvds_group_id().equals(oldGroup.getID())) {
+                    continue;
+                }
+                VMStatus vmStatus = vm.getstatus();
+                if (vmStatus == VMStatus.Suspended) {
+                    suspendedVms++;
+                }
+                if (vmStatus != VMStatus.Down) {
+                    notDownVms++;
+                }
             }
+            if (notDownVms > 0
+                    && !oldGroup.getcompatibility_version().equals(getVdsGroup().getcompatibility_version())) {
+                result = false;
+                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_RUNNING_VMS);
+            }
+            boolean sameCpuNames = StringHelper.EqOp(oldGroup.getcpu_name(), getVdsGroup().getcpu_name());
+            if (result && !sameCpuNames) {
+                if (suspendedVms > 0) {
+                    addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_SUSPENDED_VMS);
+                    result = false;
+                } else if (notDownVms > 0) {
+                    int compareResult =
+                        CpuFlagsManagerHandler.compareCpuLevels(getVdsGroup().getcpu_name(),
+                                oldGroup.getcpu_name(),
+                                oldGroup.getcompatibility_version());
+                    if (compareResult < 0) {
+                        addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_LOWER_CPU_LEVEL);
+                        result = false;
+                    } else if (compareResult > 0) {// Upgrade of CPU in same compability level is allowed if there
+                        // are running VMs - but we should warn they
+                        // cannot not be hibernated
+                        AuditLogableBase logable = new AuditLogableBase();
+                        logable.AddCustomValue("VdsGroup", getParameters().getVdsGroup().getname());
+                        AuditLogDirector.log(logable,
+                                AuditLogType.CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE);
+                    }
+                }
+            }
+        }
+        if (result && getVdsGroup().getstorage_pool_id() != null) {
+            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().get(
+                    getVdsGroup().getstorage_pool_id().getValue());
+            if (oldGroup.getstorage_pool_id() == null && storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
+                // we allow only one cluster in localfs data center
+                if (!DbFacade
+                        .getInstance()
+                        .getVdsGroupDAO().getAllForStoragePool(
+                                getVdsGroup().getstorage_pool_id().getValue()).isEmpty()) {
+                    getReturnValue()
+                    .getCanDoActionMessages()
+                    .add(VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE
+                            .toString());
+                    result = false;
+                }
+                // selection algorithm must be set to none in localfs
+                else if (getVdsGroup().getselection_algorithm() != VdsSelectionAlgorithm.None) {
+                    getReturnValue()
+                    .getCanDoActionMessages()
+                    .add(VdcBllMessages.VDS_GROUP_SELECTION_ALGORITHM_MUST_BE_SET_TO_NONE_ON_LOCAL_STORAGE
+                            .toString());
+                    result = false;
+                }
+                else if(VDSGroup.DEFAULT_VDS_GROUP_ID.equals(getVdsGroup().getID())) {
+                    addCanDoActionMessage(VdcBllMessages.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
+                    result = false;
+                }
+            }
+        }
+        if (result) {
+            result = validateMetrics();
         }
         return result;
     }

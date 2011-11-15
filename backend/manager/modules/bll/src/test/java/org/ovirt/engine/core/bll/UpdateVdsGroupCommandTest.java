@@ -2,9 +2,13 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.*;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,6 +92,7 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void nameInUse() {
         createSimpleCommand();
+        createCommandWithDifferentName();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE);
     }
 
@@ -153,6 +158,7 @@ public class UpdateVdsGroupCommandTest {
         cpuExists();
         cpuManufacturersMatch();
         clusterHasVds();
+        cpuFlagsNotMissing();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL);
     }
 
@@ -193,6 +199,15 @@ public class UpdateVdsGroupCommandTest {
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_SELECTION_ALGORITHM_MUST_BE_SET_TO_NONE_ON_LOCAL_STORAGE);
     }
 
+    @Test
+    public void vdsGroupWithNoCpu() {
+        createCommandWithNoCpuName();
+        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        allQueriesEmpty();
+        assertTrue(cmd.canDoAction());
+    }
+
     private void createSimpleCommand() {
         createCommand(createNewVdsGroup());
     }
@@ -214,6 +229,10 @@ public class UpdateVdsGroupCommandTest {
         createCommand(createDefaultVdsGroup());
     }
 
+    private void createCommandWithNoCpuName() {
+        createCommand(createVdsGroupWithNoCpuName());
+    }
+
     private void createCommandWithPowerSaveVdsGroup() {
         createCommand(createVdsGroupWithPowerSave());
     }
@@ -224,9 +243,20 @@ public class UpdateVdsGroupCommandTest {
         cmd = new UpdateVdsGroupCommand<VdsGroupOperationParameters>(params);
     }
 
+    private void createCommandWithDifferentName() {
+        createCommand(createVdsGroupWithDifferentName());
+    }
+
+    private VDSGroup createVdsGroupWithDifferentName() {
+        VDSGroup group = new VDSGroup();
+        group.setname("BadName");
+        return group;
+    }
+
     private VDSGroup createNewVdsGroup() {
         VDSGroup group = new VDSGroup();
         group.setcompatibility_version(VERSION_1_1);
+        group.setname("Default");
         return group;
     }
 
@@ -235,6 +265,15 @@ public class UpdateVdsGroupCommandTest {
         group.setname("Default");
         group.setID(VDSGroup.DEFAULT_VDS_GROUP_ID);
         group.setcpu_name("Intel Conroe");
+        group.setcompatibility_version(VERSION_1_1);
+        group.setstorage_pool_id(STORAGE_POOL_ID);
+        return group;
+    }
+
+    private VDSGroup createVdsGroupWithNoCpuName() {
+        VDSGroup group = new VDSGroup();
+        group.setname("Default");
+        group.setID(VDSGroup.DEFAULT_VDS_GROUP_ID);
         group.setcompatibility_version(VERSION_1_1);
         group.setstorage_pool_id(STORAGE_POOL_ID);
         return group;
@@ -323,6 +362,7 @@ public class UpdateVdsGroupCommandTest {
 
     private void clusterHasVds() {
         VDS vds = new VDS();
+        vds.setsupported_cluster_levels(VERSION_1_1.toString());
         List<VDS> vdsList = new ArrayList<VDS>();
         vdsList.add(vds);
         VdcQueryReturnValue returnValue = mock(VdcQueryReturnValue.class);
@@ -336,6 +376,11 @@ public class UpdateVdsGroupCommandTest {
         strings.add("foo");
         when(CpuFlagsManagerHandler.missingServerCpuFlags(anyString(), anyString(), any(Version.class)))
                 .thenReturn(strings);
+    }
+
+    private void cpuFlagsNotMissing() {
+        when(CpuFlagsManagerHandler.missingServerCpuFlags(anyString(), anyString(), any(Version.class)))
+                .thenReturn(null);
     }
 
     private void clusterVersionIsSupported() {
