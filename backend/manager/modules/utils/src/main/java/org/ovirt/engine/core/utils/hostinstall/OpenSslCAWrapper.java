@@ -102,10 +102,10 @@ public class OpenSslCAWrapper implements ICAWrapper {
      */
     private String readAllLines(BufferedReader bufferedReader) {
         String tempString;
-        String returnString = null;
+        StringBuilder returnString = new StringBuilder();
         try {
             while ((tempString = bufferedReader.readLine()) != null) {
-                returnString += tempString + '\n';
+                returnString.append(tempString).append('\n');
             }
         } catch (IOException e) {
             log.error("IOException while trying to read from buffer", e);
@@ -153,7 +153,7 @@ public class OpenSslCAWrapper implements ICAWrapper {
         if (errors != null && errors.length() != 0) {
             log.error("Sign Certificate request script errors:\n" + errors);
         }
-        if (output != null && errors.length() != 0) {
+        if (output != null && output.length() != 0) {
             log.debug("Sign Certificate request script output:\n" + output);
         }
     }
