@@ -57,7 +57,7 @@ insert into event_notification_methods (method_id, method_type) values (0,'Email
 
 delete from action_version_map; 
 -- Inserting data to history timekeeping
-Insert into dwh_history_timekeeping  VALUES('lastSync',NULL,cast('01/01/2000 12:00:00 PM' as TIMESTAMP));
+Insert into dwh_history_timekeeping  VALUES('lastSync',NULL,to_timestamp('01/01/2000', 'DD/MM/YYYY'));
 -- AddVmFromTemplate
 insert into action_version_map  values(2, '2.2', '2.2');
 -- MoveVm
