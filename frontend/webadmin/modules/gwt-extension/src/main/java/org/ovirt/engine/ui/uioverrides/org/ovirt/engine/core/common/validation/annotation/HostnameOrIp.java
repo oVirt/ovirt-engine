@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.validation.HostnameOrIPConstraint;
 
 @Target({ ANNOTATION_TYPE, METHOD, FIELD, CONSTRUCTOR, PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = HostnameOrIPConstraint.class)
 public @interface HostnameOrIp {
     String message() default "VALIDATION_FIELD_NOT_MATCHING_HOSTNAME_OR_IP_PATTERN";
 
