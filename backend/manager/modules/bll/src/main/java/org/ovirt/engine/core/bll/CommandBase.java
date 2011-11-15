@@ -63,6 +63,7 @@ import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.StatusAwareDao;
 import org.ovirt.engine.core.utils.Deserializer;
+import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -239,7 +240,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 log.debugFormat("Command [id={0}]: {1} compensation data.", commandId,
                         entitySnapshots.isEmpty() ? "No" : "Going over");
                 for (BusinessEntitySnapshot snapshot : entitySnapshots) {
-                    Class<Serializable> snapshotClass = (Class<Serializable>) getClassFor(snapshot.getSnapshotClass());
+                    Class<Serializable> snapshotClass = (Class<Serializable>)ReflectionUtils.getClassFor(snapshot.getSnapshotClass());
                     Serializable snapshotData = deserializer.deserialize(snapshot.getEntitySnapshot(), snapshotClass);
                     log.infoFormat("Command [id={0}]: Compensating {1} of {2}; snapshot: {3}.",
                             commandId,
@@ -248,7 +249,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                             (snapshot.getSnapshotType() == SnapshotType.CHANGED_ENTITY ? "id=" + snapshot.getEntityId()
                                     : snapshotData.toString()));
                     Class<BusinessEntity<Serializable>> entityClass =
-                        (Class<BusinessEntity<Serializable>>) getClassFor(snapshot.getEntityType());
+                        (Class<BusinessEntity<Serializable>>) ReflectionUtils.getClassFor(snapshot.getEntityType());
                     GenericDao<BusinessEntity<Serializable>, Serializable> daoForEntity =
                             DbFacade.getInstance().getDaoForEntity(entityClass);
 
@@ -279,20 +280,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         });
     }
 
-    /**
-     * @param className
-     *            The class to load.
-     * @return The class corresponding to the given classname.
-     */
-    private Class<?> getClassFor(String className) {
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    /**
+     /**
      * Delete the compensation data, so that we don't accidentaly try to compensate it at a later time.
      */
     private void cleanUpCompensationData() {

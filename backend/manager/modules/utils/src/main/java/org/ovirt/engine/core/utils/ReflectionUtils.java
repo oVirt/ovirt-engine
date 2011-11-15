@@ -78,6 +78,20 @@ public class ReflectionUtils {
         return true;
     }
 
+
+    /**
+     * @param className
+     *            The class to load.
+     * @return The class corresponding to the given classname.
+     */
+    public static Class<?> getClassFor(String className) {
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     /**
      *
      * @param c the class
