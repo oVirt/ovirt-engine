@@ -1,12 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -19,7 +12,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
@@ -103,52 +95,6 @@ public class async_tasks implements Serializable {
 
     public void setaction_parameters(VdcActionParametersBase value) {
         this.actionParameters = value;
-    }
-
-    // used to be toSerializedForm
-    public byte[] getSerializedForm() {
-        ByteArrayOutputStream baos = null;
-        ObjectOutput out = null;
-        try {
-            baos = new ByteArrayOutputStream();
-            out = new ObjectOutputStream(baos);
-            out.writeObject(getaction_parameters());
-            out.close();
-            baos.close();
-            return baos.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to serialize task", e);
-        } finally {
-            try {
-                if (baos != null)
-                    baos.close();
-                if (out != null)
-                    out.close();
-            } catch (IOException e) {
-                // nothing to do here
-            }
-        }
-    }
-
-    // used to be fromSerializedForm
-    public void setSerializedForm(InputStream stream) {
-        ObjectInput in = null;
-        try {
-            if (stream == null || stream.available() == 0)
-                return;
-
-            in = new ObjectInputStream(stream);
-            setaction_parameters((VdcActionParametersBase) in.readObject());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to load task", e);
-        } finally {
-            try {
-                if (in != null)
-                    in.close();
-            } catch (IOException e) {
-                // nothing to do here
-            }
-        }
     }
 
     @Override
