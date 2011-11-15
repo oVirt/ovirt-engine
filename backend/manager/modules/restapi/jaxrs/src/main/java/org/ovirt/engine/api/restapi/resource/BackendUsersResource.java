@@ -23,8 +23,10 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class BackendUsersResource extends AbstractBackendCollectionResource<User, DbUser>
@@ -64,15 +66,42 @@ public class BackendUsersResource extends AbstractBackendCollectionResource<User
     @Override
     public Response add(User user) {
         validateParameters(user, "userName");
+        String domain = getDomain(user);
         AdUser adUser = getEntity(AdUser.class,
                                   SearchType.AdUser,
-                                  getSearchPattern(user.getUserName()));
+                                  getSearchPattern(user.getUserName(), domain));
         AddUserParameters newUser = new AddUserParameters();
         newUser.setVdcUser(map(adUser));
         return performCreation(VdcActionType.AddUser, newUser, new UserIdResolver(adUser.getUserId()));
     }
 
-    protected String getSearchPattern(String param) {
+    private String getDomain(User user) {
+        if (user.isSetDomain() && user.getDomain().isSetName()) {
+            return user.getDomain().getName();
+        }
+        else if (user.isSetDomain() && user.getDomain().isSetId()) {
+            List<String> domains = getBackendCollection(
+               String.class,
+               VdcQueryType.GetDomainList,
+               new VdcQueryParametersBase());
+            for (String domain :domains) {
+                NGuid domainId = new NGuid(domain.getBytes(), true);
+                if (domainId.toString().equals(user.getDomain().getId())) {
+                   return domain;
+                }
+            }
+        }
+        else if (user.isSetUserName() && user.getUserName().contains("@")) {
+            return user.getUserName().substring(user.getUserName().indexOf("@")+1);
+        }
+        return getCurrentDomain();
+    }
+
+    protected String getCurrentDomain() {
+        return getCurrent().get(Principal.class).getDomain();
+    }
+
+    protected String getSearchPattern(String username, String domain) {
         String constraint = QueryHelper.getConstraint(getUriInfo(), DbUser.class, false);
         StringBuffer sb = new StringBuffer();
 
@@ -80,10 +109,10 @@ public class BackendUsersResource extends AbstractBackendCollectionResource<User
                   parent!=null?
                         parent.getDirectory().getName()
                         :
-                        getCurrent().get(Principal.class).getDomain()));
+                        domain));
 
          sb.append(StringHelper.isNullOrEmpty(constraint)?
-                        "allnames=" + param
+                        "allnames=" + username
                         :
                         constraint);
 
@@ -94,7 +123,7 @@ public class BackendUsersResource extends AbstractBackendCollectionResource<User
         return asCollection(AdUser.class,
                 getEntity(ArrayList.class,
                         SearchType.AdUser,
-                        getSearchPattern("*")));
+                        getSearchPattern("*", getCurrentDomain())));
 
     }
 

@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.expect;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqSearchParams;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -13,6 +14,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 
+import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.User;
@@ -24,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.NGuid;
@@ -107,9 +110,71 @@ public class BackendUsersResourceTest
     }
 
     @Test
-    public void testAddUser() throws Exception {
+    public void testAddUser_1() throws Exception {
+        setUpAddUserExpectations("ADUSER@" + DOMAIN + ": allnames=" + NAMES[0]);
+        User model = new User();
+        model.setUserName(NAMES[0]);
+
+        Response response = collection.add(model);
+        verifyAddUser(response);
+    }
+
+    @Test
+    public void testAddUser_2() throws Exception {
+        setUpAddUserExpectations("ADUSER@" + DOMAIN + ": allnames=" + NAMES[0]);
+        User model = new User();
+        Domain domain = new Domain();
+        domain.setName(DOMAIN);
+        model.setDomain(domain);
+        model.setUserName(NAMES[0]);
+
+        Response response = collection.add(model);
+        verifyAddUser(response);
+    }
+
+    @Test
+    public void testAddUser_3() throws Exception {
+        setUpAddUserExpectations("ADUSER@" + DOMAIN + ": allnames=" + NAMES[0]+"@"+ DOMAIN);
+        User model = new User();
+        model.setUserName(NAMES[0]+"@"+DOMAIN);
+
+        Response response = collection.add(model);
+        verifyAddUser(response);
+    }
+
+    @Test
+    public void testAddUser_4() throws Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+                VdcQueryParametersBase.class,
+                new String[] { },
+                new Object[] { },
+                setUpDomains());
+        setUpAddUserExpectations("ADUSER@" + DOMAIN + ": allnames=" + NAMES[0]);
+        User model = new User();
+        model.setUserName(NAMES[0]);
+        Domain domain = new Domain();
+        domain.setId(new NGuid(DOMAIN.getBytes(), true).toString());
+        model.setDomain(domain);
+        Response response = collection.add(model);
+        verifyAddUser(response);
+    }
+
+    private List<String> setUpDomains() {
+        List<String> domains = new LinkedList<String>();
+        domains.add("some.domain");
+        domains.add(DOMAIN);
+        return domains;
+    }
+
+    private void verifyAddUser(Response response) {
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof User);
+        verifyModel((User) response.getEntity(), 0);
+    }
+
+    private void setUpAddUserExpectations(String query) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations("ADUSER@" + DOMAIN + ": allnames=" + NAMES[0],
+        setUpGetEntityExpectations(query,
                                    SearchType.AdUser,
                                    getAdUser(0));
         setUpCreationExpectations(VdcActionType.AddUser,
@@ -124,13 +189,6 @@ public class BackendUsersResourceTest
                                   new String[] { "UserId" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
-        User model = new User();
-        model.setUserName(NAMES[0]);
-
-        Response response = collection.add(model);
-        assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof User);
-        verifyModel((User) response.getEntity(), 0);
     }
 
     @Override
