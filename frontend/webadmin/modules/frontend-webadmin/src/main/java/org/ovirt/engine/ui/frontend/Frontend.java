@@ -470,7 +470,7 @@ public class Frontend {
                 failureEventHandler(messages);
             }
                      
-            FrontendMultipleActionAsyncResult f = new FrontendMultipleActionAsyncResult(actionType, prms, null, state);
+            FrontendMultipleActionAsyncResult f = new FrontendMultipleActionAsyncResult(actionType, prms, result, state);
             callback.Executed(f);
             }
         });

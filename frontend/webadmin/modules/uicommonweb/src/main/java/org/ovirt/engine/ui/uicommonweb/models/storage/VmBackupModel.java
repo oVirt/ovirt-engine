@@ -240,21 +240,21 @@ public class VmBackupModel extends ManageBackupModel
 			vmBackupModel.getWindow().StopProgress();
 			vmBackupModel.Cancel();
 			java.util.ArrayList<VdcReturnValueBase> retVals = (java.util.ArrayList<VdcReturnValueBase>)result.getReturnValue();
-			if (retVals != null && vmBackupModel.getSelectedItems().size() > retVals.size())
+			if (retVals != null && vmBackupModel.getSelectedItems().size() == retVals.size())
 			{
 				ConfirmationModel confirmModel = new ConfirmationModel();
 				vmBackupModel.setConfirmWindow(confirmModel);
 				confirmModel.setTitle("Import Virtual Machine(s)");
 				confirmModel.setHashName("import_virtual_machine");
 				String importedVms = "";
-				int i = 0;
+				int counter =0;
 				for (Object item : vmBackupModel.getSelectedItems())
 				{
 					VM vm = (VM)item;
-					if (Linq.FindVdcReturnValueByDescription(retVals, vm.getvm_name()) == null)
-					{
-						importedVms += vm.getvm_name() + (++i != vmBackupModel.getSelectedItems().size() ? ", " : "");
+					if(retVals.get(counter) != null && retVals.get(counter).getSucceeded()) {
+						importedVms += vm.getvm_name() + ", ";
 					}
+					counter ++;
 				}
 				StringHelper.trimEnd(importedVms.trim(), ',');
 				confirmModel.setMessage(StringFormat.format("Import process has begun for VM(s): %1$s.\nYou can check import status in the 'Events' tab of the specific destination storage domain, or in the main 'Events' tab", importedVms));

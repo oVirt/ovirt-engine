@@ -212,22 +212,22 @@ public class TemplateBackupModel extends ManageBackupModel
 			templateBackupModel.getWindow().StopProgress();
 			templateBackupModel.Cancel();
 			java.util.ArrayList<VdcReturnValueBase> retVals = (java.util.ArrayList<VdcReturnValueBase>)result.getReturnValue();
-			if (retVals != null && templateBackupModel.getSelectedItems().size() > retVals.size())
+			if (retVals != null && templateBackupModel.getSelectedItems().size() == retVals.size())
 			{
 				ConfirmationModel confirmModel = new ConfirmationModel();
 				templateBackupModel.setConfirmWindow(confirmModel);
 				confirmModel.setTitle("Import Template(s)");
 				confirmModel.setHashName("import_template");
 				String importedTemplates = "";
-				int i = 0;
+				int counter =0;
 				for (Object a : templateBackupModel.getSelectedItems())
 				{
 					java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> item = (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>)a;
 					VmTemplate template = item.getKey();
-					if (Linq.FindVdcReturnValueByDescription(retVals, template.getname()) == null)
-					{
-						importedTemplates += template.getname() + (++i != templateBackupModel.getSelectedItems().size() ? ", " : "");
+					if(retVals.get(counter) != null && retVals.get(counter).getSucceeded()) {
+						importedTemplates += template.getname() + ", ";
 					}
+					counter++;
 				}
 				StringHelper.trimEnd(importedTemplates.trim(), ',');
 				confirmModel.setMessage(StringFormat.format("Import process has begun for Template(s): %1$s.\nYou can check import status in the 'Events' tab of the specific destination storage domain, or in the main 'Events' tab", importedTemplates));
