@@ -7,6 +7,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.Storage;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -57,13 +59,7 @@ public class BackendStorageDomainsResource
 
     @Override
     public StorageDomains list() {
-        StorageDomains storageDomains = mapCollection(getBackendCollection(SearchType.StorageDomain));
-        for (StorageDomain domain : storageDomains.getStorageDomains()) {
-            if (domain.isSetStatus() && domain.getStatus().getState().equals(StorageDomainStatus.UNKNOWN.value())) {
-                domain.setStatus(null);
-            }
-        }
-        return storageDomains;
+        return mapCollection(getBackendCollection(SearchType.StorageDomain));
     }
 
     @Override
@@ -264,7 +260,12 @@ public class BackendStorageDomainsResource
         StorageDomains collection = new StorageDomains();
         for (storage_domains entity : entities) {
             StorageDomain storageDomain = map(entity);
-            storageDomain.setStatus(null); //status is only relevant in the context of a data-center, so we reset it to 'null'.
+            //status is only relevant in the context of a data-center, so it can either be 'Unattached' or null.
+            if (StorageDomainSharedStatus.Unattached.equals(entity.getstorage_domain_shared_status())) {
+                storageDomain.setStatus(StatusUtils.create(StorageDomainStatus.UNATTACHED));
+            } else {
+                storageDomain.setStatus(null);
+            }
             collection.getStorageDomains().add(addLinks(storageDomain, getLinksToExclude(storageDomain)));
         }
         return collection;

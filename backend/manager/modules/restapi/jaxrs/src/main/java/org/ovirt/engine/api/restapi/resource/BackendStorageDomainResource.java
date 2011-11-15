@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
@@ -54,7 +57,6 @@ public class BackendStorageDomainResource extends
     @Override
     public StorageDomain get() {
         StorageDomain storageDomain = performGet(VdcQueryType.GetStorageDomainById, new StorageDomainQueryParametersBase(guid));
-        storageDomain.setStatus(null); //status is only relevant in the context of a data-center, so we reset it to 'null'.
         return addLinks(storageDomain, getLinksToExclude(storageDomain));
     }
 
@@ -165,6 +167,18 @@ public class BackendStorageDomainResource extends
     protected StorageDomain map(storage_domains entity, StorageDomain template) {
         return parent.map(entity, template);
     }
+
+
+    @Override
+    protected StorageDomain populate(StorageDomain model, storage_domains entity) {
+        if (StorageDomainSharedStatus.Unattached.equals(entity.getstorage_domain_shared_status())) {
+            model.setStatus(StatusUtils.create(StorageDomainStatus.UNATTACHED));
+        } else {
+            model.setStatus(null);
+        }
+        return super.populate(model, entity);
+    }
+
 
     private List<LogicalUnit> getIncomingLuns(Storage storage) {
         //user may pass the LUNs under Storage, or Storage-->VolumeGroup; both are supported.
