@@ -81,13 +81,21 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
 
     @Override
     public void startProgress(String progressMessage) {
+        // Set dialog content to the progress indicator widget
         progressContent.setProgressMessage(progressMessage);
         asWidget().setContent(progressContent);
+
+        // Hide dialog buttons when starting progress
+        asWidget().setFooterPanelVisible(false);
     }
 
     @Override
     public void stopProgress() {
+        // Set dialog content to the actual popup content widget
         asWidget().setContent(popupContent);
+
+        // Show dialog buttons when stopping progress
+        asWidget().setFooterPanelVisible(true);
     }
 
     protected String getHashName() {

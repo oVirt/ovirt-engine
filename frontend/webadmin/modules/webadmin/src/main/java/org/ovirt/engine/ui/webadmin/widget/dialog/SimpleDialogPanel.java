@@ -73,4 +73,8 @@ public class SimpleDialogPanel extends DialogBox {
         footerButtonPanel.clear();
     }
 
+    public void setFooterPanelVisible(boolean visible) {
+        footerButtonPanel.setVisible(visible);
+    }
+
 }
