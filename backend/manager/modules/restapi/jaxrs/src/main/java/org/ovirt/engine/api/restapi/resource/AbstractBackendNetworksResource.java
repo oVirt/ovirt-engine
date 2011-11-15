@@ -36,7 +36,7 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
 
     public Response add(Network network) {
         validateParameters(network, getRequiredAddFields());
-        network entity = (network)map(network);
+        network entity = map(network);
         return performCreation(addAction,
                                getActionParameters(network, entity),
                                new NetworkIdResolver(network.getName()));

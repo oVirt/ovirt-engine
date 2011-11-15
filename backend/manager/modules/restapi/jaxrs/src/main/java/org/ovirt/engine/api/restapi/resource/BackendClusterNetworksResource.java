@@ -1,5 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.AssignedNetworkResource;
@@ -10,10 +14,13 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.NGuid;
 
 public class BackendClusterNetworksResource
     extends AbstractBackendNetworksResource
@@ -29,6 +36,19 @@ public class BackendClusterNetworksResource
     }
 
     @Override
+    public Response add(Network network) {
+        validateParameters(network, "name"); //right now, name is mandatory (future - id alone will be enough)
+        if (!network.isSetId()) {
+            network.setId(getNetworkId(network.getName(), clusterId));
+        }
+        network entity = map(network);
+        return performCreation(addAction,
+                               getActionParameters(network, entity),
+                               new NetworkIdResolver(network.getName()));
+    }
+
+
+    @Override
     protected VdcQueryParametersBase getQueryParameters() {
         return new VdsGroupQueryParamenters(asGuid(clusterId));
     }
@@ -40,7 +60,7 @@ public class BackendClusterNetworksResource
 
     @Override
     protected String[] getRequiredAddFields() {
-        return new String[] { "id", "name" };
+        return new String[] { "id" };
     }
 
     @Override
@@ -62,4 +82,16 @@ public class BackendClusterNetworksResource
     public AssignedNetworkResource getAssignedNetworkSubResource(String id) {
         return inject(new BackendClusterNetworkResource(id, this));
     }
+
+    private String getNetworkId(String networkName, String clusterId) {
+            NGuid dataCenterId = getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupById, new GetVdsGroupByIdParameters(asGuid(clusterId)), null).getstorage_pool_id();
+            GetAllNetworkQueryParamenters params = new GetAllNetworkQueryParamenters(asGuid(dataCenterId));
+            List<network> networks = getBackendCollection(VdcQueryType.GetAllNetworks, params);
+            for (network nw: networks) {
+                if (nw.getname().equals(networkName)) {
+                    return nw.getId().toString();
+                }
+            }
+            return null;
+        }
 }

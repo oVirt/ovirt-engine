@@ -11,6 +11,8 @@ import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
@@ -142,18 +144,22 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     @Test
-    public void testAddIncompleteParameters_noId() throws Exception {
-        Network model = new Network();
-        model.setName("name");
-        model.setDescription(DESCRIPTIONS[0]);
+    public void testAddNameSuppliedButNoId() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        control.replay();
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Network", "add", "id");
-        }
+        Network model = new Network();
+        model.setName("orcus");
+        model.setDescription(DESCRIPTIONS[0]);
+        setUpEntityQueryExpectations(1, null);
+        setUpGetClusterExpectations();
+        setUpGetNetworksByDataCenterExpectations(1, null);
+        VDSGroup vdsGroup = setUpVDSGroupExpectations(CLUSTER_ID);
+        setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
+                AttachNetworkToVdsGroupParameter.class,
+                new String[] { "VdsGroup" },
+                new Object[] { vdsGroup },
+                true,
+                true);
+        collection.add(model);
     }
 
     @Test
@@ -193,4 +199,26 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
                                      group);
         return group;
     }
+
+    protected void setUpGetNetworksByDataCenterExpectations(int times, Object failure) throws Exception {
+        while (times-- > 0) {
+            setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
+                                         GetAllNetworkQueryParamenters.class,
+                                         new String[] { "StoragePoolId" },
+                                         new Object[] { GUIDS[2] },
+                                         getEntityList(),
+                                         failure);
+        }
+    }
+
+    protected void setUpGetClusterExpectations() {
+            VDSGroup cluster = new VDSGroup();
+            cluster.setstorage_pool_id(GUIDS[2]);
+            setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupById,
+                    GetVdsGroupByIdParameters.class,
+                    new String[] { "VdsId" },
+                    new Object[] { CLUSTER_ID },
+                    cluster,
+                    null);
+        }
 }
