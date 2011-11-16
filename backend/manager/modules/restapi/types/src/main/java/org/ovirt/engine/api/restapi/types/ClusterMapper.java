@@ -164,6 +164,7 @@ public class ClusterMapper {
         switch (model) {
         case POWER_SAVING:       return VdsSelectionAlgorithm.PowerSave;
         case EVENLY_DISTRIBUTED: return VdsSelectionAlgorithm.EvenlyDistribute;
+        case NONE:               return VdsSelectionAlgorithm.None;
         default:                 return null;
         }
     }

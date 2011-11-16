@@ -17,7 +17,7 @@
 package org.ovirt.engine.api.model;
 
 public enum SchedulingPolicyType {
-    EVENLY_DISTRIBUTED, POWER_SAVING;
+    EVENLY_DISTRIBUTED, POWER_SAVING, NONE;
 
     public String value() {
         return name().toLowerCase();

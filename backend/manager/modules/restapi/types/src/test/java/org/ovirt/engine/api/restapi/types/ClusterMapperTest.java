@@ -3,10 +3,13 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.ErrorHandling;
 import org.ovirt.engine.api.model.MigrateOnError;
+import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
+import org.ovirt.engine.core.compat.Guid;
 
 public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VDSGroup, VDSGroup> {
 
@@ -20,6 +23,9 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         ErrorHandling errorHandling = new ErrorHandling();
         errorHandling.setOnError(MappingTestHelper.shuffle(MigrateOnError.class).value());
         model.setErrorHandling(errorHandling);
+        SchedulingPolicy policy = new SchedulingPolicy();
+        policy.setPolicy("power_saving");
+        model.setSchedulingPolicy(policy);
         return model;
     }
 
@@ -61,5 +67,19 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         cluster.setVersion(new org.ovirt.engine.api.model.Version(){{setMajor(3);setMinor(0);}});
         VDSGroup transform = getMapper().map(cluster, null);
         assertEquals(transform.getTransparentHugepages(), true);
+    }
+
+    @Test
+    public void testSchedulingPolicyNone() {
+        Cluster cluster = new Cluster();
+        SchedulingPolicy policy = new SchedulingPolicy();
+        policy.setPolicy("None");
+        cluster.setSchedulingPolicy(policy);
+        VDSGroup transform = getMapper().map(cluster, null);
+        assertNotNull(transform.getselection_algorithm());
+        assertEquals(transform.getselection_algorithm(), VdsSelectionAlgorithm.None);
+        transform.setID(Guid.Empty);
+        cluster = ClusterMapper.map(transform, cluster);
+        assertNull(cluster.getSchedulingPolicy().getPolicy());
     }
 }
