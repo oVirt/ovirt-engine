@@ -178,7 +178,11 @@ public class BackendAssignedPermissionsResource
             permission.setad_element_id(targetId);
             permission.setObjectId(getMapper(Permission.class, Guid.class).map(perm, null));
         } else {
-            permission.setad_element_id(asGuid(perm.getUser().getId()));
+            if (perm.getUser()!=null) {
+                permission.setad_element_id(asGuid(perm.getUser().getId()));
+            } else { //if user is null, group is not null; this was validated before
+                permission.setad_element_id(asGuid(perm.getGroup().getId()));
+            }
             permission.setObjectId(targetId);
             permission.setObjectType(objectType);
         }
