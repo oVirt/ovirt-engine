@@ -14,47 +14,59 @@ EAR_SRC_DIR=ear/target/engine
 PY_SITE_PKGS:=$(shell python -c "from distutils.sysconfig import get_python_lib as f;print f()")
 APP_VERSION:=$(shell cat pom.xml | grep '<engine.version>' | awk -F\> '{print $$2}' | awk -F\< '{print $$1}')
 RPM_VERSION:=$(shell echo $(APP_VERSION) | sed "s/-/_/")
+
 #RPM_RELEASE:=$(shell echo $(APP_VERSION) | awk -F\. '{print $$3"%{?dist}"}')
 SPEC_FILE_IN=packaging/fedora/ovirt-engine.spec.in
 SPEC_FILE=ovirt-engine.spec
 RPMBUILD=$(shell bash -c "pwd -P")/rpmbuild
-TARBALL=ovirt-engine-$(RPM_VERSION)-$(RPM_RELEASE).tar.gz
-CURR_DIR=$(shell bach -c "pwd -P")
-all: build
+SRCRPMBUILD=$(shell bash -c "pwd -P")/srcrpmbuild
+OUTPUT_DIR=$(shell bash -c "pwd -P")/output
+TARBALL=ovirt-engine-$(RPM_VERSION).tar.gz
+SRPM=$(OUTPUT_DIR)/ovirt-engine-$(RPM_VERSION)*.src.rpm
+ARCH=$(shell uname -i)
+BUILD_FILE=$(shell bash -c "pwd -P")/build_mvn
 
-build:
+CURR_DIR=$(shell bach -c "pwd -P")
+all: build_mvn
+
+build_mvn:
 	$(MVN) install $(BUILD_FLAGS) -D skipTests
+	touch $(BUILD_FILE)
 
 clean:
 	$(MVN) clean
-	rm -rf $(RPMBUILD) $(SPEC_FILE)
+	rm -rf $(RPMBUILD) $(SPEC_FILE) $(OUTPUT_DIR) $(SRCRPMBUILD) $(BUILD_FILE)
 
 test:
 	$(MVN) install $(BUILD_FLAGS)
 
-install: create_dirs install_ear install_quartz install_tools install_config \
-		install_log_collector install_iso_uploader install_sysprep \
-		install_notification_service install_db_scripts install_misc
+install: build_mvn create_dirs install_ear install_quartz install_tools \
+		install_config install_log_collector install_iso_uploader \
+		install_sysprep install_notification_service install_db_scripts \
+		install_misc
 
-# TODO: unmark and veirfy that "make srpm" once files in the front has been aligned.
-#tarball: $(TARBALL)
-#$(TARBALL):
-#	tar zcf $(TARBALL) `git ls-files | sed -e "s/\s/_/g"`
+tarball: $(TARBALL)
+$(TARBALL):
+	tar zcf $(TARBALL) `git ls-files`
 
-#srpm: tarball
-#	sed 's/^Version:.*/Version: $(RPM_VERSION)/;s/^Release:.*/Release: $(RPM_RELEASE)/' $(SPEC_FILE_IN) > $(SPEC_FILE)
-#	mkdir -p $(RPMBUILD)/{RPMS,SRPMS,SOURCES,BUILD}
-#	rpmbuild -bs --define="_topdir $(RPPBUILD)" --define="_sourcedir ." $(SPEC_FILE)
+srpm: $(SRPM)
 
-rpm:
-	rm -rf $(RPMBUILD)
+$(SRPM): tarball $(SPEC_FILE_IN)
+	mkdir -p $(OUTPUT_DIR)
 	sed 's/^Version:.*/Version: $(RPM_VERSION)/' $(SPEC_FILE_IN) > $(SPEC_FILE)
+	mkdir -p $(SRCRPMBUILD)/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
+	cp -f $(SPEC_FILE) $(SRCRPMBUILD)/SPECS/
+	cp -f  $(TARBALL) $(SRCRPMBUILD)/SOURCES/
+	rpmbuild -bs --define="_topdir $(SRCRPMBUILD)" --define="_sourcedir ." $(SPEC_FILE)
+	mv $(SRCRPMBUILD)/SRPMS/*.rpm $(OUTPUT_DIR)
+	rm -rf $(SRCRPMBUILD) $(SPEC_FILE) $(TARBALL)
+
+rpm: $(SRPM)
+	rm -rf $(RPMBUILD)
 	mkdir -p $(RPMBUILD)/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
-	cp -f $(SPEC_FILE) $(RPMBUILD)/SPECS/
-	rpmbuild -bb --define="_topdir $(RPMBUILD)" \
-	--define="_sourcedir ." $(SPEC_FILE) \
-	 $(RPMBUILD)/SPECS/$(SPEC_FILE)
-	rm -f ovirt-engine.spec
+	rpmbuild  --define="_topdir $(RPMBUILD)" --rebuild  $<
+	mv $(RPMBUILD)/RPMS/$(ARCH)/*.rpm $(OUTPUT_DIR)
+	rm -rf $(RPMBUILD)
 
 create_dirs:
 	@echo "*** Creating Directories"

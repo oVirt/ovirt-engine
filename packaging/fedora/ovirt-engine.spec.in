@@ -4,6 +4,7 @@
 Name: ovirt-engine
 Version: $version
 Release: 0%{?dist}
+Source: %{name}-%{version}.tar.gz
 License: ASL 2.0
 Summary: Management server for Open Virtualization
 Group: Virtualization/Management
@@ -155,12 +156,13 @@ Requires: %{name}-tools-common = %{version}-%{release}
 The configuration tool for Open Virtualization Manager
 
 %prep
+%setup -c -q
 
 %build
 
 %install
 rm -rf %{buildroot}/*
-make -C ../../ PREFIX=%{buildroot}/ install
+make PREFIX=%{buildroot}/ install
 
 
 %preun
