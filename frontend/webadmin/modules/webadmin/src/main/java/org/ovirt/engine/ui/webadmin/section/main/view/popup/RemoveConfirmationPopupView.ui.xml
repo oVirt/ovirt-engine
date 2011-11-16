@@ -7,13 +7,14 @@
 		.items {
 			margin-top: 20px;
 			line-height: 20px;
-			height: 85%;
+			height: 60%;
 			overflow: auto;
 		}
 		
 		.noteLabel {
 			position: absolute;
-			bottom: 10px;
+			margin-top: 20px;
+			line-height: 20px;
 			color: red;
 			font-size: 12px;
 		}

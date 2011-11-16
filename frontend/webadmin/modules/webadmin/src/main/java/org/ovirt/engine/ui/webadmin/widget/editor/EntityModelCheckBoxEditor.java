@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.editor;
 
+import java.util.List;
+
 import org.ovirt.engine.ui.webadmin.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.webadmin.widget.Align;
 
@@ -8,6 +10,7 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Float;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.user.client.ui.CheckBox;
 
@@ -49,9 +52,20 @@ public class EntityModelCheckBoxEditor extends AbstractValidatedWidgetWithLabel<
 
     @Override
     protected void applyCommonValidationStyles() {
-        // Suppress check box styling, as different browsers behave
-        // differently when styling check box input elements
+        super.applyCommonValidationStyles();
+        getValidatedWidgetStyle().setPadding(5, Unit.PX);
+    }
+
+    @Override
+    public void markAsValid() {
+        super.markAsValid();
         getValidatedWidgetStyle().setBorderStyle(BorderStyle.NONE);
+    }
+
+    @Override
+    public void markAsInvalid(List<String> validationHints) {
+        super.markAsInvalid(validationHints);
+        getValidatedWidgetStyle().setBorderStyle(BorderStyle.SOLID);
     }
 
     @Override
