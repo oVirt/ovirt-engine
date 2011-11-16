@@ -84,7 +84,7 @@
       </filter>
    </appender>
 
-<!-- ============================== -->
+   <!-- ============================== -->
    <!-- PublicAPI Appender                  -->
    <!-- ============================== -->
 
@@ -314,84 +314,89 @@
 
    <!--TOP configuration for all REVM categories -->
    <category name="org.ovirt.engine" additivity="false">
-	<priority value="INFO"/>
-	<appender-ref ref="ENGINE_LOG"/>
+      <priority value="INFO"/>
+      <appender-ref ref="ENGINE_LOG"/>
    </category>
 
    <!--Buisness Logic -->
    <category name="org.ovirt.engine.core.bll">
-     <priority value="INFO"/>
+      <priority value="INFO"/>
    </category>
 
    <!--Vdsbroker -->
    <category name="org.ovirt.engine.core.vdsbroker">
-     <priority value="INFO"/>
+      <priority value="INFO"/>
    </category>
 
    <!--utils -->
    <category name="org.ovirt.engine.core.utils">
-     <priority value="INFO"/>
+      <priority value="INFO"/>
    </category>
 
    <!--Search backend -->
    <category name="org.ovirt.engine.core.searchbackend">
-     <priority value="INFO"/>
+      <priority value="INFO"/>
    </category>
 
    <!--Common -->
    <category name="org.ovirt.engine.core.common">
-     <priority value="INFO"/>
+      <priority value="INFO"/>
    </category>
 
    <!--Compact -->
    <category name="org.ovirt.engine.core.compact">
-     <priority value="INFO"/>
+      <priority value="INFO"/>
    </category>
 
    <!--Encrypt utils-->
    <category name="org.ovirt.engine.core.engineencryptutils">
-     <priority value="INFO"/>
+      <priority value="INFO"/>
    </category>
 
    <!--REST API-->
    <category name="org.ovirt.engine.api.restapi">
-     <priority value="INFO"/>
+      <priority value="INFO"/>
    </category>
 
    <!--Frontend-->
    <category name="org.ovirt.engine.ui" additivity="false">
-     <priority value="INFO"/>
-     <appender-ref ref="FRONTEND_LOG"/>
+      <priority value="INFO"/>
+      <appender-ref ref="FRONTEND_LOG"/>
    </category>
 
    <!--Postgres causes lots of verboe messages in INFO level:
         "Added default SqlReturnResultSet parameter named #result-set-1"-->
    <category name="org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect$PostgresJdbcTemplate">
-        <priority value="WARN"/>
+      <priority value="WARN"/>
    </category>
 
    <!-- ======================= -->
    <!-- Third party categories 	-->
    <!-- ======================= -->
-   
+
    <category name="org.apache.xmlrpc" additivity="false">
-	<priority value="WARN"/>
-	<appender-ref ref="ENGINE_LOG"/>
+      <priority value="WARN"/>
+      <appender-ref ref="ENGINE_LOG"/>
    </category>
-   
+
    <category name="org.apache.sshd" additivity="false">
-	<priority value="WARN"/>
-	<appender-ref ref="ENGINE_LOG"/>
+      <priority value="WARN"/>
+      <appender-ref ref="ENGINE_LOG"/>
    </category>
 
    <category name="org.apache.commons.httpclient" additivity="false">
-        <priority value="WARN" />
-        <appender-ref ref="ENGINE_LOG" />
+      <priority value="WARN" />
+      <appender-ref ref="ENGINE_LOG" />
    </category>
 
    <category name="org.springframework.ldap" additivity="false">
-        <priority value="WARN" />
-        <appender-ref ref="ENGINE_LOG" />
+      <priority value="WARN" />
+      <appender-ref ref="ENGINE_LOG" />
+   </category>
+
+   <category name="org.apache.mina" additivity="false">
+      <priority value="WARN"/>
+      <appender-ref ref="ENGINE_LOG"/>
    </category>
 
    <!-- ======================= -->
