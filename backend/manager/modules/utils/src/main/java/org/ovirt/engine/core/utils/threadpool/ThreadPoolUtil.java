@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.utils.threadpool;
 
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
@@ -13,11 +15,16 @@ public class ThreadPoolUtil {
     private static class InternalThreadExecutor extends ThreadPoolExecutor {
 
         /**
-         * The pool which will be created are equal to calling Executors.newCachedThreadPool()
+         * The pool which will be created with corePoolSize equal to ConfigValues.DefaultMinThreadPoolSize
+         * maximumPoolSize equal to DefaultMaxThreadPoolSize maximum number of waiting tasks will be
+         * ConfigValues.DefaultMaxSizeOfWaitingTasks
          */
         public InternalThreadExecutor() {
-            super(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
-
+            super(Config.<Integer> GetValue(ConfigValues.DefaultMinThreadPoolSize),
+                    Config.<Integer> GetValue(ConfigValues.DefaultMaxThreadPoolSize),
+                    60L,
+                    TimeUnit.SECONDS,
+                    new ArrayBlockingQueue<Runnable>(Config.<Integer> GetValue(ConfigValues.DefaultMaxSizeOfWaitingTasks)));
         }
 
         @Override

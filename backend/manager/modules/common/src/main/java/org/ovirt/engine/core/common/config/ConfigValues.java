@@ -1414,7 +1414,28 @@ public enum ConfigValues {
     @DefaultValueAttribute("500")
     VdsLocalDisksCriticallyLowFreeSpace(322),
 
-    Invalid(65535);
+    /**
+     * The minimal size of the internal thread pool. Minimal number of threads in pool
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    DefaultMinThreadPoolSize(323),
+
+    /**
+     * The size of the internal thread pool
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("200")
+    DefaultMaxThreadPoolSize(324),
+
+    /**
+     * The max number of waiting tasks for thread
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1500")
+    DefaultMaxSizeOfWaitingTasks(325),
+
+   Invalid(65535);
 
     private int intValue;
     private static java.util.HashMap<Integer, ConfigValues> mappings;
