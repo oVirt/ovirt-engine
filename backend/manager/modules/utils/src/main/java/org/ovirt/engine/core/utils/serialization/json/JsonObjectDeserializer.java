@@ -8,6 +8,8 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.Deserializer;
@@ -23,10 +25,11 @@ public class JsonObjectDeserializer implements Deserializer {
         if (source == null) {
             return null;
         }
-
         ObjectMapper mapper = new ObjectMapper();
         mapper.getDeserializationConfig().addMixInAnnotations(NGuid.class, JsonNGuidMixIn.class);
         mapper.getDeserializationConfig().addMixInAnnotations(Guid.class, JsonNGuidMixIn.class);
+        mapper.getSerializationConfig().addMixInAnnotations(VdcActionParametersBase.class, JsonVdcActionParametersBaseMixIn.class);
+        mapper.getSerializationConfig().addMixInAnnotations(IVdcQueryable.class, JsonIVdcQueryableMixIn.class);
         mapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.enableDefaultTyping();
         return readJsonString(source, type, mapper);
