@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -276,7 +277,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         // drive to be first (important for IDE to be index 0) !
         // foreach (DiskImage disk in mVm.DiskMap.Values.OrderBy(a =>
         // int.Parse(a.internal_drive_mapping)).OrderByDescending(a => a.boot))
-        java.util.List<DiskImage> diskImages = new java.util.ArrayList<DiskImage>(mVm.getDiskMap().values());
+        List<DiskImage> diskImages = new ArrayList<DiskImage>(mVm.getDiskMap().values());
         Collections.sort(diskImages, new DiskImageByDriveMappingComparator());
         Collections.sort(diskImages, Collections.reverseOrder(new DiskImageByBootComparator()));
         for (DiskImage disk : diskImages)
@@ -293,13 +294,13 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
             switch (disk.getdisk_interface()) {
             case IDE:
                 drive.put("if", "ide");
-                drive.put("index", (new Integer(ideIndexSlots[ideCount])).toString());
+                drive.put("index", String.valueOf(ideIndexSlots[ideCount]));
                 ideCount++;
                 break;
             case VirtIO:
                 drive.put("if", "virtio");
-                drive.put("bus", (new Integer(pciCount)).toString());
-                drive.put("boot", (new Boolean(disk.getboot())).toString().toLowerCase());
+                drive.put("index", String.valueOf(pciCount));
+                drive.put("boot", String.valueOf(disk.getboot()).toLowerCase());
                 pciCount++;
                 break;
             default:
