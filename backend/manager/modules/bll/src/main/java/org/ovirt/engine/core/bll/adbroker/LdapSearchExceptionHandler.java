@@ -53,7 +53,9 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
     }
 
     private void handleGeneralException(LdapSearchExceptionHandlingResponse response, Exception e) {
-        response.setTranslatedException(e).setServerScore(Score.HIGH);
+        response.setTranslatedException(e)
+                .setTryNextServer(true)
+                .setServerScore(Score.LOW);
     }
 
     private void handleSaslException(LdapSearchExceptionHandlingResponse response, Throwable cause) {

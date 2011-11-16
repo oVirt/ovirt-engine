@@ -8,6 +8,7 @@ import javax.naming.directory.Attributes;
 
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 
 public class GetRootDSETask implements Callable<Boolean> {
 
@@ -63,9 +64,9 @@ public class GetRootDSETask implements Callable<Boolean> {
                                 baseDNExist = true;
                             }
                         } else {
-                            log.warnFormat("Couldn't deduce provider type for domain {0}. " +
-                                    "Proceeding to next LDAP server if exists", domainName);
-                            baseDNExist = false;
+                            log.errorFormat("Couldn't deduce provider type for domain {0}",domainName);
+                            throw new EngineDirectoryServiceException(AuthenticationResult.CONNECTION_ERROR,
+                                    "Failed to get rootDSE record for server " + ldapURI);
                         }
                     }
                 } else {
