@@ -19,6 +19,8 @@ public interface Enums extends ConstantsWithLookup {
 
     String StorageDomainStatus___Locked();
 
+    String StorageDomainStatus___Maintenance();
+
     String StorageDomainSharedStatus___Active();
 
     String StorageDomainSharedStatus___InActive();
