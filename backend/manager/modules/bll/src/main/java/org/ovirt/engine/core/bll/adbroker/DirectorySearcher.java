@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.LogCompat;
@@ -78,10 +79,16 @@ public class DirectorySearcher {
         }
 
         List<URI> ldapServerURIs = domain.getLdapServers();
+        if (log.isDebugEnabled()) {
+            log.debug("Ldap server list ordered by highest score: " + StringUtils.join(ldapServerURIs, ", "));
+        }
         List response = null;
 
         for (Iterator<URI> iterator = ldapServerURIs.iterator(); iterator.hasNext();) {
             URI ldapURI = iterator.next();
+            if (log.isDebugEnabled()) {
+                log.debug("Using Ldap server " + ldapURI);
+            }
             try {
                 setException(null);
                 final GetRootDSETask getRootDSETask = new GetRootDSETask(this, domainName, ldapURI);
@@ -114,6 +121,12 @@ public class DirectorySearcher {
                 LdapSearchExceptionHandlingResponse handlingResponse = handler.handle(exception);
                 setException(handlingResponse.getTranslatedException());
                 domain.scoreLdapServer(ldapURI, handlingResponse.getServerScore());
+                if (log.isDebugEnabled()) {
+                    log.debugFormat("Failed ldap search server {0} due to {1}. We {2} try the next server",
+                            ldapURI,
+                            handlingResponse.getTranslatedException(),
+                            handlingResponse.isTryNextServer() ? "should" : "should not");
+                }
                 if (!handlingResponse.isTryNextServer()) {
                     return Collections.emptyList();
                 }
