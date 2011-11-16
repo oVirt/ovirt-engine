@@ -20,6 +20,7 @@ import org.ovirt.engine.api.resource.StorageDomainsResource;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
+import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -341,13 +342,17 @@ public class BackendStorageDomainsResource
 
     @Override
     protected void performRemove(String id) {
-        RemoveStorageDomainParameters parameters = new RemoveStorageDomainParameters(asGuidOr404(id));
-        if (storageDomain!=null) {
+        if (storageDomain.isSetDestroy() && storageDomain.isDestroy()) {
+            StorageDomainParametersBase parameters = new StorageDomainParametersBase(asGuidOr404(id));
+            parameters.setVdsId(getHostId(storageDomain));
+            performAction(VdcActionType.ForceRemoveStorageDomain, parameters);
+        } else {
+            RemoveStorageDomainParameters parameters = new RemoveStorageDomainParameters(asGuidOr404(id));
             parameters.setVdsId(getHostId(storageDomain));
             if (storageDomain.isSetFormat()) {
                 parameters.setDoFormat(storageDomain.isFormat());
             }
+            performAction(VdcActionType.RemoveStorageDomain, parameters);
         }
-        performAction(VdcActionType.RemoveStorageDomain, parameters);
     }
 }

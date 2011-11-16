@@ -1459,6 +1459,7 @@
           <xs:element ref="host" minOccurs="0"/>
           <!-- format is only relevant at deletion time -->
           <xs:element name="format" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="destroy" type="xs:boolean" minOccurs="0"/>
           <xs:element name="available" type="xs:long" minOccurs="0"/>
           <xs:element name="used" type="xs:long" minOccurs="0"/>
           <xs:element name="committed" type="xs:long" minOccurs="0"/>

@@ -20,6 +20,7 @@ import org.ovirt.engine.api.model.VolumeGroup;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
+import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -126,6 +127,23 @@ public class BackendStorageDomainsResourceTest
         storageDomain.setHost(new Host());
         storageDomain.getHost().setId(GUIDS[1].toString());
         storageDomain.setFormat(true);
+        collection.remove(GUIDS[0].toString(), storageDomain);
+    }
+
+    @Test
+    public void testRemoveWithDestroy() throws Exception {
+        setUpGetEntityExpectations();
+        setUriInfo(setUpActionExpectations(VdcActionType.ForceRemoveStorageDomain,
+                                           StorageDomainParametersBase.class,
+                                           new String[] { "StorageDomainId", "VdsId"},
+                                           new Object[] { GUIDS[0], GUIDS[1]},
+                                           true,
+                                           true));
+
+        StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setHost(new Host());
+        storageDomain.getHost().setId(GUIDS[1].toString());
+        storageDomain.setDestroy(true);
         collection.remove(GUIDS[0].toString(), storageDomain);
     }
 
