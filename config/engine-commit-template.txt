@@ -5,5 +5,3 @@ https://bugzilla.redhat.com/XXXXXX
 Longer description using lines' length under 72 chars.
 
 With multiple paragraphs if necessary.
-
-Acked-by: FirstName LastName <email>
