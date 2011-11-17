@@ -74,7 +74,16 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             }
 
             log.infoFormat("Before Installation {0}", Thread.currentThread().getName());
-            setSucceeded(_vdsInstaller.Install());
+            boolean installResult = false;
+            try {
+                installResult = _vdsInstaller.Install();
+            } catch (Exception e) {
+                log.errorFormat("Host installation failed for host {0}, {1}.",
+                        getVds().getvds_id(),
+                        getVds().getvds_name(),
+                        e);
+            }
+            setSucceeded(installResult);
             log.infoFormat("After Installation {0}", Thread.currentThread().getName());
             if (!getSucceeded()) {
                 AddCustomValue("FailedInstallMessage", getErrorMessage(_vdsInstaller.getErrorMessage()));
