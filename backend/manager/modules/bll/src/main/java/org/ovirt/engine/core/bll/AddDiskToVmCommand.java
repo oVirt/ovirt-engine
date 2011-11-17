@@ -271,7 +271,7 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
         AddImageFromScratchParameters parameters = new AddImageFromScratchParameters(Guid.Empty, getVmId(),
                 getParameters().getDiskInfo());
         parameters.setStorageDomainId(getStorageDomainId().getValue());
-        parameters.setVmSnapshotId(Guid.NewGuid());
+        parameters.setVmSnapshotId(calculateSnapshotId());
         parameters.setParentCommand(VdcActionType.AddDiskToVm);
         parameters.setEntityId(getParameters().getEntityId());
         getParameters().getImagesParameters().add(parameters);
@@ -285,6 +285,25 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
         getReturnValue().setFault(tmpRetValue.getFault());
 
         setSucceeded(tmpRetValue.getSucceeded());
+    }
+
+    /**
+     * Calculate the correct snapshot id: If the VM already has a disk then take from it, otherwise create a new one.
+     *
+     * @return The snapshot id from a disk or new id.
+     */
+    private Guid calculateSnapshotId() {
+        final Map<String, DiskImage> disks = getVm().getDiskMap();
+        if (disks == null || disks.isEmpty()) {
+            return Guid.NewGuid();
+        }
+
+        final DiskImage vmDisk = disks.values().iterator().next();
+        if (vmDisk.getvm_snapshot_id() == null) {
+            return Guid.NewGuid();
+        }
+
+        return new Guid(vmDisk.getvm_snapshot_id().getUuid());
     }
 
     @Override
