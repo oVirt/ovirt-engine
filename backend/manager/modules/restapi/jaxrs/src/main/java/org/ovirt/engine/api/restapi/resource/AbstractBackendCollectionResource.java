@@ -88,7 +88,6 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         }
 
         R model = resolveCreated(createResult, entityResolver);
-
         Response response = null;
         if (createResult.getHasAsyncTasks()) {
             if (expectBlocking()) {
@@ -97,11 +96,19 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
                 model = resolveCreated(createResult, entityResolver);
                 response = Response.created(URI.create(model.getHref())).entity(model).build();
             } else {
-                handleAsynchrony(createResult, model);
-                response = Response.status(ACCEPTED_STATUS).entity(model).build();
+                if (model==null) {
+                    response = Response.status(ACCEPTED_STATUS).build();
+                } else {
+                    handleAsynchrony(createResult, model);
+                    response = Response.status(ACCEPTED_STATUS).entity(model).build();
+                }
             }
         } else {
-            response = Response.created(URI.create(model.getHref())).entity(model).build();
+            if (model==null) {
+                response = Response.status(ACCEPTED_STATUS).build();
+            } else {
+                response = Response.created(URI.create(model.getHref())).entity(model).build();
+            }
         }
         return response;
     }
