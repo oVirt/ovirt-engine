@@ -1,186 +1,253 @@
 package org.ovirt.engine.ui.uicommonweb.models.events;
+
 import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.interfaces.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.NotImplementedException;
+import org.ovirt.engine.core.compat.ObservableCollection;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.ITimer;
+import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.ProvideTickEvent;
+import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 @SuppressWarnings("unused")
 public class EventListModel extends SearchableListModel
 {
-	private ITimer timer;
+    private ITimer timer;
 
+    private UICommand privateRefreshCommand;
 
-	private UICommand privateRefreshCommand;
-	public UICommand getRefreshCommand()
-	{
-		return privateRefreshCommand;
-	}
-	private void setRefreshCommand(UICommand value)
-	{
-		privateRefreshCommand = value;
-	}
+    public UICommand getRefreshCommand()
+    {
+        return privateRefreshCommand;
+    }
 
+    private void setRefreshCommand(UICommand value)
+    {
+        privateRefreshCommand = value;
+    }
 
+    private AuditLog lastEvent;
 
-	private AuditLog lastEvent;
-	public AuditLog getLastEvent()
-	{
-		return lastEvent;
-	}
-	private void setLastEvent(AuditLog value)
-	{
-		if (lastEvent != value)
-		{
-			lastEvent = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("LastEvent"));
-		}
-	}
+    public AuditLog getLastEvent()
+    {
+        return lastEvent;
+    }
 
-	private boolean isAdvancedView;
-	public boolean getIsAdvancedView()
-	{
-		return isAdvancedView;
-	}
-	public void setIsAdvancedView(boolean value)
-	{
-		if (isAdvancedView != value)
-		{
-			isAdvancedView = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("IsAdvancedView"));
-		}
-	}
+    private void setLastEvent(AuditLog value)
+    {
+        if (lastEvent != value)
+        {
+            lastEvent = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("LastEvent"));
+        }
+    }
 
+    private boolean isAdvancedView;
 
-	public EventListModel()
-	{
-		setTitle("Events");
+    public boolean getIsAdvancedView()
+    {
+        return isAdvancedView;
+    }
 
-		setRefreshCommand(new UICommand("Refresh", this));
+    public void setIsAdvancedView(boolean value)
+    {
+        if (isAdvancedView != value)
+        {
+            isAdvancedView = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsAdvancedView"));
+        }
+    }
 
-		setDefaultSearchString("Events:");
-		setSearchString(getDefaultSearchString());
+    public EventListModel()
+    {
+        setTitle("Events");
 
-		getSearchNextPageCommand().setIsAvailable(true);
-		getSearchPreviousPageCommand().setIsAvailable(true);
+        setRefreshCommand(new UICommand("Refresh", this));
 
-		setIsTimerDisabled(true);
+        setDefaultSearchString("Events:");
+        setSearchString(getDefaultSearchString());
 
-		timer = (ITimer)TypeResolver.getInstance().Resolve(ITimer.class);
-		timer.setInterval(getConfigurator().getPollingTimerInterval());
-		timer.getTickEvent().addListener(this);
-	}
+        getSearchNextPageCommand().setIsAvailable(true);
+        getSearchPreviousPageCommand().setIsAvailable(true);
 
-	@Override
-	public boolean IsSearchStringMatch(String searchString)
-	{
-		return searchString.trim().toLowerCase().startsWith("event");
-	}
-	
-	@Override
-	protected void SyncSearch()
-	{
-		super.SyncSearch();
+        setIsTimerDisabled(true);
 
-		setItems(new ObservableCollection<AuditLog>());
-		setLastEvent(null);
-		timer.start();
-	}
+        timer = (ITimer) TypeResolver.getInstance().Resolve(ITimer.class);
+        timer.setInterval(getConfigurator().getPollingTimerInterval());
+        timer.getTickEvent().addListener(this);
+    }
 
-	@Override
-	protected void AsyncSearch()
-	{
-		super.AsyncSearch();
-		SyncSearch();
-	}
+    @Override
+    public boolean IsSearchStringMatch(String searchString)
+    {
+        return searchString.trim().toLowerCase().startsWith("event");
+    }
 
-	private void Refresh()
-	{
-		AsyncQuery _asyncQuery = new AsyncQuery();
-		_asyncQuery.setModel(this);
-		_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object ReturnValue)
-		{
-			EventListModel eventListModel = (EventListModel)model;
-			java.util.ArrayList<AuditLog> list = (java.util.ArrayList<AuditLog>)((VdcQueryReturnValue)ReturnValue).getReturnValue();
-			eventListModel.UpdateItems(list);
-		}};
+    @Override
+    protected void SyncSearch()
+    {
+        super.SyncSearch();
 
-		SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.AuditLog);
-		tempVar.setMaxCount(getSearchPageSize());
-		tempVar.setSearchFrom(getLastEvent() != null ? getLastEvent().getaudit_log_id() : 0);
-		tempVar.setRefresh(false);
-		SearchParameters searchParameters = tempVar;
+        setItems(new ObservableCollection<AuditLog>());
+        setLastEvent(null);
+        timer.start();
+    }
 
-		  Frontend.RunQuery(VdcQueryType.Search, searchParameters, _asyncQuery);
-	}
+    @Override
+    protected void AsyncSearch()
+    {
+        super.AsyncSearch();
+        SyncSearch();
+    }
 
-	@Override
-	public void eventRaised(Event ev, Object sender, EventArgs args)
-	{
-		//base.eventRaised(ev, sender, args);
+    private void Refresh()
+    {
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            public void OnSuccess(Object model, Object ReturnValue)
+            {
+                EventListModel eventListModel = (EventListModel) model;
+                java.util.ArrayList<AuditLog> list =
+                        (java.util.ArrayList<AuditLog>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                eventListModel.UpdateItems(list);
+            }
+        };
 
-		if (ev.equals(ProvideTickEvent.Definition))
-		{
-			getRefreshCommand().Execute();
-		}
-	}
+        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.AuditLog);
+        tempVar.setMaxCount(getSearchPageSize());
+        tempVar.setSearchFrom(getLastEvent() != null ? getLastEvent().getaudit_log_id() : 0);
+        tempVar.setRefresh(false);
+        SearchParameters searchParameters = tempVar;
 
-	@Override
-	public void ExecuteCommand(UICommand command)
-	{
-		super.ExecuteCommand(command);
+        Frontend.RunQuery(VdcQueryType.Search, searchParameters, _asyncQuery);
+    }
 
-		if (command == getRefreshCommand())
-		{
-			Refresh();
-			UpdatePagingAvailability();
-		}
-	}
+    @Override
+    public void eventRaised(Event ev, Object sender, EventArgs args)
+    {
+        // base.eventRaised(ev, sender, args);
 
-	@Override
-	public void EnsureAsyncSearchStopped()
-	{
-		super.EnsureAsyncSearchStopped();
+        if (ev.equals(ProvideTickEvent.Definition))
+        {
+            getRefreshCommand().Execute();
+        }
+    }
 
-		timer.stop();
-	}
+    @Override
+    public void ExecuteCommand(UICommand command)
+    {
+        super.ExecuteCommand(command);
 
-	private void UpdateItems(java.util.ArrayList<AuditLog> source)
-	{
-		if (getItems() == null)
-		{
-			return;
-		}
+        if (command == getRefreshCommand())
+        {
+            Refresh();
+            UpdatePagingAvailability();
+        }
+    }
 
-		java.util.List<AuditLog> list = (java.util.List<AuditLog>)getItems();
+    @Override
+    public void EnsureAsyncSearchStopped()
+    {
+        super.EnsureAsyncSearchStopped();
 
-		Collections.sort(source, new Linq.AuditLogComparer());
+        timer.stop();
+    }
 
-		for (AuditLog item : source)
-		{
-			if (list.size() == getSearchPageSize())
-			{
-				list.remove(list.size() - 1);
-			}
+    private void UpdateItems(java.util.ArrayList<AuditLog> source)
+    {
+        if (getItems() == null)
+        {
+            return;
+        }
 
-			list.add(0, item);
-		}
-		getItemsChangedEvent().raise(this, EventArgs.Empty);
-		setLastEvent(Linq.FirstOrDefault(list));
-	}
+        java.util.List<AuditLog> list = (java.util.List<AuditLog>) getItems();
+
+        Collections.sort(source, new Linq.AuditLogComparer());
+
+        for (AuditLog item : source)
+        {
+            if (list.size() == getSearchPageSize())
+            {
+                list.remove(list.size() - 1);
+            }
+
+            list.add(0, item);
+        }
+        getItemsChangedEvent().raise(this, EventArgs.Empty);
+        setLastEvent(Linq.FirstOrDefault(list));
+    }
+
+    private boolean entitiesChanged = true;
+
+    @Override
+    protected void EntityChanging(Object newValue, Object oldValue) {
+        super.EntityChanging(newValue, oldValue);
+        entitiesChanged = calculateEntitiesChanged(newValue, oldValue);
+    }
+
+    /**
+     * Returns true if and only if the two entities: <li>are not null <li>implement the IVdcQueryable.getQueryableId()
+     * method <li>the old.getQueryableId().equals(new.getQueryableId())
+     * 
+     */
+    private boolean calculateEntitiesChanged(Object newValue, Object oldValue) {
+        if (newValue == null || oldValue == null) {
+            return true;
+        }
+
+        if (!(newValue instanceof IVdcQueryable && oldValue instanceof IVdcQueryable)) {
+            return true;
+        }
+
+        Object oldValueQueriable = null;
+        Object newValueQueriable = null;
+        try {
+            oldValueQueriable = ((IVdcQueryable) oldValue).getQueryableId();
+            newValueQueriable = ((IVdcQueryable) newValue).getQueryableId();
+        } catch (NotImplementedException e) {
+            return true;
+        }
+
+        if (oldValueQueriable == null || newValueQueriable == null) {
+            return true;
+        }
+
+        return !oldValueQueriable.equals(newValueQueriable);
+    }
+
+    /**
+     * Runs the onEntityContentChanged() only when the calculateEntitiesChanged(new, old) returns true
+     * 
+     */
+    @Override
+    protected void OnEntityChanged() {
+        super.OnEntityChanged();
+
+        if (entitiesChanged) {
+            onEntityContentChanged();
+        }
+    }
+
+    /**
+     * Called when the OnEntityChanged() ensures, that the new entity is different than the old one (based on the
+     * IVdcQueryable). Override it in child classes to refresh your model.
+     */
+    protected void onEntityContentChanged() {
+    }
 
 }
