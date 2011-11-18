@@ -39,7 +39,7 @@ public class UserEventListModel extends EventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("events: usrname=%1$s", getEntity().getname()));
+            setSearchString(StringFormat.format("events: usrname=%1$s", getEntity().getusername()));
             super.Search();
         }
     }
