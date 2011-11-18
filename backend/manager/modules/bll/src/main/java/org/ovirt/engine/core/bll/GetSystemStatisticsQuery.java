@@ -59,15 +59,15 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
 
         // VMs:
         int total_vms = DbFacade.getInstance().GetSystemStatisticsValue("VM", "");
-        String[] activeVmStatuses = { (new Integer(VMStatus.Up.getValue())).toString(),
-                (new Integer(VMStatus.PoweringUp.getValue())).toString(),
-                (new Integer(VMStatus.PoweredDown.getValue())).toString(),
-                (new Integer(VMStatus.MigratingTo.getValue())).toString(),
-                (new Integer(VMStatus.WaitForLaunch.getValue())).toString(),
-                (new Integer(VMStatus.RebootInProgress.getValue())).toString(),
-                (new Integer(VMStatus.PoweringDown.getValue())).toString(),
-                (new Integer(VMStatus.Paused.getValue())).toString(),
-                (new Integer(VMStatus.Unknown.getValue())).toString() };
+        String[] activeVmStatuses = { (String.valueOf(VMStatus.Up.getValue())),
+                (String.valueOf(VMStatus.PoweringUp.getValue())),
+                (String.valueOf(VMStatus.PoweredDown.getValue())),
+                (String.valueOf(VMStatus.MigratingTo.getValue())),
+                (String.valueOf(VMStatus.WaitForLaunch.getValue())),
+                (String.valueOf(VMStatus.RebootInProgress.getValue())),
+                (String.valueOf(VMStatus.PoweringDown.getValue())),
+                (String.valueOf(VMStatus.Paused.getValue())),
+                (String.valueOf(VMStatus.Unknown.getValue())) };
         int active_vms = DbFacade.getInstance()
                 .GetSystemStatisticsValue("VM", StringHelper.join(",", activeVmStatuses));
 
@@ -76,12 +76,12 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
         // Hosts:
         int total_vds = DbFacade.getInstance().GetSystemStatisticsValue("HOST", "");
 
-        String[] activeVdsStatuses = { (new Integer(VDSStatus.Up.getValue())).toString(),
-                (new Integer(VDSStatus.PreparingForMaintenance.getValue())).toString() };
+        String[] activeVdsStatuses = { (String.valueOf(VDSStatus.Up.getValue())),
+                (String.valueOf(VDSStatus.PreparingForMaintenance.getValue()))};
         int active_vds = DbFacade.getInstance().GetSystemStatisticsValue("HOST",
                 StringHelper.join(",", activeVdsStatuses));
         int maintenance_vds = DbFacade.getInstance().GetSystemStatisticsValue("HOST",
-                (new Integer(VDSStatus.Maintenance.getValue())).toString());
+                (String.valueOf(VDSStatus.Maintenance.getValue())));
         int down_vds = (total_vds - active_vds - maintenance_vds) < 0 ? 0 : (total_vds - active_vds - maintenance_vds);
 
         // Users:
