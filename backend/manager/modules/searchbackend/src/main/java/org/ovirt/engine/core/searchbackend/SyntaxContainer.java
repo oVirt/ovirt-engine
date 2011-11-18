@@ -223,7 +223,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         sb.append("mOrigText       = ");
         sb.AppendLine(mOrigText);
         sb.append("Valid           = ");
-        sb.AppendLine((new Boolean(mValid)).toString());
+        sb.AppendLine(Boolean.toString(mValid));
         sb.append("Error           = ");
         sb.AppendLine(mError.toString());
         sb.append("CrossRefObjlist = ");
