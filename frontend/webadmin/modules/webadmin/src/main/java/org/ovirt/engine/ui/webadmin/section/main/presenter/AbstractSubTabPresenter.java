@@ -2,8 +2,12 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import java.util.List;
 
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelChangeEvent;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.OrderedMultiSelectionModel;
@@ -12,6 +16,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
@@ -166,6 +171,20 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         if (hasTableSelectionModel()) {
             getView().getTableSelectionModel().clear();
         }
+    }
+
+    @ProxyEvent
+    public void onCommonModelChange(CommonModelChangeEvent event) {
+        modelProvider.getModel().getEntityChangedEvent().addListener(new IEventListener() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                Object entity = modelProvider.getModel().getEntity();
+                if (entity != null) {
+                    getView().setMainTabSelectedItem((T) entity);
+                }
+            }
+        });
     }
 
 }

@@ -41,7 +41,7 @@ public class SubTabUserGeneralPresenter extends AbstractSubTabPresenter<DbUser, 
 
     @Inject
     public SubTabUserGeneralPresenter(EventBus eventBus, SubTabUserGeneralView view, ProxyDef proxy,
-            PlaceManager placeManager, DetailModelProvider<UserListModel, UserGeneralModel> modelProvider) {
+            PlaceManager placeManager, final DetailModelProvider<UserListModel, UserGeneralModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 
