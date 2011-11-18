@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.login.view;
 
-import java.util.Arrays;
-
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -9,7 +7,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
-import org.ovirt.engine.ui.webadmin.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.webadmin.view.AbstractPopupView;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
@@ -64,23 +61,21 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
     public LoginPopupView(EventBus eventBus,
             ApplicationResources resources,
             ApplicationConstants constants,
-            ClientAgentType clientAgentType,
             InternalConfiguration intConf,
-            ApplicationMessages appMessages) {
+            ApplicationMessages messages) {
         super(eventBus, resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         asWidget().setGlassEnabled(false);
         localize(constants);
         passwordEditor.setAutoComplete("off");
-
-        if ((!intConf.getSupportedBrowsers().containsKey(clientAgentType.browser))
-                || (!Arrays.asList(intConf.getSupportedBrowsers().get(clientAgentType.browser))
-                        .contains(clientAgentType.version)))
-            // Browser is not supported
-            footerWarningMessage.setText(appMessages.browserNotSupportedVersion(clientAgentType.browser,
-                    clientAgentType.version.toString()));
-
         Driver.driver.initialize(this);
+
+        if (!intConf.isCurrentBrowserSupported()) {
+            // Browser is not supported
+            footerWarningMessage.setText(messages.browserNotSupportedVersion(
+                    intConf.getCurrentBrowser(),
+                    intConf.getCurrentBrowserVersion()));
+        }
     }
 
     void localize(ApplicationConstants constants) {
@@ -131,4 +126,5 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
     public void clearErrorMessage() {
         setErrorMessage(null);
     }
+
 }

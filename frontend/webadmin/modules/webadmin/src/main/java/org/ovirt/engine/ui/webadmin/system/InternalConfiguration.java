@@ -1,34 +1,60 @@
 package org.ovirt.engine.ui.webadmin.system;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.ovirt.engine.ui.webadmin.uicommon.ClientAgentType;
+
+import com.google.inject.Inject;
 
 /**
- * Internal application configurations
+ * Internal application configuration.
  */
 public class InternalConfiguration {
-    private Map<String, Float[]> supportedBrowsers;
 
-    // TODO: Should be available in ClientAgentType
-    enum supportedBrowsersOptions {
-        Firefox,
-        Explorer
+    /**
+     * Represents a browser supported by the application.
+     */
+    enum SupportedBrowser {
+
+        Firefox7("Firefox", 7.0f),
+        Explorer9("Explorer", 9.0f);
+
+        private final String browser;
+        private final float version;
+
+        SupportedBrowser(String browser, float version) {
+            this.browser = browser;
+            this.version = version;
+        }
+
     };
 
-    public InternalConfiguration() {
-        initSupportedBrowsers();
+    private final ClientAgentType clientAgentType;
+
+    @Inject
+    public InternalConfiguration(ClientAgentType clientAgentType) {
+        this.clientAgentType = clientAgentType;
     }
 
-    private void initSupportedBrowsers() {
-        if (supportedBrowsers == null)
-            supportedBrowsers = new HashMap<String,Float[]>();
-        
-        //Add supported browsers here
-        supportedBrowsers.put(supportedBrowsersOptions.Firefox.name(),new Float[]{7.0F});
-        supportedBrowsers.put(supportedBrowsersOptions.Explorer.name(),new Float[]{9.0F});
+    public boolean isCurrentBrowserSupported() {
+        return isBrowserSupported(getCurrentBrowser(), getCurrentBrowserVersion());
     }
-    
-    public Map<String, Float[]> getSupportedBrowsers() {
-        return supportedBrowsers;
+
+    boolean isBrowserSupported(String browser, float version) {
+        for (SupportedBrowser supportedBrowser : SupportedBrowser.values()) {
+            if (supportedBrowser.browser.equalsIgnoreCase(browser)
+                    && supportedBrowser.version == version) {
+                return true;
+            }
+        }
+
+        return false;
     }
+
+    public String getCurrentBrowser() {
+        return clientAgentType.browser;
+    }
+
+    public float getCurrentBrowserVersion() {
+        return clientAgentType.version;
+    }
+
 }

@@ -34,7 +34,7 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
 
     @UiField(provided = true)
     final Anchor configureLink;
-    
+
     @UiField(provided = true)
     final Anchor aboutLink;
 
@@ -114,4 +114,5 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
     public HasClickHandlers getConfigureLink() {
         return configureLink;
     }
+
 }

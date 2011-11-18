@@ -22,8 +22,12 @@ import org.ovirt.engine.ui.webadmin.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.webadmin.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.webadmin.uicommon.LoggerImpl;
 import org.ovirt.engine.ui.webadmin.uicommon.UiCommonDefaultTypeResolver;
+import org.ovirt.engine.ui.webadmin.uicommon.model.AlertFirstRowModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelManager;
+import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 
@@ -45,8 +49,7 @@ public class UiCommonModule extends AbstractGinModule {
 
     void bindModels() {
         // All model providers are ultimately referenced via ModelBoundTabData
-        // and are therefore created early, just like eager singletons
-        // TODO review: should we bind model providers explicitly as eager singletons?
+        // and are therefore created early on, just like eager singletons
         install(new DataCenterModule());
         install(new StorageModule());
         install(new ClusterModule());
@@ -65,6 +68,14 @@ public class UiCommonModule extends AbstractGinModule {
 
         // TagListModel
         bind(TagModelProvider.class).asEagerSingleton();
+
+        // AlertListModel
+        bind(AlertModelProvider.class).asEagerSingleton();
+        bind(AlertFirstRowModelProvider.class).asEagerSingleton();
+
+        // EventListModel
+        bind(EventModelProvider.class).asEagerSingleton();
+        bind(EventFirstRowModelProvider.class).asEagerSingleton();
     }
 
     void bindIntegration() {

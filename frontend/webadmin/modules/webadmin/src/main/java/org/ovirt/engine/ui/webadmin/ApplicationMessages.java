@@ -29,8 +29,8 @@ public interface ApplicationMessages extends Messages {
     @DefaultMessage("Are you sure you want to remove the following {0}?")
     String removeConfirmationPopupMessage(String what);
 
-    @DefaultMessage("Browser {0} version {1} is currently not supported.")
-    String browserNotSupportedVersion(String browser, String version);
+    @DefaultMessage("Browser {0} version {1,number,#.#} is currently not supported.")
+    String browserNotSupportedVersion(String browser, float version);
 
     // Host alert messages (not that the <a> and </a> tags are used to indicate the
     // place where the link to actions should be introduced:

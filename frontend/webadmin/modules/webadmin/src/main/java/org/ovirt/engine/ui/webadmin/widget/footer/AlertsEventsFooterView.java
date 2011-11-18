@@ -1,17 +1,14 @@
 package org.ovirt.engine.ui.webadmin.widget.footer;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.uicommon.model.AlertFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider.AlertCountChangeHandler;
+import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AuditLogSeverityColumn;
@@ -38,7 +35,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AlertsEventsFooterView extends Composite {
+public class AlertsEventsFooterView extends Composite implements AlertCountChangeHandler {
 
     interface WidgetUiBinder extends UiBinder<Widget, AlertsEventsFooterView> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -56,7 +53,7 @@ public class AlertsEventsFooterView extends Composite {
     @UiField
     SimplePanel firstRowTablePanel;
 
-    @UiField(provided = true)
+    @UiField
     ToggleButton alertButton;
 
     @UiField
@@ -70,42 +67,34 @@ public class AlertsEventsFooterView extends Composite {
     SimpleActionTable<AuditLog> _alertsTable;
     SimpleActionTable<AuditLog> _eventsTable;
 
-    private final ApplicationResources applicationResources;
-
-    private final ApplicationTemplates applicationTemplates;
-
+    private final ApplicationTemplates templates;
     private final SafeHtml alertImage;
 
-    public AlertsEventsFooterView(AlertModelProvider alertsModelProvider,
-            EventModelProvider eventsModelProvider,
-            ApplicationResources applicationResources,
-            ApplicationTemplates applicationTemplates) {
-        this.applicationTemplates = applicationTemplates;
-        this.applicationResources = applicationResources;
-        initToggleButtons();
+    public AlertsEventsFooterView(AlertModelProvider alertModelProvider,
+            AlertFirstRowModelProvider alertFirstRowModelProvider,
+            EventModelProvider eventModelProvider,
+            EventFirstRowModelProvider eventFirstRowModelProvider,
+            ApplicationResources resources,
+            ApplicationTemplates templates) {
+        this.templates = templates;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        initButtonListeners();
-        alertsTable =
-                new SimpleActionTable<AuditLog>(alertsModelProvider,
-                        (Resources) GWT.create(AlertsEventsFooterResources.class));
+        initButtonHandlers();
+        alertModelProvider.setAlertCountChangeHandler(this);
+
+        alertsTable = new SimpleActionTable<AuditLog>(alertModelProvider, getTableResources());
         alertsTable.setBarStyle(style.barStyle());
         initTable(alertsTable);
 
-        _alertsTable =
-                new SimpleActionTable<AuditLog>(new FirstRowModelProvider(alertsModelProvider.getGinjector()),
-                        (Resources) GWT.create(AlertsEventsFooterResources.class));
+        _alertsTable = new SimpleActionTable<AuditLog>(alertFirstRowModelProvider, getTableResources());
         _alertsTable.setBarStyle(style.barStyle());
         _alertsTable.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
         initTable(_alertsTable);
 
-        eventsTable = new SimpleActionTable<AuditLog>(eventsModelProvider,
-                (Resources) GWT.create(AlertsEventsFooterResources.class));
+        eventsTable = new SimpleActionTable<AuditLog>(eventModelProvider, getTableResources());
         eventsTable.setBarStyle(style.barStyle());
         initTable(eventsTable);
 
-        _eventsTable =
-                new SimpleActionTable<AuditLog>(new EventFirstRowModelProvider(eventsModelProvider.getGinjector()),
-                        (Resources) GWT.create(AlertsEventsFooterResources.class));
+        _eventsTable = new SimpleActionTable<AuditLog>(eventFirstRowModelProvider, getTableResources());
         _eventsTable.setBarStyle(style.barStyle());
         _eventsTable.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
         initTable(_eventsTable);
@@ -117,79 +106,30 @@ public class AlertsEventsFooterView extends Composite {
         tablePanel.add(eventsTable);
         firstRowTablePanel.add(_eventsTable);
 
-        String image = AbstractImagePrototype.create(applicationResources.alertConfigureImage()).getHTML();
+        String image = AbstractImagePrototype.create(resources.alertConfigureImage()).getHTML();
         alertImage = SafeHtmlUtils.fromTrustedString(image);
 
         // no body is invoking the alert search (timer)
-        alertsModelProvider.getModel().Search();
+        alertModelProvider.getModel().Search();
 
         setAlertCount(0);
-
     }
 
-    private void initToggleButtons() {
-        alertButton = new ToggleButton();
-
+    Resources getTableResources() {
+        return GWT.<Resources> create(AlertsEventsFooterResources.class);
     }
 
-    void setAlertCount(int size) {
-        alertButton.setHTML(applicationTemplates.alertFooterHeader(alertImage, size + ""));
+    @Override
+    public void onAlertCountChange(int count) {
+        setAlertCount(count);
     }
 
-    class FirstRowModelProvider extends AlertModelProvider {
-
-        public FirstRowModelProvider(ClientGinjector ginjector) {
-            super(ginjector);
-        }
-
-        @Override
-        protected void init() {
-            // TODO Auto-generated method stub
-            getModel().getItemsChangedEvent().addListener(new IEventListener() {
-
-                @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
-                    List<AuditLog> temp = new ArrayList<AuditLog>();
-                    int size = getModel().getItems().size();
-                    setAlertCount(size);
-                    if (size > 0) {
-                        temp.add((AuditLog) getModel().getItems().get(0));
-                    }
-                    updateDataProvider(temp);
-
-                }
-            });
-        }
-
+    void setAlertCount(int count) {
+        alertButton.setHTML(templates.alertFooterHeader(alertImage, count));
     }
 
-    class EventFirstRowModelProvider extends EventModelProvider {
-
-        public EventFirstRowModelProvider(ClientGinjector ginjector) {
-            super(ginjector);
-        }
-
-        @Override
-        protected void init() {
-            // TODO Auto-generated method stub
-            getModel().getItemsChangedEvent().addListener(new IEventListener() {
-
-                @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
-                    List<AuditLog> temp = new ArrayList<AuditLog>();
-                    if (((List<AuditLog>) getModel().getItems()).size() > 0) {
-                        temp.add(((List<AuditLog>) getModel().getItems()).get(0));
-                    }
-                    updateDataProvider(temp);
-                }
-            });
-        }
-
-    }
-
-    private void initButtonListeners() {
+    void initButtonHandlers() {
         alertButton.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 if (alertButton.getValue()) {
@@ -207,7 +147,6 @@ public class AlertsEventsFooterView extends Composite {
         });
 
         eventButton.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 if (eventButton.getValue()) {
@@ -225,7 +164,6 @@ public class AlertsEventsFooterView extends Composite {
         });
 
         expandButton.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 String height = widgetPanel.getElement().getParentElement().getParentElement().getStyle().getHeight();
@@ -249,13 +187,11 @@ public class AlertsEventsFooterView extends Composite {
                                 .getParentElement()
                                 .getChild(3);
                 e.getStyle().setBottom(offset + 8, Unit.PX);
-
             }
         });
-
     }
 
-    private void initTable(SimpleActionTable<AuditLog> table) {
+    void initTable(SimpleActionTable<AuditLog> table) {
         table.addColumn(new AuditLogSeverityColumn(), "", "40px");
 
         TextColumn<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
@@ -287,5 +223,7 @@ public class AlertsEventsFooterView extends Composite {
     interface Style extends CssResource {
 
         String barStyle();
+
     }
+
 }

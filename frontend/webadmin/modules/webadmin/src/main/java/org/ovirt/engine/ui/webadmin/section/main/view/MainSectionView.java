@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
-import java.util.Arrays;
-
 import javax.inject.Inject;
 
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
@@ -10,9 +8,10 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabBarOffsetUiHandlers;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
-import org.ovirt.engine.ui.webadmin.uicommon.ClientAgentType;
+import org.ovirt.engine.ui.webadmin.uicommon.model.AlertFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
@@ -43,10 +42,10 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     private MainTabBarOffsetUiHandlers uiHandlers;
 
     @UiField
-    SimplePanel headerPanel;
+    DockLayoutPanel wrapperLayoutPanel;
 
     @UiField
-    SimplePanel alertEventFooterPanel;
+    SimplePanel headerPanel;
 
     @UiField(provided = true)
     final StackLayoutPanel westStackPanel;
@@ -55,49 +54,38 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     LayoutPanel mainContentPanel;
 
     @UiField
+    SimplePanel alertEventFooterPanel;
+
+    @UiField
     Label footerMessage;
-
-    private final ApplicationResources applicationResources;
-
-    private final ApplicationTemplates applicationTemplates;
 
     @Inject
     public MainSectionView(SystemTreeModelProvider treeModelProvider,
             BookmarkModelProvider bookmarkModelProvider,
             TagModelProvider tagModelProvider,
-            ClientAgentType clientAgentType,
+            AlertModelProvider alertModelProvider,
+            AlertFirstRowModelProvider alertFirstRowModelProvider,
+            EventModelProvider eventModelProvider,
+            EventFirstRowModelProvider eventFirstRowModelProvider,
             InternalConfiguration intConf,
-            ApplicationMessages appMessages,
-            AlertModelProvider alertsModelProvider,
-            EventModelProvider eventsModelProvider,
-            ApplicationResources applicationResources,
-            ApplicationTemplates applicationTemplates) {
-        this.applicationTemplates = applicationTemplates;
-        this.applicationResources = applicationResources;
+            ApplicationResources resources,
+            ApplicationTemplates templates,
+            ApplicationMessages messages) {
         this.westStackPanel = createWestStackPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider);
-        Widget widget = ViewUiBinder.uiBinder.createAndBindUi(this);
-        initWidget(widget);
-        createAlertsEventsFooter(alertsModelProvider, eventsModelProvider);
+        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        initAlertEventFooterPanel(alertModelProvider, alertFirstRowModelProvider,
+                eventModelProvider, eventFirstRowModelProvider, resources, templates);
         headerPanel.getElement().getParentElement().getStyle().setOverflow(Overflow.VISIBLE);
 
-        if ((!intConf.getSupportedBrowsers().containsKey(clientAgentType.browser))
-                || (!Arrays.asList(intConf.getSupportedBrowsers().get(clientAgentType.browser))
-                        .contains(clientAgentType.version))) {
+        if (!intConf.isCurrentBrowserSupported()) {
             // Browser is not supported
-            footerMessage.setText(appMessages.browserNotSupportedVersion(clientAgentType.browser,
-                    clientAgentType.version.toString()));
+            footerMessage.setText(messages.browserNotSupportedVersion(
+                    intConf.getCurrentBrowser(),
+                    intConf.getCurrentBrowserVersion()));
         } else {
-            DockLayoutPanel layout = (DockLayoutPanel) widget;
-            layout.remove(footerMessage);
+            // Remove footer message
+            wrapperLayoutPanel.remove(footerMessage);
         }
-    }
-
-    private void createAlertsEventsFooter(AlertModelProvider alertsModelProvider,
-            EventModelProvider eventsModelProvider) {
-        this.alertEventFooterPanel.add(new AlertsEventsFooterView(alertsModelProvider,
-                eventsModelProvider,
-                applicationResources,
-                applicationTemplates));
     }
 
     StackLayoutPanel createWestStackPanel(SystemTreeModelProvider treeModelProvider,
@@ -118,6 +106,18 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
         panel.add(new TagList(tagModelProvider), "Tags", 26);
 
         return panel;
+    }
+
+    void initAlertEventFooterPanel(AlertModelProvider alertModelProvider,
+            AlertFirstRowModelProvider alertFirstRowModelProvider,
+            EventModelProvider eventModelProvider,
+            EventFirstRowModelProvider eventFirstRowModelProvider,
+            ApplicationResources resources,
+            ApplicationTemplates templates) {
+        alertEventFooterPanel.add(new AlertsEventsFooterView(
+                alertModelProvider, alertFirstRowModelProvider,
+                eventModelProvider, eventFirstRowModelProvider,
+                resources, templates));
     }
 
     @Override

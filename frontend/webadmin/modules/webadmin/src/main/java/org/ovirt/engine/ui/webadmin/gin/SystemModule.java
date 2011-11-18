@@ -46,8 +46,8 @@ public class SystemModule extends AbstractGinModule {
         bind(LoggedInGatekeeper.class).in(Singleton.class);
         bind(ErrorPopupManager.class).in(Singleton.class);
         bind(AsyncCallFailureHandler.class).asEagerSingleton();
-        bind(ClientAgentType.class).asEagerSingleton();
         bind(InternalConfiguration.class).asEagerSingleton();
+        bind(ClientAgentType.class).in(Singleton.class);
     }
 
     void bindConfiguration() {

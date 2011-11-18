@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
 	<ui:style src='../../../defines.css'>
 		@external gwt-SplitLayoutPanel-HDragger;
 		@external gwt-SplitLayoutPanel-VDragger;
 		.gwt-SplitLayoutPanel-HDragger {
 			background-color: #4a607c;
 			width: 2px !important;
-		}		
+		}
+		
 		.gwt-SplitLayoutPanel-VDragger {
 			background-color: #4a607c;
 			height: 2px !important;
@@ -16,33 +18,26 @@
 		@external gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader;
 		@external gwt-StackLayoutPanel .gwt-StackLayoutPanelContent;
 		.gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
-			font-family: Arial,sans-serif;
+			font-family: Arial, sans-serif;
 			font-size: 14px;
 			color: #333333;
 			padding-top: 0px;
 			padding-left: 8px;
 			border-top: 5px solid #f0f0f0;
-  			border-bottom: 1px solid #d5d5d5;
-  			border-left: 0px;
-  			border-right: 0px;
-  			background: #FFFFFF;
-		}		
-		.gwt-StackLayoutPanel .gwt-StackLayoutPanelContent {
-			border: 0px;
+			border-bottom: 1px solid #d5d5d5;
+			border-left: 0px;
+			border-right: 0px;
+			background: #FFFFFF;
 		}
 		
-		.footerPanel {
-			bottom: 0px;
-			width: 100%;
-			height: 20px;			
-			background-color: #666666;
-			border-top: mainSectionFooterPanelBorderTop;
-			position: relative;
+		.gwt-StackLayoutPanel .gwt-StackLayoutPanelContent {
+			border: 0px;
 		}
 		
 		.footerMessage {
 			color: red;
 			text-align: center;
+			line-height: 20px;
 		}
 		
 		.mainSplitLayoutPanel {
@@ -53,10 +48,10 @@
 		.alertEventFooterPanel {
 			position: relative;
 			margin-bottom: 30px;
-		}		
+		}
 	</ui:style>
 
-	<g:DockLayoutPanel unit="PX">
+	<g:DockLayoutPanel ui:field="wrapperLayoutPanel" unit="PX">
 		<g:north size="105">
 			<g:SimplePanel ui:field="headerPanel" />
 		</g:north>
@@ -68,20 +63,20 @@
 						<g:west size="235">
 							<g:StackLayoutPanel ui:field="westStackPanel" />
 						</g:west>
-		
+
 						<g:center>
 							<g:LayoutPanel ui:field="mainContentPanel" />
 						</g:center>
 					</g:SplitLayoutPanel>
 				</g:center>
-				<g:south width="100%" size="30">
-					<g:SimplePanel ui:field="alertEventFooterPanel" addStyleNames="{style.alertEventFooterPanel}"/>
+				<g:south size="30">
+					<g:SimplePanel ui:field="alertEventFooterPanel" addStyleNames="{style.alertEventFooterPanel}" />
 				</g:south>
 			</g:SplitLayoutPanel>
 		</g:center>
 
 		<g:south size="20">
-			<g:Label ui:field="footerMessage" addStyleNames="{style.footerMessage}"/>
+			<g:Label ui:field="footerMessage" addStyleNames="{style.footerMessage}" />
 		</g:south>
 	</g:DockLayoutPanel>
 
