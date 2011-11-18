@@ -112,7 +112,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
     }
 
     protected boolean CheckTemplateInStorageDomain() {
-        boolean retValue = CheckStorageDomain() && CheckStorageDomainStatus(StorageDomainStatus.Active)
+        boolean retValue = CheckStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active)
                 // LINQ 32934 && CheckIfDisksExist(Vm.DiskMap.Values.ToList());
                 && CheckIfDisksExist(getVm().getDiskMap().values());
         if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getvmt_guid())) {

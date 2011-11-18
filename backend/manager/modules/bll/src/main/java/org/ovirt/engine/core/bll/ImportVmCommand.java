@@ -299,7 +299,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
     protected boolean CheckTemplateInStorageDomain() {
         // LINQ && CheckIfDisksExist(Vm.DiskMap.Values.ToList());
-        boolean retValue = CheckStorageDomain() && CheckStorageDomainStatus(StorageDomainStatus.Active)
+        boolean retValue = CheckStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active)
                 && CheckIfDisksExist(new ArrayList(getVm().getDiskMap().values()));
         if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getvmt_guid())
                 && !getParameters().getCopyCollapse()) {

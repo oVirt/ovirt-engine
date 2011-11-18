@@ -72,7 +72,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     protected boolean canDoAction() {
         super.canDoAction();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DEACTIVATE);
-        if (!(CheckStorageDomain() && CheckStorageDomainStatus(StorageDomainStatus.Active))) {
+        if (!(CheckStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active))) {
             return false;
         }
 

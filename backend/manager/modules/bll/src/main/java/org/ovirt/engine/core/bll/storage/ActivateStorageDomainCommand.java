@@ -48,12 +48,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                 && CheckStoragePoolStatusNotEqual(StoragePoolStatus.Uninitialized,
                                                   VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
                 && CheckStorageDomain()
-                && (CheckStorageDomainStatus(StorageDomainStatus.InActive)
-                        || CheckStorageDomainStatus(StorageDomainStatus.Unknown)
-                // if domain is locked but isInternalExecution command we allow
-                // activating the domain.
-                // used for AddStoragePoolWithStorages
-                || (CheckStorageDomainStatus(StorageDomainStatus.Locked) && isInternalExecution()))
+                && storageDomainStatusIsValid()
                 && (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master || CheckMasterDomainIsUp());
         return returnValue;
     }
@@ -104,12 +99,21 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         }
     }
 
-
-
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_ACTIVATED_STORAGE_DOMAIN
                 : AuditLogType.USER_ACTIVATE_STORAGE_DOMAIN_FAILED;
+    }
+
+    private boolean storageDomainStatusIsValid() {
+        boolean returnValue;
+        if(isInternalExecution()) {
+            returnValue = checkStorageDomainStatus(StorageDomainStatus.InActive, StorageDomainStatus.Unknown,
+                    StorageDomainStatus.Locked);
+        } else {
+            returnValue = checkStorageDomainStatus(StorageDomainStatus.InActive, StorageDomainStatus.Unknown);
+        }
+        return returnValue;
     }
 
     private static LogCompat log = LogFactoryCompat.getLog(ActivateStorageDomainCommand.class);

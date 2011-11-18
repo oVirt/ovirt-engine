@@ -113,7 +113,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         if (retValue) {
             setStoragePoolId(getVmTemplate().getstorage_pool_id());
             retValue = CheckStorageDomain()
-                    && CheckStorageDomainStatus(StorageDomainStatus.Active)
+                    && checkStorageDomainStatus(StorageDomainStatus.Active)
                     && CheckIfDisksExist(getTemplateDisks())
                     && checkFreeSpaceOnDestinationDomain(getStorageDomain(), (int) getVmTemplate().getActualDiskSize());
         }

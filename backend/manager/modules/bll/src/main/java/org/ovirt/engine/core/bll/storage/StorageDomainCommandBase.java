@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     protected boolean canDetachDomain(boolean isDestroyStoragePool, boolean isRemoveLast, boolean isInternal) {
         boolean returnValue = CheckStoragePool()
                 && CheckStorageDomain()
-                && CheckStorageDomainStatus(StorageDomainStatus.InActive)
+                && checkStorageDomainStatus(StorageDomainStatus.InActive)
                 && (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master
                         || isDestroyStoragePool || CheckMasterDomainIsUp());
         if (returnValue) {
@@ -168,17 +169,15 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return returnValue;
     }
 
-    protected boolean CheckStorageDomainStatus(StorageDomainStatus status) {
-        boolean returnValue = false;
-        if (getStorageDomain() != null && getStorageDomain().getstatus() != null) {
-            returnValue = (getStorageDomain().getstatus() == status);
-            if (!returnValue
-                    && !getReturnValue().getCanDoActionMessages().contains(
-                            VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
-            }
+    protected boolean checkStorageDomainStatus(final StorageDomainStatus... statuses) {
+        boolean valid = false;
+        if(getStorageDomainStatus() != null) {
+            valid = Arrays.asList(statuses).contains(getStorageDomainStatus());
         }
-        return returnValue;
+        if(!valid) {
+            addStorageDomainStatusIllegalMessage();
+        }
+        return valid;
     }
 
     protected boolean CheckStorageDomainStatusNotEqual(StorageDomainStatus status) {
@@ -335,4 +334,15 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         });
     }
 
+    private StorageDomainStatus getStorageDomainStatus() {
+        StorageDomainStatus status = null;
+        if (getStorageDomain() != null) {
+            status = getStorageDomain().getstatus();
+        }
+        return status;
+    }
+
+    private void addStorageDomainStatusIllegalMessage() {
+        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+    }
 }

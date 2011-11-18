@@ -40,7 +40,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
     protected boolean canDoAction() {
         super.canDoAction();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXTEND);
-        boolean returnValue = CheckStorageDomain() && CheckStorageDomainStatus(StorageDomainStatus.Active);
+        boolean returnValue = CheckStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active);
         if (returnValue
                 && (getStorageDomain().getstorage_type() == StorageType.NFS || getStorageDomain().getstorage_type() == StorageType.UNKNOWN)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
