@@ -58,6 +58,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             mNewCreatedDiskImage = tempVar;
             // override disk info
             AddDiskImageToDb(mNewCreatedDiskImage);
+            getReturnValue().setActionReturnValue(mNewCreatedDiskImage.getId());
             setSucceeded(true);
         }
     }

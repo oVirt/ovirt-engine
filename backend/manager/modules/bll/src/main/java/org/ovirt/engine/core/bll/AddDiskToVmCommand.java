@@ -281,7 +281,7 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
                 parameters);
 
         getReturnValue().getTaskIdList().addAll(tmpRetValue.getInternalTaskIdList());
-        getReturnValue().setActionReturnValue(parameters.getVmSnapshotId());
+        getReturnValue().setActionReturnValue(tmpRetValue.getActionReturnValue());
         getReturnValue().setFault(tmpRetValue.getFault());
 
         setSucceeded(tmpRetValue.getSucceeded());
