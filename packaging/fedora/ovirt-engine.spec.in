@@ -39,7 +39,6 @@ Requires: %{name}-dbscripts
 Requires: %{name}-webadmin-portal
 Requires: vdsm-bootstrap
 #Requires: openssl
-Requires: virtio-win
 
 %description
 Open Virtualization Manager is a feature-rich
