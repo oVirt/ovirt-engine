@@ -25,7 +25,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  *
  */
-public class DiskImageDAOTest extends BaseDAOTestCase {
+public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, DiskImageDAO> {
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid FREE_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
     private static final Guid EXISTING_IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
@@ -34,9 +34,7 @@ public class DiskImageDAOTest extends BaseDAOTestCase {
     private static final Guid ANCESTOR_IMAGE_ID = new Guid("c9a559d9-8666-40d1-9967-759502b19f0b");
 
     private static final int TOTAL_DISK_IMAGES = 3;
-    private DiskImageDAO dao;
     private DiskImageDynamicDAO diskImageDynamicDao;
-    private DiskImage existingImage;
     private DiskImage newImage;
     private image_vm_pool_map existingVmPoolMapping;
     private image_vm_pool_map newImageVmPoolMapping;
@@ -44,13 +42,40 @@ public class DiskImageDAOTest extends BaseDAOTestCase {
     private stateless_vm_image_map newStatelessVmImageMap;
 
     @Override
+    protected Guid generateNonExistingId() {
+        return Guid.NewGuid();
+    }
+
+    @Override
+    protected int getEneitiesTotalCount() {
+        return TOTAL_DISK_IMAGES;
+    }
+
+    @Override
+    protected DiskImage generateNewEntity() {
+        return newImage;
+    }
+
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setdescription("This is a new description");
+    }
+
+    @Override
+    protected DiskImageDAO prepareDao() {
+        return prepareDAO(dbFacade.getDiskImageDAO());
+    }
+
+    @Override
+    protected Guid getExistingEntityId() {
+        return EXISTING_IMAGE_ID;
+    }
+
+    @Override
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getDiskImageDAO());
         diskImageDynamicDao = prepareDAO(dbFacade.getDiskImageDynamicDAO());
-
-        existingImage = dao.get(EXISTING_IMAGE_ID);
 
         existingVmPoolMapping = dao.getImageVmPoolMapByImageId(EXISTING_IMAGE_ID);
 
@@ -65,46 +90,15 @@ public class DiskImageDAOTest extends BaseDAOTestCase {
         newImage.setdisk_type(DiskType.Data);
         newImageVmPoolMapping = new image_vm_pool_map(FREE_IMAGE_ID, "z", FREE_VM_ID);
 
-        existingStatelessDiskImageMap = dao.getStatelessVmImageMapForImageId(existingImage.getId());
+        existingStatelessDiskImageMap = dao.getStatelessVmImageMapForImageId(existingEntity.getId());
         newStatelessVmImageMap = new stateless_vm_image_map(FREE_IMAGE_ID, "q", FREE_VM_ID);
-    }
-
-    /**
-     * Ensures that fetching a disk image with an invalid id fails.
-     */
-    @Test
-    public void testGetByIdWithInvalidId() {
-        DiskImage result = dao.get(Guid.NewGuid());
-
-        assertNull(result);
-    }
-
-    /**
-     * Ensures that retrieving a disk image by name works as expected.
-     */
-    @Test
-    public void testGet() {
-        DiskImage result = dao.get(existingImage.getId());
-
-        assertNotNull(result);
-        assertEquals(existingImage, result);
-    }
-
-    /**
-     * Ensures that retrieving all disk images works.
-     */
-    @Test
-    public void testGetAll() {
-        List<DiskImage> result = dao.getAll();
-
-        assertFalse(result.isEmpty());
-        assertEquals(TOTAL_DISK_IMAGES, result.size());
     }
 
     /**
      * Ensures that saving a disk image works as expected.
      */
     @Test
+    @Override
     public void testSave() {
         dao.save(newImage);
 
@@ -130,34 +124,6 @@ public class DiskImageDAOTest extends BaseDAOTestCase {
         assertEquals(newImage.getId(), mapping.getimage_id());
         assertEquals(newImage.getvm_guid(), mapping.getvm_id());
     }
-
-        /**
-     * Ensures that updating a disk image works as expected.
-     */
-    @Test
-    public void testUpdate() {
-        existingImage.setdescription("This is a new description");
-
-        dao.update(existingImage);
-
-        DiskImage result = dao.get(existingImage.getId());
-
-        assertNotNull(result);
-        assertEquals(existingImage, result);
-    }
-
-        /**
-     * Ensures that removing a disk image works as expected.
-     */
-    @Test
-    public void testRemove() {
-        dao.remove(existingImage.getId());
-
-        DiskImage result = dao.get(existingImage.getId());
-
-        assertNull(result);
-    }
-
 
     @Test
     public void testGetImageVmPoolMapByImageIdWithWrongImage() {
@@ -244,7 +210,7 @@ public class DiskImageDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAncestorForSon() {
-        DiskImage result = dao.getAncestor(existingImage.getId());
+        DiskImage result = dao.getAncestor(existingEntity.getId());
 
         assertNotNull(result);
         assertEquals(ANCESTOR_IMAGE_ID, result.getId());
