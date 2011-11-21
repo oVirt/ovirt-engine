@@ -11,7 +11,7 @@
 		.wrapperInner {
 			background-image: url(images/header_background.png);
 			background-repeat: no-repeat;
-			background-position: right;
+			background-position: left;
 		}
 		
 		.upperPanel {
