@@ -49,7 +49,7 @@ public class ClusterManageNetworkPopupView extends
         networks.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel model) {
-                // Window.alert("Lookey: " + ((EntityModel) model.getEntity()).toString()); //  useful  popup
+                // Window.alert("Lookey: " + ((EntityModel) model.getEntity()).toString()); // useful popup
                 return model.getTitle();
             }
         }, "Name");
@@ -67,11 +67,6 @@ public class ClusterManageNetworkPopupView extends
     @Override
     public ListModel flush() {
         return networks.flush();
-    }
-
-    @Override
-    public void focus() {
-        networks.setFocus(true);
     }
 
 }

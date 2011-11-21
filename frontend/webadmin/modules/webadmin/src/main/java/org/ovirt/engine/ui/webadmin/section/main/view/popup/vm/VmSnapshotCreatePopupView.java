@@ -57,7 +57,8 @@ public class VmSnapshotCreatePopupView extends AbstractModelBoundPopupView<Snaps
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         descriptionEditor.setFocus(true);
     }
+
 }

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
 
@@ -107,12 +106,12 @@
 						</td>
 					</tr>
 				</table>
-				<g:VerticalPanel verticalAlignment="middle"
-					addStyleNames="{style.errorMessagePanel}">
+				<g:VerticalPanel verticalAlignment="middle" addStyleNames="{style.errorMessagePanel}">
 					<g:Label ui:field="errorMessage" addStyleNames="{style.errorMessage}" />
 					<g:Label ui:field="footerWarningMessage" addStyleNames="{style.errorMessage}" />
 				</g:VerticalPanel>
 			</g:HTMLPanel>
 		</d:content>
 	</d:SimplePopupPanel>
+
 </ui:UiBinder>

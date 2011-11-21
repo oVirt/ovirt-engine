@@ -5,12 +5,11 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SimpleDialogPanel extends DialogBox {
+public class SimpleDialogPanel extends DialogBoxWithKeyHandlers {
 
     interface WidgetUiBinder extends UiBinder<Widget, SimpleDialogPanel> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -21,6 +20,7 @@ public class SimpleDialogPanel extends DialogBox {
         String footerButton();
 
         String contentWidget();
+
     }
 
     @UiField

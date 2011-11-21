@@ -58,7 +58,7 @@ public class VmChangeCDPopupView extends AbstractModelBoundPopupView<AttachCdMod
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         isoImageEditor.setFocus(true);
     }
 
@@ -67,4 +67,5 @@ public class VmChangeCDPopupView extends AbstractModelBoundPopupView<AttachCdMod
 
         String isoImageEditorBox();
     }
+
 }

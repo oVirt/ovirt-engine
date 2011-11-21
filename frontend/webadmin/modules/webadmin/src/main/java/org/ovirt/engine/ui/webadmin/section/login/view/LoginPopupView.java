@@ -7,15 +7,20 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
+import org.ovirt.engine.ui.webadmin.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.webadmin.view.AbstractPopupView;
+import org.ovirt.engine.ui.webadmin.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.webadmin.widget.dialog.SimplePopupPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.ListModelListBoxEditor;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -33,6 +38,9 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
     interface ViewUiBinder extends UiBinder<DecoratedPopupPanel, LoginPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
+
+    @UiField
+    SimplePopupPanel popup;
 
     @UiField
     @Path("userName.entity")
@@ -100,6 +108,17 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
         // This is required by the Editor framework
         loginCommand.setIsDefault(true);
         object.getCommands().add(loginCommand);
+
+        // Add popup key handlers
+        final DeferredModelCommandInvoker commandInvoker = new DeferredModelCommandInvoker(object);
+        popup.setKeyPressHandler(new PopupNativeKeyPressHandler() {
+            @Override
+            public void onKeyPress(NativeEvent event) {
+                if (KeyCodes.KEY_ENTER == event.getKeyCode()) {
+                    commandInvoker.invokeDefaultCommand();
+                }
+            }
+        });
 
         Driver.driver.edit(object);
     }

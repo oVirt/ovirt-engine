@@ -43,6 +43,7 @@ public class LoginPopupPresenterWidget extends PresenterWidget<LoginPopupPresent
     @Override
     protected void onBind() {
         super.onBind();
+
         final LoginModel loginModel = getView().flush();
         loginModel.getLoggedInEvent().addListener(new IEventListener() {
             @Override
@@ -56,8 +57,8 @@ public class LoginPopupPresenterWidget extends PresenterWidget<LoginPopupPresent
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 logger.warning("Login failed for user [" + loginModel.getUserName().getEntity() + "]");
                 getView().setErrorMessage(loginModel.getMessage());
-                
-                //FIXME: Re-enable login properties (can't this be handled by the model itself when auth fails?)
+
+                // FIXME: Re-enable login properties (can't this be handled by the model itself when auth fails?)
                 loginModel.getUserName().setIsChangable(true);
                 loginModel.getPassword().setIsChangable(true);
                 loginModel.getDomain().setIsChangable(true);

@@ -51,4 +51,5 @@ public class VmDesktopNewPopupView extends AbstractVmPopupView implements VmDesk
         isStatelessEditor.setVisible(true);
         numOfMonitorsEditor.setVisible(true);
     }
+
 }

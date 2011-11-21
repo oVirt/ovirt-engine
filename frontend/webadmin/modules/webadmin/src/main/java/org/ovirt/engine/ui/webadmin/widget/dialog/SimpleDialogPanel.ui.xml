@@ -14,23 +14,23 @@
 		
 		.headerRightPanel {
 			position: absolute;
- 			right: 5px;
- 		}
+			right: 5px;
+		}
 		
 		.headerLeftPanel {
 			position: absolute;
 			left: 5px;
- 		}
- 		
+		}
+		
 		.headerCenterPanel {
-			position: absolute;		
-			background: url(images/dialog_header_background_repetitive.png) repeat-x;			
+			position: absolute;
+			background: url(images/dialog_header_background_repetitive.png) repeat-x;
 			height: 27px;
 			line-height: 27px;
 			width: auto;
 			left: 27px;
 			right: 123px;
-		}	
+		}
 		
 		.headerTitle {
 			text-align: left;
@@ -43,7 +43,7 @@
 		.content {
 			border: 1px solid #CED8DF;
 			position: absolute;
-			padding: 20px;			
+			padding: 20px;
 			top: 50px;
 			bottom: 50px;
 			left: 20px;
@@ -77,7 +77,7 @@
 				<g:Image resource='{resources.dialogHeaderImage}' />
 			</g:SimplePanel>
 		</g:FlowPanel>
-		
+
 		<g:SimplePanel ui:field="contentPanel" addStyleNames="{style.content}" />
 
 		<g:HTMLPanel addStyleNames="{style.footer}">

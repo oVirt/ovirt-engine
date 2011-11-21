@@ -79,9 +79,4 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
         return table.flush();
     }
 
-    @Override
-    public void focus() {
-        table.setFocus(true);
-    }
-
 }

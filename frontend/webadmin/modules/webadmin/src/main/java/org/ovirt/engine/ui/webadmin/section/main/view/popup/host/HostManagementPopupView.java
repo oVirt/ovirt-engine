@@ -202,7 +202,7 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         networkEditor.setFocus(true);
     }
 

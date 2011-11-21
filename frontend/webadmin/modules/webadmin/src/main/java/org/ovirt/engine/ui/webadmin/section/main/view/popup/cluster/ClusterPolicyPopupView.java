@@ -206,23 +206,15 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<ClusterP
     }
 
     @Override
-    public void focus() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void edit(ClusterPolicyModel object) {
         Driver.driver.edit(object);
         setClusterPolicyModel(object);
         if (getClusterPolicyModel().getSelectionAlgorithm().equals(VdsSelectionAlgorithm.PowerSave)) {
             policyRadioButton_powerSave.setValue(true);
-        }
-        else if (getClusterPolicyModel().getSelectionAlgorithm()
+        } else if (getClusterPolicyModel().getSelectionAlgorithm()
                 .equals(VdsSelectionAlgorithm.EvenlyDistribute)) {
             policyRadioButton_evenDist.setValue(true);
-        }
-        else {
+        } else {
             policyRadioButton_none.setValue(true);
         }
 
@@ -237,13 +229,11 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<ClusterP
             if (getClusterPolicyModel().getOverCommitHighLevel() <= 50
                     || getClusterPolicyModel().getOverCommitHighLevel() >= 90) {
                 rightSlider.setValue(75);
-            }
-            else {
+            } else {
                 rightSlider.setValue(getClusterPolicyModel().getOverCommitHighLevel());
             }
             // timeTextBox.setText(getClusterPolicyModel().getOverCommitTime().getEntity() + "");
-        }
-        else if (getClusterPolicyModel().getSelectionAlgorithm()
+        } else if (getClusterPolicyModel().getSelectionAlgorithm()
                 .equals(VdsSelectionAlgorithm.EvenlyDistribute)) {
             setVisibility(true);
             leftSlider.setVisible(false);
@@ -251,13 +241,11 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<ClusterP
             if (getClusterPolicyModel().getOverCommitHighLevel() <= 50
                     || getClusterPolicyModel().getOverCommitHighLevel() >= 90) {
                 rightSlider.setValue(75);
-            }
-            else {
+            } else {
                 rightSlider.setValue(getClusterPolicyModel().getOverCommitHighLevel());
             }
             // timeTextBox.setText(getClusterPolicyModel().getOverCommitTime().getEntity() + "");
-        }
-        else { // also for VdsSelectionAlgorithm.None
+        } else { // also for VdsSelectionAlgorithm.None
 
             setVisibility(false);
             leftDummySlider.setVisible(true);

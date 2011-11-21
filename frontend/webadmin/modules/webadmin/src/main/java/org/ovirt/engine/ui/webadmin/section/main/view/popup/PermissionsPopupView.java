@@ -156,7 +156,7 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         searchStringEditor.setFocus(true);
     }
 

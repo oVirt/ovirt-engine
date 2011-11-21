@@ -68,7 +68,7 @@ public class TemplateInterfacePopupView extends AbstractModelBoundPopupView<VmIn
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         nameEditor.setFocus(true);
     }
 

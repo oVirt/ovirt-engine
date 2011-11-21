@@ -7,7 +7,6 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -32,13 +31,11 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
     private final UiCommonEventMap eventMap;
     private final Map<String, EntityModel> ownerModels;
     private int tabIndexCounter = 0;
-    private final M object;
 
     /**
      * A Visitor for UICommon Edited Models.
      */
-    public UiCommonEditorVisitor(M object, UiCommonEventMap eventMap, Map<String, EntityModel> ownerModels) {
-        this.object = object;
+    public UiCommonEditorVisitor(UiCommonEventMap eventMap, Map<String, EntityModel> ownerModels) {
         this.eventMap = eventMap;
         this.ownerModels = ownerModels;
     }
@@ -80,20 +77,6 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
                     if (KeyCodes.KEY_ENTER == event.getNativeEvent().getKeyCode()) {
                         // Set value in model
                         ctx.setInModel(editor.getValue());
-                        // Activate Default Command
-                        for (UICommand command : object.getCommands()) {
-                            if (command.getIsDefault()) {
-                                command.Execute();
-                            }
-                        }
-                    }
-                    if (KeyCodes.KEY_ESCAPE == event.getNativeEvent().getKeyCode()) {
-                        // Activate Cancel Command
-                        for (UICommand command : object.getCommands()) {
-                            if (command.getIsCancel()) {
-                                command.Execute();
-                            }
-                        }
                     }
                 }
             });

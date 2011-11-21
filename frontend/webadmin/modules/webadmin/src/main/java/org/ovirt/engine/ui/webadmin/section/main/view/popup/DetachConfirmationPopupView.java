@@ -78,7 +78,7 @@ public class DetachConfirmationPopupView extends AbstractModelBoundPopupView<Hos
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         commitChanges.setFocus(true);
     }
 

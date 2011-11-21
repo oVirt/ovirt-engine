@@ -23,7 +23,6 @@ public class WebAdminEditorDriverGenerator extends
     private TreeLogger logger;
     private EditorModel model;
     private SourceWriter sw;
-    private GeneratorContext context;
 
     @Override
     protected Class<?> getDriverInterfaceType() {
@@ -59,7 +58,6 @@ public class WebAdminEditorDriverGenerator extends
         entityModelType = typeOracle.findType("org.ovirt.engine.ui.uicommonweb.models.EntityModel");
         listModelType = typeOracle.findType("org.ovirt.engine.ui.uicommonweb.models.ListModel");
         this.logger = logger;
-        this.context = context;
         this.model = model;
         this.sw = sw;
 

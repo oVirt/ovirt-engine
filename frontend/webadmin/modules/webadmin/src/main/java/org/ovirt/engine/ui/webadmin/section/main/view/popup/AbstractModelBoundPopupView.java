@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBo
 import org.ovirt.engine.ui.webadmin.view.AbstractPopupView;
 import org.ovirt.engine.ui.webadmin.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.webadmin.widget.UiCommandButton;
+import org.ovirt.engine.ui.webadmin.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.webadmin.widget.dialog.ProgressPopupContent;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 
@@ -43,7 +44,6 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
     @Override
     protected void initWidget(SimpleDialogPanel widget) {
         super.initWidget(widget);
-
         this.popupContent = widget.getContent();
     }
 
@@ -96,6 +96,16 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
 
         // Show dialog buttons when stopping progress
         asWidget().setFooterPanelVisible(true);
+    }
+
+    @Override
+    public void focusInput() {
+        // No-op, override as necessary
+    }
+
+    @Override
+    public void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler) {
+        asWidget().setKeyPressHandler(handler);
     }
 
     protected String getHashName() {

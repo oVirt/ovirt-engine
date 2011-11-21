@@ -350,8 +350,7 @@ public class VmRunOncePopupView extends AbstractModelBoundPopupView<RunOnceModel
                 NodeList<Element> options = bootSequenceBox.getElement().getElementsByTagName("option");
                 if (!isEnabled) {
                     options.getItem(i).setAttribute("disabled", "disabled");
-                }
-                else {
+                } else {
                     options.getItem(i).removeAttribute("disabled");
                 }
             }
@@ -363,13 +362,10 @@ public class VmRunOncePopupView extends AbstractModelBoundPopupView<RunOnceModel
         return Driver.driver.flush();
     }
 
-    @Override
-    public void focus() {
-    }
-
     interface Style extends CssResource {
         String attachImageCheckBoxLabel();
 
         String attachImageSelectBoxLabel();
     }
+
 }

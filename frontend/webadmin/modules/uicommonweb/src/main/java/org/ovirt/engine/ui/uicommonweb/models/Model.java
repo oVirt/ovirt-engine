@@ -256,6 +256,30 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
 		privateCommands = value;
 	}
 
+	public UICommand getDefaultCommand() {
+		java.util.List<UICommand> commands = getCommands();
+		if (commands != null) {
+			for (UICommand c : commands) {
+				if (c.getIsDefault()) {
+					return c;
+				}
+			}
+		}
+		return null;
+	}
+
+	public UICommand getCancelCommand() {
+		java.util.List<UICommand> commands = getCommands();
+		if (commands != null) {
+			for (UICommand c : commands) {
+				if (c.getIsCancel()) {
+					return c;
+				}
+			}
+		}
+		return null;
+	}
+
 	private UICommand privateOpenDocumentationCommand;
 	public UICommand getOpenDocumentationCommand()
 	{

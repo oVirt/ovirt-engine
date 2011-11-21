@@ -124,10 +124,6 @@ public class VmAssignTagsPopupView extends AbstractModelBoundPopupView<TagListMo
         return Driver.driver.flush();
     }
 
-    @Override
-    public void focus() {
-    }
-
     interface AssignTagTreeResources extends CellTree.Resources {
         interface TableStyle extends CellTree.Style {
         }

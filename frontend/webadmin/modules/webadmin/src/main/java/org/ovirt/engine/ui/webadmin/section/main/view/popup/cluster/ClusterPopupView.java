@@ -199,7 +199,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         nameEditor.setFocus(true);
     }
 

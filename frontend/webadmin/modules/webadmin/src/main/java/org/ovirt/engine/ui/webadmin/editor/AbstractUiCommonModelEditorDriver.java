@@ -46,8 +46,7 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
         });
 
         // Visit editors
-        accept(new UiCommonEditorVisitor<T>(object, getEventMap(), getOwnerModels()));
-
+        accept(new UiCommonEditorVisitor<T>(getEventMap(), getOwnerModels()));
     }
 
     @Override

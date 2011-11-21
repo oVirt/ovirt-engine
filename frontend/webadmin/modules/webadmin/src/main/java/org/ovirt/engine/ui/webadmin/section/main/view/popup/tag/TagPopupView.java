@@ -57,7 +57,7 @@ public class TagPopupView extends AbstractModelBoundPopupView<TagModel> implemen
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         nameEditor.setFocus(true);
     }
 

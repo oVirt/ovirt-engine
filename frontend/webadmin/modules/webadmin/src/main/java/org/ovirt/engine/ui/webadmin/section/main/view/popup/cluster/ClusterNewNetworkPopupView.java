@@ -78,7 +78,7 @@ public class ClusterNewNetworkPopupView extends AbstractModelBoundPopupView<Clus
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         nameEditor.setFocus(true);
     }
 

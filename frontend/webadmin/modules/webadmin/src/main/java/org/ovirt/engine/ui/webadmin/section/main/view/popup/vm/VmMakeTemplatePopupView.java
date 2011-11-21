@@ -105,7 +105,7 @@ public class VmMakeTemplatePopupView extends AbstractModelBoundPopupView<UnitVmM
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         nameEditor.setFocus(true);
     }
 

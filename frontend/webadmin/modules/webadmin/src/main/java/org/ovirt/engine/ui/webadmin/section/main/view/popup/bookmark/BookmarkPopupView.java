@@ -57,7 +57,7 @@ public class BookmarkPopupView extends AbstractModelBoundPopupView<BookmarkModel
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         nameEditor.setFocus(true);
     }
 

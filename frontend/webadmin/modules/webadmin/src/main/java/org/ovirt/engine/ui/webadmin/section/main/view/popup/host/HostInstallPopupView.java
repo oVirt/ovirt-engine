@@ -20,9 +20,8 @@ import com.google.inject.Inject;
 /**
  * This is the dialog used to re-install a host.
  * 
- * Take into account that it can be used both for a normal host an also for an
- * bare metal hypervisor. In the first case it will ask for the root password and
- * in the second it will as for the location of the ISO image of the hypervisor.
+ * Take into account that it can be used both for a normal host an also for an bare metal hypervisor. In the first case
+ * it will ask for the root password and in the second it will as for the location of the ISO image of the hypervisor.
  */
 public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallModel> implements HostInstallPopupPresenterWidget.ViewDef {
 
@@ -76,7 +75,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         // We are trusting the model to decide which of the two alternatives of
         // the dialog (for a normal host or for a bare metal hypervisor):
         if (passwordEditor.isAccessible()) {

@@ -30,27 +30,27 @@ public class VmInterfacePopupView extends AbstractModelBoundPopupView<VmInterfac
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VmInterfacePopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
-    
+
     @UiField
     @Path("name.entity")
     EntityModelTextBoxEditor nameEditor;
-    
+
     @UiField(provided = true)
     @Path("network.selectedItem")
     ListModelListBoxEditor<Object> networkEditor;
-    
+
     @UiField(provided = true)
     @Path("nicType.selectedItem")
     ListModelListBoxEditor<Object> nicTypeEditor;
-    
+
     @UiField
     @Ignore
     CheckBox enableManualMacCheckbox;
-    
+
     @UiField
     @Path("MAC.entity")
     EntityModelTextBoxEditor MACEditor;
-    
+
     @Inject
     public VmInterfacePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -61,7 +61,7 @@ public class VmInterfacePopupView extends AbstractModelBoundPopupView<VmInterfac
         Driver.driver.initialize(this);
     }
 
-    //TODO: Localize
+    // TODO: Localize
     private void localize(ApplicationConstants constants) {
         nameEditor.setLabel("Name");
         networkEditor.setLabel("Network");
@@ -75,19 +75,19 @@ public class VmInterfacePopupView extends AbstractModelBoundPopupView<VmInterfac
                 return ((network) object).getname();
             }
         });
-        
+
         nicTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         nameEditor.setFocus(true);
     }
 
     @Override
     public void edit(final VmInterfaceModel iface) {
         Driver.driver.edit(iface);
-        
+
         enableManualMacCheckbox.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -100,4 +100,5 @@ public class VmInterfacePopupView extends AbstractModelBoundPopupView<VmInterfac
     public VmInterfaceModel flush() {
         return Driver.driver.flush();
     }
+
 }

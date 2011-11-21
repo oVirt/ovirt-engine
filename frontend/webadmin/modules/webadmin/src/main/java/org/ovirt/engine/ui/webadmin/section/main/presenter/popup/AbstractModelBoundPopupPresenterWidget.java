@@ -8,11 +8,15 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.webadmin.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.webadmin.widget.HasEditorDriver;
 import org.ovirt.engine.ui.webadmin.widget.HasUiCommandClickHandlers;
+import org.ovirt.engine.ui.webadmin.widget.dialog.PopupNativeKeyPressHandler;
 
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PopupView;
@@ -20,6 +24,8 @@ import com.gwtplatform.mvp.client.PresenterWidget;
 
 /**
  * Base class for popup presenter widgets bound to a UiCommon Window model.
+ * <p>
+ * It is assumed that each popup presenter widget is bound as non-singleton.
  * 
  * @param <T>
  *            Window model type.
@@ -46,7 +52,9 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
         void stopProgress();
 
-        void focus();
+        void focusInput();
+
+        void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler);
 
     }
 
@@ -63,6 +71,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         updateTitle(model);
         updateMessage(model);
         updateItems(model);
+        updateHashName(model);
         model.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -93,14 +102,37 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
             });
         }
 
+        // Add popup key handlers
+        final DeferredModelCommandInvoker commandInvoker = new DeferredModelCommandInvoker(model);
+        getView().setPopupKeyPressHandler(new PopupNativeKeyPressHandler() {
+            @Override
+            public void onKeyPress(NativeEvent event) {
+                if (KeyCodes.KEY_ENTER == event.getKeyCode()) {
+                    handleEnterKey(commandInvoker);
+                } else if (KeyCodes.KEY_ESCAPE == event.getKeyCode()) {
+                    handleEscapeKey(commandInvoker);
+                }
+            }
+        });
+
         // Initialize popup contents from the model
         getView().edit(model);
+    }
+
+    protected void handleEnterKey(DeferredModelCommandInvoker commandInvoker) {
+        commandInvoker.invokeDefaultCommand();
+    }
+
+    protected void handleEscapeKey(DeferredModelCommandInvoker commandInvoker) {
+        commandInvoker.invokeCancelCommand();
     }
 
     @Override
     protected void onReveal() {
         super.onReveal();
-        getView().focus();
+
+        // Try to focus some popup input widget
+        getView().focusInput();
     }
 
     void updateTitle(T model) {
@@ -140,19 +172,10 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
     }
 
     /**
-     * Hides the popup.
-     */
-    void hide() {
-        getView().hide();
-    }
-
-    /**
      * Hides the popup and unbinds the presenter widget, removing all handlers registered via {@link #registerHandler}.
-     * <p>
-     * Should be called only for non-singleton presenter widgets.
      */
     public void hideAndUnbind() {
-        hide();
+        getView().hide();
         unbind();
     }
 

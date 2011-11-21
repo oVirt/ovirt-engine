@@ -22,9 +22,4 @@ public abstract class AbstractConfirmationPopupView extends AbstractModelBoundPo
         messageLabel.setText(message);
     }
 
-    @Override
-    public void focus() {
-        asWidget().center();
-    }
-
 }

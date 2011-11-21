@@ -83,7 +83,7 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         nameEditor.setFocus(true);
     }
 

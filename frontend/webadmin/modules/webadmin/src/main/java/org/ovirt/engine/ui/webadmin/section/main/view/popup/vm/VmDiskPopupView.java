@@ -34,7 +34,7 @@ public class VmDiskPopupView extends AbstractModelBoundPopupView<DiskModel> impl
     @UiField
     @Path("size.entity")
     EntityModelTextBoxEditor sizeEditor;
-    
+
     @UiField(provided = true)
     @Path("storageDomain.selectedItem")
     ListModelListBoxEditor<Object> storageDomainEditor;
@@ -42,11 +42,11 @@ public class VmDiskPopupView extends AbstractModelBoundPopupView<DiskModel> impl
     @UiField(provided = true)
     @Path("preset.selectedItem")
     ListModelListBoxEditor<Object> presetEditor;
-    
+
     @UiField(provided = true)
     @Path("interface.selectedItem")
     ListModelListBoxEditor<Object> interfaceEditor;
-    
+
     @UiField(provided = true)
     @Path("volumeType.selectedItem")
     ListModelListBoxEditor<Object> volumeTypeEditor;
@@ -54,7 +54,7 @@ public class VmDiskPopupView extends AbstractModelBoundPopupView<DiskModel> impl
     @UiField(provided = true)
     @Path("wipeAfterDelete.entity")
     EntityModelCheckBoxEditor wipeAfterDeleteEditor;
-    
+
     @UiField(provided = true)
     @Path("isBootable.entity")
     EntityModelCheckBoxEditor isBootableEditor;
@@ -86,29 +86,29 @@ public class VmDiskPopupView extends AbstractModelBoundPopupView<DiskModel> impl
                 return ((storage_domains) object).getstorage_name();
             }
         });
-        
+
         presetEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((DiskImageBase)object).getdisk_type().name();
+                return ((DiskImageBase) object).getdisk_type().name();
             }
         });
-        
+
         interfaceEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
                 return object.toString();
             }
         });
-        
+
         volumeTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
-        
+
         wipeAfterDeleteEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isBootableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         sizeEditor.setFocus(true);
     }
 
@@ -121,4 +121,5 @@ public class VmDiskPopupView extends AbstractModelBoundPopupView<DiskModel> impl
     public DiskModel flush() {
         return Driver.driver.flush();
     }
+
 }

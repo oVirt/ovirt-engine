@@ -440,7 +440,7 @@ public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         nameEditor.setFocus(true);
     }
 

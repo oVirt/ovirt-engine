@@ -207,7 +207,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         networkEditor.setFocus(true);
     }
 

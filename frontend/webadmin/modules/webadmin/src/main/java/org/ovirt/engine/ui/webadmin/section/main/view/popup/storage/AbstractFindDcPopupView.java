@@ -69,9 +69,4 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
         return table.flush();
     }
 
-    @Override
-    public void focus() {
-        table.setFocus(true);
-    }
-
 }

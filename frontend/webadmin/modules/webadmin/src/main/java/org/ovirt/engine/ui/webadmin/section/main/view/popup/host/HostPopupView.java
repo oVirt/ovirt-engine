@@ -218,7 +218,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     }
 
     @Override
-    public void focus() {
+    public void focusInput() {
         nameEditor.setFocus(true);
     }
 
