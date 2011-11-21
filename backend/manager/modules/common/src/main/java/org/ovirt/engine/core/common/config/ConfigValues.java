@@ -86,7 +86,7 @@ public enum ConfigValues {
     // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
     // .NET attributes:
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("300")
+    @DefaultValueAttribute("3000")
     AsyncTaskZombieTaskLifeInMinutes(17),
     // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
     // .NET attributes:
