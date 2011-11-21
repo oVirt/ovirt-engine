@@ -526,17 +526,17 @@ public class SyntaxChecker implements ISyntaxChecker {
                     retval.setErr(SyntaxError.INVALID_CHARECTER, curStartPos, idx + 1);
                     return retval;
                 } else {
-                    String s = "";
+                    final StringBuilder buff = new StringBuilder();
                     int pos = idx;
                     // parsing the whole page number (can be more than one char)
                     while (pos < searchText.length() - 1 && Character.isDigit(nextObject.charAt(0))) {
-                        s += nextObject;
+                        buff.append(nextObject);
                         pos++;
                         strRealObj = searchText.substring(pos, pos + 1);
                         nextObject = strRealObj.toUpperCase();
                     }
-                    s += nextObject;
-                    retval.addSyntaxObject(SyntaxObjectType.PAGE_VALUE, s, curStartPos, idx + s.length());
+                    buff.append(nextObject);
+                    retval.addSyntaxObject(SyntaxObjectType.PAGE_VALUE, buff.toString(), curStartPos, idx + buff.length());
                     // update index position
                     idx = pos + 1;
                     retval.setvalid(true);
