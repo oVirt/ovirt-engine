@@ -21,7 +21,7 @@ import org.ovirt.engine.core.utils.ejb.EjbUtils;
 
 /***
  * This class is a servlet implementation, aimed to report fundemental health of engine.
- * The servlet URL is: /ENGINEanagerWeb/HealthStatus (as defined in web.xml), and these
+ * The servlet URL is: /OvirtEngineWeb/HealthStatus (as defined in web.xml), and these
  * are the possible HTTP return codes:
  * - 200: OK
  * - 500: Unable to connect to DB.

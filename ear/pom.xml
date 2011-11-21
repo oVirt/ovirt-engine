@@ -223,15 +223,15 @@
             <webModule>
               <groupId>org.ovirt.engine.ui</groupId>
               <artifactId>rmw-war</artifactId>
-              <bundleFileName>engineanagerweb.war</bundleFileName>
-              <contextRoot>/ENGINEanagerWeb</contextRoot>
+              <bundleFileName>ovirtengineweb.war</bundleFileName>
+              <contextRoot>/OvirtEngineWeb</contextRoot>
             </webModule>
 
             <webModule>
               <groupId>org.ovirt.engine.ui</groupId>
               <artifactId>rm-war</artifactId>
-              <bundleFileName>engineanager.war</bundleFileName>
-              <contextRoot>/ENGINEanager</contextRoot>
+              <bundleFileName>ovirtengine.war</bundleFileName>
+              <contextRoot>/OvirtEngine</contextRoot>
             </webModule>
 
             <webModule>

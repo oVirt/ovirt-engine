@@ -28,7 +28,7 @@
 		<!-- Access the new way -->
 	    <servlet-mapping>
 	      <servlet-name>RegisterServlet</servlet-name>
-	      <url-pattern>/RegisterServlet/*</url-pattern>
+	      <url-pattern>/register</url-pattern>
 	    </servlet-mapping>
 	    <!-- Here for backward compatibility -->
 	    <servlet-mapping>
