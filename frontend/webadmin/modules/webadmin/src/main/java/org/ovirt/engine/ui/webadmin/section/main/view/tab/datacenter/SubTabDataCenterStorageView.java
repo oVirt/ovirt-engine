@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -47,10 +47,10 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(typeColumn, "Domain Type");
 
-        TextColumn<storage_domains> statusColumn = new EnumColumn<storage_domains, StorageDomainSharedStatus>() {
+        TextColumn<storage_domains> statusColumn = new EnumColumn<storage_domains, StorageDomainStatus>() {
             @Override
-            public StorageDomainSharedStatus getRawValue(storage_domains object) {
-                return object.getstorage_domain_shared_status();
+            public StorageDomainStatus getRawValue(storage_domains object) {
+                return object.getstatus();
             }
         };
         getTable().addColumn(statusColumn, "Status");
