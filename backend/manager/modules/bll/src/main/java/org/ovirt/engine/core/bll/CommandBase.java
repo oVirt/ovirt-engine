@@ -172,6 +172,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (vdcUser == null) {
             if (!StringHelper.isNullOrEmpty(sessionId)) {
                 vdcUser = (IVdcUser) SessionDataContainer.getInstance().GetData(sessionId, "VdcUser");
+                ThreadLocalParamsContainer.setHttpSessionId(sessionId);
             } else {
                 vdcUser = (IVdcUser) SessionDataContainer.getInstance().GetData("VdcUser");
             }
