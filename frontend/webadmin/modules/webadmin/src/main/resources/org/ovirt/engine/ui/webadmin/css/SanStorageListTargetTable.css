@@ -3,7 +3,7 @@
 }
 
 .cellTableFirstColumn {
-	padding: 2px 15px;
+	padding: 2px 0px;
 }
 
 .cellTableLastColumn {
@@ -22,10 +22,10 @@
 	padding-left: 5px;
 	padding-right: 5px;
 	text-align: left;
-	color: #111111;
+	color: grey;
 	font-family: Arial,sans-serif;
 	font-size: 11px;
-	background-color: #F0F2FF;
+	background-color: #F9F9F9;
 	height: 28px;	
 }
 
@@ -37,24 +37,24 @@
 	border-right: 0px;
 	border-left: 0px;
 	white-space: nowrap;
-	cursor: pointer;
+	cursor: pointer;	
 }
 
 .cellTableEvenRow {
-	background-color: #ffffff;
+	background-color: transparent;
 }
 
 .cellTableOddRow {
-	background-color: #f3f7fb;
+	background-color: transparent;
 }
 
 .cellTableHoveredRow {
-	background-color: #eee;
+	background-color: transparent;
 }
 
 .cellTableSelectedRow {
-	background-color: #C3D0E0;
-	color: white;
+	background-color: transparent;
+	color: black;
 	overflow: auto;
 }
 

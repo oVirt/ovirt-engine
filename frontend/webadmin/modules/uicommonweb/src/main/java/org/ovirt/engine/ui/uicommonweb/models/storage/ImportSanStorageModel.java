@@ -33,6 +33,21 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
 		{
 			candidates = value;
 			OnPropertyChanged(new PropertyChangedEventArgs("Candidates"));
+			getCandidatesList().setItems(ToEntityModelList(candidates));
+		}
+	}
+
+	private ListModel candidatesList;
+	public ListModel getCandidatesList()
+	{
+		return candidatesList;
+	}
+	public void setCandidatesList(ListModel value)
+	{
+		if (candidatesList != value)
+		{
+			candidatesList = value;
+			OnPropertyChanged(new PropertyChangedEventArgs("CandidatesList"));
 		}
 	}
 
@@ -55,6 +70,7 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
 
 	protected ImportSanStorageModel()
 	{
+		setCandidatesList(new ListModel());
 		InitializeItems(null);
 	}
 
@@ -122,7 +138,8 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
 		}
 		else
 		{
-			java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>)getItems();
+			java.util.ArrayList<SanTargetModel> items = new java.util.ArrayList<SanTargetModel>();
+			items.addAll((java.util.List<SanTargetModel>)getItems());
 
 			//Add new targets.
 			if (newItems != null)
@@ -136,6 +153,7 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
 				}
 			}
 
+			setItems(items);
 			UpdateLoginAllAvailability();
 		}
 	}
@@ -143,8 +161,26 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
 	@Override
 	public boolean Validate()
 	{
-		setIsValid(getSelectedItem() != null);
+		boolean isValid = getSelectedItem() != null || getCandidatesList().getSelectedItem() != null;
+		if (!isValid)
+		{
+			getInvalidityReasons().add("Please select a Storage Domain to import");
+		}
+
+		setIsValid(isValid);
 
 		return super.Validate() && getIsValid();
+	}
+
+	private Iterable ToEntityModelList(java.util.List<storage_domains> list)
+	{
+		java.util.ArrayList<EntityModel> entityModelList = new java.util.ArrayList<EntityModel>();
+		for (Object storage : list)
+		{
+			EntityModel model = new EntityModel();
+			model.setEntity(storage);
+			entityModelList.add(model);
+		}
+		return entityModelList;
 	}
 }

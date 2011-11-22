@@ -40,6 +40,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
     @Inject
     public NfsStorageView() {
+        createPathEditor();
         nfsPathEditor = pathEditor;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(ClientGinjectorProvider.instance().getApplicationConstants());

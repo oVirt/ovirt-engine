@@ -9,11 +9,11 @@
 		}
 		
 		.formatContentWidget {
-			width: 70px;
+			width: 80px;
 		}
 		
 		.storageContentWidget {
-			width: 200px;
+			width: 220px;
 		}
 		
 		.storageTypePanel {
@@ -42,11 +42,12 @@
 		}
 		
 		.formatListEditor {
-			width: 130px;
+			width: 140px;
+			float: right;
 		}
 		
 		.storageTypeListEditor {
-			width: 400px;
+			width: 420px;
 			padding-left: 5px;
 		}
 		
@@ -63,13 +64,12 @@
 		}
 		
 		.specificStorageTypePanel {			
-			width: 100%;
-			margin-top: 40px;
+			width: 100%;			
 		}
 		
 	</ui:style>
 	
-	<d:SimpleDialogPanel width="640px" height="540px">
+	<d:SimpleDialogPanel width="700px" height="620px">
 		<d:content>
 			<g:FlowPanel addStyleNames="{style.content}">
 				<e:EntityModelTextBoxEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}"/>

@@ -5,6 +5,7 @@
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.NfsStorageView.WidgetStyle">
 		.content {
+			margin-top: 40px;
 		}
 		
 		.nfsPathEditor {
@@ -12,7 +13,7 @@
 		}
 		
 		.nfsPathContentWidget {
-			width: 458px;	
+			width: 518px;	
 		}
 		
 		.nfsMessageLabel {

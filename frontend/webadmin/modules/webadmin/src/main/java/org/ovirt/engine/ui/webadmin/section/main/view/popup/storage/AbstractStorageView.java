@@ -14,12 +14,12 @@ public abstract class AbstractStorageView<M extends IStorageModel> extends Compo
     protected EntityModelTextBoxEditor pathEditor;
 
     public AbstractStorageView() {
-        createPathEditor();
+
     }
 
     public abstract void focus();
 
-    private void createPathEditor() {
+    protected void createPathEditor() {
         pathEditor = new EntityModelTextBoxEditor() {
             boolean accessible;
 
@@ -39,5 +39,9 @@ public abstract class AbstractStorageView<M extends IStorageModel> extends Compo
                 super.setEnabled(accessible ? enabled : true);
             }
         };
+    }
+
+    public boolean isSubViewFocused() {
+        return false;
     }
 }

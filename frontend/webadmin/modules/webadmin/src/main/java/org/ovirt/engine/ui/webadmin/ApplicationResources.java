@@ -73,6 +73,9 @@ public interface ApplicationResources extends ClientBundle {
     @Source("images/expander.png")
     ImageResource expanderImage();
 
+    @Source("images/button_down.png")
+    ImageResource expanderDownImage();
+
     @Source("images/btn_guide_hover.png")
     ImageResource guideHoverMediumImage();
 

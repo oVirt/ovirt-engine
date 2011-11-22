@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.AbstractSanStorageView.WidgetStyle">		
+		.contentPanel {
+			padding: 2px;
+			height: 340px;
+		}
+		
+		.validContentPanel {
+			border: 1px lightGray solid;
+		}
+		
+		.invalidContentPanel {
+			border: 1px orange solid;
+		}
+		
+		.listPanel {
+			height: 340px;
+		}
+		
+		.treePanel {
+			height: 308px;
+			overflow: auto;
+		}
+		
+		.errorMessageLabel {			
+			color: red;
+			margin: 2px;
+			height: 16px;
+		}
+		
+		.listLabel {
+			margin: 2px;
+		}
+	</ui:style>
+	
+	<g:FlowPanel>
+		<g:Label ui:field="errorMessage" addStyleNames="{style.errorMessageLabel}" />		
+		<g:FlowPanel ui:field="contentPanel" addStyleNames="{style.contentPanel} {style.validContentPanel}">			
+			<g:FlowPanel ui:field="extraContentPanel" />
+			<g:Label ui:field="listLabel" addStyleNames="{style.listLabel}" />
+			<g:ScrollPanel ui:field="listPanel" addStyleNames="{style.listPanel}" />
+		</g:FlowPanel>	
+	</g:FlowPanel>
+
+</ui:UiBinder>

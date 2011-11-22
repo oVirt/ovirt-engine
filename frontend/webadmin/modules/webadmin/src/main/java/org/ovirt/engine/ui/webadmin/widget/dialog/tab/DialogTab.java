@@ -89,4 +89,8 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
         tabContainer.getElement().replaceClassName(style.active(), style.inactive());
     }
 
+    public void setTabLabelStyle(String styleName) {
+        tabLabel.setStyleName(styleName);
+    }
+
 }

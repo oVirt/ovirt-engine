@@ -7,7 +7,7 @@
 	<ui:style
 		type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.LocalStorageView.WidgetStyle">
 			.content {
-				
+				margin-top: 40px;
 			}
 			
 			.localPathEditor {
@@ -15,7 +15,7 @@
 			}
 			
 			.localPathContentWidget {
-				width: 458px;
+				width: 518px;
 			}
 			
 			.errorMessageLabel {

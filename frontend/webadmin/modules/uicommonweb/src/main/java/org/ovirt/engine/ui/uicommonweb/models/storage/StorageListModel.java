@@ -390,14 +390,17 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 	{
 		storage_domains storage = (storage_domains)getSelectedItem();
 
-		GetLunsByVgIdParameters tempVar = new GetLunsByVgIdParameters();
-		tempVar.setVgId(storage.getstorage());
-		VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetLunsByVgId, tempVar);
+		AsyncDataProvider.GetLunsByVgId(new AsyncQuery(model,
+		new INewAsyncCallback() {
+			@Override
+			public void OnSuccess(Object target, Object returnValue) {
 
-		if (returnValue != null && returnValue.getSucceeded())
-		{
-			model.ApplyData((java.util.ArrayList<LUNs>)returnValue.getReturnValue(), true);
-		}
+			SanStorageModel sanStorageModel = (SanStorageModel)target;
+			java.util.ArrayList<LUNs> lunList = (java.util.ArrayList<LUNs>)returnValue;
+			sanStorageModel.ApplyData(lunList, true);
+
+			}
+		}), storage.getstorage());
 	}
 
 	private void ImportDomain()
@@ -1012,6 +1015,41 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 		Frontend.RunMultipleActions(actionTypes, parameters, new java.util.ArrayList<IFrontendActionAsyncCallback>(java.util.Arrays.asList(new IFrontendActionAsyncCallback[] { callback1, callback2, callback3 })), failureCallback, this);
 	}
 
+	public void SaveNewSanStorage()
+	{
+		StorageModel model = (StorageModel)getWindow();
+		SanStorageModel sanModel = (SanStorageModel)model.getSelectedItem();
+		VDS host = (VDS)model.getHost().getSelectedItem();
+
+		java.util.ArrayList<String> lunIds = new java.util.ArrayList<String>();
+		for (LunModel lun : sanModel.getAddedLuns())
+		{
+			lunIds.add(lun.getLunId());
+		}
+
+		AddSANStorageDomainParameters tempVar = new AddSANStorageDomainParameters(storageDomain);
+		tempVar.setVdsId(host.getvds_id());
+		tempVar.setLunIds(lunIds);
+		Frontend.RunAction(VdcActionType.AddSANStorageDomain, tempVar,
+		new IFrontendActionAsyncCallback() {
+			@Override
+			public void Executed(FrontendActionAsyncResult  result) {
+
+			StorageListModel storageListModel = (StorageListModel)result.getState();
+			StorageModel storageModel = (StorageModel)storageListModel.getWindow();
+			storage_pool dataCenter = (storage_pool)storageModel.getDataCenter().getSelectedItem();
+			if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
+			{
+				VdcReturnValueBase returnValue = result.getReturnValue();
+				NGuid storageId = (NGuid)returnValue.getActionReturnValue();
+				storageListModel.AttachStorageToDataCenter((Guid)storageId, dataCenter.getId());
+			}
+			storageListModel.OnFinish(storageListModel.context, true, storageListModel.storageModel);
+
+			}
+		}, this);
+	}
+
 	private void SaveLocalStorage(TaskContext context)
 	{
 		this.context = context;
@@ -1147,22 +1185,16 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
 	private void SaveSanStorage(TaskContext context)
 	{
+		this.context = context;
+
 		StorageModel model = (StorageModel)getWindow();
 		SanStorageModel sanModel = (SanStorageModel)model.getSelectedItem();
 		storage_domains storage = (storage_domains)getSelectedItem();
-		boolean isNew = model.getStorage() == null;
-
 		VDS host = (VDS)model.getHost().getSelectedItem();
 
+		boolean isNew = model.getStorage() == null;
 
-		java.util.ArrayList<String> lunIds = new java.util.ArrayList<String>();
-		for (LunModel lun : sanModel.getAddedLuns())
-		{
-			lunIds.add(lun.getLunId());
-		}
-
-
-		storage_domain_static storageDomain = isNew ? new storage_domain_static() : (storage_domain_static)Cloner.clone(storage.getStorageStaticData());
+		storageDomain = isNew ? new storage_domain_static() : (storage_domain_static)Cloner.clone(storage.getStorageStaticData());
 
 		storageDomain.setstorage_type(isNew ? sanModel.getType() : storageDomain.getstorage_type());
 
@@ -1172,40 +1204,60 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
 		storageDomain.setstorage_name((String)model.getName().getEntity());
 
-		VdcReturnValueBase returnValue;
-
 		if (isNew)
 		{
-			AddSANStorageDomainParameters tempVar = new AddSANStorageDomainParameters(storageDomain);
-			tempVar.setVdsId(host.getvds_id());
-			tempVar.setLunIds(lunIds);
-			returnValue = Frontend.RunAction(VdcActionType.AddSANStorageDomain, tempVar);
+			AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this,
+		new INewAsyncCallback() {
+			@Override
+			public void OnSuccess(Object target, Object returnValue) {
 
-			if (returnValue != null && returnValue.getSucceeded())
-			{
-				//Attach storage to data center as neccessary.
-				storage_pool dataCenter = (storage_pool)model.getDataCenter().getSelectedItem();
-				if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
+				StorageListModel storageListModel = (StorageListModel)target;
+				java.util.ArrayList<storage_domains> storages = (java.util.ArrayList<storage_domains>)returnValue;
+				if (storages != null && storages.size() > 0)
 				{
-					NGuid storageId = (NGuid)returnValue.getActionReturnValue();
-					AttachStorageToDataCenter((Guid)storageId, dataCenter.getId());
+					String storageName = storages.get(0).getstorage_name();
+					OnFinish(storageListModel.context, false, storageListModel.storageModel, "Create operation failed. Domain " + storageName + " already exists in the system.");
 				}
+				else
+				{
+					storageListModel.SaveNewSanStorage();
+				}
+
 			}
+		}), null, path);
 		}
 		else
 		{
-			returnValue = Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(storageDomain));
+			Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(storageDomain),
+		new IFrontendActionAsyncCallback() {
+			@Override
+			public void Executed(FrontendActionAsyncResult  result) {
+
+				StorageListModel storageListModel = (StorageListModel)result.getState();
+				StorageModel storageModel = (StorageModel)getWindow();
+				SanStorageModel sanStorageModel = (SanStorageModel)storageModel.getSelectedItem();
+				storage_domains storageDomain1 = (storage_domains)storageListModel.getSelectedItem();
+				java.util.ArrayList<String> lunIds = new java.util.ArrayList<String>();
+				for (LunModel lun : sanStorageModel.getAddedLuns())
+				{
+					lunIds.add(lun.getLunId());
+				}
+				if (lunIds.size() > 0)
+				{
+					Frontend.RunAction(VdcActionType.ExtendSANStorageDomain, new ExtendSANStorageDomainParameters(storageDomain1.getid(), lunIds),
+		new IFrontendActionAsyncCallback() {
+			@Override
+			public void Executed(FrontendActionAsyncResult  result1) {
 
 
-			//Extend storage as neccessary.
-			if (returnValue != null && returnValue.getSucceeded() && lunIds.size() > 0)
-			{
-				returnValue = Frontend.RunAction(VdcActionType.ExtendSANStorageDomain, new ExtendSANStorageDomainParameters(storage.getid(), lunIds));
 			}
+		}, this);
+				}
+				storageListModel.OnFinish(storageListModel.context, true, storageListModel.storageModel);
+
+			}
+		}, this);
 		}
-
-
-		context.InvokeUIThread(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "Finish", returnValue != null && returnValue.getSucceeded(), sanModel, null })));
 	}
 
 	private void AttachStorageToDataCenter(Guid storageId, Guid dataCenterId)
@@ -1396,31 +1448,51 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
 	private void ImportSanStorage(TaskContext context)
 	{
+		this.context = context;
+
 		java.util.ArrayList<Object> data = (java.util.ArrayList<Object>)context.getState();
-
-		StorageModel model = (StorageModel)getWindow();
-		ImportSanStorageModel storageModel = (ImportSanStorageModel)model.getSelectedItem();
-		storage_domains storage = (storage_domains)storageModel.getSelectedItem();
-
+		StorageModel storageModel = (StorageModel)getWindow();
+		ImportSanStorageModel sanStorageModel = (ImportSanStorageModel)storageModel.getSelectedItem();
 		Guid hostId = (Guid)data.get(1);
+		storage_domains storage;
+
+		if (sanStorageModel.getSelectedItem() != null)
+		{
+			storage = (storage_domains)sanStorageModel.getSelectedItem();
+		}
+		else
+		{
+			ListModel candidates = sanStorageModel.getCandidatesList();
+			EntityModel selectedItem = (EntityModel)candidates.getSelectedItem();
+			storage = (storage_domains)selectedItem.getEntity();
+		}
 
 		AddSANStorageDomainParameters tempVar = new AddSANStorageDomainParameters(storage == null ? null : storage.getStorageStaticData());
 		tempVar.setVdsId(hostId);
-		VdcReturnValueBase returnValue = Frontend.RunAction(VdcActionType.AddExistingSANStorageDomain, tempVar);
+		Frontend.RunAction(VdcActionType.AddExistingSANStorageDomain, tempVar,
+		new IFrontendActionAsyncCallback() {
+			@Override
+			public void Executed(FrontendActionAsyncResult  result) {
 
-
-		if (returnValue != null && returnValue.getSucceeded())
-		{
-			//Attach storage to data center as neccessary.
-			storage_pool dataCenter = (storage_pool)model.getDataCenter().getSelectedItem();
-			if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
+			Object[] array = (Object[])result.getState();
+			StorageListModel storageListModel = (StorageListModel)array[0];
+			storage_domains sdToAdd1 = (storage_domains)array[1];
+			VdcReturnValueBase returnVal = result.getReturnValue();
+			boolean success = returnVal != null && returnVal.getSucceeded();
+			if (success)
 			{
-				AttachStorageToDataCenter(storage.getid(), dataCenter.getId());
+				StorageModel model = (StorageModel)storageListModel.getWindow();
+				storage_pool dataCenter = (storage_pool)model.getDataCenter().getSelectedItem();
+				if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
+				{
+					storageListModel.AttachStorageToDataCenter(sdToAdd1.getid(), dataCenter.getId());
+				}
+				storageListModel.OnFinish(storageListModel.context, true, storageListModel.storageModel);
 			}
-		}
+			OnFinish(storageListModel.context, success, storageListModel.storageModel, null);
 
-
-		context.InvokeUIThread(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "Finish", returnValue != null && returnValue.getSucceeded(), storageModel, null })));
+			}
+		}, new Object[] { this, storage });
 	}
 
 	public void run(TaskContext context)

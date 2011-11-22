@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
+	xmlns:t="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog.tab" xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget">
+
+	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+
+	<ui:style type="org.ovirt.engine.ui.webadmin.widget.storage.IscsiDiscoverTargetsView.WidgetStyle">
+		.content {
+			margin-top: 15px;
+		}
+		
+		.authPanelInner {
+			padding-top: 10px;
+		}	
+		
+		.discoverTargetAuthPanel {
+			border-left: 1px grey solid;
+			margin-left: 5px;
+			padding-left: 5px;
+		}
+		
+		.textBox {
+			width: 120px;
+		}
+		
+		.chapBox {
+			width: 80px;
+		}
+		
+		.chapLabel {
+			font-weight: normal;
+		}
+		
+		.userAuthLabel {
+			color: #333333;
+		}
+		
+		.discoverButton {
+			width: 50px;
+			margin-left: 5px;
+			margin-top: 15px;
+		}
+		
+		.loginAllButton {
+			width: 60px;
+			float: right;
+			margin: 2px;
+		}
+		
+		.discoverTargetsLabelPanel {
+			position: relative;
+			top: 9px;
+			left: 6px;
+			width: 117px;
+			padding-left: 3px;
+			padding-right: 3px;
+			background-color: white;
+		}
+		
+		.collapsedDiscoverTargetsPanel {
+			border-top: 1px black solid;
+			width: 100%;
+		}
+		
+		.expandedDiscoverTargetsPanel {
+			border: 1px black solid;
+			height: 116px;
+			width: 100%;
+		}
+		
+		.discoverTargetsImageButton {
+			background-color: transparent;
+			line-height: 13px;
+			cursor: hand;
+			cursor: pointer;
+		}
+		
+		.discoverTargetsLabel {
+			padding-left: 2px;
+			font-weight: bold;
+			white-space: nowrap;
+			line-height: 13px;
+		}
+		
+		.targetsListPanel {
+			margin-top: 40px;
+		}		
+		
+		.messageLabel {
+			color: red;
+			font-size: 11px;
+			width: 500px;
+			padding-left: 5px;
+			padding-right: 5px;
+			padding-top: 2px;
+			padding-bottom: 2px;
+		}
+		
+		.loginAllButton {
+			width: 60px;
+			float: right;
+			margin-top: 5px;
+		}
+		
+	</ui:style>	
+
+	<g:FlowPanel>
+		<g:HorizontalPanel addStyleNames="{style.discoverTargetsLabelPanel}">	
+			<g:ToggleButton ui:field="discoverTargetsImageButton" addStyleNames="{style.discoverTargetsImageButton}" />
+		</g:HorizontalPanel>		
+		<g:VerticalPanel ui:field="discoverTargetsPanel" addStyleNames="{style.collapsedDiscoverTargetsPanel}">
+			<g:FlowPanel ui:field="discoverTargetsPanelInner">
+				<g:HorizontalPanel addStyleNames="{style.authPanelInner}">									
+					<g:VerticalPanel>
+						<e:EntityModelTextBoxEditor ui:field="addressEditor" />
+						<e:EntityModelTextBoxEditor ui:field="portEditor" />
+					</g:VerticalPanel>																				
+					<g:VerticalPanel addStyleNames="{style.discoverTargetAuthPanel}">
+						<e:EntityModelCheckBoxEditor ui:field="useUserAuthEditor" addStyleNames="{style.userAuthLabel}" />
+						<g:HorizontalPanel>
+							<e:EntityModelTextBoxEditor ui:field="chapUserEditor" />
+							<e:EntityModelTextBoxEditor ui:field="chapPassEditor" />
+						</g:HorizontalPanel>
+					</g:VerticalPanel>										
+				</g:HorizontalPanel>
+				<g:HorizontalPanel>
+					<w:UiCommandButton ui:field="discoverButton" addStyleNames="{style.discoverButton}" />
+					<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}"/>
+				</g:HorizontalPanel>									
+			</g:FlowPanel>									
+		</g:VerticalPanel>
+		<w:UiCommandButton ui:field="loginAllButton" addStyleNames="{style.loginAllButton}" />
+	</g:FlowPanel>
+
+</ui:UiBinder>

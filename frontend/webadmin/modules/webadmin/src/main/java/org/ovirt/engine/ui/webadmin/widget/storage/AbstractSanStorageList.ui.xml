@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style>		
+		.treeContainer {
+			width: 100%;
+			overflow-y: scroll !important;
+		}
+	</ui:style>
+	
+	<g:FlowPanel>
+		<g:SimplePanel ui:field="treeHeader" />
+		<g:ScrollPanel ui:field="treeContainer" addStyleNames="{style.treeContainer}" />
+	</g:FlowPanel>
+	
+</ui:UiBinder>

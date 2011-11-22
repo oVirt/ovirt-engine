@@ -68,4 +68,8 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
     @Template("<span style='position: relative; white-space: nowrap;'><span>{0}</span>{1} Alerts</span>")
     SafeHtml alertFooterHeader(SafeHtml imageHtml, int alertCount);
 
+    @Template("<span><span style='position: relative; vertical-align: middle;'>{0}</span>" +
+            "<span style='position: relative; margin-left: 3px; white-space: nowrap;'>{1}</span></span>")
+    SafeHtml imageTextButton(SafeHtml image, String text);
+
 }

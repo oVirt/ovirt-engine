@@ -20,7 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.*;
 import org.ovirt.engine.ui.uicommonweb.models.*;
 
 @SuppressWarnings("unused")
-public abstract class SanStorageModelBase extends ListModel implements IStorageModel
+public abstract class SanStorageModelBase extends SearchableListModel implements IStorageModel
 {
 
 	private UICommand privateUpdateCommand;
@@ -133,6 +133,21 @@ public abstract class SanStorageModelBase extends ListModel implements IStorageM
 		}
 	}
 
+	private boolean isAllLunsSelected;
+	public boolean getIsAllLunsSelected()
+	{
+		return isAllLunsSelected;
+	}
+	public void setIsAllLunsSelected(boolean value)
+	{
+		if (isAllLunsSelected != value)
+		{
+			isAllLunsSelected = value;
+			IsAllLunsSelectedChanged();
+			OnPropertyChanged(new PropertyChangedEventArgs("IsAllLunsSelected"));
+		}
+	}
+
 
 	public boolean loginAllInProgress;
 	public SanTargetModel sanTargetModel;
@@ -195,6 +210,8 @@ public abstract class SanStorageModelBase extends ListModel implements IStorageM
 		tempVar.setport(String.valueOf(model.getPort()));
 		storage_server_connections connection = tempVar;
 
+		getContainer().StartProgress(null);
+
 		Frontend.RunAction(VdcActionType.ConnectStorageToVds, new StorageServerConnectionParametersBase(connection, host.getvds_id()),
 		new IFrontendActionAsyncCallback() {
 			@Override
@@ -207,6 +224,7 @@ public abstract class SanStorageModelBase extends ListModel implements IStorageM
 			{
 				sanStorageModel.sanTargetModel.setIsLoggedIn(true);
 				sanStorageModel.sanTargetModel.getLoginCommand().setIsExecutionAllowed(false);
+				sanStorageModel.getContainer().StopProgress();
 				if (!sanStorageModel.loginAllInProgress)
 				{
 					sanStorageModel.UpdateInternal();
@@ -398,5 +416,9 @@ public abstract class SanStorageModelBase extends ListModel implements IStorageM
 		}
 
 		getLoginAllCommand().setIsExecutionAllowed(allow);
+	}
+
+	protected void IsAllLunsSelectedChanged()
+	{
 	}
 }

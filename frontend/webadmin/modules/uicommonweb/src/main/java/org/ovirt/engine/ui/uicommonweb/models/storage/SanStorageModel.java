@@ -42,21 +42,6 @@ public abstract class SanStorageModel extends SanStorageModelBase
 		}
 	}
 
-	private boolean isAllLunsSelected;
-	public boolean getIsAllLunsSelected()
-	{
-		return isAllLunsSelected;
-	}
-	public void setIsAllLunsSelected(boolean value)
-	{
-		if (isAllLunsSelected != value)
-		{
-			isAllLunsSelected = value;
-			IsAllLunsSelectedChanged();
-			OnPropertyChanged(new PropertyChangedEventArgs("IsAllLunsSelected"));
-		}
-	}
-
 	private String getLUNsFailure;
 	public String getGetLUNsFailure()
 	{
@@ -137,6 +122,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
 			if (response.getSucceeded())
 			{
 				model.ApplyData((java.util.ArrayList<LUNs>)response.getReturnValue(), false);
+				model.setGetLUNsFailure("");
 			}
 			else
 			{
@@ -216,19 +202,23 @@ public abstract class SanStorageModel extends SanStorageModelBase
 			if (a.getLunType() == getType() || a.getLunType() == StorageType.UNKNOWN)
 			{
 				java.util.ArrayList<SanTargetModel> targets = new java.util.ArrayList<SanTargetModel>();
-				for (storage_server_connections b : a.getLunConnections())
-				{
-					SanTargetModel tempVar = new SanTargetModel();
-					tempVar.setAddress(b.getconnection());
-					tempVar.setPort(b.getport());
-					tempVar.setName(b.getiqn());
-					tempVar.setIsSelected(true);
-					tempVar.setIsLoggedIn(true);
-					tempVar.setLuns(new ObservableCollection<LunModel>());
-					SanTargetModel model = tempVar;
-					model.getLoginCommand().setIsExecutionAllowed(false);
 
-					targets.add(model);
+				if (a.getLunConnections() != null)
+				{
+					for (storage_server_connections b : a.getLunConnections())
+					{
+						SanTargetModel tempVar = new SanTargetModel();
+						tempVar.setAddress(b.getconnection());
+						tempVar.setPort(b.getport());
+						tempVar.setName(b.getiqn());
+						tempVar.setIsSelected(true);
+						tempVar.setIsLoggedIn(true);
+						tempVar.setLuns(new ObservableCollection<LunModel>());
+						SanTargetModel model = tempVar;
+						model.getLoginCommand().setIsExecutionAllowed(false);
+
+						targets.add(model);
+					}
 				}
 
 				LunModel tempVar2 = new LunModel();
@@ -284,7 +274,8 @@ public abstract class SanStorageModel extends SanStorageModelBase
 				}
 			}
 
-			java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>)getItems();
+			java.util.ArrayList<SanTargetModel> items = new java.util.ArrayList<SanTargetModel>();
+			items.addAll((java.util.List<SanTargetModel>)getItems());
 
 			//Add new targets.
 			if (newTargets != null)
@@ -304,6 +295,8 @@ public abstract class SanStorageModel extends SanStorageModelBase
 				MergeLunsToTargets(newLuns, items);
 			}
 
+			setItems(items);
+
 			UpdateLoginAllAvailability();
 		}
 		else
@@ -322,7 +315,8 @@ public abstract class SanStorageModel extends SanStorageModelBase
 				}
 			}
 
-			java.util.List<LunModel> items = (java.util.List<LunModel>)getItems();
+			java.util.ArrayList<LunModel> items = new java.util.ArrayList<LunModel>();
+			items.addAll((java.util.List<LunModel>)getItems());
 
 			//Add new LUNs.
 			if (newLuns != null)
@@ -335,6 +329,8 @@ public abstract class SanStorageModel extends SanStorageModelBase
 					}
 				}
 			}
+
+			setItems(items);
 		}
 	}
 
@@ -430,7 +426,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
 		}
 	}
 
-	private void IsAllLunsSelectedChanged()
+	protected void IsAllLunsSelectedChanged()
 	{
 		if (!getIsGrouppedByTarget())
 		{
@@ -480,7 +476,14 @@ public abstract class SanStorageModel extends SanStorageModelBase
 	@Override
 	public boolean Validate()
 	{
-		setIsValid(getAddedLuns().size() > 0 || includedLUNs.size() > 0);
+		boolean isValid = getAddedLuns().size() > 0 || includedLUNs.size() > 0;
+
+		if (!isValid)
+		{
+			getInvalidityReasons().add("No LUNs selected. Please select LUNs.");
+		}
+
+		setIsValid(isValid);
 
 		return super.Validate() && getIsValid();
 	}

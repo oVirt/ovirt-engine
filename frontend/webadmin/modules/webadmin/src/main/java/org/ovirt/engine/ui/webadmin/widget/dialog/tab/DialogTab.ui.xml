@@ -5,7 +5,7 @@
 	<ui:style src='../../../defines.css' type="org.ovirt.engine.ui.webadmin.widget.dialog.tab.DialogTab.Style">
 		.tab {
 			padding: 5px;
-			cursor: pointer;
+			cursor: pointer;			
 		}
 		
 		.active {
@@ -26,7 +26,7 @@
 	</ui:style>
 
 	<g:SimplePanel ui:field="tabContainer" addStyleNames="{style.tab} {style.inactive}">
-		<g:InlineLabel ui:field="tabLabel" />
+		<g:InlineLabel ui:field="tabLabel"/>
 	</g:SimplePanel>
 
 </ui:UiBinder>

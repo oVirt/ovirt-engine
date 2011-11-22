@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.*;
 import org.ovirt.engine.ui.uicommonweb.models.*;
 
 @SuppressWarnings("unused")
-public class LunModel extends Model
+public class LunModel extends EntityModel
 {
 
 	private String lunId;
@@ -142,7 +142,27 @@ public class LunModel extends Model
 		{
 			targets = value;
 			OnPropertyChanged(new PropertyChangedEventArgs("Targets"));
+			getTargetsList().setItems(targets);
 		}
+	}
+
+	private ListModel targetsList;
+	public ListModel getTargetsList()
+	{
+		return targetsList;
+	}
+	public void setTargetsList(ListModel value)
+	{
+		if (targetsList != value)
+		{
+			targetsList = value;
+			OnPropertyChanged(new PropertyChangedEventArgs("TargetsList"));
+		}
+	}
+
+	public LunModel()
+	{
+		setTargetsList(new ListModel());
 	}
 
 }

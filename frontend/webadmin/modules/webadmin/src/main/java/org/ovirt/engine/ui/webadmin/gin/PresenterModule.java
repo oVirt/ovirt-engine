@@ -16,8 +16,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmat
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterNewNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterNewNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPolicyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterNetworkPopupPresenterWidget;
@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManage
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDestroyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
@@ -120,8 +121,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.DetachConfirmationPo
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.PermissionsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.RemoveConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.bookmark.BookmarkPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterNewNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterManageNetworkPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterNewNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPolicyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterNetworkPopupView;
@@ -135,6 +136,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementP
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindMultiDcPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindSingleDcPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageDestroyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.tag.TagPopupView;
@@ -580,8 +582,8 @@ public class PresenterModule extends AbstractPresenterModule {
                 ClusterNewNetworkPopupView.class);
 
         bindPresenterWidget(ClusterManageNetworkPopupPresenterWidget.class,
-        		ClusterManageNetworkPopupPresenterWidget.ViewDef.class,
-        		ClusterManageNetworkPopupView.class);
+                ClusterManageNetworkPopupPresenterWidget.ViewDef.class,
+                ClusterManageNetworkPopupView.class);
 
         bindPresenterWidget(ClusterPopupPresenterWidget.class,
                 ClusterPopupPresenterWidget.ViewDef.class,
@@ -627,15 +629,20 @@ public class PresenterModule extends AbstractPresenterModule {
                 StorageRemovePopupPresenterWidget.ViewDef.class,
                 StorageRemovePopupView.class);
 
+        // Storage Destroy
+        bindPresenterWidget(StorageDestroyPopupPresenterWidget.class,
+                StorageDestroyPopupPresenterWidget.ViewDef.class,
+                StorageDestroyPopupView.class);
+
         bindPresenterWidget(VmDesktopNewPopupPresenterWidget.class,
                 VmDesktopNewPopupPresenterWidget.ViewDef.class,
                 VmDesktopNewPopupView.class);
-        
+
         bindPresenterWidget(VmServerNewPopupPresenterWidget.class,
                 VmServerNewPopupPresenterWidget.ViewDef.class,
                 VmServerNewPopupView.class);
 
-     // VM Snapshot Create
+        // VM Snapshot Create
         bindPresenterWidget(VmSnapshotCreatePopupPresenterWidget.class,
                 VmSnapshotCreatePopupPresenterWidget.ViewDef.class,
                 VmSnapshotCreatePopupView.class);
@@ -674,7 +681,7 @@ public class PresenterModule extends AbstractPresenterModule {
         bindPresenterWidget(TemplateNewPresenterWidget.class,
                 TemplateNewPresenterWidget.ViewDef.class,
                 TemplateNewPopupView.class);
-        
+
         // Add/Edit Template's NIC
         bindPresenterWidget(TemplateInterfacePopupPresenterWidget.class,
                 TemplateInterfacePopupPresenterWidget.ViewDef.class,

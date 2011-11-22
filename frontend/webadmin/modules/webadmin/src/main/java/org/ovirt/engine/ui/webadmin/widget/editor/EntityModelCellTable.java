@@ -17,6 +17,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -81,6 +82,10 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
      *            table's resources
      */
     public EntityModelCellTable(boolean multiSelection, Resources resources) {
+        this(multiSelection, resources, false);
+    }
+
+    public EntityModelCellTable(boolean multiSelection, Resources resources, boolean hideCheckbox) {
         super(DEFAULT_PAGESIZE, resources);
 
         this.multiSelection = multiSelection;
@@ -97,6 +102,10 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
             @SuppressWarnings("unchecked")
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
+                if (EntityModelCellTable.this.listModel == null) {
+                    return;
+                }
+
                 // Clear "IsSelected"
                 for (EntityModel entity : (List<EntityModel>) EntityModelCellTable.this.listModel.getItems()) {
                     entity.setIsSelected(false);
@@ -120,27 +129,29 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
             }
         });
 
-        // add selection columns
-        Column<EntityModel, Boolean> checkColumn;
-        if (multiSelection) {
-            checkColumn = new Column<EntityModel, Boolean>(
-                    new CheckboxCell(true, false)) {
-                @Override
-                public Boolean getValue(EntityModel object) {
-                    return getSelectionModel().isSelected(object);
-                }
-            };
-        } else {
-            checkColumn = new Column<EntityModel, Boolean>(
-                    new RadioboxCell(true, false)) {
-                @Override
-                public Boolean getValue(EntityModel object) {
-                    return getSelectionModel().isSelected(object);
-                }
-            };
+        if (!hideCheckbox) {
+            // add selection columns
+            Column<EntityModel, Boolean> checkColumn;
+            if (multiSelection) {
+                checkColumn = new Column<EntityModel, Boolean>(
+                        new CheckboxCell(true, false)) {
+                    @Override
+                    public Boolean getValue(EntityModel object) {
+                        return getSelectionModel().isSelected(object);
+                    }
+                };
+            } else {
+                checkColumn = new Column<EntityModel, Boolean>(
+                        new RadioboxCell(true, false)) {
+                    @Override
+                    public Boolean getValue(EntityModel object) {
+                        return getSelectionModel().isSelected(object);
+                    }
+                };
+            }
+            addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+            setColumnWidth(checkColumn, 40, Unit.PX);
         }
-        addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
-        setColumnWidth(checkColumn, 40, Unit.PX);
     }
 
     /**
@@ -150,7 +161,35 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
      * @param headerString
      */
     public void addEntityModelColumn(Column<EntityModel, ?> column, String headerString) {
-        addColumn(column, headerString);
+        super.addColumn(column, headerString);
+    }
+
+    public void setCustomSelectionColumn(Column customSelectionColumn, String width) {
+        removeColumn(0);
+        insertColumn(0, customSelectionColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+        setColumnWidth(customSelectionColumn, width);
+    }
+
+    @Override
+    public void addColumn(Column column, String headerString) {
+        super.addColumn(column, headerString);
+    }
+
+    @Override
+    public void addColumn(Column column, String headerString, String width) {
+        super.addColumn(column, headerString);
+        super.setColumnWidth(column, width);
+    }
+
+    public void addColumn(Column column, Header header, String width) {
+        super.addColumn(column, header);
+        super.setColumnWidth(column, width);
+    }
+
+    @Override
+    public void insertColumn(int beforeIndex, Column column, String headerString, String width) {
+        super.insertColumn(beforeIndex, column, headerString);
+        super.setColumnWidth(column, width);
     }
 
     @SuppressWarnings("unchecked")
@@ -172,7 +211,7 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 M list = (M) sender;
-                getSelectionModel().setSelected((EntityModel)list.getSelectedItem(),true);
+                getSelectionModel().setSelected((EntityModel) list.getSelectedItem(), true);
             }
         });
 
@@ -180,7 +219,6 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 M list = (M) sender;
-
                 if (list.getSelectedItems() != null) {
                     for (Object item : list.getSelectedItems()) {
                         EntityModel entityModel = (EntityModel) item;

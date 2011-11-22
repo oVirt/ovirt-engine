@@ -36,6 +36,7 @@ public class LocalStorageView extends AbstractStorageView<LocalStorageModel> {
 
     @Inject
     public LocalStorageView() {
+        createPathEditor();
         localPathEditor = pathEditor;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(ClientGinjectorProvider.instance().getApplicationConstants());

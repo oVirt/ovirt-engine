@@ -1199,4 +1199,15 @@ public final class AsyncDataProvider
 		} };
 		Frontend.RunQuery(VdcQueryType.GetoVirtISOs, new VdcQueryParametersBase(), aQuery);
 	}
+
+	public static void GetLunsByVgId(AsyncQuery aQuery, String vgId)
+	{
+		aQuery.converterCallback = new IAsyncConverter() { public Object Convert(Object source, AsyncQuery _asyncQuery)
+		{
+			return source != null ? (java.util.ArrayList<LUNs>)source : new java.util.ArrayList<LUNs>();
+		} };
+		GetLunsByVgIdParameters tempVar = new GetLunsByVgIdParameters();
+		tempVar.setVgId(vgId);
+		Frontend.RunQuery(VdcQueryType.GetLunsByVgId, tempVar, aQuery);
+	}
 }

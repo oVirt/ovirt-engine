@@ -167,6 +167,12 @@ public interface ApplicationConstants extends Constants {
     @DefaultStringValue("Format Domain, i.e. Storage Content will be lost!")
     String storageRemovePopupFormatLabel();
 
+    @DefaultStringValue("The following operation is unrecoverable and destructive!")
+    String storageDestroyPopupWarningLabel();
+
+    @DefaultStringValue("All references to objects that reside on Storage Domain %1$s in the database will be removed. You may need to manually clean the storage in order to reuse it.")
+    String storageDestroyPopupMessageLabel();
+
     @DefaultStringValue("General")
     String storageGeneralSubTabLabel();
 
@@ -307,9 +313,9 @@ public interface ApplicationConstants extends Constants {
 
     @DefaultStringValue("Root Password")
     String hostInstallPasswordLabel();
-    
+
     @DefaultStringValue("RHEV-H ISO Name")
-    String hostInstallIsoLabel();    
+    String hostInstallIsoLabel();
 
     @DefaultStringValue("General")
     String poolGeneralSubTabLabel();
@@ -544,4 +550,40 @@ public interface ApplicationConstants extends Constants {
 
     @DefaultStringValue("")
     String copyRightNotice();
+
+    @DefaultStringValue("LUNs > Targets")
+    String storageIscsiPopupLunToTargetsTabLabel();
+
+    @DefaultStringValue("Targets > LUNs")
+    String storageIscsiPopupTargetsToLunTabLabel();
+
+    @DefaultStringValue("Address")
+    String storageIscsiPopupAddressLabel();
+
+    @DefaultStringValue("Port")
+    String storageIscsiPopupPortLabel();
+
+    @DefaultStringValue("User Authentication:")
+    String storageIscsiPopupUserAuthLabel();
+
+    @DefaultStringValue("CHAP username")
+    String storageIscsiPopupChapUserLabel();
+
+    @DefaultStringValue("CHAP password")
+    String storageIscsiPopupChapPassLabel();
+
+    @DefaultStringValue("Discover")
+    String storageIscsiPopupDiscoverButtonLabel();
+
+    @DefaultStringValue("Discover Targets")
+    String storageIscsiDiscoverTargetsLabel();
+
+    @DefaultStringValue("Login All")
+    String storageIscsiPopupLoginAllButtonLabel();
+
+    @DefaultStringValue("Login")
+    String storageIscsiPopupLoginButtonLabel();
+
+    @DefaultStringValue("Select Storage Domain")
+    String storageIscsiSelectStorageLabel();
 }

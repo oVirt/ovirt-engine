@@ -22,10 +22,10 @@
 	padding-left: 5px;
 	padding-right: 5px;
 	text-align: left;
-	color: #111111;
+	color: grey;
 	font-family: Arial,sans-serif;
 	font-size: 11px;
-	background-color: #F0F2FF;
+	background-color: #F9F9F9;
 	height: 28px;	
 }
 
@@ -37,24 +37,27 @@
 	border-right: 0px;
 	border-left: 0px;
 	white-space: nowrap;
-	cursor: pointer;
+	cursor: pointer;	
 }
 
 .cellTableEvenRow {
 	background-color: #ffffff;
+	color: grey;
 }
 
 .cellTableOddRow {
-	background-color: #f3f7fb;
+	background-color: #ffffff;
+	color: grey;
 }
 
 .cellTableHoveredRow {
-	background-color: #eee;
+	background-color: #ffffff;
+	color: grey;
 }
 
 .cellTableSelectedRow {
-	background-color: #C3D0E0;
-	color: white;
+	background-color: #ffffff;
+	color: black;
 	overflow: auto;
 }
 

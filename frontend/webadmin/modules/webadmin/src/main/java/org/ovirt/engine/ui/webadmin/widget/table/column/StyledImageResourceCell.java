@@ -9,15 +9,21 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class StyledImageResourceCell extends ImageResourceCell {
 
+    private String style = "";
+
     @Override
     public void render(Context context, ImageResource value, SafeHtmlBuilder sb) {
         if (value != null) {
             SafeHtml html = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(value).getHTML());
 
-            sb.appendHtmlConstant("<div style=\"" + "text-align: center; padding-top: 6px;" + "\">");
+            sb.appendHtmlConstant("<div style=\"" + style + "\">");
             sb.append(html);
             sb.appendHtmlConstant("</div>");
         }
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
     }
 
 }

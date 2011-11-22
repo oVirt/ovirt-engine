@@ -1,17 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+	xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
+	xmlns:t="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog.tab">
+
+	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.IscsiStorageView.WidgetStyle">
-		.content {
-			text-align: center;
+		.bar {
+			width: 20px;
+			height: 342px;
+		}
+		
+		.dialogTab {
+			position: absolute;
+			width: 100px;
+			margin-top: 70px;
+			left: -20px;
+			-webkit-transform: rotate(-90deg);
+			-moz-transform: rotate(-90deg);
+			-ms-transform: rotate(-90deg);			
+			filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);			
+		}
+		
+		.tab {
+			height: 161px;		
+		}
+		
+		.tabContentPanel {
+			padding: 2px;
+			height: 336px;
+		}
+		
+		.validTabContentPanel {
+			border: 1px lightGray solid;
+		}
+		
+		.invalidTabContentPanel {
+			border: 1px orange solid;
+		}	
+		
+		.targetsListPanel {
+			margin-top: 35px;
+		}
+		
+		.expandedlunsListPanel {
+			height: 308px;
+		}
+			
+		.expandedlunsListPanel {
+			width: 100%;
+			overflow-y: scroll !important;
+			overflow-x: auto;
+		}
+		
+		.errorMessageLabel {			
 			color: red;
+			margin: 2px;
+			height: 16px;
 		}		
 	</ui:style>
 	
-	<g:FlowPanel addStyleNames="{style.content}">
-		<g:Label>--- Not Implemented Yet --- </g:Label>		
+	<g:FlowPanel>
+		<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />	
+		<t:DialogTabPanel ui:field="dialogTabPanel" height="340px" width="100%">
+			<t:tab>
+				<t:DialogTab ui:field="targetsToLunTab" addStyleNames="{style.tab}">
+					<t:content height="100%">
+						<g:FlowPanel ui:field="targetsToLunsTabContentPanel" addStyleNames="{style.tabContentPanel} {style.validTabContentPanel}">
+							<g:SimplePanel ui:field="targetsToLunsPanel" />
+						</g:FlowPanel>
+					</t:content>
+				</t:DialogTab>
+			</t:tab>
+			<t:tab>
+				<t:DialogTab ui:field="lunToTargetsTab" addStyleNames="{style.tab}">
+					<t:content height="100%">
+						<g:FlowPanel ui:field="lunsToTargetsTabContentPanel" addStyleNames="{style.tabContentPanel} {style.validTabContentPanel}">							
+							<g:SimplePanel ui:field="lunsListPanel" />
+						</g:FlowPanel>
+					</t:content>
+				</t:DialogTab>
+			</t:tab>
+		</t:DialogTabPanel>	
 	</g:FlowPanel>
 
 </ui:UiBinder>

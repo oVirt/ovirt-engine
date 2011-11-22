@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -67,6 +66,9 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     @Ignore
     @UiField
     FlowPanel specificStorageTypePanel;
+
+    @Ignore
+    AbstractStorageView storageView;
 
     @Inject
     public StoragePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
@@ -169,21 +171,26 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void revealStorageView(StorageModel object) {
-        AbstractStorageView storageView = null;
-
         IStorageModel model = object.getSelectedItem();
         if (model.getType() == StorageType.NFS) {
             storageView = new NfsStorageView();
         } else if (model.getType() == StorageType.LOCALFS) {
             storageView = new LocalStorageView();
         } else if (model.getType() == StorageType.FCP) {
-            storageView = new FcpStorageView();
+            if (model.getRole() == StorageDomainType.ImportExport) {
+                storageView = new SanImportStorageView();
+            }
+            else {
+                storageView = new FcpStorageView();
+            }
         } else if (model.getType() == StorageType.ISCSI) {
-            storageView = new IscsiStorageView();
+            if (model.getRole() == StorageDomainType.ImportExport) {
+                storageView = new IscsiImportStorageView();
+            }
+            else {
+                storageView = new IscsiStorageView();
+            }
         }
-
-        // Add the command list to the concrete storage model
-        ((Model) model).setCommands(object.getCommands());
 
         // Clear the current storage view
         specificStorageTypePanel.clear();
@@ -209,6 +216,11 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         nameEditor.setFocus(true);
     }
 
+    @Override
+    public boolean handleEnterKeyDisabled() {
+        return storageView.isSubViewFocused();
+    }
+
     interface WidgetStyle extends CssResource {
         String formatContentWidget();
 
@@ -220,4 +232,5 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
         String storageDomainTypeLabel();
     }
+
 }

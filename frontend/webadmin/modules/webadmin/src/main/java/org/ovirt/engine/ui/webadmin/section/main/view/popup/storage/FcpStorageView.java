@@ -1,58 +1,29 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
-import org.ovirt.engine.ui.uicommonweb.models.storage.FcpStorageModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
+import org.ovirt.engine.ui.webadmin.widget.storage.SanStorageLunToTargetList;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.inject.Inject;
+import com.google.gwt.user.client.ui.Label;
 
-public class FcpStorageView extends AbstractStorageView<FcpStorageModel> {
-
-    interface Driver extends SimpleBeanEditorDriver<FcpStorageModel, FcpStorageView> {
-        Driver driver = GWT.create(Driver.class);
-    }
-
-    interface ViewUiBinder extends UiBinder<Widget, FcpStorageView> {
-        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
-    }
+public class FcpStorageView extends AbstractSanStorageView {
 
     @UiField
-    WidgetStyle style;
+    @Path(value = "GetLUNsFailure")
+    Label errorMessage;
 
-    @Inject
-    public FcpStorageView() {
-        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(ClientGinjectorProvider.instance().getApplicationConstants());
-        addStyles();
-        Driver.driver.initialize(this);
-    }
-
-    void addStyles() {
-    }
-
-    void localize(ApplicationConstants constants) {
-    }
+    SanStorageLunToTargetList sanStorageLunToTargetList;
 
     @Override
-    public void edit(FcpStorageModel object) {
-        Driver.driver.edit(object);
-    }
+    protected void initLists(SanStorageModelBase object) {
+        // Create and update storage list
+        sanStorageLunToTargetList = new SanStorageLunToTargetList(object, true);
+        sanStorageLunToTargetList.activateItemsUpdate();
 
-    @Override
-    public FcpStorageModel flush() {
-        return Driver.driver.flush();
-    }
+        // Set tree style
+        sanStorageLunToTargetList.setTreeContainerStyleName(style.treePanel());
 
-    interface WidgetStyle extends CssResource {
-    }
-
-    @Override
-    public void focus() {
+        // Add view widget to panel
+        listPanel.add(sanStorageLunToTargetList);
     }
 }

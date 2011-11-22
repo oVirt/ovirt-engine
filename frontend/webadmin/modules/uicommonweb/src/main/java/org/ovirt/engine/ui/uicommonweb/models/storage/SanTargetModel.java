@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.*;
 import org.ovirt.engine.ui.uicommonweb.models.*;
 
 @SuppressWarnings("unused")
-public class SanTargetModel extends Model
+public class SanTargetModel extends EntityModel
 {
 
 	public static EventDefinition LoggedInEventDefinition;
@@ -111,6 +111,21 @@ public class SanTargetModel extends Model
 		{
 			luns = value;
 			OnPropertyChanged(new PropertyChangedEventArgs("Luns"));
+			getLunsList().setItems(luns);
+		}
+	}
+
+	private ListModel lunsList;
+	public ListModel getLunsList()
+	{
+		return lunsList;
+	}
+	public void setLunsList(ListModel value)
+	{
+		if (lunsList != value)
+		{
+			lunsList = value;
+			OnPropertyChanged(new PropertyChangedEventArgs("LunsList"));
 		}
 	}
 
@@ -123,8 +138,8 @@ public class SanTargetModel extends Model
 	public SanTargetModel()
 	{
 		setLoggedInEvent(new Event(LoggedInEventDefinition));
-
 		setLoginCommand(new UICommand("Login", this));
+		setLunsList(new ListModel());
 	}
 
 	private void Login()

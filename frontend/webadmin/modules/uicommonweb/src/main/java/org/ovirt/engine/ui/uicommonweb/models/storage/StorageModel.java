@@ -181,7 +181,6 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 		{
 			UpdateFormat();
 			UpdateHost();
-			getSelectedItem().getUpdateCommand().Execute();
 		}
 	}
 
@@ -489,6 +488,8 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 		{
 			getHost().setSelectedItem(Linq.FirstOrDefault(hosts));
 		}
+
+		getSelectedItem().getUpdateCommand().Execute();
 	}
 
 	private void UpdateFormat()
