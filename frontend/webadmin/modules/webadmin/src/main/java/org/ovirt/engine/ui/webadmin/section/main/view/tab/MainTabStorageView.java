@@ -102,6 +102,12 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
                 return getMainModel().getRemoveCommand();
             }
         });
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Destroy", true) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getDestroyCommand();
+            }
+        });
     }
 
 }

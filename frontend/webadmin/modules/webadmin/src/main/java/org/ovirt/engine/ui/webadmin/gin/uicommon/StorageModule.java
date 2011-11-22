@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDestroyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
@@ -51,7 +52,8 @@ public class StorageModule extends AbstractGinModule {
     @Singleton
     public MainModelProvider<storage_domains, StorageListModel> getStorageListProvider(ClientGinjector ginjector,
             final Provider<StoragePopupPresenterWidget> popupProvider,
-            final Provider<StorageRemovePopupPresenterWidget> removePopupProvider) {
+            final Provider<StorageRemovePopupPresenterWidget> removePopupProvider,
+            final Provider<StorageDestroyPopupPresenterWidget> destroyConfirmPopupProvider) {
         return new MainTabModelProvider<storage_domains, StorageListModel>(ginjector, StorageListModel.class) {
             @Override
             protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
@@ -63,6 +65,15 @@ public class StorageModule extends AbstractGinModule {
                     return removePopupProvider.get();
                 } else {
                     return super.getModelPopup(lastExecutedCommand);
+                }
+            }
+
+            @Override
+            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getDestroyCommand()) {
+                    return destroyConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(lastExecutedCommand);
                 }
             }
         };
