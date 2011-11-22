@@ -32,6 +32,7 @@
 		
 		.gwt-StackLayoutPanel .gwt-StackLayoutPanelContent {
 			border: 0px;
+			padding: 2px;
 		}
 		
 		.footerMessage {

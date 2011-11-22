@@ -9,10 +9,8 @@ import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class TagList extends AbstractActionStackPanelItem<TagListModel> {
@@ -21,13 +19,9 @@ public class TagList extends AbstractActionStackPanelItem<TagListModel> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    @UiField
-    VerticalPanel container;
-
     public TagList(TagModelProvider modelProvider) {
         super(getTreeDisplayWidget(modelProvider), getActionPanel(modelProvider));
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        container.setCellHeight(actionPanel, "18px");
     }
 
     static Widget getTreeDisplayWidget(TagModelProvider modelProvider) {

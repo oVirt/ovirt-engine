@@ -11,9 +11,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class BookmarkList extends AbstractActionStackPanelItem<bookmarks> {
@@ -22,13 +20,9 @@ public class BookmarkList extends AbstractActionStackPanelItem<bookmarks> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    @UiField
-    VerticalPanel container;
-
     public BookmarkList(BookmarkModelProvider modelProvider) {
         super(getBookmarkDisplayWidget(modelProvider), getActionPanel(modelProvider));
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        container.setCellHeight(actionPanel, "28px");
     }
 
     static Widget getBookmarkDisplayWidget(BookmarkModelProvider modelProvider) {

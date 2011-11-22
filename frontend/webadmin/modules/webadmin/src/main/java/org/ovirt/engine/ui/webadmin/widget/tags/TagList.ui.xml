@@ -9,9 +9,16 @@
 		}
 	</ui:style>
 
-	<g:VerticalPanel ui:field="container" width="100%">
-		<w:SimpleActionPanel ui:field="actionPanel" addStyleNames="{style.actionPanel}" />
-		<g:Widget ui:field="dataDisplayWidget" />
-	</g:VerticalPanel>
+	<g:DockLayoutPanel unit="PX">
+		<g:north size="30">
+			<w:SimpleActionPanel ui:field="actionPanel" addStyleNames="{style.actionPanel}" />
+		</g:north>
+
+		<g:center>
+			<g:ScrollPanel>
+				<g:Widget ui:field="dataDisplayWidget" />
+			</g:ScrollPanel>
+		</g:center>
+	</g:DockLayoutPanel>
 
 </ui:UiBinder>

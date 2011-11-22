@@ -6,21 +6,22 @@
 
 	<ui:style>
 		.refreshButton {
-			position: absolute;
+			float: right;
 			font-size: 12px;
 			height: 14px;
 			width: 12px;
-			right: 5px;
-			top: 5px;
+			margin-right: 5px;
 			background: transparent;
 			border: 1px solid transparent;
 		}
 	</ui:style>
 
-	<g:FlowPanel ui:field="actionPanel">
+	<g:HTMLPanel>
+		<g:FlowPanel ui:field="actionPanel" />
 		<g:PushButton ui:field="refreshButton" addStyleNames="{style.refreshButton}">
 			<g:upFace image='{resources.refreshButtonImage}' />
 		</g:PushButton>
-	</g:FlowPanel>
+		<div style="clear: both;" />
+	</g:HTMLPanel>
 
 </ui:UiBinder>

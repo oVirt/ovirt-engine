@@ -3,7 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
-		
+
 	<ui:style type="org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable.Style">
 		.panel {
 			overflow: auto;
@@ -43,12 +43,13 @@
 		}
 		
 		.contentWithDefaultHeader {
+			
 		}
 		
 		.headerContainer {
 			position: absolute;
 			height: 28px;
-			top: 34px;			
+			top: 34px;
 			bottom: 0px;
 			left: 0px;
 			right: 0px;
@@ -61,9 +62,9 @@
 		<g:HTMLPanel ui:field="barPanel" addStyleNames="{style.bar}">
 			<g:FlowPanel ui:field="actionPanel" />
 			<g:PushButton ui:field="nextPageButton" addStyleNames="{style.linkButton}" />
-			<g:PushButton ui:field="prevPageButton" addStyleNames="{style.linkButton}" />			
+			<g:PushButton ui:field="prevPageButton" addStyleNames="{style.linkButton}" />
 			<g:PushButton ui:field="refreshPageButton" addStyleNames="{style.refreshButton}">
-				<g:upFace image='{resources.refreshButtonImage}'/>
+				<g:upFace image='{resources.refreshButtonImage}' />
 			</g:PushButton>
 			<div style="clear: both;" />
 		</g:HTMLPanel>
