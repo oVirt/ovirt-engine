@@ -2,6 +2,7 @@ package org.ovirt.engine.core.compat.backendcompat;
 
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Date;
 
 import org.ovirt.engine.core.compat.CompatException;
@@ -33,16 +34,26 @@ public class File {
         }
     }
 
-    public static String ReadAllText(String filename) {
+    public static String ReadAllText(final String filename) {
+        FileInputStream fis = null;
         try {
             java.io.File file = new java.io.File(filename.toString());
-            FileInputStream fis = new FileInputStream(file);
+            fis = new FileInputStream(file);
             int size = fis.available();
             byte[] contents = new byte[size];
             fis.read(contents);
             return new String(contents);
         } catch (Exception e) {
             throw new CompatException(e);
+        } finally {
+            //in the absence of commons io, this workaround is needed to close the file
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    //ignore
+                }
+            }
         }
     }
 

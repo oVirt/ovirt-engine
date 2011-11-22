@@ -43,6 +43,21 @@ public class FileTest extends TestCase {
         assertEquals("Data should be equal", "This is a test", data);
     }
 
+    /**
+     * Test to verify fix on File.ReadAllText()
+     */
+    public void testReadAllTextTonSOfTimes() throws Exception {
+        java.io.File iFile = java.io.File.createTempFile("Test", ".txt");
+        FileWriter iFileWriter = new FileWriter(iFile);
+        iFileWriter.write("This is a test");
+        iFileWriter.close();
+
+        for(int i = 0; i< 100000; i++) {
+            String data = File.ReadAllText(iFile.getAbsolutePath());
+            assertEquals("Data should be equal", "This is a test", data);
+        }
+    }
+
     public void testOpenText() throws Exception {
         java.io.File iFile = java.io.File.createTempFile("Test", ".txt");
         FileWriter iFileWriter = new FileWriter(iFile);
