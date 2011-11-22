@@ -31,7 +31,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 
     @Override
     public Boolean isRaiseErrorModalPanel(VdcQueryType queryType) {
-        return true;
+        return false;
     }
 
     @Override
