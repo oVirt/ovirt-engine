@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
@@ -31,9 +32,9 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
+@LockIdNameAttribute(fieldName = "ProblematicVdsId")
 public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends StorageHandlingCommandBase<T> {
     private final VDS _problematicVds;
-
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -49,16 +50,20 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         _problematicVds = DbFacade.getInstance().getVdsDAO().get(parameters.getVdsId());
     }
 
+    public Guid getProblematicVdsId() {
+        return _problematicVds.getvds_id();
+    }
+
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = true;
+        boolean returnValue = !IsObjecteLocked();
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MANUAL_FENCE);
         // check problematic vds status
         if (IsLegalStatus(_problematicVds.getstatus())) {
             if (_problematicVds.getspm_status() == VdsSpmStatus.SPM) {
                 if(getStoragePool().getstorage_pool_type() != StorageType.LOCALFS) {
-                    returnValue = InitializeVds();
+                    returnValue = returnValue && InitializeVds();
                 }
                 if (returnValue && getStoragePool().getstatus() != StoragePoolStatus.NotOperational
                         && getStoragePool().getstatus() != StoragePoolStatus.Problematic
