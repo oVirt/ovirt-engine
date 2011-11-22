@@ -1440,6 +1440,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     IsNeedSupportForOldVgAPI(326),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1")
+    InitStorageSparseSizeInGB(327),
+
     Invalid(65535);
 
     private int intValue;
