@@ -274,6 +274,9 @@ public final class VdcActionUtils {
                 StorageDomainStatus.Unknown,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.DetachStorageDomainFromPool,
                         VdcActionType.DeactivateStorageDomain)));
+        storageDomainMatrix.put(
+                StorageDomainStatus.Maintenance,
+                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.DeactivateStorageDomain)));
         _matrix.put(storage_domains.class, storageDomainMatrix);
     }
 
