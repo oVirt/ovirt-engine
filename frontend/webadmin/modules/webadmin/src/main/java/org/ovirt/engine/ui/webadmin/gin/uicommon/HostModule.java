@@ -55,13 +55,13 @@ public class HostModule extends AbstractGinModule {
             @Override
             protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getNewCommand()
-                        || lastExecutedCommand == getModel().getEditCommand()) {
+                        || lastExecutedCommand == getModel().getEditCommand()
+                        || lastExecutedCommand == getModel().getApproveCommand()) {
                     return popupProvider.get();
                 } else if (lastExecutedCommand == getModel().getAssignTagsCommand()) {
                     return assignTagsPopupProvider.get();
-                } else {
-                    return super.getModelPopup(lastExecutedCommand);
                 }
+                return super.getModelPopup(lastExecutedCommand);
             }
 
             @Override

@@ -876,21 +876,31 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
 	public void Approve()
 	{
 		VDS host = (VDS)getSelectedItem();
-		HostModel model = new HostModel();
-		setWindow(model);
-		PrepareModelForApproveEdit(host, model, null);
-		model.setTitle("Edit and Approve Host");
-		model.setHashName("edit_and_approve_host");
+		HostModel hostModel = new HostModel();
+		setWindow(hostModel);
+		AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object result)
+            {
+                HostListModel hostListModel = (HostListModel)model;
+                HostModel innerHostModel = (HostModel)hostListModel.getWindow();
+                java.util.ArrayList<storage_pool> dataCenters = (java.util.ArrayList<storage_pool>)result;
+                VDS host = (VDS)hostListModel.getSelectedItem();
+                hostListModel.PrepareModelForApproveEdit(host, innerHostModel, dataCenters);
+                innerHostModel.setTitle("Edit and Approve Host");
+                innerHostModel.setHashName("edit_and_approve_host");
 
 
-		UICommand tempVar = new UICommand("OnApprove", this);
-		tempVar.setTitle("OK");
-		tempVar.setIsDefault(true);
-		model.getCommands().add(tempVar);
-		UICommand tempVar2 = new UICommand("Cancel", this);
-		tempVar2.setTitle("Cancel");
-		tempVar2.setIsCancel(true);
-		model.getCommands().add(tempVar2);
+                UICommand tempVar = new UICommand("OnApprove", hostListModel);
+                tempVar.setTitle("OK");
+                tempVar.setIsDefault(true);
+                innerHostModel.getCommands().add(tempVar);
+                UICommand tempVar2 = new UICommand("Cancel", hostListModel);
+                tempVar2.setTitle("Cancel");
+                tempVar2.setIsCancel(true);
+                innerHostModel.getCommands().add(tempVar2);
+            }};
+            AsyncDataProvider.GetDataCenterList(_asyncQuery);
 	}
 
 	private void PrepareModelForApproveEdit(VDS vds, HostModel model, java.util.ArrayList<storage_pool> dataCenters)
