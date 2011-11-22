@@ -219,29 +219,6 @@ public class VmItemBehavior extends ItemBehavior
 
 			getItem().setPoolType(pool.getvm_pool_type());
 		}
-
-
-		if (getItem().getDefaultConsole() == null)
-		{
-			getItem().setDefaultConsole(new SpiceConsoleModel());
-		}
-		getItem().getDefaultConsole().setEntity(entity);
-
-		//Support RDP console for windows VMs.
-		if (DataProvider.IsWindowsOsType(entity.getvm_os()))
-		{
-			if (getItem().getAdditionalConsole() == null)
-			{
-				getItem().setAdditionalConsole(new RdpConsoleModel());
-			}
-			getItem().getAdditionalConsole().setEntity(entity);
-			getItem().setHasAdditionalConsole(true);
-		}
-		else
-		{
-			getItem().setAdditionalConsole(null);
-			getItem().setHasAdditionalConsole(false);
-		}
 	}
 
 	private void UpdateActionAvailability()

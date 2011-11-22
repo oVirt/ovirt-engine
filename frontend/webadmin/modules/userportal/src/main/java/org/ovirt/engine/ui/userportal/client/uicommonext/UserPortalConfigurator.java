@@ -8,6 +8,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommon.Configurator;
+import org.ovirt.engine.ui.uicommon.DataProvider;
 import org.ovirt.engine.ui.uicommon.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommon.models.vms.ISpice;
 import org.ovirt.engine.ui.userportal.client.util.ClientAgentType;
@@ -33,6 +34,8 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     
     private boolean isUsbEnabled;
     
+    private boolean isInitialized;
+    
     private UserPortalConfigurator()
     {       
         // Add event listeners
@@ -50,9 +53,6 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         
         // Update USB filters
         updateUsbFilter();
-        
-        // Update USB listen port
-        updateIsUsbEnabled();
     }
     
     public static UserPortalConfigurator getInstance() {
@@ -90,14 +90,15 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         fetchFile("consoles/spice/usbfilter.txt", usbFilterFileFetchedEvent);
     }
     
-    public void updateIsUsbEnabled() {
+    public void updateIsUsbEnabled(final ISpice spice) {
         // Get 'EnableUSBAsDefault' value from database
         AsyncDataProvider.IsUSBEnabledByDefault(new AsyncQuery(this,
             new INewAsyncCallback() {
                 @Override
                 public void OnSuccess(Object target, Object returnValue) {
                     // Update IsUsbEnabled value
-                    UserPortalConfigurator.getInstance().setIsUsbEnabled((Boolean) returnValue);
+                    isUsbEnabled = (Boolean) returnValue;
+                    spice.setUsbListenPort(isUsbEnabled ? getSpiceDefaultUsbPort() : getSpiceDisableUsbListenPort());
                 }
             }));
     }
@@ -160,9 +161,18 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     @Override
     public void Configure(ISpice spice)
     {
-        super.Configure(spice);
-
-        spice.setUsbFilter(usbFilter);
-        spice.setUsbListenPort(isUsbEnabled ? getSpiceDefaultUsbPort() : getSpiceDisableUsbListenPort());
+		spice.setDesiredVersion(getSpiceVersion());
+		spice.setAdminConsole(getSpiceAdminConsole());
+		spice.setFullScreen(getSpiceFullScreen());
+		spice.setUsbFilter(usbFilter);
+		
+		if (!isInitialized) {
+	        updateIsUsbEnabled(spice);
+			
+			isInitialized = true;
+		} 
+		else {        
+			spice.setUsbListenPort(isUsbEnabled ? getSpiceDefaultUsbPort() : getSpiceDisableUsbListenPort());
+		}
     }
 }
