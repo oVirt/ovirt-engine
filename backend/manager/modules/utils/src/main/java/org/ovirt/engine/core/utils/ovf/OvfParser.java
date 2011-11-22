@@ -1,26 +1,27 @@
 package org.ovirt.engine.core.utils.ovf;
 
-import org.ovirt.engine.core.compat.*;
+import java.text.DateFormat;
+import java.util.Date;
+
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.compat.DateTime;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.LogCompat;
+import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNamespaceManager;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.compat.backendcompat.XmlNodeList;
-import org.ovirt.engine.core.common.businessentities.*;
 
 public class OvfParser {
+
+    private static final String utcFallbackDateFormatStr = "yyyy.MM.dd HH:mm:ss";
+    private static final String utcDateFormatStr = "yyyy/MM/dd HH:mm:ss";
     protected XmlDocument _document;
     protected XmlNamespaceManager _xmlNS;
-
-    private static java.text.DateFormat utcDateTimeFormat;
-    private static java.text.DateFormat utcDateTimeFormat2;
-
-    static {
-        utcDateTimeFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        utcDateTimeFormat.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
-
-        utcDateTimeFormat2 = new java.text.SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-        utcDateTimeFormat2.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
-    }
 
     public OvfParser(String ovfstring) {
         _document = new XmlDocument();
@@ -84,8 +85,14 @@ public class OvfParser {
         return null;
     }
 
-    public static String LocalDateToUtcDateString(java.util.Date date) {
-        return utcDateTimeFormat.format(date);
+    public static String LocalDateToUtcDateString(Date date) {
+        return getDateFormat(utcDateFormatStr).format(date);
+    }
+
+    private static DateFormat getDateFormat(final String format) {
+        final DateFormat utcDateTimeFormat = new java.text.SimpleDateFormat(format);
+        utcDateTimeFormat.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+        return utcDateTimeFormat;
     }
 
     /**
@@ -102,11 +109,11 @@ public class OvfParser {
         }
 
         try {
-            date.argvalue = utcDateTimeFormat.parse(str);
+            date.argvalue = getDateFormat(utcDateFormatStr).parse(str);
             return true;
         } catch (java.text.ParseException e1) {
             try {
-                date.argvalue = utcDateTimeFormat2.parse(str);
+                date.argvalue = getDateFormat(utcFallbackDateFormatStr).parse(str);
                 return true;
             } catch (java.text.ParseException e) {
                 log.error("OVF DateTime format Error, Expected: yyyy/M/dd hh:mm:ss", e);
