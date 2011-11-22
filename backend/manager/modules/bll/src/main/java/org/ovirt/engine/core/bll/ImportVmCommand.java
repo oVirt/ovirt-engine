@@ -614,10 +614,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         AuditLogDirector.log(logable, AuditLogType.VM_IMPORT_INFO);
     }
 
-    private void restoreDefaultValues(VmStatic vmStaticForDefaultValues, VmStatic vmStaticFromOvf) {
-        vmStaticFromOvf.setMigrationSupport(vmStaticForDefaultValues.getMigrationSupport());
-    }
-
     protected boolean macAdded = false;
     protected void AddVmNetwork() {
         // Add interfaces from template

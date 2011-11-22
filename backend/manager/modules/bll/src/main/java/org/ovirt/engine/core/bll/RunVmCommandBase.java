@@ -65,10 +65,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         return getVdsSelector().getRunVdssList();
     }
 
-    private void setRunVdssList(java.util.ArrayList<Guid> value) {
-        getVdsSelector().setRunVdssList(value);
-    }
-
     public static VdsSelectionAlgorithm getDefaultSelectionAlgorithm() {
         return _defaultSelectionAlgorithm;
     }
