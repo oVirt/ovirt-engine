@@ -11,8 +11,8 @@ public class SnapshotMapper {
         if (entity.getdescription() != null) {
             model.setDescription(entity.getdescription());
         }
-        if (entity.getlast_modified_date() != null) {
-            model.setDate(DateMapper.map(entity.getlast_modified_date(), null));
+        if (entity.getcreation_date() != null) {
+            model.setDate(DateMapper.map(entity.getcreation_date(), null));
         }
         return model;
     }
