@@ -43,15 +43,9 @@ public class VmTemplateHandler {
                 DbFacade.getInstance().getDiskImageTemplateDAO().getAllByVmTemplate(vmt.getId());
         for (DiskImageTemplate dit : diskList) {
             vmt.getDiskMap().put(dit.getinternal_drive_mapping(), dit);
-            // translation from num of sectors to GB
+
+            // Translation from number of sectors to GB.
             vmt.setSizeGB(Double.valueOf(dit.getsize()) / Double.valueOf((1024 * 1024 * 1024)));
-            // if (dit.IsLocked)
-            // {
-            // status = VmTemplateStatus.Locked;
-            // }
-            /**
-             * TODO: Vitaly
-             */
             DiskImage image = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(dit.getId());
             if (image != null) {
                 vmt.getDiskImageMap().put(dit.getinternal_drive_mapping(), image);
