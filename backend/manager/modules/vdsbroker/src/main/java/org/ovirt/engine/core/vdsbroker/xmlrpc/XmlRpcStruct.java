@@ -22,6 +22,14 @@ public class XmlRpcStruct {
         innerMap.put(key, map);
     }
 
+    public void add(String key, List<String> map) {
+        innerMap.put(key, map);
+    }
+
+    public void add(String key, XmlRpcStruct map) {
+        innerMap.put(key, map.getInnerMap());
+    }
+
     public void add(String key, String value) {
         innerMap.put(key, value);
 

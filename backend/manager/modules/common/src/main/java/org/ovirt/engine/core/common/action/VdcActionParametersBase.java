@@ -86,7 +86,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
         CreateCloneOfTemplateParameters.class, MoveMultipleImageGroupsParameters.class,
         FenceVdsManualyParameters.class, VolumeFormat.class, ImageOperation.class,
         RemoveStorageDomainParameters.class, RecoveryStoragePoolParameters.class, AddUserParameters.class,
-        ChangeVDSClusterParameters.class, ChangeVMClusterParameters.class })
+        ChangeVDSClusterParameters.class, ChangeVMClusterParameters.class, SetupNetworksParameters.class })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VdcActionParametersBase")
 public class VdcActionParametersBase implements java.io.Serializable {

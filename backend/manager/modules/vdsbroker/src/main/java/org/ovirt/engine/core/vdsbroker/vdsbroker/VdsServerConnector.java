@@ -63,6 +63,8 @@ public interface VdsServerConnector {
     public Map<String, Object> editNetwork(String oldBridge, String newBridge, String vlan, String bond, String[] nics,
             Map<String, String> options);
 
+    public Map<String, Object> setupNetworks(Map networks, Map bonding, Map options);
+
     public Map<String, Object> setSafeNetworkConfig();
 
     public Map<String, Object> fenceNode(String ip, String port, String type, String user, String password,

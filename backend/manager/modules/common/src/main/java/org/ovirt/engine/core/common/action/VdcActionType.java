@@ -83,6 +83,7 @@ public enum VdcActionType {
     RemoveNetwork(155, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK),
     UpdateNetwork(156, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK),
     CommitNetworkChanges(157, ActionGroup.CONFIGURE_HOST_NETWORK),
+    SetupNetworks(158, ActionGroup.CONFIGURE_HOST_NETWORK),
     // VmTemplatesCommand
     AddVmTemplate(201, ActionGroup.CREATE_TEMPLATE),
     UpdateVmTemplate(202, ActionGroup.EDIT_TEMPLATE_PROPERTIES),

@@ -68,6 +68,8 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc editNetwork(String oldBridge, String newBridge, String vlan, String bond, String[] nics,
             Map<String, String> options);
 
+    StatusOnlyReturnForXmlRpc setupNetworks(XmlRpcStruct networks, XmlRpcStruct bonding, XmlRpcStruct options);
+
     StatusOnlyReturnForXmlRpc setSafeNetworkConfig();
 
     FenceStatusReturnForXmlRpc fenceNode(String ip, String port, String type, String user, String password,

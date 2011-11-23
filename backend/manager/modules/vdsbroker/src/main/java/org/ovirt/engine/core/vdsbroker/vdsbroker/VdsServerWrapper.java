@@ -345,6 +345,18 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    public StatusOnlyReturnForXmlRpc setupNetworks(XmlRpcStruct networks, XmlRpcStruct bonding, XmlRpcStruct options) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.setupNetworks(networks.getInnerMap(),
+                    bonding.getInnerMap(), options.getInnerMap());
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+
+    }
+
     public StatusOnlyReturnForXmlRpc setSafeNetworkConfig() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.setSafeNetworkConfig();
