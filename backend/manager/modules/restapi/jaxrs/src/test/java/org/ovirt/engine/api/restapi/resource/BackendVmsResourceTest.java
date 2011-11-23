@@ -66,16 +66,12 @@ public class BackendVmsResourceTest
             vmStatistics.setusage_mem_percent(0);
             vmStatistics.setusage_network_percent(0);
             vm.setStatisticsData(vmStatistics);
-            int j=0;
-            while (j < 2) {
-                for (int i=0; i<GUIDS.length-1; i++) {
-                    setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
-                            GetVmByVmIdParameters.class,
-                            new String[] { "Id" },
-                            new Object[] { GUIDS[i] },
-                            vm);
-                }
-                j++;
+            for (int i=0; i<GUIDS.length-1; i++) {
+                setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+                        GetVmByVmIdParameters.class,
+                        new String[] { "Id" },
+                        new Object[] { GUIDS[i] },
+                        vm);
             }
             setUpQueryExpectations("");
             collection.setUriInfo(uriInfo);

@@ -1,7 +1,15 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Set;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
+import org.ovirt.engine.api.common.util.DetailHelper;
+import org.ovirt.engine.api.common.util.DetailHelper.Detail;
+import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
@@ -9,6 +17,8 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
+import org.ovirt.engine.api.model.Statistic;
+import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Ticket;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -20,6 +30,8 @@ import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmResource;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendResource.EntityIdResolver;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendResource.QueryIdResolver;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
@@ -299,7 +311,23 @@ public class BackendVmResource extends
 
     @Override
     protected VM populate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
-        return parent.addStatistics(model, entity, uriInfo, httpHeaders);
+        Set<Detail> details = DetailHelper.getDetails(getHttpHeaders());
+        parent.addInlineDetails(details, model);
+        addStatistics(model, entity, uriInfo, httpHeaders);
+        return model;
+    }
+
+    VM addStatistics(VM model, org.ovirt.engine.core.common.businessentities.VM entity, UriInfo ui, HttpHeaders httpHeaders) {
+        if (DetailHelper.include(httpHeaders, "statistics")) {
+            model.setStatistics(new Statistics());
+            VmStatisticalQuery query = new VmStatisticalQuery(newModel(model.getId()));
+            List<Statistic> statistics = query.getStatistics(entity);
+            for (Statistic statistic : statistics) {
+                LinkHelper.addLinks(ui, statistic, query.getParentType());
+            }
+            model.getStatistics().getStatistics().addAll(statistics);
+        }
+        return model;
     }
 
     protected class UpdateParametersProvider implements

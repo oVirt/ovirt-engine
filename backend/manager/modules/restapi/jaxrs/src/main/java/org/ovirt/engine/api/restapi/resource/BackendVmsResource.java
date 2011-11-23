@@ -6,18 +6,14 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.common.util.DetailHelper.Detail;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Nics;
-import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Tags;
 import org.ovirt.engine.api.model.VM;
@@ -60,12 +56,7 @@ public class BackendVmsResource extends
 
     @Override
     public VMs list() {
-        VMs vms = mapCollection(getBackendCollection(SearchType.VM));
-        Set<Detail> details = DetailHelper.getDetails(getHttpHeaders());
-        for (VM vm : vms.getVMs()) {
-            addInlineDetails(details, vm);
-        }
-        return vms;
+         return mapCollection(getBackendCollection(SearchType.VM));
     }
 
     @Override
@@ -167,7 +158,7 @@ public class BackendVmsResource extends
         return diskImages;
     }
 
-    private VM addInlineDetails(Set<Detail> details, VM vm) {
+    protected VM addInlineDetails(Set<Detail> details, VM vm) {
         if (details.contains(Detail.DISKS)) {
             addInlineDisks(vm);
         }
@@ -176,9 +167,6 @@ public class BackendVmsResource extends
         }
         if (details.contains(Detail.TAGS)) {
             addInlineTags(vm);
-        }
-        if (details.contains(Detail.STATISTICS)) {
-            addInlineStatistics(vm);
         }
         return vm;
     }
@@ -279,18 +267,10 @@ public class BackendVmsResource extends
 
     @Override
     protected VM populate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
-        return addInlineDetails(DetailHelper.getDetails(getHttpHeaders()), model);
-    }
-
-    VM addStatistics(VM model, org.ovirt.engine.core.common.businessentities.VM entity, UriInfo ui, HttpHeaders httpHeaders) {
-        if (DetailHelper.include(httpHeaders, "statistics")) {
-            model.setStatistics(new Statistics());
-            VmStatisticalQuery query = new VmStatisticalQuery(newModel(model.getId()));
-            List<Statistic> statistics = query.getStatistics(entity);
-            for (Statistic statistic : statistics) {
-                LinkHelper.addLinks(ui, statistic, query.getParentType());
-            }
-            model.getStatistics().getStatistics().addAll(statistics);
+        Set<Detail> details = DetailHelper.getDetails(getHttpHeaders());
+        model = addInlineDetails(details, model);
+        if (details.contains(Detail.STATISTICS)) {
+            addInlineStatistics(model);
         }
         return model;
     }
