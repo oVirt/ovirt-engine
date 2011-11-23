@@ -99,7 +99,32 @@ public class DbFacade {
     @SuppressWarnings("unused")
     private static final LogCompat log = LogFactoryCompat.getLog(DbFacade.class);
 
-    private static Map<Class<?>, Class<?>> mapEntityToDao;
+    @SuppressWarnings("serial")
+    private final static Map<Class<?>, Class<?>> mapEntityToDao = new HashMap<Class<?>, Class<?>>()
+    {
+        {
+            mapEntityToDao.put(storage_pool.class, StoragePoolDAO.class);
+            mapEntityToDao.put(storage_pool_iso_map.class, StoragePoolIsoMapDAO.class);
+            mapEntityToDao.put(storage_domain_static.class, StorageDomainStaticDAO.class);
+            mapEntityToDao.put(storage_domain_dynamic.class, StorageDomainDynamicDAO.class);
+            mapEntityToDao.put(VdsStatic.class, VdsStaticDAO.class);
+            mapEntityToDao.put(VdsDynamic.class, VdsDynamicDAO.class);
+            mapEntityToDao.put(VdsStatistics.class, VdsStatisticsDAO.class);
+            mapEntityToDao.put(vds_spm_id_map.class, VdsSpmIdMapDAO.class);
+            mapEntityToDao.put(roles.class, RoleDAO.class);
+            mapEntityToDao.put(VmTemplate.class, VmTemplateDAO.class);
+            mapEntityToDao.put(VmDynamic.class, VmDynamicDAO.class);
+            mapEntityToDao.put(VmStatic.class, VmStaticDAO.class);
+            mapEntityToDao.put(VmStatistics.class, VmStatisticsDAO.class);
+            mapEntityToDao.put(image_vm_map.class, ImageVmMapDAO.class);
+            mapEntityToDao.put(DiskImage.class, DiskImageDAO.class);
+            mapEntityToDao.put(DiskImageDynamic.class, DiskImageDynamicDAO.class);
+            mapEntityToDao.put(DiskImageTemplate.class, DiskImageTemplateDAO.class);
+            mapEntityToDao.put(VmNetworkInterface.class, VmNetworkInterfaceDAO.class);
+            mapEntityToDao.put(VmNetworkStatistics.class, VmNetworkStatisticsDAO.class);
+            mapEntityToDao.put(network.class, NetworkDAO.class);
+        }
+    };
 
     private JdbcTemplate jdbcTemplate;
 
@@ -110,30 +135,6 @@ public class DbFacade {
 
     private int connectionCheckInterval;
 
-    {
-        mapEntityToDao = new HashMap<Class<?>, Class<?>>();
-        mapEntityToDao.put(storage_pool.class, StoragePoolDAO.class);
-        mapEntityToDao.put(storage_pool_iso_map.class, StoragePoolIsoMapDAO.class);
-        mapEntityToDao.put(storage_domain_static.class, StorageDomainStaticDAO.class);
-        mapEntityToDao.put(storage_domain_dynamic.class, StorageDomainDynamicDAO.class);
-        mapEntityToDao.put(VdsStatic.class, VdsStaticDAO.class);
-        mapEntityToDao.put(VdsDynamic.class, VdsDynamicDAO.class);
-        mapEntityToDao.put(VdsStatistics.class, VdsStatisticsDAO.class);
-        mapEntityToDao.put(vds_spm_id_map.class, VdsSpmIdMapDAO.class);
-        mapEntityToDao.put(roles.class, RoleDAO.class);
-        mapEntityToDao.put(VmTemplate.class, VmTemplateDAO.class);
-        mapEntityToDao.put(VmDynamic.class, VmDynamicDAO.class);
-        mapEntityToDao.put(VmStatic.class, VmStaticDAO.class);
-        mapEntityToDao.put(VmStatistics.class, VmStatisticsDAO.class);
-        mapEntityToDao.put(image_vm_map.class, ImageVmMapDAO.class);
-        mapEntityToDao.put(DiskImage.class, DiskImageDAO.class);
-        mapEntityToDao.put(DiskImageDynamic.class, DiskImageDynamicDAO.class);
-        mapEntityToDao.put(DiskImageTemplate.class, DiskImageTemplateDAO.class);
-        mapEntityToDao.put(VmNetworkInterface.class, VmNetworkInterfaceDAO.class);
-        mapEntityToDao.put(VmNetworkStatistics.class, VmNetworkStatisticsDAO.class);
-        mapEntityToDao.put(network.class, NetworkDAO.class);
-
-    }
 
     public void setDbEngineDialect(DbEngineDialect dbEngineDialect) {
         this.dbEngineDialect = dbEngineDialect;
