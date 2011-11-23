@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.utils;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 
-import junit.framework.TestCase;
+public class EnumUtilsTest {
 
-public class EnumUtilsTest extends TestCase {
-    public void testConvertToStringWithSpaces() {
+    @Test
+    public void convertToStringWithSpaces() {
         assertEquals("Hello There", EnumUtils.ConvertToStringWithSpaces("HelloThere"));
     }
 }
