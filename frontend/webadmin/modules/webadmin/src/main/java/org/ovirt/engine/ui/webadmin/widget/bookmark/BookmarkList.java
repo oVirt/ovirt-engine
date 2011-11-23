@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.ui.Widget;
 
 public class BookmarkList extends AbstractActionStackPanelItem<bookmarks> {
@@ -28,6 +29,7 @@ public class BookmarkList extends AbstractActionStackPanelItem<bookmarks> {
     static Widget getBookmarkDisplayWidget(BookmarkModelProvider modelProvider) {
         ApplicationTemplates templates = ClientGinjectorProvider.instance().getApplicationTemplates();
         CellList<bookmarks> display = new CellList<bookmarks>(new BookmarkListItemCell(templates));
+        display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
         modelProvider.addDataDisplay(display);
         return display;
     }
