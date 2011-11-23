@@ -3,7 +3,8 @@ package org.ovirt.engine.core.common.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.MatchCollection;
+import org.ovirt.engine.core.compat.Regex;
 
 public class EnumUtils {
 
@@ -56,4 +57,18 @@ public class EnumUtils {
         return result;
     }
 
+
+    /**
+     * Return the value of the {@link Enum#name()} method for the given enum instance if it's not <code>null</code>,
+     * otherwise return <code>null</code>.
+     *
+     * @param <E>
+     *            The type of the enum.
+     * @param enumInstance
+     *            The instance to get the name from.
+     * @return <code>null</code> if the instance is null, result of {@link Enum#name()} otherwise.
+     */
+    public static <E extends Enum<E>> String nameOrNull(E enumInstance) {
+        return enumInstance == null ? null : enumInstance.name();
+    }
 }
