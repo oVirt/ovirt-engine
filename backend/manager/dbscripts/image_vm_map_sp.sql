@@ -1,3 +1,17 @@
+-- TODO: Delete this function once the disks table is updated directly from code.
+Create or replace FUNCTION UpdateActiveImageIdInDisk(v_image_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+    UPDATE disks
+    SET    active_image_id = v_image_id
+    WHERE  disk_id IN (SELECT image_group_id
+                       FROM   images
+                       WHERE  image_guid = v_image_id);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 
 
 ----------------------------------------------------------------
@@ -15,6 +29,10 @@ RETURNS VOID
 BEGIN
 INSERT INTO image_vm_map(active, image_id, vm_id)
 	VALUES(v_active, v_image_id, v_vm_id);
+-- TODO: Delete this once the disks table is updated directly from code.
+IF (v_active) THEN
+   PERFORM UpdateActiveImageIdInDisk(v_image_id);
+END IF;
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -33,6 +51,12 @@ BEGIN
       UPDATE image_vm_map
       SET active = v_active
       WHERE image_id = v_image_id AND vm_id = v_vm_id;
+
+      -- TODO: Delete this once the disks table is updated directly from code.
+      IF (v_active) THEN
+         PERFORM UpdateActiveImageIdInDisk(v_image_id);
+      END IF;
+
 END; $procedure$
 LANGUAGE plpgsql;
 

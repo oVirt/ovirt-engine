@@ -84,10 +84,12 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         newImage.setvm_guid(EXISTING_VM_ID);
         newImage.setit_guid(EXISTING_IMAGE_DISK_TEMPLATE);
         newImage.setId(Guid.NewGuid());
+        newImage.setinternal_drive_mapping("4");
         newImage.setvolume_format(VolumeFormat.COW);
         newImage.setvolume_type(VolumeType.Sparse);
         newImage.setdisk_interface(DiskInterface.IDE);
         newImage.setdisk_type(DiskType.Data);
+        newImage.setimage_group_id(Guid.NewGuid());
         newImageVmPoolMapping = new image_vm_pool_map(FREE_IMAGE_ID, "z", FREE_VM_ID);
 
         existingStatelessDiskImageMap = dao.getStatelessVmImageMapForImageId(existingEntity.getId());

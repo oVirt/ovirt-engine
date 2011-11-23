@@ -23,6 +23,7 @@ LEFT OUTER JOIN storage_pool ON storage_pool.id = storage_pool_iso_map.storage_p
 CREATE OR REPLACE VIEW images_storage_domain_view
 AS
 
+-- TODO: Change code to treat disks values directly instead of through this view.
 SELECT
 storage_domain_static_view.storage as storage_path,
 	storage_domain_static_view.storage_pool_id as storage_pool_id,
@@ -30,22 +31,38 @@ storage_domain_static_view.storage as storage_path,
 	images.creation_date as creation_date,
     images.size as size,
     images.it_guid as it_guid,
-    images.internal_drive_mapping as internal_drive_mapping,
     images.description as description,
     images.ParentId as ParentId,
-    images.imageStatus as imageStatus,
     images.lastModified as lastModified,
     images.app_list as app_list,
     images.storage_id as storage_id,
     images.vm_snapshot_id as vm_snapshot_id,
     images.volume_type as volume_type,
     images.volume_format as volume_format,
-    images.disk_type as disk_type,
-    images.image_group_id as image_group_id,
-    images.disk_interface as disk_interface,
     images.boot as boot,
-    images.wipe_after_delete as wipe_after_delete,
-    images.propagate_errors as propagate_errors,
+    disks.disk_id as image_group_id,
+    CASE WHEN disks.status = 'OK' THEN 1
+         WHEN disks.status = 'LOCKED' THEN 2
+         WHEN disks.status = 'INVALID' THEN 3
+         WHEN disks.status = 'ILLEGAL' THEN 4
+         ELSE 0
+    END AS imageStatus,
+    CAST (disks.internal_drive_mapping AS VARCHAR(50)) as internal_drive_mapping,
+    CASE WHEN disks.disk_type = 'System' THEN 1
+         WHEN disks.disk_type = 'Data' THEN 2
+         WHEN disks.disk_type = 'Shared' THEN 3
+         WHEN disks.disk_type = 'Swap' THEN 4
+         WHEN disks.disk_type = 'Temp' THEN 5
+         ELSE 0
+    END AS disk_type,
+    CASE WHEN disks.disk_interface = 'SCSI' THEN 1
+         WHEN disks.disk_interface = 'VirtIO' THEN 2
+         ELSE 0
+    END AS disk_interface,
+    disks.wipe_after_delete as wipe_after_delete,
+    CASE WHEN disks.propagate_errors = 'On' THEN 1
+         ELSE 0
+    END AS propagate_errors,
     disk_image_dynamic.actual_size as actual_size,
     disk_image_dynamic.read_rate as read_rate,
     disk_image_dynamic.write_rate as write_rate
@@ -55,7 +72,8 @@ LEFT OUTER JOIN
 storage_domain_static_view
 ON
 images.storage_id = storage_domain_static_view.id
-left outer join disk_image_dynamic on images.image_guid = disk_image_dynamic.image_id;
+left outer join disk_image_dynamic on images.image_guid = disk_image_dynamic.image_id
+JOIN disks ON images.image_group_id = disks.disk_id;
 
 
 CREATE OR REPLACE VIEW storage_domain_file_repos

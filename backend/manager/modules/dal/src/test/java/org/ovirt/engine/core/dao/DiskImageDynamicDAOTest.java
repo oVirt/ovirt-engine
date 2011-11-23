@@ -106,6 +106,7 @@ public class DiskImageDynamicDAOTest extends BaseDAOTestCase{
     public void testSave() {
         DiskImage newImage = new DiskImage();
         newImage = new DiskImage();
+        newImage.setinternal_drive_mapping("4");
         newImage.setvolume_format(VolumeFormat.COW);
         newImage.setvolume_type(VolumeType.Sparse);
         newImage.setdisk_interface(DiskInterface.IDE);
@@ -113,6 +114,7 @@ public class DiskImageDynamicDAOTest extends BaseDAOTestCase{
         newImage.setactive(true);
         newImage.setvm_guid(EXISTING_VM_ID);
         newImage.setit_guid(EXISTING_IMAGE_DISK_TEMPLATE);
+        newImage.setimage_group_id(Guid.NewGuid());
         diskImageDao.save(newImage);
         DiskImageDynamic dynamic = new DiskImageDynamic();
         dynamic.setread_rate(5);
