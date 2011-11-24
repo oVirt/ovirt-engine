@@ -97,6 +97,7 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
         // connection error or timeout indicates problems with the sever so handling the same.
         case CONNECTION_ERROR:
         case CONNECTION_TIMED_OUT:
+        case CLOCK_SKEW_TOO_GREAT:
             response.setServerScore(Score.LOW).setTryNextServer(true);
             break;
         default:
