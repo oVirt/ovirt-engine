@@ -61,6 +61,8 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         if (getVm() == null) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        } else {
+            setDescription(getVmName());
         }
         // check that vm is down and images are ok
         // not checking storage domain, there is a check in

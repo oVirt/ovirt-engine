@@ -67,6 +67,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (getVm() == null) {
             retVal = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        } else {
+            setDescription(getVmName());
         }
 
         // check that target domain exists

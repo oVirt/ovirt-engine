@@ -64,6 +64,9 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     @Override
     protected boolean canDoAction() {
+        if (getVmTemplate() != null) {
+            setDescription(getVmTemplateName());
+        }
         boolean retVal = ImportExportCommon.CheckStorageDomain(getParameters().getStorageDomainId(), getReturnValue()
                 .getCanDoActionMessages());
 

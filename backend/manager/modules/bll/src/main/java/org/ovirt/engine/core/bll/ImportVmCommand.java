@@ -80,6 +80,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
     @Override
     protected boolean canDoAction() {
+        if (getVm() != null) {
+            setDescription(getVmName());
+        }
         boolean retVal = false;
 
         // Load images from Import/Export domain

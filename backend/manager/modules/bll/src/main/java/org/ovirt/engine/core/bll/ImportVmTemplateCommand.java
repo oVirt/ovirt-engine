@@ -103,6 +103,8 @@ public class ImportVmTemplateCommand<T extends ImprotVmTemplateParameters> exten
 
         if (getVmTemplate() == null) {
             retVal = false;
+        } else {
+            setDescription(getVmTemplateName());
         }
         if (retVal) {
             VmTemplate duplicateTemplate = getVmTemplateDAO()
