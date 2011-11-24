@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.AbstractActionPanel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -147,21 +148,39 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         table.addDomHandler(new KeyDownHandler() {
             @Override
             public void onKeyDown(KeyDownEvent event) {
-                if (!KeyDownEvent.isArrow(event.getNativeKeyCode())) {
+
+                boolean shiftPageDown = event.isShiftKeyDown() && KeyCodes.KEY_PAGEDOWN == event.getNativeKeyCode();
+                boolean shiftPageUp = event.isShiftKeyDown() && KeyCodes.KEY_PAGEUP == event.getNativeKeyCode();
+                boolean ctrlA =
+                        event.isControlKeyDown()
+                                && ('a' == event.getNativeKeyCode() || 'A' == event.getNativeKeyCode());
+                boolean arrow = KeyDownEvent.isArrow(event.getNativeKeyCode());
+
+                if (shiftPageUp || shiftPageDown || ctrlA || arrow) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
                     return;
                 }
-                event.preventDefault();
-                event.stopPropagation();
 
-                selectionModel.setMultiSelectEnabled(event.isControlKeyDown() && !multiSelectionDisabled);
-                selectionModel.setMultiRangeSelectEnabled(event.isShiftKeyDown() && !multiSelectionDisabled);
+                if (shiftPageDown) {
+                    selectionModel.selectAllNext();
+                } else if (shiftPageUp) {
+                    selectionModel.selectAllPrev();
+                } else if (ctrlA) {
+                    selectionModel.selectAll();
+                } else if (arrow) {
+                    selectionModel.setMultiSelectEnabled(event.isControlKeyDown() && !multiSelectionDisabled);
+                    selectionModel.setMultiRangeSelectEnabled(event.isShiftKeyDown() && !multiSelectionDisabled);
 
-                if (event.isDownArrow()) {
-                    selectionModel.selectNext();
-                } else if (event.isUpArrow()) {
-                    selectionModel.selectPrev();
+                    if (event.isDownArrow()) {
+                        selectionModel.selectNext();
+                    } else if (event.isUpArrow()) {
+                        selectionModel.selectPrev();
+                    }
                 }
             }
+
         }, KeyDownEvent.getType());
 
         // Use fixed table layout

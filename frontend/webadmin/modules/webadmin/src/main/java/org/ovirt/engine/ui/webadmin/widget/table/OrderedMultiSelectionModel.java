@@ -228,6 +228,33 @@ public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
         selectRow(-1);
     }
 
+    public void selectAllPrev() {
+        selectRange(firstItem());
+        scheduleSelectionChangeEvent();
+    }
+
+    public void selectAllNext() {
+        selectRange(lastItem());
+        scheduleSelectionChangeEvent();
+    }
+
+    public void selectAll() {
+        clearSelection();
+        setMultiRangeSelectEnabled(false);
+        setMultiSelectEnabled(false);
+        setSelected(firstItem(), true);
+        selectRange(lastItem());
+        scheduleSelectionChangeEvent();
+    }
+
+    private T firstItem() {
+        return dataDisplay.getVisibleItems().get(0);
+    }
+
+    private T lastItem() {
+        return dataDisplay.getVisibleItems().get(dataDisplay.getVisibleItems().size() - 1);
+    }
+
     public void setDataDisplay(AbstractHasData<T> dataDisplay) {
         this.dataDisplay = dataDisplay;
     }
