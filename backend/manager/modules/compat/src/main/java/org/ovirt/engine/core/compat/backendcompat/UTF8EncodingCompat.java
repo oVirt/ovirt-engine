@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 
 public class UTF8EncodingCompat {
 
-    public String GetString(byte[] byteArrayOvfData) {
+    public String getString(byte[] byteArrayOvfData) {
         try {
             return new String(byteArrayOvfData, "UTF8");
         } catch (UnsupportedEncodingException e) {

@@ -22,7 +22,6 @@ import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.backendcompat.Convert;
 
 public class EncryptionUtils {
     private static String algo = "RSA";
@@ -39,11 +38,11 @@ public class EncryptionUtils {
      */
     private static String encrypt(String source, Certificate cert) throws GeneralSecurityException {
         String result = null;
-        byte[] cipherbytes = Encoding.UTF8.GetBytes(source.trim());
+        byte[] cipherbytes = Encoding.UTF8.getBytes(source.trim());
         Cipher rsa = Cipher.getInstance(algo);
         rsa.init(Cipher.ENCRYPT_MODE, cert.getPublicKey());
         byte[] cipher = rsa.doFinal(cipherbytes);
-        result = Convert.ToBase64String(cipher);
+        result = Encoding.Base64.getString(cipher);
         return result;
     }
 
@@ -63,13 +62,13 @@ public class EncryptionUtils {
         String result = "";
         try {
             {
-                byte[] cipherbytes = Convert.FromBase64String(source);
+                byte[] cipherbytes = Encoding.Base64.getBytes(source);
                 {
                     Cipher rsa = Cipher.getInstance(algo);
                     rsa.init(Cipher.DECRYPT_MODE, key);
                     {
                         byte[] plainbytes = rsa.doFinal(cipherbytes);
-                        result = Encoding.ASCII.GetString(plainbytes);
+                        result = Encoding.ASCII.getString(plainbytes);
                     }
                 }
             }
@@ -149,11 +148,11 @@ public class EncryptionUtils {
     private static String decrypt(String source, Key key) throws NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         String result = "";
-        byte[] cipherbytes = Convert.FromBase64String(source);
+        byte[] cipherbytes = Encoding.Base64.getBytes(source);
         Cipher rsa = Cipher.getInstance(algo);
         rsa.init(Cipher.DECRYPT_MODE, key);
         byte[] plainbytes = rsa.doFinal(cipherbytes);
-        result = Encoding.UTF8.GetString(plainbytes);
+        result = Encoding.UTF8.getString(plainbytes);
         return result;
     }
 

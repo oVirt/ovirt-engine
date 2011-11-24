@@ -1,19 +1,29 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.compat.*;
+import java.util.List;
+
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.*;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
-import org.ovirt.engine.core.compat.backendcompat.UTF8EncodingCompat;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.queries.ImportCandidateInfoBase;
+import org.ovirt.engine.core.common.queries.ImportCandidateSourceEnum;
+import org.ovirt.engine.core.common.queries.TemplateCandidateInfo;
+import org.ovirt.engine.core.common.queries.VmCandidateInfo;
+import org.ovirt.engine.core.common.vdscommands.GetImportCandidatesVDSCommandParameters;
+import org.ovirt.engine.core.compat.Encoding;
+import org.ovirt.engine.core.compat.LogCompat;
+import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
-
-import java.util.List;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class GetImportCandidatesInfoVDSCommand<P extends GetImportCandidatesVDSCommandParameters>
         extends GetImportCandidateBase<P> {
@@ -101,8 +111,7 @@ public class GetImportCandidatesInfoVDSCommand<P extends GetImportCandidatesVDSC
         {
             try {
                 byte[] byteArrayOvfData = (byte[]) (irsInfoList.getItem("metadata"));
-                UTF8EncodingCompat utf8enc = new UTF8EncodingCompat();
-                String ovfData = utf8enc.GetString(byteArrayOvfData);
+                String ovfData = Encoding.UTF8.getString(byteArrayOvfData);
 
                 java.util.ArrayList<DiskImage> candidateImagesData = null;
                 OvfManager ovfm = new OvfManager();
