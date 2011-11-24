@@ -260,6 +260,7 @@ rm -rf %{buildroot}
 
 %files userportal
 %dir /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear
+%config(noreplace) /usr/local/jboss/server/default/deploy/engine.ear/userportal.war/org.ovirt.engine.ui.userportal.UserPortal/consoles/spice/usbfilter.txt
 /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/userportal.war
 
 %files webadmin-portal
