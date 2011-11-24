@@ -487,7 +487,7 @@ public abstract class SearchableListModel extends ListModel
 
 			ItemsChanging(value, items);
 			items = value;
-			ItemsChanged();
+			UpdatePagingAvailability();
 			getItemsChangedEvent().raise(this, EventArgs.Empty);
 			OnPropertyChanged(new PropertyChangedEventArgs("Items"));
 
