@@ -82,10 +82,11 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
             PrintReturnValue();
             throw new VDSProtocolException(ex);
         } catch (XmlRpcRunTimeException ex) {
+            final String msgFormat = "XML RPC error in command {0} ( {2} ), the error was: {1} ";
             if ((ExceptionUtils.getRootCause(ex) instanceof ConnectException)) {
-                log.debugFormat("XML RPC error in command {0}, the error was: {1} ", getCommandName(), ex.getMessage());
+                log.debugFormat(msgFormat, getCommandName(), ex.getMessage(), getAdditionalInformation());
             } else {
-                log.errorFormat("XML RPC error in command {0}, the error was: {1} ", getCommandName(), ex.getMessage());
+                log.errorFormat(msgFormat, getCommandName(), ex.getMessage(), getAdditionalInformation());
             }
             PrintReturnValue();
             throw new VDSNetworkException(ex);
