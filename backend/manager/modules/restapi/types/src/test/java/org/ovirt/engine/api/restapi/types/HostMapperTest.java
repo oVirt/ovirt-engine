@@ -75,4 +75,13 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         assertEquals(host.getSummary().getMigrating(), new Integer(1));
     }
 
+    @Test
+    public void testMemoryMapping() {
+        VDS vds = new VDS();
+        vds.setvds_id(Guid.Empty);
+        vds.setphysical_mem_mb(4000);
+        Host host = HostMapper.map(vds, (Host)null);
+        assertNotNull(host.getMemory());
+        assertEquals(new Long(host.getMemory()), new Long(4194304000L));
+    }
 }
