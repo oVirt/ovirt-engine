@@ -103,26 +103,26 @@ public class DbFacade {
     private final static Map<Class<?>, Class<?>> mapEntityToDao = new HashMap<Class<?>, Class<?>>()
     {
         {
-            mapEntityToDao.put(storage_pool.class, StoragePoolDAO.class);
-            mapEntityToDao.put(storage_pool_iso_map.class, StoragePoolIsoMapDAO.class);
-            mapEntityToDao.put(storage_domain_static.class, StorageDomainStaticDAO.class);
-            mapEntityToDao.put(storage_domain_dynamic.class, StorageDomainDynamicDAO.class);
-            mapEntityToDao.put(VdsStatic.class, VdsStaticDAO.class);
-            mapEntityToDao.put(VdsDynamic.class, VdsDynamicDAO.class);
-            mapEntityToDao.put(VdsStatistics.class, VdsStatisticsDAO.class);
-            mapEntityToDao.put(vds_spm_id_map.class, VdsSpmIdMapDAO.class);
-            mapEntityToDao.put(roles.class, RoleDAO.class);
-            mapEntityToDao.put(VmTemplate.class, VmTemplateDAO.class);
-            mapEntityToDao.put(VmDynamic.class, VmDynamicDAO.class);
-            mapEntityToDao.put(VmStatic.class, VmStaticDAO.class);
-            mapEntityToDao.put(VmStatistics.class, VmStatisticsDAO.class);
-            mapEntityToDao.put(image_vm_map.class, ImageVmMapDAO.class);
-            mapEntityToDao.put(DiskImage.class, DiskImageDAO.class);
-            mapEntityToDao.put(DiskImageDynamic.class, DiskImageDynamicDAO.class);
-            mapEntityToDao.put(DiskImageTemplate.class, DiskImageTemplateDAO.class);
-            mapEntityToDao.put(VmNetworkInterface.class, VmNetworkInterfaceDAO.class);
-            mapEntityToDao.put(VmNetworkStatistics.class, VmNetworkStatisticsDAO.class);
-            mapEntityToDao.put(network.class, NetworkDAO.class);
+            put(storage_pool.class, StoragePoolDAO.class);
+            put(storage_pool_iso_map.class, StoragePoolIsoMapDAO.class);
+            put(storage_domain_static.class, StorageDomainStaticDAO.class);
+            put(storage_domain_dynamic.class, StorageDomainDynamicDAO.class);
+            put(VdsStatic.class, VdsStaticDAO.class);
+            put(VdsDynamic.class, VdsDynamicDAO.class);
+            put(VdsStatistics.class, VdsStatisticsDAO.class);
+            put(vds_spm_id_map.class, VdsSpmIdMapDAO.class);
+            put(roles.class, RoleDAO.class);
+            put(VmTemplate.class, VmTemplateDAO.class);
+            put(VmDynamic.class, VmDynamicDAO.class);
+            put(VmStatic.class, VmStaticDAO.class);
+            put(VmStatistics.class, VmStatisticsDAO.class);
+            put(image_vm_map.class, ImageVmMapDAO.class);
+            put(DiskImage.class, DiskImageDAO.class);
+            put(DiskImageDynamic.class, DiskImageDynamicDAO.class);
+            put(DiskImageTemplate.class, DiskImageTemplateDAO.class);
+            put(VmNetworkInterface.class, VmNetworkInterfaceDAO.class);
+            put(VmNetworkStatistics.class, VmNetworkStatisticsDAO.class);
+            put(network.class, NetworkDAO.class);
         }
     };
 
