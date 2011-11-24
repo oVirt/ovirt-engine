@@ -139,6 +139,7 @@ public class HostMapper {
         if (entity.getcpu_cores()!=null) {
             CpuTopology cpuTopology = new CpuTopology();
             cpuTopology.setCores(entity.getcpu_cores());
+            cpuTopology.setSockets(entity.getcpu_sockets());
             cpu.setTopology(cpuTopology);
         }
         cpu.setName(entity.getcpu_model());
