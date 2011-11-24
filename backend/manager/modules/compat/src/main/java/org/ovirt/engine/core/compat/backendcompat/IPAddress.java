@@ -24,4 +24,19 @@ public class IPAddress {
             throw newEx;
         }
     }
+
+    @Override
+    public String toString() {
+        if (ip == null) {
+            return "";
+        }
+        try {
+            return InetAddress.getByAddress(ip).getHostAddress();
+        } catch (UnknownHostException ex) {
+            RuntimeException newEx = new RuntimeException(ex.getMessage());
+            newEx.setStackTrace(ex.getStackTrace());
+            throw newEx;
+        }
+    }
+
 }
