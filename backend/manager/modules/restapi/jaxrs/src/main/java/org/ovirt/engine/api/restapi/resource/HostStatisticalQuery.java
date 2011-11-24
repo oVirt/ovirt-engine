@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.ovirt.engine.api.model.Host;
@@ -40,7 +39,7 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
         long mem = entity.getphysical_mem_mb()==null ? 0 : entity.getphysical_mem_mb() * Mb;
         long memUsedByCent = (s==null || s.getusage_mem_percent()==null) ? 0 : mem * s.getusage_mem_percent();
         return asList(setDatum(clone(MEM_TOTAL),   mem),
-                      setDatum(clone(MEM_USED),    new BigDecimal(memUsedByCent).divide(CENT)),
+                      setDatum(clone(MEM_USED),    (int)(memUsedByCent/100)),
                       setDatum(clone(MEM_FREE),    (s==null || s.getmem_available()==null) ? 0 : s.getmem_available()*Mb),
                       setDatum(clone(MEM_BUFFERS), 0),
                       setDatum(clone(MEM_CACHED),  0),
