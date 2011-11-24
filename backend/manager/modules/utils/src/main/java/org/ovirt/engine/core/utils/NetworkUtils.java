@@ -11,6 +11,7 @@ public final class NetworkUtils {
     public static String EngineNetwork = "engine";
     public static int MaxVmInterfaces = 8;
     public static final String DASH = "-";
+    public static final String OS_REFERENCE_TO_MACHINE_NAME = "HOSTNAME";
 
     // method return interface name without vlan:
     // input: eth0.5 output eth0

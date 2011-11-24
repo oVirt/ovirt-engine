@@ -5,7 +5,7 @@ import java.net.UnknownHostException;
 
 public class Dns {
 
-    public static IPAddress[] GetHostAddresses(String gethost_name) {
+    public static IPAddress[] GetHostAddresses(String hostName) {
         try {
             InetAddress addr = InetAddress.getLocalHost();
             byte[] ipAddr = addr.getAddress();

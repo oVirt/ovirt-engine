@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.Dns;
-import org.ovirt.engine.core.compat.backendcompat.Environment;
 import org.ovirt.engine.core.compat.backendcompat.IPAddress;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -67,7 +66,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         parameters.setConnectionTimeout(120);
         parameters.setCheckConnectivity(getParameters().getCheckConnectivity());
 
-        IPAddress[] adresses = Dns.GetHostAddresses(Environment.MachineName);
+        IPAddress[] adresses = Dns.GetHostAddresses(NetworkUtils.OS_REFERENCE_TO_MACHINE_NAME);
         if (adresses != null && adresses.length > 0) {
             parameters.setHostAddr(adresses[0].toString());
         }
