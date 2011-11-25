@@ -105,12 +105,25 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 		privateAvailableStorageItems = value;
 	}
 
-
+	private String privateHash;
+	public String getHash()
+	{
+		return privateHash;
+	}
+	public void setHash(String value)
+	{
+		privateHash = value;
+	}
+	
 
 	public StorageModel(StorageModelBehavior behavior)
 	{
 		this.behavior = behavior;
 		this.behavior.setModel(this);
+		
+		Frontend.getQueryStartedEvent().addListener(this);
+		Frontend.getQueryCompleteEvent().addListener(this);
+		Frontend.Subscribe(new VdcQueryType[] { VdcQueryType.Search, VdcQueryType.GetConfigurationValue, VdcQueryType.GetStoragePoolsByStorageDomainId });
 
 		setName(new EntityModel());
 		setDataCenter(new ListModel());
@@ -125,6 +138,8 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 	public void Initialize()
 	{
 		super.Initialize();
+		
+		setHash(getHashName() + new java.util.Date());
 
 		InitDataCenter();
 	}
@@ -155,6 +170,34 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 		else if (ev.equals(NfsStorageModel.PathChangedEventDefinition))
 		{
 			NfsStorageModel_PathChanged(sender, args);
+		}
+		else if (ev.equals(Frontend.QueryStartedEventDefinition) && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
+		{
+			Frontend_QueryStarted();
+		}
+		else if (ev.equals(Frontend.QueryCompleteEventDefinition) && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
+		{
+			Frontend_QueryComplete();
+		}
+	}
+	
+	private int queryCounter;
+
+	private void Frontend_QueryStarted()
+	{
+		queryCounter++;
+		if (getProgress() == null)
+		{
+			StartProgress(null);
+		}
+	}
+
+	private void Frontend_QueryComplete()
+	{
+		queryCounter--;
+		if (queryCounter == 0)
+		{
+			StopProgress();
 		}
 	}
 
@@ -250,7 +293,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 					}
 
 			}
-		}));
+		}, getHash()));
 			}
 		}
 	}
@@ -325,7 +368,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 					}
 
 			}
-		}));
+		}, getHash()));
 			}
 
 			else // "Edit Storage" mode:
@@ -350,7 +393,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 					storageModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
 
 			}
-		}), getStorage().getid());
+		}, getHash()), getStorage().getid());
 			}
 		}
 	}
@@ -398,6 +441,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
 				AsyncQuery _asyncQuery = new AsyncQuery();
 				_asyncQuery.setModel(this);
+				_asyncQuery.setContext(getHash());
 				_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object ReturnValue)
 				 {
 					StorageModel storageModel = (StorageModel)model;
@@ -419,9 +463,8 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 					StorageModel storageModel = (StorageModel)target;
 					Iterable<VDS> hosts = (Iterable<VDS>)returnValue;
 					storageModel.PostUpdateHost(hosts);
-
 			}
-		}));
+		}, getHash()));
 			}
 			else
 			{
@@ -435,7 +478,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 					storageModel.PostUpdateHost(hosts);
 
 			}
-		}), dataCenter.getname());
+		}, getHash()), dataCenter.getname());
 			}
 		 }
 	}
@@ -489,6 +532,10 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 			getHost().setSelectedItem(Linq.FirstOrDefault(hosts));
 		}
 
+		if (queryCounter > 0) {
+			queryCounter++;
+		}
+		StopProgress();
 		getSelectedItem().getUpdateCommand().Execute();
 	}
 
