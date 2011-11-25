@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
@@ -28,7 +29,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstal
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmAssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
@@ -50,7 +50,7 @@ public class HostModule extends AbstractGinModule {
     public MainModelProvider<VDS, HostListModel> getHostListProvider(ClientGinjector ginjector,
             final Provider<HostPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<VmAssignTagsPopupPresenterWidget> assignTagsPopupProvider) {
+            final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider) {
         return new MainTabModelProvider<VDS, HostListModel>(ginjector, HostListModel.class) {
             @Override
             protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {

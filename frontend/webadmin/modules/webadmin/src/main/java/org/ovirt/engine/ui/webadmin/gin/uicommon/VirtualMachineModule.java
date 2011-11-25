@@ -21,9 +21,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmAssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
@@ -51,7 +51,7 @@ public class VirtualMachineModule extends AbstractGinModule {
     @Provides
     @Singleton
     public MainModelProvider<VM, VmListModel> getVmListProvider(ClientGinjector ginjector,
-            final Provider<VmAssignTagsPopupPresenterWidget> assignTagsPopupProvider,
+            final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider,
             final Provider<VmMakeTemplatePopupPresenterWidget> makeTemplatePopupProvider,
             final Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider,
             final Provider<VmChangeCDPopupPresenterWidget> changeCDPopupProvider,
@@ -76,7 +76,7 @@ public class VirtualMachineModule extends AbstractGinModule {
                 } else if (lastExecutedCommand == getModel().getNewServerCommand()) {
                     return newServerVmPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getEditCommand()) {
-                    UnitVmModel vm = (UnitVmModel)getModel().getWindow();
+                    UnitVmModel vm = (UnitVmModel) getModel().getWindow();
                     if (vm.getVmType().equals(VmType.Desktop)) {
                         return newDesktopVmPopupProvider.get();
                     } else {

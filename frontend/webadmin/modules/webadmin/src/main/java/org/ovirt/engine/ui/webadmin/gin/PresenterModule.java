@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
@@ -37,7 +38,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.Storage
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateNewPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmAssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
@@ -116,6 +116,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.MainContentView;
 import org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.MainTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.SearchPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.AssignTagsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.DefaultConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.DetachConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.PermissionsPopupView;
@@ -142,7 +143,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageRemov
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.tag.TagPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateNewPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmAssignTagsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDesktopNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskPopupView;
@@ -648,9 +648,9 @@ public class PresenterModule extends AbstractPresenterModule {
                 VmSnapshotCreatePopupView.class);
 
         // VM Assign Tags
-        bindPresenterWidget(VmAssignTagsPopupPresenterWidget.class,
-                VmAssignTagsPopupPresenterWidget.ViewDef.class,
-                VmAssignTagsPopupView.class);
+        bindPresenterWidget(AssignTagsPopupPresenterWidget.class,
+                AssignTagsPopupPresenterWidget.ViewDef.class,
+                AssignTagsPopupView.class);
 
         // VM RunOnce
         bindPresenterWidget(VmRunOncePopupPresenterWidget.class,

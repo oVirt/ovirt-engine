@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
+package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmAssignTagsPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
@@ -28,14 +27,14 @@ import com.google.gwt.user.cellview.client.TreeNode;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.inject.Inject;
 
-public class VmAssignTagsPopupView extends AbstractModelBoundPopupView<TagListModel>
-        implements VmAssignTagsPopupPresenterWidget.ViewDef {
+public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListModel>
+        implements AssignTagsPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<TagListModel, VmAssignTagsPopupView> {
+    interface Driver extends SimpleBeanEditorDriver<TagListModel, AssignTagsPopupView> {
         Driver driver = GWT.create(Driver.class);
     }
 
-    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VmAssignTagsPopupView> {
+    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AssignTagsPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -44,7 +43,7 @@ public class VmAssignTagsPopupView extends AbstractModelBoundPopupView<TagListMo
     EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> tree;
 
     @Inject
-    public VmAssignTagsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public AssignTagsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
         initTree();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

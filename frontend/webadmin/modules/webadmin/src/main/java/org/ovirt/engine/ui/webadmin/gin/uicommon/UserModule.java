@@ -16,9 +16,9 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmAssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
@@ -38,7 +38,7 @@ public class UserModule extends AbstractGinModule {
     @Provides
     @Singleton
     public MainModelProvider<DbUser, UserListModel> getUserListProvider(ClientGinjector ginjector,
-            final Provider<VmAssignTagsPopupPresenterWidget> assignTagsPopupProvider,
+            final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new MainTabModelProvider<DbUser, UserListModel>(ginjector, UserListModel.class) {
