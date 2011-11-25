@@ -26,12 +26,12 @@
 	font-family: Arial,sans-serif;
 	font-size: 11px;
 	background-color: #F9F9F9;
-	height: 28px;	
+	height: 24px !important;	
 }
 
 .cellTableCell {
 	padding: 0px 3px;
-	height: 26px !important;
+	height: 24px !important;
 	border-top: 0px;
 	border-bottom: 1px solid #EDEEF0;
 	border-right: 0px;

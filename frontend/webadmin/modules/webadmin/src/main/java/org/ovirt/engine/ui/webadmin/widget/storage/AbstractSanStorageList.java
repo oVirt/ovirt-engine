@@ -82,6 +82,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
     protected void addRootNode(TreeItem rootItem, TreeItem leafItem) {
         rootItem.getElement().getStyle().setBackgroundColor("#eff3ff");
         rootItem.getElement().getStyle().setMarginBottom(1, Unit.PX);
+        rootItem.getElement().getStyle().setPadding(0, Unit.PX);
 
         if (leafItem != null) {
             rootItem.addItem(leafItem);
