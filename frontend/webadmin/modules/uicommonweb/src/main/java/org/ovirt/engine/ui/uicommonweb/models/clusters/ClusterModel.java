@@ -602,7 +602,7 @@ public class ClusterModel extends Model
 					clusterModel.getCPU().setSelectedItem(Linq.FirstOrDefault(cpus, new Linq.ServerCpuPredicate(oldSelectedCpu.getCpuName())));
 				}
 
-				if (clusterModel.getCPU().getSelectedItem() == null)
+				if (clusterModel.getCPU().getSelectedItem() == null || !isCPUinitialized)
 				{
 					clusterModel.getCPU().setSelectedItem(Linq.FirstOrDefault(cpus));
 					InitCPU();
