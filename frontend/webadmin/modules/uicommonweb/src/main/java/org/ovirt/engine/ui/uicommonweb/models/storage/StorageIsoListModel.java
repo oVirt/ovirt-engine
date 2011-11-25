@@ -115,6 +115,11 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
 	@Override
 	protected void SyncSearch()
 	{
+		if (getEntity() == null)
+		{
+			return;
+		}
+		
 		super.SyncSearch();
 
 		if (getProgress() != null)
