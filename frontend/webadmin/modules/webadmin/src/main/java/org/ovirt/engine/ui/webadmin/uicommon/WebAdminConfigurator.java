@@ -32,6 +32,8 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
     private boolean isUsbEnabled;
 
+    private boolean isInitialized;
+
     public WebAdminConfigurator()
     {
         // Set default configuration values
@@ -44,9 +46,6 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
         // Update Spice version if needed
         updateSpiceVersion();
-
-        // Update USB listen port
-        updateIsUsbEnabled();
     }
 
     public Boolean getIsUsbEnabled() {
@@ -78,14 +77,15 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         fetchFile("SpiceVersion_x64.txt", spiceVersionFileFetchedEvent);
     }
 
-    public void updateIsUsbEnabled() {
+    public void updateIsUsbEnabled(final ISpice spice) {
         // Get 'EnableUSBAsDefault' value from database
         AsyncDataProvider.IsUSBEnabledByDefault(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         // Update IsUsbEnabled value
-                        ((WebAdminConfigurator) target).setIsUsbEnabled((Boolean) returnValue);
+                        isUsbEnabled = (Boolean) returnValue;
+                        spice.setUsbListenPort(isUsbEnabled ? getSpiceDefaultUsbPort() : getSpiceDisableUsbListenPort());
                     }
                 }));
     }
@@ -170,6 +170,13 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         spice.setCurrentVersion(getSpiceVersion());
         spice.setAdminConsole(getSpiceAdminConsole());
         spice.setFullScreen(getSpiceFullScreen());
-        spice.setUsbListenPort(isUsbEnabled ? getSpiceDefaultUsbPort() : getSpiceDisableUsbListenPort());
+
+        if (isInitialized) {
+            spice.setUsbListenPort(isUsbEnabled ? getSpiceDefaultUsbPort() : getSpiceDisableUsbListenPort());
+        }
+        else {
+            updateIsUsbEnabled(spice);
+            isInitialized = true;
+        }
     }
 }
