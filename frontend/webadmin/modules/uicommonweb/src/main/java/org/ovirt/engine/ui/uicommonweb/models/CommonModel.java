@@ -598,7 +598,7 @@ public class CommonModel extends ListModel
 		setWindow(model);
 		model.setTitle("Configure");
 		model.setHashName("configure");
-		model.setEntity(new Model[] { new RoleListModel(), new SystemPermissionListModel() });
+		model.setEntity(new Model[] { roleListModel, systemPermissionListModel });
 
 
 		UICommand tempVar = new UICommand("Cancel", this);
@@ -658,6 +658,8 @@ public class CommonModel extends ListModel
 
 		setItems(list);
 
+		roleListModel = new RoleListModel();
+		systemPermissionListModel = new SystemPermissionListModel();
 
 		//Activate the default list model.
 		setSelectedItem(getDefaultItem());
@@ -688,6 +690,8 @@ public class CommonModel extends ListModel
 	}
 
 	private boolean executingSearch;
+	private RoleListModel roleListModel;
+	private SystemPermissionListModel systemPermissionListModel;
 
 	@Override
 	protected void OnSelectedItemChanging(Object newValue, Object oldValue)
@@ -1021,5 +1025,12 @@ public class CommonModel extends ListModel
 			search.argvalue = source;
 			getAutoCompleteModel().setFilter(null);
 		}
+	}
+	public RoleListModel getRoleListModel() {
+		return roleListModel;
+	}
+	
+	public SystemPermissionListModel getSystemPermissionListModel() {
+		return systemPermissionListModel;
 	}
 }

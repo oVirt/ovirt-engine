@@ -30,7 +30,7 @@ public class HeadlessTabPanel extends AbstractTabPanel {
     }
 
     @Override
-    protected void addTabWidget(Widget tabWidget, int index) {
+    public void addTabWidget(Widget tabWidget, int index) {
         if (tabWidgetHandler != null)
             tabWidgetHandler.addTabWidget(tabWidget, index);
     }

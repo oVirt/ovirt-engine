@@ -45,7 +45,7 @@ public class SimpleSelectionTreeNodeModel implements TreeNodeModel<SelectionTree
 
     private final SelectionTreeNodeModel model;
 
-    protected SimpleSelectionTreeNodeModel(SelectionTreeNodeModel model) {
+    protected SimpleSelectionTreeNodeModel(final SelectionTreeNodeModel model) {
         this.eventBus = ClientGinjectorProvider.instance().getEventBus();
         this.model = model;
 
@@ -90,7 +90,11 @@ public class SimpleSelectionTreeNodeModel implements TreeNodeModel<SelectionTree
 
     @Override
     public boolean getSelected() {
-        return model.getIsSelectedNullable() != null ? model.getIsSelectedNullable() : false;
+        return model.getIsSelectedNullable() == null ? false : model.getIsSelectedNullable();
+    }
+
+    public Boolean getIsSelectedNullable() {
+        return model.getIsSelectedNullable();
     }
 
     @Override

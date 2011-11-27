@@ -11,6 +11,8 @@ import org.ovirt.engine.ui.uicommonweb.*;
 import org.ovirt.engine.ui.uicommonweb.models.*;
 import org.ovirt.engine.core.common.*;
 
+import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RolePermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.*;
 import org.ovirt.engine.core.common.businessentities.*;
 
@@ -52,6 +54,7 @@ public class SystemPermissionListModel extends SearchableListModel
 		setAddCommand(new UICommand("Add", this));
 		setRemoveCommand(new UICommand("Remove", this));
 
+		setSearchPageSize(1000);
 		getSearchCommand().Execute();
 
 		UpdateActionAvailability();
@@ -64,6 +67,23 @@ public class SystemPermissionListModel extends SearchableListModel
 
 		setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetSystemPermissions, new VdcQueryParametersBase()));
 		setItems(getAsyncResult().getData());
+	}
+	
+	@Override
+	protected void SyncSearch()
+	{
+		super.SyncSearch();
+
+		AsyncQuery _asyncQuery = new AsyncQuery();
+		_asyncQuery.setModel(this);
+		_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object ReturnValue)
+		{
+			SystemPermissionListModel systemPermissionListModel = (SystemPermissionListModel)model;
+			systemPermissionListModel.setItems((Iterable)((VdcQueryReturnValue)ReturnValue).getReturnValue());
+		}};
+
+
+		Frontend.RunQuery(VdcQueryType.GetSystemPermissions, new VdcQueryParametersBase(), _asyncQuery);
 	}
 
 	private void UpdateActionAvailability()

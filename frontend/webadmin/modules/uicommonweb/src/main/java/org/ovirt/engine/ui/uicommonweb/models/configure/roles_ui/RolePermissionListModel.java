@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.*;
 
 import org.ovirt.engine.ui.uicommonweb.*;
 import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.*;
 
 @SuppressWarnings("unused")
@@ -49,8 +50,8 @@ public class RolePermissionListModel extends SearchableListModel
 
 		setRemoveCommand(new UICommand("Remove", this));
 
-		getSearchCommand().Execute();
-
+		setSearchPageSize(1000);
+		
 		UpdateActionAvailability();
 	}
 
@@ -59,27 +60,24 @@ public class RolePermissionListModel extends SearchableListModel
 	{
 		super.SyncSearch();
 
+		AsyncQuery _asyncQuery = new AsyncQuery();
+		_asyncQuery.setModel(this);
+		_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object ReturnValue)
+		{
+			RolePermissionListModel permissionListModel = (RolePermissionListModel)model;
+			permissionListModel.setItems((Iterable)((VdcQueryReturnValue)ReturnValue).getReturnValue());
+		}};
+
 		MultilevelAdministrationByRoleIdParameters tempVar = new MultilevelAdministrationByRoleIdParameters(getEntity().getId());
 		tempVar.setRefresh(getIsQueryFirstTime());
-		VdcQueryReturnValue retValue = Frontend.RunQuery(VdcQueryType.GetPermissionByRoleId, tempVar);
-
-		if (retValue != null && retValue.getSucceeded())
-		{
-			//Items = ((List<IVdcQueryable>)retValue.ReturnValue).Cast<roles>().ToList();
-			setItems(Linq.<permissions>Cast((java.util.ArrayList<permissions>)retValue.getReturnValue()));
-		}
-
-		else
-		{
-			setItems(new java.util.ArrayList<roles>());
-		}
+		Frontend.RunQuery(VdcQueryType.GetPermissionByRoleId, tempVar, _asyncQuery);
 	}
 
 	@Override
 	protected void OnEntityChanged()
 	{
 		super.OnEntityChanged();
-		AsyncSearch();
+		Search();
 	}
 
 	@Override

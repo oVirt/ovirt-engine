@@ -1,4 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui;
+import java.util.ArrayList;
 import java.util.Collections;
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.ui.uicompat.*;
@@ -42,6 +43,12 @@ public class RoleListModel extends ListWithDetailsModel
 		{
 			return values()[value];
 		}
+	}
+	
+	@Override
+	public void setSelectedItem(Object value) {
+		// TODO Auto-generated method stub
+		super.setSelectedItem(value);
 	}
 
 
@@ -113,7 +120,7 @@ public class RoleListModel extends ListWithDetailsModel
 
 
 	private CommandType commandType = CommandType.values()[0];
-	private java.util.ArrayList<ActionGroup> attachedActions;
+	public java.util.ArrayList<ActionGroup> publicAttachedActions;
 	public java.util.ArrayList<ActionGroup> detachActionGroup;
 	public java.util.ArrayList<ActionGroup> attachActionGroup;
 	public roles role;
@@ -139,6 +146,7 @@ public class RoleListModel extends ListWithDetailsModel
 		setSearchAdminRolesCommand(new UICommand("SearchAdminRoles", this));
 		setSearchUserRolesCommand(new UICommand("SearchUserRoles", this));
 
+		setSearchPageSize(1000);
 		getSearchCommand().Execute();
 
 		UpdateActionAvailability();
@@ -300,41 +308,61 @@ public class RoleListModel extends ListWithDetailsModel
 		super.eventRaised(ev, sender, args);
 
 
-		if (getWindow() != null && sender == ((RoleModel)getWindow()).getIsAdminRole())
+		if (getWindow() != null
+				&& sender == ((RoleModel) getWindow()).getIsAdminRole()) {
+			if (commandType == CommandType.New) {
+				setAttachedActionGroups(new java.util.ArrayList<ActionGroup>());
+			} else {
+
+				AsyncQuery _asyncQuery = new AsyncQuery();
+				_asyncQuery.setModel(this);
+				_asyncQuery.asyncCallback = new INewAsyncCallback() {
+					public void OnSuccess(Object model, Object ReturnValue) {
+						RoleListModel roleListModel = (RoleListModel)model;
+						roleListModel.publicAttachedActions = (ArrayList<ActionGroup>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+						roleListModel.setAttachedActionGroups(publicAttachedActions);
+					}
+				};
+				roles role = (roles)getSelectedItem();
+				Frontend.RunQuery(
+						VdcQueryType.GetRoleActionGroupsByRoleId,
+						new MultilevelAdministrationByRoleIdParameters(role
+								.getId()), _asyncQuery);
+			}
+
+		}
+	}
+	
+	void setAttachedActionGroups(ArrayList<ActionGroup> attachedActions) {
+		roles role = (roles)getSelectedItem();
+		RoleModel model = (RoleModel)getWindow();
+		ArrayList<SelectionTreeNodeModel> selectionTree = RoleTreeView.GetRoleTreeView((model.getIsNew() ? false : role.getis_readonly()), (Boolean)model.getIsAdminRole().getEntity());  
+		for (SelectionTreeNodeModel sm : selectionTree)
 		{
-			RoleModel model = (RoleModel)getWindow();
-			roles role = (roles)getSelectedItem();
-			java.util.ArrayList<ActionGroup> attachedActions = (commandType == CommandType.New) ? new java.util.ArrayList<ActionGroup>() : DataProvider.GetRoleActionGroupsByRoleId(role.getId());
-
-			model.setPermissionGroupModels(null);
-
-			model.setPermissionGroupModels(RoleTreeView.GetRoleTreeView((model.getIsNew() ? false : role.getis_readonly()), (Boolean)model.getIsAdminRole().getEntity()));
-			for (SelectionTreeNodeModel sm : model.getPermissionGroupModels())
+			for (SelectionTreeNodeModel smChild : sm.getChildren())
 			{
-				for (SelectionTreeNodeModel smChild : sm.getChildren())
+				smChild.setParent(sm);
+				smChild.setIsSelectedNotificationPrevent(false);
+
+				for (SelectionTreeNodeModel smGrandChild : smChild.getChildren())
 				{
-					smChild.setParent(sm);
-					smChild.setIsSelectedNotificationPrevent(false);
+					smGrandChild.setParent(smChild);
+					smGrandChild.setIsSelectedNotificationPrevent(false);
 
-					for (SelectionTreeNodeModel smGrandChild : smChild.getChildren())
+					if (attachedActions.contains(ActionGroup.valueOf(smGrandChild.getTitle())))
 					{
-						smGrandChild.setParent(smChild);
-						smGrandChild.setIsSelectedNotificationPrevent(false);
+						smGrandChild.setIsSelectedNullable(true);
+						smGrandChild.UpdateParentSelection();
+					}
 
-						if (attachedActions.contains(ActionGroup.valueOf(smGrandChild.getTitle())))
-						{
-							smGrandChild.setIsSelectedNullable(true);
-							smGrandChild.UpdateParentSelection();
-						}
-
-						if (smChild.getChildren().get(0).equals(smGrandChild))
-						{
-							smGrandChild.UpdateParentSelection();
-						}
+					if (smChild.getChildren().get(0).equals(smGrandChild))
+					{
+						smGrandChild.UpdateParentSelection();
 					}
 				}
 			}
 		}
+		model.setPermissionGroupModels(selectionTree);
 	}
 
 	private void InitRoleDialog(roles role)
@@ -352,7 +380,7 @@ public class RoleListModel extends ListWithDetailsModel
 			role.setType(RoleType.USER);
 		}
 		model.getIsAdminRole().getEntityChangedEvent().addListener(this);
-		model.getIsAdminRole().setEntity(role.getType() == RoleType.ADMIN);
+		model.getIsAdminRole().setEntity(RoleType.ADMIN.equals(role.getType()));
 		model.getName().setEntity(role.getname());
 		if (commandType == CommandType.Clone)
 		{
@@ -410,7 +438,7 @@ public class RoleListModel extends ListWithDetailsModel
 		roles role = (roles)getSelectedItem();
 		RoleModel model = (RoleModel)getWindow();
 
-		java.util.ArrayList<ActionGroup> attachedActions = commandType == CommandType.New ? new java.util.ArrayList<ActionGroup>() : DataProvider.GetRoleActionGroupsByRoleId(role.getId());
+		java.util.ArrayList<ActionGroup> attachedActions = commandType == CommandType.New ? new java.util.ArrayList<ActionGroup>() : publicAttachedActions;
 
 		for (SelectionTreeNodeModel sm : model.getPermissionGroupModels())
 		{
@@ -444,12 +472,12 @@ public class RoleListModel extends ListWithDetailsModel
 		//Check name unicitate.
 		String name = (String)model.getName().getEntity();
 
-		if (!DataProvider.IsRoleNameUnique(name) && name.compareToIgnoreCase(role.getname()) != 0)
-		{
-			model.getName().setIsValid(false);
-			model.getName().getInvalidityReasons().add("Name must be unique.");
-			return;
-		}
+//		if (!DataProvider.IsRoleNameUnique(name) && name.compareToIgnoreCase(role.getname()) != 0)
+//		{
+//			model.getName().setIsValid(false);
+//			model.getName().getInvalidityReasons().add("Name must be unique.");
+//			return;
+//		}
 
 
 		role.setname((String)model.getName().getEntity());
@@ -504,9 +532,9 @@ public class RoleListModel extends ListWithDetailsModel
 		}
 		else
 		{
-			attachedActions = DataProvider.GetRoleActionGroupsByRoleId(role.getId());
-			detachActionGroup = Linq.Except(attachedActions, actions);
-			attachActionGroup = Linq.Except(actions, attachedActions);
+			
+			detachActionGroup = Linq.Except(publicAttachedActions, actions);
+			attachActionGroup = Linq.Except(actions, publicAttachedActions);
 
 			Frontend.RunAction(VdcActionType.UpdateRole, new RolesOperationsParameters(role),
 		new IFrontendActionAsyncCallback() {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.uicommon.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +40,8 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
         @Override
         public void onSelection(SelectionEvent<M> event) {
             M selectedItem = event.getSelectedItem();
-            display.getSelectionModel().setSelected(selectedItem, selectedItem.getSelected());
+            display.getSelectionModel().setSelected(selectedItem,
+                    selectedItem.getSelected());
         }
     }
 
@@ -85,6 +87,12 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
         private final SafeHtml INPUT_UNCHECKED_DISABLED =
                 SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" disabled/>");
 
+        private final SafeHtml INPUT_CHECKED_NULL_DISABLED =
+                SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" checked style=\"-moz-Field ! important; background-color: yellow;\" disabled/>");
+
+        private final SafeHtml INPUT_CHECKED_NULL =
+                SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" checked style=\"-moz-Field ! important; background-color: yellow;\"/>");
+
         private ExCheckboxCell(boolean dependsOnSelection, boolean handlesSelection) {
             super(dependsOnSelection, handlesSelection);
         }
@@ -92,6 +100,8 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
         @Override
         public void render(Context context, Boolean value, SafeHtmlBuilder sb) {
             Object key = context.getKey();
+            // TODO semi-checked checkbox (null value)
+            // value = ((SimpleSelectionTreeNodeModel) context.getKey()).getIsSelectedNullable();
             @SuppressWarnings("unchecked")
             M model = (M) key;
             if (!model.isEditable()) {
@@ -101,12 +111,23 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
                     clearViewData(key);
                     viewData = null;
                 }
+                // if (value == null) {
+                // sb.append(INPUT_CHECKED_NULL_DISABLED);
+                // } else
                 if (value != null && ((viewData != null) ? viewData : value)) {
                     sb.append(INPUT_CHECKED_DISABLED);
                 } else {
                     sb.append(INPUT_UNCHECKED_DISABLED);
                 }
             } else {
+                // if (value == null) {
+                // Boolean viewData = getViewData(key);
+                // if (viewData != null && viewData.equals(value)) {
+                // clearViewData(key);
+                // viewData = null;
+                // }
+                // sb.append(INPUT_CHECKED_NULL);
+                // } else
                 // enabled
                 super.render(context, value, sb);
             }
@@ -149,7 +170,32 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 Set<M> selectedSet = selectionModel.getSelectedSet();
-                doSelection(selectedSet, root);
+                HashSet<TreeNodeModel> removedSet = new HashSet<TreeNodeModel>();
+                HashSet<TreeNodeModel> nullSet = new HashSet<TreeNodeModel>();
+                for (TreeNodeModel<T, M> child : root) {
+                    if (!selectedSet.contains(child) && child.getSelected()) {
+                        selectedSet.remove(child);
+                        removedSet.add(child);
+                    }
+                    for (TreeNodeModel<T, M> child1 : child.getChildren()) {
+                        if (!selectedSet.contains(child1) && child1.getSelected()) {
+                            selectedSet.remove(child1);
+                            removedSet.add(child1);
+                        }
+                        for (TreeNodeModel<T, M> child2 : child1.getChildren()) {
+                            if (!selectedSet.contains(child2) && child2.getSelected()) {
+                                selectedSet.remove(child2);
+                                removedSet.add(child2);
+                            }
+                        }
+                    }
+                }
+                for (M m : selectedSet) {
+                    m.setSelected(true);
+                }
+                for (TreeNodeModel treeNodeModel : removedSet) {
+                    treeNodeModel.setSelected(false);
+                }
             }
         });
     }
@@ -209,20 +255,5 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
      */
     public void setRoot(List<M> arrayList) {
         this.root = arrayList;
-    }
-
-    private void doSelection(Set<M> selectedSet, List<? extends TreeNodeModel<T, M>> list) {
-        for (TreeNodeModel<T, M> model : list) {
-            if (model != null) {
-                if (selectedSet.contains(model)) {
-                    model.setSelected(true);
-                } else {
-                    model.setSelected(false);
-                }
-                if (model.getChildren() != null && model.getChildren().size() > 0) {
-                    doSelection(selectedSet, model.getChildren());
-                }
-            }
-        }
     }
 }

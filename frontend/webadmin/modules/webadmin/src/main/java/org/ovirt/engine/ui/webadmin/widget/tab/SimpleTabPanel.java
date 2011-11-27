@@ -21,7 +21,7 @@ public class SimpleTabPanel extends AbstractTabPanel {
     }
 
     @Override
-    protected void addTabWidget(Widget tabWidget, int index) {
+    public void addTabWidget(Widget tabWidget, int index) {
         tabContainer.insert(tabWidget, index);
     }
 

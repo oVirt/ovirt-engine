@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.webadmin.auth.CurrentUser;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.utils.WebUtils;
-import org.ovirt.engine.ui.webadmin.widget.FeatureNotImplementedYetPopup;
 import org.ovirt.engine.ui.webadmin.widget.tab.HeadlessTabPanel.TabWidgetHandler;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -25,7 +25,7 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
         void setUserNameLabel(String userName);
 
         HasClickHandlers getConfigureLink();
-        
+
         HasClickHandlers getLogoutLink();
 
         HasClickHandlers getAboutLink();
@@ -40,14 +40,20 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
     private final CurrentUser user;
     private final SearchPanelPresenterWidget searchPanel;
     private final AboutPopupPresenterWidget aboutPopup;
+    private final ConfigurePopupPresenterWidget configurePopup;
 
     @Inject
-    public HeaderPresenterWidget(EventBus eventBus, ViewDef view, CurrentUser user,
-            SearchPanelPresenterWidget searchPanel, AboutPopupPresenterWidget aboutPopup) {
+    public HeaderPresenterWidget(EventBus eventBus,
+            ViewDef view,
+            CurrentUser user,
+            SearchPanelPresenterWidget searchPanel,
+            AboutPopupPresenterWidget aboutPopup,
+            ConfigurePopupPresenterWidget configurePopup) {
         super(eventBus, view);
         this.user = user;
         this.searchPanel = searchPanel;
         this.aboutPopup = aboutPopup;
+        this.configurePopup = configurePopup;
     }
 
     @Override
@@ -72,11 +78,10 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
         registerHandler(getView().getConfigureLink().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                FeatureNotImplementedYetPopup a = new FeatureNotImplementedYetPopup((Widget)event.getSource(),false);
-                a.show();
+                RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, configurePopup);
             }
         }));
-        
+
         registerHandler(getView().getLogoutLink().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

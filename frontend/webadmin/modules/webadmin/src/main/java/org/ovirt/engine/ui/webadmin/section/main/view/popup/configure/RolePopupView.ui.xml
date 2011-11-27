@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+
+<ui:style>
+		
+	</ui:style>
+
+	<d:SimpleDialogPanel width="650px" height="500px">
+		<d:content>
+			<g:VerticalPanel>
+				<g:FlowPanel>
+					<g:HorizontalPanel>
+						<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+						<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+					</g:HorizontalPanel>
+					<g:HorizontalPanel>
+						<g:Label ui:field="accountTypeLabel"/>
+						<g:RadioButton name="accountTypeRadioButton" ui:field="userRadioButtonEditor"/>
+						<g:RadioButton name="accountTypeRadioButton" ui:field="adminRadioButtonEditor"/>
+					</g:HorizontalPanel>
+					<g:HTML><hr style="width:100%;" /></g:HTML>
+					<g:Label ui:field="explainationLabel"/>
+					<g:Button ui:field="expandAllButton"/>
+					<g:Button ui:field="collapseAllButton"/>
+					<g:ScrollPanel height="250px">
+						<e:EntityModelCellTree ui:field="tree"/>
+					</g:ScrollPanel>
+				</g:FlowPanel>
+			</g:VerticalPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

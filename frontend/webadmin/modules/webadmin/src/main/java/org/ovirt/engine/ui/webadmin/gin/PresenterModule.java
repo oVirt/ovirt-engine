@@ -21,6 +21,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.Cluster
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterNewNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPolicyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.RolePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindMultiStoragePopupPresenterWidget;
@@ -126,6 +128,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterManag
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterNewNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPolicyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.ConfigurePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.RolePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindMultiStoragePopupView;
@@ -258,6 +262,12 @@ public class PresenterModule extends AbstractPresenterModule {
         bindSingletonPresenterWidget(AboutPopupPresenterWidget.class,
                 AboutPopupPresenterWidget.ViewDef.class,
                 AboutPopupView.class);
+        bindSingletonPresenterWidget(ConfigurePopupPresenterWidget.class,
+                ConfigurePopupPresenterWidget.ViewDef.class,
+                ConfigurePopupView.class);
+        bindPresenterWidget(RolePopupPresenterWidget.class,
+                RolePopupPresenterWidget.ViewDef.class,
+                RolePopupView.class);
 
         // Main section: main tabs
         bindPresenter(MainTabPanelPresenter.class,

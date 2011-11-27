@@ -586,4 +586,50 @@ public interface ApplicationConstants extends Constants {
 
     @DefaultStringValue("Select Storage Domain")
     String storageIscsiSelectStorageLabel();
+
+    @DefaultStringValue("Configure")
+    String configurePopupTitle();
+
+    @DefaultStringValue("All Roles")
+    String allRolesLabel();
+
+    @DefaultStringValue("Administrator Roles")
+    String adminRolesLabel();
+
+    @DefaultStringValue("User Roles")
+    String userRolesLabel();
+
+    @DefaultStringValue("Show")
+    String showRolesLabel();
+
+    @DefaultStringValue("Name")
+    String RoleNameLabel();
+
+    @DefaultStringValue("Description")
+    String RoleDescriptionLabel();
+
+    @DefaultStringValue("Account Type:")
+    String RoleAccount_TypeLabel();
+
+    @DefaultStringValue("User")
+    String RoleUserLabel();
+
+    @DefaultStringValue("Admin")
+    String RoleAdminLabel();
+
+    @DefaultStringValue("Check Boxes to Allow Action")
+    String RoleCheckBoxes();
+
+    @DefaultStringValue("Expand All")
+    String RoleExpand_AllLabel();
+
+    @DefaultStringValue("Collapse All")
+    String RoleCollapse_AllLabel();
+
+    @DefaultStringValue("Roles")
+    String configureRoleTabLabel();
+
+    @DefaultStringValue("System Permissions")
+    String configureSystemPermissionTabLabel();
+
 }

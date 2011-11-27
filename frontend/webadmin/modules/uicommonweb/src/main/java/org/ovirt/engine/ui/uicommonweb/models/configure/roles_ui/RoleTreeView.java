@@ -1,4 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui;
+import java.util.ArrayList;
 import java.util.Collections;
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.ui.uicompat.*;
@@ -27,7 +28,7 @@ public class RoleTreeView
 		java.util.ArrayList<ActionGroup> userActionGroups = null;
 		if(isAdmin == false)
 		{
-			userActionGroups = DataProvider.GetUserActionGroups();
+			userActionGroups = GetUserActionGroups();
 		}
 
 		java.util.ArrayList<SelectionTreeNodeModel> roleTreeView = new java.util.ArrayList<SelectionTreeNodeModel>();
@@ -84,6 +85,33 @@ public class RoleTreeView
 
 
 		return roleTreeView;
+	}
+
+	private static ArrayList<ActionGroup> GetUserActionGroups() {
+		ArrayList<ActionGroup> array = new ArrayList<ActionGroup>();
+		array.add(ActionGroup.CREATE_VM);
+		array.add(ActionGroup.DELETE_VM);
+		array.add(ActionGroup.EDIT_VM_PROPERTIES);
+		array.add(ActionGroup.VM_BASIC_OPERATIONS);
+		array.add(ActionGroup.CHANGE_VM_CD);
+		array.add(ActionGroup.MIGRATE_VM);
+		array.add(ActionGroup.CONNECT_TO_VM);
+		array.add(ActionGroup.CONFIGURE_VM_NETWORK);
+		array.add(ActionGroup.CONFIGURE_VM_STORAGE);
+		array.add(ActionGroup.MOVE_VM);
+		array.add(ActionGroup.MANIPULATE_VM_SNAPSHOTS);
+		array.add(ActionGroup.CREATE_TEMPLATE);
+		array.add(ActionGroup.EDIT_TEMPLATE_PROPERTIES);
+		array.add(ActionGroup.DELETE_TEMPLATE);
+		array.add(ActionGroup.COPY_TEMPLATE);
+		array.add(ActionGroup.CONFIGURE_TEMPLATE_NETWORK);
+		array.add(ActionGroup.CREATE_VM_POOL);
+		array.add(ActionGroup.EDIT_VM_POOL_CONFIGURATION);
+		array.add(ActionGroup.DELETE_VM_POOL);
+		array.add(ActionGroup.VM_POOL_BASIC_OPERATIONS);
+		array.add(ActionGroup.MANIPULATE_PERMISSIONS);
+		return array;
+		
 	}
 
 	private static RoleNode initTreeView()

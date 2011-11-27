@@ -94,7 +94,7 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel {
     /**
      * Adds a tab widget to this tab panel at the given position.
      */
-    protected abstract void addTabWidget(Widget tabWidget, int index);
+    public abstract void addTabWidget(Widget tabWidget, int index);
 
     /**
      * Removes a tab widget from this tab panel.

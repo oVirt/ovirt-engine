@@ -99,7 +99,6 @@ public class RoleModel extends Model
 		}
 	}
 
-
 	public RoleModel()
 	{
 		setExpandAllCommand(new UICommand("ExpandAll", this));

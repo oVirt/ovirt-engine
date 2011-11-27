@@ -41,6 +41,8 @@ public interface TreeNodeModel<T, M extends TreeNodeModel<T, M>> extends HasSele
     /**
      * Set the Node Selection state
      * 
+     * @return
+     * 
      */
     void setSelected(boolean value);
 

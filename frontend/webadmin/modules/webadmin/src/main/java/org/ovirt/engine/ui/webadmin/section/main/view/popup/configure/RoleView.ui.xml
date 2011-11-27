@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+	<ui:style>
+		.labelStyle {
+			vertical-align: bottom;
+			height: 30px;
+			line-height: 25px;
+			margin-right: 5px;
+		}
+		
+		.imageStyle {
+			vertical-align: bottom;
+			height: 30px;
+			line-height: 25px;
+			margin-left: 10px;
+		}
+	</ui:style>
+
+	<g:VerticalPanel>
+		<g:HorizontalPanel>
+			<g:Label ui:field="showLabel" addStyleNames="{style.labelStyle}"/>
+			<g:RadioButton name="rolesRadioButton" ui:field="allRolesRadioButton"/>
+			<g:Image resource='{resources.adminImage}' addStyleNames="{style.imageStyle}"/>
+			<g:RadioButton name="rolesRadioButton" ui:field="adminRolesRadioButton"/>
+			<g:Image resource='{resources.userImage}' addStyleNames="{style.imageStyle}"/>
+			<g:RadioButton name="rolesRadioButton" ui:field="userRolesRadioButton"/>
+		</g:HorizontalPanel>
+		<g:SimplePanel ui:field="rolesTabContent" height="400px" />
+	</g:VerticalPanel>
+
+</ui:UiBinder>

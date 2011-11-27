@@ -28,6 +28,9 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 
@@ -76,6 +79,14 @@ public class UiCommonModule extends AbstractGinModule {
         // EventListModel
         bind(EventModelProvider.class).asEagerSingleton();
         bind(EventFirstRowModelProvider.class).asEagerSingleton();
+        // RoleListModel
+        bind(RoleModelProvider.class).asEagerSingleton();
+
+        // RolePermissionListModel
+        bind(RolePermissionModelProvider.class).asEagerSingleton();
+
+        // SystemPermissionListModel
+        bind(SystemPermissionModelProvider.class).asEagerSingleton();
     }
 
     void bindIntegration() {
