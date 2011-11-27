@@ -54,7 +54,7 @@ public class ConfigurationProvider {
         }
     }
 
-    public ManageDomainsResult setConfigValue(ConfigValues enumValue, String value, String loggingValue) {
+    public void setConfigValue(ConfigValues enumValue, String value, String loggingValue) throws ManageDomainsResult {
 
         log.info("Setting value for " + enumValue.toString() + " to " + loggingValue);
 
@@ -65,15 +65,14 @@ public class ConfigurationProvider {
                             + value + " -p " + engineConfigProperties);
             int retVal = engineConfigProcess.waitFor();
             if (retVal != 0) {
-                return new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION,
+                throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION,
                         enumValue.name());
             }
-            return new ManageDomainsResult(ManageDomainsResultEnum.OK);
         } catch (IOException e) {
-            return new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION_WITH_DETAILS,
+            throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION_WITH_DETAILS,
                     new String[] { enumValue.name(), e.getMessage() });
         } catch (InterruptedException e) {
-            return new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION_WITH_DETAILS,
+            throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION_WITH_DETAILS,
                     new String[] { enumValue.name(), e.getMessage() });
         }
 

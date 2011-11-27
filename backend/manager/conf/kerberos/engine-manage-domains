@@ -49,7 +49,7 @@ fi
 usage () {
         printf "engine-manage-domains: add/edit/delete/validate/list domains\n"
         printf "USAGE:\n"
-        printf "\tengine-manage-domains -action=ACTION [-domain=DOMAIN -user=USER -passwordFile=PASSWORD_FILE -interactive -configFile=PATH] -report\n"
+        printf "\tengine-manage-domains -action=ACTION [-domain=DOMAIN -user=USER -passwordFile=PASSWORD_FILE -interactive -configFile=PATH -addPermissions] -report\n"
         printf "Where:\n"
         printf "\tACTION             action to perform (add/edit/delete/validate/list). See details below.\n"
         printf "\tDOMAIN             	(mandatory for add, edit and delete) the domain you wish to perform the action on.\n"
@@ -71,6 +71,8 @@ usage () {
 		printf "\t\t\tValidate the current configuration (go over all the domains, try to authenticate to each domain using the configured user/password.).\n"
 		printf "\t\t-report In combination with -action=validate will report all validation error, if occured.\n"
 		printf "\t\t\tDefault behaviour is to exit when a validation error occurs.\n"
+		printf "\t\t-addPermissions In combination with -action=add/edit will add engine superuser permissions to the user.\n"
+		printf "\t\t\tDefault behaviour is not to add permissions.\n"
 		printf "\t\t-action=list\n"
 		printf "\t\t\tLists the current configuration.\n"
 		printf "\t\t-h\n"
@@ -120,7 +122,7 @@ fi
 
 cat << EOF > $PROPERTIES_FILE
 AdUserName
-AdUserPassword
+AdUserPassword.type=CompositePassword
 LDAPSecurityAuthentication
 DomainName
 AdUserId

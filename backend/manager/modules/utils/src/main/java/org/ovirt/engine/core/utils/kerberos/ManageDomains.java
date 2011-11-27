@@ -33,6 +33,9 @@ public class ManageDomains {
     public static final String CONF_FILE_PATH = "/etc/ovirt-engine/engine-manage-domains/engine-manage-domains.conf";
     private final String WARNING_ABOUT_TO_DELETE_LAST_DOMAIN =
             "WARNING: Domain %1$s is the last domain in the configuration. After deleting it you will have to either add another domain, or to use the internal admin user in order to login.";
+    private final String WARNING_NOT_ADDING_PERMISSIONS =
+        "WARNING: No permissions were added to the Engine. Login either with the internal admin user or with another configured user.";
+
     private final String SERVICE_RESTART_MESSAGE =
             "oVirt Engine restart is required in order for the changes to take place (service jboss-as restart).";
     private final String DELETE_DOMAIN_SUCCESS =
@@ -50,6 +53,7 @@ public class ManageDomains {
     private ConfigurationProvider configurationProvider;
     private ManageDomainsDAOImpl daoImpl;
     private boolean reportAllErrors;
+    private boolean addPermissions;
     private final static Logger log = Logger.getLogger(ManageDomains.class);
     private final static String REMOTE_LOCATION = "remote";
 
@@ -62,7 +66,8 @@ public class ManageDomains {
         configFile,
         propertiesFile,
         report,
-        interactive
+        interactive,
+        addPermissions
     }
 
     public enum ActionType {
@@ -152,6 +157,9 @@ public class ManageDomains {
         }
         if (parser.hasArg(Arguments.report.name())) {
             util.reportAllErrors = true;
+        }
+        if (parser.hasArg(Arguments.addPermissions.name())) {
+            util.addPermissions = true;
         }
 
         try {
@@ -410,7 +418,12 @@ public class ManageDomains {
                 true,
                 false);
 
-        updatePermissionsTable(adUserNameEntry, adUserIdEntry);
+        if (addPermissions) {
+            updatePermissionsTable(adUserNameEntry, adUserIdEntry);
+        } else {
+            System.out.println(WARNING_NOT_ADDING_PERMISSIONS);
+        }
+
         // Update the configuration
         setConfigurationEntries(domainNameEntry,
                 adUserNameEntry,
@@ -507,7 +520,11 @@ public class ManageDomains {
                 true,
                 false);
 
-        updatePermissionsTable(adUserNameEntry, adUserIdEntry);
+        if (addPermissions) {
+            updatePermissionsTable(adUserNameEntry, adUserIdEntry);
+        } else {
+            System.out.println(WARNING_NOT_ADDING_PERMISSIONS);
+        }
 
         setConfigurationEntries(domainNameEntry,
                         adUserNameEntry,
@@ -719,59 +736,36 @@ public class ManageDomains {
         }
     }
 
-    private ManageDomainsResult setConfigurationEntries(DomainsConfigurationEntry domainNameEntry,
+    private void setConfigurationEntries(DomainsConfigurationEntry domainNameEntry,
             DomainsConfigurationEntry adUserNameEntry,
             DomainsConfigurationEntry adPasswordEntry,
             DomainsConfigurationEntry authModeEntry,
             DomainsConfigurationEntry ldapServersEntry,
-            DomainsConfigurationEntry adUserIdEntry) {
+            DomainsConfigurationEntry adUserIdEntry) throws ManageDomainsResult {
         // Update the configuration
-        ManageDomainsResult result =
-                configurationProvider.setConfigValue(ConfigValues.AdUserName,
-                        adUserNameEntry.getDomainsConfigurationEntry(),
-                        adUserNameEntry.getDomainsLoggingEntry());
+        configurationProvider.setConfigValue(ConfigValues.AdUserName,
+                adUserNameEntry.getDomainsConfigurationEntry(),
+                adUserNameEntry.getDomainsLoggingEntry());
 
-        if (!result.isSuccessful()) {
-            return result;
-        }
+        configurationProvider.setConfigValue(ConfigValues.AdUserPassword,
+                adPasswordEntry.getDomainsConfigurationEntry(),
+                adPasswordEntry.getDomainsLoggingEntry());
 
-        result =
-                configurationProvider.setConfigValue(ConfigValues.AdUserPassword,
-                        adPasswordEntry.getDomainsConfigurationEntry(),
-                        adPasswordEntry.getDomainsLoggingEntry());
-        if (!result.isSuccessful()) {
-            return result;
-        }
+        configurationProvider.setConfigValue(ConfigValues.LdapServers,
+                ldapServersEntry.getDomainsConfigurationEntry(),
+                ldapServersEntry.getDomainsLoggingEntry());
 
-        result =
-                configurationProvider.setConfigValue(ConfigValues.LdapServers,
-                        ldapServersEntry.getDomainsConfigurationEntry(),
-                        ldapServersEntry.getDomainsLoggingEntry());
-        if (!result.isSuccessful()) {
-            return result;
-        }
+        configurationProvider.setConfigValue(ConfigValues.AdUserId,
+                adUserIdEntry.getDomainsConfigurationEntry(),
+                adUserIdEntry.getDomainsLoggingEntry());
 
-        result =
-                configurationProvider.setConfigValue(ConfigValues.AdUserId,
-                        adUserIdEntry.getDomainsConfigurationEntry(),
-                        adUserIdEntry.getDomainsLoggingEntry());
-        if (!result.isSuccessful()) {
-            return result;
-        }
+        configurationProvider.setConfigValue(ConfigValues.LDAPSecurityAuthentication,
+                authModeEntry.getDomainsConfigurationEntry(),
+                authModeEntry.getDomainsLoggingEntry());
 
-        result =
-                configurationProvider.setConfigValue(ConfigValues.LDAPSecurityAuthentication,
-                        authModeEntry.getDomainsConfigurationEntry(),
-                        authModeEntry.getDomainsLoggingEntry());
-        if (!result.isSuccessful()) {
-            return result;
-        }
-
-        result =
-                configurationProvider.setConfigValue(ConfigValues.DomainName,
-                        domainNameEntry.getDomainsConfigurationEntry(),
-                        domainNameEntry.getDomainsLoggingEntry());
-        return result;
+        configurationProvider.setConfigValue(ConfigValues.DomainName,
+                domainNameEntry.getDomainsConfigurationEntry(),
+                domainNameEntry.getDomainsLoggingEntry());
     }
 
     public void deleteDomain(String domainName) throws ManageDomainsResult {
@@ -815,18 +809,14 @@ public class ManageDomains {
         ldapServersEntry.removeValueForDomain(domainName);
 
         // Update the configuration
-        ManageDomainsResult result = setConfigurationEntries(domainNameEntry,
+        setConfigurationEntries(domainNameEntry,
                 adUserNameEntry,
                 adUserPasswordEntry,
                 authModeEntry,
                 ldapServersEntry,
                 adUserIdEntry);
 
-        if (result.isSuccessful()) {
-            System.out.println(String.format(DELETE_DOMAIN_SUCCESS, domainName));
-        } else {
-            throw result;
-        }
+        System.out.println(String.format(DELETE_DOMAIN_SUCCESS, domainName));
     }
 
     private void validate(CLIParser parser) throws ManageDomainsResult {
