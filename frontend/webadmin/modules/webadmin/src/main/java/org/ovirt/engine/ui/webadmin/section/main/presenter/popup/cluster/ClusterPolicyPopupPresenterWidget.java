@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster;
 
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterPolicyModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBoundPopupPresenterWidget;
 
@@ -11,9 +12,18 @@ public class ClusterPolicyPopupPresenterWidget extends AbstractModelBoundPopupPr
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<ClusterPolicyModel> {
     }
 
+    private final ClusterListModel clusterListModel;
+
     @Inject
-    public ClusterPolicyPopupPresenterWidget(EventBus eventBus, ViewDef view) {
+    public ClusterPolicyPopupPresenterWidget(EventBus eventBus, ViewDef view, ClusterListModel clusterListModel) {
         super(eventBus, view);
+        this.clusterListModel = clusterListModel;
+    }
+
+    @Override
+    protected void onHide() {
+        super.onHide();
+        clusterListModel.ForceRefresh();
     }
 
 }
