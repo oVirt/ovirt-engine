@@ -729,6 +729,11 @@ public class Frontend {
 			runActionExecutionFailed(actionType, result.getFault());
 			if (callback != null)
 				callback.Executed(f);
+			
+			// Prevent another (untranslated) error message pop-up display 
+			// ('runActionExecutionFailed' invokes an error pop-up displaying, 
+			// therefore calling 'failureEventHandler' is redundant)
+			success = true;
 		} else {
 			success = true;
 			if (callback != null)
