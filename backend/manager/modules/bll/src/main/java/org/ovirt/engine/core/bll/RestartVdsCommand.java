@@ -47,12 +47,12 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         final String sessionId = getParameters().getSessionId();
 
         // execute StopVds action
-        returnValueBase = executeStopVdsFenceAction(vdsId, sessionId);
+        returnValueBase = executeVdsFenceAction(vdsId, sessionId, FenceActionType.Stop, VdcActionType.StopVds);
         if (returnValueBase.getSucceeded()) {
             executeFenceVdsManulalyAction(vdsId, sessionId);
 
             // execute StartVds action
-            returnValueBase = executeStartVdsFenceAction(vdsId, sessionId);
+            returnValueBase = executeVdsFenceAction(vdsId, sessionId, FenceActionType.Start, VdcActionType.StartVds);
             setSucceeded(returnValueBase.getSucceeded());
             setFencingSucceeded(getSucceeded());
         } else {
@@ -71,21 +71,14 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         Backend.getInstance().runInternalAction(VdcActionType.FenceVdsManualy, fenceVdsManuallyParams);
     }
 
-    private VdcReturnValueBase executeStopVdsFenceAction(final Guid vdsId, String sessionId) {
-        FenceVdsActionParameters stopVdsParams = new FenceVdsActionParameters(vdsId, FenceActionType.Stop);
-        stopVdsParams.setParentCommand(VdcActionType.RestartVds);
-        stopVdsParams.setShouldBeLogged(false);
-        stopVdsParams.setSessionId(sessionId);
-        return Backend.getInstance().runInternalAction(VdcActionType.StopVds, stopVdsParams);
-    }
-
-    private VdcReturnValueBase executeStartVdsFenceAction(final Guid vdsId, String sessionId) {
-        // TODO 1: evaluate the impact of having parent command of StartVds to be RestartVds
-        // TODO 2: consider merge executeStopVdsFenceAction and executeStartVdsFenceAction
-        FenceVdsActionParameters startVdsParams = new FenceVdsActionParameters(vdsId, FenceActionType.Start);
-        startVdsParams.setShouldBeLogged(false);
-        startVdsParams.setSessionId(sessionId);
-        return Backend.getInstance().runInternalAction(VdcActionType.StartVds, startVdsParams);
+    private VdcReturnValueBase executeVdsFenceAction(final Guid vdsId,
+                        String sessionId,
+                        FenceActionType fenceAction,
+                        VdcActionType action) {
+        FenceVdsActionParameters params = new FenceVdsActionParameters(vdsId, fenceAction);
+        params.setParentCommand(VdcActionType.RestartVds);
+        params.setSessionId(sessionId);
+        return Backend.getInstance().runInternalAction(action, params);
     }
 
     /**
