@@ -44,7 +44,6 @@ public class ReflectionHelper {
 
     private ReflectionHelper() {}
 
-    @SuppressWarnings("unchecked")
     public static <R extends BaseResource> R newModel(Class<R> clz) {
         R ret = null;
         try {
@@ -54,6 +53,7 @@ public class ReflectionHelper {
         return ret;
     }
 
+    @SuppressWarnings("unchecked")
     public static <R extends BaseResource> R newModel(AbstractUpdatableResource<R> resource) {
         return newModel((Class<R>)((ParameterizedType)resource.getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
     }
