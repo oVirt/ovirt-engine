@@ -6,10 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.hibernate.annotations.common.util.StringHelper;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.LogCompat;
+import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -47,7 +53,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 entity.setvds_strength(rs.getInt("vds_strength"));
                 entity.setpm_type(rs.getString("pm_type"));
                 entity.setpm_user(rs.getString("pm_user"));
-                entity.setpm_password(rs.getString("pm_password"));
+                entity.setpm_password(decryptPassword(rs.getString("pm_password")));
                 entity.setpm_port((Integer) rs.getObject("pm_port"));
                 entity.setpm_options(rs.getString("pm_options"));
                 entity.setpm_enabled(rs.getBoolean("pm_enabled"));
@@ -85,7 +91,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 entity.setvds_strength(rs.getInt("vds_strength"));
                 entity.setpm_type(rs.getString("pm_type"));
                 entity.setpm_user(rs.getString("pm_user"));
-                entity.setpm_password(rs.getString("pm_password"));
+                entity.setpm_password(decryptPassword(rs.getString("pm_password")));
                 entity.setpm_port((Integer) rs.getObject("pm_port"));
                 entity.setpm_options(rs.getString("pm_options"));
                 entity.setpm_enabled(rs.getBoolean("pm_enabled"));
@@ -125,7 +131,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 entity.setvds_strength(rs.getInt("vds_strength"));
                 entity.setpm_type(rs.getString("pm_type"));
                 entity.setpm_user(rs.getString("pm_user"));
-                entity.setpm_password(rs.getString("pm_password"));
+                entity.setpm_password(decryptPassword(rs.getString("pm_password")));
                 entity.setpm_port((Integer) rs.getObject("pm_port"));
                 entity.setpm_options(rs.getString("pm_options"));
                 entity.setpm_enabled(rs.getBoolean("pm_enabled"));
@@ -163,7 +169,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 entity.setvds_strength(rs.getInt("vds_strength"));
                 entity.setpm_type(rs.getString("pm_type"));
                 entity.setpm_user(rs.getString("pm_user"));
-                entity.setpm_password(rs.getString("pm_password"));
+                entity.setpm_password(decryptPassword(rs.getString("pm_password")));
                 entity.setpm_port((Integer) rs.getObject("pm_port"));
                 entity.setpm_options(rs.getString("pm_options"));
                 entity.setpm_enabled(rs.getBoolean("pm_enabled"));
@@ -201,7 +207,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 entity.setvds_strength(rs.getInt("vds_strength"));
                 entity.setpm_type(rs.getString("pm_type"));
                 entity.setpm_user(rs.getString("pm_user"));
-                entity.setpm_password(rs.getString("pm_password"));
+                entity.setpm_password(decryptPassword(rs.getString("pm_password")));
                 entity.setpm_port((Integer) rs.getObject("pm_port"));
                 entity.setpm_options(rs.getString("pm_options"));
                 entity.setpm_enabled(rs.getBoolean("pm_enabled"));
@@ -229,7 +235,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("vds_strength", vds.getvds_strength())
                 .addValue("pm_type", vds.getpm_type())
                 .addValue("pm_user", vds.getpm_user())
-                .addValue("pm_password", vds.getpm_password())
+                .addValue("pm_password", encryptPassword(vds.getpm_password()))
                 .addValue("pm_port", vds.getpm_port())
                 .addValue("pm_options", vds.getpm_options())
                 .addValue("pm_enabled", vds.getpm_enabled())
@@ -255,7 +261,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("vds_strength", vds.getvds_strength())
                 .addValue("pm_type", vds.getpm_type())
                 .addValue("pm_user", vds.getpm_user())
-                .addValue("pm_password", vds.getpm_password())
+                .addValue("pm_password", encryptPassword(vds.getpm_password()))
                 .addValue("pm_port", vds.getpm_port())
                 .addValue("pm_options", vds.getpm_options())
                 .addValue("pm_enabled", vds.getpm_enabled())
@@ -277,4 +283,42 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
     public List<VdsStatic> getAll() {
         throw new NotImplementedException();
     }
+
+    public static String encryptPassword(String password) {
+        if (StringHelper.isEmpty(password)) {
+            return password;
+        }
+        String result = password;
+
+        String keyFile = Config.<String> GetValue(ConfigValues.keystoreUrl, Config.DefaultConfigurationVersion);
+        String passwd = Config.<String> GetValue(ConfigValues.keystorePass, Config.DefaultConfigurationVersion);
+        String alias = Config.<String> GetValue(ConfigValues.CertAlias, Config.DefaultConfigurationVersion);
+        try {
+            result = EncryptionUtils.encrypt((String) result, keyFile, passwd, alias);
+        } catch (Exception e) {
+            throw new SecurityException(e);
+        }
+        return result;
+    }
+
+    public static String decryptPassword(String password) {
+        if (StringHelper.isEmpty(password)) {
+            return password;
+        }
+        String result = password;
+
+        String keyFile = Config.<String> GetValue(ConfigValues.keystoreUrl, Config.DefaultConfigurationVersion);
+        String passwd = Config.<String> GetValue(ConfigValues.keystorePass, Config.DefaultConfigurationVersion);
+        String alias = Config.<String> GetValue(ConfigValues.CertAlias, Config.DefaultConfigurationVersion);
+        try {
+            result = EncryptionUtils.decrypt((String) result, keyFile, passwd, alias);
+        } catch (Exception e) {
+            log.debugFormat("Failed to decrypt password, error message: {0}", e.getMessage());
+            result = password;
+        }
+        return result;
+    }
+
+    private static LogCompat log = LogFactoryCompat.getLog(VdsStaticDAODbFacadeImpl.class);
+
 }
