@@ -2,6 +2,9 @@ package org.ovirt.engine.core.bll.storage;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -11,6 +14,7 @@ import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class StorageDomainCommandBaseTest {
@@ -52,6 +56,51 @@ public class StorageDomainCommandBaseTest {
         assertTrue(commandHasInvalidStatusMessage());
     }
 
+    @Test
+    public void activeDomain() {
+        doReturn(true).when(cmd).IsDomainActive(any(Guid.class), any(NGuid.class));
+        assertTrue(cmd.IsDomainActive(Guid.NewGuid(), Guid.NewGuid()));
+    }
+
+    @Test
+    public void canDetachInactiveDomain() {
+        storageDomainIsInactive();
+        storagePoolExists();
+        masterDomainIsUp();
+        isNotLocalData();
+        canDetachDomain();
+        assertTrue(cmd.canDetachDomain(false, false, false));
+    }
+
+    @Test
+    public void canDetachMaintenanceDomain() {
+     storageDomainIsMaintenance();
+     storagePoolExists();
+     masterDomainIsUp();
+     isNotLocalData();
+     canDetachDomain();
+     assertTrue(cmd.canDetachDomain(false, false, false));
+    }
+
+
+    private void storagePoolExists() {
+        when(cmd.CheckStoragePool()).thenReturn(true);
+    }
+
+    private void masterDomainIsUp() {
+        doReturn(true).when(cmd).CheckMasterDomainIsUp();
+    }
+
+    private void isNotLocalData() {
+        doReturn(true).when(cmd).isNotLocalData(anyBoolean());
+    }
+
+    private void canDetachDomain() {
+        doReturn(true).when(cmd).isDetachAllowed(anyBoolean());
+    }
+
+
+
     private boolean commandHasInvalidStatusMessage() {
         return cmd.getReturnValue().getCanDoActionMessages().contains(
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString());
@@ -63,9 +112,16 @@ public class StorageDomainCommandBaseTest {
         when(cmd.getStorageDomain()).thenReturn(domain);
     }
 
+    private void storageDomainIsMaintenance() {
+        storage_domains domain = new storage_domains();
+        domain.setstatus(StorageDomainStatus.Maintenance);
+        when(cmd.getStorageDomain()).thenReturn(domain);
+    }
+
+
     private void createTestCommand() {
-        StorageDomainParametersBase parameters = new StorageDomainParametersBase(Guid.NewGuid());
-        cmd = spy(new TestStorageCommandBase(new StorageDomainParametersBase()));
+        StorageDomainParametersBase parameters = new StorageDomainParametersBase();
+        cmd = spy(new TestStorageCommandBase(parameters));
     }
 
     class TestStorageCommandBase extends StorageDomainCommandBase<StorageDomainParametersBase> {

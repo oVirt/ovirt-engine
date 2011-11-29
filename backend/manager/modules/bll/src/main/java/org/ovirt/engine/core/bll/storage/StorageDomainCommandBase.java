@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.config.Config;
@@ -38,6 +39,8 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 public abstract class StorageDomainCommandBase<T extends StorageDomainParametersBase> extends
         StorageHandlingCommandBase<T> {
 
+    private storage_pool _storagePool;
+
     public StorageDomainCommandBase(T parameters) {
         super(parameters);
     }
@@ -47,7 +50,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
      *
      * @param commandId
      */
-
     protected StorageDomainCommandBase(Guid commandId) {
         super(commandId);
     }
@@ -77,57 +79,85 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected boolean canDetachDomain(boolean isDestroyStoragePool, boolean isRemoveLast, boolean isInternal) {
-        boolean returnValue = CheckStoragePool()
+        return CheckStoragePool()
                 && CheckStorageDomain()
-                && checkStorageDomainStatus(StorageDomainStatus.InActive)
-                && (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master
-                        || isDestroyStoragePool || CheckMasterDomainIsUp());
-        if (returnValue) {
-            if (this.getStoragePool().getstorage_pool_type() == StorageType.LOCALFS
-                    && getStorageDomain().getstorage_domain_type() == StorageDomainType.Data
-                    && !isInternal) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE);
-            }
-        }
-        if (returnValue) {
-            if (DbFacade.getInstance()
-                    .getStoragePoolIsoMapDAO()
-                    .get(new StoragePoolIsoMapId(getStorageDomain().getid(),
-                            getStoragePoolId())) == null) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.STORAGE_DOMAIN_NOT_ATTACHED_TO_STORAGE_POOL);
-            } else if (DbFacade.getInstance()
-                    .getDiskImageDAO()
-                    .getAllSnapshotsForStorageDomain(getStorageDomain().getid())
-                    .size() != 0
-                    || DbFacade.getInstance()
-                            .getStorageDomainDAO()
-                            .getAllImageGroupStorageDomainMapsForStorageDomain(getStorageDomain().getid())
-                            .size() != 0) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DETACH_STORAGE_DOMAIN_WITH_IMAGES);
-            } else if (!isRemoveLast
-                    && getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
+                && checkStorageDomainStatus(StorageDomainStatus.InActive, StorageDomainStatus.Maintenance)
+                && (isMaster() || isDestroyStoragePool || CheckMasterDomainIsUp())
+                && isNotLocalData(isInternal)
+                && isDetachAllowed(isRemoveLast);
+    }
 
-                storage_domains storage_domains =
-                        LinqUtils.firstOrNull(DbFacade.getInstance()
-                                .getStorageDomainDAO()
-                                .getAllForStoragePool(getStorageDomain().getstorage_pool_id().getValue()),
-                                new Predicate<storage_domains>() {
-                                    @Override
-                                    public boolean eval(storage_domains a) {
-                                        return a.getid().equals(getStorageDomain().getid())
-                                                && a.getstatus() == StorageDomainStatus.Active;
-                                    }
-                                });
-                if (storage_domains == null) {
-                    returnValue = false;
-                    addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DETACH_LAST_STORAGE_DOMAIN);
-                }
+    protected boolean isDetachAllowed(final boolean isRemoveLast) {
+        boolean returnValue = true;
+        if (getStoragePoolIsoMap() == null) {
+            returnValue = false;
+            addCanDoActionMessage(VdcBllMessages.STORAGE_DOMAIN_NOT_ATTACHED_TO_STORAGE_POOL);
+        } else if (hasImages()) {
+            returnValue = false;
+            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DETACH_STORAGE_DOMAIN_WITH_IMAGES);
+        } else if (!isRemoveLast
+                && isMaster()) {
+
+            storage_domains storage_domains =
+                    LinqUtils.firstOrNull(DbFacade.getInstance()
+                            .getStorageDomainDAO()
+                            .getAllForStoragePool(getStorageDomain().getstorage_pool_id().getValue()),
+                            new Predicate<storage_domains>() {
+                                @Override
+                                public boolean eval(storage_domains a) {
+                                    return a.getid().equals(getStorageDomain().getid())
+                                            && a.getstatus() == StorageDomainStatus.Active;
+                                }
+                            });
+            if (storage_domains == null) {
+                returnValue = false;
+                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DETACH_LAST_STORAGE_DOMAIN);
             }
         }
         return returnValue;
+    }
+
+    protected boolean isNotLocalData(final boolean isInternal) {
+        boolean returnValue = true;
+        if (this.getStoragePool().getstorage_pool_type() == StorageType.LOCALFS
+                && getStorageDomain().getstorage_domain_type() == StorageDomainType.Data
+                && !isInternal) {
+            returnValue = false;
+            addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE);
+        }
+        return returnValue;
+    }
+
+    private boolean hasImages() {
+        return DbFacade.getInstance()
+                .getDiskImageDAO()
+                .getAllSnapshotsForStorageDomain(getStorageDomain().getid())
+                .size() != 0
+                || DbFacade.getInstance()
+                        .getStorageDomainDAO()
+                        .getAllImageGroupStorageDomainMapsForStorageDomain(getStorageDomain().getid())
+                        .size() != 0;
+    }
+
+    private storage_pool_iso_map getStoragePoolIsoMap() {
+        return DbFacade.getInstance()
+                .getStoragePoolIsoMapDAO()
+                .get(new StoragePoolIsoMapId(getStorageDomain().getid(),
+                        getStoragePoolId()));
+    }
+
+    private boolean isMaster() {
+        return getStorageDomain().getstorage_domain_type() == StorageDomainType.Master;
+    }
+
+    @Override
+    public storage_pool getStoragePool() {
+        if (_storagePool == null) {
+            if (getStoragePoolId() != null && !getStoragePoolId().equals(Guid.Empty)) {
+                _storagePool = getStoragePoolDAO().get(getStoragePoolId().getValue());
+            }
+        }
+        return _storagePool;
     }
 
     @Override
@@ -194,11 +224,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean CheckMasterDomainIsUp() {
         boolean returnValue = true;
-        // LINQ 29456
-        // IEnumerable<storage_domains> storageDomains =
-        // DbFacade.Instance.GetStorageDomainsByStoragePoolId(StoragePool.id).
-        // Where(a => a.storage_domain_type == StorageDomainType.Master &&
-        // a.status == StorageDomainStatus.Active);
         List<storage_domains> storageDomains = DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(
                 getStoragePool().getId());
         storageDomains = LinqUtils.filter(storageDomains, new Predicate<storage_domains>() {
@@ -208,7 +233,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                         && a.getstatus() == StorageDomainStatus.Active;
             }
         });
-        // LINQ 29456
         if (storageDomains.isEmpty()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MASTER_STORAGE_DOMAIN_NOT_ACTIVE);
             returnValue = false;
@@ -271,7 +295,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     /**
-     * The following method will perform election for the new master: data domain which is in Active status and not
+     *  The new master must  be a data domain which is in Active status and not
      * reported by any vdsm as problematic. In case that all domains reported as problematic a first Active data domain
      * will be returned
      * @return an elected master domain or null
