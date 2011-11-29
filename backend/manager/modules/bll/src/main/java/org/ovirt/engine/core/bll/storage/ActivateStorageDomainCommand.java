@@ -26,6 +26,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
 
+    private static LogCompat log = LogFactoryCompat.getLog(ActivateStorageDomainCommand.class);
+
     public ActivateStorageDomainCommand(T parameters) {
         super(parameters);
     }
@@ -109,12 +111,11 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         boolean returnValue;
         if(isInternalExecution()) {
             returnValue = checkStorageDomainStatus(StorageDomainStatus.InActive, StorageDomainStatus.Unknown,
-                    StorageDomainStatus.Locked);
+                    StorageDomainStatus.Locked, StorageDomainStatus.Maintenance);
         } else {
-            returnValue = checkStorageDomainStatus(StorageDomainStatus.InActive, StorageDomainStatus.Unknown);
+            returnValue = checkStorageDomainStatus(StorageDomainStatus.InActive, StorageDomainStatus.Unknown,
+                    StorageDomainStatus.Maintenance);
         }
         return returnValue;
     }
-
-    private static LogCompat log = LogFactoryCompat.getLog(ActivateStorageDomainCommand.class);
 }

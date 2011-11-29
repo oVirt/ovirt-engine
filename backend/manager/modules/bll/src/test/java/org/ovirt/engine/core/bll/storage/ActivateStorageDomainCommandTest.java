@@ -99,6 +99,20 @@ public class ActivateStorageDomainCommandTest {
         noIllegalStatusMessage();
     }
 
+    @Test
+    public void internalMaintenanceAllowed() {
+        testInternalExecution(StorageDomainStatus.Maintenance);
+        canDoActionSucceeds();
+        noIllegalStatusMessage();
+    }
+
+    @Test
+    public void nonInternalMaintenanceAllowed() {
+        testExecution(StorageDomainStatus.Maintenance);
+        canDoActionSucceeds();
+        noIllegalStatusMessage();
+    }
+
 
     private void testInternalExecution(StorageDomainStatus status) {
         testExecution(status);
@@ -109,14 +123,6 @@ public class ActivateStorageDomainCommandTest {
         createStorageDomain(status);
         createUpStoragePool();
         createCommand();
-    }
-
-    private void createUnknownStorageDomain() {
-        createStorageDomain(StorageDomainStatus.Unknown);
-    }
-
-    private void createLockedStorageDomain() {
-        createStorageDomain(StorageDomainStatus.Locked);
     }
 
     private void createStorageDomain(StorageDomainStatus status) {
