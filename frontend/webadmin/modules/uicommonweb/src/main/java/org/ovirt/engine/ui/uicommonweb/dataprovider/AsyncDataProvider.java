@@ -1210,4 +1210,15 @@ public final class AsyncDataProvider
 		tempVar.setVgId(vgId);
 		Frontend.RunQuery(VdcQueryType.GetLunsByVgId, tempVar, aQuery);
 	}
+	
+	public static void GetAllTemplatesFromExportDomain(AsyncQuery aQuery, Guid storagePoolId, Guid storageDomainId)
+	{
+		aQuery.converterCallback = new IAsyncConverter() { public Object Convert(Object source, AsyncQuery _asyncQuery)
+		{
+			return source != null ? source : new java.util.HashMap<VmTemplate, java.util.ArrayList<DiskImage>>();
+		} };
+		GetAllFromExportDomainQueryParamenters getAllFromExportDomainQueryParamenters = new GetAllFromExportDomainQueryParamenters(storagePoolId, storageDomainId);
+		getAllFromExportDomainQueryParamenters.setGetAll(true);
+		Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, getAllFromExportDomainQueryParamenters, aQuery);
+	}
 }

@@ -632,4 +632,10 @@ public interface ApplicationConstants extends Constants {
     @DefaultStringValue("System Permissions")
     String configureSystemPermissionTabLabel();
 
+    @DefaultStringValue("Force Override")
+	String vmExportPopupForceOverrideLabel();
+
+    @DefaultStringValue("Collapse Snapshots")
+	String vmExportPopupCollapseSnapshotsLabel();
+
 }

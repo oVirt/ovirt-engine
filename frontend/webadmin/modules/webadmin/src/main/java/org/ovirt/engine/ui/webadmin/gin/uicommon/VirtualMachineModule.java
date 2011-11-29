@@ -24,9 +24,11 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindSingleStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
@@ -55,6 +57,8 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmMakeTemplatePopupPresenterWidget> makeTemplatePopupProvider,
             final Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider,
             final Provider<VmChangeCDPopupPresenterWidget> changeCDPopupProvider,
+            final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
+            final Provider<FindSingleStoragePopupPresenterWidget> movePopupProvider,
             final Provider<VmDesktopNewPopupPresenterWidget> newDesktopVmPopupProvider,
             final Provider<VmServerNewPopupPresenterWidget> newServerVmPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
@@ -69,6 +73,10 @@ public class VirtualMachineModule extends AbstractGinModule {
                     return runOncePopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getChangeCdCommand()) {
                     return changeCDPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getExportCommand()) {
+                    return exportPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getMoveCommand()) {
+                    return movePopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getNewDesktopCommand()) {

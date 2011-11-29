@@ -43,6 +43,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.Templa
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
@@ -150,6 +151,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateNew
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDesktopNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmExportPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMakeTemplatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRunOncePopupView;
@@ -676,6 +678,11 @@ public class PresenterModule extends AbstractPresenterModule {
         bindPresenterWidget(VmChangeCDPopupPresenterWidget.class,
                 VmChangeCDPopupPresenterWidget.ViewDef.class,
                 VmChangeCDPopupView.class);
+
+        // VM Export
+        bindPresenterWidget(VmExportPopupPresenterWidget.class,
+                VmExportPopupPresenterWidget.ViewDef.class,
+                VmExportPopupView.class);
 
         // VM Add/Edit Interface
         bindPresenterWidget(VmInterfacePopupPresenterWidget.class,

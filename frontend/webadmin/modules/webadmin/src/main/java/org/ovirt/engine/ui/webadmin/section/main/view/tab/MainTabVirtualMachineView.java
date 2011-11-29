@@ -221,13 +221,13 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         });
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Export", false, false) {
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Export") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getExportCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Move", false, false) {
+        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Move") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getMoveCommand();

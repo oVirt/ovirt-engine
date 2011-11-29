@@ -12,6 +12,9 @@ import org.ovirt.engine.ui.uicommonweb.models.*;
 import org.ovirt.engine.core.common.*;
 
 import org.ovirt.engine.ui.uicommonweb.models.configure.*;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.VmBackupModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.*;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.*;
 import org.ovirt.engine.core.common.*;
@@ -768,32 +771,46 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		model.setTitle("Move Virtual Machine");
 		model.setHashName("move_virtual_machine");
 
-		//var storageDomains = (vm.vmt_guid != Guid.Empty
-		//    ? DataProvider.GetStorageDomainListByTemplate(vm.vmt_guid)
-		//    : DataProvider.GetStorageDomainList(vm.storage_pool_id)
-		//        .Where(a => a.storage_domain_type == StorageDomainType.Data || a.storage_domain_type == StorageDomainType.Master)
-		//    );
-
 		java.util.ArrayList<storage_domains> storageDomains;
 		if (!vm.getvmt_guid().equals(Guid.Empty))
 		{
-			storageDomains = DataProvider.GetStorageDomainListByTemplate(vm.getvmt_guid());
+			AsyncDataProvider.GetStorageDomainListByTemplate(new AsyncQuery(this,
+				new INewAsyncCallback() {
+					@Override
+					public void OnSuccess(Object target, Object returnValue) {	
+							VmListModel vmListModel = (VmListModel)target;
+							java.util.ArrayList<storage_domains> storageDomains = (java.util.ArrayList<storage_domains>)returnValue;
+							vmListModel.PostMoveGetStorageDomains(storageDomains);	
+					}
+				}), vm.getvmt_guid());
 		}
 		else
 		{
-			storageDomains = new java.util.ArrayList<storage_domains>();
-			for (storage_domains a : DataProvider.GetStorageDomainList(vm.getstorage_pool_id()))
-			{
-				if (a.getstorage_domain_type() == StorageDomainType.Data || a.getstorage_domain_type() == StorageDomainType.Master)
-				{
-					storageDomains.add(a);
-				}
-			}
-		}
-
-
+			AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+				new INewAsyncCallback() {
+					@Override
+					public void OnSuccess(Object target, Object returnValue) {		
+							VmListModel vmListModel = (VmListModel)target;
+							java.util.ArrayList<storage_domains> storageDomains = (java.util.ArrayList<storage_domains>)returnValue;
+							
+							java.util.ArrayList<storage_domains> filteredStorageDomains = new java.util.ArrayList<storage_domains>();
+							for (storage_domains a : storageDomains)
+							{
+								if (a.getstorage_domain_type() == StorageDomainType.Data || a.getstorage_domain_type() == StorageDomainType.Master)
+								{
+									filteredStorageDomains.add(a);
+								}
+							}
+							
+							vmListModel.PostMoveGetStorageDomains(filteredStorageDomains);		
+					}
+				}), vm.getstorage_pool_id());
+		}		
+	}
+	
+	private void PostMoveGetStorageDomains(java.util.ArrayList<storage_domains> storageDomains) 
+	{
 		// filter only the Active storage domains (Active regarding the relevant storage pool).
-		//storageDomains = storageDomains.Where(a => a.status.HasValue && a.status.Value == StorageDomainStatus.Active);
 		java.util.ArrayList<storage_domains> list = new java.util.ArrayList<storage_domains>();
 		for (storage_domains a : storageDomains)
 		{
@@ -804,12 +821,33 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		}
 		storageDomains = list;
 
+		VM vm = (VM)getSelectedItem();
+		AsyncDataProvider.GetVmDiskList(new AsyncQuery(new Object[] { this, storageDomains },
+			new INewAsyncCallback() {
+				@Override
+				public void OnSuccess(Object target, Object returnValue) {
+					Object[] array = (Object[])target;
+					VmListModel vmListModel = (VmListModel)array[0];
+					java.util.ArrayList<storage_domains> storageDomains = (java.util.ArrayList<storage_domains>)array[1];
 
-		java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(vm.getvm_guid());
+					java.util.ArrayList<DiskImage> disks = new java.util.ArrayList<DiskImage>();
+					Iterable disksEnumerable = (Iterable)returnValue;
+					java.util.Iterator disksIterator = disksEnumerable.iterator();
+					
+					while (disksIterator.hasNext())	{
+						disks.add((DiskImage)disksIterator.next());
+					}
+					
+					vmListModel.PostMoveGetVmDiskList(disks, storageDomains);	
+				}
+			}), vm.getvm_guid());		
+	}
+	
+	private void PostMoveGetVmDiskList(java.util.ArrayList<DiskImage> disks, java.util.ArrayList<storage_domains> storageDomains)
+	{
 		if (disks.size() > 0)
 		{
-			//storageDomains = storageDomains.Where(a => a.id != disks[0].storage_id);
-			list = new java.util.ArrayList<storage_domains>();
+			java.util.ArrayList<storage_domains> list = new java.util.ArrayList<storage_domains>();
 			for (storage_domains a : storageDomains)
 			{
 				if (!a.getid().equals(disks.get(0).getstorage_id().getValue()))
@@ -822,9 +860,6 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
 		Collections.sort(storageDomains, new Linq.StorageDomainByNameComparer());
 
-		//var items = storageDomains.OrderBy(a => a.storage_name)
-		//    .Select(a => new EntityModel() { Entity = a })
-		//    .ToList();
 		java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
 		for (storage_domains a : storageDomains)
 		{
@@ -833,6 +868,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 			items.add(m);
 		}
 
+		ListModel model = (ListModel)getWindow();
 		model.setItems(items);
 		if (items.size() == 1)
 		{
@@ -918,7 +954,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 			}
 		}, model);
 	}
-
+		
 	private void Export()
 	{
 		VM vm = (VM)getSelectedItem();
@@ -937,25 +973,36 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		model.setTitle("Export Virtual Machine");
 		model.setHashName("export_virtual_machine");
 
-		//var storages = DataProvider.GetStorageDomainList(vm.storage_pool_id)
-		//    .Where(a => a.storage_domain_type == StorageDomainType.ImportExport)
-		//    .ToList();
-		//model.Storage.Options = storages;
-		//model.Storage.Value = storages.FirstOrDefault();
-		java.util.ArrayList<storage_domains> storages = new java.util.ArrayList<storage_domains>();
-		for (storage_domains a : DataProvider.GetStorageDomainList(vm.getstorage_pool_id()))
-		{
-			if (a.getstorage_domain_type() == StorageDomainType.ImportExport)
-			{
-				storages.add(a);
-			}
-		}
-		model.getStorage().setItems(storages);
-		model.getStorage().setSelectedItem(Linq.FirstOrDefault(storages));
+		AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+			new INewAsyncCallback() {
+				@Override
+				public void OnSuccess(Object target, Object returnValue) {		
+						VmListModel vmListModel = (VmListModel)target;
+						java.util.ArrayList<storage_domains> storageDomains = (java.util.ArrayList<storage_domains>)returnValue;
+						
+						java.util.ArrayList<storage_domains> filteredStorageDomains = new java.util.ArrayList<storage_domains>();
+						for (storage_domains a : storageDomains)
+						{
+							if (a.getstorage_domain_type() == StorageDomainType.ImportExport)
+							{
+								filteredStorageDomains.add(a);
+							}
+						}
+						
+						vmListModel.PostExportGetStorageDomainList(filteredStorageDomains);		
+				}
+			}), vm.getstorage_pool_id());
+	}
+	
+	private void PostExportGetStorageDomainList(java.util.ArrayList<storage_domains> storageDomains) 
+	{
+		ExportVmModel model = (ExportVmModel)getWindow();
+		model.getStorage().setItems(storageDomains);
+		model.getStorage().setSelectedItem(Linq.FirstOrDefault(storageDomains));
 
 
 		boolean noActiveStorage = true;
-		for (storage_domains a : storages)
+		for (storage_domains a : storageDomains)
 		{
 			if (a.getstatus() == StorageDomainStatus.Active)
 			{
@@ -964,7 +1011,6 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 			}
 		}
 
-
 		if (SelectedVmsOnDifferentDataCenters())
 		{
 			model.getCollapseSnapshots().setIsChangable(false);
@@ -972,14 +1018,13 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
 			model.setMessage("Virtual Machines reside on several Data Centers. Make sure the exported Virtual Machines reside on the same Data Center.");
 
-
 			UICommand tempVar = new UICommand("Cancel", this);
 			tempVar.setTitle("Close");
 			tempVar.setIsDefault(true);
 			tempVar.setIsCancel(true);
 			model.getCommands().add(tempVar);
 		}
-		else if (storages.isEmpty())
+		else if (storageDomains.isEmpty())
 		{
 			model.getCollapseSnapshots().setIsChangable(false);
 			model.getForceOverride().setIsChangable(false);
@@ -993,7 +1038,6 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 			model.getCommands().add(tempVar2);
 
 		}
-		//else if (storages.All(a => a.status != StorageDomainStatus.Active))
 		else if (noActiveStorage)
 		{
 			model.getCollapseSnapshots().setIsChangable(false);
@@ -1025,48 +1069,73 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 	private void showWarningOnExistingVms(ExportVmModel model)
 	{
 		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getid();
-		storage_pool storagePool = DataProvider.GetFirstStoragePoolByStorageDomain(storageDomainId);
+		AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(new Object[] { this, model },
+			new INewAsyncCallback() {
+				@Override
+				public void OnSuccess(Object target, Object returnValue) {
+					Object[] array = (Object[])target;
+					VmListModel vmListModel = (VmListModel)array[0];
+					ExportVmModel exportVmModel = (ExportVmModel)array[1];
+					java.util.ArrayList<storage_pool> storagePools = (java.util.ArrayList<storage_pool>)returnValue;
+					
+					vmListModel.PostShowWarningOnExistingVms(exportVmModel, storagePools);
+				}
+			}), storageDomainId);		
+	}
+	
+	private void PostShowWarningOnExistingVms(ExportVmModel exportModel, java.util.List<storage_pool> storagePools)
+	{		
+		storage_pool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
+		
 		String existingVMs = "";
 		if (storagePool != null)
 		{
-			GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(storagePool.getId(), storageDomainId);
-			tempVar.setGetAll(true);
-			VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetVmsFromExportDomain, tempVar);
-			if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
+			AsyncQuery _asyncQuery = new AsyncQuery();
+			_asyncQuery.setModel(this);
+			_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object ReturnValue)
 			{
-				for (Object selectedItem : getSelectedItems())
+				VmListModel vmListModel = (VmListModel)model;
+				ExportVmModel exportModel1 = (ExportVmModel)vmListModel.getWindow();
+				String existingVMs = "";
+				
+				if (ReturnValue != null)
 				{
-					VM vm = (VM)selectedItem;
-
-					//if (((List<VM>)returnValue.ReturnValue).SingleOrDefault(a => a.vm_guid == vm.vm_guid) != null)
-					VM foundVm = null;
-					for (VM a : (java.util.ArrayList<VM>)returnValue.getReturnValue())
+					for (Object selectedItem : vmListModel.getSelectedItems())
 					{
-						if (a.getvm_guid().equals(vm.getvm_guid()))
+						VM vm = (VM)selectedItem;
+						VM foundVm = null;						
+						
+						VdcQueryReturnValue returnValue = (VdcQueryReturnValue)ReturnValue;
+						for (VM a : (java.util.ArrayList<VM>)returnValue.getReturnValue())
 						{
-							foundVm = a;
-							break;
+							if (a.getvm_guid().equals(vm.getvm_guid()))
+							{
+								foundVm = a;
+								break;
+							}
+						}
+
+						if (foundVm != null)
+						{
+							existingVMs += "\u2022  " + vm.getvm_name() + "\n";
 						}
 					}
-
-					if (foundVm != null)
-					{
-						existingVMs += "\u2022  " + vm.getvm_name() + "\n";
-					}
 				}
-			}
-			if (!StringHelper.isNullOrEmpty(existingVMs))
-			{
-				model.setMessage(StringFormat.format("VM(s):\n%1$s already exist on the target Export Domain. If you want to override them, please check the 'Force Override' check-box.", existingVMs));
-			}
+				if (!StringHelper.isNullOrEmpty(existingVMs))
+				{
+					exportModel1.setMessage(StringFormat.format("VM(s):\n%1$s already exist on the target Export Domain. If you want to override them, please check the 'Force Override' check-box.", existingVMs));
+				}
+			}};
+			
+			Guid storageDomainId = ((storage_domains)exportModel.getStorage().getSelectedItem()).getid();
+			GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(storagePool.getId(), storageDomainId);
+			tempVar.setGetAll(true);
+			Frontend.RunQuery(VdcQueryType.GetVmsFromExportDomain, tempVar, _asyncQuery);			
 		}
 	}
 
 	private boolean SelectedVmsOnDifferentDataCenters()
 	{
-		//List<VM> vms = SelectedItems.Cast<VM>().ToList();
-		//return vms.GroupBy(a => a.storage_pool_id).Count() > 1 ? true : false;
-
 		java.util.ArrayList<VM> vms = new java.util.ArrayList<VM>();
 		for (Object selectedItem : getSelectedItems())
 		{
@@ -1088,84 +1157,92 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
 		return t.size() > 1;
 	}
-
-	private java.util.ArrayList<String> getTemplatesNotPresentOnExportDomain()
+		
+	private void GetTemplatesNotPresentOnExportDomain()
 	{
 		ExportVmModel model = (ExportVmModel)getWindow();
-		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getid();
-		storage_pool storagePool = DataProvider.GetFirstStoragePoolByStorageDomain(storageDomainId);
-		java.util.ArrayList<String> missingTemplates = new java.util.ArrayList<String>();
-
-		if (storagePool != null)
-		{
-			GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(storagePool.getId(), storageDomainId);
-			tempVar.setGetAll(true);
-			VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar);
-			java.util.HashMap<String, java.util.ArrayList<String>> templateDic = new java.util.HashMap<String, java.util.ArrayList<String>>();
-			//check if relevant templates are already there
-			if (returnValue != null && returnValue.getSucceeded())
-			{
-				for (Object selectedItem : getSelectedItems())
-				{
-					VM vm = (VM)selectedItem;
-
-					//if (vm.vmt_guid != Guid.Empty && ((Dictionary<VmTemplate, List<DiskImage>>)returnValue.ReturnValue).getKey()s.SingleOrDefault(a => vm.vmt_guid == a.vmt_guid) == null)
-
-					boolean hasMatch = false;
-					for (VmTemplate a : ((java.util.HashMap<VmTemplate, java.util.ArrayList<DiskImage>>)returnValue.getReturnValue()).keySet())
-					{
-						if (vm.getvmt_guid().equals(a.getId()))
-						{
-							hasMatch = true;
-							break;
-						}
-					}
-
-					if (!vm.getvmt_guid().equals(Guid.Empty) && !hasMatch)
-					{
-						if (!templateDic.containsKey(vm.getvmt_name()))
-						{
-							templateDic.put(vm.getvmt_name(), new java.util.ArrayList<String>());
-						}
-						templateDic.get(vm.getvmt_name()).add(vm.getvm_name());
-						//missingTemplates.Add(StringFormat.format("Template '{0}' for VM '{1}'", vm.vmt_name, vm.vm_name));
-					}
+		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getid();		
+		
+		AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this,
+			new INewAsyncCallback() {
+				@Override
+				public void OnSuccess(Object target, Object returnValue) {
+					VmListModel vmListModel = (VmListModel)target;
+					java.util.ArrayList<storage_pool> storagePools = (java.util.ArrayList<storage_pool>)returnValue;
+					storage_pool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
+					
+					vmListModel.PostGetTemplatesNotPresentOnExportDomain(storagePool);
 				}
-				String tempStr;
-				java.util.ArrayList<String> tempList;
-				for (java.util.Map.Entry<String, java.util.ArrayList<String>> keyValuePair : templateDic.entrySet())
-				{
-					tempList = keyValuePair.getValue();
-					tempStr = "Template " + keyValuePair.getKey() + " (for ";
-					int i;
-					for (i = 0; i < tempList.size() - 1; i++)
-					{
-						tempStr += tempList.get(i) + ", ";
-					}
-					tempStr += tempList.get(i) + ")";
-					missingTemplates.add(tempStr);
-				}
-			}
-			else
-			{
-				return null;
-			}
-		}
-		return missingTemplates;
+			}), storageDomainId);		
 	}
-
-	public void OnExport()
+	
+	private void PostGetTemplatesNotPresentOnExportDomain(storage_pool storagePool) 
 	{
 		ExportVmModel model = (ExportVmModel)getWindow();
 		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getid();
-		if (!model.Validate())
-		{
-			return;
+		
+		if (storagePool != null)
+		{			
+			AsyncDataProvider.GetAllTemplatesFromExportDomain(new AsyncQuery(this,
+				new INewAsyncCallback() {
+					@Override
+					public void OnSuccess(Object target, Object returnValue) {
+						VmListModel vmListModel = (VmListModel)target;
+						java.util.HashMap<VmTemplate, java.util.ArrayList<DiskImage>> templatesDiskSet = (java.util.HashMap<VmTemplate, java.util.ArrayList<DiskImage>>)returnValue;
+						java.util.HashMap<String, java.util.ArrayList<String>> templateDic = new java.util.HashMap<String, java.util.ArrayList<String>>();
+						
+						//check if relevant templates are already there						
+						for (Object selectedItem : vmListModel.getSelectedItems())
+						{
+							VM vm = (VM)selectedItem;
+							boolean hasMatch = false;
+							for (VmTemplate a : templatesDiskSet.keySet())
+							{
+								if (vm.getvmt_guid().equals(a.getId()))
+								{
+									hasMatch = true;
+									break;
+								}
+							}
+
+							if (!vm.getvmt_guid().equals(Guid.Empty) && !hasMatch)
+							{
+								if (!templateDic.containsKey(vm.getvmt_name()))
+								{
+									templateDic.put(vm.getvmt_name(), new java.util.ArrayList<String>());
+								}
+								templateDic.get(vm.getvmt_name()).add(vm.getvm_name());
+							}
+						}
+						
+						String tempStr;
+						java.util.ArrayList<String> tempList;
+						java.util.ArrayList<String> missingTemplates = new java.util.ArrayList<String>();
+						for (java.util.Map.Entry<String, java.util.ArrayList<String>> keyValuePair : templateDic.entrySet())
+						{
+							tempList = keyValuePair.getValue();
+							tempStr = "Template " + keyValuePair.getKey() + " (for ";
+							int i;
+							for (i = 0; i < tempList.size() - 1; i++)
+							{
+								tempStr += tempList.get(i) + ", ";
+							}
+							tempStr += tempList.get(i) + ")";
+							missingTemplates.add(tempStr);
+						}
+						
+						vmListModel.PostExportGetMissingTemplates(missingTemplates);
+					}
+				}), storagePool.getId(), storageDomainId);
 		}
-
-		java.util.ArrayList<String> missingTemplatesFromVms = getTemplatesNotPresentOnExportDomain();
-
+	}
+	
+	private void PostExportGetMissingTemplates(java.util.ArrayList<String> missingTemplatesFromVms) 
+	{
+		ExportVmModel model = (ExportVmModel)getWindow();
+		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getid();		
 		java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
+		
 		for (Object a : getSelectedItems())
 		{
 			VM vm = (VM)a;
@@ -1209,16 +1286,14 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 				model.StartProgress(null);
 
 				Frontend.RunMultipleAction(VdcActionType.ExportVm, parameters,
-		new IFrontendMultipleActionAsyncCallback() {
-			@Override
-			public void Executed(FrontendMultipleActionAsyncResult  result) {
-
-					ExportVmModel localModel = (ExportVmModel)result.getState();
-					localModel.StopProgress();
-					Cancel();
-
-			}
-		}, model);
+					new IFrontendMultipleActionAsyncCallback() {
+						@Override
+						public void Executed(FrontendMultipleActionAsyncResult  result) {			
+								ExportVmModel localModel = (ExportVmModel)result.getState();
+								localModel.StopProgress();
+								Cancel();			
+						}
+					}, model);
 			}
 		}
 		else
@@ -1234,21 +1309,30 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 				parameter.setTemplateMustExists(false);
 			}
 
-
 			model.StartProgress(null);
 
 			Frontend.RunMultipleAction(VdcActionType.ExportVm, parameters,
-		new IFrontendMultipleActionAsyncCallback() {
-			@Override
-			public void Executed(FrontendMultipleActionAsyncResult  result) {
-
-				ExportVmModel localModel = (ExportVmModel)result.getState();
-				localModel.StopProgress();
-				Cancel();
-
-			}
-		}, model);
+				new IFrontendMultipleActionAsyncCallback() {
+					@Override
+					public void Executed(FrontendMultipleActionAsyncResult  result) {		
+						ExportVmModel localModel = (ExportVmModel)result.getState();
+						localModel.StopProgress();
+						Cancel();		
+					}
+				}, model);
 		}
+	}
+
+	public void OnExport()
+	{
+		ExportVmModel model = (ExportVmModel)getWindow();
+		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getid();
+		if (!model.Validate())
+		{
+			return;
+		}
+
+		GetTemplatesNotPresentOnExportDomain();
 	}
 
 	private void OnExportNoTemplates()
