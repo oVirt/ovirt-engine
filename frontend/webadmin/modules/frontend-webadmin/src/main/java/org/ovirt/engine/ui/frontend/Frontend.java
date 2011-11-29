@@ -142,7 +142,6 @@ public class Frontend {
 					if (getEventsHandler() != null) {
 						ArrayList<VdcQueryReturnValue> failedResult = new ArrayList<VdcQueryReturnValue>();
 						failedResult.add(result);
-						getEventsHandler().runQueryFailed(failedResult);
 						if (getEventsHandler().isRaiseErrorModalPanel(queryType))
 							failureEventHandler(result.getExceptionString());
 					}

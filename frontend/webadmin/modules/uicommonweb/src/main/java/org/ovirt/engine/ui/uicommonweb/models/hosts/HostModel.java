@@ -20,7 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.*;
 import org.ovirt.engine.ui.uicommonweb.models.*;
 
 @SuppressWarnings("unused")
-public class HostModel extends Model implements ITaskTarget
+public class HostModel extends Model
 {
 
 	public static final int HostNameMaxLength = 255;
@@ -542,13 +542,44 @@ public class HostModel extends Model implements ITaskTarget
 			return;
 		}
 
-
 		setMessage("Testing in progress. It will take a few seconds. Please wait...");
 		getTestCommand().setIsExecutionAllowed(false);
 
 		VDSGroup cluster = (VDSGroup)getCluster().getSelectedItem();
 
-		Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { BeginTestStage, getManagementIp().getEntity(), getPmType().getSelectedItem(), getPmUserName().getEntity(), getPmPassword().getEntity(), cluster.getstorage_pool_id() != null ? cluster.getstorage_pool_id().getValue() : Guid.Empty, getPmOptionsMap() }))).Run();
+		GetNewVdsFenceStatusParameters param = new GetNewVdsFenceStatusParameters();
+		if (getHostId() != null)
+		{
+			param.setVdsId(getHostId().getValue());
+		}
+		param.setManagementIp((String)getManagementIp().getEntity());
+		param.setPmType((String)getPmType().getSelectedItem());
+		param.setUser((String)getPmUserName().getEntity());
+		param.setPassword((String)getPmPassword().getEntity());
+		param.setStoragePoolId((Guid)cluster.getstorage_pool_id().getValue() != null ? cluster.getstorage_pool_id().getValue().getValue() : Guid.Empty);
+		param.setFencingOptions(new ValueObjectMap((java.util.HashMap<String, String>)getPmOptionsMap(), false));
+
+		
+		Frontend.RunQuery(VdcQueryType.GetNewVdsFenceStatus, param, new IFrontendQueryAsyncCallback() {
+			
+			@Override
+			public void OnSuccess(FrontendQueryAsyncResult result) {
+				if (result != null && result.getReturnValue() != null && result.getReturnValue().getReturnValue() != null) {
+					FenceStatusReturnValue fenceStatusReturnValue = (FenceStatusReturnValue) result.getReturnValue().getReturnValue();
+					String message = fenceStatusReturnValue.toString();
+					setMessage(message);
+					getTestCommand().setIsExecutionAllowed(true);
+				}
+			}
+			
+			@Override
+			public void OnFailure(FrontendQueryAsyncResult result) {
+				String message = "Test Failed (unknown error).";
+				setMessage(message);
+				getTestCommand().setIsExecutionAllowed(true);
+				
+			}
+		});
 	}
 
 	private void ValidatePmModels()
@@ -619,52 +650,6 @@ public class HostModel extends Model implements ITaskTarget
 		if (command == getTestCommand())
 		{
 			Test();
-		}
-	}
-
-	public void run(TaskContext context)
-	{
-		java.util.ArrayList<Object> state = (java.util.ArrayList<Object>)context.getState();
-		String stage = (String)state.get(0);
-
-//C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a string member and was converted to Java 'if-else' logic:
-//		switch (stage)
-//ORIGINAL LINE: case BeginTestStage:
-		if (StringHelper.stringsEqual(stage, BeginTestStage))
-		{
-					String message = null;
-
-					GetNewVdsFenceStatusParameters param = new GetNewVdsFenceStatusParameters();
-					if (getHostId() != null)
-					{
-						param.setVdsId(getHostId().getValue());
-					}
-					param.setManagementIp((String)state.get(1));
-					param.setPmType((String)state.get(2));
-					param.setUser((String)state.get(3));
-					param.setPassword((String)state.get(4));
-					param.setStoragePoolId((Guid)state.get(5));
-					param.setFencingOptions(new ValueObjectMap((java.util.HashMap<String, String>)state.get(6), false));
-
-					VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetNewVdsFenceStatus, param);
-					if (returnValue != null && returnValue.getReturnValue() != null)
-					{
-						FenceStatusReturnValue fenceStatusReturnValue = (FenceStatusReturnValue) returnValue.getReturnValue();
-						message = fenceStatusReturnValue.toString();
-					}
-					else
-					{
-						message = "Test Failed (unknown error).";
-					}
-
-					context.InvokeUIThread(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { EndTestStage, message })));
-
-		}
-//ORIGINAL LINE: case EndTestStage:
-		else if (StringHelper.stringsEqual(stage, EndTestStage))
-		{
-					setMessage((String)state.get(1));
-					getTestCommand().setIsExecutionAllowed(true);
 		}
 	}
 }
