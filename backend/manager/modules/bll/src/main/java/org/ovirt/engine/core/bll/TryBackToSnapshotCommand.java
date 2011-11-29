@@ -29,11 +29,6 @@ public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> 
         return getVm().getvm_guid();
     }
 
-    @Override
-    protected void setImageContainerId(Guid value) {
-        super.setImageContainerId(value);
-    }
-
     /**
      * Set old image be inactive
      */

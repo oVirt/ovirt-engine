@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RecoveryStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -108,10 +107,5 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
                     "Failed to connect storage"),
                     VdcBllErrors.StorageServerConnectionError));
         }
-    }
-
-    @Override
-    public AuditLogType getAuditLogTypeValue() {
-        return super.getAuditLogTypeValue();
     }
 }

@@ -29,11 +29,6 @@ public class MoveMultipleImageGroupsCommand<T extends MoveMultipleImageGroupsPar
     }
 
     @Override
-    protected void setImageContainerId(Guid value) {
-        super.setImageContainerId(value);
-    }
-
-    @Override
     protected void executeCommand() {
         // lock images
         for (DiskImage disk : getParameters().getImagesList()) {

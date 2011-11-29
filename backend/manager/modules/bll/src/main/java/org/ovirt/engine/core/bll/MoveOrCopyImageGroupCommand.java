@@ -91,11 +91,6 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         return getParameters() != null ? getParameters().getContainerId() : super.getImageContainerId();
     }
 
-    @Override
-    protected void setImageContainerId(Guid value) {
-        super.setImageContainerId(value);
-    }
-
     protected ImageOperation getMoveOrCopyImageOperation() {
         return getParameters().getOperation();
     }

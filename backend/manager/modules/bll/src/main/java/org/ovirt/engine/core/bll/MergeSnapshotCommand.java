@@ -49,11 +49,6 @@ public class MergeSnapshotCommand<T extends MergeSnapshotParamenters> extends Vm
         return super.getVmId();
     }
 
-    @Override
-    public void setVmId(Guid value) {
-        super.setVmId(value);
-    }
-
     private List<DiskImage> _sourceImages = null;
 
     private List<DiskImage> getSourceImages() {
