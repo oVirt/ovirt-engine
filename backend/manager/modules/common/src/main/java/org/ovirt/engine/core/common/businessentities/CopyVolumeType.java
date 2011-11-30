@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "CopyVolumeType")
 public enum CopyVolumeType {
@@ -13,18 +15,16 @@ public enum CopyVolumeType {
     LeafVol(8); // collapse without marking as template
 
     private int intValue;
-    private static java.util.HashMap<Integer, CopyVolumeType> mappings;
+    private static Map<Integer, CopyVolumeType> mappings = new HashMap<Integer, CopyVolumeType>();
 
-    private synchronized static java.util.HashMap<Integer, CopyVolumeType> getMappings() {
-        if (mappings == null) {
-            mappings = new java.util.HashMap<Integer, CopyVolumeType>();
+    static {
+        for (CopyVolumeType action : values()) {
+            mappings.put(action.getValue(), action);
         }
-        return mappings;
     }
 
     private CopyVolumeType(int value) {
         intValue = value;
-        CopyVolumeType.getMappings().put(value, this);
     }
 
     public int getValue() {
@@ -32,6 +32,6 @@ public enum CopyVolumeType {
     }
 
     public static CopyVolumeType forValue(int value) {
-        return getMappings().get(value);
+        return mappings.get(value);
     }
 }

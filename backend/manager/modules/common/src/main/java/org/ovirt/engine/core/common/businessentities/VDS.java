@@ -1200,34 +1200,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("CpuName"));
     }
 
-    public enum VDSRefreshType {
-        LIST(0),
-        STATS(1);
-
-        private int intValue;
-        private static java.util.HashMap<Integer, VDSRefreshType> mappings;
-
-        private synchronized static java.util.HashMap<Integer, VDSRefreshType> getMappings() {
-            if (mappings == null) {
-                mappings = new java.util.HashMap<Integer, VDSRefreshType>();
-            }
-            return mappings;
-        }
-
-        private VDSRefreshType(int value) {
-            intValue = value;
-            VDSRefreshType.getMappings().put(value, this);
-        }
-
-        public int getValue() {
-            return intValue;
-        }
-
-        public static VDSRefreshType forValue(int value) {
-            return getMappings().get(value);
-        }
-    }
-
     @XmlElement(name = "vds_spm_id")
     private Integer privatevds_spm_id;
 

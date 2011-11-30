@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dal;
 
+
 // This enum was moved from VdcBLL
 public enum VdcBllMessages {
     Unassigned,
@@ -80,12 +81,12 @@ public enum VdcBllMessages {
     ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED,
     ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS,
     ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST,
-    ACTION_TYPE_FAILED_VDS_VM_CLUSTER(75),
-    ACTION_TYPE_FAILED_VDS_VM_MEMORY(76),
-    ACTION_TYPE_FAILED_VDS_VM_VERSION(77),
-    ACTION_TYPE_FAILED_VDS_VM_SWAP(78),
-    ACTION_TYPE_FAILED_VDS_VM_CPUS(79),
-    ACTION_TYPE_FAILED_NO_VDS_AVAILABLE_IN_CLUSTER(80),
+    ACTION_TYPE_FAILED_VDS_VM_CLUSTER,
+    ACTION_TYPE_FAILED_VDS_VM_MEMORY,
+    ACTION_TYPE_FAILED_VDS_VM_VERSION,
+    ACTION_TYPE_FAILED_VDS_VM_SWAP,
+    ACTION_TYPE_FAILED_VDS_VM_CPUS,
+    ACTION_TYPE_FAILED_NO_VDS_AVAILABLE_IN_CLUSTER,
     ACTION_TYPE_FAILED_CANNOT_REMOVE_IMAGE_TEMPLATE,
     ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_IMAGE,
     ACTION_TYPE_FAILED_CPU_NOT_FOUND,
@@ -514,30 +515,11 @@ public enum VdcBllMessages {
     ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS,
     DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS;
 
-    private int intValue;
-    private static java.util.HashMap<Integer, VdcBllMessages> mappings;
-
-    private synchronized static java.util.HashMap<Integer, VdcBllMessages> getMappings() {
-        if (mappings == null) {
-            mappings = new java.util.HashMap<Integer, VdcBllMessages>();
-        }
-        return mappings;
-    }
-
-    private VdcBllMessages() {
-        this(-1);
-    }
-
-    private VdcBllMessages(int value) {
-        intValue = value;
-        VdcBllMessages.getMappings().put(value, this);
-    }
-
     public int getValue() {
-        return intValue;
+        return this.ordinal();
     }
 
     public static VdcBllMessages forValue(int value) {
-        return getMappings().get(value);
+        return values()[value];
     }
 }

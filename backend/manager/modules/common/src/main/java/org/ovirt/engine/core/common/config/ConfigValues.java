@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.config;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public enum ConfigValues {
@@ -1435,21 +1436,20 @@ public enum ConfigValues {
     @DefaultValueAttribute("1500")
     DefaultMaxSizeOfWaitingTasks(325),
 
-   Invalid(65535);
+    Invalid(65535);
 
     private int intValue;
-    private static java.util.HashMap<Integer, ConfigValues> mappings;
+    private static Map<Integer, ConfigValues> mappings;
 
-    private synchronized static java.util.HashMap<Integer, ConfigValues> getMappings() {
-        if (mappings == null) {
-            mappings = new java.util.HashMap<Integer, ConfigValues>();
+    static {
+        mappings = new HashMap<Integer, ConfigValues>();
+        for (ConfigValues action : values()) {
+            mappings.put(action.getValue(), action);
         }
-        return mappings;
     }
 
     private ConfigValues(int value) {
         intValue = value;
-        ConfigValues.getMappings().put(value, this);
     }
 
     public int getValue() {
@@ -1457,6 +1457,6 @@ public enum ConfigValues {
     }
 
     public static ConfigValues forValue(int value) {
-        return getMappings().get(value);
+        return mappings.get(value);
     }
 }

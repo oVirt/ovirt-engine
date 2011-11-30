@@ -14,7 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.DefaultDisplayTypeEnum;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -41,7 +40,6 @@ public class GeneralDbDAOTest extends BaseDAOTestCase {
         // Only classes that allow user input are checked.
         businessEntities.add(bookmarks.class);
         businessEntities.add(DbUser.class);
-        businessEntities.add(DefaultDisplayTypeEnum.class);
         businessEntities.add(LUNs.class);
         businessEntities.add(NetworkInterface.class);
         businessEntities.add(network.class);
