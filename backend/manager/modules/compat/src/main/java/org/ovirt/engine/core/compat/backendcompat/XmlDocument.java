@@ -97,8 +97,9 @@ public class XmlDocument {
     }
 
     public void Load(String filename) {
+        InputStream is = null;
         try {
-            InputStream is = new FileInputStream(filename);
+            is = new FileInputStream(filename);
             BufferedReader r = new BufferedReader(new InputStreamReader(is));
             StringBuffer buffer = new StringBuffer();
 
@@ -111,6 +112,14 @@ public class XmlDocument {
             LoadXml(buffer.toString());
         } catch (IOException e) {
             throw new RuntimeException("Failed to load file: " + filename, e);
+        } finally {
+            if(is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    //ignore
+                }
+            }
         }
     }
 }

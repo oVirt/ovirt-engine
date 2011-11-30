@@ -252,13 +252,14 @@ public class ReflectionHelper {
      * @return List of classes
      * @throws MalformedURLException
      */
-    private static List<Class<?>> getClassNamesInJarPackage(ClassLoader loader, String jarName, String packageName) throws MalformedURLException {
+    static List<Class<?>> getClassNamesInJarPackage(ClassLoader loader, String jarName, String packageName) throws MalformedURLException {
         ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
 
         packageName = packageName.replaceAll("\\.", "/");
 
+        JarInputStream jarFileInputStream = null;
         try {
-            JarInputStream jarFileInputStream = new JarInputStream(new FileInputStream(jarName));
+            jarFileInputStream = new JarInputStream(new FileInputStream(jarName));
             JarEntry jarEntry;
             while (true) {
                 jarEntry = jarFileInputStream.getNextJarEntry();
@@ -269,6 +270,14 @@ public class ReflectionHelper {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if(jarFileInputStream != null) {
+                    jarFileInputStream.close();
+                }
+            } catch (IOException e) {
+                //ignore
+            }
         }
         return classes;
     }

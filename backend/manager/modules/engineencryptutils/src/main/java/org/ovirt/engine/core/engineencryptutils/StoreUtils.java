@@ -4,6 +4,7 @@ import java.util.Vector;
 import java.util.HashMap;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.security.KeyStore;
 import java.security.Key;
 
@@ -46,13 +47,23 @@ public class StoreUtils {
 
     private static byte[] pvk(String keystore, String password, String alias) {
         byte[] bReturn = null;
+        FileInputStream input = null;
         try {
             KeyStore ks = KeyStore.getInstance("jks");
-            ks.load(new FileInputStream(keystore), password.toCharArray());
+            input = new FileInputStream(keystore);
+            ks.load(input, password.toCharArray());
             Key key = ks.getKey(alias, password.toCharArray());
             bReturn = key.getEncoded();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    //ignore
+                }
+            }
         }
         return bReturn;
     }
