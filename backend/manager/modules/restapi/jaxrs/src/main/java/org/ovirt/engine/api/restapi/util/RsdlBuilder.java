@@ -64,7 +64,7 @@ public class RsdlBuilder {
 
     public RsdlBuilder(BackendApiResource apiResource) {
         this.apiResource = apiResource;
-        this.entryPoint = apiResource.getUriInfo().getBaseUri().getPath() + "/";
+        this.entryPoint = apiResource.getUriInfo().getBaseUri().getPath();
     }
 
     private RSDL construct() throws ClassNotFoundException, IOException {
