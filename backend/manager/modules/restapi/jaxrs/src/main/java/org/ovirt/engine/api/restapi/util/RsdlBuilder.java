@@ -332,9 +332,12 @@ public class RsdlBuilder {
         return pathRelevant && returnValueRelevant;
     }
 
-    //example: for "api/hosts/host:id/nics" return "nic"
+    //might need to truncate the plural 's', for example:
+    //for "{api}/hosts/{host:id}/nics" return "nic"
+    //but for "{api}/hosts/{host:id}/storage" return "storage" (don't truncate last character)
     private static String getSingleForm(String prefix) {
         int startIndex = prefix.lastIndexOf('/')+1;
-        return prefix.substring(startIndex, prefix.length() -1);
+        int endPos = prefix.endsWith("s") ?  prefix.length() -1 : prefix.length();
+        return prefix.substring(startIndex, endPos);
     }
 }
