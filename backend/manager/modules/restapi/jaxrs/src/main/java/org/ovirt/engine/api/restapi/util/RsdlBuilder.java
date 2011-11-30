@@ -186,7 +186,12 @@ public class RsdlBuilder {
 
     private static void addToGenericParamsMap (Class<?> resource, Type[] paramTypes, Type[] genericParamTypes, Map<String, Type> parametersMap) {
         for (int i=0; i<genericParamTypes.length; i++) {
-            if (!parametersMap.containsKey(genericParamTypes[i].toString())) {
+            if (paramTypes[i].toString().length() == 1) {
+                //if the parameter type is generic - don't add to map, as it might override a more meaningful value:
+                //for example, without this check we could replace <"R", "Template"> with <"R", "R">, and lose information.
+            } else {
+                //if the length is greater than 1, we have an actual type (e.g: "CdRoms"), and we want to add it to the
+                //map, even if it overrides an existing value.
                 parametersMap.put(genericParamTypes[i].toString(), paramTypes[i]);
             }
         }
