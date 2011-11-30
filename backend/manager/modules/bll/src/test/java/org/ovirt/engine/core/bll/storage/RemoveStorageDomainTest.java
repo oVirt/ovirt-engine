@@ -8,6 +8,8 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 import java.util.ArrayList;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.BaseMockitoTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
@@ -23,12 +25,15 @@ import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveVGVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
@@ -38,7 +43,12 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@PrepareForTest({ Config.class })
+@RunWith(PowerMockRunner.class)
 public class RemoveStorageDomainTest extends BaseMockitoTest {
 
     private Guid STORAGE_DOMAIN_ID = GUIDS[0];
@@ -130,6 +140,7 @@ public class RemoveStorageDomainTest extends BaseMockitoTest {
             if (storageType == StorageType.ISCSI) {
                 expectRemove(vdsBroker);
             }
+
         } else {
             setUpStorageHelper(dom, storageType, false, false);
         }
@@ -140,6 +151,8 @@ public class RemoveStorageDomainTest extends BaseMockitoTest {
 
         expectBusinessEntitySnapshotDAO(db);
 
+        expectConfigGetValue();
+
         RemoveStorageDomainCommand cmd = new RemoveStorageDomainCommand(getParams(format));
         cmd.executeCommand();
 
@@ -147,9 +160,23 @@ public class RemoveStorageDomainTest extends BaseMockitoTest {
         checkMessages(cmd);
     }
 
+    private void expectConfigGetValue() {
+        PowerMockito.mockStatic(Config.class);
+        Mockito.when(Config.GetValue(eq(ConfigValues.IsNeedSupportForOldVgAPI), any(String.class)))
+                .thenReturn(Boolean.TRUE);
+    }
+
     protected VDSBrokerFrontend setUpVdsBroker(BackendInternal backend) {
         VDSBrokerFrontend vdsBroker = mock(VDSBrokerFrontend.class);
         when(backend.getResourceManager()).thenReturn(vdsBroker);
+        return vdsBroker;
+    }
+
+    protected VDSBrokerFrontend expectRemove(VDSBrokerFrontend vdsBroker) {
+        VDSReturnValue ret = new VDSReturnValue();
+        ret.setSucceeded(true);
+        when(vdsBroker.RunVdsCommand(eq(VDSCommandType.RemoveVG),
+                                               any(RemoveVGVDSCommandParameters.class))).thenReturn(ret);
         return vdsBroker;
     }
 
@@ -237,14 +264,6 @@ public class RemoveStorageDomainTest extends BaseMockitoTest {
         return vdsBroker;
     }
 
-    protected VDSBrokerFrontend expectRemove(VDSBrokerFrontend vdsBroker) {
-        VDSReturnValue ret = new VDSReturnValue();
-        ret.setSucceeded(true);
-        when(vdsBroker.RunVdsCommand(eq(VDSCommandType.RemoveVG),
-                                       any(RemoveVGVDSCommandParameters.class))).thenReturn(ret);
-        return vdsBroker;
-    }
-
     protected void expectBusinessEntitySnapshotDAO(DbFacade db) {
         BusinessEntitySnapshotDAO dao = mock(BusinessEntitySnapshotDAO.class);
         when(db.getBusinessEntitySnapshotDAO()).thenReturn(dao);
@@ -295,6 +314,7 @@ public class RemoveStorageDomainTest extends BaseMockitoTest {
     protected VDS getVds(Guid id) {
         VDS vds = new VDS();
         vds.setvds_id(id);
+        vds.setvds_group_compatibility_version(new Version(2, 2));
         return vds;
     }
 }

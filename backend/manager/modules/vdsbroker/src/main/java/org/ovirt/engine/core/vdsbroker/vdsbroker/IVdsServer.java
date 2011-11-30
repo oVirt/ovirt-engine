@@ -118,6 +118,7 @@ public interface IVdsServer {
 
     OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList);
 
+    @Deprecated
     StatusOnlyReturnForXmlRpc removeVG(String vgUUID);
 
     VGListReturnForXmlRpc getVGList();

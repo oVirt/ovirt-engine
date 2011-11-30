@@ -1436,6 +1436,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("1500")
     DefaultMaxSizeOfWaitingTasks(325),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    IsNeedSupportForOldVgAPI(326),
+
     Invalid(65535);
 
     private int intValue;

@@ -477,8 +477,6 @@ public interface Enums extends ConstantsWithLookup {
 
     String VdcActionType___RemoveStoragePool();
 
-    String VdcActionType___RemoveVg();
-
     String VdcActionType___UpdateStorageDomain();
 
     String VdcActionType___UpdateStoragePool();

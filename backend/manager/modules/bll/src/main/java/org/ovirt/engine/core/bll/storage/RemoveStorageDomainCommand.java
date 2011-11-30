@@ -11,6 +11,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveVGVDSCommandParameters;
@@ -180,12 +182,14 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
                            new FormatStorageDomainVDSCommandParameters(vds.getvds_id(), dom.getid())).getSucceeded();
     }
 
+    @SuppressWarnings("deprecation")
     protected boolean removeStorage(storage_domains dom, VDS vds) {
-        if (!isFCP(dom) && !isISCSI(dom)) {
-            return true;
+        if (Config.<Boolean> GetValue(ConfigValues.IsNeedSupportForOldVgAPI,
+                vds.getvds_group_compatibility_version().getValue()) && (isFCP(dom) || isISCSI(dom))) {
+            return getVdsBroker()
+                    .RunVdsCommand(VDSCommandType.RemoveVG,
+                            new RemoveVGVDSCommandParameters(vds.getvds_id(), dom.getstorage())).getSucceeded();
         }
-        return getVdsBroker()
-                .RunVdsCommand(VDSCommandType.RemoveVG,
-                           new RemoveVGVDSCommandParameters(vds.getvds_id(), dom.getstorage())).getSucceeded();
+        return true;
     }
 }

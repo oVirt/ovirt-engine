@@ -203,7 +203,6 @@ public enum VdcActionType {
     DeactivateStorageDomain(909, ActionGroup.MANIPULATE_STORAGE_DOMAIN),
     AddSANStorageDomain(910, ActionGroup.CREATE_STORAGE_DOMAIN),
     ExtendSANStorageDomain(911, ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION),
-    RemoveVg(912),
     ReconstructMasterDomain(913),
     HandleFailedStorageDomain(914),
     RecoveryStoragePool(915, ActionGroup.CREATE_STORAGE_POOL),

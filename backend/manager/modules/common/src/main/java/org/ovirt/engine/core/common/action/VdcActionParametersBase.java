@@ -74,7 +74,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
         MoveOrCopyImageGroupParameters.class, MoveOrCopyParameters.class, MoveVmParameters.class,
         ImportVmParameters.class, ImprotVmTemplateParameters.class,
         EventSubscriptionParametesBase.class, UpdateVmDiskParameters.class, DiskImage.class,
-        DiskImageBase.class, RemoveVgParameters.class, ExtendSANStorageDomainParameters.class,
+        DiskImageBase.class, ExtendSANStorageDomainParameters.class,
         MigrateVmToServerParameters.class, FenceVdsActionParameters.class,
         SetStoragePoolStatusParameters.class,
         SetConfigurationValueParametes.class,
