@@ -261,8 +261,25 @@ public class RsdlBuilder {
         Class<?>[] parameterTypes = m.getParameterTypes();
         assert(parameterTypes.length==1);
         String s = parameterTypes[0].getSimpleName();
+        s = handleExcpetionalCases(s, prefix); //TODO: refactor to a more generic solution
         results.add(new RsdlBuilder.LinkBuilder().url(prefix).rel(ADD).requestParameter(s).responseType(s).httpMethod(HttpMethod.POST).build());
     }
+
+    private static String handleExcpetionalCases(String s, String prefix) {
+        if (s.equals("BaseDevice")) {
+            if (prefix.contains("cdroms")) {
+                return "CdRom";
+            }
+            if (prefix.contains("nics")) {
+                return "NIC";
+            }
+            if (prefix.contains("disks")) {
+                return "Disk";
+            }
+        }
+        return s;
+    }
+
     /**
      * get the class name, without package prefix
      * @param returnValue
