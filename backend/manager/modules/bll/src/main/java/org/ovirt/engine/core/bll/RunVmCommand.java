@@ -532,13 +532,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             Version bestClusterVer = null;
             int bestToolVer = 0;
             for (RepoFileMetaData map : repoFilesMap) {
-                String fileName = map.getRepoFileName() != null ? map.getRepoFileName() : new String();
+                String fileName = map.getRepoFileName() != null ? map.getRepoFileName() : "";
                 Matcher matchToolPattern = Pattern.compile(IsoDomainListSyncronizer.regexToolPattern).matcher(fileName);
                 if (matchToolPattern.find()) {
                     // Get cluster version and tool version of Iso tool.
                     // TODO: Should be group name string support in java7.
                     Version clusterVer = new Version(matchToolPattern.group(1));
-                    int toolVersion = new Integer(matchToolPattern.group(3)).intValue();
+                    int toolVersion = Integer.parseInt(matchToolPattern.group(3));
 
                     if (clusterVer.compareTo(getVm().getvds_group_compatibility_version()) <= 0) {
                         if ((bestClusterVer == null)

@@ -787,7 +787,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             if (actionType == null) {
                 String name = getClass().getName();
                 name = name.substring(0, name.length() - 7);
-                name = name.substring(name.lastIndexOf(".") + 1);
+                name = name.substring(name.lastIndexOf('.') + 1);
                 actionType = VdcActionType.valueOf(name);
             }
             return actionType;
