@@ -112,7 +112,7 @@ public class RsdlBuilder {
                                ", Links: " + (rsdl != null ? rsdl.getLinks().size() : "0") + ".";
     }
 
-    public static class LinkBuilder {
+    public class LinkBuilder {
         private Link link = new Link();;
         public LinkBuilder url(String url) {
             link.setHref(url);
@@ -143,10 +143,6 @@ public class RsdlBuilder {
         }
     }
 
-    public static class ParametersBuilder {
-
-    }
-
     public Collection<Link> getLinks() throws ClassNotFoundException, IOException {
         //SortedSet<Link> results = new TreeSet<Link>();
         List<Link> results = new ArrayList<Link>();
@@ -158,7 +154,7 @@ public class RsdlBuilder {
         return results;
     }
 
-    private static Class<?> findResource(String path, List<Class<?>> classes) throws ClassNotFoundException, IOException {
+    private Class<?> findResource(String path, List<Class<?>> classes) throws ClassNotFoundException, IOException {
         path = "/" + path;
         for (Class<?> clazz : classes) {
             if (path.equals(getPath(clazz))) {
@@ -168,12 +164,12 @@ public class RsdlBuilder {
         return null;
     }
 
-    private static String getPath(Class<?> clazz) {
+    private String getPath(Class<?> clazz) {
         Path pathAnnotation = clazz.getAnnotation(Path.class);
         return pathAnnotation==null ? null : pathAnnotation.value();
     }
 
-    public static List<Link> describe(Class<?> resource, String prefix, Map<String, Type> parametersMap) throws ClassNotFoundException {
+    public List<Link> describe(Class<?> resource, String prefix, Map<String, Type> parametersMap) throws ClassNotFoundException {
         //SortedSet<Link> results = new TreeSet<Link>();
         List<Link> results = new ArrayList<Link>();
         if (resource!=null) {
@@ -184,7 +180,7 @@ public class RsdlBuilder {
         return results;
     }
 
-    private static void addToGenericParamsMap (Class<?> resource, Type[] paramTypes, Type[] genericParamTypes, Map<String, Type> parametersMap) {
+    private void addToGenericParamsMap (Class<?> resource, Type[] paramTypes, Type[] genericParamTypes, Map<String, Type> parametersMap) {
         for (int i=0; i<genericParamTypes.length; i++) {
             if (paramTypes[i].toString().length() == 1) {
                 //if the parameter type is generic - don't add to map, as it might override a more meaningful value:
@@ -197,7 +193,7 @@ public class RsdlBuilder {
         }
     }
 
-    private static void handleMethod(String prefix, Collection<Link> results, Method m, Class<?> resource, Map<String, Type> parametersMap) throws ClassNotFoundException {
+    private void handleMethod(String prefix, Collection<Link> results, Method m, Class<?> resource, Map<String, Type> parametersMap) throws ClassNotFoundException {
         if (isRequiresDescription(m)) {
             Class<?> returnType = findReturnType(m, resource, parametersMap);
             String returnTypeStr = getReturnTypeStr(returnType);
@@ -229,11 +225,11 @@ public class RsdlBuilder {
         }
     }
 
-    private static void handleAction(String prefix, Collection<Link> results, String returnValueStr, String path) {
+    private void handleAction(String prefix, Collection<Link> results, String returnValueStr, String path) {
         results.add(new RsdlBuilder.LinkBuilder().url(prefix + "/" + path).rel(path).requestParameter(ACTION).responseType(returnValueStr).httpMethod(HttpMethod.POST).build());
     }
 
-    private static void handleDelete(String prefix, Collection<Link> results, Method m) {
+    private void handleDelete(String prefix, Collection<Link> results, Method m) {
         if (m.getParameterTypes().length>1) {
             Class<?>[] parameterTypes = m.getParameterTypes();
             Annotation[][] parameterAnnotations = m.getParameterAnnotations();
@@ -249,15 +245,15 @@ public class RsdlBuilder {
         }
     }
 
-    private static void handlePut(String prefix, Collection<Link> results, String returnValueStr) {
+    private void handlePut(String prefix, Collection<Link> results, String returnValueStr) {
         results.add(new RsdlBuilder.LinkBuilder().url(prefix).rel(UPDATE).requestParameter(returnValueStr).responseType(returnValueStr).httpMethod(HttpMethod.PUT).build());
     }
 
-    private static void handleGet(String prefix, Collection<Link> results, String returnValueStr) {
+    private void handleGet(String prefix, Collection<Link> results, String returnValueStr) {
         results.add(new RsdlBuilder.LinkBuilder().url(prefix).rel(GET).responseType(returnValueStr).httpMethod(HttpMethod.GET).build());
     }
 
-    private static void handleAdd(String prefix, Collection<Link> results, Method m) {
+    private void handleAdd(String prefix, Collection<Link> results, Method m) {
         Class<?>[] parameterTypes = m.getParameterTypes();
         assert(parameterTypes.length==1);
         String s = parameterTypes[0].getSimpleName();
@@ -265,7 +261,7 @@ public class RsdlBuilder {
         results.add(new RsdlBuilder.LinkBuilder().url(prefix).rel(ADD).requestParameter(s).responseType(s).httpMethod(HttpMethod.POST).build());
     }
 
-    private static String handleExcpetionalCases(String s, String prefix) {
+    private String handleExcpetionalCases(String s, String prefix) {
         if (s.equals("BaseDevice")) {
             if (prefix.contains("cdroms")) {
                 return "CdRom";
@@ -285,13 +281,13 @@ public class RsdlBuilder {
      * @param returnValue
      * @return
      */
-    private static String getReturnTypeStr(Class<?> returnValue) {
+    private String getReturnTypeStr(Class<?> returnValue) {
         int lastIndexOf = returnValue.getSimpleName().lastIndexOf(".");
         String entityType = lastIndexOf==-1 ? returnValue.getSimpleName() : returnValue.getSimpleName().substring(lastIndexOf);
         return entityType;
     }
 
-    private static Class<?> findReturnType(Method m, Class<?> resource, Map<String, Type> parametersMap) throws ClassNotFoundException {
+    private Class<?> findReturnType(Method m, Class<?> resource, Map<String, Type> parametersMap) throws ClassNotFoundException {
         for (Type superInterface : resource.getGenericInterfaces()) {
             if (superInterface instanceof ParameterizedType) {
                 ParameterizedType p = (ParameterizedType)superInterface;
@@ -326,7 +322,7 @@ public class RsdlBuilder {
         }
     }
 
-    private static boolean isSingleEntityResource(Method m) {
+    private boolean isSingleEntityResource(Method m) {
         Annotation[][] parameterAnnotations = m.getParameterAnnotations();
         for (int i=0; i<parameterAnnotations.length; i++) {
             for (int j=0; j<parameterAnnotations[j].length; j++) {
@@ -338,12 +334,12 @@ public class RsdlBuilder {
         return false;
     }
 
-    private static boolean isAction(Method m) {
+    private boolean isAction(Method m) {
         return m.isAnnotationPresent(Actionable.class);
     }
 
 
-    private static boolean isRequiresDescription(Method m) {
+    private boolean isRequiresDescription(Method m) {
         boolean pathRelevant = !(m.isAnnotationPresent(Path.class) && m.getAnnotation(Path.class).value().contains(":"));
         boolean returnValueRelevant = !m.getReturnType().equals(CreationResource.class);
         return pathRelevant && returnValueRelevant;
@@ -352,7 +348,7 @@ public class RsdlBuilder {
     //might need to truncate the plural 's', for example:
     //for "{api}/hosts/{host:id}/nics" return "nic"
     //but for "{api}/hosts/{host:id}/storage" return "storage" (don't truncate last character)
-    private static String getSingleForm(String prefix) {
+    private String getSingleForm(String prefix) {
         int startIndex = prefix.lastIndexOf('/')+1;
         int endPos = prefix.endsWith("s") ?  prefix.length() -1 : prefix.length();
         return prefix.substring(startIndex, endPos);
