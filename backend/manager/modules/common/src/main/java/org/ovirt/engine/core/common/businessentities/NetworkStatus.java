@@ -1,17 +1,34 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType(name = "NetworkStatus")
 public enum NetworkStatus {
-    NonOperational,
-    Operational;
+    NonOperational(0),
+    Operational(1);
+
+    private int intValue;
+    private static Map<Integer, NetworkStatus> mappings;
+
+    static {
+        mappings = new HashMap<Integer, NetworkStatus>();
+        for (NetworkStatus error : values()) {
+            mappings.put(error.getValue(), error);
+        }
+    }
+
+    private NetworkStatus(int value) {
+        intValue = value;
+    }
 
     public int getValue() {
-        return this.ordinal();
+        return intValue;
     }
 
     public static NetworkStatus forValue(int value) {
-        return values()[value];
+        return mappings.get(value);
     }
 }

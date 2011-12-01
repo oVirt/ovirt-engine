@@ -1,17 +1,34 @@
 package org.ovirt.engine.core.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType(name = "EventNotificationMethods")
 public enum EventNotificationMethods {
-    EMAIL;
+    EMAIL(0);
+
+    private int intValue;
+    private static Map<Integer, EventNotificationMethods> mappings;
+
+    static {
+        mappings = new HashMap<Integer, EventNotificationMethods>();
+        for (EventNotificationMethods value : values()) {
+            mappings.put(value.getValue(), value);
+        }
+    }
+
+    private EventNotificationMethods(int value) {
+        intValue = value;
+    }
 
     public int getValue() {
-        return this.ordinal();
+        return intValue;
     }
 
     public static EventNotificationMethods forValue(int value) {
-        return values()[value];
+        return mappings.get(value);
     }
 
 }

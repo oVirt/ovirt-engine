@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -7,15 +10,29 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "NetworkBootProtocol")
 public enum NetworkBootProtocol {
-    None,
-    Dhcp,
-    StaticIp;
+    None(0),
+    Dhcp(1),
+    StaticIp(2);
+
+    private int intValue;
+    private static Map<Integer, NetworkBootProtocol> mappings;
+
+    static {
+        mappings = new HashMap<Integer, NetworkBootProtocol>();
+        for (NetworkBootProtocol error : values()) {
+            mappings.put(error.getValue(), error);
+        }
+    }
+
+    private NetworkBootProtocol(int value) {
+        intValue = value;
+    }
 
     public int getValue() {
-        return this.ordinal();
+        return intValue;
     }
 
     public static NetworkBootProtocol forValue(int value) {
-        return values()[value];
+        return mappings.get(value);
     }
 }
