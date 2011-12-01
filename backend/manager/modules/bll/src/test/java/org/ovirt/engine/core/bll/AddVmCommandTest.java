@@ -24,6 +24,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
@@ -48,6 +49,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.LogCompat;
+import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -68,6 +71,7 @@ public class AddVmCommandTest {
     private final int AVAILABLE_SPACE_GB = 11;
     private final int USED_SPACE_GB = 4;
     private final Guid STORAGE_POOL_ID = Guid.NewGuid();
+    private VmTemplate vmTemplate = null;
 
     @Mock
     DbFacade db;
@@ -115,7 +119,7 @@ public class AddVmCommandTest {
     public void create10GBVmWith11GbAvailableAndA5GbBuffer() throws Exception {
         setupAllMocks();
         VM vm = createVm(REQUIRED_DISK_SIZE_GB);
-        AddVmCommand<VmManagementParametersBase> cmd = createCommand(vm);
+        AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = createVmFromTemplateCommand(vm);
         mockStorageDomainDAOGet(AVAILABLE_SPACE_GB);
         mockUninterestingMethods(cmd);
         assertFalse("If the disk is too big, canDoAction should fail", cmd.canDoAction());
@@ -185,6 +189,51 @@ public class AddVmCommandTest {
                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
 
+    @Test
+    public void canAddThinVmFromTemplateWithManyDisks() {
+        ArrayList<String> reasons = new ArrayList<String>();
+        final int domainSizeGB = 20;
+        final int sizeRequired = 10;
+        final int pctRequired = 10;
+        AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired, pctRequired);
+
+        // Adding 10 disks, which each one should consume the default sparse size (which is 1GB).
+        setNewDisksForTemplate(10, cmd.getVmTemplate().getDiskMap());
+        doReturn(createVmTemplate()).when(cmd).getVmTemplate();
+        assertFalse("Thin vm could not be added due to storage sufficient", cmd.CanAddVm(new Object(), reasons));
+        assertTrue("canDoAction failed for insufficient disk size",
+                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
+    }
+
+
+    @Test
+    public void canAddCloneVmFromTemplate() {
+        ArrayList<String> reasons = new ArrayList<String>();
+        final int domainSizeGB = 15;
+        final int sizeRequired = 4;
+        final int pctRequired = 10;
+        AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = setupCanAddVmFromTemplateTests(domainSizeGB, sizeRequired, pctRequired);
+
+        // Set new Disk Image map with 3GB.
+        setNewImageDiskMapForTemplate(new Long("3000000000"), cmd.getVmTemplate().getDiskImageMap());
+        assertFalse("Clone vm could not be added due to storage sufficient", cmd.CanAddVm(new Object(), reasons));
+        assertTrue("canDoAction failed for insufficient disk size",
+                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
+    }
+
+    @Test
+    public void canAddCloneVmFromTemplateInvalidPercentage() {
+        ArrayList<String> reasons = new ArrayList<String>();
+        final int domainSizeGB = 30;
+        final int sizeRequired = 6;
+        final int pctRequired = 53;
+        AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = setupCanAddVmFromTemplateTests(domainSizeGB, sizeRequired, pctRequired);
+        setNewImageDiskMapForTemplate(new Long("3000000000"), cmd.getVmTemplate().getDiskImageMap());
+        assertFalse("Thin vm could not be added due to storage sufficient", cmd.CanAddVm(new Object(), reasons));
+        assertTrue("canDoAction failed for insufficient disk size",
+                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
+    }
+
     private VmTemplate setupSelectStorageDomainTests(final int domainSpaceGB,
             final int sizeRequired,
             final int pctRequired) {
@@ -200,9 +249,39 @@ public class AddVmCommandTest {
         return template;
     }
 
+    private AddVmFromTemplateCommand<AddVmFromTemplateParameters> createVmFromTemplateCommand(VM vm) {
+        AddVmFromTemplateParameters param = new AddVmFromTemplateParameters();
+        param.setVm(vm);
+        AddVmFromTemplateCommand<AddVmFromTemplateParameters> concrete = new AddVmFromTemplateCommand<AddVmFromTemplateParameters>(param);
+        return spy(concrete);
+    }
+
+    private AddVmFromTemplateCommand<AddVmFromTemplateParameters> setupCanAddVmFromTemplateTests(final int domainSizeGB,
+            final int sizeRequired,
+            final int pctRequired) {
+        VM vm = initializeMock(domainSizeGB, sizeRequired, pctRequired);
+        AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = createVmFromTemplateCommand(vm);
+        initCommandMethods(cmd);
+        return cmd;
+    }
+
     private AddVmCommand<VmManagementParametersBase> setupCanAddVmTests(final int domainSizeGB,
             final int sizeRequired,
             final int pctRequired) {
+        VM vm = initializeMock(domainSizeGB, sizeRequired, pctRequired);
+        AddVmCommand<VmManagementParametersBase> cmd = createCommand(vm);
+        initCommandMethods(cmd);
+        return cmd;
+    }
+
+    private <T extends VmManagementParametersBase> void initCommandMethods(AddVmCommand<T> cmd) {
+        doReturn(Guid.NewGuid()).when(cmd).getStoragePoolId();
+        doReturn(true).when(cmd).CanAddVm(Matchers.<Object> anyObject(), Matchers.<ArrayList> any(ArrayList.class),
+                anyInt(), anyString(), Matchers.<Guid> any(Guid.class), anyInt());
+        doReturn(STORAGE_POOL_ID).when(cmd).getStoragePoolId();
+    }
+
+    private VM initializeMock(final int domainSizeGB, final int sizeRequired, final int pctRequired) {
         mockVmTemplateDAOReturnVmTemplate();
         mockDiskImageDAOGetSnapshotById();
         mockStorageDomainDAOGetForStoragePool(domainSizeGB);
@@ -212,13 +291,22 @@ public class AddVmCommandTest {
         mockConfig();
         mockConfigSizeRequirements(sizeRequired, pctRequired);
         VM vm = createVm(8);
-        AddVmCommand<VmManagementParametersBase> cmd = createCommand(vm);
-        doReturn(Guid.NewGuid()).when(cmd).getStoragePoolId();
-        doReturn(true).when(cmd).CanAddVm(Matchers.<Object> anyObject(), Matchers.<ArrayList> any(ArrayList.class),
-                anyInt(), anyString(), Matchers.<Guid> any(Guid.class), anyInt());
-        doReturn(STORAGE_POOL_ID).when(cmd).getStoragePoolId();
-        return cmd;
+        return vm;
     }
+
+     private void setNewDisksForTemplate(int numberOfNewDisks, Map<String, DiskImageTemplate> disksMap) {
+         for (int newDiskInd = 0; newDiskInd < numberOfNewDisks; newDiskInd++) {
+             DiskImageTemplate diskImageTempalte = new DiskImageTemplate();
+             diskImageTempalte.setId(Guid.NewGuid());
+             disksMap.put(Guid.NewGuid().toString(), diskImageTempalte);
+         }
+     }
+
+     private void setNewImageDiskMapForTemplate(long diskSize, Map<String, DiskImage> diskImageMap) {
+         DiskImage diskImage = new DiskImage();
+         diskImage.setactual_size(diskSize);
+         diskImageMap.put(Guid.NewGuid().toString(), diskImage);
+     }
 
     private void setupAllMocks() {
         mockVmDAOGetById();
@@ -273,13 +361,15 @@ public class AddVmCommandTest {
     }
 
     private VmTemplate createVmTemplate() {
-        VmTemplate template = new VmTemplate();
-        template.setstorage_pool_id(STORAGE_POOL_ID);
-        template.addDiskImageTemplate(createDiskImageTemplate());
-        Map<String, DiskImage> diskImageMap = new HashMap<String, DiskImage>(1);
-        diskImageMap.put("disk1", createDiskImage());
-        template.setDiskImageMap(diskImageMap);
-        return template;
+        if (vmTemplate == null) {
+            vmTemplate = new VmTemplate();
+            vmTemplate.setstorage_pool_id(STORAGE_POOL_ID);
+            vmTemplate.addDiskImageTemplate(createDiskImageTemplate());
+            Map<String, DiskImage> diskImageMap = new HashMap<String, DiskImage>(1);
+            diskImageMap.put("disk1", createDiskImage());
+            vmTemplate.setDiskImageMap(diskImageMap);
+        }
+        return vmTemplate;
     }
 
     private DiskImageTemplate createDiskImageTemplate() {
@@ -354,6 +444,7 @@ public class AddVmCommandTest {
     private void mockConfig() {
         when(Config.<Object> GetValue(ConfigValues.PredefinedVMProperties, "3.0")).thenReturn("");
         when(Config.<Object> GetValue(ConfigValues.UserDefinedVMProperties, "3.0")).thenReturn("");
+        when(Config.<Object> GetValue(ConfigValues.InitStorageSparseSizeInGB)).thenReturn(new Integer("1"));
     }
 
     private void mockConfigSizeRequirements(int requiredSpaceBufferInGB, int requiredSpacePercent) {
@@ -386,7 +477,7 @@ public class AddVmCommandTest {
         return spy(concrete);
     }
 
-    private void mockUninterestingMethods(AddVmCommand<VmManagementParametersBase> spy) {
+    private <T extends VmManagementParametersBase> void mockUninterestingMethods(AddVmCommand<T> spy) {
         doReturn(true).when(spy).isVmNameValidLength(Matchers.<VM> any(VM.class));
         doReturn(STORAGE_POOL_ID).when(spy).getStoragePoolId();
         doReturn(createVmTemplate()).when(spy).getVmTemplate();
@@ -395,4 +486,6 @@ public class AddVmCommandTest {
         doReturn(Collections.<DiskImageBase> emptyList()).when(spy).getVmDisks();
         spy.setVmTemplateId(Guid.NewGuid());
     }
+
+    private static LogCompat log = LogFactoryCompat.getLog(AddVmCommandTest.class);
 }
