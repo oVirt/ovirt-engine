@@ -196,11 +196,11 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
     /** Log object for this class. */
     private static final Log LOG = LogFactory.getLog(AuthSSLProtocolSocketFactory.class);
 
-    private URL keystoreUrl = null;
-    private String keystorePassword = null;
-    private URL truststoreUrl = null;
-    private String truststorePassword = null;
-    private SSLContext sslcontext = null;
+    private final URL keystoreUrl;
+    private final String keystorePassword;
+    private final URL truststoreUrl;
+    private final String truststorePassword;
+    private final SSLContext sslcontext;
 
     /**
      * Constructor for AuthSSLProtocolSocketFactory. Either a keystore or truststore file must be given. Otherwise SSL
@@ -223,6 +223,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
         this.keystorePassword = keystorePassword;
         this.truststoreUrl = truststoreUrl;
         this.truststorePassword = truststorePassword;
+        this.sslcontext = createSSLContext();
     }
 
     private static KeyStore createKeyStore(final URL url, final String password) throws KeyStoreException,
@@ -338,17 +339,6 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
         }
     }
 
-    private SSLContext getSSLContext() {
-        if (this.sslcontext == null) {
-            synchronized (this) {
-                if (this.sslcontext == null) {
-                    this.sslcontext = createSSLContext();
-                }
-            }
-        }
-        return this.sslcontext;
-    }
-
     /**
      * Attempts to get a new socket connection to the given host within the given time limit.
      * <p>
@@ -381,7 +371,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
             throw new IllegalArgumentException("Parameters may not be null");
         }
         int timeout = params.getConnectionTimeout();
-        SocketFactory socketfactory = getSSLContext().getSocketFactory();
+        SocketFactory socketfactory = sslcontext.getSocketFactory();
         if (timeout == 0) {
             SSLSocket socket = (SSLSocket) socketfactory.createSocket(host, port, localAddress, localPort);
             socket.setEnabledProtocols(new String[] { "SSLv3" });
@@ -402,7 +392,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
      */
     public Socket createSocket(String host, int port, InetAddress clientHost, int clientPort) throws IOException,
             UnknownHostException {
-        SSLSocket socket = (SSLSocket) getSSLContext().getSocketFactory().createSocket(host, port, clientHost,
+        SSLSocket socket = (SSLSocket) sslcontext.getSocketFactory().createSocket(host, port, clientHost,
                 clientPort);
         socket.setEnabledProtocols(new String[] { "SSLv3" });
         return socket;
@@ -412,7 +402,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
      * @see SecureProtocolSocketFactory#createSocket(java.lang.String,int)
      */
     public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
-        SSLSocket socket = (SSLSocket) getSSLContext().getSocketFactory().createSocket(host, port);
+        SSLSocket socket = (SSLSocket) sslcontext.getSocketFactory().createSocket(host, port);
         socket.setEnabledProtocols(new String[] { "SSLv3" });
         return socket;
     }
@@ -422,7 +412,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
      */
     public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException,
             UnknownHostException {
-        SSLSocket sslSocket = (SSLSocket) getSSLContext().getSocketFactory()
+        SSLSocket sslSocket = (SSLSocket) sslcontext.getSocketFactory()
                 .createSocket(socket, host, port, autoClose);
         sslSocket.setEnabledProtocols(new String[] { "SSLv3" });
         return sslSocket;
