@@ -129,9 +129,33 @@
               </compileSourcesArtifacts>
             </configuration>
           </plugin>
-        </plugins>
-      </build>
-    </profile>
+          <plugin>
+            <artifactId>maven-clean-plugin</artifactId>
+            <version>2.4.1</version>
+            <configuration>
+              <excludeDefaultDirectories>true</excludeDefaultDirectories>
+              <filesets>
+                <fileset>
+                  <directory>${project.basedir}/target/${artifactId}-${version}/org.ovirt.engine.ui.userportal.UserPortal/sc/system/helpers</directory>
+                    <includes>
+                      <include>isomorphic_applets.jar</include>
+                    </includes>
+                </fileset>
+            </filesets>
+		  </configuration>
+		  <executions>
+		    <execution>
+		      <id>auto-clean</id>
+		      <phase>prepare-package</phase>
+		      <goals>
+		        <goal>clean</goal>
+		      </goals>
+		    </execution>
+		  </executions>
+		</plugin>
+	  </plugins>
+	</build>
+  </profile>
 
     <profile>
       <id>gwtdev</id>
