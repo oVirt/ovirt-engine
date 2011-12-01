@@ -81,6 +81,11 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     }
 
     @Override
+    protected int getNeededDiskSize() {
+        return (int)getVmTemplate().getActualDiskSize();
+    }
+
+    @Override
     protected void EndSuccessfully() {
         super.EndSuccessfully();
         VmTemplateHandler.UnLockVmTemplate(getParameters().OriginalTemplate);

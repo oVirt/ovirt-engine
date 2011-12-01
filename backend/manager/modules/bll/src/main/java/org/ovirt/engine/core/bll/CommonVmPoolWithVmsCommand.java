@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -229,16 +230,25 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             storage_domains domain = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(domainId,
                     vmTemplate.getstorage_pool_id());
             if (domain != null && domain.getstorage_domain_type() != StorageDomainType.ImportExport
-                    && domain.getstatus() == StorageDomainStatus.Active && domain.getavailable_disk_size() != null) {
-                size += domain.getavailable_disk_size() - Config.<Integer> GetValue(ConfigValues.FreeSpaceCriticalLowInGB);
+                    && domain.getstatus() == StorageDomainStatus.Active && domain.getavailable_disk_size() != null &&
+                    StorageDomainSpaceChecker.hasSpaceForRequest(domain, getBlockSparseInitSizeInGB())) {
+                size += domain.getavailable_disk_size() - getFreeSpaceCriticalLowInGB();
             }
         }
 
-        if (size < .5 * getParameters().getVmsCount()) {
+        if (size < (getBlockSparseInitSizeInGB() * getParameters().getVmsCount() * vmTemplate.getDiskMap().size())) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
         }
         return retValue;
+    }
+
+    private Integer getFreeSpaceCriticalLowInGB() {
+        return Config.<Integer> GetValue(ConfigValues.FreeSpaceCriticalLowInGB);
+    }
+
+    private int getBlockSparseInitSizeInGB() {
+        return Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB).intValue();
     }
 
     // TODO: Need to think of balancing between vms of pool over storage domains

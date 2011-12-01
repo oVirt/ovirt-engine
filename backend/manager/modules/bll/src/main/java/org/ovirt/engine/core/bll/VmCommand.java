@@ -400,6 +400,14 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return Collections.singletonMap(getParameters().getVmId(), VdcObjectType.VM);
     }
 
+    protected int getNeededDiskSize() {
+        return getBlockSparseInitSizeInGB() * getVmTemplate().getDiskMap().size();
+    }
+
+    protected int getBlockSparseInitSizeInGB() {
+        return Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB).intValue();
+    }
+
     protected static void handleCustomPropertiesError(List<ValidationError> validationErrors, ArrayList<String> message) {
         String invalidSyntaxMsg = VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_SYNTAX.name();
 

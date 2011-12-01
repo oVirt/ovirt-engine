@@ -220,7 +220,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 // populate template disks for domain size check
                 VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
                 returnValue =
-                        StorageDomainSpaceChecker.hasSpaceForRequest(domain, (int) getVmTemplate().getActualDiskSize());
+                        StorageDomainSpaceChecker.hasSpaceForRequest(domain, getNeededDiskSize());
                 if (!returnValue)
                     reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
             }
