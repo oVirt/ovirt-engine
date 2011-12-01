@@ -38,8 +38,8 @@ import org.ovirt.engine.api.common.util.FileUtils;
 import org.ovirt.engine.api.common.util.ReflectionHelper;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Body;
+import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.HttpMethod;
-import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.RSDL;
@@ -99,7 +99,7 @@ public class RsdlBuilder {
 
     private RSDL construct() throws ClassNotFoundException, IOException {
         RSDL rsdl = new RSDL();
-        for (Link link : getLinks()) {
+        for (DetailedLink link : getLinks()) {
             rsdl.getLinks().add(link);
         }
         return rsdl;
@@ -153,7 +153,7 @@ public class RsdlBuilder {
     }
 
     public class LinkBuilder {
-        private Link link = new Link();;
+        private DetailedLink link = new DetailedLink();;
         public LinkBuilder url(String url) {
             link.setHref(url);
             return this;
@@ -178,14 +178,14 @@ public class RsdlBuilder {
             link.getRequest().setHttpMethod(httpMethod);
             return this;
         }
-        public Link build() {
+        public DetailedLink build() {
             return addParametersMetadata(link);
         }
     }
 
-    public Collection<Link> getLinks() throws ClassNotFoundException, IOException {
+    public Collection<DetailedLink> getLinks() throws ClassNotFoundException, IOException {
         //SortedSet<Link> results = new TreeSet<Link>();
-        List<Link> results = new ArrayList<Link>();
+        List<DetailedLink> results = new ArrayList<DetailedLink>();
         List<Class<?>> classes = ReflectionHelper.getClasses(RESOURCES_PACKAGE);
         for (String path : apiResource.getRels()) {
             Class<?> resource = findResource(path, classes);
@@ -209,9 +209,9 @@ public class RsdlBuilder {
         return pathAnnotation==null ? null : pathAnnotation.value();
     }
 
-    public List<Link> describe(Class<?> resource, String prefix, Map<String, Type> parametersMap) throws ClassNotFoundException {
+    public List<DetailedLink> describe(Class<?> resource, String prefix, Map<String, Type> parametersMap) throws ClassNotFoundException {
         //SortedSet<Link> results = new TreeSet<Link>();
-        List<Link> results = new ArrayList<Link>();
+        List<DetailedLink> results = new ArrayList<DetailedLink>();
         if (resource!=null) {
             for (Method m : resource.getMethods()) {
                 handleMethod(prefix, results, m, resource, parametersMap);
@@ -233,7 +233,7 @@ public class RsdlBuilder {
         }
     }
 
-    private void handleMethod(String prefix, Collection<Link> results, Method m, Class<?> resource, Map<String, Type> parametersMap) throws ClassNotFoundException {
+    private void handleMethod(String prefix, Collection<DetailedLink> results, Method m, Class<?> resource, Map<String, Type> parametersMap) throws ClassNotFoundException {
         if (isRequiresDescription(m)) {
             Class<?> returnType = findReturnType(m, resource, parametersMap);
             String returnTypeStr = getReturnTypeStr(returnType);
@@ -265,11 +265,11 @@ public class RsdlBuilder {
         }
     }
 
-    private void handleAction(String prefix, Collection<Link> results, String returnValueStr, String path) {
+    private void handleAction(String prefix, Collection<DetailedLink> results, String returnValueStr, String path) {
         results.add(new RsdlBuilder.LinkBuilder().url(prefix + "/" + path).rel(path).requestParameter(ACTION).responseType(returnValueStr).httpMethod(HttpMethod.POST).build());
     }
 
-    private void handleDelete(String prefix, Collection<Link> results, Method m) {
+    private void handleDelete(String prefix, Collection<DetailedLink> results, Method m) {
         if (m.getParameterTypes().length>1) {
             Class<?>[] parameterTypes = m.getParameterTypes();
             Annotation[][] parameterAnnotations = m.getParameterAnnotations();
@@ -285,15 +285,16 @@ public class RsdlBuilder {
         }
     }
 
-    private void handlePut(String prefix, Collection<Link> results, String returnValueStr) {
+    private void handlePut(String prefix, Collection<DetailedLink> results, String returnValueStr) {
         results.add(new RsdlBuilder.LinkBuilder().url(prefix).rel(UPDATE).requestParameter(returnValueStr).responseType(returnValueStr).httpMethod(HttpMethod.PUT).build());
     }
 
-    private void handleGet(String prefix, Collection<Link> results, String returnValueStr) {
-        results.add(new RsdlBuilder.LinkBuilder().url(prefix).rel(GET).responseType(returnValueStr).httpMethod(HttpMethod.GET).build());
+    private void handleGet(String prefix, Collection<DetailedLink> results, String returnValueStr) {
+        DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix).rel(GET).responseType(returnValueStr).httpMethod(HttpMethod.GET).build();
+        results.add(link);
     }
 
-    private Link addParametersMetadata(Link link) {
+    private DetailedLink addParametersMetadata(DetailedLink link) {
         String link_name = link.getHref() + "|rel=" + link.getRel();
         if (this.parametersMetaData.containsKey(link_name)) {
             Action action = this.parametersMetaData.get(link_name);
@@ -325,7 +326,7 @@ public class RsdlBuilder {
         return link;
     }
 
-    private void handleAdd(String prefix, Collection<Link> results, Method m) {
+    private void handleAdd(String prefix, Collection<DetailedLink> results, Method m) {
         Class<?>[] parameterTypes = m.getParameterTypes();
         assert(parameterTypes.length==1);
         String s = parameterTypes[0].getSimpleName();
