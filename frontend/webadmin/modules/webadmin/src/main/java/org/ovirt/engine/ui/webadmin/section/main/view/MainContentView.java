@@ -15,29 +15,42 @@ public class MainContentView extends AbstractView implements MainContentPresente
     private final SimplePanel mainTabPanelContainer = new SimplePanel();
     private final SimplePanel subTabPanelContainer = new SimplePanel();
 
+    private boolean subTabPanelVisible;
+
     public MainContentView() {
         initWidget(splitPanel);
+        initSplitPanel();
+    }
+
+    void initSplitPanel() {
+        splitPanel.add(mainTabPanelContainer);
+        subTabPanelVisible = false;
     }
 
     @Override
     public void setInSlot(Object slot, Widget content) {
-        if (slot == MainContentPresenter.TYPE_SetMainTabPanelContent)
+        if (slot == MainContentPresenter.TYPE_SetMainTabPanelContent) {
             setPanelContent(mainTabPanelContainer, content);
-        else if (slot == MainContentPresenter.TYPE_SetSubTabPanelContent)
+        } else if (slot == MainContentPresenter.TYPE_SetSubTabPanelContent) {
             setPanelContent(subTabPanelContainer, content);
-        else
+        } else {
             super.setInSlot(slot, content);
+        }
     }
 
     @Override
     public void update(boolean subTabPanelVisible) {
-        splitPanel.clear();
+        if (this.subTabPanelVisible != subTabPanelVisible) {
+            splitPanel.clear();
 
-        if (subTabPanelVisible) {
-            splitPanel.addSouth(subTabPanelContainer, subTabPanelHeight);
-            splitPanel.add(mainTabPanelContainer);
-        } else {
-            splitPanel.add(mainTabPanelContainer);
+            if (subTabPanelVisible) {
+                splitPanel.addSouth(subTabPanelContainer, subTabPanelHeight);
+                splitPanel.add(mainTabPanelContainer);
+            } else {
+                splitPanel.add(mainTabPanelContainer);
+            }
+
+            this.subTabPanelVisible = subTabPanelVisible;
         }
     }
 
