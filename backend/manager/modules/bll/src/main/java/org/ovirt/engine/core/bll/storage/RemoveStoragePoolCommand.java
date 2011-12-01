@@ -308,12 +308,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                     getStoragePool().getId());
             List<storage_domains> domainsList = poolDomains;
             if (returnValue) {
-                domainsList = LinqUtils.filter(domainsList, new Predicate<storage_domains>() {
-                    @Override
-                    public boolean eval(storage_domains dom) {
-                        return dom.getstatus() == StorageDomainStatus.Active;
-                    }
-                });
+                domainsList = getActiveOrLockedDomainList(domainsList);
 
                 if (!domainsList.isEmpty()) {
                     returnValue = false;
@@ -346,6 +341,16 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         }
 
         return returnValue;
+    }
+
+    protected List<storage_domains> getActiveOrLockedDomainList(List<storage_domains> domainsList) {
+        domainsList = LinqUtils.filter(domainsList, new Predicate<storage_domains>() {
+            @Override
+            public boolean eval(storage_domains dom) {
+                return (dom.getstatus() == StorageDomainStatus.Active || dom.getstatus() == StorageDomainStatus.Locked);
+            }
+        });
+        return domainsList;
     }
 
     @Override
