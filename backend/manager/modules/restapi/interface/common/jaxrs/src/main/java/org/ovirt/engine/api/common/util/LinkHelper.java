@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,6 +32,7 @@ import javax.ws.rs.core.UriInfo;
 import org.ovirt.engine.api.model.ActionsBuilder;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CdRom;
+import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.Cluster;
@@ -40,7 +42,9 @@ import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Group;
+import org.ovirt.engine.api.model.KeyValuePair;
 import org.ovirt.engine.api.model.Link;
+import org.ovirt.engine.api.model.LinkCapabilities;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Permission;
@@ -672,6 +676,92 @@ public class LinkHelper {
     }
 
     /**
+     * Combine URL params to URI path.
+     *
+     * @param head the path head
+     * @param params the URL params to append
+     * @return the combined head and params
+     */
+    public static String combine(String head, Map<String, String> params) {
+        String combined_params = "";
+        if (params != null) {
+           for (Entry<String, String> entry : params.entrySet()) {
+                combined_params += String.format(PARAMETER_TEMPLATE, entry.getKey(), entry.getValue());
+           }
+        }
+        return head + combined_params;
+    }
+
+    /**
+     * Create a search link with the given parameters
+     *
+     * @param url the url
+     * @param rel the link to add
+     * @param flags flags for this link, e.g: 'searchable'
+     * @return the link the was created
+     */
+    public static DetailedLink createLink(String url, String rel, LinkFlags flags) {
+        return createLink(url, rel, flags, new LinkedList<KeyValuePair>());
+    }
+
+    /**
+     * Create a search link with the given parameters
+     *
+     * @param url the url
+     * @param rel the link to add
+     * @param flags flags for this link, e.g: 'searchable'
+     * @param params url parameters
+     * @return the link the was created
+     */
+    public static DetailedLink createLink(String url, String rel, LinkFlags flags, List<KeyValuePair> params) {
+        DetailedLink link = new DetailedLink();
+        link.setRel(rel);
+        link.setHref(combine(url, rel));
+        if (flags == LinkFlags.SEARCHABLE) {
+            LinkCapabilities capabilities = new LinkCapabilities();
+            capabilities.setSearchable(true);
+            link.setLinkCapabilities(capabilities);
+        }
+        link.getUrlParmeters().addAll(params);
+        return link;
+    }
+
+    /**
+     * Create a search link with the given parameters
+     *
+     * @param url the url
+     * @param rel the link to add
+     * @param params url parameters
+     * @return the link the was created
+     */
+    public static Link createLink(String url, String rel, List<KeyValuePair> params) {
+        Link link = new Link();
+        link.setRel(rel + SEARCH_RELATION);
+        link.setHref(combine(url + SEARCH_TEMPLATE, params));
+        return link;
+    }
+
+    public static Link createLink(String url, String rel) {
+        Link link = new Link();
+        link.setRel(rel);
+        link.setHref(url);
+        return link;
+    }
+
+    /**
+     * Create a search link with the given parameters
+     * @param url the url
+     * @param rel the link to add
+     * @return link with search
+     */
+    public static Link createSearchLink(String url, String rel) {
+        Link link = new Link();
+        link.setRel(rel + SEARCH_RELATION);
+        link.setHref(combine(url, rel) + SEARCH_TEMPLATE);
+        return link;
+    }
+
+    /**
      * Combine head and tail portions of a URI path.
      *
      * @param head the path head
@@ -695,11 +785,11 @@ public class LinkHelper {
      * @param params the URL params to append
      * @return the combined head and params
      */
-    public static String combine(String head, Map<String, String> params) {
+    public static String combine(String head, List<KeyValuePair> params) {
         String combined_params = "";
         if (params != null) {
-           for (Entry<String, String> entry : params.entrySet()) {
-                combined_params += String.format(PARAMETER_TEMPLATE, entry.getKey(), entry.getValue());
+           for (KeyValuePair pair : params) {
+                combined_params += String.format(PARAMETER_TEMPLATE, pair.getKey(), pair.getValue());
            }
         }
         return head + combined_params;

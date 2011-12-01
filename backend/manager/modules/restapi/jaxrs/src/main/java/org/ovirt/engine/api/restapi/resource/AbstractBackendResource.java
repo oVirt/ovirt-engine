@@ -239,7 +239,7 @@ public class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQu
 
     protected R injectSearchLinks(R resource, String[] rels){
         for(String rel : rels){
-            LinkHelper.addLink(resource, rel);
+            resource.getLinks().add(LinkHelper.createSearchLink(resource.getHref(), rel));
         }
         return resource;
     }
