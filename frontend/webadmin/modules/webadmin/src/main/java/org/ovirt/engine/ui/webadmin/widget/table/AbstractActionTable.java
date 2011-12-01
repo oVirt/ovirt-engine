@@ -6,6 +6,8 @@ import java.util.List;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.AbstractActionPanel;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -89,9 +91,32 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
                     selectionModel.setMultiSelectEnabled(event.getCtrlKey());
                     selectionModel.setMultiRangeSelectEnabled(event.getShiftKey());
                 }
-                this.setFocus(true);
 
                 super.onBrowserEvent2(event);
+            }
+
+            @Override
+            protected int getKeyboardSelectedRow() {
+                if (selectionModel.getLastSelectedRow() == -1) {
+                    return super.getKeyboardSelectedRow();
+                }
+
+                return selectionModel.getLastSelectedRow();
+            }
+
+            @Override
+            protected void onLoad() {
+                super.onLoad();
+                if (selectionModel.getLastSelectedRow() == -1) {
+                    return;
+                }
+
+                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        setFocus(true);
+                    }
+                });
             }
 
             @Override
