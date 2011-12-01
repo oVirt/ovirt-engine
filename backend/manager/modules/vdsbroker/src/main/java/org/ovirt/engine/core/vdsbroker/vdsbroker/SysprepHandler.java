@@ -15,8 +15,8 @@ import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.StringBuilderCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeZoneInfo;
-import org.ovirt.engine.core.compat.backendcompat.File;
 import org.ovirt.engine.core.dal.dbbroker.generic.DomainsPasswordMap;
+import org.ovirt.engine.core.utils.FileUtil;
 
 public final class SysprepHandler {
     private static Map<String, String> userPerDomain = new HashMap<String, String>();
@@ -197,9 +197,9 @@ public final class SysprepHandler {
     private static String LoadFile(String fileName) {
         String content = "";
         fileName = ConfigUtil.resolvePath(getSysprepDir(), fileName);
-        if (File.Exists(fileName)) {
+        if (FileUtil.fileExists(fileName)) {
             try {
-                content = File.ReadAllText(fileName);
+                content = FileUtil.readAllText(fileName);
             } catch (RuntimeException e) {
                 log.error("Failed to read sysprep template: " + fileName, e);
             }

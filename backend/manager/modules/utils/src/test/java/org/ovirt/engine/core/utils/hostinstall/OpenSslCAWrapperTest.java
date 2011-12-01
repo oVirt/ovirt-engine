@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.backendcompat.File;
+import org.ovirt.engine.core.utils.FileUtil;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -26,7 +26,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
  * externally dependent
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Config.class, File.class })
+@PrepareForTest({ Config.class, FileUtil.class })
 public class OpenSslCAWrapperTest {
     static final int defaultSignCertTimeoutInSeconds = 30;
     @Spy
@@ -48,9 +48,9 @@ public class OpenSslCAWrapperTest {
         when(Config.GetValue(ConfigValues.SignCertTimeoutInSeconds)).thenReturn(defaultSignCertTimeoutInSeconds);
         when(Config.resolveCABasePath()).thenReturn(new String());
 
-        // Mocking the org.ovirt.engine.core.compat.backendcompat.File class
-        mockStatic(File.class);
-        when(File.Exists(any(String.class))).thenReturn(true);
+        // Mocking the org.ovirt.engine.core.utils FileUtil class
+        mockStatic(FileUtil.class);
+        when(FileUtil.fileExists(any(String.class))).thenReturn(true);
 
         // Mocking the process and openSslWrapper
         when(processMock.getInputStream()).thenReturn(new ByteArrayInputStream(new byte[1]));

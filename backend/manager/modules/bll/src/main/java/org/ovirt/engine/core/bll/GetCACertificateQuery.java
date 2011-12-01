@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.compat.backendcompat.File;
-import org.ovirt.engine.core.compat.backendcompat.StreamReaderCompat;
 import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.queries.*;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.compat.backendcompat.StreamReaderCompat;
+import org.ovirt.engine.core.utils.FileUtil;
 
 public class GetCACertificateQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     public GetCACertificateQuery(P parameters) {
@@ -13,7 +13,7 @@ public class GetCACertificateQuery<P extends VdcQueryParametersBase> extends Que
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setSucceeded(false);
-        if (File.Exists(Config.resolveCACertificatePath())) {
+        if (FileUtil.fileExists(Config.resolveCACertificatePath())) {
             // C# TO JAVA CONVERTER NOTE: The following 'using' block is
             // replaced by its Java equivalent:
             // using (StreamReaderCompat reader = new

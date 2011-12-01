@@ -10,14 +10,14 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
-import org.ovirt.engine.core.compat.backendcompat.File;
+import org.ovirt.engine.core.utils.FileUtil;
 
 public class OpenSslCAWrapper implements ICAWrapper {
     public final boolean SignCertificateRequest(String requestFileName, int days, String signedCertificateFileName) {
         log.debug("Entered SignCertificateRequest");
         boolean returnValue = true;
         String signRequestBatch = Config.resolveSignScriptPath();
-        if (File.Exists(signRequestBatch)) {
+        if (FileUtil.fileExists(signRequestBatch)) {
             Integer signatureTimeout = Config.<Integer> GetValue(ConfigValues.SignCertTimeoutInSeconds);
             String[] command_array =
                     createCommandArray(signatureTimeout, signRequestBatch, requestFileName, days,

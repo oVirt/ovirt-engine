@@ -21,8 +21,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.backendcompat.File;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.VdcException;
 import org.ovirt.engine.core.utils.hostinstall.ICAWrapper;
 import org.ovirt.engine.core.utils.hostinstall.IVdsInstallCallBack;
@@ -264,7 +264,7 @@ public class VdsInstaller implements IVdsInstallCallBack {
             if (_executionSucceded) {
                 String currRequest = buildCAPath(_requestsDirectory, _certRequestFileName);
                 try {
-                    File.Delete(currRequest);
+                    FileUtil.deleteFile(currRequest);
                 } catch (RuntimeException exp) {
                     log.errorFormat(
                             "Installation of {0}. Could not delete certificate request file from: {1}. error: {2}. (Stage: {3}",

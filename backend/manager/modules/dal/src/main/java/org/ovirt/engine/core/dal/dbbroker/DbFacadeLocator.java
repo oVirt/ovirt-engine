@@ -11,7 +11,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.common.utils.ResourceUtils;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
-import org.ovirt.engine.core.compat.backendcompat.File;
+import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -79,7 +79,7 @@ public class DbFacadeLocator {
             String onStartConnectionTimeout = null;
             String connectionCheckInterval = null;
             Properties props = new Properties();
-            if (File.Exists(ENGINE_CONF_FILE)) {
+            if (FileUtil.fileExists(ENGINE_CONF_FILE)) {
                 // File exists, load /etc/engine.conf and set values in DbFacade
                 inputStream = new FileInputStream(ENGINE_CONF_FILE);
                 props.load(inputStream);

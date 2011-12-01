@@ -34,10 +34,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.backendcompat.File;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.CommandParametersInitializer;
+import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -246,7 +246,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 retrunValue = retrunValue && validateSingleHostAttachedToLocalStorage();
 
                 if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)
-                        && !File.Exists(Config.resolveCertificatePath())) {
+                        && !FileUtil.fileExists(Config.resolveCertificatePath())) {
                     addCanDoActionMessage(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND);
                     retrunValue = false;
                 } else if (!getParameters().getAddPending()

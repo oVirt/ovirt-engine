@@ -8,6 +8,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
+
+import org.ovirt.engine.core.compat.CompatException;
 
 public class FileUtil {
     public static InputStream findFile(String name) {
@@ -56,6 +59,38 @@ public class FileUtil {
             } catch (Exception e) {
                 // Ignore
             }
+        }
+    }
+
+    public static String readAllText(final String filename) {
+        FileInputStream fis = null;
+        try {
+            java.io.File file = new java.io.File(filename.toString());
+            fis = new FileInputStream(file);
+            int size = fis.available();
+            byte[] contents = new byte[size];
+            fis.read(contents);
+            return new String(contents);
+        } catch (Exception e) {
+            throw new CompatException(e);
+        } finally {
+            // in the absence of commons io, this workaround is needed to close the file
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        }
+    }
+
+    public static Date getLastWriteTime(Object filename) {
+        try {
+            java.io.File file = new java.io.File(filename.toString());
+            return new Date(file.lastModified());
+        } catch (Exception e) {
+            throw new CompatException(e);
         }
     }
 }

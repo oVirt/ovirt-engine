@@ -30,10 +30,10 @@ import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.compat.backendcompat.File;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -147,7 +147,7 @@ public class VdsManager {
         }
         // if ssl is on and no certificate file
         if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)
-                    && !File.Exists(Config.resolveCertificatePath())) {
+                    && !FileUtil.fileExists(Config.resolveCertificatePath())) {
             if (_vds.getstatus() != VDSStatus.Maintenance && _vds.getstatus() != VDSStatus.InstallFailed) {
                 setStatus(VDSStatus.NonResponsive, _vds);
                 UpdateDynamicData(_vds.getDynamicData());
