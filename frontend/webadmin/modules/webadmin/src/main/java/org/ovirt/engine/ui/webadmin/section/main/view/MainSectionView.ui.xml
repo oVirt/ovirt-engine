@@ -3,6 +3,38 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
 	<ui:style src='../../../defines.css'>
+		@external .gwt-MenuBar;
+		@external .gwt-MenuBar .gwt-MenuItem;
+		@external .gwt-MenuBar .gwt-MenuItem-selected;
+		.gwt-MenuBar { 
+			border: 1px solid #666;
+		    margin: 0 auto;
+		    background-color: #eee;
+		    font-size: 70%;
+		    padding: 3px;
+		}
+		
+		.gwt-MenuBar .gwt-MenuItem {
+			cursor: hand;
+		    cursor: pointer;
+		
+		    border: 1px solid #999;
+		    background-color: #eee;
+		    padding: 2px 10px;
+		}
+		
+		.gwt-MenuBar .gwt-MenuItem-selected {
+		 	background-color: #fff;
+		}
+		
+		@external .gwt-PopupPanel;
+		.gwt-PopupPanel {
+		  border: 1px solid #C3D9FF;
+		  padding: 0px;
+		  background: white;
+		}
+		
+		
 		@external gwt-SplitLayoutPanel-HDragger;
 		@external gwt-SplitLayoutPanel-VDragger;
 		.gwt-SplitLayoutPanel-HDragger {
@@ -50,6 +82,8 @@
 			position: relative;
 			margin-bottom: 30px;
 		}
+		
+		
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="wrapperLayoutPanel" unit="PX">
