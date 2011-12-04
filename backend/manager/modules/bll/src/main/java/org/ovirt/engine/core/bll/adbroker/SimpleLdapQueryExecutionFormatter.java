@@ -3,6 +3,11 @@ package org.ovirt.engine.core.bll.adbroker;
 public class SimpleLdapQueryExecutionFormatter extends LdapQueryExecutionFormatterBase {
 
     @Override
+    protected String getDisplayFilter(LdapQueryMetadata queryMetadata) {
+        return String.format(queryMetadata.getFilter(), queryMetadata.getQueryData().getFilterParameters());
+    }
+
+    @Override
     public LdapQueryExecution format(LdapQueryMetadata queryMetadata) {
 
         String filter =
@@ -10,16 +15,13 @@ public class SimpleLdapQueryExecutionFormatter extends LdapQueryExecutionFormatt
                         getEncodedParameters(queryMetadata.getQueryData().getFilterParameters(),
                                 queryMetadata.getLdapGuidEncoder()));
 
-        // The display filter uses the regular parameters, because the encoded ones may not be readable
-        String displayFilter =
-                String.format(queryMetadata.getFilter(), queryMetadata.getQueryData().getFilterParameters());
-
         String baseDN =
                 String.format(queryMetadata.getBaseDN(),
                         getEncodedParameters(queryMetadata.getQueryData().getBaseDNParameters(),
                                 queryMetadata.getLdapGuidEncoder()));
+
         return new LdapQueryExecution(filter,
-                displayFilter,
+                getDisplayFilter(queryMetadata),
                 baseDN,
                 queryMetadata.getContextMapper(),
                 queryMetadata.getSearchScope(),

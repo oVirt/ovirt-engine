@@ -9,8 +9,6 @@ import javax.naming.CommunicationException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
@@ -18,8 +16,10 @@ import javax.naming.directory.SearchResult;
 
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.dns.DnsSRVLocator.DnsSRVResult;
+import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.ldap.LdapSRVLocator;
-import org.ovirt.engine.core.ldap.RootDSEQueryInfo;
+import org.ovirt.engine.core.ldap.RootDSEData;
+import org.ovirt.engine.core.utils.ipa.RHDSUserContextMapper;
 
 /**
  * JAAS Privileged action to be run when KerbersUtil successfully authenticates. This action performs ldap query to
@@ -29,14 +29,14 @@ public class JndiAction implements PrivilegedAction {
 
     private String userName;
     private String domainName;
-    private boolean isIPA;
+    private LdapProviderType ldapProviderType = LdapProviderType.activeDirectory;
     private StringBuffer userGuid;
     private final static Logger log = Logger.getLogger(JndiAction.class);
 
     public JndiAction(String userName, String domainName, StringBuffer userGuid) {
         this.userName = userName;
         this.domainName = domainName;
-        this.isIPA = false;
+        this.ldapProviderType = LdapProviderType.activeDirectory;
         this.userGuid = userGuid;
     }
 
@@ -58,7 +58,6 @@ public class JndiAction implements PrivilegedAction {
 
         DirContext ctx = null;
 
-        boolean foundUser = false;
         String currentLdapServer = null;
 
         if (ldapDnsResult == null || ldapDnsResult.getNumOfValidAddresses() == 0) {
@@ -88,6 +87,8 @@ public class JndiAction implements PrivilegedAction {
                     ldapQueryPath.append("/").append(domainDN);
                     SearchControls controls = new SearchControls();
                     controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+                    // Adding all the three attributes possible, as RHDS doesn't return the nsUniqueId by default
+                    controls.setReturningAttributes(new String[]{"nsUniqueId", "ipaUniqueId","objectGuid"});
                     currentLdapServer = ldapQueryPath.toString();
                     env.put(Context.PROVIDER_URL, currentLdapServer);
 
@@ -99,7 +100,6 @@ public class JndiAction implements PrivilegedAction {
                         // Print the objectGUID for the user
                         userGuid.append(guidFromResults(answer.next()));
                         log.debug("User guid is: " + userGuid.toString());
-                        foundUser = true;
                         return AuthenticationResult.OK;
                     }
 
@@ -144,9 +144,12 @@ public class JndiAction implements PrivilegedAction {
     private String guidFromResults(SearchResult sr) throws NamingException {
         String guidString = "";
 
-        if (isIPA) {
+        if (ldapProviderType.equals(LdapProviderType.ipa)) {
             String ipaUniqueId = (String) sr.getAttributes().get("ipaUniqueId").get();
             guidString += ipaUniqueId;
+        } else if (ldapProviderType.equals(LdapProviderType.rhds)) {
+            String nsUniqueId = (String) sr.getAttributes().get("nsUniqueId").get();
+            guidString += RHDSUserContextMapper.getGuidFromNsUniqueId(nsUniqueId);
         } else {
             Object objectGuid = sr.getAttributes().get("objectGUID").get();
             byte[] guid = (byte[]) objectGuid;
@@ -157,10 +160,14 @@ public class JndiAction implements PrivilegedAction {
 
     private String prepareQuery() {
         String query;
-        if (isIPA) {
+        if (ldapProviderType.equals(LdapProviderType.ipa)) {
             userName = userName.split("@")[0];
             query = "(&(objectClass=posixAccount)(objectClass=krbPrincipalAux)(uid=" + userName + "))";
-        } else {
+        } else if (ldapProviderType.equals(LdapProviderType.rhds)) {
+            userName = userName.split("@")[0];
+            query = "(&(objectClass=person)(uid=" + userName + "))";
+        }
+        else {
             StringBuilder queryBase = new StringBuilder("(&(sAMAccountType=805306368)(");
             if (userName.contains("@")) {
                 queryBase.append("userPrincipalName=" + userName);
@@ -186,33 +193,9 @@ public class JndiAction implements PrivilegedAction {
     }
 
     private String getDomainDN(DirContext ctx) throws NamingException {
-
-        // Queries the rootDSE and get the "defaultNamingContext" attribute value -
-        // this attribute will be a part of the LDAP URL to perform users queries (i.e - search for a user)
-        SearchControls controls = RootDSEQueryInfo.createSearchControls();
-        String query = RootDSEQueryInfo.ROOT_DSE_LDAP_QUERY;
-        NamingEnumeration<SearchResult> searchResults = executeQuery(ctx, controls, query);
-
-        // The information on base DN is located in the attribute "defaultNamingContext"
-        while (searchResults.hasMoreElements()) {
-            SearchResult searchResult = searchResults.nextElement();
-            Attributes attributes = searchResult.getAttributes();
-            Attribute attribute = attributes.get(RootDSEQueryInfo.DEFAULT_NAMING_CONTEXT_RESULT_ATTRIBUTE);
-            if (attribute != null) {
-                String domainDN = (String) attribute.get();
-                return domainDN;
-            } else {
-                Attribute ipaAttribute = attributes.get(RootDSEQueryInfo.NAMING_CONTEXTS_RESULT_ATTRIBUTE);
-                if (ipaAttribute != null) {
-                    isIPA = true;
-                    String domainDN = (String) ipaAttribute.get(0);
-                    return domainDN;
-                }
-
-                return null;
-            }
-        }
-        return null;
+        RootDSEData rootDSEData = new RootDSEData(ctx);
+        ldapProviderType = rootDSEData.getLdapProviderType();
+        return rootDSEData.getDomainDN();
     }
 
 }

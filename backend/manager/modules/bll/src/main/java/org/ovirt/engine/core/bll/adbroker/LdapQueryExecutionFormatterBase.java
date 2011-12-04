@@ -7,6 +7,8 @@ public abstract class LdapQueryExecutionFormatterBase implements LdapQueryFormat
     @Override
     public abstract LdapQueryExecution format(LdapQueryMetadata queryMetadata);
 
+    protected abstract String getDisplayFilter(LdapQueryMetadata queryMetadata);
+
     protected Object[] getEncodedParameters(Object[] parameters, LdapGuidEncoder LdapGuidEncoder) {
         if (parameters == null) {
             return null;

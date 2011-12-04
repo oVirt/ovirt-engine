@@ -12,6 +12,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 
+import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.ldap.RootDSEData;
 import org.ovirt.engine.core.utils.CLIParser;
 import org.springframework.ldap.AuthenticationException;
@@ -21,7 +22,7 @@ import org.springframework.ldap.core.support.LdapContextSource;
 
 public class SimpleAuthenticationCheck {
     private static String INVALID_CREDENTIALS_ERROR_CODE = "49";
-    private boolean isIPA;
+    private LdapProviderType ldapProviderType;
 
     public enum Arguments {
         domain,
@@ -74,7 +75,7 @@ public class SimpleAuthenticationCheck {
 
         try {
             RootDSEData rootDSEData = new RootDSEData(getDirContext(getLdapUrl(ldapServer)));
-            isIPA = new Boolean(rootDSEData.isIPA());
+            ldapProviderType = rootDSEData.getLdapProviderType();
 
             return ReturnStatus.OK;
         } catch (Exception ex) {
@@ -109,13 +110,16 @@ public class SimpleAuthenticationCheck {
             String query = "";
             ContextMapper contextMapper;
 
-            if (isIPA) {
+            if (ldapProviderType.equals(LdapProviderType.ipa)) {
                 query = "(&(objectClass=posixAccount)(objectClass=krbPrincipalAux)(uid=" + username + "))";
                 contextMapper = new IPAUserContextMapper();
-                // AD
-            } else {
-                query = "(&(sAMAccountType=805306368)(sAMAccountName=" + username + "))";
+            // AD
+            } else if (ldapProviderType.equals(LdapProviderType.activeDirectory)) {
                 contextMapper = new ADUserContextMapper();
+            // RHDS
+            } else {
+                query = "(&(objectClass=person)(uid=" + username + "))";
+                contextMapper = new RHDSUserContextMapper();
             }
 
             try {
@@ -179,8 +183,11 @@ public class SimpleAuthenticationCheck {
         String ldapBaseDn = domainToDN(domain);
         StringBuilder ldapUserDn = new StringBuilder();
 
-        if (isIPA) {
+
+        if (ldapProviderType.equals(LdapProviderType.ipa)) {
             ldapUserDn.append("uid=").append(username).append(",cn=Users").append(",cn=Accounts,");
+        } else if (ldapProviderType.equals(LdapProviderType.rhds)) {
+            ldapUserDn.append("uid=").append(username).append(",ou=People");
         } else {
             ldapUserDn.append("CN=").append(username).append(",CN=Users,");
         }

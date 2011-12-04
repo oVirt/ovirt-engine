@@ -96,16 +96,19 @@ public class GetRootDSE {
     }
 
     public LdapProviderType retrieveLdapProviderType(String domain) {
+        LdapProviderType retVal = LdapProviderType.general;
         Attributes attributes = getDomainAttributes(LdapProviderType.general, domain);
         if (attributes != null) {
             if (attributes.get(ADRootDSEAttributes.domainControllerFunctionality.name()) != null) {
-                return LdapProviderType.activeDirectory;
-            } else {
-                return LdapProviderType.ipa;
+                retVal = LdapProviderType.activeDirectory;
+            } else if (attributes.get(RHDSRootDSEAttributes.netscapemdsuffix.name()) != null) {
+                retVal = LdapProviderType.rhds;
+            } else if (attributes.get(IPARootDSEAttributes.namingContexts.name()) != null) {
+                retVal = LdapProviderType.ipa;
             }
-        } else {
-            return LdapProviderType.general;
         }
+
+        return retVal;
     }
 
     public Attributes getDomainAttributes(LdapProviderType general, String domain) {

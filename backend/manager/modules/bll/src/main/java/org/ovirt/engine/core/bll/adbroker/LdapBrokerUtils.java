@@ -360,4 +360,18 @@ public class LdapBrokerUtils {
         sb.delete(0, 1);
         return sb.toString();
     }
+
+    public static String getGuidFromNsUniqueId(String nsUniqueId) {
+        // 12345678-12345678-12345678-12345678 -->
+        // 12345678-1234-5678-1234-567812345678
+        StringBuilder sb = new StringBuilder();
+        sb.append(nsUniqueId.substring(0, 13))
+                .append("-")
+                .append(nsUniqueId.substring(13, 22))
+                .append("-")
+                .append(nsUniqueId.substring(22, 26))
+                .append(nsUniqueId.substring(27, 35));
+        return sb.toString();
+    }
+
 }

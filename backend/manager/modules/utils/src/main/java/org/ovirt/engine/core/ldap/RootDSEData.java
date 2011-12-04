@@ -10,8 +10,48 @@ import javax.naming.directory.SearchResult;
 
 public class RootDSEData {
     private String domainDN = null;
-    private boolean isIPA = false;
+    private LdapProviderType ldapProviderType = null;
+    private final static String RHDS_NAMING_CONTEXT = "o=netscaperoot";
 
+    public static String getDefaultNamingContextFromNamingContexts(Attribute namingContexts) {
+        for (int index = 0; index < namingContexts.size(); ++index) {
+            String namingContext;
+            try {
+                namingContext = (String) namingContexts.get(index);
+            } catch (NamingException e) {
+                return null;
+            }
+            if (!RHDS_NAMING_CONTEXT.equalsIgnoreCase(namingContext)) {
+                return namingContext;
+            }
+        }
+        return null;
+    }
+
+    public boolean applyDomainAttributes(Attributes attributes) throws NamingException {
+        boolean retVal = false;
+        Attribute attribute = attributes.get(RootDSEQueryInfo.DEFAULT_NAMING_CONTEXT_RESULT_ATTRIBUTE);
+
+        if (attribute != null) {
+            domainDN = (String) attribute.get();
+            ldapProviderType = LdapProviderType.activeDirectory;
+            retVal = true;
+        } else {
+            Attribute namingContextAttribute = attributes.get(RootDSEQueryInfo.NAMING_CONTEXTS_RESULT_ATTRIBUTE);
+            Attribute rhdsAttribute = attributes.get(RootDSEQueryInfo.RHDS_PROPERTY);
+            if (namingContextAttribute != null) {
+                domainDN = getDefaultNamingContextFromNamingContexts(namingContextAttribute);
+                if (rhdsAttribute != null) {
+                    ldapProviderType = LdapProviderType.rhds;
+                } else {
+                    ldapProviderType = LdapProviderType.ipa;
+                }
+                retVal = true;
+            }
+        }
+
+        return retVal;
+    }
     public RootDSEData(DirContext dirContext) throws NamingException {
         // Queries the rootDSE and get the "defaultNamingContext" attribute value -
         // this attribute will be a part of the LDAP URL to perform users queries (i.e - search for a user)
@@ -19,20 +59,12 @@ public class RootDSEData {
         String query = RootDSEQueryInfo.ROOT_DSE_LDAP_QUERY;
         NamingEnumeration<SearchResult> searchResults = dirContext.search("", query, controls);
 
+        boolean succeeded = false;
         // The information on base DN is located in the attribute "defaultNamingContext"
-        while (searchResults.hasMoreElements()) {
+        while (searchResults.hasMoreElements() && !succeeded) {
             SearchResult searchResult = searchResults.nextElement();
             Attributes attributes = searchResult.getAttributes();
-            Attribute attribute = attributes.get(RootDSEQueryInfo.DEFAULT_NAMING_CONTEXT_RESULT_ATTRIBUTE);
-            if (attribute != null) {
-                domainDN = (String) attribute.get();
-            } else {
-                Attribute ipaAttribute = attributes.get(RootDSEQueryInfo.NAMING_CONTEXTS_RESULT_ATTRIBUTE);
-                if (ipaAttribute != null) {
-                    isIPA = true;
-                    domainDN = (String) ipaAttribute.get(0);
-                }
-            }
+            succeeded = applyDomainAttributes(attributes);
         }
     }
 
@@ -44,12 +76,12 @@ public class RootDSEData {
         this.domainDN = domainDN;
     }
 
-    public boolean isIPA() {
-        return isIPA;
+    public LdapProviderType getLdapProviderType() {
+        return ldapProviderType;
     }
 
-    public void setIPA(boolean isIPA) {
-        this.isIPA = isIPA;
+    public void setLdapProviderType(LdapProviderType ldapProviderType) {
+        this.ldapProviderType = ldapProviderType;
     }
 
 }

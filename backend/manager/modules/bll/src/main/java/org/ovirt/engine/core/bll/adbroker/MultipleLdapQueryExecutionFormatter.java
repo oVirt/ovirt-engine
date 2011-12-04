@@ -11,10 +11,15 @@ public class MultipleLdapQueryExecutionFormatter extends LdapQueryExecutionForma
     }
 
     @Override
+    protected String getDisplayFilter(LdapQueryMetadata queryMetadata) {
+        // The display filter uses the regular parameters, because the encoded ones may not be readable
+        return getFilter(queryMetadata, queryMetadata.getQueryData().getFilterParameters());
+    }
+
+    @Override
     public LdapQueryExecution format(LdapQueryMetadata queryMetadata) {
 
-        // The display filter uses the regular parameters, because the encoded ones may not be readable
-        String displayFilter = getFilter(queryMetadata, queryMetadata.getQueryData().getFilterParameters());
+        String displayFilter = getDisplayFilter(queryMetadata);
 
         Object[] encodedFilterParameters =
                 getEncodedParameters(queryMetadata.getQueryData().getFilterParameters(),
@@ -36,7 +41,7 @@ public class MultipleLdapQueryExecutionFormatter extends LdapQueryExecutionForma
                 queryMetadata.getQueryData().getDomain());
     }
 
-    private String getFilter(LdapQueryMetadata queryMetadata, Object[] filterParameters) {
+    protected String getFilter(LdapQueryMetadata queryMetadata, Object[] filterParameters) {
         String filter = prefix;
 
         for (Object currObject : filterParameters) {

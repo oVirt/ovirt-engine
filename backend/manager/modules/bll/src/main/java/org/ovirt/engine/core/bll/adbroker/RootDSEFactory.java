@@ -12,6 +12,8 @@ public class RootDSEFactory {
             return  new ADRootDSE(rootDseRecords);
         case ipa:
             return new IPARootDSE(rootDseRecords);
+        case rhds:
+            return new RHDSRootDSE(rootDseRecords);
         case general:
         default:
             return new GeneralRootDSE(rootDseRecords);
