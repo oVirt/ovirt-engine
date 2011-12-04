@@ -208,4 +208,5 @@ install_misc:
 	cp -f ./backend/manager/conf/login-config.xml $(PREFIX)$(JBOSS_HOME)/server/default/conf
 	cp -f ./backend/manager/conf/postgres-ds.xml $(PREFIX)$(JBOSS_HOME)/server/default/deploy
 	cp -f ./backend/manager/conf/transaction-jboss-beans.xml $(PREFIX)$(JBOSS_HOME)/server/default/deploy
+	cp -f ./LICENSE $(PREFIX)/usr/share/ovirt-engine
 

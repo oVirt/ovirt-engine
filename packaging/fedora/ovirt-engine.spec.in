@@ -194,6 +194,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %dir %{_datadir}/%{name}
+%doc %{_datadir}/%{name}/LICENSE
 %dir %{_datadir}/%{name}/resources
 %dir %{_datadir}/%{name}/ovirt-isos
 %dir %{_datadir}/%{name}/db-backups
