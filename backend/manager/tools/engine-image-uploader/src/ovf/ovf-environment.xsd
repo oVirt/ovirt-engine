@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    DMTF - Distributed Management Task Force, Inc. - http://www.dmtf.org
+    
+    Document number: DSP8027
+    Date: 2009-02-12
+    Version: 1.1.0
+    Document status: DMTF Standard
+    
+    Title: OVF XML Schema Specification for OVF Environment
+    
+    Document type: Specification (W3C XML Schema)
+    Document language: E
+    
+    Contact group: tm-redundancy@dmtf.org
+    
+    Copyright (C) 2008,2009 Distributed Management Task Force, Inc. (DMTF).  All rights reserved.
+    DMTF is a not-for-profit association of industry members dedicated to promoting enterprise and
+    systems management and interoperability.  Members and non-members may reproduce DMTF specifications
+    and documents for uses consistent with this purpose, provided that correct attribution is given.  As
+    DMTF specifications may be revised from time to time, the particular version and release date should
+    always be noted.  Implementation of certain elements of this standard or proposed standard may be
+    subject to third party patent rights, including provisional patent rights (herein "patent rights").
+    DMTF makes no representations to users of the standard as to the existence of such rights, and is
+    not responsible to recognize, disclose, or identify any or all such third party patent right, owners
+    or claimants, nor for any incomplete or inaccurate identification or disclosure of such rights,
+    owners or claimants.  DMTF shall have no liability to any party, in any manner or circumstance,
+    under any legal theory whatsoever, for failure to recognize, disclose, or identify any such third
+    party patent rights, or for such party's reliance on the standard or incorporation thereof in its
+    product, protocols or testing procedures.  DMTF shall have no liability to any party implementing
+    such standard, whether such implementation is foreseeable or not, nor to any patent owner or
+    claimant, and shall have no liability or responsibility for costs or losses incurred if a standard
+    is withdrawn or modified after publication, and shall be indemnified and held harmless by any party
+    implementing the standard from any and all claims of infringement by a patent owner for such
+    implementations.  For information about patents held by third-parties which have notified the DMTF
+    that, in their opinion, such patent may relate to or impact implementations of DMTF standards, visit
+    http://www.dmtf.org/about/policies/disclosures.php.
+    
+    Change log:
+    1.0.0  - 2009-01-15 - DMTF Standard
+    1.1.0a - 2009-08-06 - Work in progress
+    - Updated DMTF header 
+    1.1.0b - 2009-09-15 - Work in progress
+    - No change, version updated to match DSP8023
+    1.1.0c - 2009-10-08 - Draft Standard
+    - No change, version updated to match DSP8023
+    1.1.0 - 2009-02-09 - DMTF Standard  
+-->  
+
+<xs:schema 
+    targetNamespace="http://schemas.dmtf.org/ovf/environment/1"
+    xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:cim="http://schemas.dmtf.org/wbem/wscim/1/common"
+    attributeFormDefault="qualified"
+    elementFormDefault="qualified">
+
+    <xs:import namespace="http://schemas.dmtf.org/wbem/wscim/1/common" 
+        schemaLocation="http://schemas.dmtf.org/wbem/wscim/1/common.xsd"/>
+    
+    <xs:element name="Environment" type="ovfenv:Environment_Type">
+        <xs:annotation>
+            <xs:documentation>Root element of OVF environment</xs:documentation>
+        </xs:annotation>                
+    </xs:element>
+
+    <xs:complexType name="Environment_Type">
+        <xs:annotation>
+            <xs:documentation>Type for root OVF environment</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element ref="ovfenv:Section" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Entity independent meta-data
+                    sections</xs:documentation>
+                </xs:annotation>                
+            </xs:element>
+            <xs:element name="Entity" type="ovfenv:Entity_Type" minOccurs="0"
+                maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Meta-data particular to a given
+                    entity</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:any namespace="##other" processContents="lax" minOccurs="0" 
+                maxOccurs="unbounded"/>                    
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" default="" use="optional">
+            <xs:annotation>
+                <xs:documentation>Identifier matching recipient of this
+                environment</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##any" processContents="lax"/>
+    </xs:complexType>
+
+    <xs:complexType name="Entity_Type">
+        <xs:annotation>
+            <xs:documentation>Container of sections for a specific entity
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element ref="ovfenv:Section" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:any namespace="##other" processContents="lax" minOccurs="0" 
+                maxOccurs="unbounded"/>                    
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>Entity identifier</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##any" processContents="lax"/>
+    </xs:complexType>
+
+    <!-- SECTION -->
+
+    <xs:element name="Section" type="ovfenv:Section_Type">
+        <xs:annotation>
+            <xs:documentation>Base elements for OVF environment sections. This is the
+                head of the substitution group.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="Section_Type" abstract="true">
+        <xs:annotation>
+            <xs:documentation>Abstract type for all sections in
+            environment</xs:documentation>
+        </xs:annotation>
+        <xs:anyAttribute namespace="##any" processContents="lax"/>
+    </xs:complexType>
+
+    <!-- CORE SECTIONS -->
+
+    <xs:element name="PropertySection" type="ovfenv:PropertySection_Type"
+        substitutionGroup="ovfenv:Section">
+        <xs:annotation>
+            <xs:documentation>Element substitutable for Section since
+                PropertySection_Type is a derivation of Section_Type </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="PropertySection_Type">
+        <xs:annotation>
+            <xs:documentation>Key/value pairs of assigned properties for an
+            entity</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ovfenv:Section_Type">
+                <xs:sequence>
+                    <xs:element name="Property" minOccurs="0" maxOccurs="unbounded">
+                        <xs:complexType>
+                            <xs:attribute name="key" type="xs:string" use="required"/>
+                            <xs:attribute name="value" type="xs:string" use="required"/>
+                            <xs:anyAttribute namespace="##any" processContents="lax"/>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:any namespace="##other" processContents="lax" minOccurs="0" 
+                        maxOccurs="unbounded"/>                    
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="PlatformSection" type="ovfenv:PlatformSection_Type"
+        substitutionGroup="ovfenv:Section">
+        <xs:annotation>
+            <xs:documentation>Element substitutable for Section since Platform_Type is 
+                a derivation of Section_Type </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="PlatformSection_Type">
+        <xs:annotation>
+            <xs:documentation>Information about deployment platform</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ovfenv:Section_Type">
+                <xs:sequence>
+                    <xs:element name="Kind" type="cim:cimString" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Experimental: Deployment platform
+                            description</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Version" type="cim:cimString" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Experimental: Deployment platform
+                            version</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Vendor" type="cim:cimString" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Experimental: Deployment platform
+                            vendor</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Locale" type="cim:cimString" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Experimental: Current locale</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Timezone" type="xs:int" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Experimental: Current timezone offset in minutes 
+                                from UTC. Time zones east of Greenwich are positive and time
+                                zones west of Greenwich are negative.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:any namespace="##other" processContents="lax" minOccurs="0" 
+                        maxOccurs="unbounded"/>                    
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

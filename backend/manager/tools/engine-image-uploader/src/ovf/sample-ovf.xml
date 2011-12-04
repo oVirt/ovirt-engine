@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ovf:Envelope xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1/"
+	xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData"
+	xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ovf:version="3.0.0.0">
+	<References>
+		<File
+			ovf:href="2b30e705-c1d6-4bd8-a6cd-a1fe8a70614f/c0e51e1b-004e-4d10-abc0-8b9f5e21f3ad"
+			ovf:id="c0e51e1b-004e-4d10-abc0-8b9f5e21f3ad" ovf:size="8589934592"
+			ovf:description="_tmcowrhel6_Fri Oct 28 13:01:24 CEST 2011_template" />
+	</References>
+    <References>
+        <File
+            ovf:href="2b30e705-c1d6-4bd8-a6cd-a1fe8a70614f/c0e51e1b-004e-4d10-abc0-8b9f5e21f3ad"
+            ovf:id="c0e51e1b-004e-4d10-abc0-8b9f5e21f3ad" ovf:size="8589934592"
+            ovf:description="_tmcowrhel6_Fri Oct 28 13:01:24 CEST 2011_template" />
+    </References>	
+	<Section xsi:type="ovf:NetworkSection_Type">
+		<Info>List of networks</Info>
+		<Network ovf:name="Network 1" />
+	</Section>
+	<Section xsi:type="ovf:DiskSection_Type">
+		<Info>List of Virtual Disks</Info>
+		<Disk ovf:diskId="c0e51e1b-004e-4d10-abc0-8b9f5e21f3ad" ovf:size="8"
+			ovf:actual_size="1" ovf:vm_snapshot_id="c1398a3c-ca59-460a-ac0c-0ea91d7218be"
+			ovf:parentRef=""
+			ovf:fileRef="2b30e705-c1d6-4bd8-a6cd-a1fe8a70614f/c0e51e1b-004e-4d10-abc0-8b9f5e21f3ad"
+			ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html"
+			ovf:volume-format="COW" ovf:volume-type="Sparse" ovf:disk-interface="VirtIO"
+			ovf:disk-type="System" ovf:boot="true" ovf:wipe-after-delete="false" />
+	</Section>
+	<Content ovf:id="out" xsi:type="ovf:VirtualSystem_Type">
+		<Name>tmcowrhel6</Name>
+		<TemplateId>5272b689-cd9f-4532-9b5d-2413eb7b9402</TemplateId>
+		<Description></Description>
+		<Domain></Domain>
+		<CreationDate>2011/10/28 11:01:24</CreationDate>
+		<IsAutoSuspend>false</IsAutoSuspend>
+		<TimeZone></TimeZone>
+		<VmType>1</VmType>
+		<default_display_type>1</default_display_type>
+		<default_boot_sequence>0</default_boot_sequence>
+		<Section ovf:id="5272b689-cd9f-4532-9b5d-2413eb7b9402"
+			ovf:required="false" xsi:type="ovf:OperatingSystemSection_Type">
+			<Info>Guest Operating System</Info>
+			<Description>RHEL6x64</Description>
+		</Section>
+		<Section xsi:type="ovf:VirtualHardwareSection_Type">
+			<Info>1 CPU, 1024 Memeory</Info>
+			<System>
+				<vssd:VirtualSystemType>RHEVM 3.0.0.0</vssd:VirtualSystemType>
+			</System>
+			<Item>
+				<rasd:Caption>1 virtual cpu</rasd:Caption>
+				<rasd:Description>Number of virtual CPU</rasd:Description>
+				<rasd:InstanceId>1</rasd:InstanceId>
+				<rasd:ResourceType>3</rasd:ResourceType>
+				<rasd:num_of_sockets>1</rasd:num_of_sockets>
+				<rasd:cpu_per_socket>1</rasd:cpu_per_socket>
+			</Item>
+			<Item>
+				<rasd:Caption>1024 MB of memory</rasd:Caption>
+				<rasd:Description>Memory Size</rasd:Description>
+				<rasd:InstanceId>2</rasd:InstanceId>
+				<rasd:ResourceType>4</rasd:ResourceType>
+				<rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+				<rasd:VirtualQuantity>1024</rasd:VirtualQuantity>
+			</Item>
+			<Item>
+				<rasd:Caption>Drive 1</rasd:Caption>
+				<rasd:InstanceId>c0e51e1b-004e-4d10-abc0-8b9f5e21f3ad
+				</rasd:InstanceId>
+				<rasd:ResourceType>17</rasd:ResourceType>
+				<rasd:HostResource>2b30e705-c1d6-4bd8-a6cd-a1fe8a70614f/c0e51e1b-004e-4d10-abc0-8b9f5e21f3ad
+				</rasd:HostResource>
+				<rasd:Parent>00000000-0000-0000-0000-000000000000</rasd:Parent>
+				<rasd:Template>00000000-0000-0000-0000-000000000000</rasd:Template>
+				<rasd:ApplicationList></rasd:ApplicationList>
+				<rasd:StorageId>1fc3879e-15a3-4dd7-9054-90aec81c5331
+				</rasd:StorageId>
+				<rasd:StoragePoolId>94faa67c-e5b7-11e0-b9b4-5254001ce785
+				</rasd:StoragePoolId>
+				<rasd:CreationDate>2011/10/28 11:09:20</rasd:CreationDate>
+				<rasd:LastModified>2011/10/28 11:09:20</rasd:LastModified>
+			</Item>
+			<Item>
+				<rasd:Caption>Ethernet adapter on rhevm</rasd:Caption>
+				<rasd:InstanceId>3</rasd:InstanceId>
+				<rasd:ResourceType>10</rasd:ResourceType>
+				<rasd:ResourceSubType>3</rasd:ResourceSubType>
+				<rasd:Connection>rhevm</rasd:Connection>
+				<rasd:Name>nic1</rasd:Name>
+				<rasd:speed>1000</rasd:speed>
+			</Item>
+			<Item>
+				<rasd:Caption>USB Controller</rasd:Caption>
+				<rasd:InstanceId>4</rasd:InstanceId>
+				<rasd:ResourceType>23</rasd:ResourceType>
+				<rasd:UsbPolicy>Enabled</rasd:UsbPolicy>
+			</Item>
+			<Item>
+				<rasd:Caption>Graphical Controller</rasd:Caption>
+				<rasd:InstanceId>5</rasd:InstanceId>
+				<rasd:ResourceType>20</rasd:ResourceType>
+				<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+			</Item>
+		</Section>
+	</Content>
+</ovf:Envelope>

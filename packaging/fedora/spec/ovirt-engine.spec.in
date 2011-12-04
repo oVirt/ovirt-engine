@@ -40,6 +40,7 @@ Requires: %{name}-userportal
 Requires: %{name}-config
 Requires: %{name}-notification-service
 Requires: %{name}-iso-uploader
+Requires: %{name}-image-uploader
 Requires: %{name}-log-collector
 Requires: %{name}-dbscripts
 Requires: %{name}-webadmin-portal
@@ -94,6 +95,15 @@ Requires: python-lxml
 
 %description iso-uploader
 ISO Uploader tool for Open Virtualization Manager
+
+%package image-uploader
+Summary: Image Uploader tool for Open Virtualization Manager
+Group: Virtualization/Management
+Requires: %{name}
+Requires: python-lxml
+
+%description image-uploader
+Image Uploader tool for Open Virtualization Manager
 
 %package log-collector
 Summary: Log Collector tool for Open Virtualization Manager
@@ -321,6 +331,11 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %{_bindir}/engine-iso-uploader
 %config(noreplace) %{_sysconfdir}/%{name}/isouploader.conf
 %doc  %{_mandir}/man8/engine-iso-uploader.8.gz
+
+%files image-uploader
+%{_datadir}/%{name}/image-uploader
+%{_bindir}/engine-image-uploader
+%config(noreplace) %{_sysconfdir}/%{name}/imageuploader.conf
 
 %files log-collector
 %attr (755,root,root) %{_datadir}/%{name}/log-collector

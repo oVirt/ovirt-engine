@@ -42,7 +42,7 @@ test:
 	$(MVN) install $(BUILD_FLAGS)
 
 install: build_mvn create_dirs install_ear install_quartz install_tools \
-		install_config install_log_collector install_iso_uploader \
+		install_config install_log_collector install_iso_uploader install_image_uploader\
 		install_sysprep install_notification_service install_db_scripts \
 		install_misc install_setup install_sec
 
@@ -71,12 +71,14 @@ rpm: $(SRPM)
 
 create_dirs:
 	@echo "*** Creating Directories"
-	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/{sysprep,kerberos,scripts,3rd-party-lib,engine.ear,conf,dbscripts,resources,ovirt-isos,iso-uploader,log-collector,db-backups,engine.ear}
+	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/{sysprep,kerberos,scripts,3rd-party-lib,engine.ear,conf,dbscripts,resources,ovirt-isos,iso-uploader,log-collector,image_uploader,db-backups,engine.ear}
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/engine-config/lib
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/notifier/lib
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/lib
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/log-collector/schemas
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/iso-uploader/schemas
+	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/image-uploader/schemas
+	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/image-uploader/ovf
 	@mkdir -p $(PREFIX)/usr/share/java
 	@mkdir -p $(PREFIX)/usr/bin
 	@mkdir -p $(PREFIX)/usr/share/man/man8
@@ -205,6 +207,21 @@ install_iso_uploader:
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/iso-uploader/schemas/*
 	rm -f $(PREFIX)/usr/bin/engine-iso-uploader
 	ln -s /usr/share/ovirt-engine/iso-uploader/engine-iso-uploader.py $(PREFIX)/usr/bin/engine-iso-uploader
+
+install_image_uploader:
+	@echo "*** Deploying image uploader"
+	cp -f ./backend/manager/tools/engine-image-uploader/src/engine-image-uploader.py $(PREFIX)/usr/share/ovirt-engine/image-uploader/
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/image-uploader/engine-image-uploader.py
+	cp -f ./backend/manager/tools/engine-image-uploader/src/imageuploader.conf $(PREFIX)/etc/ovirt-engine/
+	chmod 600 $(PREFIX)/etc/ovirt-engine/imageuploader.conf
+	cp -f ./backend/manager/tools/engine-tools-common-lib/src/rhev/schemas/api.py $(PREFIX)/usr/share/ovirt-engine/image-uploader/schemas
+	cp -f ./backend/manager/tools/engine-tools-common-lib/src/rhev/schemas/__init__.py $(PREFIX)/usr/share/ovirt-engine/image-uploader/schemas
+	cp -f ./backend/manager/tools/engine-image-uploader/src/ovf/__init__.py $(PREFIX)/usr/share/ovirt-engine/image-uploader/ovf
+	cp -f ./backend/manager/tools/engine-image-uploader/src/ovf/ovfenvelope.py $(PREFIX)/usr/share/ovirt-engine/image-uploader/ovf
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/image-uploader/schemas/*
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/image-uploader/ovf/*
+	rm -f $(PREFIX)/usr/bin/engine-image-uploader
+	ln -s /usr/share/ovirt-engine/image-uploader/engine-image-uploader.py $(PREFIX)/usr/bin/engine-image-uploader
 
 install_sysprep:
 	@echo "*** Deploying sysperp"
