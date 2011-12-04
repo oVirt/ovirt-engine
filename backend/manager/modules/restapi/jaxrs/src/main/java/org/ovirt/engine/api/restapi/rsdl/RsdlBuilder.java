@@ -14,9 +14,10 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.restapi.util;
+package org.ovirt.engine.api.restapi.rsdl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -27,15 +28,20 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.ovirt.engine.api.common.util.FileUtils;
 import org.ovirt.engine.api.common.util.ReflectionHelper;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Body;
 import org.ovirt.engine.api.model.HttpMethod;
 import org.ovirt.engine.api.model.Link;
+import org.ovirt.engine.api.model.Parameter;
+import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.RSDL;
 import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Response;
@@ -43,12 +49,14 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.yaml.snakeyaml.Yaml;
 
 public class RsdlBuilder {
 
     private RSDL rsdl;
     private String entryPoint;
     private BackendApiResource apiResource;
+    private Map<String, Action> parametersMetaData;
     private String href;
     private String description;
 
@@ -61,10 +69,29 @@ public class RsdlBuilder {
     protected static final LogCompat LOG = LogFactoryCompat.getLog(RsdlBuilder.class);
 
     private static final String RESOURCES_PACKAGE = "org.ovirt.engine.api.resource";
+    private static final String PARAMS_METADATA = "rsdl_metadata_v-3.1.yaml";
 
     public RsdlBuilder(BackendApiResource apiResource) {
         this.apiResource = apiResource;
         this.entryPoint = apiResource.getUriInfo().getBaseUri().getPath();
+        this.parametersMetaData = loadParametersMetaData();
+    }
+
+    public Map<String, Action> loadParametersMetaData() {
+        parametersMetaData = new HashMap<String, Action>();
+        try {
+             InputStream stream = FileUtils.get(RESOURCES_PACKAGE, PARAMS_METADATA);
+             if (stream != null) {
+                 Object result = new Yaml().load(stream);
+                 for (Action action : ((MetaData)result).getActions()) {
+                     parametersMetaData.put(action.getName(), action);
+                 }
+             }
+             LOG.error("Parameters metatdata file not found.");
+        } catch (Exception e) {
+             LOG.error("Loading parameters metatdata failed.", e);
+        }
+        return parametersMetaData;
     }
 
     private RSDL construct() throws ClassNotFoundException, IOException {
@@ -139,7 +166,7 @@ public class RsdlBuilder {
             return this;
         }
         public Link build() {
-            return link;
+            return addParametersMetadata(link);
         }
     }
 
@@ -149,7 +176,7 @@ public class RsdlBuilder {
         List<Class<?>> classes = ReflectionHelper.getClasses(RESOURCES_PACKAGE);
         for (String path : apiResource.getRels()) {
             Class<?> resource = findResource(path, classes);
-            results.addAll(describe(resource, entryPoint +  path, new HashMap<String, Type>()));
+            results.addAll(describe(resource, entryPoint + "/" +  path, new HashMap<String, Type>()));
         }
         return results;
     }
@@ -253,11 +280,44 @@ public class RsdlBuilder {
         results.add(new RsdlBuilder.LinkBuilder().url(prefix).rel(GET).responseType(returnValueStr).httpMethod(HttpMethod.GET).build());
     }
 
+    private Link addParametersMetadata(Link link) {
+        String link_name = link.getHref() + "|rel=" + link.getRel();
+        if (this.parametersMetaData.containsKey(link_name)) {
+            Action action = this.parametersMetaData.get(link_name);
+            if (action.getRequest() != null) {
+                if (action.getRequest().getBody() != null) {
+                    if (action.getRequest().getBody().getSignatures() != null) {
+                        for (Signature signature : action.getRequest().getBody().getSignatures()) {
+                            ParametersSet ps = new ParametersSet();
+                            for (Entry<Object, Object> mandatoryKeyValuePair : signature.getMandatoryArguments().entrySet()) {
+                                Parameter mandatory_param = new Parameter();
+                                mandatory_param.setName(mandatoryKeyValuePair.getKey().toString());
+                                mandatory_param.setType(mandatoryKeyValuePair.getValue().toString());
+                                mandatory_param.setMandatory(true);
+                                ps.getParameters().add(mandatory_param);
+                            }
+                            for (Entry<Object, Object> optionalKeyValuePair : signature.getOptionalArguments().entrySet()) {
+                                Parameter optional_param = new Parameter();
+                                optional_param.setName(optionalKeyValuePair.getKey().toString());
+                                optional_param.setType(optionalKeyValuePair.getValue().toString());
+                                optional_param.setMandatory(false);
+                                ps.getParameters().add(optional_param);
+                            }
+                            link.getRequest().getBody().getParametersSets().add(ps);
+                        }
+                    }
+                }
+            }
+        }
+        return link;
+    }
+
     private void handleAdd(String prefix, Collection<Link> results, Method m) {
         Class<?>[] parameterTypes = m.getParameterTypes();
         assert(parameterTypes.length==1);
         String s = parameterTypes[0].getSimpleName();
         s = handleExcpetionalCases(s, prefix); //TODO: refactor to a more generic solution
+
         results.add(new RsdlBuilder.LinkBuilder().url(prefix).rel(ADD).requestParameter(s).responseType(s).httpMethod(HttpMethod.POST).build());
     }
 

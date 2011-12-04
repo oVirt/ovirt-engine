@@ -26,10 +26,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
@@ -181,7 +178,23 @@ public class ReflectionHelper {
         }
         return ret;
     }
-
+    /**
+     * Locate all directories in given package
+     *
+     * @param path
+     * @return Map<URL, File>
+     * @throws IOException
+     */
+    public static List<URL> getDirectories(String path) throws IOException {
+         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+         assert classLoader != null;
+         Enumeration<URL> resources = classLoader.getResources(path);
+         List<URL> dirs = new ArrayList<URL>();
+         while (resources.hasMoreElements()) {
+             dirs.add(resources.nextElement());
+         }
+         return dirs;
+    }
     /**
      * Locates all classes in given package
      *
@@ -192,30 +205,22 @@ public class ReflectionHelper {
      */
     public static List<Class<?>> getClasses(String packageName) throws ClassNotFoundException,
             IOException {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        assert classLoader != null;
         String path = packageName.replace('.', '/');
-        Enumeration<URL> resources = classLoader.getResources(path);
-        Map<URL, File> dirs = new HashMap<URL, File>();
-        while (resources.hasMoreElements()) {
-            URL url = resources.nextElement();
-            dirs.put(url, new File(url.getFile()));
-        }
+        List<URL> dirs = getDirectories(path);
         ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
-        ClassLoader loader = URLClassLoader.newInstance(dirs.keySet().toArray(new URL[0]),
+        ClassLoader loader = URLClassLoader.newInstance(dirs.toArray(new URL[0]),
                                                         Thread.currentThread().getContextClassLoader());
 
-        for (Entry<URL, File> directory : dirs.entrySet()) {
-            String resource = directory.getKey().getPath().replace("/"+path+"/", "");
+        for (URL directory : dirs) {
+            String resource = directory.getPath().replace("/"+path+"/", "");
             if (resource.endsWith(".jar")) {
                 classes.addAll(getClassNamesInJarPackage(loader, resource, packageName));
             } else {
-                classes.addAll(getClassNamesInPackage(directory.getValue(), packageName));
+                classes.addAll(getClassNamesInPackage(new File(directory.getFile()), packageName));
             }
         }
         return classes;
     }
-
     /**
      * Locates all classes in given package
      *

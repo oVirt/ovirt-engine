@@ -2117,7 +2117,13 @@
   <xs:complexType name="Body">
     <xs:sequence>
       <xs:element name="type" type="xs:string" minOccurs="1" maxOccurs="1"/>
-      <xs:element ref="parameters_set" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="parameters_set" maxOccurs="unbounded" minOccurs="0">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="ParametersSets"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -2151,18 +2157,17 @@
   <xs:element name="parameter" type="Parameter"/>
 
   <xs:complexType name="Parameter">
-    <xs:complexContent>
-      <xs:extension base="BaseResource">
-        <xs:sequence>
-          <xs:element name="type" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="type" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="mandatory" type="xs:boolean" minOccurs="0"/>
+    </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="parameters" type="Parameters"/>
+  <xs:element name="parameters_set" type="ParametersSet"/>
 
-  <xs:complexType name="Parameters">
+  <xs:complexType name="ParametersSet">
     <xs:sequence>
       <xs:element ref="parameter" maxOccurs="unbounded" minOccurs="0">
         <xs:annotation>
@@ -2174,26 +2179,12 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="parameters_set" type="ParametersSet"/>
-
-  <xs:complexType name="ParametersSet">
-    <xs:sequence>
-      <xs:element ref="parameters" maxOccurs="unbounded" minOccurs="0">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="ParametersSet"/>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-
   <xs:element name="rsdl" type="RSDL"/>
 
   <xs:complexType name="RSDL">
     <xs:complexContent>
       <xs:extension base="BaseResource">
-        <xs:sequence>
+        <xs:sequence>        
           <xs:element ref="version" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
       </xs:extension>

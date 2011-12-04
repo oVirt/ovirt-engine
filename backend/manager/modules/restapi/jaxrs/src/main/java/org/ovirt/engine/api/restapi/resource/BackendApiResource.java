@@ -46,7 +46,7 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.api.restapi.util.RsdlBuilder;
+import org.ovirt.engine.api.restapi.rsdl.RsdlBuilder;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
 
 public class BackendApiResource
