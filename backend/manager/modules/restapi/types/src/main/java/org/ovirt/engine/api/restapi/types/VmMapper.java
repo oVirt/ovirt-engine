@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.EnumSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -633,7 +633,7 @@ public class VmMapper {
 
     @Mapping(from = Boot.class, to = List.class)
     public static BootSequence map(List<Boot> boot, BootSequence template) {
-        Set devSet = EnumSet.noneOf(BootDevice.class);
+        Set<BootDevice> devSet = new LinkedHashSet<BootDevice>();
         for (Boot b : boot) {
             if (b.isSetDev()) {
                 BootDevice dev = BootDevice.fromValue(b.getDev());
