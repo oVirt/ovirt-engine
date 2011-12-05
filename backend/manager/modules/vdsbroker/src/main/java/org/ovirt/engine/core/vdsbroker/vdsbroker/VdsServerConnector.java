@@ -41,6 +41,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> migrateStatus(String vmId);
 
+    public Map<String, Object> migrateCancel(String vmId);
+
     public Map<String, Object> changeCD(String vmId, String imageLocation);
 
     public Map<String, Object> changeFloppy(String vmId, String imageLocation);

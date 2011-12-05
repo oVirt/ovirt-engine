@@ -12,6 +12,7 @@ public enum VDSCommandType {
     Resume("org.ovirt.engine.core.vdsbroker"),
     Migrate("org.ovirt.engine.core.vdsbroker"),
     MigrateStatus("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    CancelMigrate("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     ChangeDisk("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     ChangeFloppy("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     VmLogon("org.ovirt.engine.core.vdsbroker.vdsbroker"),

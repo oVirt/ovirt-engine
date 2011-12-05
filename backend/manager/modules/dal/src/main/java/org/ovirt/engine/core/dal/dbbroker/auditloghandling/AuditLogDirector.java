@@ -318,6 +318,8 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.AUTO_SUSPEND_VM_FINISH_FAILURE, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.AUTO_FAILED_SUSPEND_VM, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VM_MIGRATION_START, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.VM_CANCEL_MIGRATION, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.VM_CANCEL_MIGRATION_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VM_IMPORT, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.VM_IMPORT_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.TEMPLATE_IMPORT, AuditLogSeverity.NORMAL);

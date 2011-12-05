@@ -47,6 +47,7 @@ public enum VdcActionType {
     RemoveVmTemplateFromImportExport(38, ActionGroup.IMPORT_EXPORT_VM),
     ImportVmTemplate(39, ActionGroup.IMPORT_EXPORT_VM),
     ChangeVMCluster(40, ActionGroup.EDIT_VM_PROPERTIES),
+    CancelMigrateVm(41, ActionGroup.MIGRATE_VM),
     // powerclient 4.2
     PowerClientMigrateOnConnectCheck(50),
     SetDedicatedVm(51),

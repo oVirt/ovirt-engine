@@ -189,6 +189,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String VAR__ACTION__PAUSE();
     String VAR__ACTION__HIBERNATE();
     String VAR__ACTION__MIGRATE();
+    String VAR__ACTION__CANCEL_MIGRATE();
     String VAR__ACTION__ATTACHE_DESKTOP_TO();
     String VAR__ACTION__REVERT_TO();
     String VAR__ACTION__PREVIEW();
@@ -503,4 +504,5 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_DISK_SYSTEM_ALREADY_EXISTS();
     String ACTION_TYPE_FAILED_VM_TASKS_ARE_ALREADY_RUNNING();
     String MOVE_VM_CLUSTER_MISSING_NETWORK();
+    String VM_CANNOT_CANCEL_MIGRATION_WHEN_VM_IS_NOT_MIGRATING();
 }

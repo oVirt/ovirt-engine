@@ -232,6 +232,17 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    public StatusOnlyReturnForXmlRpc migrateCancel(String vmId) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.migrateCancel(vmId);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+
+    }
+
     public OneVmReturnForXmlRpc changeDisk(String vmId, String imageLocation) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.changeCD(vmId, imageLocation);

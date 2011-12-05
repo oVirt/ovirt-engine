@@ -323,4 +323,5 @@ public interface VdsmErrors extends ConstantsWithLookup {
     String DEVICE_BLOCK_SIZE_NOT_SUPPORTED();
     String HOST_ALREADY_EXISTS();
     String MIGRATION_DEST_INVALID_HOSTNAME();
+    String MIGRATION_CANCEL_ERROR();
 }

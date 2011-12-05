@@ -28,6 +28,7 @@ public enum VdcBllMessages {
     VAR__ACTION__PAUSE,
     VAR__ACTION__HIBERNATE,
     VAR__ACTION__MIGRATE,
+    VAR__ACTION__CANCEL_MIGRATE,
     VAR__ACTION__ATTACHE_DESKTOP_TO,
     VAR__ACTION__REVERT_TO,
     VAR__ACTION__PREVIEW,
@@ -178,6 +179,7 @@ public enum VdcBllMessages {
     /**
      * "Cannot delete the server, there are desktop(s) running on the server.";
      */
+    VM_CANNOT_CANCEL_MIGRATION_WHEN_VM_IS_NOT_MIGRATING,
     VM_CANNOT_REMOVE_VDS_GROUP_VMS_DETECTED,
     VM_TEMPLATE_IMAGE_IS_LOCKED,
     VM_TEMPLATE_IMAGE_IS_ILLEGAL,

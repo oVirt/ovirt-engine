@@ -46,6 +46,8 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc migrateStatus(String vmId);
 
+    StatusOnlyReturnForXmlRpc migrateCancel(String vmId);
+
     OneVmReturnForXmlRpc changeDisk(String vmId, String imageLocation);
 
     OneVmReturnForXmlRpc changeFloppy(String vmId, String imageLocation);

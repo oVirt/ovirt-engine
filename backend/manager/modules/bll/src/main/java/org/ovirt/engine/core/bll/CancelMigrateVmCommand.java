@@ -1,0 +1,49 @@
+package org.ovirt.engine.core.bll;
+
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
+import org.ovirt.engine.core.dal.VdcBllMessages;
+
+public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
+    public CancelMigrateVmCommand(T param) {
+        super(param);
+        setVmId(param.getVmId());
+    }
+
+    @Override
+    protected void executeCommand() {
+        VDSReturnValue retVal = Backend.getInstance()
+                .getResourceManager()
+                .RunVdsCommand(
+                        VDSCommandType.CancelMigrate,
+                        new VdsAndVmIDVDSParametersBase(getVm().getrun_on_vds().getValue(),
+                                getParameters().getVmId()));
+
+        setSucceeded(retVal.getSucceeded());
+    }
+
+    @Override
+    protected boolean canDoAction() {
+        if (getVm() == null) {
+            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CANCEL_MIGRATE);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
+            return false;
+        }
+        if (getVm().getstatus() != VMStatus.MigratingFrom) {
+            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_CANCEL_MIGRATION_WHEN_VM_IS_NOT_MIGRATING);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.VM_CANCEL_MIGRATION
+                : AuditLogType.VM_CANCEL_MIGRATION_FAILED;
+    }
+}
