@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.config.Config;
@@ -129,18 +128,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             }
         }
         return returnValue;
-    }
-
-    private storage_pool _storagePool;
-
-    @Override
-    public storage_pool getStoragePool() {
-        if (_storagePool == null) {
-            if (getStoragePoolId() != null && !getStoragePoolId().equals(Guid.Empty)) {
-                _storagePool = getStoragePoolDAO().get(getStoragePoolId().getValue());
-            }
-        }
-        return _storagePool;
     }
 
     @Override

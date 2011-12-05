@@ -240,7 +240,7 @@ public class AuditLogableBase extends TimeoutBase {
     private storage_pool _storagePool;
 
     public storage_pool getStoragePool() {
-        if (_storagePool == null && getStoragePoolId() != null) {
+        if (_storagePool == null && getStoragePoolId() != null && !Guid.Empty.equals(getStoragePoolId())) {
             _storagePool = getStoragePoolDAO().get(getStoragePoolId().getValue());
         }
         return _storagePool;
