@@ -28,6 +28,8 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class XmlRpcUtils {
 
+    private static final String HTTP = "http://";
+    private static final String HTTPS = "https://";
     private static LogCompat log = LogFactoryCompat.getLog(XmlRpcUtils.class);
     static {
         if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)) {
@@ -53,7 +55,6 @@ public class XmlRpcUtils {
     /**
      * wrapper for the apache xmlrpc client factory. gets the xmlrpc connection parameters and an interface to implement
      * and returns an instance which implements the given interface.
-     *
      * @param <T>
      *            the type of the instance for the interface
      * @param hostName
@@ -64,28 +65,26 @@ public class XmlRpcUtils {
      *            - the time out for the connection
      * @param type
      *            - the instance type of the interface for this connection
+     * @param isSecure
+     *            - if a connection should be https or http
      * @return an instance of the given type.
      */
-    public static <T> KeyValuePairCompat<T, HttpClient> getHttpConnection(String hostName, int port, int clientTimeOut,
-            Class<T> type) {
+    public static <T> KeyValuePairCompat<T, HttpClient> getConnection(String hostName, int port, int clientTimeOut,
+            Class<T> type, boolean isSecure) {
+        URL serverUrl;
+        String prefix;
+        if (isSecure) {
+            prefix = HTTPS;
+        } else {
+            prefix = HTTP;
+        }
         try {
-            URL serverUrl = new URL("http://" + hostName + ":" + port);
-            return getHttpConnection(serverUrl, clientTimeOut, type);
+            serverUrl = new URL(prefix + hostName + ":" + port);
         } catch (MalformedURLException mfue) {
             log.error("failed to forme the xml-rpc url", mfue);
             return null;
         }
-    }
-
-    public static <T> KeyValuePairCompat<T, HttpClient> getHttpsConnection(String hostName, int port,
-            int clientTimeOut, Class<T> type) {
-        try {
-            URL serverUrl = new URL("https://" + hostName + ":" + port);
-            return getHttpConnection(serverUrl, clientTimeOut, type);
-        } catch (MalformedURLException mfue) {
-            log.error("failed to forme the xml-rpc url", mfue);
-            return null;
-        }
+        return getHttpConnection(serverUrl, clientTimeOut, type);
     }
 
     public static void shutDownConnection(HttpClient httpClient) {

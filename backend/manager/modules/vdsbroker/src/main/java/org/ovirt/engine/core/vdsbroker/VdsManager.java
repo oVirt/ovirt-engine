@@ -184,15 +184,12 @@ public class VdsManager {
         log.infoFormat("vdsBroker({0},{1})", _vds.gethost_name(), _vds.getport());
 
         int clientTimeOut = Config.<Integer> GetValue(ConfigValues.vdsTimeout) * 1000;
-        KeyValuePairCompat<VdsServerConnector, HttpClient> returnValue;
-        if (!Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)) {
-            returnValue = XmlRpcUtils.getHttpConnection(_vds.gethost_name(), _vds.getport(), clientTimeOut,
-                    VdsServerConnector.class);
-        } else {
-            returnValue = XmlRpcUtils.getHttpsConnection(_vds.gethost_name(), _vds.getport(), clientTimeOut,
-                    VdsServerConnector.class);
-        }
-
+        KeyValuePairCompat<VdsServerConnector, HttpClient> returnValue =
+                XmlRpcUtils.getConnection(_vds.gethost_name(),
+                        _vds.getport(),
+                        clientTimeOut,
+                        VdsServerConnector.class,
+                        Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers));
         _vdsProxy = new VdsServerWrapper(returnValue.getKey(), returnValue.getValue());
     }
 

@@ -549,39 +549,23 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         public IIrsServer getIrsProxy() {
             if (getmIrsProxy() == null) {
                 storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().get(_storagePoolId);
-                // dont try to start spm on uninitialized pool
+                // don't try to start spm on uninitialized pool
                 if (storagePool.getstatus() != StoragePoolStatus.Uninitialized) {
-                    Object result = TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
+                    String host = TransactionSupport.executeInNewTransaction(new TransactionMethod<String>() {
                         @Override
-                        public Object runInTransaction() {
+                        public String runInTransaction() {
                             return gethostFromVds();
                         }
                     });
 
-                    if (result != null) {
-                        String host = result.toString();
-
-                        // log.InfoFormat("Created IrsProxy , Call stack:{0}",
-                        // b.toString());
-
+                    if (host != null) {
                         int clientTimeOut = Config.<Integer> GetValue(ConfigValues.vdsTimeout) * 1000;
-                        KeyValuePairCompat<IrsServerConnector, HttpClient> returnValue;
-                        if (!Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)) {
-                            returnValue = XmlRpcUtils.getHttpConnection(host, getmIrsPort(), clientTimeOut,
-                                    IrsServerConnector.class);
-                        } else {
-                            returnValue = XmlRpcUtils.getHttpsConnection(host, getmIrsPort(), clientTimeOut,
-                                    IrsServerConnector.class);
-                            // setmIrsProxy(XmlRpcProxyGen.<IIrsServer>Create());
-                            // String certFileName =
-                            // Config.resolveCertificatePath();
-                            // getmIrsProxy().setUrl("https://" + host + ":" +
-                            // getmIrsPort());
-                            // X509Certificate cert = new
-                            // X509Certificate(certFileName,
-                            // Config.<String>GetValue(ConfigValues.CertificatePassword));
-                            // getmIrsProxy().getClientCertificates().add(cert);
-                        }
+                        KeyValuePairCompat<IrsServerConnector, HttpClient> returnValue =
+                                XmlRpcUtils.getConnection(host,
+                                        getmIrsPort(),
+                                        clientTimeOut,
+                                        IrsServerConnector.class,
+                                        Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers));
                         setmIrsProxy(new IrsServerWrapper(returnValue.getKey(), returnValue.getValue()));
                         Class[] inputTypes = new Class[] { storage_pool.class, boolean.class };
                         Object[] inputParams = new Object[] { storagePool, _isSpmStartCalled };
