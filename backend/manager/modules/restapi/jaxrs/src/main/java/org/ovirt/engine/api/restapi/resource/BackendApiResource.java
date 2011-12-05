@@ -16,11 +16,15 @@
 
 package org.ovirt.engine.api.restapi.resource;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -38,6 +42,7 @@ import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.ApiResource;
+import org.ovirt.engine.api.common.util.FileUtils;
 import org.ovirt.engine.api.common.util.JAXBHelper;
 import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.common.util.LinkHelper.LinkFlags;
@@ -47,6 +52,7 @@ import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.api.restapi.rsdl.RsdlBuilder;
+import org.ovirt.engine.api.restapi.rsdl.SchemaBuilder;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
 
 public class BackendApiResource
@@ -54,12 +60,17 @@ public class BackendApiResource
     implements ApiResource {
 
     private static final String SYSTEM_STATS_ERROR = "Unknown error querying system statistics";
-
+    private static final String RESOURCES_PACKAGE = "org.ovirt.engine.api.resource";
+    private static final String API_SCHEMA = "api.xsd";
     private static final String RSDL_CONSTRAINT_PARAMETER = "rsdl";
-    private static final String RSDL_DESCRIPTION = "The oVirt RESTful API description language.";
-    private static RSDL rsdl = null;
-
+    private static final String SCHEMA_CONSTRAINT_PARAMETER = "schema";
     private static final String QUERY_PARAMETER = "?";
+    private static final String RSDL_DESCRIPTION = "The oVirt RESTful API description language.";
+    private static final String SCHEMA_DESCRIPTION = "oVirt API entities schema.";
+    private static final String SCHEMA_NAME = "ovirt-engine-api-schema.xsd";
+    private static final String SCHEMA_REL = "get";
+
+    private static RSDL rsdl = null;
 
     protected final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
 
@@ -187,10 +198,37 @@ public class BackendApiResource
         BaseResource response = null;
         if (QueryHelper.hasConstraint(getUriInfo(), RSDL_CONSTRAINT_PARAMETER)) {
             response = addSystemVersion(getRSDL());
+        } else if (QueryHelper.hasConstraint(getUriInfo(), SCHEMA_CONSTRAINT_PARAMETER)) {
+            return getSchema();
         } else {
             response = addSummary(addSystemVersion(addLinks(new API())));
         }
         return getResponseBuilder(response).entity(response).build();
+    }
+
+    private Response getSchema() {
+        ByteArrayOutputStream baos = null;
+        InputStream is = null;
+        int thisLine;
+        try {
+            baos = new ByteArrayOutputStream();
+            is = FileUtils.get(RESOURCES_PACKAGE, API_SCHEMA);
+            while ((thisLine = is.read()) != -1) {
+                baos.write(thisLine);
+            }
+            baos.flush();
+            return Response.ok(baos.toByteArray(), MediaType.APPLICATION_OCTET_STREAM)
+                           .header("content-disposition","attachment; filename = " + SCHEMA_NAME)
+                           .build();
+        } catch (IOException e) {
+            LOG.error("Loading api.xsd file failed.", e);
+            return Response.serverError().build();
+        } finally {
+            try {
+                if (baos != null) baos.close();
+                if (is != null) is.close();
+            } catch (IOException e) {;}
+        }
     }
 
     private RSDL addSystemVersion(RSDL rsdl) {
@@ -202,6 +240,11 @@ public class BackendApiResource
         if (rsdl == null) {
             rsdl =  new RsdlBuilder(this).description(RSDL_DESCRIPTION).
                                           href(getUriInfo().getBaseUri().getPath() + QUERY_PARAMETER + RSDL_CONSTRAINT_PARAMETER).
+                                          schema(new SchemaBuilder().rel(SCHEMA_REL)
+                                                                    .href(getUriInfo().getBaseUri().getPath() + QUERY_PARAMETER + SCHEMA_CONSTRAINT_PARAMETER)
+                                                                    .name(SCHEMA_NAME)
+                                                                    .description(SCHEMA_DESCRIPTION)
+                                                                    .build()).
                                           build();
         }
         return rsdl;

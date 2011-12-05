@@ -45,6 +45,7 @@ import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.RSDL;
 import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Response;
+import org.ovirt.engine.api.model.Schema;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.core.compat.LogCompat;
@@ -58,6 +59,8 @@ public class RsdlBuilder {
     private BackendApiResource apiResource;
     private Map<String, Action> parametersMetaData;
     private String href;
+    private Schema schema;
+
     private String description;
 
     private static final String ACTION = "Action";
@@ -107,6 +110,7 @@ public class RsdlBuilder {
             rsdl = construct();
             rsdl.setHref(getHref());
             rsdl.setDescription(getDescription());
+            rsdl.setSchema(getSchema());
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("RSDL generation failure.", e);
@@ -119,6 +123,11 @@ public class RsdlBuilder {
         return this;
     }
 
+    public RsdlBuilder schema(Schema schema) {
+        this.schema = schema;
+        return this;
+    }
+
     public RsdlBuilder description(String description) {
         this.description = description;
         return this;
@@ -126,6 +135,10 @@ public class RsdlBuilder {
 
     public String getHref() {
         return this.href;
+    }
+
+    public Schema getSchema() {
+        return schema;
     }
 
     public String getDescription() {

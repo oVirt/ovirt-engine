@@ -2179,12 +2179,26 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="schema" type="Schema"/>
+
+  <xs:complexType name="Schema">
+    <xs:complexContent>
+      <xs:extension base="Link">
+        <xs:sequence>
+          <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="rsdl" type="RSDL"/>
 
   <xs:complexType name="RSDL">
     <xs:complexContent>
       <xs:extension base="BaseResource">
-        <xs:sequence>        
+        <xs:sequence>
+          <xs:element ref="schema" minOccurs="0" maxOccurs="1" />
           <xs:element ref="version" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
       </xs:extension>
