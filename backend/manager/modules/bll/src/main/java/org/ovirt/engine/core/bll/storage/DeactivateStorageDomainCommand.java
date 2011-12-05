@@ -229,7 +229,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 @Override
                 public Object runInTransaction() {
                     getCompensationContext().snapshotEntityStatus(map, map.getstatus());
-                    map.setstatus(StorageDomainStatus.InActive);
+                    map.setstatus(StorageDomainStatus.Maintenance);
                     DbFacade.getInstance().getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
                     if (!Guid.Empty.equals(_newMasterStorageDomainId)) {
                         storage_pool_iso_map mapOfNewMaster = getNewMaster().getStoragePoolIsoMapData();

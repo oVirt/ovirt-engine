@@ -158,7 +158,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     /**
      * @param compensationContext the compensationContext to set
      */
-    protected void setCompensationContext(CompensationContext compensationContext) {
+    public void setCompensationContext(CompensationContext compensationContext) {
         this.compensationContext = compensationContext;
     }
 
