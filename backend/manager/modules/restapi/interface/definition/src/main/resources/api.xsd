@@ -11,46 +11,14 @@
   </xs:annotation>
 
   <!-- Links -->
-  <xs:element name="keyValuePair" type="KeyValuePair"/>
-
-  <xs:complexType name="KeyValuePair">
-    <xs:sequence>
-        <xs:element name="key" type="xs:string" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:element name="linkCapabilities" type="LinkCapabilities"/>
-  <xs:complexType name="LinkCapabilities">
-    <xs:sequence>
-      <xs:element name="searchable" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="detailedLink" type="DetailedLink"/>
-
-  <xs:complexType name="DetailedLink">
-    <xs:complexContent>
-      <xs:extension base="Link">
-        <xs:sequence>
-          <xs:element ref="request" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="response" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="linkCapabilities" minOccurs="0" maxOccurs="1"/>
-          <xs:sequence>
-             <xs:annotation>
-              <xs:appinfo>
-                <jaxb:property name="urlParmeters"/>
-              </xs:appinfo>
-            </xs:annotation>
-            <xs:element ref="keyValuePair" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
 
   <xs:element name="link" type="Link"/>
 
   <xs:complexType name="Link">
+	<xs:sequence>
+		<xs:element ref="request" minOccurs="0" maxOccurs="1"/>
+		<xs:element ref="response" minOccurs="0" maxOccurs="1"/>
+	</xs:sequence>
     <xs:attribute name="href" type="xs:string"/>
     <xs:attribute name="rel" type="xs:string"/>
   </xs:complexType>

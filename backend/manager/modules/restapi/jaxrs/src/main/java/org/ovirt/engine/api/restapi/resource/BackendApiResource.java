@@ -20,27 +20,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import org.ovirt.engine.api.common.util.JAXBHelper;
-import org.ovirt.engine.api.common.util.LinkHelper;
-import org.ovirt.engine.api.common.util.LinkHelper.LinkFlags;
-import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.API;
 import org.ovirt.engine.api.model.ApiSummary;
 import org.ovirt.engine.api.model.BaseResource;
-import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.Hosts;
-import org.ovirt.engine.api.model.KeyValuePair;
-import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.LinkHeader;
+import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.ObjectFactory;
 import org.ovirt.engine.api.model.ProductInfo;
 import org.ovirt.engine.api.model.RSDL;
@@ -50,13 +43,17 @@ import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.ApiResource;
 import org.ovirt.engine.api.common.util.FileUtils;
-import org.ovirt.engine.api.restapi.util.VersionHelper;
+import org.ovirt.engine.api.common.util.JAXBHelper;
+import org.ovirt.engine.api.common.util.LinkHelper;
+import org.ovirt.engine.api.common.util.LinkHelper.LinkFlags;
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.api.restapi.rsdl.RsdlBuilder;
 import org.ovirt.engine.api.restapi.rsdl.SchemaBuilder;
+import org.ovirt.engine.api.restapi.util.VersionHelper;
 
 public class BackendApiResource
     extends BackendResource
@@ -67,63 +64,47 @@ public class BackendApiResource
     private static final String API_SCHEMA = "api.xsd";
     private static final String RSDL_CONSTRAINT_PARAMETER = "rsdl";
     private static final String SCHEMA_CONSTRAINT_PARAMETER = "schema";
+    private static final String QUERY_PARAMETER = "?";
     private static final String RSDL_DESCRIPTION = "The oVirt RESTful API description language.";
     private static final String SCHEMA_DESCRIPTION = "oVirt API entities schema.";
     private static final String SCHEMA_NAME = "ovirt-engine-api-schema.xsd";
     private static final String SCHEMA_REL = "get";
 
     private static RSDL rsdl = null;
-    private static final String QUERY_PARAMETER = "?";
+
     protected final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
 
-    private Collection<DetailedLink> getLinks() {
-        Collection<DetailedLink> links = new LinkedList<DetailedLink>();
-        links.add(createLink("capabilities"));
-        links.add(createLink("clusters", LinkFlags.SEARCHABLE));
-        links.add(createLink("datacenters", LinkFlags.SEARCHABLE));
-        links.add(createLink("events", LinkFlags.SEARCHABLE, getEventParams()));
-        links.add(createLink("hosts", LinkFlags.SEARCHABLE));
-        links.add(createLink("networks"));
-        links.add(createLink("roles"));
-        links.add(createLink("storagedomains", LinkFlags.SEARCHABLE));
-        links.add(createLink("tags"));
-        links.add(createLink("templates", LinkFlags.SEARCHABLE));
-        links.add(createLink("users", LinkFlags.SEARCHABLE));
-        links.add(createLink("groups", LinkFlags.SEARCHABLE));
-        links.add(createLink("domains"));
-        links.add(createLink("vmpools", LinkFlags.SEARCHABLE));
-        links.add(createLink("vms", LinkFlags.SEARCHABLE));
-        return links;
-    }
+    private API addLinks(API api) {
+        addLink(api, "capabilities");
+        addLink(api, "clusters", LinkFlags.SEARCHABLE);
+        addLink(api, "datacenters", LinkFlags.SEARCHABLE);
+        addLink(api, "events", LinkFlags.SEARCHABLE, new HashMap<String, String>(){{put("from", "event_id");}});
+        addLink(api, "hosts", LinkFlags.SEARCHABLE);
+        addLink(api, "networks");
+        addLink(api, "roles");
+        addLink(api, "storagedomains", LinkFlags.SEARCHABLE);
+        addLink(api, "tags");
+        addLink(api, "templates", LinkFlags.SEARCHABLE);
+        addLink(api, "users", LinkFlags.SEARCHABLE);
+        addLink(api, "groups", LinkFlags.SEARCHABLE);
+        addLink(api, "domains");
+        addLink(api, "vmpools", LinkFlags.SEARCHABLE);
+        addLink(api, "vms", LinkFlags.SEARCHABLE);
 
-    private API getApi() {
-        API api = new API();
-        for (DetailedLink detailedLink : getLinks()) {
-            //add thin link
-            api.getLinks().add(LinkHelper.createLink(detailedLink.getHref(), detailedLink.getRel()));
-            //when required - add extra link for search
-            if (detailedLink.isSetLinkCapabilities() && detailedLink.getLinkCapabilities().isSetSearchable() && detailedLink.getLinkCapabilities().isSearchable()) {
-                api.getLinks().add(LinkHelper.createLink(detailedLink.getHref(), detailedLink.getRel(), detailedLink.getUrlParmeters()));
-            }
-        }
+        addStaticLinks(getSpecialObjects(api).getLinks(),
+                new String[]{"templates/blank", "tags/root"},
+                new String[]{getTemplateBlankUri(), getTagRootUri()});
+
         return api;
     }
 
-    private LinkedList<KeyValuePair> getEventParams() {
-        LinkedList<KeyValuePair> keyValuePairs = new LinkedList<KeyValuePair>();
-        KeyValuePair pair = new KeyValuePair();
-        pair.setKey("from");
-        pair.setValue("event_id");
-        keyValuePairs.add(pair);
-        return keyValuePairs;
-    }
-
-    public List<String> getRels() {
-        List<String> rels = new ArrayList<String>();
-        for (Link link : getLinks()) {
+    public String[] getRels() {
+        final API api = addLinks(new API());
+        ArrayList<String> rels = new ArrayList<String>();
+        for (Link link : api.getLinks()) {
             rels.add(link.getRel());
         }
-        return rels;
+        return rels.toArray(new String[0]);
     }
 
     private BaseResource getSpecialObjects(API api) {
@@ -150,16 +131,16 @@ public class BackendApiResource
         }
     }
 
-    private DetailedLink createLink(String rel, LinkFlags flags) {
-        return LinkHelper.createLink(getUriInfo().getBaseUri().getPath(), rel, flags);
+    private void addLink(API api, String rel, LinkFlags flags) {
+        LinkHelper.addLink(getUriInfo().getBaseUri().getPath(),api, rel, flags);
     }
 
-    private DetailedLink createLink(String rel, LinkFlags flags, List<KeyValuePair> params) {
-        return LinkHelper.createLink(getUriInfo().getBaseUri().getPath(), rel, flags, params);
+    private void addLink(API api, String rel, LinkFlags flags, Map<String, String> params) {
+        LinkHelper.addLink(getUriInfo().getBaseUri().getPath(),api, rel, flags, params);
     }
 
-    private DetailedLink createLink(String rel) {
-        return LinkHelper.createLink(getUriInfo().getBaseUri().getPath(), rel, LinkFlags.NONE);
+    private void addLink(API api, String rel) {
+        LinkHelper.addLink(getUriInfo().getBaseUri().getPath(),api, rel, LinkFlags.NONE);
     }
 
     private String addPath(UriBuilder uriBuilder, Link link) {
@@ -208,7 +189,7 @@ public class BackendApiResource
 
     @Override
     public Response head() {
-        API api = getApi();
+        API api = addLinks(new API());
         return getResponseBuilder(api).build();
     }
 
@@ -220,7 +201,7 @@ public class BackendApiResource
         } else if (QueryHelper.hasConstraint(getUriInfo(), SCHEMA_CONSTRAINT_PARAMETER)) {
             return getSchema();
         } else {
-            response = addSummary(addSystemVersion(getApi()));
+            response = addSummary(addSystemVersion(addLinks(new API())));
         }
         return getResponseBuilder(response).entity(response).build();
     }

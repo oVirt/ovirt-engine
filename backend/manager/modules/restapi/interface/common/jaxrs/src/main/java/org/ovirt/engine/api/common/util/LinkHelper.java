@@ -20,8 +20,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;
@@ -30,7 +31,6 @@ import javax.ws.rs.core.UriInfo;
 import org.ovirt.engine.api.model.ActionsBuilder;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CdRom;
-import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.Cluster;
@@ -40,9 +40,7 @@ import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Group;
-import org.ovirt.engine.api.model.KeyValuePair;
 import org.ovirt.engine.api.model.Link;
-import org.ovirt.engine.api.model.LinkCapabilities;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Permission;
@@ -590,72 +588,87 @@ public class LinkHelper {
     }
 
     /**
-     * Create a search link with the given parameters
+     * Appends searchable links to resource's Href
      *
-     * @param url the url
-     * @param rel the link to add
-     * @param flags flags for this link, e.g: 'searchable'
-     * @return the link the was created
+     * @param url to append to
+     * @param resource to add links to
+     * @param rel link ro add
+     * @param flags used to specify different link options
      */
-    public static DetailedLink createLink(String url, String rel, LinkFlags flags) {
-        return createLink(url, rel, flags, new LinkedList<KeyValuePair>());
+    public static void addLink(BaseResource resource, String rel, LinkFlags flags) {
+        addLink(resource.getHref(), resource, rel, flags);
     }
 
     /**
-     * Create a search link with the given parameters
+     * Adds searchable links to resource
      *
-     * @param url the url
-     * @param rel the link to add
-     * @param flags flags for this link, e.g: 'searchable'
-     * @param params url parameters
-     * @return the link the was created
+     * @param url to append to
+     * @param resource to add links to
+     * @param rel link ro add
+     * @param flags used to specify different link options
      */
-    public static DetailedLink createLink(String url, String rel, LinkFlags flags, List<KeyValuePair> params) {
-        DetailedLink link = new DetailedLink();
+    public static void addLink(String url, BaseResource resource, String rel, LinkFlags flags) {
+        addLink(url, resource, rel, flags, new HashMap<String, String>());
+    }
+
+    /**
+     * Adds searchable links to resource
+     *
+     * @param url to append to
+     * @param resource to add links to
+     * @param rel link to add
+     * @param flags used to specify different link options
+     * @param params the URL params to append
+     */
+    public static void addLink(String url, BaseResource resource, String rel, LinkFlags flags, Map<String, String> params) {
+        Link link = new Link();
         link.setRel(rel);
         link.setHref(combine(url, rel));
+        resource.getLinks().add(link);
+
         if (flags == LinkFlags.SEARCHABLE) {
-            LinkCapabilities capabilities = new LinkCapabilities();
-            capabilities.setSearchable(true);
-            link.setLinkCapabilities(capabilities);
+            addLink(url, resource, rel, params);
         }
-        link.getUrlParmeters().addAll(params);
-        return link;
     }
 
     /**
-     * Create a search link with the given parameters
+     * Appends searchable links to resource's Href
      *
-     * @param url the url
-     * @param rel the link to add
-     * @param params url parameters
-     * @return the link the was created
+     * @param url to append to and combine search dialect
+     * @param resource to add links to
+     * @param rel link ro add
      */
-    public static Link createLink(String url, String rel, List<KeyValuePair> params) {
+    public static void addLink(BaseResource resource, String rel) {
+        addLink(resource.getHref(), resource, rel);
+    }
+
+    /**
+     * Adds searchable links to resource
+     *
+     * @param url to append to and combine search dialect
+     * @param resource to add links to
+     * @param rel link ro add
+     * @param params the URL params to append
+     */
+    public static void addLink(String url, BaseResource resource, String rel, Map<String, String> params) {
         Link link = new Link();
         link.setRel(rel + SEARCH_RELATION);
-        link.setHref(combine(url + SEARCH_TEMPLATE, params));
-        return link;
-    }
-
-    public static Link createLink(String url, String rel) {
-        Link link = new Link();
-        link.setRel(rel);
-        link.setHref(url);
-        return link;
+        link.setHref(combine(combine(url, rel) + SEARCH_TEMPLATE, params));
+        resource.getLinks().add(link);
     }
 
     /**
-     * Create a search link with the given parameters
-     * @param url the url
-     * @param rel the link to add
-     * @return link with search
+     * Adds searchable links to resource
+     *
+     * @param url to append to and combine search dialect
+     * @param resource to add links to
+     * @param rel link ro add
      */
-    public static Link createSearchLink(String url, String rel) {
+    public static void addLink(String url, BaseResource resource, String rel) {
         Link link = new Link();
         link.setRel(rel + SEARCH_RELATION);
         link.setHref(combine(url, rel) + SEARCH_TEMPLATE);
-        return link;
+        resource.getLinks().add(link);
     }
 
     /**
@@ -682,11 +695,11 @@ public class LinkHelper {
      * @param params the URL params to append
      * @return the combined head and params
      */
-    public static String combine(String head, List<KeyValuePair> params) {
+    public static String combine(String head, Map<String, String> params) {
         String combined_params = "";
         if (params != null) {
-           for (KeyValuePair pair : params) {
-                combined_params += String.format(PARAMETER_TEMPLATE, pair.getKey(), pair.getValue());
+           for (Entry<String, String> entry : params.entrySet()) {
+                combined_params += String.format(PARAMETER_TEMPLATE, entry.getKey(), entry.getValue());
            }
         }
         return head + combined_params;
