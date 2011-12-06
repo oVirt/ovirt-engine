@@ -263,7 +263,9 @@ public class BackendApiResourceTest extends Assert {
         UriInfo uriInfo = createMock(UriInfo.class);
         expect(uriInfo.getBaseUri()).andReturn(URI.create(base)).anyTimes();
         expect(uriInfo.getBaseUriBuilder()).andReturn(uriBuilder);
-        expect(uriInfo.getQueryParameters()).andReturn(null);
+        for (int i=0; i<2; i++) {
+            expect(uriInfo.getQueryParameters()).andReturn(null);
+        }
 
         return uriInfo;
     }
