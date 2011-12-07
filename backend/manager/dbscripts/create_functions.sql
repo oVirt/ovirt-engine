@@ -194,7 +194,7 @@ BEGIN
 			SELECT v_entity_id AS id;
 	WHEN v_entity_type = 4 THEN -- Template
 		-- get image id first
-		image_id := ( SELECT it_guid FROM vm_template_image_map WHERE vmt_guid = v_entity_id limit 1);
+		image_id := ( SELECT image_id FROM image_vm_map WHERE vm_id = v_entity_id limit 1);
 		-- get the storage id from images
 		v_storage_id := ( SELECT storage_id FROM images WHERE image_guid = image_id );
 		-- finally get data center id
@@ -376,12 +376,10 @@ BEGIN
     CASE
     WHEN v_entity_type = 1 THEN
         result := 'System';
-    WHEN v_entity_type = 2 THEN
+    WHEN v_entity_type = 2 OR v_entity_type = 4 THEN
         result := ( SELECT vm_name FROM vm_static WHERE vm_guid = v_entity_id );
     WHEN v_entity_type = 3 THEN
         result := ( SELECT vds_name FROM vds_static WHERE vds_id = v_entity_id );
-    WHEN v_entity_type = 4 THEN
-        result := ( SELECT name FROM vm_templates WHERE vmt_guid = v_entity_id );
     WHEN v_entity_type = 5 THEN
         result := ( SELECT vm_pool_name FROM vm_pools WHERE vm_pool_id = v_entity_id );
     WHEN v_entity_type = 9 THEN

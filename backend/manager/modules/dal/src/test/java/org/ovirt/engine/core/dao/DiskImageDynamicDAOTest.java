@@ -106,6 +106,7 @@ public class DiskImageDynamicDAOTest extends BaseDAOTestCase{
     public void testSave() {
         DiskImage newImage = new DiskImage();
         newImage = new DiskImage();
+        newImage.setId(Guid.NewGuid());
         newImage.setinternal_drive_mapping("4");
         newImage.setvolume_format(VolumeFormat.COW);
         newImage.setvolume_type(VolumeType.Sparse);

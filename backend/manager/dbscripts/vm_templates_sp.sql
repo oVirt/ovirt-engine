@@ -41,8 +41,77 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_templates(child_count, creation_date, description, mem_size_mb, name, num_of_sockets, cpu_per_socket, os, vmt_guid, vds_group_id,domain,num_of_monitors,status,usb_policy,time_zone,fail_back,is_auto_suspend,vm_type,hypervisor_type,operation_mode,nice_level,default_boot_sequence,default_display_type,priority,auto_startup,is_stateless,iso_path,origin,initrd_url,kernel_url,kernel_params)
-	VALUES(v_child_count, v_creation_date, v_description, v_mem_size_mb, v_name, v_num_of_sockets, v_cpu_per_socket, v_os, v_vmt_guid, v_vds_group_id, v_domain,v_num_of_monitors,v_status,v_usb_policy,v_time_zone,v_fail_back,v_is_auto_suspend,v_vm_type,v_hypervisor_type,v_operation_mode,v_nice_level,v_default_boot_sequence,v_default_display_type,v_priority,v_auto_startup,v_is_stateless,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params);
+INSERT
+INTO vm_static(
+    vmt_guid,
+    child_count,
+    creation_date,
+    description,
+    mem_size_mb,
+    vm_name,
+    num_of_sockets,
+    cpu_per_socket,
+    os,
+    vm_guid,
+    vds_group_id,
+    domain,
+    num_of_monitors,
+    template_status,
+    usb_policy,
+    time_zone,
+    fail_back,
+    is_auto_suspend,
+    vm_type,
+    hypervisor_type,
+    operation_mode,
+    nice_level,
+    default_boot_sequence,
+    default_display_type,
+    priority,
+    auto_startup,
+    is_stateless,
+    iso_path,
+    origin,
+    initrd_url,
+    kernel_url,
+    kernel_params,
+    entity_type)
+VALUES(
+    -- This field is meaningless for templates for the time being, however we want to keep it not null for VMs.
+    -- Thus, since templates are top level elements they "point" to the 'Blank' template.
+    '00000000-0000-0000-0000-000000000000',
+    v_child_count,
+    v_creation_date,
+    v_description,
+    v_mem_size_mb,
+    v_name,
+    v_num_of_sockets,
+    v_cpu_per_socket,
+    v_os,
+    v_vmt_guid,
+    v_vds_group_id,
+    v_domain,
+    v_num_of_monitors,
+    v_status,
+    v_usb_policy,
+    v_time_zone,
+    v_fail_back,
+    v_is_auto_suspend,
+    v_vm_type,
+    v_hypervisor_type,
+    v_operation_mode,
+    v_nice_level,
+    v_default_boot_sequence,
+    v_default_display_type,
+    v_priority,
+    v_auto_startup,
+    v_is_stateless,
+    v_iso_path,
+    v_origin,
+    v_initrd_url,
+    v_kernel_url,
+    v_kernel_params,
+    'TEMPLATE');
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -86,12 +155,12 @@ RETURNS VOID
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
    AS $procedure$
 BEGIN
-      UPDATE vm_templates
+      UPDATE vm_static
       SET child_count = v_child_count,creation_date = v_creation_date,description = v_description, 
-      mem_size_mb = v_mem_size_mb,name = v_name,num_of_sockets = v_num_of_sockets, 
+      mem_size_mb = v_mem_size_mb,vm_name = v_name,num_of_sockets = v_num_of_sockets,
       cpu_per_socket = v_cpu_per_socket,os = v_os, 
       vds_group_id = v_vds_group_id,domain = v_domain,num_of_monitors = v_num_of_monitors,
-      status = v_status,usb_policy = v_usb_policy,time_zone = v_time_zone,
+      template_status = v_status,usb_policy = v_usb_policy,time_zone = v_time_zone,
       fail_back = v_fail_back,is_auto_suspend = v_is_auto_suspend,
       vm_type = v_vm_type,hypervisor_type = v_hypervisor_type,operation_mode = v_operation_mode, 
       nice_level = v_nice_level,default_boot_sequence = v_default_boot_sequence, 
@@ -99,7 +168,8 @@ BEGIN
       priority = v_priority,auto_startup = v_auto_startup,is_stateless = v_is_stateless, 
       iso_path = v_iso_path,origin = v_origin,initrd_url = v_initrd_url, 
       kernel_url = v_kernel_url,kernel_params = v_kernel_params, _update_date = CURRENT_TIMESTAMP
-      WHERE vmt_guid = v_vmt_guid;
+      WHERE vm_guid = v_vmt_guid
+      AND   entity_type = 'TEMPLATE';
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -111,10 +181,10 @@ RETURNS VOID
 
    AS $procedure$
 BEGIN
-      UPDATE vm_templates
-      SET
-      status = v_status
-      WHERE vmt_guid = v_vmt_guid;
+      UPDATE vm_static
+      SET    template_status = v_status
+      WHERE  vm_guid = v_vmt_guid
+      AND    entity_type = 'TEMPLATE';
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -129,9 +199,10 @@ RETURNS VOID
 BEGIN
         -- Get (and keep) a shared lock with "right to upgrade to exclusive"
 		-- in order to force locking parent before children 
-      select   vmt_guid INTO v_val FROM vm_templates  WHERE vmt_guid = v_vmt_guid     FOR UPDATE;
-      DELETE FROM vm_templates
-      WHERE vmt_guid = v_vmt_guid;
+      select   vm_guid INTO v_val FROM vm_static  WHERE vm_guid = v_vmt_guid AND entity_type = 'TEMPLATE' FOR UPDATE;
+      DELETE FROM vm_static
+      WHERE vm_guid = v_vmt_guid
+      AND   entity_type = 'TEMPLATE';
 		-- delete Template permissions --
       DELETE FROM permissions where object_id = v_vmt_guid;
 END; $procedure$
@@ -185,8 +256,8 @@ Create or replace FUNCTION GetVmTemplateByImageId(v_image_guid UUID) RETURNS SET
 BEGIN
       RETURN QUERY SELECT vm_templates.*
       FROM vm_templates_view vm_templates
-      inner join vm_template_image_map on vm_templates.vmt_guid = vm_template_image_map.vmt_guid
-      WHERE vm_template_image_map.it_guid = v_image_guid;
+      inner join image_vm_map AS vm_template_image_map on vm_templates.vmt_guid = vm_template_image_map.vm_id
+      WHERE vm_template_image_map.image_id = v_image_guid;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -196,8 +267,8 @@ Create or replace FUNCTION GetVmTemplatesByStorageDomainId(v_storage_domain_id U
 BEGIN
       RETURN QUERY SELECT DISTINCT vm_templates.*
       FROM vm_templates_view vm_templates
-      inner join vm_template_image_map on vm_templates.vmt_guid = vm_template_image_map.vmt_guid
-      where vm_template_image_map.it_guid in(select image_guid from images where storage_id = v_storage_domain_id or image_group_id in(select image_group_id from image_group_storage_domain_map
+      inner join image_vm_map AS vm_template_image_map on vm_templates.vmt_guid = vm_template_image_map.vm_id
+      where vm_template_image_map.image_id in(select image_guid from images where storage_id = v_storage_domain_id or image_group_id in(select image_group_id from image_group_storage_domain_map
             where image_group_storage_domain_map.storage_domain_id = v_storage_domain_id));
 END; $procedure$
 LANGUAGE plpgsql;

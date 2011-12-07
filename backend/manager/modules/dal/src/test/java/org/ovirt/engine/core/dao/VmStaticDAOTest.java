@@ -41,6 +41,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         vmtemplate = dbFacade.getVmTemplateDAO().get(
                 new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
         newVmStatic = new VmStatic();
+        newVmStatic.setId(Guid.NewGuid());
         newVmStatic.setvm_name("New Virtual Machine");
         newVmStatic.setvds_group_id(VDS_GROUP_ID);
         newVmStatic.setvmt_guid(vmtemplate.getId());

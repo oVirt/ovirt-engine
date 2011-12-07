@@ -20,7 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class ImageVmMapDAOTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid FREE_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
-    private static final Guid EXISTING_IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
+    private static final Guid EXISTING_IMAGE_ID = new Guid("c9a559d9-8666-40d1-9967-759502b19f0b");
 
     private ImageVmMapDAO dao;
     private image_vm_map existingVmMapping;

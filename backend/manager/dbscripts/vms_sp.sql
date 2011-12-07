@@ -287,8 +287,8 @@ Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000) ,
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid,domain,creation_date,num_of_monitors,is_initialized,is_auto_suspend,num_of_sockets,cpu_per_socket,usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds, fail_back, default_boot_sequence, vm_type, hypervisor_type, operation_mode, nice_level, default_display_type, priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem)
-	VALUES(v_description,  v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_domain, v_creation_date, v_num_of_monitors, v_is_initialized, v_is_auto_suspend, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone, v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back, v_default_boot_sequence, v_vm_type, v_hypervisor_type, v_operation_mode, v_nice_level, v_default_display_type, v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem);
+INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid,domain,creation_date,num_of_monitors,is_initialized,is_auto_suspend,num_of_sockets,cpu_per_socket,usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds, fail_back, default_boot_sequence, vm_type, hypervisor_type, operation_mode, nice_level, default_display_type, priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem, entity_type)
+	VALUES(v_description,  v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_domain, v_creation_date, v_num_of_monitors, v_is_initialized, v_is_auto_suspend, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone, v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back, v_default_boot_sequence, v_vm_type, v_hypervisor_type, v_operation_mode, v_nice_level, v_default_display_type, v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem, 'VM');
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -354,7 +354,8 @@ BEGIN
       kernel_params = v_kernel_params,migration_support = v_migration_support,
       predefined_properties = v_predefined_properties,userdefined_properties = v_userdefined_properties,
       min_allocated_mem = v_min_allocated_mem
-      WHERE vm_guid = v_vm_guid;
+      WHERE vm_guid = v_vm_guid
+      AND   entity_type = 'VM';
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -372,7 +373,8 @@ BEGIN
             -- in order to force locking parent before children 
       select   vm_guid INTO v_val FROM vm_static  WHERE vm_guid = v_vm_guid     FOR UPDATE;
       DELETE FROM vm_static
-      WHERE vm_guid = v_vm_guid;
+      WHERE vm_guid = v_vm_guid
+      AND   entity_type = 'VM';
 
 			-- delete VM permissions --
       DELETE FROM permissions where object_id = v_vm_guid;
@@ -387,7 +389,8 @@ Create or replace FUNCTION GetAllFromVmStatic() RETURNS SETOF vm_static
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vm_static.*
-   FROM vm_static;
+   FROM vm_static
+   WHERE entity_type = 'VM';
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -401,7 +404,8 @@ Create or replace FUNCTION GetVmStaticByVmGuid(v_vm_guid UUID) RETURNS SETOF vm_
 BEGIN
 RETURN QUERY SELECT vm_static.*
    FROM vm_static
-   WHERE vm_guid = v_vm_guid;
+   WHERE vm_guid = v_vm_guid
+   AND   entity_type = 'VM';
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -418,7 +422,8 @@ BEGIN
       SELECT vm_name
       FROM vm_static
       WHERE dedicated_vm_for_vds = v_vds_id
-      AND migration_support = 2;
+      AND   migration_support = 2
+      AND   entity_type = 'VM';
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -434,7 +439,8 @@ RETURN QUERY SELECT vm_static.*
         vds_groups ON vm_static.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN
         storage_pool ON vm_static.vds_group_id = vds_groups.vds_group_id
         and vds_groups.storage_pool_id = storage_pool.id
-   WHERE v_sp_id = storage_pool.id;
+   WHERE v_sp_id = storage_pool.id
+   AND   entity_type = 'VM';
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -446,7 +452,8 @@ Create or replace FUNCTION GetVmStaticByName(v_vm_name VARCHAR(255)) RETURNS SET
 BEGIN
 RETURN QUERY SELECT vm_static.*
    FROM vm_static
-   WHERE VM_NAME = v_vm_name;
+   WHERE VM_NAME = v_vm_name
+   AND   entity_type = 'VM';
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -460,7 +467,8 @@ Create or replace FUNCTION GetVmStaticByVdsGroup(v_vds_group_id UUID) RETURNS SE
 BEGIN
 RETURN QUERY SELECT vm_static.*
    FROM vm_static
-   WHERE vds_group_id = v_vds_group_id;
+   WHERE vds_group_id = v_vds_group_id
+   AND   entity_type = 'VM';
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -474,7 +482,8 @@ Create or replace FUNCTION GetVmStaticWithFailbackByVdsId(v_vds_id UUID) RETURNS
 BEGIN
 RETURN QUERY SELECT vm_static.*
    FROM vm_static
-   WHERE dedicated_vm_for_vds = v_vds_id and fail_back = TRUE;
+   WHERE dedicated_vm_for_vds = v_vds_id and fail_back = TRUE
+   AND   entity_type = 'VM';
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -637,9 +646,9 @@ INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NA
 	
       INSERT INTO vm_statistics(vm_guid) VALUES(v_vm_guid);
 	
-      UPDATE vm_templates
+      UPDATE vm_static
       SET child_count =(SELECT COUNT(*) FROM vm_static WHERE vmt_guid = v_vmt_guid)
-      WHERE vmt_guid = v_vmt_guid;
+      WHERE vm_guid = v_vmt_guid;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -654,9 +663,9 @@ RETURNS VOID
    v_vmt_guid  UUID;
 BEGIN
       select   vm_static.vmt_guid INTO v_vmt_guid FROM vm_static WHERE vm_guid = v_vm_guid;
-      UPDATE vm_templates
+      UPDATE vm_static
       SET child_count =(SELECT COUNT(*) FROM vm_static WHERE vmt_guid = v_vmt_guid) -1
-      WHERE vmt_guid = v_vmt_guid;
+      WHERE vm_guid = v_vmt_guid;
       DELETE FROM tags_vm_map
       WHERE vm_id = v_vm_guid;
       DELETE FROM vm_statistics WHERE vm_guid = v_vm_guid;
@@ -879,7 +888,8 @@ RETURNS VOID
 BEGIN
       UPDATE vm_static
       SET is_initialized = v_is_initialized
-      WHERE vm_guid = v_vm_guid;
+      WHERE vm_guid = v_vm_guid
+      AND   entity_type = 'VM';
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -894,7 +904,7 @@ Create or replace FUNCTION GetOrderedVmGuidsForRunMultipleActions(v_vm_guids VAR
    DECLARE
    v_ordered_guids GetOrderedVmGuidsForRunMultipleActions_rs;
 BEGIN
-   FOR v_ordered_guids IN EXECUTE 'SELECT vm_guid from vm_static where vm_guid in( ' || v_vm_guids || ' ) order by auto_startup desc,priority desc, migration_support desc' LOOP
+   FOR v_ordered_guids IN EXECUTE 'SELECT vm_guid from vm_static where vm_guid in( ' || v_vm_guids || ' ) AND entity_type = ''VM''  order by auto_startup desc,priority desc, migration_support desc' LOOP
       RETURN NEXT v_ordered_guids;
    END LOOP;
 	

@@ -469,14 +469,14 @@ BEGIN
    END;
 
    BEGIN
-      CREATE GLOBAL TEMPORARY TABLE tt_TEMPTEMPLATEIMAGESTABLE AS select it_guid
+      CREATE GLOBAL TEMPORARY TABLE tt_TEMPTEMPLATEIMAGESTABLE AS select image_id
 	
-         from vm_template_image_map where vmt_guid in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
+         from image_vm_map AS vm_template_image_map where vm_id in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
       exception when others then
          truncate table tt_TEMPTEMPLATEIMAGESTABLE;
-         insert into tt_TEMPTEMPLATEIMAGESTABLE select it_guid
+         insert into tt_TEMPTEMPLATEIMAGESTABLE select image_id
 	
-         from vm_template_image_map where vmt_guid in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
+         from image_vm_map AS vm_template_image_map where vm_id in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
    END;
 
    delete FROM permissions where object_id in (select vm_guid from vm_images_view where storage_id = v_storage_domain_id);
@@ -485,14 +485,14 @@ BEGIN
 
    delete FROM images where storage_id = v_storage_domain_id;
 
-   delete FROM vm_template_image_map where vmt_guid in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
+   delete FROM image_vm_map where vm_id in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
 
    delete FROM image_templates where it_guid in(select it_guid from tt_TEMPTEMPLATEIMAGESTABLE);
 
    delete FROM vm_interface where vmt_guid in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM permissions where object_id in (select vmt_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM permissions where object_id = v_storage_domain_id;
-   delete from vm_templates where vmt_guid in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
+   delete from vm_static where vm_guid in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM storage_domain_dynamic where id  = v_storage_domain_id;
    delete FROM storage_domain_static where id  = v_storage_domain_id;
     

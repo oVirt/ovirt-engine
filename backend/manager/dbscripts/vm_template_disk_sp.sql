@@ -32,8 +32,8 @@ Create or replace FUNCTION DeleteVmTemplateDisk(v_it_guid UUID)
 RETURNS VOID
    AS $procedure$
 BEGIN
-      DELETE FROM vm_template_image_map
-      WHERE it_guid = v_it_guid;
+      DELETE FROM image_vm_map
+      WHERE image_id = v_it_guid;
       DELETE FROM image_templates
       WHERE it_guid = v_it_guid;
 END; $procedure$
@@ -82,11 +82,11 @@ Create or replace FUNCTION InsertVmTemplateDisk(v_creation_date TIMESTAMP WITH T
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO image_templates(creation_date, description, it_guid, size, os, os_version, bootable)
-	VALUES(v_creation_date, v_description, v_it_guid, v_size, v_os, v_os_version, v_bootable);
+INSERT INTO image_templates(creation_date, description, it_guid, size, os, os_version, bootable, internal_drive_mapping)
+	VALUES(v_creation_date, v_description, v_it_guid, v_size, v_os, v_os_version, v_bootable, v_internal_drive_mapping);
     
-      INSERT INTO vm_template_image_map(it_guid, vmt_guid, internal_drive_mapping)
-	VALUES(v_vtim_it_guid, v_vmt_guid, v_internal_drive_mapping);
+      INSERT INTO image_vm_map(image_id, vm_id, active)
+	VALUES(v_vtim_it_guid, v_vmt_guid, TRUE);
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -112,11 +112,9 @@ RETURNS VOID
 BEGIN
       UPDATE image_templates
       SET creation_date = v_creation_date,description = v_description,size = v_size, 
-      os = v_os,os_version = v_os_version,bootable = v_bootable
+      os = v_os,os_version = v_os_version,bootable = v_bootable,
+      internal_drive_mapping = v_internal_drive_mapping
       WHERE it_guid = v_it_guid;
-      UPDATE vm_template_image_map
-      SET internal_drive_mapping = v_internal_drive_mapping
-      WHERE it_guid = v_vtim_it_guid AND vmt_guid = v_vmt_guid;
 END; $procedure$
 LANGUAGE plpgsql;
 

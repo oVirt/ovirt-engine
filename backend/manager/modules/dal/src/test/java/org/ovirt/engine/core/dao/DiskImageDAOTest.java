@@ -33,7 +33,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
     private static final Guid EXISTING_IMAGE_DISK_TEMPLATE = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
     private static final Guid ANCESTOR_IMAGE_ID = new Guid("c9a559d9-8666-40d1-9967-759502b19f0b");
 
-    private static final int TOTAL_DISK_IMAGES = 3;
+    private static final int TOTAL_DISK_IMAGES = 4;
     private DiskImageDynamicDAO diskImageDynamicDao;
     private DiskImage newImage;
     private image_vm_pool_map existingVmPoolMapping;

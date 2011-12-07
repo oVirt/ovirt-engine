@@ -160,8 +160,8 @@ CREATE OR REPLACE VIEW vm_templates_view
 AS
 
 SELECT
-vm_templates.vmt_guid as vmt_guid,
-       vm_templates.name as name,
+vm_templates.vm_guid as vmt_guid,
+       vm_templates.vm_name as name,
        vm_templates.mem_size_mb as mem_size_mb,
        vm_templates.os as os,
        vm_templates.creation_date as creation_date,
@@ -173,7 +173,7 @@ vm_templates.vmt_guid as vmt_guid,
        vm_templates.vds_group_id as vds_group_id,
        vm_templates.domain as domain,
        vm_templates.num_of_monitors as num_of_monitors,
-       vm_templates.status as status,
+       vm_templates.template_status as status,
        vm_templates.usb_policy as usb_policy,
        vm_templates.time_zone as time_zone,
        vm_templates.is_auto_suspend as is_auto_suspend,
@@ -196,48 +196,51 @@ vm_templates.vmt_guid as vmt_guid,
        vm_templates.kernel_url as kernel_url,
        vm_templates.kernel_params as kernel_params
 
-FROM       vm_templates  INNER JOIN
+FROM       vm_static AS vm_templates  INNER JOIN
 vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id
 left outer JOIN
-storage_pool ON storage_pool.id = vds_groups.storage_pool_id;
+storage_pool ON storage_pool.id = vds_groups.storage_pool_id
+WHERE entity_type = 'TEMPLATE';
 
 
 
 CREATE OR REPLACE VIEW vm_templates_storage_domain
 AS
 
-SELECT     vm_templates.vmt_guid, vm_templates.name, vm_templates.mem_size_mb, vm_templates.os, vm_templates.creation_date,
+SELECT     vm_templates.vm_guid AS vmt_guid, vm_templates.vm_name AS name, vm_templates.mem_size_mb, vm_templates.os, vm_templates.creation_date,
                       vm_templates.child_count, vm_templates.num_of_sockets, vm_templates.cpu_per_socket,
                       vm_templates.num_of_sockets*vm_templates.cpu_per_socket AS num_of_cpus, vm_templates.description,
-                      vm_templates.vds_group_id, vm_templates.domain, vm_templates.num_of_monitors, vm_templates.status,
+                      vm_templates.vds_group_id, vm_templates.domain, vm_templates.num_of_monitors, vm_templates.template_status AS status,
                       vm_templates.usb_policy, vm_templates.time_zone, vm_templates.is_auto_suspend, vm_templates.fail_back,
                       vds_groups.name AS vds_group_name, vm_templates.vm_type, vm_templates.hypervisor_type, vm_templates.operation_mode,
                       vm_templates.nice_level, storage_pool.id AS storage_pool_id, storage_pool.name AS storage_pool_name,
                       vm_templates.default_boot_sequence, vm_templates.default_display_type, vm_templates.priority, vm_templates.auto_startup,
                       vm_templates.is_stateless, vm_templates.iso_path, vm_templates.origin, vm_templates.initrd_url, vm_templates.kernel_url,
                       vm_templates.kernel_params, images.storage_id
-FROM         vm_templates INNER JOIN
+FROM       vm_static AS vm_templates INNER JOIN
                       vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN
                       storage_pool ON storage_pool.id = vds_groups.storage_pool_id INNER JOIN
-                      vm_template_image_map ON vm_template_image_map.vmt_guid = vm_templates.vmt_guid LEFT JOIN
-                      images ON images.image_guid = vm_template_image_map.it_guid
+                      image_vm_map AS vm_template_image_map ON vm_template_image_map.vm_id = vm_templates.vm_guid LEFT JOIN
+                      images ON images.image_guid = vm_template_image_map.image_id
+WHERE      entity_type = 'TEMPLATE'
 UNION
-SELECT                vm_templates_1.vmt_guid, vm_templates_1.name, vm_templates_1.mem_size_mb, vm_templates_1.os, vm_templates_1.creation_date,
+SELECT                vm_templates_1.vm_guid AS vmt_guid, vm_templates_1.vm_name AS name, vm_templates_1.mem_size_mb, vm_templates_1.os, vm_templates_1.creation_date,
                       vm_templates_1.child_count, vm_templates_1.num_of_sockets, vm_templates_1.cpu_per_socket,
                       vm_templates_1.num_of_sockets*vm_templates_1.cpu_per_socket AS num_of_cpus, vm_templates_1.description, vm_templates_1.vds_group_id,
-                      vm_templates_1.domain, vm_templates_1.num_of_monitors, vm_templates_1.status, vm_templates_1.usb_policy, vm_templates_1.time_zone,
+                      vm_templates_1.domain, vm_templates_1.num_of_monitors, vm_templates_1.template_status AS status, vm_templates_1.usb_policy, vm_templates_1.time_zone,
                       vm_templates_1.is_auto_suspend, vm_templates_1.fail_back, vds_groups_1.name AS vds_group_name, vm_templates_1.vm_type,
                       vm_templates_1.hypervisor_type, vm_templates_1.operation_mode, vm_templates_1.nice_level, storage_pool_1.id AS storage_pool_id,
                       storage_pool_1.name AS storage_pool_name, vm_templates_1.default_boot_sequence, vm_templates_1.default_display_type,
                       vm_templates_1.priority, vm_templates_1.auto_startup, vm_templates_1.is_stateless, vm_templates_1.iso_path, vm_templates_1.origin,
                       vm_templates_1.initrd_url, vm_templates_1.kernel_url, vm_templates_1.kernel_params,
                       image_group_storage_domain_map.storage_domain_id AS storage_id
-FROM                  vm_templates AS vm_templates_1 INNER JOIN
+FROM                  vm_static AS vm_templates_1 INNER JOIN
                       vds_groups AS vds_groups_1 ON vm_templates_1.vds_group_id = vds_groups_1.vds_group_id LEFT OUTER JOIN
                       storage_pool AS storage_pool_1 ON storage_pool_1.id = vds_groups_1.storage_pool_id INNER JOIN
-                      vm_template_image_map AS vm_template_image_map_1 ON vm_template_image_map_1.vmt_guid = vm_templates_1.vmt_guid INNER JOIN
-                      images AS images_1 ON images_1.image_guid = vm_template_image_map_1.it_guid INNER JOIN
-                      image_group_storage_domain_map ON image_group_storage_domain_map.image_group_id = images_1.image_group_id;
+                      image_vm_map AS vm_template_image_map_1 ON vm_template_image_map_1.vm_id = vm_templates_1.vm_guid INNER JOIN
+                      images AS images_1 ON images_1.image_guid = vm_template_image_map_1.image_id INNER JOIN
+                      image_group_storage_domain_map ON image_group_storage_domain_map.image_group_id = images_1.image_group_id
+WHERE                 entity_type = 'TEMPLATE';
 
 
 
@@ -248,9 +251,9 @@ CREATE OR REPLACE VIEW vm_template_disk
 AS
 
 SELECT
-vm_template_image_map.it_guid as vtim_it_guid,
-	vm_template_image_map.vmt_guid as vmt_guid,
-	vm_template_image_map.internal_drive_mapping as internal_drive_mapping,
+vm_template_image_map.image_id as vtim_it_guid,
+	vm_template_image_map.vm_id as vmt_guid,
+	image_templates.internal_drive_mapping as internal_drive_mapping,
 	image_templates.it_guid as it_guid,
 	image_templates.os as os,
 	image_templates.os_version as os_version,
@@ -259,11 +262,9 @@ vm_template_image_map.it_guid as vtim_it_guid,
 	image_templates.description as description,
 	image_templates.bootable as bootable
 FROM
-vm_template_image_map
+image_vm_map AS vm_template_image_map
 INNER JOIN
-image_templates
-ON
-vm_template_image_map.it_guid = image_templates.it_guid;
+image_templates ON (vm_template_image_map.image_id = image_templates.it_guid);
 
 
 
@@ -356,7 +357,7 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_static.fail_back as fail_back, vm_static.default_boot_sequence as default_boot_sequence, vm_static.vm_type as vm_type,
 					  vm_static.hypervisor_type as hypervisor_type, vm_static.operation_mode as operation_mode, vds_groups.name as vds_group_name, vds_groups.selection_algorithm as selection_algorithm, vds_groups.transparent_hugepages as transparent_hugepages,
 					  storage_pool.id as storage_pool_id, storage_pool.name as storage_pool_name,
-                      vds_groups.description as vds_group_description, vm_templates.name as vmt_name,
+                      vds_groups.description as vds_group_description, vm_templates.vm_name as vmt_name,
                       vm_templates.mem_size_mb as vmt_mem_size_mb, vm_templates.os as vmt_os, vm_templates.creation_date as vmt_creation_date,
                       vm_templates.child_count as vmt_child_count, vm_templates.num_of_sockets as vmt_num_of_sockets,
                       vm_templates.cpu_per_socket as vmt_cpu_per_socket, vm_templates.num_of_sockets*vm_templates.cpu_per_socket as vmt_num_of_cpus,
@@ -376,13 +377,14 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_static.initrd_url as initrd_url, vm_static.kernel_url as kernel_url, vm_static.kernel_params as kernel_params, vm_dynamic.pause_status as pause_status, vm_dynamic.exit_message as exit_message, vm_dynamic.exit_status as exit_status,vm_static.migration_support as migration_support,vm_static.predefined_properties as predefined_properties,vm_static.userdefined_properties as userdefined_properties,vm_static.min_allocated_mem as min_allocated_mem
 FROM         vm_static INNER JOIN
 vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid INNER JOIN
-vm_templates ON vm_static.vmt_guid = vm_templates.vmt_guid INNER JOIN
+vm_static AS vm_templates ON vm_static.vmt_guid = vm_templates.vm_guid INNER JOIN
 vm_statistics ON vm_static.vm_guid = vm_statistics.vm_guid INNER JOIN
 vds_groups ON vm_static.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN
 storage_pool ON vm_static.vds_group_id = vds_groups.vds_group_id
 and vds_groups.storage_pool_id = storage_pool.id LEFT OUTER JOIN
 vds_static ON vm_dynamic.run_on_vds = vds_static.vds_id LEFT OUTER JOIN
-vm_pool_map_view ON vm_static.vm_guid = vm_pool_map_view.vm_guid;
+vm_pool_map_view ON vm_static.vm_guid = vm_pool_map_view.vm_guid
+WHERE vm_static.entity_type = 'VM';
 
 
 
@@ -1089,10 +1091,10 @@ CREATE OR REPLACE VIEW vm_interface_view AS
   SELECT vm_interface_statistics.rx_rate, vm_interface_statistics.tx_rate, vm_interface_statistics.rx_drop,
       vm_interface_statistics.tx_drop, vm_interface_statistics.iface_status, vm_interface.type, vm_interface.speed,
       vm_interface.mac_addr, vm_interface.network_name, vm_interface.name, NULL::uuid as vm_guid,
-      vm_interface.vmt_guid, vm_templates.name AS vm_name, vm_interface.id, 0 AS boot_protocol, 0 AS is_vds
+      vm_interface.vmt_guid, vm_templates.vm_name AS vm_name, vm_interface.id, 0 AS boot_protocol, 0 AS is_vds
   FROM vm_interface_statistics
   RIGHT JOIN vm_interface ON vm_interface_statistics.id = vm_interface.id
-  JOIN vm_templates ON vm_interface.vmt_guid = vm_templates.vmt_guid;
+  JOIN vm_static AS vm_templates ON vm_interface.vmt_guid = vm_templates.vm_guid;
 
 ----------------------------------------------
 -- Event Notification Views
