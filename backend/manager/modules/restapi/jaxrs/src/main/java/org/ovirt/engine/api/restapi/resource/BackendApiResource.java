@@ -66,11 +66,12 @@ public class BackendApiResource
     private static final String RESOURCES_PACKAGE = "org.ovirt.engine.api.resource";
     private static final String API_SCHEMA = "api.xsd";
     private static final String RSDL_CONSTRAINT_PARAMETER = "rsdl";
+    private static final String RSDL_REL = "rsdl";
+    private static final String SCHEMA_REL = "schema";
     private static final String SCHEMA_CONSTRAINT_PARAMETER = "schema";
     private static final String RSDL_DESCRIPTION = "The oVirt RESTful API description language.";
     private static final String SCHEMA_DESCRIPTION = "oVirt API entities schema.";
     private static final String SCHEMA_NAME = "ovirt-engine-api-schema.xsd";
-    private static final String SCHEMA_REL = "get";
 
     private static RSDL rsdl = null;
     private static final String QUERY_PARAMETER = "?";
@@ -258,6 +259,7 @@ public class BackendApiResource
     private synchronized RSDL getRSDL() {
         if (rsdl == null) {
             rsdl =  new RsdlBuilder(this).description(RSDL_DESCRIPTION).
+                                          rel(RSDL_REL).
                                           href(getUriInfo().getBaseUri().getPath() + QUERY_PARAMETER + RSDL_CONSTRAINT_PARAMETER).
                                           schema(new SchemaBuilder().rel(SCHEMA_REL)
                                                                     .href(getUriInfo().getBaseUri().getPath() + QUERY_PARAMETER + SCHEMA_CONSTRAINT_PARAMETER)

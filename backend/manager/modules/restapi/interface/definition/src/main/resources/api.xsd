@@ -2248,6 +2248,7 @@
        <xs:element type="DetailedLinks" name="links" minOccurs="0"/>
      </xs:sequence>
      <xs:attribute name="href" type="xs:string"/>
+     <xs:attribute name="rel" type="xs:string"/>
   </xs:complexType>
 
 </xs:schema>

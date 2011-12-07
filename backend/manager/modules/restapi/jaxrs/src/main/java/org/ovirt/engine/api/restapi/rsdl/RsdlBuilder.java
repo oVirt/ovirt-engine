@@ -59,9 +59,9 @@ public class RsdlBuilder {
     private String entryPoint;
     private BackendApiResource apiResource;
     private Map<String, Action> parametersMetaData;
+    private String rel;
     private String href;
     private Schema schema;
-
     private String description;
 
     private static final String ACTION = "Action";
@@ -110,6 +110,7 @@ public class RsdlBuilder {
     public RSDL build() {
         try {
             rsdl = construct();
+            rsdl.setRel(getRel());
             rsdl.setHref(getHref());
             rsdl.setDescription(getDescription());
             rsdl.setSchema(getSchema());
@@ -118,6 +119,11 @@ public class RsdlBuilder {
             LOG.error("RSDL generation failure.", e);
         }
         return rsdl;
+    }
+
+    public RsdlBuilder rel(String rel) {
+        this.rel = rel;
+        return this;
     }
 
     public RsdlBuilder href(String href) {
@@ -137,6 +143,10 @@ public class RsdlBuilder {
 
     public String getHref() {
         return this.href;
+    }
+
+    public String getRel() {
+        return this.rel;
     }
 
     public Schema getSchema() {
