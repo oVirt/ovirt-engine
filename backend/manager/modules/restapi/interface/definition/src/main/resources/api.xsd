@@ -2242,9 +2242,9 @@
 
   <xs:complexType name="RSDL">
      <xs:sequence>
-       <xs:element ref="schema" minOccurs="0" maxOccurs="1" />
-       <xs:element ref="version" minOccurs="0" maxOccurs="1" />
        <xs:element name="description" type="xs:string" minOccurs="0"/>
+       <xs:element ref="version" minOccurs="0" maxOccurs="1" />     
+       <xs:element ref="schema" minOccurs="0" maxOccurs="1" />
        <xs:element type="DetailedLinks" name="links" minOccurs="0"/>
      </xs:sequence>
      <xs:attribute name="href" type="xs:string"/>
