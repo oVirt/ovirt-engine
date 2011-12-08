@@ -340,6 +340,9 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 		// If 'AdminConsole' is true, send true; otherwise, false should be sent only for VMs with SPICE driver installed.
 		getspice().setAdminConsole(getConfigurator().getSpiceAdminConsole() ? true : getEntity().getSpiceDriverVersion() != null ? false : true);
 
+		// Call configure for setting 'UsbListenPort' value
+		getConfigurator().Configure(getspice());
+		
 		// 'UsbListenPort' is different than 'SpiceDisableUsbListenPort' when 'EnableUSBAsDefault' database configuration parameter is true
 		// (initialized in the configurator)
 		if (getspice().getUsbListenPort() != getConfigurator().getSpiceDisableUsbListenPort())
