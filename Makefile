@@ -5,7 +5,7 @@
 # (at your option) any later version.  See the files README and
 # LICENSE_GPL_v2 which accompany this distribution.
 #
-MVN=/usr/bin/mvn
+MVN=$(shell which mvn)
 BUILD_FLAGS=-P gwt-admin,gwt-user
 DEPLOY_FLAGS=-f deploy.xml
 JBOSS_HOME=/usr/local/jboss-5.1.0.GA
@@ -86,6 +86,7 @@ create_dirs:
 	@mkdir -p $(PREFIX)/var/run/ovirt-engine/notifier
 	@mkdir -p $(PREFIX)/var/lock/ovirt-engine
 	@mkdir -p $(PREFIX)/etc/init.d/
+	@mkdir -p $(PREFIX)/etc/cron.daily/
 	@mkdir -p $(PREFIX)/etc/ovirt-engine/{engine-config,engine-manage-domains}
 	@mkdir -p $(PREFIX)$(EAR_DIR)
 	@mkdir -p $(PREFIX)$(JBOSS_HOME)/common/lib
@@ -202,6 +203,7 @@ install_misc:
 	chmod 644 $(PREFIX)/usr/share/ovirt-engine/kerberos/*
 	rm -rf $(PREFIX)/usr/share/ovirt-engine/keberos/*.bat
 	cp -f ./backend/manager/conf/vds_installer.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	cp -f ./packaging/ovirtlogrot.sh $(PREFIX)/usr/share/ovirt-engine/scripts
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/vds_installer.py
 	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)$(JBOSS_HOME)/common/lib/postgresql-jdbc.jar
 	cp -f ./backend/manager/conf/jboss-log4j.xml $(PREFIX)$(JBOSS_HOME)/server/default/conf
@@ -209,4 +211,7 @@ install_misc:
 	cp -f ./backend/manager/conf/postgres-ds.xml $(PREFIX)$(JBOSS_HOME)/server/default/deploy
 	cp -f ./backend/manager/conf/transaction-jboss-beans.xml $(PREFIX)$(JBOSS_HOME)/server/default/deploy
 	cp -f ./LICENSE $(PREFIX)/usr/share/ovirt-engine
+	cp -f ./packaging/ovirtlogrot.sh ${PREFIX}/usr/share/ovirt-engine/scripts/
+	cp -f ./packaging/resources/ovirt-cron ${PREFIX}/etc/cron.daily/
+
 

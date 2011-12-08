@@ -215,6 +215,8 @@ ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/nul
 %{_datadir}/%{name}/conf
 %{_datadir}/%{name}/3rd-party-lib
 %attr (755,root,root) %{_datadir}/%{name}/scripts/vds_installer.py*
+%attr (755,root,root) %{_datadir}/%{name}/scripts/ovirtlogrot.sh
+%attr (755,root,root) %{_sysconfdir}/cron.daily/ovirt-cron
 #%attr (755,jboss,jboss) %{_datadir}/%{name}/resources/jboss
 %dir %{_sysconfdir}/%{name}
 #%attr (755,jboss,jboss) %{_sysconfdir}/pki/%{name}
@@ -237,6 +239,7 @@ ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/nul
 %{_jbossprofiledir}/deploy/postgres-ds.xml
 %{_jbossprofiledir}/deploy/transaction-jboss-beans.xml
 %{_jbossdir}/common/lib/postgresql-jdbc.jar
+
 
 #/var/lib/jbossas/common/lib/quartz-1.8.3.jar
 #/var/lib/jbossas/common/lib/postgresql-jdbc.jar
