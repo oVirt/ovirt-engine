@@ -488,13 +488,22 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     @XmlElement(name = "vm_host")
     public String getvm_host() {
+        String vmHost = this.mVmDynamic.getvm_host();
         if (!StringHelper.isNullOrEmpty(this.getvm_ip())) {
             this.mVmDynamic.setvm_host(getvm_ip());
+        } else {
+            String vmDomain = getvm_domain();
+
+            // If VM's host name isn't available - set as VM's name
+            // If no IP address is available - assure that 'vm_host' is FQN by concatenating
+            // vmHost and vmDomain.
+            if (StringHelper.isNullOrEmpty(vmHost)) {
+                this.mVmDynamic.setvm_host(getvm_name());
+            } else if (!StringHelper.isNullOrEmpty(vmDomain) && !vmHost.endsWith(vmDomain)) {
+                this.mVmDynamic.setvm_host(vmHost + "." + vmDomain);
+            }
         }
-        if (StringHelper.isNullOrEmpty(this.mVmDynamic.getvm_host())) {
-            // if no ip and no host try the name.
-            this.mVmDynamic.setvm_host(getvm_name() + "." + getvm_domain());
-        }
+
         return this.mVmDynamic.getvm_host();
     }
 
