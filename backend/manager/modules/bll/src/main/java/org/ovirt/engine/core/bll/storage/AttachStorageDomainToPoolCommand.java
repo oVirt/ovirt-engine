@@ -85,7 +85,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
                         @Override
                         public Object runInTransaction() {
                             getCompensationContext().snapshotEntityStatus(map, map.getstatus());
-                            map.setstatus(StorageDomainStatus.InActive);
+                            map.setstatus(StorageDomainStatus.Maintenance);
                             DbFacade.getInstance().getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
                             if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
                                 CalcStoragePoolStatusByDomainsStatus();
