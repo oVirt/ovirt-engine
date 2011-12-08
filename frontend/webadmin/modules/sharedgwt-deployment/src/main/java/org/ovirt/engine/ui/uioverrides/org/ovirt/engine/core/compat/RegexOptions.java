@@ -26,9 +26,9 @@ public class RegexOptions {
     public static final int Multiline = 2;
 
     /**
-     * Specifies that the only valid captures are explicitly named or numbered groups of the form (?<i>name</i>…). This
+     * Specifies that the only valid captures are explicitly named or numbered groups of the form (?<i>name</i>...). This
      * allows unnamed parentheses to act as noncapturing groups without the syntactic clumsiness of the expression
-     * (?:…).
+     * (?:...).
      */
     public static final int ExplicitCapture = 4;
 
