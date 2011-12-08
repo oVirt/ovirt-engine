@@ -324,6 +324,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
 			java.util.ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getvm_guid());
 			for (ConsoleModel cachedModel : cachedModels)
 			{
+				cachedModel.setEntity(null);
 				cachedModel.setEntity(vm);
 			}
 
