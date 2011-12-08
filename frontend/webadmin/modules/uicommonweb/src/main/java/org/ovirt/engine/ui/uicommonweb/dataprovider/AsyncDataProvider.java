@@ -1225,4 +1225,20 @@ public final class AsyncDataProvider
 		getAllFromExportDomainQueryParamenters.setGetAll(true);
 		Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, getAllFromExportDomainQueryParamenters, aQuery);
 	}
+
+	public static void GetUpHostListByCluster(AsyncQuery aQuery, String clusterName)
+	{
+		aQuery.converterCallback = new IAsyncConverter() { public Object Convert(Object source, AsyncQuery _asyncQuery)
+		{
+			if (source != null)
+			{
+				java.util.ArrayList<VDS> list = Linq.<VDS>Cast((java.util.ArrayList<IVdcQueryable>)source);
+				return list;
+			}
+
+			return new java.util.ArrayList<VDS>();
+		} };
+
+		Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + clusterName + " and status = up", SearchType.VDS), aQuery);
+	}
 }

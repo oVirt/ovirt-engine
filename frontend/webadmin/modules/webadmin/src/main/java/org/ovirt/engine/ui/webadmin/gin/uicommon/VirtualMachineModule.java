@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
@@ -58,6 +59,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider,
             final Provider<VmChangeCDPopupPresenterWidget> changeCDPopupProvider,
             final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
+            final Provider<VmMigratePopupPresenterWidget> migratePopupProvider,
             final Provider<FindSingleStoragePopupPresenterWidget> movePopupProvider,
             final Provider<VmDesktopNewPopupPresenterWidget> newDesktopVmPopupProvider,
             final Provider<VmServerNewPopupPresenterWidget> newServerVmPopupProvider,
@@ -75,6 +77,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                     return changeCDPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getExportCommand()) {
                     return exportPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getMigrateCommand()) {
+                    return migratePopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getMoveCommand()) {
                     return movePopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getRemoveCommand()) {

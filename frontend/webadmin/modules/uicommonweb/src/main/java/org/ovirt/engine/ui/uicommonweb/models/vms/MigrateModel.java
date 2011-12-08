@@ -65,6 +65,9 @@ public class MigrateModel extends Model
 			getHosts().setIsChangable(!isAutoSelect);
 			OnPropertyChanged(new PropertyChangedEventArgs("IsAutoSelect"));
 			setIsSameVdsMessageVisible(!value);
+			privateSelectHostAutomatically_IsSelected.setEntity(value);
+			privateSelectDestinationHost_IsSelected.setEntity(!value);
+			privateHosts.setIsChangable(!value);
 		}
 	}
 
@@ -120,11 +123,37 @@ public class MigrateModel extends Model
 		privatehasSameVdsMessage = value;
 	}
 
+	private EntityModel privateSelectHostAutomatically_IsSelected;
+	public EntityModel getSelectHostAutomatically_IsSelected()
+	{
+		return privateSelectHostAutomatically_IsSelected;
+	}
+	public void setSelectHostAutomatically_IsSelected(EntityModel value)
+	{
+		privateSelectHostAutomatically_IsSelected = value;
+	}
+
+	private EntityModel privateSelectDestinationHost_IsSelected;
+	public EntityModel getSelectDestinationHost_IsSelected()
+	{
+		return privateSelectDestinationHost_IsSelected;
+	}
+	public void setSelectDestinationHost_IsSelected(EntityModel value)
+	{
+		privateSelectDestinationHost_IsSelected = value;
+	}
+
 
 	public MigrateModel()
 	{
 		setHosts(new ListModel());
 		getHosts().getSelectedItemChangedEvent().addListener(this);
+
+		setSelectHostAutomatically_IsSelected(new EntityModel());
+		getSelectHostAutomatically_IsSelected().getEntityChangedEvent().addListener(this);
+
+		setSelectDestinationHost_IsSelected(new EntityModel());
+		getSelectDestinationHost_IsSelected().getEntityChangedEvent().addListener(this);
 	}
 
 	@Override
@@ -144,6 +173,17 @@ public class MigrateModel extends Model
 				}
 			}
 			setIsSameVdsMessageVisible(gethasSameVdsMessage());
+		}
+		else if (ev.equals(EntityModel.EntityChangedEventDefinition))
+		{
+			if (sender == getSelectHostAutomatically_IsSelected())
+			{
+				setIsAutoSelect((Boolean)getSelectHostAutomatically_IsSelected().getEntity());
+			}
+			else if (sender == getSelectDestinationHost_IsSelected())
+			{
+				setIsAutoSelect(!(Boolean)getSelectDestinationHost_IsSelected().getEntity());
+			}
 		}
 	}
 }

@@ -54,4 +54,13 @@ public interface ApplicationMessages extends Messages {
 
     @DefaultMessage("Power Management is not configured for this Host. <a>Enable Power Management</a>")
     String hostHasNoPowerManagementAlert();
+
+    @DefaultMessage("Host Destination is disabled since you have selected Virtual Machines in several Clusters.")
+    String migrateHostDisabledVMsInServerClusters();
+
+    @DefaultMessage("Note that some of the selected VMs are already running on this Host and will not be migrated.")
+    String migrateSomeVmsAlreadyRunningOnHost();
+
+    @DefaultMessage("No available Host to migrate to.")
+    String migrateNoAvailableHost();
 }

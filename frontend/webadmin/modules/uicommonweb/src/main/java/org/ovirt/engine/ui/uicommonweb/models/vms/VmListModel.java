@@ -1818,7 +1818,20 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		model.setHashName("migrate_virtual_machine");
 		model.setIsAutoSelect(true);
 		model.setVmList(Linq.<VM>Cast(getSelectedItems()));
-		java.util.ArrayList<VDS> hosts = DataProvider.GetUpHostListByCluster(vm.getvds_group_name());
+
+		AsyncDataProvider.GetUpHostListByCluster(new AsyncQuery(this,
+			new INewAsyncCallback() {
+				@Override
+				public void OnSuccess(Object target, Object returnValue) {
+					VmListModel vmListModel = (VmListModel)target;
+					vmListModel.PostMigrateGetUpHosts((java.util.ArrayList<VDS>) returnValue);
+				}
+			}), vm.getvds_group_name());
+	}
+
+	private void PostMigrateGetUpHosts(java.util.ArrayList<VDS> hosts)
+	{
+		MigrateModel model = (MigrateModel) getWindow();
 		model.setVmsOnSameCluster(true);
 		NGuid run_on_vds = null;
 		boolean allRunOnSameVds = true;
@@ -1906,16 +1919,16 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 			}
 
 			Frontend.RunMultipleAction(VdcActionType.MigrateVm, list,
-		new IFrontendMultipleActionAsyncCallback() {
-			@Override
-			public void Executed(FrontendMultipleActionAsyncResult  result) {
+				new IFrontendMultipleActionAsyncCallback() {
+					@Override
+					public void Executed(FrontendMultipleActionAsyncResult  result) {
 
-				MigrateModel localModel = (MigrateModel)result.getState();
-				localModel.StopProgress();
-				Cancel();
+						MigrateModel localModel = (MigrateModel)result.getState();
+						localModel.StopProgress();
+						Cancel();
 
-			}
-		}, model);
+					}
+				}, model);
 		}
 		else
 		{
@@ -1933,16 +1946,16 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 			}
 
 			Frontend.RunMultipleAction(VdcActionType.MigrateVmToServer, list,
-		new IFrontendMultipleActionAsyncCallback() {
-			@Override
-			public void Executed(FrontendMultipleActionAsyncResult  result) {
+				new IFrontendMultipleActionAsyncCallback() {
+					@Override
+					public void Executed(FrontendMultipleActionAsyncResult  result) {
 
-				MigrateModel localModel = (MigrateModel)result.getState();
-				localModel.StopProgress();
-				Cancel();
+						MigrateModel localModel = (MigrateModel)result.getState();
+						localModel.StopProgress();
+						Cancel();
 
-			}
-		}, model);
+					}
+				}, model);
 		}
 	}
 

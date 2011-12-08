@@ -633,9 +633,18 @@ public interface ApplicationConstants extends Constants {
     String configureSystemPermissionTabLabel();
 
     @DefaultStringValue("Force Override")
-	String vmExportPopupForceOverrideLabel();
+    String vmExportPopupForceOverrideLabel();
 
     @DefaultStringValue("Collapse Snapshots")
-	String vmExportPopupCollapseSnapshotsLabel();
+    String vmExportPopupCollapseSnapshotsLabel();
+
+    @DefaultStringValue("Select Host Automatically")
+    String vmMigratePopupSelectHostAutomaticallyLabel();
+
+    @DefaultStringValue("Select Destination Host")
+    String vmMigratePopupSelectDestinationHostLabel();
+
+    @DefaultStringValue("Host:")
+    String vmMigratePopupHostsListLabel();
 
 }

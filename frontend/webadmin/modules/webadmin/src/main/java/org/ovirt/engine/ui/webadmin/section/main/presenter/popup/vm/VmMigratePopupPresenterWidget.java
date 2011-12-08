@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm;
 
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.MigrateModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBoundPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class VmMigratePopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<VmModel, VmMigratePopupPresenterWidget.ViewDef> {
-    public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<VmModel> {
+public class VmMigratePopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<MigrateModel, VmMigratePopupPresenterWidget.ViewDef> {
+    public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<MigrateModel> {
     }
 
     @Inject

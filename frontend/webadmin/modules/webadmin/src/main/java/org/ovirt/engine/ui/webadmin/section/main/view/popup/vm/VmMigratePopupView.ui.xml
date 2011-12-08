@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+
+	<ui:style>
+		.noteLabel,
+		.errorLabel {
+			margin-left: 5px;
+			margin-top: 10px;
+		}
+
+		.errorLabel {
+			color: #CD2127;
+		}
+
+		.messagePanel {
+			height: 70px;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="400px" height="300px">
+		<d:content>
+			<g:FlowPanel>
+				<e:EntityModelRadioButtonEditor ui:field="selectHostAutomaticallyEditor"/>
+				<e:EntityModelRadioButtonEditor ui:field="selectDestinationHostEditor"/>
+				<e:ListModelListBoxEditor ui:field="hostsListEditor"/>
+				<g:FlowPanel addStyleNames="{style.messagePanel}" >
+					<g:Label ui:field="message1" addStyleNames="{style.errorLabel}" />
+					<g:Label ui:field="message2" addStyleNames="{style.noteLabel}" />
+					<g:Label ui:field="message3" addStyleNames="{style.errorLabel}" />
+				</g:FlowPanel>
+			</g:FlowPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>
