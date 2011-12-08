@@ -498,7 +498,8 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
             // If no IP address is available - assure that 'vm_host' is FQN by concatenating
             // vmHost and vmDomain.
             if (StringHelper.isNullOrEmpty(vmHost)) {
-                this.mVmDynamic.setvm_host(getvm_name());
+                vmHost = StringHelper.isNullOrEmpty(vmDomain) ? getvm_name() : getvm_name() + "." + vmDomain;
+                this.mVmDynamic.setvm_host(vmHost);
             } else if (!StringHelper.isNullOrEmpty(vmDomain) && !vmHost.endsWith(vmDomain)) {
                 this.mVmDynamic.setvm_host(vmHost + "." + vmDomain);
             }
