@@ -17,9 +17,67 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class AdGroupDAODbFacadeImpl extends BaseDAODbFacade implements AdGroupDAO {
 
+    @Override
+    public ad_groups get(Guid id) {
+        return getCallsHandler().executeRead("Getad_groupsByid",
+                new ADGroupRowMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("id", id));
+    }
+
+    @Override
+    public ad_groups getByName(String name) {
+        return getCallsHandler().executeRead("Getad_groupsByName",
+                new ADGroupRowMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("name", name));
+    }
+
+    @Override
+    public List<ad_groups> getAll() {
+        return getCallsHandler().executeReadList("GetAllFromad_groups",
+                new ADGroupRowMapper(),
+                getCustomMapSqlParameterSource());
+    }
+
+    @Override
+    public List<ad_groups> getAllTimeLeasedForPool(int id) {
+        return getCallsHandler().executeReadList("Gettime_leasedad_groups_by_vm_pool_id",
+                new ADGroupRowMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("vmPoolId", id));
+    }
+
+    @Override
+    public void save(ad_groups group) {
+        insertOrUpdate(group, "Insertad_groups");
+    }
+
+    @Override
+    public void update(ad_groups group) {
+        insertOrUpdate(group, "Updatead_groups");
+    }
+
+    private void insertOrUpdate(final ad_groups group, final String storedProcName) {
+        getCallsHandler().executeModification(storedProcName, getCustomMapSqlParameterSource()
+                .addValue("id", group.getid())
+                .addValue("name", group.getname())
+                .addValue("status", group.getstatus())
+                .addValue("domain", group.getdomain())
+                .addValue("distinguishedname", group.getDistinguishedName()));
+    }
+
+    @Override
+    public void remove(Guid id) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("id", id);
+
+        getCallsHandler().executeModification("Deletead_groups", parameterSource);
+    }
+
     private static final class ADGroupRowMapper implements ParameterizedRowMapper<ad_groups> {
         @Override
-        public ad_groups mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public ad_groups mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             ad_groups entity = new ad_groups();
             entity.setid(Guid.createGuidFromString(rs.getString("id")));
             entity.setname(rs.getString("name"));
@@ -31,74 +89,4 @@ public class AdGroupDAODbFacadeImpl extends BaseDAODbFacade implements AdGroupDA
         }
     }
 
-    @Override
-    public ad_groups get(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", id);
-
-        ParameterizedRowMapper<ad_groups> mapper = new ADGroupRowMapper();
-        return getCallsHandler().executeRead("Getad_groupsByid", mapper, parameterSource);
-    }
-
-    @Override
-    public ad_groups getByName(String name) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("name", name);
-
-        ParameterizedRowMapper<ad_groups> mapper = new ADGroupRowMapper();
-        return getCallsHandler().executeRead("Getad_groupsByName", mapper, parameterSource);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<ad_groups> getAll() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
-        ParameterizedRowMapper<ad_groups> mapper = new ADGroupRowMapper();
-
-        return getCallsHandler().executeReadList("GetAllFromad_groups", mapper, parameterSource);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<ad_groups> getAllTimeLeasedForPool(int id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vmPoolId", id);
-
-        ParameterizedRowMapper<ad_groups> mapper = new ADGroupRowMapper();
-
-        return getCallsHandler().executeReadList("Gettime_leasedad_groups_by_vm_pool_id", mapper, parameterSource);
-    }
-
-    @Override
-    public void save(ad_groups group) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", group.getid())
-                .addValue("name", group.getname())
-                .addValue("status", group.getstatus())
-                .addValue("domain", group.getdomain())
-                .addValue("distinguishedname", group.getDistinguishedName());
-
-        getCallsHandler().executeModification("Insertad_groups", parameterSource);
-    }
-
-    @Override
-    public void update(ad_groups group) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", group.getid())
-                .addValue("name", group.getname())
-                .addValue("status", group.getstatus())
-                .addValue("domain", group.getdomain())
-                .addValue("distinguishedname", group.getDistinguishedName());
-
-        getCallsHandler().executeModification("Updatead_groups", parameterSource);
-    }
-
-    @Override
-    public void remove(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", id);
-
-        getCallsHandler().executeModification("Deletead_groups", parameterSource);
-    }
 }
