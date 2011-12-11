@@ -1,5 +1,13 @@
 %define py_site_pkgs %(python -c "from distutils.sysconfig import get_python_lib as f;print f()")
 %define __os_install_post %{nil}
+%define _localdir %{_usr}/local
+%define _jbossdir %{_localdir}/jboss-5.1.0.GA
+%define _jbossprofiledir %{_jbossdir}/server/default
+%define __getent /usr/bin/getent
+%define __groupadd /usr/sbin/groupadd
+%define __useradd /usr/sbin/useradd
+%define __usermod /usr/sbin/usermod
+%define _engineeardir %{_jbossprofiledir}/deploy/engine.ear
 
 Name: ovirt-engine
 Version: $version
@@ -168,28 +176,28 @@ make PREFIX=%{buildroot}/ install
 %preun
 
 %post
-ln -s /usr/share/vdsm-bootstrap /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/components.war/vds &> /dev/null || /bin/true
+ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/null || /bin/true
 
 %postun
 
 %pre
-/usr/bin/getent group kvm > /dev/null || /usr/sbin/groupadd -g 36 -r kvm
-/usr/bin/getent passwd vdsm > /dev/null || /usr/sbin/useradd -u 36 -g kvm -o -r vdsm -c "Ovirt node manager" -d / -s /sbin/nologin
+%{__getent} group kvm > /dev/null || %{__groupadd} -g 36 -r kvm
+%{__getent} passwd vdsm > /dev/null || %{__useradd} -u 36 -g kvm -o -r vdsm -c "Ovirt node manager" -d / -s /sbin/nologin
 
-/usr/bin/getent group ovirt > /dev/null || /usr/sbin/groupadd -g 108 ovirt
-/usr/bin/getent passwd ovirt > /dev/null || /usr/sbin/useradd -u 108 -g ovirt -o -r ovirt -c "Ovirt Manager" -d /var/lib/ovirt -s /sbin/nologin
-/usr/bin/getent passwd jboss > /dev/null && /usr/sbin/usermod -a -G jboss ovirt > /dev/null
+%{__getent} group ovirt > /dev/null || %{__groupadd} -g 108 ovirt
+%{__getent} passwd ovirt > /dev/null || %{__useradd} -u 108 -g ovirt -o -r ovirt -c "Ovirt Manager" -d /var/lib/ovirt -s /sbin/nologin
+%{__getent} passwd jboss > /dev/null && %{__usermod} -a -G jboss ovirt > /dev/null
 
 %pre notification-service
-/usr/bin/getent group ovirt > /dev/null || /usr/sbin/groupadd -g 108 ovirt
-/usr/bin/getent passwd ovirt > /dev/null || /usr/sbin/useradd -u 108 -g ovirt -o -r ovirt -c "Ovirt Manager" -d /var/lib/ovirt -s /sbin/nologin
-/usr/bin/getent passwd jboss > /dev/null && /usr/sbin/usermod -a -G jboss ovirt > /dev/null
+%{__getent} group ovirt > /dev/null || %{__groupadd} -g 108 ovirt
+%{__getent} passwd ovirt > /dev/null || %{__useradd} -u 108 -g ovirt -o -r ovirt -c "Ovirt Manager" -d /var/lib/ovirt -s /sbin/nologin
+%{__getent} passwd jboss > /dev/null && %{__usermod} -a -G jboss ovirt > /dev/null
 
 %post notification-service
-/bin/chown ovirt:ovirt /etc/ovirt-engine/notifier/notifier.conf > /dev/null || /bin/true
+%{__chown} ovirt:ovirt /etc/ovirt-engine/notifier/notifier.conf > /dev/null || /bin/true
 
 %clean
-rm -rf %{buildroot}
+%{__rm} -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
@@ -223,27 +231,27 @@ rm -rf %{buildroot}
 %config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.w7
 %config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.w7x64
 %config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.xp
-/usr/local/jboss-5.1.0.GA/common/lib/quartz.jar
-/usr/local/jboss-5.1.0.GA/server/default/conf/jboss-log4j.xml
-/usr/local/jboss-5.1.0.GA/server/default/conf/login-config.xml
-/usr/local/jboss-5.1.0.GA/server/default/deploy/postgres-ds.xml
-/usr/local/jboss-5.1.0.GA/server/default/deploy/transaction-jboss-beans.xml
-/usr/local/jboss-5.1.0.GA/common/lib/postgresql-jdbc.jar
+%{_jbossdir}/common/lib/quartz.jar
+%{_jbossprofiledir}/conf/jboss-log4j.xml
+%{_jbossprofiledir}/conf/login-config.xml
+%{_jbossprofiledir}/deploy/postgres-ds.xml
+%{_jbossprofiledir}/deploy/transaction-jboss-beans.xml
+%{_jbossdir}/common/lib/postgresql-jdbc.jar
 
 #/var/lib/jbossas/common/lib/quartz-1.8.3.jar
 #/var/lib/jbossas/common/lib/postgresql-jdbc.jar
 
 %files backend
-%dir /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear
-/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/META-INF
-/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/lib
-/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/engine-bll.jar
-/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/engine-scheduler.jar
-/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/engine-vdsbroker.jar
-/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/engineanagerweb.war
-/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/engineanager.war
-/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/components.war
-%dir /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/webadmin.war
+%dir %{_engineeardir}
+%{_engineeardir}/META-INF
+%{_engineeardir}/lib
+%{_engineeardir}/engine-bll.jar
+%{_engineeardir}/engine-scheduler.jar
+%{_engineeardir}/engine-vdsbroker.jar
+%{_engineeardir}/engineanagerweb.war
+%{_engineeardir}/engineanager.war
+%{_engineeardir}/components.war
+%dir %{_engineeardir}/webadmin.war
 
 %files dbscripts
 %attr (755,root,root) %{_datadir}/%{name}/dbscripts
@@ -252,21 +260,21 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 
 %files restapi
-%dir /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear
-/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/restapi.war
+%dir %{_engineeardir}
+%{_engineeardir}/restapi.war
 
 %files genericapi
-%dir /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear
-/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/engine-genericapi.jar
+%dir %{_engineeardir}
+%{_engineeardir}/engine-genericapi.jar
 
 %files userportal
-%dir /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear
-%config(noreplace) /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/userportal.war/org.ovirt.engine.ui.userportal.UserPortal/consoles/spice/usbfilter.txt
-/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/userportal.war
+%dir %{_engineeardir}
+%config(noreplace) %{_engineeardir}/userportal.war/org.ovirt.engine.ui.userportal.UserPortal/consoles/spice/usbfilter.txt
+%{_engineeardir}/userportal.war
 
 %files webadmin-portal
-%dir /usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear
-/usr/local/jboss-5.1.0.GA/server/default/deploy/engine.ear/webadmin.war
+%dir %{_engineeardir}
+%{_engineeardir}/webadmin.war
 
 %files iso-uploader
 %{_datadir}/%{name}/iso-uploader
@@ -305,6 +313,8 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/%{name}/notifier/notifier.conf
 
 %changelog
+* Sun Dec 11 2011 Ronen Angluster <ranglust@redhat.com> - 3.0.0
+- Moved all hard coded paths to macros
 * Wed Oct 26 2011 Ronen Angluster <ranglust@redhat.com> - 3.0.0
 - Initial build
 - Cloned from RHEVM spec file
