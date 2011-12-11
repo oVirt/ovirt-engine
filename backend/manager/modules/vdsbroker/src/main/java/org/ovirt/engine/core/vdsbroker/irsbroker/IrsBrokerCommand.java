@@ -386,7 +386,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 } else if (domainPoolMap.getstatus() != StorageDomainStatus.Locked
                         && domainPoolMap.getstatus() != data.getstatus()) {
                     DbFacade.getInstance().getStoragePoolIsoMapDAO().update(data.getStoragePoolIsoMapData());
-                    if (data.getstatus() != null && data.getstatus() == StorageDomainStatus.InActive
+                    if (data.getstatus() != null && (data.getstatus() == StorageDomainStatus.InActive ||
+                            data.getstatus() == StorageDomainStatus.Maintenance)
                             && domainFromDb.getstorage_domain_type() == StorageDomainType.Master) {
                         storage_pool pool = DbFacade.getInstance().getStoragePoolDAO()
                                 .get(domainPoolMap.getstorage_pool_id().getValue());
