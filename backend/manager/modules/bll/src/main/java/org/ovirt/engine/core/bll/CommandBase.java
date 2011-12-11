@@ -703,9 +703,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (TransactionSupport.current() != null) {
             TransactionSupport.registerRollbackHandler(CommandBase.this);
         }
-        if (AquireLock() && ExecuteWithoutTransaction()) {
 
-        } else {
+        // If we didn't managed to acquire lock for command or the object wasn't managed to execute properly, then
+        // rollback the transaction.
+        if (!AquireLock() || !ExecuteWithoutTransaction()) {
             if (TransactionSupport.current() == null) {
                 cancelTasks();
             }
