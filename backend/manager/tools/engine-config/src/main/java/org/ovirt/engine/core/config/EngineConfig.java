@@ -9,7 +9,7 @@ import org.ovirt.engine.core.config.validation.ConfigActionType;
 public class EngineConfig {
 
     public static final String CONFIG_FILE_PATH_PROPERTY = "engine-config.config.file.path";
-    public static final String DEFAULT_CONFIG_PATH = "/etc/engine/engine-config/";
+    public static final String DEFAULT_CONFIG_PATH = "/etc/ovirt-engine/engine-config/";
     private static final Logger log = Logger.getLogger(EngineConfig.class);
     private EngineConfigCLIParser parser;
     private EngineConfigLogic engineConfigLogic;

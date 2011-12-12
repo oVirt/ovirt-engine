@@ -45,7 +45,7 @@ PUSHDIR=`readlink -f $0`
 pushd `dirname $PUSHDIR` > /dev/null
 
 # Support alternate configuration file
-CONF_FILE=/etc/engine/engine-config/engine-config.conf
+CONF_FILE=/etc/ovirt-engine/engine-config/engine-config.conf
 
 found=0
 for ((i=1; i<=$# && ! found; i++))
