@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.AbstractActionPanel;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -173,7 +174,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         table.addDomHandler(new KeyDownHandler() {
             @Override
             public void onKeyDown(KeyDownEvent event) {
-
                 boolean shiftPageDown = event.isShiftKeyDown() && KeyCodes.KEY_PAGEDOWN == event.getNativeKeyCode();
                 boolean shiftPageUp = event.isShiftKeyDown() && KeyCodes.KEY_PAGEUP == event.getNativeKeyCode();
                 boolean ctrlA =
@@ -205,8 +205,31 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
                     }
                 }
             }
-
         }, KeyDownEvent.getType());
+
+        // Add right click handler
+        table.addCellPreviewHandler(new CellPreviewEvent.Handler<T>() {
+            @Override
+            public void onCellPreview(CellPreviewEvent<T> event) {
+                if (event.getNativeEvent().getButton() != NativeEvent.BUTTON_RIGHT
+                        || !"mousedown".equals(event.getNativeEvent().getType())) {
+                    return;
+                }
+
+                final T value = event.getValue();
+
+                if (!selectionModel.isSelected(value)) {
+                    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+                        @Override
+                        public void execute() {
+                            selectionModel.setMultiSelectEnabled(false);
+                            selectionModel.setMultiRangeSelectEnabled(false);
+                            selectionModel.setSelected(value, true);
+                        }
+                    });
+                }
+            }
+        });
 
         // Use fixed table layout
         table.setWidth("100%", true);
