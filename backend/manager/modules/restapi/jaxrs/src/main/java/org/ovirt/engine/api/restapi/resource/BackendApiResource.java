@@ -38,10 +38,11 @@ import org.ovirt.engine.api.model.ApiSummary;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.Hosts;
-import org.ovirt.engine.api.model.KeyValuePair;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.LinkHeader;
 import org.ovirt.engine.api.model.ObjectFactory;
+import org.ovirt.engine.api.model.Parameter;
+import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.ProductInfo;
 import org.ovirt.engine.api.model.RSDL;
 import org.ovirt.engine.api.model.SpecialObjects;
@@ -104,19 +105,19 @@ public class BackendApiResource
             api.getLinks().add(LinkHelper.createLink(detailedLink.getHref(), detailedLink.getRel()));
             //when required - add extra link for search
             if (detailedLink.isSetLinkCapabilities() && detailedLink.getLinkCapabilities().isSetSearchable() && detailedLink.getLinkCapabilities().isSearchable()) {
-                api.getLinks().add(LinkHelper.createLink(detailedLink.getHref(), detailedLink.getRel(), detailedLink.getUrlParmeters()));
+                api.getLinks().add(LinkHelper.createLink(detailedLink.getHref(), detailedLink.getRel(), detailedLink.getRequest().getUrl().getParametersSets()));
             }
         }
         return api;
     }
 
-    private LinkedList<KeyValuePair> getEventParams() {
-        LinkedList<KeyValuePair> keyValuePairs = new LinkedList<KeyValuePair>();
-        KeyValuePair pair = new KeyValuePair();
-        pair.setKey("from");
-        pair.setValue("event_id");
-        keyValuePairs.add(pair);
-        return keyValuePairs;
+    private ParametersSet getEventParams() {
+        ParametersSet ps = new ParametersSet();
+        Parameter param = new Parameter();
+        param.setName("from");
+        param.setValue("event_id");
+        ps.getParameters().add(param);
+        return ps;
     }
 
     public List<String> getRels() {
@@ -155,7 +156,7 @@ public class BackendApiResource
         return LinkHelper.createLink(getUriInfo().getBaseUri().getPath(), rel, flags);
     }
 
-    private DetailedLink createLink(String rel, LinkFlags flags, List<KeyValuePair> params) {
+    private DetailedLink createLink(String rel, LinkFlags flags, ParametersSet params) {
         return LinkHelper.createLink(getUriInfo().getBaseUri().getPath(), rel, flags, params);
     }
 

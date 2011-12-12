@@ -20,10 +20,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;
@@ -42,13 +39,15 @@ import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Group;
-import org.ovirt.engine.api.model.KeyValuePair;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.LinkCapabilities;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Parameter;
+import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Permit;
+import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Statistic;
@@ -56,6 +55,7 @@ import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.api.model.Url;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VM;
@@ -278,7 +278,7 @@ public class LinkHelper {
      * @return    the relative path to the collection
      */
     private static String getPath(Class<?> clz) {
-        Path pathAnnotation = (Path)clz.getAnnotation(Path.class);
+        Path pathAnnotation = clz.getAnnotation(Path.class);
 
         String path = pathAnnotation.value();
         if (path.startsWith("/")) {
@@ -309,7 +309,7 @@ public class LinkHelper {
             if (method.getName().startsWith("get") &&
                 clz.isAssignableFrom(method.getReturnType()) &&
                 isPluralResourceGetter(method.getName(), type.getSimpleName())) {
-                Path pathAnnotation = (Path)method.getAnnotation(Path.class);
+                Path pathAnnotation = method.getAnnotation(Path.class);
                 return pathAnnotation.value();
             }
         }
@@ -612,7 +612,7 @@ public class LinkHelper {
      * @param flags used to specify different link options
      */
     public static void addLink(String url, BaseResource resource, String rel, LinkFlags flags) {
-        addLink(url, resource, rel, flags, new HashMap<String, String>());
+        addLink(url, resource, rel, flags, new ParametersSet());
     }
 
     /**
@@ -624,7 +624,7 @@ public class LinkHelper {
      * @param flags used to specify different link options
      * @param params the URL params to append
      */
-    public static void addLink(String url, BaseResource resource, String rel, LinkFlags flags, Map<String, String> params) {
+    public static void addLink(String url, BaseResource resource, String rel, LinkFlags flags, ParametersSet params) {
         Link link = new Link();
         link.setRel(rel);
         link.setHref(combine(url, rel));
@@ -654,7 +654,7 @@ public class LinkHelper {
      * @param rel link ro add
      * @param params the URL params to append
      */
-    public static void addLink(String url, BaseResource resource, String rel, Map<String, String> params) {
+    public static void addLink(String url, BaseResource resource, String rel, ParametersSet params) {
         Link link = new Link();
         link.setRel(rel + SEARCH_RELATION);
         link.setHref(combine(combine(url, rel) + SEARCH_TEMPLATE, params));
@@ -682,11 +682,11 @@ public class LinkHelper {
      * @param params the URL params to append
      * @return the combined head and params
      */
-    public static String combine(String head, Map<String, String> params) {
+    public static String combine(String head, ParametersSet params) {
         String combined_params = "";
         if (params != null) {
-           for (Entry<String, String> entry : params.entrySet()) {
-                combined_params += String.format(PARAMETER_TEMPLATE, entry.getKey(), entry.getValue());
+           for (Parameter entry : params.getParameters()) {
+                combined_params += String.format(PARAMETER_TEMPLATE, entry.getName(), entry.getValue());
            }
         }
         return head + combined_params;
@@ -701,7 +701,7 @@ public class LinkHelper {
      * @return the link the was created
      */
     public static DetailedLink createLink(String url, String rel, LinkFlags flags) {
-        return createLink(url, rel, flags, new LinkedList<KeyValuePair>());
+        return createLink(url, rel, flags, new ParametersSet());
     }
 
     /**
@@ -713,7 +713,7 @@ public class LinkHelper {
      * @param params url parameters
      * @return the link the was created
      */
-    public static DetailedLink createLink(String url, String rel, LinkFlags flags, List<KeyValuePair> params) {
+    public static DetailedLink createLink(String url, String rel, LinkFlags flags, ParametersSet params) {
         DetailedLink link = new DetailedLink();
         link.setRel(rel);
         link.setHref(combine(url, rel));
@@ -722,7 +722,9 @@ public class LinkHelper {
             capabilities.setSearchable(true);
             link.setLinkCapabilities(capabilities);
         }
-        link.getUrlParmeters().addAll(params);
+        link.setRequest(new Request());
+        link.getRequest().setUrl(new Url());
+        link.getRequest().getUrl().getParametersSets().add(params);
         return link;
     }
 
@@ -734,7 +736,7 @@ public class LinkHelper {
      * @param params url parameters
      * @return the link the was created
      */
-    public static Link createLink(String url, String rel, List<KeyValuePair> params) {
+    public static Link createLink(String url, String rel, List<ParametersSet> params) {
         Link link = new Link();
         link.setRel(rel + SEARCH_RELATION);
         link.setHref(combine(url + SEARCH_TEMPLATE, params));
@@ -785,11 +787,14 @@ public class LinkHelper {
      * @param params the URL params to append
      * @return the combined head and params
      */
-    public static String combine(String head, List<KeyValuePair> params) {
+    public static String combine(String head, List<ParametersSet> params) {
         String combined_params = "";
         if (params != null) {
-           for (KeyValuePair pair : params) {
-                combined_params += String.format(PARAMETER_TEMPLATE, pair.getKey(), pair.getValue());
+           for (ParametersSet ps : params) {
+               for (Parameter param : ps.getParameters()) {
+                   combined_params += String.format(PARAMETER_TEMPLATE, param.getName(), param.getValue());
+              }
+
            }
         }
         return head + combined_params;

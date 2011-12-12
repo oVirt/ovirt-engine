@@ -47,6 +47,7 @@ import org.ovirt.engine.api.model.RSDL;
 import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Response;
 import org.ovirt.engine.api.model.Schema;
+import org.ovirt.engine.api.model.Url;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.core.compat.LogCompat;
@@ -311,6 +312,20 @@ public class RsdlBuilder {
         if (this.parametersMetaData.containsKey(link_name)) {
             Action action = this.parametersMetaData.get(link_name);
             if (action.getRequest() != null) {
+                if (action.getRequest().getUrlparams() != null && !action.getRequest().getUrlparams().isEmpty()) {
+                    link.getRequest().setUrl(new Url());
+                    ParametersSet ps = new ParametersSet();
+                    for (Object key :  action.getRequest().getUrlparams().keySet()) {
+                        Parameter param = new Parameter();
+                        param.setName(key.toString());
+                        Object value = action.getRequest().getUrlparams().get(key);
+                        if (value != null) {
+                            param.setValue(value.toString());
+                        }
+                        ps.getParameters().add(param);
+                    }
+                    link.getRequest().getUrl().getParametersSets().add(ps);
+                }
                 if (action.getRequest().getBody() != null) {
                     if (action.getRequest().getBody().getSignatures() != null) {
                         for (Signature signature : action.getRequest().getBody().getSignatures()) {
