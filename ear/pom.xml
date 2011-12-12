@@ -223,13 +223,6 @@
             </webModule>
 
             <webModule>
-              <groupId>org.ovirt.engine.ui</groupId>
-              <artifactId>components-war</artifactId>
-              <bundleFileName>components.war</bundleFileName>
-              <contextRoot>/rhev-docs</contextRoot>
-            </webModule>
-
-            <webModule>
               <groupId>org.ovirt.engine.api</groupId>
               <artifactId>restapi-webapp</artifactId>
               <bundleFileName>restapi.war</bundleFileName>
@@ -300,7 +293,7 @@
                   <version>${quartz.version}</version>
                   <type>jar</type>
                   <overWrite>true</overWrite>
-                  <destFileName>quartz.jar</destFileName>
+                  <destFileName>quartz-${quartz.version}.jar</destFileName>
                   <outputDirectory>${project.build.directory}/quartz</outputDirectory>
                 </artifactItem>
               </artifactItems>
@@ -432,8 +425,8 @@
                 <configuration>
                   <tasks>
                     <delete file="${jbossHome}/common/lib/quartz.jar"/>
-                    <echo>*** Copying quartz.jar from ${project.build.directory}/quartz/quartz.jar to ${jbossHome}/common/lib/</echo>
-                    <copy file="${project.build.directory}/quartz/quartz.jar" tofile="${jbossHome}/common/lib/quartz.jar" verbose="true" overwrite="true"/>
+                    <echo>*** Copying quartz-${quartz.version}.jar from ${project.build.directory}/quartz/quartz-${quartz.version}.jar to ${jbossHome}/common/lib/</echo>
+                    <copy file="${project.build.directory}/quartz/quartz-${quartz.version}.jar" tofile="${jbossHome}/common/lib/quartz-${quartz.version}.jar" verbose="true" overwrite="true"/>
                   </tasks>
                 </configuration>
 

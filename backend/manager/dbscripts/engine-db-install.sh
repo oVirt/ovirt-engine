@@ -25,7 +25,7 @@ REQUIRED_RPMS=(postgresql-server postgresql postgresql-libs postgresql-contrib u
 PGDATA=/var/lib/pgsql/data
 
 #location of engine db scripts
-ENGINE_DB_SCRIPTS_DIR=/usr/share/engine/dbscripts
+ENGINE_DB_SCRIPTS_DIR=/usr/share/ovirt-engine/dbscripts
 ENGINE_DB_CREATE_SCRIPT=create_db.sh
 
 #postresql service
@@ -34,7 +34,9 @@ DB_ADMIN=postgres
 DB_USER=engine
 TABLE_NAME=vdc_options
 DB_NAME=engine
-PGSQL_SERVICE=/etc/init.d/$PGSQL
+SYSTEMCTL=/bin/systemctl
+PGSQL_SERVICE="/sbin/service $PGSQL"
+POSTGRESQL_SERVICE=postgresql.service
 
 #auth security file path
 PG_HBA_FILE=/var/lib/pgsql/data/pg_hba.conf
@@ -123,7 +125,7 @@ verifyPkgIsInstalled()
 verifyPostgresService()
 {
    echo "[$SCRIPT_NAME] verifying postgres service exists." >> $LOG_FILE 
-   if [ ! -x $PGSQL_SERVICE ]
+   if [ ! -f /etc/systemd/system/multi-user.target.wants/postgresql.service ]
    then
         echo "[$SCRIPT_NAME] postgresql service cannot be executed from $PGSQL_SERVICE" 
         exit 1 
@@ -143,7 +145,10 @@ initPgsqlDB()
     then
         echo "[$SCRIPT_NAME] psgql db already been initialized." >> $LOG_FILE
     else
-        $PGSQL_SERVICE initdb >> $LOG_FILE 2>&1
+		#This is how it is handled in RHEL6, im leaving this remark in case
+		#We'll need to revert
+        #$PGSQL_SERVICE initdb >> $LOG_FILE 2>&1
+		/usr/bin/postgresql-setup initdb postgresql >> $LOG_FILE 2>&1
 	    _verifyRC $? "error, failed initializing postgresql db"
     fi
 }

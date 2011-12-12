@@ -54,7 +54,7 @@ start_time=$5
 cert_pass=$6
 lock_file=$7
 if [ -z "$lock_file" ]; then
-        lock_file=/var/lock/engine/.openssl.exclusivelock
+        lock_file=/var/lock/ovirt-engine/.openssl.exclusivelock
 fi
 
 timeout=$8

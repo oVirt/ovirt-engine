@@ -9,14 +9,14 @@ MVN=$(shell which mvn)
 BUILD_FLAGS=-P gwt-admin,gwt-user
 DEPLOY_FLAGS=-f deploy.xml
 JBOSS_HOME=/usr/local/jboss-5.1.0.GA
-EAR_DIR=${JBOSS_HOME}/server/default/deploy/engine.ear
+EAR_DIR=/usr/share/ovirt-engine/engine.ear
 EAR_SRC_DIR=ear/target/engine
 PY_SITE_PKGS:=$(shell python -c "from distutils.sysconfig import get_python_lib as f;print f()")
 APP_VERSION:=$(shell cat pom.xml | grep '<engine.version>' | awk -F\> '{print $$2}' | awk -F\< '{print $$1}')
 RPM_VERSION:=$(shell echo $(APP_VERSION) | sed "s/-/_/")
 
 #RPM_RELEASE:=$(shell echo $(APP_VERSION) | awk -F\. '{print $$3"%{?dist}"}')
-SPEC_FILE_IN=packaging/fedora/ovirt-engine.spec.in
+SPEC_FILE_IN=packaging/fedora/spec/ovirt-engine.spec.in
 SPEC_FILE=ovirt-engine.spec
 RPMBUILD=$(shell bash -c "pwd -P")/rpmbuild
 SRCRPMBUILD=$(shell bash -c "pwd -P")/srcrpmbuild
@@ -30,6 +30,7 @@ CURR_DIR=$(shell bach -c "pwd -P")
 all: build_mvn
 
 build_mvn:
+	export MAVEN_OPTS="-XX:MaxPermSize=512m"
 	$(MVN) install $(BUILD_FLAGS) -D skipTests
 	touch $(BUILD_FILE)
 
@@ -43,7 +44,7 @@ test:
 install: build_mvn create_dirs install_ear install_quartz install_tools \
 		install_config install_log_collector install_iso_uploader \
 		install_sysprep install_notification_service install_db_scripts \
-		install_misc
+		install_misc install_setup install_sec
 
 tarball: $(TARBALL)
 $(TARBALL):
@@ -70,7 +71,7 @@ rpm: $(SRPM)
 
 create_dirs:
 	@echo "*** Creating Directories"
-	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/{sysprep,kerberos,scripts,3rd-party-lib,engine.ear,conf,dbscripts,resources,ovirt-isos,iso-uploader,log-collector,db-backups}
+	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/{sysprep,kerberos,scripts,3rd-party-lib,engine.ear,conf,dbscripts,resources,ovirt-isos,iso-uploader,log-collector,db-backups,engine.ear}
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/engine-config/lib
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/notifier/lib
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/lib
@@ -92,6 +93,8 @@ create_dirs:
 	@mkdir -p $(PREFIX)$(JBOSS_HOME)/common/lib
 	@mkdir -p $(PREFIX)$(JBOSS_HOME)/server/default/deploy
 	@mkdir -p $(PREFIX)$(JBOSS_HOME)/server/default/conf
+	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/resources/jboss/
+	@mkdir -p $(PREFIX)/etc/pki/ovirt-engine/{keys,private,requests,certs}
 
 install_ear:
 	@echo "*** Deploying EAR to $(PREFIX)"
@@ -100,13 +103,46 @@ install_ear:
 
 install_quartz:
 	@echo "*** Deploying quartz.jar to $(PREFIX)"
-	cp -f ear/target/quartz/quartz.jar $(PREFIX)$(JBOSS_HOME)/common/lib/
+	cp -f ear/target/quartz/quartz*.jar $(PREFIX)$(JBOSS_HOME)/common/lib/
 
 install_tools:
 	@echo "*** Installing Common Tools"
 	cp -f ./backend/manager/tools/engine-tools-common/target/engine-tools-common-$(APP_VERSION).jar $(PREFIX)/usr/share/java/
 	rm -f $(PREFIX)/usr/share/java/engine-tools-common.jar
 	ln -s /usr/share/java/engine-tools-common-$(APP_VERSION).jar $(PREFIX)/usr/share/java/engine-tools-common.jar
+
+install_setup:
+	@echo "*** Deploying setup executables"
+	cp -f ./packaging/fedora/setup/engine-config-install.properties $(PREFIX)/usr/share/ovirt-engine/conf
+	chmod 644 $(PREFIX)/usr/share/ovirt-engine/conf/engine-config-install.properties
+	cp -f ./packaging/fedora/setup/iptables.default $(PREFIX)/usr/share/ovirt-engine/conf
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/conf/iptables.default
+	cp -f ./packaging/fedora/setup/nfs.sysconfig $(PREFIX)/usr/share/ovirt-engine/conf
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/conf/nfs.sysconfig
+	cp -f ./packaging/fedora/setup/engine-setup.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/engine-setup.py
+	cp -f ./packaging/fedora/setup/nfsutils.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/nfsutils.py
+	cp -f ./packaging/fedora/setup/basedefs.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/basedefs.py
+	cp -f ./packaging/fedora/setup/engine_validators.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/engine_validators.py
+	cp -f ./packaging/fedora/setup/common_utils.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/common_utils.py
+	cp -f ./packaging/fedora/setup/resources/jboss/web-conf.js $(PREFIX)/etc/ovirt-engine
+	chmod 755 $(PREFIX)/etc/ovirt-engine/web-conf.js
+	cp -f ./packaging/fedora/setup/output_messages.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/output_messages.py
+	ln -s /usr/share/ovirt-engine/scripts/engine-setup.py $(PREFIX)/usr/bin/engine-setup
+	cp -af ./packaging/fedora/setup/resources/jboss/* $(PREFIX)/usr/share/ovirt-engine/resources/jboss/
+	sed -i "s/MYVERSION/$(RPM_VERSION)/" $(PREFIX)/usr/share/ovirt-engine/resources/jboss/engineVersion.js
+
+install_sec:
+	cd backend/manager/3rdparty/pub2ssh/; chmod +x pubkey2ssh.sh; mkdir -p bin; ./pubkey2ssh.sh; cd -
+	rm -rf $(PREFIX)/etc/pki/engine-config/*.bat
+	cp -f ./backend/manager/3rdparty/pub2ssh/bin/pubkey2ssh $(PREFIX)/etc/pki/ovirt-engine
+	chmod 755 $(PREFIX)/etc/pki/ovirt-engine
+	cp -a  ./backend/manager/conf/ca/* $(PREFIX)/etc/pki/ovirt-engine
 
 install_config:
 	@echo "*** Deploying engine-config & engine-manage-domains"
@@ -206,10 +242,8 @@ install_misc:
 	cp -f ./packaging/ovirtlogrot.sh $(PREFIX)/usr/share/ovirt-engine/scripts
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/vds_installer.py
 	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)$(JBOSS_HOME)/common/lib/postgresql-jdbc.jar
-	cp -f ./backend/manager/conf/jboss-log4j.xml $(PREFIX)$(JBOSS_HOME)/server/default/conf
-	cp -f ./backend/manager/conf/login-config.xml $(PREFIX)$(JBOSS_HOME)/server/default/conf
-	cp -f ./backend/manager/conf/postgres-ds.xml $(PREFIX)$(JBOSS_HOME)/server/default/deploy
-	cp -f ./backend/manager/conf/transaction-jboss-beans.xml $(PREFIX)$(JBOSS_HOME)/server/default/deploy
+	cp -f ./backend/manager/conf/jboss-log4j.xml $(PREFIX)/usr/share/ovirt-engine/conf
+	cp -f ./packaging/fedora/setup/resources/postgres/postgres-ds.xml $(PREFIX)/usr/share/ovirt-engine/conf
 	cp -f ./LICENSE $(PREFIX)/usr/share/ovirt-engine
 	cp -f ./packaging/ovirtlogrot.sh ${PREFIX}/usr/share/ovirt-engine/scripts/
 	cp -f ./packaging/resources/ovirt-cron ${PREFIX}/etc/cron.daily/

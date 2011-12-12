@@ -1,0 +1,93 @@
+﻿html, body
+{
+	margin: 0;
+	padding: 0;
+	background-image: url(images/bg_main.gif);
+	color: #111111;
+}
+
+
+
+.fakeH2 {
+	height: 42px;
+	color: #FFFFFF;
+	background-color: #669900;
+	text-align: left;
+	padding: 4px 6px 4px 4px;
+	
+	font-family: Verdana;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.left
+{
+	background-image: url(images/logo.png);
+	background-repeat: no-repeat;
+	float: left;
+	height: 73px;
+	width: 820px;
+	margin-top: 0px;
+}
+
+.center
+{
+	background-image: url(images/bg_head.gif);
+	background-repeat: repeat-x;
+	height: 73px;
+}
+
+.right
+{
+	background-image: url(images/header_right.jpg);
+	background-repeat: no-repeat;
+	background-position: right; 
+	float: right;
+	height: 73px;
+	width: 10px;
+}
+
+.header_nav
+{
+	padding-top: 22px;
+	padding-left: 90px;
+	width: 250px;
+}
+
+.main
+{
+    
+	width: 500px;
+	text-align: left;
+	font-family: Verdana;
+	font-size: 12px;
+	margin:auto;
+	padding-top: 50px;
+	line-height: 18pt ;
+}
+
+
+a, a:visited
+{
+	text-decoration: none;
+	color: #111111;
+}
+
+a:hover
+{
+	text-decoration: underline;
+	font-weight: bold;
+}
+
+.welcome
+{
+	font-family: Verdana;
+	font-size: 16px;
+}
+
+.warningMessage
+{
+	color: #cc0000;
+	font-family: Verdana;
+	font-size: 12px;
+}

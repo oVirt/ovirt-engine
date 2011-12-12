@@ -7,7 +7,7 @@
 %define __groupadd /usr/sbin/groupadd
 %define __useradd /usr/sbin/useradd
 %define __usermod /usr/sbin/usermod
-%define _engineeardir %{_jbossprofiledir}/deploy/engine.ear
+%define _engineeardir %{_datadir}/%{name}/engine.ear
 
 Name: ovirt-engine
 Version: $version
@@ -21,12 +21,13 @@ URL: http://www.ovirt.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
 BuildArch: x86_64
 BuildRequires: unzip
-#BuildRequires: openssl-devel
+BuildRequires: openssl-devel
 BuildRequires: gcc-c++
 Requires: java-1.6.0-openjdk
 Requires: policycoreutils-python
 Requires: cracklib-python
 Requires: ntp
+Requires: bind-utils
 Requires: postgresql-server >= 8.4.7
 Requires: postgresql-contrib >= 8.4.7
 Requires: postgresql-jdbc
@@ -47,7 +48,7 @@ Requires: %{name}-log-collector
 Requires: %{name}-dbscripts
 Requires: %{name}-webadmin-portal
 Requires: vdsm-bootstrap
-#Requires: openssl
+Requires: openssl
 
 %description
 Open Virtualization Manager is a feature-rich
@@ -107,6 +108,16 @@ Requires: python-lxml
 
 %description log-collector
 Log Collector tool for Open Virtualization Manager
+
+%package setup
+Summary: Setup and upgrade scripts for Open Virtualization Manager
+Group: Virtualization/Management
+Requires: %{name}
+Requires: lsof
+Requires: nfs-utils
+
+%description setup
+Setup and upgrade scripts for Open Virtualization Manager
 
 %package dbscripts
 Summary: Database scripts for Open Virtualization Manager
@@ -176,11 +187,28 @@ make PREFIX=%{buildroot}/ install
 
 
 %preun
+#raw
+if [ "$1" -eq 0 ]
+then
+    curdate=`date +"%Y_%m_%d_%H_%M_%%S"`
+    if [[ -d %{_sysconfdir}/pki/%{name} ]]; then
+        mkdir -p %{_sysconfdir}/pki/%{name}-backups/%{name}-${curdate}
+        #backup whole 'rhevm' dir into the backup dir with current date
+        cp -pR %{_sysconfdir}/pki/%{name}/ %{_sysconfdir}/pki/%{name}-backups/%{name}-${curdate}/
+    fi
+fi
+
+%postun
+if [ "$1" -eq 0 ]
+then
+    if [[ -d %{_sysconfdir}/pki/%{name} ]]; then
+	    rm -rf %{_sysconfdir}/pki/%{name}
+	fi
+fi
+#end raw
 
 %post
 ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/null || /bin/true
-
-%postun
 
 %pre
 %{__getent} group kvm > /dev/null || %{__groupadd} -g 36 -r kvm
@@ -219,32 +247,25 @@ ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/nul
 %attr (755,root,root) %{_datadir}/%{name}/scripts/vds_installer.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/ovirtlogrot.sh
 %attr (755,root,root) %{_sysconfdir}/cron.daily/ovirt-cron
-#%attr (755,jboss,jboss) %{_datadir}/%{name}/resources/jboss
+%attr (755,jboss,jboss) %{_datadir}/%{name}/resources/jboss
 %dir %{_sysconfdir}/%{name}
-#%attr (755,jboss,jboss) %{_sysconfdir}/pki/%{name}
+%attr (755,jboss,jboss) %{_sysconfdir}/pki/%{name}
 %attr (640,jboss,jboss) %config(noreplace) %{_sysconfdir}/%{name}/engine.conf
 
-#%config(noreplace) %{_sysconfdir}/pki/%{name}/database.txt
-#%config(noreplace) %{_sysconfdir}/pki/%{name}/serial.txt
-#%config(noreplace) %{_sysconfdir}/pki/%{name}/cacert.template
-#%config(noreplace) %{_sysconfdir}/pki/%{name}/cert.template
-#%config(noreplace) %{_sysconfdir}/%{name}/web-conf.js
+%config(noreplace) %{_sysconfdir}/pki/%{name}/database.txt
+%config(noreplace) %{_sysconfdir}/pki/%{name}/serial.txt
+%config(noreplace) %{_sysconfdir}/pki/%{name}/cacert.template
+%config(noreplace) %{_sysconfdir}/pki/%{name}/cert.template
+%config(noreplace) %{_sysconfdir}/%{name}/web-conf.js
 %config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.2k3
 %config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.2k8
 %config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.2k8x86
 %config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.w7
 %config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.w7x64
 %config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.xp
-%{_jbossdir}/common/lib/quartz.jar
-%{_jbossprofiledir}/conf/jboss-log4j.xml
-%{_jbossprofiledir}/conf/login-config.xml
-%{_jbossprofiledir}/deploy/postgres-ds.xml
-%{_jbossprofiledir}/deploy/transaction-jboss-beans.xml
+%{_jbossdir}/common/lib/quartz-1.8.3.jar
 %{_jbossdir}/common/lib/postgresql-jdbc.jar
-
-
-#/var/lib/jbossas/common/lib/quartz-1.8.3.jar
-#/var/lib/jbossas/common/lib/postgresql-jdbc.jar
+%attr (755,root,root) %{_sysconfdir}/pki/%{name}/pubkey2ssh
 
 %files backend
 %dir %{_engineeardir}
@@ -257,6 +278,15 @@ ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/nul
 %{_engineeardir}/engineanager.war
 %{_engineeardir}/components.war
 %dir %{_engineeardir}/webadmin.war
+
+%files setup
+%attr (755,root,root) %{_datadir}/%{name}/scripts/basedefs.py*
+%attr (755,root,root) %{_datadir}/%{name}/scripts/engine_validators.py*
+%attr (755,root,root) %{_datadir}/%{name}/scripts/common_utils.py*
+%attr (755,root,root) %{_datadir}/%{name}/scripts/output_messages.py*
+%attr (755,root,root) %{_datadir}/%{name}/scripts/nfsutils.py*
+%attr (755,root,root) %{_datadir}/%{name}/scripts/engine-setup.py*
+%attr (750,root,root) %{_bindir}/engine-setup
 
 %files dbscripts
 %attr (755,root,root) %{_datadir}/%{name}/dbscripts

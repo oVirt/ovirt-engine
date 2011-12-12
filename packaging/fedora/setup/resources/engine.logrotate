@@ -1,0 +1,7 @@
+/var/log/jbossas/rhevm-slimmed/console.log {
+         size 100M
+         missingok
+         copytruncate
+         rotate 5
+         compress
+}
