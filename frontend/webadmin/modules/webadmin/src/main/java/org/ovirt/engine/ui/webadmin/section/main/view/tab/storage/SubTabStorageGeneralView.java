@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.form.FormBuilder;
 import org.ovirt.engine.ui.webadmin.widget.form.FormItem;
 import org.ovirt.engine.ui.webadmin.widget.form.GeneralFormPanel;
+import org.ovirt.engine.ui.webadmin.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentLabel;
 
 import com.google.gwt.core.client.GWT;
@@ -19,7 +20,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.NumberLabel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -35,15 +35,15 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<storage_dom
 
     @Ignore
     // TODO Primitive getters not supported in 2.2
-    NumberLabel<Integer> totalSize = new NumberLabel<Integer>();
+    DiskSizeLabel<Integer> totalSize = new DiskSizeLabel<Integer>();
 
     @Ignore
     // TODO Primitive getters not supported in 2.2
-    NumberLabel<Integer> availableSize = new NumberLabel<Integer>();
+    DiskSizeLabel<Integer> availableSize = new DiskSizeLabel<Integer>();
 
     @Ignore
     // TODO Primitive getters not supported in 2.2
-    NumberLabel<Integer> usedSize = new NumberLabel<Integer>();
+    DiskSizeLabel<Integer> usedSize = new DiskSizeLabel<Integer>();
 
     @Ignore
     // TODO Primitive getters not supported in 2.2
