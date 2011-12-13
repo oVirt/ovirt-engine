@@ -334,13 +334,7 @@
       <url>http://powermock.googlecode.com/svn/repo/</url>
     </repository>
 
-    <repository>
-      <id>gwt-repo</id>
-      <url>http://google-web-toolkit.googlecode.com/svn/${gwt.version}/gwt/maven</url>
-      <name>Google Web Toolkit Repository</name>
-    </repository>
-
-    <repository>
+   <repository>
       <id>atlassian.public.repo</id>
       <name>The Atlassian public repo</name>
       <url>https://maven.atlassian.com/content/groups/public</url>
