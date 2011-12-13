@@ -9,19 +9,16 @@
 		}
 		
 		.nfsPathEditor {
-			width: 100%;
+			width: 91%;
 		}
 		
 		.nfsPathContentWidget {
-			width: 518px;	
+			width: 525px;	
 		}
 		
 		.nfsMessageLabel {
-			color: #252528;
-			font-size: 10px;
-			font-style: italic;
 			margin-left: 100px;
-			width: 200px;
+			width: 295px;
 		}
 		
 		.errorMessageLabel {
@@ -34,7 +31,7 @@
 	
 	<g:FlowPanel addStyleNames="{style.content}">
 		<e:EntityModelTextBoxEditor ui:field="nfsPathEditor" addStyleNames="{style.nfsPathEditor}"/>
-		<g:Label ui:field="nfsMessageLabel" addStyleNames="{style.nfsMessageLabel}"/>
+		<g:Label ui:field="nfsMessageLabel" addStyleNames="{style.nfsMessageLabel}, generalDialogComment"/>
 		<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}"/>
 	</g:FlowPanel>
 

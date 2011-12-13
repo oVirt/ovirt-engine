@@ -12,12 +12,14 @@
 			background-color: mainBackgroundColor;
 			color: white;
 			font-weight: bold;
+			border: 1px solid #345B7A;
 		}
 		
 		.inactive {
 			background-color: #F3F3F3;
 			color: black;
 			font-weight: normal;
+			border: 1px solid #E5E5E5;
 		}
 		
 		.inactive:hover {

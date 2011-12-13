@@ -77,4 +77,7 @@ public class SimpleDialogPanel extends DialogBoxWithKeyHandlers {
         footerButtonPanel.setVisible(visible);
     }
 
+    public void addContentStyleName(String styleName) {
+        contentPanel.addStyleName(styleName);
+    }
 }

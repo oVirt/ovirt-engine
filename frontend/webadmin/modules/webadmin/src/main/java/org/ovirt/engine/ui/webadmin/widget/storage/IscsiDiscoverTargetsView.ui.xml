@@ -38,13 +38,11 @@
 		}
 		
 		.discoverButton {
-			width: 50px;
 			margin-left: 5px;
 			margin-bottom: 2px;
 		}
 		
 		.loginAllButton {
-			width: 60px;
 			float: right;
 			margin: 2px;
 		}

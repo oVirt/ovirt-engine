@@ -4,6 +4,7 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogButton;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -11,7 +12,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 public class UiCommandButton extends Composite implements HasUiCommandClickHandlers, HasLabel {
@@ -23,7 +23,7 @@ public class UiCommandButton extends Composite implements HasUiCommandClickHandl
     private UICommand command;
 
     @UiField
-    PushButton button;
+    SimpleDialogButton button;
 
     public UiCommandButton() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));

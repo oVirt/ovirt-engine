@@ -72,4 +72,13 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
             "<span style='position: relative; margin-left: 3px; white-space: nowrap;'>{1}</span></span>")
     SafeHtml imageTextButton(SafeHtml image, String text);
 
+
+    @Template("<table cellspacing='0' cellpadding='0'><tr>" +
+            "<td style='background: url({1});width:2px;'></td>" +
+            "<td style='text-align:center;'>" +
+            "<div class='{4}' style='background: url({2}) repeat-x;height:20px;'>{0}</div>" +
+            "</td>" +
+            "<td style='background: url({3});width:2px;'></td>" +
+            "</tr></table>")
+    SafeHtml dialogButton(String text, String start, String stretch, String end, String contentStyleName);
 }

@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPo
 import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
 import org.ovirt.engine.ui.webadmin.widget.Align;
+import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTree;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCheckBoxEditor;
@@ -31,7 +32,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.inject.Inject;
 
@@ -87,7 +87,7 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
 
     @UiField
     @Ignore
-    PushButton detachAll;
+    SimpleDialogButton detachAll;
 
     @Inject
     public DataCenterNetworkPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {

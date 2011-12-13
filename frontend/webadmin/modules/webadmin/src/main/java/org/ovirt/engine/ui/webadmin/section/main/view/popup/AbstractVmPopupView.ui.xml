@@ -7,7 +7,11 @@
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractVmPopupView.Style">
 		.generalTabTopDecorator {
 			background-color: #D3D3D3;
+			margin-top: 4px;
+			margin-right: 3px;
 			margin-bottom: 20px;
+			padding-top: 6px;
+			padding-bottom: 6px;
 		}
 
 		.sectionPanel {
@@ -16,9 +20,26 @@
 
 		.sectionLabel {
 			font-weight: bold;
+			margin-top: 10px;
+			margin-bottom: 5px;
+		}
+		
+		.sectionComment {
+			margin-top: 10px;
+			margin-left: 5px;
+			font-style: italic;
 		}
 
+		.checkboxWithLongLabel,
 		.checkbox {
+			margin-left: -9px;
+		}
+
+		.checkboxWithLongLabel label {
+			margin-left: 26px;
+			margin-top: -26px;
+			display: block;
+			line-height: 20px;
 		}
 
 		.longCheckboxContent {
@@ -36,16 +57,22 @@
 
 		}
 
-		/*This is a hack and should be handled better*/
-		.hostSelectionListbox {
-			margin-left: 143px;
+		.attachCdPanel {
+			width: 100%;
+		}
+		
+		.hostRunMigrationOptions {
+			margin-left: 6px;
+		}
+		
+		label {
 		}
 
 	</ui:style>
 
-	<d:SimpleDialogPanel width="700px" height="500px">
+	<d:SimpleDialogPanel width="620px" height="460px">
 		<d:content>
-			<t:DialogTabPanel width="600px" height="370px">
+			<t:DialogTabPanel width="100%" height="100%">
 				<t:tab>
 					<t:DialogTab ui:field="generalTab">
 						<t:content>
@@ -66,8 +93,6 @@
 								</g:FlowPanel>
 								<g:FlowPanel addStyleNames="{style.sectionPanel}">
 									<e:ListModelListBoxEditor ui:field="oSTypeEditor" />
-								</g:FlowPanel>
-								<g:FlowPanel addStyleNames="{style.sectionPanel}">
 									<e:EntityModelCheckBoxEditor ui:field="isStatelessEditor" addStyleNames="{style.checkbox}" />
 								</g:FlowPanel>
 							</g:FlowPanel>
@@ -106,11 +131,10 @@
 									<g:Label>Specific</g:Label>
 									<e:ListModelListBoxEditor ui:field="defaultHostEditor" />
 								</g:HorizontalPanel>
-								<g:HTML><hr style="width:100%;" /></g:HTML>
 								<g:Label addStyleNames="{style.sectionLabel}">Run/Migration Options:</g:Label>
-								<g:VerticalPanel width="100%">
+								<g:VerticalPanel width="100%" addStyleNames="{style.hostRunMigrationOptions}">
 									<e:EntityModelCheckBoxEditor ui:field="runVMOnSpecificHostEditor" addStyleNames="{style.checkbox}" />
-									<e:EntityModelCheckBoxEditor ui:field="dontMigrateVMEditor" addStyleNames="{style.checkbox}" />
+									<e:EntityModelCheckBoxEditor ui:field="dontMigrateVMEditor" addStyleNames="{style.checkboxWithLongLabel}" />
 								</g:VerticalPanel>
 							</g:FlowPanel>
 						</t:content>
@@ -138,7 +162,7 @@
 									<g:FlowPanel addStyleNames="{style.sectionPanel}">
 									<g:HorizontalPanel>
 										<g:Label addStyleNames="{style.sectionLabel}">Storage Allocation:</g:Label>
-										<g:Label>(Available only when a template is selected)</g:Label>
+										<g:Label addStyleNames="{style.sectionComment}">(Available only when a template is selected)</g:Label>
 									</g:HorizontalPanel>
 									<e:ListModelListBoxEditor ui:field="storageDomainEditor" />
 									<e:ListModelListBoxEditor ui:field="provisioningEditor" />
@@ -159,12 +183,9 @@
 									<g:Label addStyleNames="{style.sectionLabel}">Boot Sequence:</g:Label>
 									<e:ListModelListBoxEditor ui:field="firstBootDeviceEditor" />
 									<e:ListModelListBoxEditor ui:field="secondBootDeviceEditor" />
-									<g:HorizontalPanel>
-										<g:HorizontalPanel>
-											<g:CheckBox ui:field="cdImageIsChangable" />
-											<g:Label>Attach CD</g:Label>
-										</g:HorizontalPanel>
-										<e:ListModelListBoxEditor addStyleNames="{style.hostSelectionListbox}" ui:field="cdImageEditor" />
+									<g:HorizontalPanel addStyleNames="{style.attachCdPanel}" verticalAlignment="ALIGN_MIDDLE">
+										<g:CheckBox text="Attach CD" ui:field="cdImageIsChangable" />
+										<e:ListModelListBoxEditor ui:field="cdImageEditor" />
 									</g:HorizontalPanel>
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="linuxBootOptionsPanel" addStyleNames="{style.sectionPanel}">

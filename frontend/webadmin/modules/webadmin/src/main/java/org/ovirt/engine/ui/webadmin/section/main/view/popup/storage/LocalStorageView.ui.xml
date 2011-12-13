@@ -15,7 +15,7 @@
 			}
 			
 			.localPathContentWidget {
-				width: 518px;
+				width: 525px;
 			}
 			
 			.errorMessageLabel {

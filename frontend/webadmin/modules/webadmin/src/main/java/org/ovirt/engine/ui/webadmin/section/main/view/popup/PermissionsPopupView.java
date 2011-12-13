@@ -26,10 +26,12 @@ import com.google.gwt.event.dom.client.HasKeyPressHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 
 public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementListModel> implements PermissionsPopupPresenterWidget.ViewDef {
@@ -72,6 +74,15 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
     @Path("searchString")
     TextBoxChanger searchStringEditor;
 
+    @UiField
+    SimplePanel everyonePanel;
+
+    @UiField
+    HorizontalPanel roleSelectionPanel;
+    
+    @UiField
+    ScrollPanel searchItemsScrollPanel;
+    
     @Inject
     public PermissionsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -109,7 +120,6 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
                 if (model.getEntity() instanceof DbUser)
                     return ((DbUser) model.getEntity()).getname();
                 else {
-                    Window.alert("shit: " + model.getEntity().toString());
                     return model.getEntity().toString();
                 }
             }
@@ -195,13 +205,11 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
 
     @Override
     public void hideRoleSelection(Boolean indic) {
-        roleSelection.setVisible(!indic);
-        roleToAssignLabel.setVisible(!indic);
+        roleSelectionPanel.setVisible(!indic);
     }
 
     @Override
     public void hideEveryoneSelection(Boolean indic) {
-        everyoneRadio.setVisible(!indic);
-        specificUserOrGroupRadio.setVisible(!indic);
+        everyonePanel.setVisible(!indic);
     }
 }

@@ -78,3 +78,30 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
 .subTabGeneralItemValue {
 	color: #777777
 }
+
+.dialog-button-text-disabled,
+.dialog-button-text {
+	font-family: Verdana, sans-serif;
+	font-size:13px;
+	padding-left: 5px;
+    padding-right: 5px;
+	color: black;
+	white-space: nowrap;
+}
+
+.dialog-button-text-disabled {
+	color: #888888;
+}
+
+.gwt-ListBox {
+	background-color: white;
+}
+
+.gwt-ListBox:disabled {
+	background-color: #F6F6F5;
+	color: #888888;
+}
+
+.gwt-PopupPanelGlass {
+	z-index: 1;
+}

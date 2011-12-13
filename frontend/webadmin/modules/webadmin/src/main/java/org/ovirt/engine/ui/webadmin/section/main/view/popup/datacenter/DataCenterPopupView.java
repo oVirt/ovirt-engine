@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.webadmin.widget.renderer.NullSafeRenderer;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
@@ -45,12 +46,16 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     @Path(value = "version.selectedItem")
     ListModelListBoxEditor<Object> versionEditor;
 
+    @UiField
+    Style style;
+    
     @Inject
     public DataCenterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
+        addContentStyleName(style.contentStyle());        
         Driver.driver.initialize(this);
     }
 
@@ -87,4 +92,11 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
         nameEditor.setFocus(true);
     }
 
+    public void addContentStyleName(String styleName) {
+        this.asWidget().addContentStyleName(styleName);
+    }
+
+    interface Style extends CssResource {
+    	String contentStyle();
+    }
 }

@@ -32,6 +32,8 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
     }
 
     private Widget tabContent;
+    
+    private boolean isActive;
 
     @UiField
     SimplePanel tabContainer;
@@ -53,8 +55,7 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
 
     @Override
     public void markAsValid() {
-        super.markAsValid();
-        getValidatedWidgetStyle().setBorderStyle(BorderStyle.NONE);
+    	tabContainer.getElement().addClassName(isActive ? style.active() : style.inactive());
     }
 
     @Override
@@ -82,10 +83,12 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
     }
 
     public void activate() {
+    	isActive = true;
         tabContainer.getElement().replaceClassName(style.inactive(), style.active());
     }
 
     public void deactivate() {
+    	isActive = false;
         tabContainer.getElement().replaceClassName(style.active(), style.inactive());
     }
 

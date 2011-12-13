@@ -7,11 +7,14 @@
 	<ui:style>
 		.generalTabTopDecorator {
 			background-color: #D3D3D3;
-			margin-bottom: 20px;
+			margin-bottom: 8px;
+			margin-top: 4px;
+			margin-right: 3px;
+			padding-top: 6px;
+			padding-bottom: 6px;
 		}
 		
 		.powerManagementTabInputDecorator {
-			margin-top: 20px;
 			margin-left: 20px;
 		}
 		
@@ -37,7 +40,7 @@
 
 	<d:SimpleDialogPanel width="650px" height="500px">
 		<d:content>
-			<t:DialogTabPanel ui:field="tabPanel" height="350px">
+			<t:DialogTabPanel ui:field="tabPanel" height="100%">
 				<t:tab>
 					<t:DialogTab ui:field="generalTab">
 						<t:content>

@@ -3,7 +3,15 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
 
-	<d:SimpleDialogPanel width="500px" height="400px">
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterPopupView.Style">
+			.contentStyle {
+			padding-right: 20px;
+			padding-left: 20px;
+			padding-top: 20px;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="450px" height="320px">
 		<d:content>
 			<g:FlowPanel>
 				<e:EntityModelTextBoxEditor ui:field="nameEditor" />

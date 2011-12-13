@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AboutPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.view.AbstractPopupView;
+import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogButton;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -13,7 +14,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.inject.Inject;
 
 public class AboutPopupView extends AbstractPopupView<DialogBox> implements AboutPopupPresenterWidget.ViewDef {
@@ -29,7 +29,7 @@ public class AboutPopupView extends AbstractPopupView<DialogBox> implements Abou
     InlineLabel versionLabel;
 
     @UiField
-    PushButton closeButton;
+    SimpleDialogButton closeButton;
 
     @UiField
     Label copyrightNotice;

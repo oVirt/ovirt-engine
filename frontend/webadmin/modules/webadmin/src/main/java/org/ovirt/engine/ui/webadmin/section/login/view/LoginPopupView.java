@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.webadmin.view.AbstractPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimplePopupPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
@@ -26,7 +27,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.inject.Inject;
 
 public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> implements LoginPopupPresenterWidget.ViewDef {
@@ -55,7 +55,7 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
     ListModelListBoxEditor<Object> domainEditor;
 
     @UiField
-    PushButton loginButton;
+    SimpleDialogButton loginButton;
 
     @UiField
     @Ignore

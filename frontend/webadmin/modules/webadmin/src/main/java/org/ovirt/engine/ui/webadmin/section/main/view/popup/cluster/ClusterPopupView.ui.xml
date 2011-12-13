@@ -4,10 +4,16 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"	xmlns:t="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog.tab">
 
+	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPopupView.WidgetStyle">
 		.generalTabTopDecorator {
 			background-color: #D3D3D3;
-			margin-bottom: 20px;
+			margin-bottom: 8px;
+			margin-top: 4px;
+			margin-right: 3px;			
+			padding-top: 6px;
+			padding-bottom: 6px;
 		}
 		
 		.explanationLabel {
@@ -20,11 +26,15 @@
 		.label {
 			width: 350px;
 		}
+
+		.radioButtonsTabContent {
+			margin-top: 10px;
+		}		
 	</ui:style>
 
 	<d:SimpleDialogPanel width="600px" height="500px">
 		<d:content>
-			<t:DialogTabPanel height="350px" width="500px">
+			<t:DialogTabPanel height="100%">
 				<t:tab>
 					<t:DialogTab ui:field="generalTab">
 						<t:content>
@@ -43,15 +53,15 @@
 				<t:tab>
 					<t:DialogTab ui:field="memoryOptimizationTab">
 						<t:content>
-							<g:FlowPanel>
+							<g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
 								<e:EntityModelRadioButtonEditor ui:field="optimizationNoneEditor" />
-								<g:Label ui:field="optimizationNoneExplanationLabel" addStyleNames="{style.explanationLabel}" />
+								<g:Label ui:field="optimizationNoneExplanationLabel" addStyleNames="{style.explanationLabel},generalDialogComment" />
 								<e:EntityModelRadioButtonEditor ui:field="optimizationForServerEditor" />
-								<g:Label ui:field="optimizationForServerExplanationLabel" addStyleNames="{style.explanationLabel}" />
+								<g:Label ui:field="optimizationForServerExplanationLabel" addStyleNames="{style.explanationLabel},generalDialogComment" />
 								<e:EntityModelRadioButtonEditor ui:field="optimizationForDesktopEditor" />
-								<g:Label ui:field="optimizationForDesktopExplanationLabel" addStyleNames="{style.explanationLabel}" />
+								<g:Label ui:field="optimizationForDesktopExplanationLabel" addStyleNames="{style.explanationLabel},generalDialogComment" />
 								<e:EntityModelRadioButtonEditor ui:field="optimizationCustomEditor" />
-								<g:Label ui:field="optimizationCustomExplanationLabel" addStyleNames="{style.explanationLabel}" />
+								<g:Label ui:field="optimizationCustomExplanationLabel" addStyleNames="{style.explanationLabel},generalDialogComment" />
 							</g:FlowPanel>
 						</t:content>
 					</t:DialogTab>
@@ -59,7 +69,7 @@
 				<t:tab>
 					<t:DialogTab ui:field="resiliencePolicyTab">
 						<t:content>
-							<g:FlowPanel>
+							<g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
 								<e:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_YESEditor" addStyleNames="{style.label}" />
 								<e:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_HA_ONLYEditor" addStyleNames="{style.label}" />
 								<e:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_NOEditor" addStyleNames="{style.label}" />

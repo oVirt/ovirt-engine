@@ -14,6 +14,8 @@
 @external gwt-DialogBox .dialogTopCenterInner;
 @external gwt-DialogBox .Caption;
 
+@external generalDialogComment;
+
 .gwt-DialogBox .dialogTopLeft {
 	background: url(images/dialog/panel_edge_TL.png) no-repeat;
 }
@@ -69,4 +71,11 @@
 	border: 0px;
 	height: 20px;
 	z-index: 1;
+}
+
+.generalDialogComment {
+	color: #555555;
+	font-style: italic;
+	font-size: 13px;
+	font-family: Verdana, sans-serif;	
 }

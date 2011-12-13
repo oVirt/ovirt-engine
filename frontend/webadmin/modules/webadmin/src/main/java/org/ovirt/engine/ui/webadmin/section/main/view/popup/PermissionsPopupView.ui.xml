@@ -6,72 +6,66 @@
 	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget">
 
 	<ui:style>
-		.dock { /*border-right: 1px solid #BBBBBB;*/ /*padding-right: 5px;*/
-			border-bottom: 1px solid #BBBBBB;
-			border-top: 1px solid #BBBBBB;
-		}
-
-		.checkbox {
-			margin-left: 25px;
-		}
-		.tag {
-			margin-left: 50px;
-		}
 		.mainLabel {
 			font-weight: bold;
 			padding: 5px;
 		}
-		.subLabel {
-			font-size: 9pt;
-			padding: 5px;
-		}
-		.message {
-			color: red;
-		}
+
 		.goButton {
-			margin-left: 5px;
-			width: 40px;
 			float: left;
+			margin-left: 5px;
 		}
 		
 		.searchItemsPanel {
 			width: 100%;
-			height: 100%;
+			height: 77%;
+			border-bottom: 1px solid #BBBBBB;
+			border-top: 1px solid #BBBBBB;
 		}
+
+		.searchStringEditor {
+			width: 250px;
+			margin-left: 5px;
+		}
+
+		.everyonePanel {
+			height: 5%;
+			margin-top: 3px;
+		}
+
+		.searchStringPanel {
+			height: 5%;
+		}
+
+		.rolePanel {
+			height: 5%;
+		}
+
 	</ui:style>
 
-	<d:SimpleDialogPanel width="700px" height="400px">
+	<d:SimpleDialogPanel width="700px" height="500px">
 		<d:content>
-			<g:DockLayoutPanel unit="PCT">
-				<g:north size="10">
-					<g:HorizontalPanel>
+			<g:FlowPanel>
+				<g:SimplePanel ui:field="everyonePanel" addStyleNames="{style.everyonePanel}">
+					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
 						<g:RadioButton name="everyoneOrSpecific" ui:field="specificUserOrGroupRadio">Specific User/Group</g:RadioButton>
  						<g:RadioButton name="everyoneOrSpecific" ui:field="everyoneRadio">Everyone</g:RadioButton>
 					</g:HorizontalPanel>
-				</g:north>
-				<g:north size="12">
-					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
-						<g:Label>Search:</g:Label>
-						<e:ListModelListBoxEditor ui:field="domainSelection" />
-						<e:TextBoxChanger ui:field="searchStringEditor" />
-						<w:UiCommandButton ui:field="searchButton"
-							addStyleNames="{style.goButton}" />
-					</g:HorizontalPanel>
-				</g:north>
-				<g:center>
-					<g:FlowPanel addStyleNames="{style.dock}">
-						<g:ScrollPanel addStyleNames="{style.searchItemsPanel}">
-							<e:EntityModelCellTable ui:field="searchItems" />
-						</g:ScrollPanel>
-					</g:FlowPanel>
-				</g:center>
-				<g:south size="20">
-					<g:HorizontalPanel spacing="10">
-						<g:Label ui:field="roleToAssignLabel" addStyleNames="{style.mainLabel}">Role to Assign:</g:Label>
-						<e:ListModelListBoxEditor ui:field="roleSelection" />
-					</g:HorizontalPanel>
-				</g:south>
-			</g:DockLayoutPanel>
+				</g:SimplePanel>
+				<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.searchStringPanel}">
+					<e:ListModelListBoxEditor label="Search:" ui:field="domainSelection" />
+					<e:TextBoxChanger addStyleNames="{style.searchStringEditor}" ui:field="searchStringEditor" />
+					<w:UiCommandButton ui:field="searchButton"
+						addStyleNames="{style.goButton}" />
+				</g:HorizontalPanel>
+				<g:ScrollPanel ui:field="searchItemsScrollPanel" addStyleNames="{style.searchItemsPanel}">
+					<e:EntityModelCellTable ui:field="searchItems" />
+				</g:ScrollPanel>
+				<g:HorizontalPanel spacing="10" ui:field="roleSelectionPanel" addStyleNames="{style.rolePanel}">
+					<g:Label ui:field="roleToAssignLabel" addStyleNames="{style.mainLabel}">Role to Assign:</g:Label>
+					<e:ListModelListBoxEditor ui:field="roleSelection" />
+				</g:HorizontalPanel>
+			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>
 

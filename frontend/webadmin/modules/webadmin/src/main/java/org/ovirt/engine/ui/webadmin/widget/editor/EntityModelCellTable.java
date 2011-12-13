@@ -44,7 +44,8 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
 
     private static final int DEFAULT_PAGESIZE = 1000;
     private static Resources DEFAULT_RESOURCES = GWT.create(CellTable.Resources.class);
-
+    private static final int CHECK_COLUMN_WIDTH = 27;
+    
     /**
      * Create a new {@link EntityModelCellTable} with Single Selection
      */
@@ -150,7 +151,7 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
                 };
             }
             addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
-            setColumnWidth(checkColumn, 40, Unit.PX);
+            setColumnWidth(checkColumn, CHECK_COLUMN_WIDTH, Unit.PX);
         }
     }
 

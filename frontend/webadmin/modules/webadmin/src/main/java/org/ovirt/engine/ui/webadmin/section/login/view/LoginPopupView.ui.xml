@@ -100,7 +100,7 @@
 					<tr class="formRow">
 						<td height="20">
 							<g:HTMLPanel addStyleNames="{style.buttonBar}">
-								<g:PushButton ui:field="loginButton" addStyleNames="{style.button}" />
+								<d:SimpleDialogButton ui:field="loginButton" addStyleNames="{style.button}" />
 								<div style="clear: both;" />
 							</g:HTMLPanel>
 						</td>

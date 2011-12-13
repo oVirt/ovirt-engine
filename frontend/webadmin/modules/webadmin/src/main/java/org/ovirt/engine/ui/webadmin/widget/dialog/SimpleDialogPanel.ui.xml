@@ -43,22 +43,23 @@
 		.content {
 			border: 1px solid #CED8DF;
 			position: absolute;
-			padding: 20px;
-			top: 50px;
-			bottom: 50px;
-			left: 20px;
-			right: 20px;
+			padding: 0px;
+			top: 34px;
+			bottom: 35px;
+			left: 6px;
+			right: 6px;
 		}
 		
 		.footer {
 			position: absolute;
-			right: 25px;
-			bottom: 10px;
+			right: 11px;
+			bottom: 9px;
 		}
 		
 		.footerButton {
 			float: right;
 			font-size: 12px;
+			margin-left: 4px;
 		}
 		
 		.contentWidget {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog">
 
 	<ui:style>
 		.button {
@@ -8,6 +9,6 @@
 		}
 	</ui:style>
 
-	<g:PushButton ui:field="button" addStyleNames="{style.button}" />
+	<d:SimpleDialogButton ui:field="button" addStyleNames="{style.button}" />
 
 </ui:UiBinder>

@@ -52,7 +52,7 @@
 						<g:Label ui:field="assignLabel" addStyleNames="{style.mainLabel}"/>
 						<e:EntityModelCellTree ui:field="tree" />
 						<g:Label ui:field="messageLabel" addStyleNames="{style.message}"/>
-						<g:PushButton ui:field="detachAll" text="Detach ALL Clusters" visible="false" />
+						<d:SimpleDialogButton ui:field="detachAll" text="Detach ALL Clusters" visible="false" />
 					</g:VerticalPanel>
 				</g:east>
 			</g:DockLayoutPanel>

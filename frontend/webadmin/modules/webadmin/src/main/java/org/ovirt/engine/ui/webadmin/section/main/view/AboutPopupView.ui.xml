@@ -34,7 +34,7 @@
 		</d:content>
 
 		<d:footerButton>
-			<g:PushButton ui:field="closeButton" />
+			<d:SimpleDialogButton ui:field="closeButton" />
 		</d:footerButton>
 	</d:SimpleDialogPanel>
 

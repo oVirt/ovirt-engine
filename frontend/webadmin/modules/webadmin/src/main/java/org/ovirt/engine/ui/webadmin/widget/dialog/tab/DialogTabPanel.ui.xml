@@ -5,9 +5,9 @@
 	<ui:style>
 		.bar {
 			float: left;
-			width: 150px;
+			width: 160px;
 			height: 100%;
-			background-color: #F3F3F3;
+			background-color: #E5E5E5;
 		}
 		
 		.content {

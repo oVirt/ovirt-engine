@@ -16,7 +16,8 @@
 			position: absolute;
 			width: 100px;
 			margin-top: 70px;
-			left: -20px;
+			left: -40px;
+			white-space: nowrap;
 			-webkit-transform: rotate(-90deg);
 			-moz-transform: rotate(-90deg);
 			-ms-transform: rotate(-90deg);
