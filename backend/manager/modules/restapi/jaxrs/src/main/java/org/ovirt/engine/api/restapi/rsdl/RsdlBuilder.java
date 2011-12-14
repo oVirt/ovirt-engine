@@ -40,6 +40,8 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Body;
 import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.DetailedLinks;
+import org.ovirt.engine.api.model.Header;
+import org.ovirt.engine.api.model.Headers;
 import org.ovirt.engine.api.model.HttpMethod;
 import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
@@ -325,6 +327,18 @@ public class RsdlBuilder {
                         ps.getParameters().add(param);
                     }
                     link.getRequest().getUrl().getParametersSets().add(ps);
+                }
+                if (action.getRequest().getHeaders() != null && !action.getRequest().getHeaders().isEmpty()) {
+                    link.getRequest().setHeaders(new Headers());
+                    for (Object key :  action.getRequest().getHeaders().keySet()) {
+                        Header header = new Header();
+                        header.setName(key.toString());
+                        Object value = action.getRequest().getHeaders().get(key);
+                        if (value != null) {
+                            header.setValue(value.toString());
+                        }
+                        link.getRequest().getHeaders().getHeaders().add(header);
+                    }
                 }
                 if (action.getRequest().getBody() != null) {
                     if (action.getRequest().getBody().getSignatures() != null) {

@@ -2185,6 +2185,7 @@
   <xs:complexType name="Request">
     <xs:sequence>
       <xs:element name="http_method" type="HttpMethod" minOccurs="1" maxOccurs="1"/>
+      <xs:element ref="headers" minOccurs="0" maxOccurs="1"/>
       <xs:element ref="url" minOccurs="0" maxOccurs="1"/>
       <xs:element ref="body" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
@@ -2220,6 +2221,33 @@
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="header" type="Header"/>
+
+  <xs:complexType name="Header">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="mandatory" type="xs:boolean" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="headers" type="Headers"/>
+
+  <xs:complexType name="Headers">
+    <xs:sequence>
+      <xs:element ref="header" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="Headers"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="parameters_set" type="ParametersSet"/>
