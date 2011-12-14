@@ -85,6 +85,13 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
                 return getMainModel().getRemoveCommand();
             }
         });
+
+        getTable().addActionButton(new UiCommandButtonDefinition<storage_pool>("Force Remove") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getForceRemoveCommand();
+            }
+        });
     }
 
 }

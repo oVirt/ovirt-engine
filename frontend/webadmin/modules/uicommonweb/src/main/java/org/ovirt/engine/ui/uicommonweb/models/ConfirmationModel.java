@@ -54,8 +54,8 @@ public class ConfirmationModel extends ListModel
 		getLatch().setIsValid(true);
 		if (getLatch().getIsAvailable() && !(Boolean)getLatch().getEntity())
 		{
-			getLatch().setIsValid(false);
 			getLatch().getInvalidityReasons().add("You must approve the action by clicking on this checkbox.");
+			getLatch().setIsValid(false);
 		}
 
 		return getLatch().getIsValid();

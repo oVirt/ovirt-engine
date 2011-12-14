@@ -55,7 +55,8 @@ public class DataCenterModule extends AbstractGinModule {
 
             @Override
             protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                if (lastExecutedCommand == getModel().getRemoveCommand()
+                        || lastExecutedCommand == getModel().getForceRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(lastExecutedCommand);
