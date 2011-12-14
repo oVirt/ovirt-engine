@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,7 +17,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.backendcompat.PropertyCompat;
 import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.ResXResourceReader;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
@@ -22,9 +24,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public final class AuditLogDirector {
     private static LogCompat log = LogFactoryCompat.getLog(AuditLogDirector.class);
-    private static java.util.HashMap<AuditLogType, String> mMessages = new java.util.HashMap<AuditLogType, String>();
-    private static java.util.HashMap<AuditLogType, AuditLogSeverity> mSeverities =
-            new java.util.HashMap<AuditLogType, AuditLogSeverity>();
+    private static Map<AuditLogType, String> mMessages = new HashMap<AuditLogType, String>();
+    private static Map<AuditLogType, AuditLogSeverity> mSeverities = new HashMap<AuditLogType, AuditLogSeverity>();
+    private static final Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match ${<alphanumeric>...}
 
     static {
         initMessages();
@@ -599,7 +601,6 @@ public final class AuditLogDirector {
 
     /**
      * Gets the message.
-     *
      * @param logType
      *            Type of the log.
      * @return
@@ -663,7 +664,6 @@ public final class AuditLogDirector {
 
     /**
      * Update the logged object timeout attribute by log type definition
-     *
      * @param auditLogable
      *            the logable object to be updated
      * @param logType
@@ -684,7 +684,6 @@ public final class AuditLogDirector {
 
     /**
      * Composes an object id from all log id's to identify uniquely each instance.
-     *
      * @param logable
      *            the object to log
      * @param logType
@@ -726,8 +725,6 @@ public final class AuditLogDirector {
         String returnValue = message;
         if (logable != null) {
             Map<String, String> map = getAvalableValues(logable);
-            Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match
-                                                                // ${<alphanumeric>...}
             Matcher matcher = pattern.matcher(message);
 
             StringBuffer buffer = new StringBuffer();
@@ -752,20 +749,11 @@ public final class AuditLogDirector {
         return returnValue;
     }
 
-    static String getReplacementValue(String value, java.util.HashMap<String, String> map) {
-        String returnValue = null;
-        if (!((returnValue = map.get(value.toLowerCase())) != null)) {
-            returnValue = value;
-        }
-        return returnValue;
-    }
-
-    static java.util.HashMap<String, String> getAvalableValues(AuditLogableBase logable) {
-        java.util.HashMap<String, String> returnValue =
-                new java.util.HashMap<String, String>(logable.getCustomValues());
-        java.lang.Class<?> type = AuditLogableBase.class;
-        PropertyInfo[] info = TypeCompat.GetProperties(type);
-        for (PropertyInfo propertyInfo : info) {
+    static Map<String, String> getAvalableValues(AuditLogableBase logable) {
+        Map<String, String> returnValue =
+                new HashMap<String, String>(logable.getCustomValues());
+        Class<?> type = AuditLogableBase.class;
+        for (PropertyInfo propertyInfo : TypeCompat.GetProperties(type)) {
             Object value = propertyInfo.GetValue(logable, null);
             String stringValue = value != null ? value.toString() : null;
             if (!returnValue.containsKey(propertyInfo.getName().toLowerCase())) {
@@ -775,20 +763,10 @@ public final class AuditLogDirector {
                         logable.getAuditLogTypeValue(), propertyInfo.getName().toLowerCase());
             }
         }
-        java.lang.Class<?> currType = logable.getClass();
-        CustomLogField[] attributes = AuditLogHelper.getCustomLogFields(currType, true);
-        if (attributes.length != 0) {
-
-            for (CustomLogField attribute : attributes) {
-                PropertyCompat propertyInfo = TypeCompat.GetProperty(currType, attribute.value());
-                if (propertyInfo != null) {
-                    Object value = propertyInfo.GetValue(logable, null);
-                    String stringValue = value != null ? value.toString() : null;
-                    returnValue.put(propertyInfo.getName().toLowerCase(), stringValue);
-                }
-            }
+        List<String> attributes = AuditLogHelper.getCustomLogFields(logable.getClass(), true);
+        if (attributes != null && attributes.size() > 0) {
+            TypeCompat.getPropertyValues(logable, new HashSet<String>(attributes), returnValue);
         }
-
         return returnValue;
     }
 

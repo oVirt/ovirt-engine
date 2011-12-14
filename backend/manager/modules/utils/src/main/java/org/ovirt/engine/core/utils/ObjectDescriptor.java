@@ -1,12 +1,14 @@
 package org.ovirt.engine.core.utils;
 
+import java.util.List;
+
 import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
 
 public final class ObjectDescriptor {
     public static String toString(Object obj) {
-        java.lang.Class type = obj.getClass();
-        PropertyInfo[] properties = TypeCompat.GetProperties(type);
+        Class type = obj.getClass();
+        List<PropertyInfo> properties = TypeCompat.GetProperties(type);
         StringBuilder builder = new StringBuilder(String.format("Class Name: %1$s", type.getName()));
         builder.append("\n");
         for (PropertyInfo property : properties) {

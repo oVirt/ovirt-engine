@@ -1,35 +1,37 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
 public class AuditLogHelperTest extends TestCase {
     public void testSimple() {
-        CustomLogField[] array = AuditLogHelper.getCustomLogFields(BaseClass.class, true);
-        assertEquals("size should be 1", 1, array.length);
+        List<String> array = AuditLogHelper.getCustomLogFields(BaseClass.class, true);
+        assertEquals("size should be 1", 1, array.size());
         array = AuditLogHelper.getCustomLogFields(BaseClass.class, false);
-        assertEquals("Not Inherited size should be 1", 1, array.length);
+        assertEquals("Not Inherited size should be 1", 1, array.size());
     }
 
     public void testSingleChild() {
-        CustomLogField[] array = AuditLogHelper.getCustomLogFields(SingleChild.class, true);
-        assertEquals("size should be 2", 2, array.length);
-        assertEquals("Parent Attribute", "JarJar", array[0].value());
-        assertEquals("Child Attribute", "Binks", array[1].value());
+        List<String> array = AuditLogHelper.getCustomLogFields(SingleChild.class, true);
+        assertEquals("size should be 2", 2, array.size());
+        assertEquals("Parent Attribute", "jarjar", array.get(0));
+        assertEquals("Child Attribute", "binks", array.get(1));
         array = AuditLogHelper.getCustomLogFields(SingleChild.class, false);
-        assertEquals("Not inherited size should be 1", 1, array.length);
-        assertEquals("Not Inhertied Child Attribute", "Binks", array[0].value());
+        assertEquals("Not inherited size should be 1", 1, array.size());
+        assertEquals("Not Inhertied Child Attribute", "binks", array.get(0));
     }
 
     public void testMultiChild() {
-        CustomLogField[] array = AuditLogHelper.getCustomLogFields(MultiChild.class, true);
-        assertEquals("size should be 3", 3, array.length);
-        assertEquals("Parent Attribute", "JarJar", array[0].value());
-        assertEquals("Child Attribute", "Luke", array[1].value());
-        assertEquals("Child Attribute", "Skywalker", array[2].value());
+        List<String> array = AuditLogHelper.getCustomLogFields(MultiChild.class, true);
+        assertEquals("size should be 3", 3, array.size());
+        assertEquals("Parent Attribute", "jarjar", array.get(0));
+        assertEquals("Child Attribute", "luke", array.get(1));
+        assertEquals("Child Attribute", "skywalker", array.get(2));
         array = AuditLogHelper.getCustomLogFields(MultiChild.class, false);
-        assertEquals("Not Inherited size should be 3", 3, array.length);
-        assertEquals("Not Inherited Child Attribute", "Luke", array[0].value());
-        assertEquals("Not Inherited Child Attribute", "Skywalker", array[1].value());
-        assertEquals("Not Inherited Parent Attribute", "JarJar", array[2].value());
+        assertEquals("Not Inherited size should be 3", 3, array.size());
+        assertEquals("Not Inherited Child Attribute", "luke", array.get(0));
+        assertEquals("Not Inherited Child Attribute", "skywalker", array.get(1));
+        assertEquals("Not Inherited Parent Attribute", "jarjar", array.get(2));
     }
 }

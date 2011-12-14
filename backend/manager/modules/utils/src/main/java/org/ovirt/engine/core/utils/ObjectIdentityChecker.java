@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.utils;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.IObjectDescriptorContainer;
@@ -182,8 +184,8 @@ public class ObjectIdentityChecker {
     public static java.util.ArrayList<String> GetChangedFields(Object source, Object destination) {
         java.util.ArrayList<String> returnValue = new java.util.ArrayList<String>();
         if (source.getClass().isInstance(destination)) {
-            java.lang.Class objectType = source.getClass();
-            PropertyInfo[] properties = TypeCompat.GetProperties(objectType);
+            Class objectType = source.getClass();
+            List<PropertyInfo> properties = TypeCompat.GetProperties(objectType);
             for (PropertyInfo property : properties) {
                 Object sourceValue = property.GetValue(source, null);
                 Object destinationValue = property.GetValue(destination, null);
