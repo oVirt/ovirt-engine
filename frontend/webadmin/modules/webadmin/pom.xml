@@ -323,6 +323,7 @@
 							<runTarget>/webadmin/webadmin/WebAdmin.html</runTarget>
 							<port>8080</port>
 							<noServer>true</noServer>
+							<bindAddress>0.0.0.0</bindAddress>
 							<gen>gen</gen>
 							<!-- <modules> <module>${project.groupId}.WebAdmin</module> </modules> -->
 							<extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs>
