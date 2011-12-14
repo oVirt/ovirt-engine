@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.FullDateTimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -80,7 +81,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
         };
         getTable().addColumn(logTimeColumn, "Time");
 
-        TextColumn<AuditLog> messageColumn = new TextColumn<AuditLog>() {
+        TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
                 return object.getmessage();
