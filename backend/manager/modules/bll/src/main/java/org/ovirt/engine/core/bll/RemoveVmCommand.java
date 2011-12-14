@@ -62,26 +62,27 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     private boolean removeVm() {
-        return TransactionSupport.executeInNewTransaction(new TransactionMethod<Boolean>() {
+        VM vm = getVm();
+        Guid vmId = getVmId();
+        VmHandler.updateDisksFromDb(vm);
+        hasImages = vm.getDiskMap().size() > 0;
+
+        setVm(DbFacade.getInstance().getVmDAO().getById(vmId));
+        RemoveVmInSpm(vm.getstorage_pool_id(), vmId);
+        if (!RemoveVmImages(null)) {
+            return false;
+        }
+
+        if (!hasImages) {
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
-                public Boolean runInTransaction() {
-                    VM vm = getVm();
-                    Guid vmId = getVmId();
-                    VmHandler.updateDisksFromDb(vm);
-                    hasImages = vm.getDiskMap().size() > 0;
-
-                    setVm(DbFacade.getInstance().getVmDAO().getById(vmId));
-                    RemoveVmInSpm(vm.getstorage_pool_id(), vmId);
-                    if (!RemoveVmImages(null)) {
-                        return false;
-                    }
-
-                    if (!hasImages) {
-                        RemoveVmFromDb();
-                    }
-                    return true;
+                public Void runInTransaction() {
+                    RemoveVmFromDb();
+                    return null;
                 }
             });
+        }
+        return true;
     }
 
     @Override
