@@ -93,6 +93,7 @@ The generic API for Open Virtualization Manager
 Summary: ISO Uploader tool for Open Virtualization Manager
 Group: Virtualization/Management
 Requires: %{name}
+Requires: python-lxml
 
 %description iso-uploader
 ISO Uploader tool for Open Virtualization Manager
@@ -102,6 +103,7 @@ Summary: Log Collector tool for Open Virtualization Manager
 Group: Virtualization/Management
 Requires: %{name}
 Requires: sos
+Requires: python-lxml
 
 %description log-collector
 Log Collector tool for Open Virtualization Manager
