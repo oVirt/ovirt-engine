@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.ImageUiCommandButtonDefinition
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
@@ -34,7 +35,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
     void initTable(ApplicationResources resources) {
         getTable().addColumn(new VmStatusColumn(), "", "30px");
 
-        TextColumn<VM> nameColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getvm_name();
@@ -44,7 +45,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
 
         getTable().addColumn(new VmTypeColumn(), "", "40px");
 
-        TextColumn<VM> clusterColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getvds_group_name();
@@ -53,7 +54,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
 
         getTable().addColumn(clusterColumn, "Cluster", "100px");
 
-        TextColumn<VM> hostColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getrun_on_vds_name();
@@ -62,7 +63,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
 
         getTable().addColumn(hostColumn, "Host", "100px");
 
-        TextColumn<VM> ipColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getvm_ip();
@@ -128,7 +129,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(uptimeColumn, "Uptime", "70px");
 
-        TextColumn<VM> loggedInUserColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> loggedInUserColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 if (object.getguest_cur_user_name() == null) {

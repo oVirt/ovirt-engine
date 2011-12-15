@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.RxTxRateColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.SumUpColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
@@ -27,7 +28,7 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
     }
 
     private void initTable() {
-        TextColumn<VmNetworkInterface> nameColumn = new TextColumn<VmNetworkInterface>() {
+        TextColumnWithTooltip<VmNetworkInterface> nameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getName();
@@ -35,7 +36,7 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<VmNetworkInterface> networkNameColumn = new TextColumn<VmNetworkInterface>() {
+        TextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getNetworkName();
@@ -51,7 +52,7 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
         };
         getTable().addColumn(typeColumn, "Type");
 
-        TextColumn<VmNetworkInterface> macColumn = new TextColumn<VmNetworkInterface>() {
+        TextColumnWithTooltip<VmNetworkInterface> macColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getMacAddress();
@@ -59,7 +60,7 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
         };
         getTable().addColumn(macColumn, "MAC");
 
-        TextColumn<VmNetworkInterface> speedColumn = new TextColumn<VmNetworkInterface>() {
+        TextColumnWithTooltip<VmNetworkInterface> speedColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 if (object.getSpeed() != null) {

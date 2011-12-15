@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.ActionCellTable;
 import org.ovirt.engine.ui.webadmin.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.webadmin.widget.table.column.SafeHtmlColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -27,7 +28,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -95,7 +95,7 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableView<VM
         getTable().setTableSelectionModel(selectionModel, selectionEventManager);
         getTable().setMultiSelectionDisabled(true);
 
-        TextColumn<SnapshotModel> nameColumn = new TextColumn<SnapshotModel>() {
+        TextColumnWithTooltip<SnapshotModel> nameColumn = new TextColumnWithTooltip<SnapshotModel>() {
             @Override
             public String getValue(SnapshotModel object) {
                 if (object.getDate() == null) {
@@ -124,7 +124,7 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableView<VM
         };
         getTable().addColumn(descriptionColumn, "Description");
 
-        TextColumn<SnapshotModel> diskColumn = new TextColumn<SnapshotModel>() {
+        TextColumnWithTooltip<SnapshotModel> diskColumn = new TextColumnWithTooltip<SnapshotModel>() {
             @Override
             public String getValue(SnapshotModel object) {
                 return object.getParticipantDisks();
@@ -171,7 +171,7 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableView<VM
             }
         }, GWT.<Resources> create(SubTableResources.class));
 
-        TextColumn<String> nameColumn = new TextColumn<String>() {
+        TextColumnWithTooltip<String> nameColumn = new TextColumnWithTooltip<String>() {
             @Override
             public String getValue(String object) {
                 return object;

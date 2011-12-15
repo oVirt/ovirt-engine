@@ -6,8 +6,8 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineApplicationPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class SubTabVirtualMachineApplicationView extends AbstractSubTabTableView<VM, String, VmListModel, VmAppListModel> implements SubTabVirtualMachineApplicationPresenter.ViewDef {
@@ -20,7 +20,7 @@ public class SubTabVirtualMachineApplicationView extends AbstractSubTabTableView
     }
 
     void initTable() {
-        TextColumn<String> appNameColumn = new TextColumn<String>() {
+        TextColumnWithTooltip<String> appNameColumn = new TextColumnWithTooltip<String>() {
             @Override
             public String getValue(String appName) {
                 return appName;
@@ -28,4 +28,5 @@ public class SubTabVirtualMachineApplicationView extends AbstractSubTabTableView
         };
         getTable().addColumn(appNameColumn, "Installed Applications");
     }
+
 }

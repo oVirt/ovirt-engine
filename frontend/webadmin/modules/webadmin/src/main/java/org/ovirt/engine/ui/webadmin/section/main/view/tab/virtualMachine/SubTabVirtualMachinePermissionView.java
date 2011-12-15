@@ -10,8 +10,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstrctSubTabPermissio
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PermissionTypeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class SubTabVirtualMachinePermissionView extends AbstrctSubTabPermissionsView<VM, VmListModel>
@@ -27,7 +27,7 @@ public class SubTabVirtualMachinePermissionView extends AbstrctSubTabPermissions
     protected void initTable() {
         getTable().addColumn(new PermissionTypeColumn(), "", "30px");
 
-        TextColumn<permissions> userColumn = new TextColumn<permissions>() {
+        TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
             @Override
             public String getValue(permissions object) {
                 return object.getOwnerName();
@@ -35,7 +35,7 @@ public class SubTabVirtualMachinePermissionView extends AbstrctSubTabPermissions
         };
         getTable().addColumn(userColumn, "User");
 
-        TextColumn<permissions> roleColumn = new TextColumn<permissions>() {
+        TextColumnWithTooltip<permissions> roleColumn = new TextColumnWithTooltip<permissions>() {
             @Override
             public String getValue(permissions object) {
                 return object.getRoleName();

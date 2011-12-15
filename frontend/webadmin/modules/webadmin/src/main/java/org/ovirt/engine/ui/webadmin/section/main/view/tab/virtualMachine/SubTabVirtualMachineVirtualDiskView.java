@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.FullDateTimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
@@ -29,7 +30,7 @@ public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableView
     }
 
     private void initTable() {
-        TextColumn<DiskImage> nameColumn = new TextColumn<DiskImage>() {
+        TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return "Disk " + object.getinternal_drive_mapping();
@@ -53,7 +54,7 @@ public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableView
         };
         getTable().addColumn(actualSizeColumn, "Actual Size");
 
-        TextColumn<DiskImage> typeColumn = new TextColumn<DiskImage>() {
+        TextColumnWithTooltip<DiskImage> typeColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getdisk_type().toString();
@@ -61,7 +62,7 @@ public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableView
         };
         getTable().addColumn(typeColumn, "Type");
 
-        TextColumn<DiskImage> formatColumn = new TextColumn<DiskImage>() {
+        TextColumnWithTooltip<DiskImage> formatColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getvolume_format().toString();
@@ -77,7 +78,7 @@ public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableView
         };
         getTable().addColumn(allocationColumn, "Allocation");
 
-        TextColumn<DiskImage> interfaceColumn = new TextColumn<DiskImage>() {
+        TextColumnWithTooltip<DiskImage> interfaceColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getdisk_interface().toString();
