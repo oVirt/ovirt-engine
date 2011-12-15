@@ -7,8 +7,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPre
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSGroup, ClusterListModel> implements MainTabClusterPresenter.ViewDef {
@@ -21,7 +21,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
     }
 
     void initTable() {
-        TextColumn<VDSGroup> nameColumn = new TextColumn<VDSGroup>() {
+        TextColumnWithTooltip<VDSGroup> nameColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getname();
@@ -29,7 +29,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<VDSGroup> versionColumn = new TextColumn<VDSGroup>() {
+        TextColumnWithTooltip<VDSGroup> versionColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getcompatibility_version().getValue();
@@ -37,7 +37,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         };
         getTable().addColumn(versionColumn, "Compatiblity Version");
 
-        TextColumn<VDSGroup> descColumn = new TextColumn<VDSGroup>() {
+        TextColumnWithTooltip<VDSGroup> descColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getdescription();

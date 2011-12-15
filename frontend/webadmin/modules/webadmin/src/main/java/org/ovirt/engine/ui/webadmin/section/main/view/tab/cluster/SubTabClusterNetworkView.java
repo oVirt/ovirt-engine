@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 
@@ -30,7 +31,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
     void initTable() {
         getTable().addColumn(new NetworkStatusColumn(), "", "20px");
 
-        TextColumn<network> nameColumn = new TextColumn<network>() {
+        TextColumnWithTooltip<network> nameColumn = new TextColumnWithTooltip<network>() {
             @Override
             public String getValue(network object) {
                 return object.getname();
@@ -46,7 +47,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
         };
         getTable().addColumn(statusColumn, "Status");
 
-        TextColumn<network> roleColumn = new TextColumn<network>() {
+        TextColumnWithTooltip<network> roleColumn = new TextColumnWithTooltip<network>() {
             @Override
             public String getValue(network object) {
                 // according to ClusterNetworkListView.xaml:45
@@ -55,7 +56,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
         };
         getTable().addColumn(roleColumn, "Role");
 
-        TextColumn<network> descColumn = new TextColumn<network>() {
+        TextColumnWithTooltip<network> descColumn = new TextColumnWithTooltip<network>() {
             @Override
             public String getValue(network object) {
                 return object.getdescription();

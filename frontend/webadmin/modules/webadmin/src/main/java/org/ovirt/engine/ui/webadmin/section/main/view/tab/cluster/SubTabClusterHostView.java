@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 
@@ -28,7 +29,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
     void initTable() {
         getTable().addColumn(new HostStatusColumn(), "", "30px");
 
-        TextColumn<VDS> nameColumn = new TextColumn<VDS>() {
+        TextColumnWithTooltip<VDS> nameColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
                 return object.getvds_name();
@@ -36,7 +37,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<VDS> hostColumn = new TextColumn<VDS>() {
+        TextColumnWithTooltip<VDS> hostColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
                 return object.gethost_name();
@@ -52,7 +53,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
         };
         getTable().addColumn(statusColumn, "Status");
 
-        TextColumn<VDS> loadColumn = new TextColumn<VDS>() {
+        TextColumnWithTooltip<VDS> loadColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
                 return object.getvm_active() + " VMs";
