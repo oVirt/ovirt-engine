@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
@@ -26,7 +27,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
     }
 
     void initTable() {
-        TextColumn<VmTemplate> nameColumn = new TextColumn<VmTemplate>() {
+        TextColumnWithTooltip<VmTemplate> nameColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getname();
@@ -34,7 +35,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<VmTemplate> domainColumn = new TextColumn<VmTemplate>() {
+        TextColumnWithTooltip<VmTemplate> domainColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getdomain();
@@ -58,7 +59,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         };
         getTable().addColumn(statusColumn, "Status");
 
-        TextColumn<VmTemplate> clusterColumn = new TextColumn<VmTemplate>() {
+        TextColumnWithTooltip<VmTemplate> clusterColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getvds_group_name();
@@ -66,7 +67,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         };
         getTable().addColumn(clusterColumn, "Cluster");
 
-        TextColumn<VmTemplate> descriptionColumn = new TextColumn<VmTemplate>() {
+        TextColumnWithTooltip<VmTemplate> descriptionColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getdescription();

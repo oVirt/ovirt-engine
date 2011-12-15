@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTe
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
@@ -27,7 +28,7 @@ public class SubTabTemplateDiskView extends AbstractSubTabTableView<VmTemplate, 
     }
 
     void initTable() {
-        TextColumn<DiskImage> nameColumn = new TextColumn<DiskImage>() {
+        TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return "Disk " + object.getinternal_drive_mapping();
@@ -35,7 +36,7 @@ public class SubTabTemplateDiskView extends AbstractSubTabTableView<VmTemplate, 
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<DiskImage> sizeColumn = new TextColumn<DiskImage>() {
+        TextColumnWithTooltip<DiskImage> sizeColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return String.valueOf(object.getSizeInGigabytes()) + " GB";
