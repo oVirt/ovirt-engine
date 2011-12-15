@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ProgressBarColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
@@ -29,7 +30,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
     void initTable() {
         getTable().addColumn(new HostStatusColumn(), "", "30px");
 
-        TextColumn<VDS> nameColumn = new TextColumn<VDS>() {
+        TextColumnWithTooltip<VDS> nameColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
                 return object.getvds_name();
@@ -37,7 +38,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<VDS> hostColumn = new TextColumn<VDS>() {
+        TextColumnWithTooltip<VDS> hostColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
                 return object.gethost_name();
@@ -45,7 +46,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         };
         getTable().addColumn(hostColumn, "Host/IP");
 
-        TextColumn<VDS> clusterColumn = new TextColumn<VDS>() {
+        TextColumnWithTooltip<VDS> clusterColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
                 return object.getvds_group_name();

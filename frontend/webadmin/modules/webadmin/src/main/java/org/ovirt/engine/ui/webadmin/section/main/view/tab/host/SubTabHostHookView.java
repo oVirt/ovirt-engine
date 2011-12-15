@@ -10,8 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHookPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
-
-import com.google.gwt.user.cellview.client.TextColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String, String>, HostListModel, HostHooksListModel>
         implements SubTabHostHookPresenter.ViewDef {
@@ -24,7 +23,7 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
     }
 
     void initTable() {
-        TextColumn<Map<String, String>> eventColumn = new TextColumn<Map<String, String>>() {
+        TextColumnWithTooltip<Map<String, String>> eventColumn = new TextColumnWithTooltip<Map<String, String>>() {
             @Override
             public String getValue(Map<String, String> object) {
                 return object.get("EventName");
@@ -32,7 +31,7 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
         };
         getTable().addColumn(eventColumn, "Event Name");
 
-        TextColumn<Map<String, String>> scriptColumn = new TextColumn<Map<String, String>>() {
+        TextColumnWithTooltip<Map<String, String>> scriptColumn = new TextColumnWithTooltip<Map<String, String>>() {
             @Override
             public String getValue(Map<String, String> object) {
                 return object.get("ScriptName");
@@ -40,7 +39,7 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
         };
         getTable().addColumn(scriptColumn, "Script Name");
 
-        TextColumn<Map<String, String>> propNameColumn = new TextColumn<Map<String, String>>() {
+        TextColumnWithTooltip<Map<String, String>> propNameColumn = new TextColumnWithTooltip<Map<String, String>>() {
             @Override
             public String getValue(Map<String, String> object) {
                 return object.get("PropertyName");
@@ -48,7 +47,7 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
         };
         getTable().addColumn(propNameColumn, "Property Name");
 
-        TextColumn<Map<String, String>> propValueColumn = new TextColumn<Map<String, String>>() {
+        TextColumnWithTooltip<Map<String, String>> propValueColumn = new TextColumnWithTooltip<Map<String, String>>() {
             @Override
             public String getValue(Map<String, String> object) {
                 return object.get("PropertyValue");

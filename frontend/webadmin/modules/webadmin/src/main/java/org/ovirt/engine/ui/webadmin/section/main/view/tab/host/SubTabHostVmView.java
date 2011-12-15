@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
@@ -33,7 +34,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
     void initTable() {
         getTable().addColumn(new VmStatusColumn(), "", "30px");
 
-        TextColumn<VM> nameColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getvm_name();
@@ -43,7 +44,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
 
         getTable().addColumn(new VmTypeColumn(), "", "30px");
 
-        TextColumn<VM> clusterColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getvds_group_name();
@@ -51,7 +52,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         };
         getTable().addColumn(clusterColumn, "Cluster");
 
-        TextColumn<VM> ipColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getvm_ip();
