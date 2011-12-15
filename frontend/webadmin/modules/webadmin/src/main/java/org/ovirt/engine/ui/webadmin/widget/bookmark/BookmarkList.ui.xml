@@ -15,7 +15,7 @@
 		</g:north>
 
 		<g:center>
-			<g:ScrollPanel>
+			<g:ScrollPanel ui:field="scrollPanel">
 				<g:Widget ui:field="dataDisplayWidget" />
 			</g:ScrollPanel>
 		</g:center>

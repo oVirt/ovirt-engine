@@ -13,7 +13,7 @@ import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TagList extends AbstractActionStackPanelItem<TagListModel> {
+public class TagList extends AbstractActionStackPanelItem<TagListModel, CellTree> {
 
     interface WidgetUiBinder extends UiBinder<Widget, TagList> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -24,7 +24,7 @@ public class TagList extends AbstractActionStackPanelItem<TagListModel> {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 
-    static Widget getTreeDisplayWidget(TagModelProvider modelProvider) {
+    static CellTree getTreeDisplayWidget(TagModelProvider modelProvider) {
         TagTreeResources res = GWT.create(TagTreeResources.class);
 
         CellTree display = new CellTree(modelProvider, null, res);
