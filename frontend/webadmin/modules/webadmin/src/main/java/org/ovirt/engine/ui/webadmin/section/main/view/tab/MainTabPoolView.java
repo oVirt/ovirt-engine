@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetails
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
@@ -23,7 +24,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
     }
 
     void initTable() {
-        TextColumn<vm_pools> nameColumn = new TextColumn<vm_pools>() {
+        TextColumnWithTooltip<vm_pools> nameColumn = new TextColumnWithTooltip<vm_pools>() {
             @Override
             public String getValue(vm_pools object) {
                 return object.getvm_pool_name();
@@ -31,7 +32,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<vm_pools> assignedColumn = new TextColumn<vm_pools>() {
+        TextColumnWithTooltip<vm_pools> assignedColumn = new TextColumnWithTooltip<vm_pools>() {
             @Override
             public String getValue(vm_pools object) {
                 return Integer.toString(object.getvm_assigned_count());
@@ -39,7 +40,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
         };
         getTable().addColumn(assignedColumn, "Assigned VMs");
 
-        TextColumn<vm_pools> runningColumn = new TextColumn<vm_pools>() {
+        TextColumnWithTooltip<vm_pools> runningColumn = new TextColumnWithTooltip<vm_pools>() {
             @Override
             public String getValue(vm_pools object) {
                 return Integer.toString(object.getvm_running_count());
@@ -55,7 +56,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
         };
         getTable().addColumn(typeColumn, "Type");
 
-        TextColumn<vm_pools> descColumn = new TextColumn<vm_pools>() {
+        TextColumnWithTooltip<vm_pools> descColumn = new TextColumnWithTooltip<vm_pools>() {
             @Override
             public String getValue(vm_pools object) {
                 return object.getvm_pool_description();

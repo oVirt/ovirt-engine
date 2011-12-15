@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
@@ -32,7 +33,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<vm_pools, VM, Pool
     void initTable() {
         getTable().addColumn(new VmStatusColumn(), "", "30px");
 
-        TextColumn<VM> nameColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getvm_name();
@@ -42,7 +43,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<vm_pools, VM, Pool
 
         getTable().addColumn(new VmTypeColumn(), "", "30px");
 
-        TextColumn<VM> hostColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getrun_on_vds_name();
@@ -50,7 +51,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<vm_pools, VM, Pool
         };
         getTable().addColumn(hostColumn, "Host");
 
-        TextColumn<VM> ipColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getvm_ip();
@@ -74,7 +75,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<vm_pools, VM, Pool
         };
         getTable().addColumn(uptimeColumn, "Uptime");
 
-        TextColumn<VM> loggedInUserColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> loggedInUserColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getguest_cur_user_name();
