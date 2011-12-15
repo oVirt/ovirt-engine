@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 
 import com.google.gwt.user.cellview.client.TextColumn;
@@ -31,7 +32,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
 
         getTable().addColumn(new VmStatusColumn(), "", "30px");
 
-        TextColumn<VM> nameColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getvm_name();
@@ -39,7 +40,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<VM> templateColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> templateColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getvmt_name();
@@ -55,7 +56,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         };
         getTable().addColumn(originColumn, "Origin");
 
-        TextColumn<VM> memoryColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> memoryColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return String.valueOf(object.getvm_mem_size_mb()) + " MB";
@@ -63,7 +64,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         };
         getTable().addColumn(memoryColumn, "Memory");
 
-        TextColumn<VM> cpuColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> cpuColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return String.valueOf(object.getnum_of_cpus());
@@ -71,7 +72,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         };
         getTable().addColumn(cpuColumn, "CPUs");
 
-        TextColumn<VM> diskColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> diskColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return String.valueOf(object.getDiskMap().size());

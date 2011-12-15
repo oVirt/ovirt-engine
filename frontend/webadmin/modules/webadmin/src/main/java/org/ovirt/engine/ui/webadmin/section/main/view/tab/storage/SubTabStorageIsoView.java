@@ -7,8 +7,8 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageIsoPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class SubTabStorageIsoView extends AbstractSubTabTableView<storage_domains, EntityModel, StorageListModel, StorageIsoListModel>
@@ -22,7 +22,7 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<storage_domain
     }
 
     void initTable() {
-        TextColumn<EntityModel> fileNameColumn = new TextColumn<EntityModel>() {
+        TextColumnWithTooltip<EntityModel> fileNameColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 return object.getTitle();
@@ -30,7 +30,7 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<storage_domain
         };
         getTable().addColumn(fileNameColumn, "File Name");
 
-        TextColumn<EntityModel> typeColumn = new TextColumn<EntityModel>() {
+        TextColumnWithTooltip<EntityModel> typeColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 return object.getEntity().toString();

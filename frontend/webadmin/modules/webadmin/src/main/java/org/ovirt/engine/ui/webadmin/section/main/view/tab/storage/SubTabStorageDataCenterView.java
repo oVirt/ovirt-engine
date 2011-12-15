@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
@@ -28,7 +29,7 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<storage
     void initTable() {
         getTable().addColumn(new StorageDomainStatusColumn(), "", "30px");
 
-        TextColumn<storage_domains> nameColumn = new TextColumn<storage_domains>() {
+        TextColumnWithTooltip<storage_domains> nameColumn = new TextColumnWithTooltip<storage_domains>() {
             @Override
             public String getValue(storage_domains object) {
                 return object.getstorage_pool_name();

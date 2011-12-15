@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
@@ -30,8 +31,8 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
     }
 
     void initTable() {
-        TextColumn<Entry<VmTemplate, ArrayList<DiskImage>>> nameColumn =
-                new TextColumn<Entry<VmTemplate, ArrayList<DiskImage>>>() {
+        TextColumnWithTooltip<Entry<VmTemplate, ArrayList<DiskImage>>> nameColumn =
+                new TextColumnWithTooltip<Entry<VmTemplate, ArrayList<DiskImage>>>() {
                     @Override
                     public String getValue(Entry<VmTemplate, ArrayList<DiskImage>> object) {
                         return object.getKey().getname();
@@ -48,8 +49,8 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                 };
         getTable().addColumn(originColumn, "Origin");
 
-        TextColumn<Entry<VmTemplate, ArrayList<DiskImage>>> memoryColumn =
-                new TextColumn<Entry<VmTemplate, ArrayList<DiskImage>>>() {
+        TextColumnWithTooltip<Entry<VmTemplate, ArrayList<DiskImage>>> memoryColumn =
+                new TextColumnWithTooltip<Entry<VmTemplate, ArrayList<DiskImage>>>() {
                     @Override
                     public String getValue(Entry<VmTemplate, ArrayList<DiskImage>> object) {
                         return String.valueOf(object.getKey().getmem_size_mb()) + " MB";
@@ -57,8 +58,8 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                 };
         getTable().addColumn(memoryColumn, "Memory");
 
-        TextColumn<Entry<VmTemplate, ArrayList<DiskImage>>> cpuColumn =
-                new TextColumn<Entry<VmTemplate, ArrayList<DiskImage>>>() {
+        TextColumnWithTooltip<Entry<VmTemplate, ArrayList<DiskImage>>> cpuColumn =
+                new TextColumnWithTooltip<Entry<VmTemplate, ArrayList<DiskImage>>>() {
                     @Override
                     public String getValue(Entry<VmTemplate, ArrayList<DiskImage>> object) {
                         return String.valueOf(object.getKey().getnum_of_cpus());
@@ -66,8 +67,8 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                 };
         getTable().addColumn(cpuColumn, "CPUs");
 
-        TextColumn<Entry<VmTemplate, ArrayList<DiskImage>>> diskColumn =
-                new TextColumn<Entry<VmTemplate, ArrayList<DiskImage>>>() {
+        TextColumnWithTooltip<Entry<VmTemplate, ArrayList<DiskImage>>> diskColumn =
+                new TextColumnWithTooltip<Entry<VmTemplate, ArrayList<DiskImage>>>() {
                     @Override
                     public String getValue(Entry<VmTemplate, ArrayList<DiskImage>> object) {
                         return String.valueOf(object.getKey().getDiskMap().size());

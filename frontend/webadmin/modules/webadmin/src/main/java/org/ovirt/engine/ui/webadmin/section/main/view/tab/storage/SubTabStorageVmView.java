@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabSto
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 
 import com.google.gwt.user.cellview.client.TextColumn;
@@ -29,7 +30,7 @@ public class SubTabStorageVmView extends AbstractSubTabTableView<storage_domains
 
         getTable().addColumn(new VmStatusColumn(), "", "30px");
 
-        TextColumn<VM> nameColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getvm_name();
@@ -37,7 +38,7 @@ public class SubTabStorageVmView extends AbstractSubTabTableView<storage_domains
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<VM> diskColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> diskColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return String.valueOf(object.getDiskMap().size());
@@ -45,7 +46,7 @@ public class SubTabStorageVmView extends AbstractSubTabTableView<storage_domains
         };
         getTable().addColumn(diskColumn, "Disks");
 
-        TextColumn<VM> templateColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> templateColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getvmt_name();
@@ -53,7 +54,7 @@ public class SubTabStorageVmView extends AbstractSubTabTableView<storage_domains
         };
         getTable().addColumn(templateColumn, "Template");
 
-        TextColumn<VM> vSizeColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> vSizeColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return String.valueOf(object.getDiskSize());
@@ -61,7 +62,7 @@ public class SubTabStorageVmView extends AbstractSubTabTableView<storage_domains
         };
         getTable().addColumn(vSizeColumn, "V-Size");
 
-        TextColumn<VM> actualSizeColumn = new TextColumn<VM>() {
+        TextColumnWithTooltip<VM> actualSizeColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return String.valueOf(object.getActualDiskWithSnapshotsSize());

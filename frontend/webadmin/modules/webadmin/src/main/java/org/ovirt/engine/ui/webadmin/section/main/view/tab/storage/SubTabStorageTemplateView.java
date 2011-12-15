@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
@@ -26,7 +27,7 @@ public class SubTabStorageTemplateView extends AbstractSubTabTableView<storage_d
     }
 
     void initTable() {
-        TextColumn<VmTemplate> nameColumn = new TextColumn<VmTemplate>() {
+        TextColumnWithTooltip<VmTemplate> nameColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getname();
@@ -34,7 +35,7 @@ public class SubTabStorageTemplateView extends AbstractSubTabTableView<storage_d
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<VmTemplate> diskColumn = new TextColumn<VmTemplate>() {
+        TextColumnWithTooltip<VmTemplate> diskColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return String.valueOf(object.getDiskMap().size());
