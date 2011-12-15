@@ -9,8 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
-
-import com.google.gwt.user.cellview.client.TextColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 public class SubTabDataCenterClusterView extends AbstractSubTabTableView<storage_pool, VDSGroup, DataCenterListModel, DataCenterClusterListModel>
         implements SubTabDataCenterClusterPresenter.ViewDef {
@@ -23,7 +22,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<storage
     }
 
     void initTable() {
-        TextColumn<VDSGroup> nameColumn = new TextColumn<VDSGroup>() {
+        TextColumnWithTooltip<VDSGroup> nameColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getname();
@@ -31,7 +30,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<VDSGroup> versionColumn = new TextColumn<VDSGroup>() {
+        TextColumnWithTooltip<VDSGroup> versionColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getcompatibility_version().getValue();
@@ -39,7 +38,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(versionColumn, "Compatiblity Version");
 
-        TextColumn<VDSGroup> descColumn = new TextColumn<VDSGroup>() {
+        TextColumnWithTooltip<VDSGroup> descColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getdescription();

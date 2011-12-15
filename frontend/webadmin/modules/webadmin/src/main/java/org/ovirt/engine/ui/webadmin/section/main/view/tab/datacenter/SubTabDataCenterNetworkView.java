@@ -11,8 +11,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTab
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
-
-import com.google.gwt.user.cellview.client.TextColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<storage_pool, network, DataCenterListModel, DataCenterNetworkListModel>
         implements SubTabDataCenterNetworkPresenter.ViewDef {
@@ -25,7 +24,7 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<storage
     }
 
     void initTable() {
-        TextColumn<network> nameColumn = new TextColumn<network>() {
+        TextColumnWithTooltip<network> nameColumn = new TextColumnWithTooltip<network>() {
             @Override
             public String getValue(network object) {
                 return object.getname();
@@ -33,7 +32,7 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<network> typeColumn = new TextColumn<network>() {
+        TextColumnWithTooltip<network> typeColumn = new TextColumnWithTooltip<network>() {
             @Override
             public String getValue(network object) {
                 return object.getdescription();

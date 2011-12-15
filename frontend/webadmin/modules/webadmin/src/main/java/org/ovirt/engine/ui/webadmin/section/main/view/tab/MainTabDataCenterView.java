@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DcStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
@@ -27,7 +28,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
     void initTable() {
         getTable().addColumn(new DcStatusColumn(), "", "30px");
 
-        TextColumn<storage_pool> nameColumn = new TextColumn<storage_pool>() {
+        TextColumnWithTooltip<storage_pool> nameColumn = new TextColumnWithTooltip<storage_pool>() {
             @Override
             public String getValue(storage_pool object) {
                 return object.getname();
@@ -51,7 +52,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
         };
         getTable().addColumn(statusColumn, "Status");
 
-        TextColumn<storage_pool> versionColumn = new TextColumn<storage_pool>() {
+        TextColumnWithTooltip<storage_pool> versionColumn = new TextColumnWithTooltip<storage_pool>() {
             @Override
             public String getValue(storage_pool object) {
                 return object.getcompatibility_version().getValue();
@@ -59,7 +60,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
         };
         getTable().addColumn(versionColumn, "Compatibility Version");
 
-        TextColumn<storage_pool> descColumn = new TextColumn<storage_pool>() {
+        TextColumnWithTooltip<storage_pool> descColumn = new TextColumnWithTooltip<storage_pool>() {
             @Override
             public String getValue(storage_pool object) {
                 return object.getdescription();

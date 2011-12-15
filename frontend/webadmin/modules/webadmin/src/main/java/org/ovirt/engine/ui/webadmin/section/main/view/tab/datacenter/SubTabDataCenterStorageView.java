@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 
@@ -31,7 +32,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
     void initTable() {
         getTable().addColumn(new StorageDomainStatusColumn(), "", "30px");
 
-        TextColumn<storage_domains> nameColumn = new TextColumn<storage_domains>() {
+        TextColumnWithTooltip<storage_domains> nameColumn = new TextColumnWithTooltip<storage_domains>() {
             @Override
             public String getValue(storage_domains object) {
                 return object.getstorage_name();
@@ -55,7 +56,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(statusColumn, "Status");
 
-        TextColumn<storage_domains> freeColumn = new TextColumn<storage_domains>() {
+        TextColumnWithTooltip<storage_domains> freeColumn = new TextColumnWithTooltip<storage_domains>() {
             @Override
             public String getValue(storage_domains object) {
                 return object.getTotalDiskSize() - object.getused_disk_size() + " GB";
@@ -63,7 +64,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(freeColumn, "Free Space");
 
-        TextColumn<storage_domains> usedColumn = new TextColumn<storage_domains>() {
+        TextColumnWithTooltip<storage_domains> usedColumn = new TextColumnWithTooltip<storage_domains>() {
             @Override
             public String getValue(storage_domains object) {
                 return object.getused_disk_size() + " GB";
@@ -71,7 +72,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(usedColumn, "Used Space");
 
-        TextColumn<storage_domains> totalColumn = new TextColumn<storage_domains>() {
+        TextColumnWithTooltip<storage_domains> totalColumn = new TextColumnWithTooltip<storage_domains>() {
             @Override
             public String getValue(storage_domains object) {
                 return object.getTotalDiskSize() + " GB";
