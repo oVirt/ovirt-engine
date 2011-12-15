@@ -94,56 +94,56 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
 
 class AdvancedViewColumns {
 
-    public static final TextColumn<AuditLog> logTypeColumn = new TextColumn<AuditLog>() {
+    public static final TextColumnWithTooltip<AuditLog> logTypeColumn = new TextColumnWithTooltip<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
             return String.valueOf(object.getlog_typeValue());
         }
     };
 
-    public static final TextColumn<AuditLog> userColumn = new TextColumn<AuditLog>() {
+    public static final TextColumnWithTooltip<AuditLog> userColumn = new TextColumnWithTooltip<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
             return object.getuser_name();
         }
     };
 
-    public static final TextColumn<AuditLog> hostColumn = new TextColumn<AuditLog>() {
+    public static final TextColumnWithTooltip<AuditLog> hostColumn = new TextColumnWithTooltip<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
             return object.getvds_name();
         }
     };
 
-    public static final TextColumn<AuditLog> virtualMachineColumn = new TextColumn<AuditLog>() {
+    public static final TextColumnWithTooltip<AuditLog> virtualMachineColumn = new TextColumnWithTooltip<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
             return object.getvm_name();
         }
     };
 
-    public static final TextColumn<AuditLog> templateColumn = new TextColumn<AuditLog>() {
+    public static final TextColumnWithTooltip<AuditLog> templateColumn = new TextColumnWithTooltip<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
             return object.getvm_template_name();
         }
     };
 
-    public static final TextColumn<AuditLog> dataCenterColumn = new TextColumn<AuditLog>() {
+    public static final TextColumnWithTooltip<AuditLog> dataCenterColumn = new TextColumnWithTooltip<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
             return object.getstorage_pool_name();
         }
     };
 
-    public static final TextColumn<AuditLog> storageColumn = new TextColumn<AuditLog>() {
+    public static final TextColumnWithTooltip<AuditLog> storageColumn = new TextColumnWithTooltip<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
             return object.getstorage_domain_name();
         }
     };
 
-    public static final TextColumn<AuditLog> clusterColumn = new TextColumn<AuditLog>() {
+    public static final TextColumnWithTooltip<AuditLog> clusterColumn = new TextColumnWithTooltip<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
             return object.getvds_group_name();
