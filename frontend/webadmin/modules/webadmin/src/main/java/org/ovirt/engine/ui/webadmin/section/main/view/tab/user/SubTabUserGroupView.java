@@ -9,8 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
-
-import com.google.gwt.user.cellview.client.TextColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGroup, UserListModel, UserGroupListModel>
         implements SubTabUserGroupPresenter.ViewDef {
@@ -23,7 +22,7 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
     }
 
     void initTable() {
-        TextColumn<UserGroup> nameColumn = new TextColumn<UserGroup>() {
+        TextColumnWithTooltip<UserGroup> nameColumn = new TextColumnWithTooltip<UserGroup>() {
             @Override
             public String getValue(UserGroup object) {
                 return object.getGroupName();
@@ -31,7 +30,7 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
         };
         getTable().addColumn(nameColumn, "Group Name");
 
-        TextColumn<UserGroup> OrgUnitColumn = new TextColumn<UserGroup>() {
+        TextColumnWithTooltip<UserGroup> OrgUnitColumn = new TextColumnWithTooltip<UserGroup>() {
             @Override
             public String getValue(UserGroup object) {
                 return object.getOrganizationalUnit();
@@ -39,14 +38,13 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
         };
         getTable().addColumn(OrgUnitColumn, "Organizational Unit");
 
-        TextColumn<UserGroup> domainColumn = new TextColumn<UserGroup>() {
+        TextColumnWithTooltip<UserGroup> domainColumn = new TextColumnWithTooltip<UserGroup>() {
             @Override
             public String getValue(UserGroup object) {
                 return object.getDomain();
             }
         };
         getTable().addColumn(domainColumn, "Domain");
-
     }
 
 }

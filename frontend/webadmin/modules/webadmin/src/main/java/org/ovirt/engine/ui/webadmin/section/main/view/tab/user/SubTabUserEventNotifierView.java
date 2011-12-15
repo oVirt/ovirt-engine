@@ -27,7 +27,6 @@ public class SubTabUserEventNotifierView extends AbstractSubTabTableView<DbUser,
     }
 
     void initTable() {
-
         TextColumn<event_subscriber> eventNameColumn = new EnumColumn<event_subscriber, AuditLogType>() {
             @Override
             protected AuditLogType getRawValue(event_subscriber object) {

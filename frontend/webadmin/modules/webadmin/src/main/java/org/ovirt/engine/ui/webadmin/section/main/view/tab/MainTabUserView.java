@@ -8,9 +8,9 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetails
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PopupTextColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UserStatusColumn;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser, UserListModel> implements MainTabUserPresenter.ViewDef {
@@ -25,14 +25,14 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
     void initTable() {
         getTable().addColumn(new UserStatusColumn(), "", "30px");
 
-        getTable().addColumn(new TextColumn<DbUser>() {
+        getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getname();
             }
         }, "First Name");
 
-        getTable().addColumn(new TextColumn<DbUser>() {
+        getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getsurname();
@@ -53,7 +53,7 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
             }
         }, "Group");
 
-        getTable().addColumn(new TextColumn<DbUser>() {
+        getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getemail();

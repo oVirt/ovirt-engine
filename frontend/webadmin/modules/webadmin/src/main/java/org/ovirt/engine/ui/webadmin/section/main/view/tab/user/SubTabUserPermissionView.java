@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GroupNameColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ObjectNameColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PermissionTypeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 
@@ -30,7 +31,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, pe
     void initTable() {
         getTable().addColumn(new PermissionTypeColumn(), "", "30px");
 
-        TextColumn<permissions> roleColumn = new TextColumn<permissions>() {
+        TextColumnWithTooltip<permissions> roleColumn = new TextColumnWithTooltip<permissions>() {
             @Override
             public String getValue(permissions object) {
                 return object.getRoleName();
