@@ -308,15 +308,50 @@ class CollectorBase(object):
 
 
         def parse_sosreport_stdout(self, stdout):
+            def reportFinder(line):
+                if fnmatch.fnmatch(line, '*sosreport-*tar*'):
+                    return line
+                else:
+                    return None
+
+            def md5Finder(line):
+                if fnmatch.fnmatch(line, 'The md5sum is*'):
+                    return line
+                else:
+                    return None
+
             try:
                 lines = stdout.splitlines()
-                lines = filter(None, lines)
-                path = lines[-3].strip()
-                filename = os.path.basename(path)
-                md5sum = lines[-2].partition(": ")[-1]
-                self.configuration["filename"] = filename
-                self.configuration["checksum"] = md5sum
-                self.configuration["path"] = path
+                fileAry = filter(reportFinder,lines)
+                if fileAry is not None:
+                    if fileAry[0] is not None and len(fileAry) > 0:
+                        path = fileAry[0].strip()
+                        filename = os.path.basename(path)
+                        self.configuration["filename"] = filename
+                        if os.path.isabs(path):
+                            self.configuration["path"] = path
+                        else:
+                            self.configuration["path"] = os.path.join(self.configuration["local_tmp_dir"], filename)
+                    else:
+                        self.configuration["filename"] = None
+                        self.configuration["path"] = None
+                else:
+                    self.configuration["filename"] = None
+                    self.configuration["path"] = None
+
+                fileAry = filter(md5Finder,lines)
+                if fileAry is not None and len(fileAry) > 0:
+                    if fileAry[0] is not None:
+                        md5sum = fileAry[0].partition(": ")[-1]
+                        self.configuration["checksum"] = md5sum
+                    else:
+                        self.configuration["checksum"] = None
+                else:
+                    self.configuration["checksum"] = None
+
+                logging.debug("filename(%s)" % self.configuration["filename"])
+                logging.debug("path(%s)" % self.configuration["path"])
+                logging.debug("checksum(%s)" % self.configuration["checksum"])
             except IndexError, e:
                 logging.debug("message(%s)" % e)
                 logging.debug("parse_sosreport_stdout: " + traceback.format_exc())
@@ -468,7 +503,7 @@ class ENGINEData(CollectorBase):
     def sosreport(self):
         self.configuration["reports"] = ",".join((
             "jboss",
-            "engine",
+            "rhevm",
             "rpm",
             "libvirt",
             "general",
@@ -484,11 +519,18 @@ class ENGINEData(CollectorBase):
         self.configuration["sos_options"] = self.build_options()
         stdout = self.caller.call('/usr/sbin/sosreport --batch --report --tmp-dir=%(local_tmp_dir)s  -o %(reports)s %(sos_options)s')
         self.parse_sosreport_stdout(stdout)
+        if os.path.exists(self.configuration["path"]):
+            archiveSize = '%.1fM' % (float(os.path.getsize(self.configuration["path"])) / (1 << 20))
+        else:
+            archiveSize = None
+
         return """Log files have been collected and placed in %s.
       The MD5 for this file is %s and its size is %s""" % (
       self.configuration["path"] ,
       self.configuration["checksum"],
-      '%.1fM' % (float(os.path.getsize(self.configuration["path"])) / (1 << 20)))
+      archiveSize)
+
+
 
 
 class PostgresData(CollectorBase):
@@ -564,8 +606,8 @@ class LogCollector(object):
 
         try:
             self.conf.prompt("engine", msg="hostname of oVirt Engine")
-            self.conf.prompt("user", msg="username for oVirt Engine")
-            self.conf.getpass("passwd", msg="password for oVirt Engine")
+            self.conf.prompt("user", msg="REST API username for oVirt Engine")
+            self.conf.getpass("passwd", msg="REST API password for the %s oVirt Engine user"  % self.conf.get("user"))
         except Configuration.SkipException:
             logging.info("Will not collect hypervisor list from oVirt Engine API.")
             raise

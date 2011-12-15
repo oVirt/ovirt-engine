@@ -344,7 +344,7 @@ class ISOUploader(object):
         try:
             self.configuration.prompt("engine", msg=_("hostname of oVirt Engine"))
             self.configuration.prompt("user", msg=_("REST API username for oVirt Engine"))
-            self.configuration.getpass("passwd", msg=_("REST API password for oVirt Engine"))
+            self.configuration.getpass("passwd", msg=_("REST API password for the %s oVirt Engine user") % self.configuration.get("user"))
         except Configuration.SkipException:
             raise Exception("Insufficient information provided to communicate with the oVirt Engine REST API.")
 
@@ -654,7 +654,7 @@ class ISOUploader(object):
             isoFiles = self._fetch_from_api("/storagedomains/%s/files" % id)
             logging.debug("Returned XML is\n%s" % isoFiles)
         except Exception,e:
-            logging.warn(_("unable to force the oVirt Engine refresh its file list for the %s ISO storage domain" %
+            logging.warn(_("failed to refresh the list of files available in the %s ISO storage domain. Please refresh the list manually using the 'Refresh' button in the oVirt Webadmin console."  %
                            self.configuration.get('iso_domain')))
 
     def upload_to_storage_domain(self):
