@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelChangeEvent;
+import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelChangeEvent.CommonModelChangeHandler;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.FeatureNotImplementedYetPopup;
 
@@ -96,16 +99,7 @@ public abstract class AbstractActionPanel<T> extends Composite {
             }
         });
 
-        // Update button definition whenever list model item selection changes
-        IEventListener itemSelectionChangeHandler = new IEventListener() {
-            @Override
-            public void eventRaised(org.ovirt.engine.core.compat.Event ev, Object sender, EventArgs args) {
-                // Update action button on item selection change
-                buttonDef.update();
-            }
-        };
-        dataProvider.getModel().getSelectedItemChangedEvent().addListener(itemSelectionChangeHandler);
-        dataProvider.getModel().getSelectedItemsChangedEvent().addListener(itemSelectionChangeHandler);
+        registerSelectionChangeHandler(buttonDef);
 
         // Update button whenever its definition gets re-initialized
         buttonDef.addInitializeHandler(new InitializeHandler() {
@@ -116,6 +110,32 @@ public abstract class AbstractActionPanel<T> extends Composite {
         });
 
         updateActionButton(newActionButton, buttonDef);
+    }
+
+    private void registerSelectionChangeHandler(final ActionButtonDefinition<T> buttonDef) {
+        // Update button definition whenever list model item selection changes
+        final IEventListener itemSelectionChangeHandler = new IEventListener() {
+            @Override
+            public void eventRaised(org.ovirt.engine.core.compat.Event ev, Object sender, EventArgs args) {
+                // Update action button on item selection change
+                buttonDef.update();
+            }
+        };
+
+        addSelectionChangeListener(itemSelectionChangeHandler);
+
+        ClientGinjectorProvider.instance().getEventBus()
+                .addHandler(CommonModelChangeEvent.getType(), new CommonModelChangeHandler() {
+                    @Override
+                    public void onCommonModelChange(CommonModelChangeEvent event) {
+                        addSelectionChangeListener(itemSelectionChangeHandler);
+                    }
+                });
+    }
+
+    private void addSelectionChangeListener(final IEventListener itemSelectionChangeHandler) {
+        dataProvider.getModel().getSelectedItemChangedEvent().addListener(itemSelectionChangeHandler);
+        dataProvider.getModel().getSelectedItemsChangedEvent().addListener(itemSelectionChangeHandler);
     }
 
     /**
