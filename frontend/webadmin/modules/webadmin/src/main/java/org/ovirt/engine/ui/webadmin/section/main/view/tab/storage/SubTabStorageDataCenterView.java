@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class SubTabStorageDataCenterView extends AbstractSubTabTableView<storage_domains, storage_domains, StorageListModel, StorageDataCenterListModel>
@@ -37,12 +36,13 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<storage_domains> domainStatusColumn = new EnumColumn<storage_domains, StorageDomainStatus>() {
-            @Override
-            protected StorageDomainStatus getRawValue(storage_domains object) {
-                return object.getstatus();
-            }
-        };
+        TextColumnWithTooltip<storage_domains> domainStatusColumn =
+                new EnumColumn<storage_domains, StorageDomainStatus>() {
+                    @Override
+                    protected StorageDomainStatus getRawValue(storage_domains object) {
+                        return object.getstatus();
+                    }
+                };
         getTable().addColumn(domainStatusColumn, "Domain Status in Data-Center", "300px");
 
         getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Attach") {

@@ -13,8 +13,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
-
-import com.google.gwt.user.cellview.client.TextColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 public class SubTabUserEventNotifierView extends AbstractSubTabTableView<DbUser, event_subscriber, UserListModel, UserEventNotifierListModel>
         implements SubTabUserEventNotifierPresenter.ViewDef {
@@ -27,7 +26,7 @@ public class SubTabUserEventNotifierView extends AbstractSubTabTableView<DbUser,
     }
 
     void initTable() {
-        TextColumn<event_subscriber> eventNameColumn = new EnumColumn<event_subscriber, AuditLogType>() {
+        TextColumnWithTooltip<event_subscriber> eventNameColumn = new EnumColumn<event_subscriber, AuditLogType>() {
             @Override
             protected AuditLogType getRawValue(event_subscriber object) {
                 return Enum.valueOf(AuditLogType.class, object.getevent_up_name());

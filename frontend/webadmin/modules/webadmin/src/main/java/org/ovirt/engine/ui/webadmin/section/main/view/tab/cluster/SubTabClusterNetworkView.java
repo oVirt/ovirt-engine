@@ -16,8 +16,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
-
 public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, network, ClusterListModel, ClusterNetworkListModel>
         implements SubTabClusterNetworkPresenter.ViewDef {
 
@@ -39,7 +37,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<network> statusColumn = new EnumColumn<network, NetworkStatus>() {
+        TextColumnWithTooltip<network> statusColumn = new EnumColumn<network, NetworkStatus>() {
             @Override
             public NetworkStatus getRawValue(network object) {
                 return object.getStatus();

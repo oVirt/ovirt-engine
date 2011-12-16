@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_domains, VM, StorageListModel, VmBackupModel>
@@ -48,7 +47,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         };
         getTable().addColumn(templateColumn, "Template");
 
-        TextColumn<VM> originColumn = new EnumColumn<VM, OriginType>() {
+        TextColumnWithTooltip<VM> originColumn = new EnumColumn<VM, OriginType>() {
             @Override
             protected OriginType getRawValue(VM object) {
                 return object.getorigin();
@@ -80,7 +79,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         };
         getTable().addColumn(diskColumn, "Disks");
 
-        TextColumn<VM> creationDateColumn = new GeneralDateTimeColumn<VM>() {
+        TextColumnWithTooltip<VM> creationDateColumn = new GeneralDateTimeColumn<VM>() {
             @Override
             protected Date getRawValue(VM object) {
                 return object.getvm_creation_date();

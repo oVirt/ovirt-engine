@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.DcStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<storage_pool, DataCenterListModel> implements MainTabDataCenterPresenter.ViewDef {
@@ -36,7 +35,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<storage_pool> storageTypeColumn = new EnumColumn<storage_pool, StorageType>() {
+        TextColumnWithTooltip<storage_pool> storageTypeColumn = new EnumColumn<storage_pool, StorageType>() {
             @Override
             public StorageType getRawValue(storage_pool object) {
                 return object.getstorage_pool_type();
@@ -44,7 +43,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
         };
         getTable().addColumn(storageTypeColumn, "Storage Type");
 
-        TextColumn<storage_pool> statusColumn = new EnumColumn<storage_pool, StoragePoolStatus>() {
+        TextColumnWithTooltip<storage_pool> statusColumn = new EnumColumn<storage_pool, StoragePoolStatus>() {
             @Override
             public StoragePoolStatus getRawValue(storage_pool object) {
                 return object.getstatus();

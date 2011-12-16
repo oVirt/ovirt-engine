@@ -19,8 +19,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
-import com.google.gwt.user.cellview.client.TextColumn;
-
 public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListModel, HostVmListModel>
         implements SubTabHostVmPresenter.ViewDef {
 
@@ -84,7 +82,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         };
         getTable().addColumn(netColumn, "Network");
 
-        TextColumn<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
+        TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {
                 return object.getstatus();
@@ -92,7 +90,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         };
         getTable().addColumn(statusColumn, "Status");
 
-        TextColumn<VM> hostColumn = new UptimeColumn<VM>() {
+        TextColumnWithTooltip<VM> hostColumn = new UptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
                 return object.getRoundedElapsedTime();

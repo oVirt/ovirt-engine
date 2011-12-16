@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableView<VM, DiskImage, VmListModel, VmDiskListModel> implements SubTabVirtualMachineVirtualDiskPresenter.ViewDef {
@@ -70,7 +69,7 @@ public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableView
         };
         getTable().addColumn(formatColumn, "Format");
 
-        TextColumn<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
+        TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override
             protected VolumeType getRawValue(DiskImage object) {
                 return VolumeType.forValue(object.getvolume_type().getValue());
@@ -86,7 +85,7 @@ public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableView
         };
         getTable().addColumn(interfaceColumn, "Interface");
 
-        TextColumn<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
+        TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
             protected Date getRawValue(DiskImage object) {
                 return object.getcreation_date();

@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<storage_domains, Entry<VmTemplate, ArrayList<DiskImage>>, StorageListModel, TemplateBackupModel>
@@ -40,7 +39,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                 };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumn<Entry<VmTemplate, ArrayList<DiskImage>>> originColumn =
+        TextColumnWithTooltip<Entry<VmTemplate, ArrayList<DiskImage>>> originColumn =
                 new EnumColumn<Entry<VmTemplate, ArrayList<DiskImage>>, OriginType>() {
                     @Override
                     protected OriginType getRawValue(Entry<VmTemplate, ArrayList<DiskImage>> object) {
@@ -76,7 +75,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                 };
         getTable().addColumn(diskColumn, "Disks");
 
-        TextColumn<Entry<VmTemplate, ArrayList<DiskImage>>> creationDateColumn =
+        TextColumnWithTooltip<Entry<VmTemplate, ArrayList<DiskImage>>> creationDateColumn =
                 new GeneralDateTimeColumn<Entry<VmTemplate, ArrayList<DiskImage>>>() {
                     @Override
                     protected Date getRawValue(Entry<VmTemplate, ArrayList<DiskImage>> object) {

@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class SubTabTemplateDiskView extends AbstractSubTabTableView<VmTemplate, DiskImage, TemplateListModel, TemplateDiskListModel>
@@ -44,7 +43,7 @@ public class SubTabTemplateDiskView extends AbstractSubTabTableView<VmTemplate, 
         };
         getTable().addColumn(sizeColumn, "Size");
 
-        TextColumn<DiskImage> typeColumn = new EnumColumn<DiskImage, DiskType>() {
+        TextColumnWithTooltip<DiskImage> typeColumn = new EnumColumn<DiskImage, DiskType>() {
             @Override
             protected DiskType getRawValue(DiskImage object) {
                 return object.getdisk_type();
@@ -52,7 +51,7 @@ public class SubTabTemplateDiskView extends AbstractSubTabTableView<VmTemplate, 
         };
         getTable().addColumn(typeColumn, "Type");
 
-        TextColumn<DiskImage> formatColumn = new EnumColumn<DiskImage, VolumeFormat>() {
+        TextColumnWithTooltip<DiskImage> formatColumn = new EnumColumn<DiskImage, VolumeFormat>() {
             @Override
             protected VolumeFormat getRawValue(DiskImage object) {
                 return object.getvolume_format();
@@ -60,7 +59,7 @@ public class SubTabTemplateDiskView extends AbstractSubTabTableView<VmTemplate, 
         };
         getTable().addColumn(formatColumn, "Format");
 
-        TextColumn<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
+        TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override
             protected VolumeType getRawValue(DiskImage object) {
                 return VolumeType.forValue(object.getvolume_type().getValue());
@@ -68,7 +67,7 @@ public class SubTabTemplateDiskView extends AbstractSubTabTableView<VmTemplate, 
         };
         getTable().addColumn(allocationColumn, "Allocation");
 
-        TextColumn<DiskImage> interfaceColumn = new EnumColumn<DiskImage, DiskInterface>() {
+        TextColumnWithTooltip<DiskImage> interfaceColumn = new EnumColumn<DiskImage, DiskInterface>() {
             @Override
             protected DiskInterface getRawValue(DiskImage object) {
                 return object.getdisk_interface();

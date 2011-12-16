@@ -11,8 +11,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.ObjectNameColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PermissionTypeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
-
 public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetailsModel> extends AbstractSubTabTableView<I, permissions, M, PermissionListModel> {
 
     public AbstractSubTabPermissionsView(SearchableDetailModelProvider<permissions, M, PermissionListModel> modelProvider) {
@@ -39,7 +37,7 @@ public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetails
         };
         getTable().addColumn(roleColumn, "Role");
 
-        TextColumn<permissions> permissionColumn = new ObjectNameColumn<permissions>() {
+        TextColumnWithTooltip<permissions> permissionColumn = new ObjectNameColumn<permissions>() {
             @Override
             protected Object[] getRawValue(permissions object) {
                 return new Object[] { object.getObjectType(), object.getObjectName(), getDetailModel().getEntity(),

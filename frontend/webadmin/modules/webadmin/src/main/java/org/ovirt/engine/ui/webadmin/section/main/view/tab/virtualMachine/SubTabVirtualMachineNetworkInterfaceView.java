@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.RxTxRateColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.SumUpColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTableView<VM, VmNetworkInterface, VmListModel, VmInterfaceListModel> implements SubTabVirtualMachineNetworkInterfacePresenter.ViewDef {
@@ -44,7 +43,7 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
         };
         getTable().addColumn(networkNameColumn, "Network Name");
 
-        TextColumn<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
+        TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
             protected VmInterfaceType getRawValue(VmNetworkInterface object) {
                 return VmInterfaceType.forValue(object.getType());
@@ -72,7 +71,7 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
         };
         getTable().addColumn(speedColumn, "Speed (Mbps)");
 
-        TextColumn<VmNetworkInterface> rxColumn = new RxTxRateColumn<VmNetworkInterface>() {
+        TextColumnWithTooltip<VmNetworkInterface> rxColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
             protected Double getRate(VmNetworkInterface object) {
                 return object.getStatistics().getReceiveRate();
@@ -89,7 +88,7 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
         };
         getTable().addColumn(rxColumn, "Rx (Mbps)");
 
-        TextColumn<VmNetworkInterface> txColumn = new RxTxRateColumn<VmNetworkInterface>() {
+        TextColumnWithTooltip<VmNetworkInterface> txColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
             protected Double getRate(VmNetworkInterface object) {
                 return object.getStatistics().getTransmitRate();
@@ -106,7 +105,7 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
         };
         getTable().addColumn(txColumn, "Tx (Mbps)");
 
-        TextColumn<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
+        TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
             @Override
             protected Double[] getRawValue(VmNetworkInterface object) {
                 return new Double[] { object.getStatistics().getReceiveDropRate(),

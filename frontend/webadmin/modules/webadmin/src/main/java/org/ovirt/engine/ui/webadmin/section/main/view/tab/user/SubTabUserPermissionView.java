@@ -16,8 +16,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.ObjectNameColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PermissionTypeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
-
 public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, permissions, UserListModel, UserPermissionListModel>
         implements SubTabUserPermissionPresenter.ViewDef {
 
@@ -39,8 +37,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, pe
         };
         getTable().addColumn(roleColumn, "Role");
 
-        TextColumn<permissions> permissionColumn = new ObjectNameColumn<permissions>() {
-
+        TextColumnWithTooltip<permissions> permissionColumn = new ObjectNameColumn<permissions>() {
             @Override
             protected Object[] getRawValue(permissions object) {
                 return new Object[] { object.getObjectType(), object.getObjectName() };
@@ -48,8 +45,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, pe
         };
         getTable().addColumn(permissionColumn, "Object");
 
-        TextColumn<permissions> groupColumn = new GroupNameColumn<permissions>() {
-
+        TextColumnWithTooltip<permissions> groupColumn = new GroupNameColumn<permissions>() {
             @Override
             protected Object[] getRawValue(permissions object) {
                 return new Object[] { getDetailModel().getEntity(), object.getad_element_id(), object.getOwnerName() };

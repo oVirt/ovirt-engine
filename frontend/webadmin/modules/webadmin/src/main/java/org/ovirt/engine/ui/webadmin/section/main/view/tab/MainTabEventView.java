@@ -17,7 +17,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -73,7 +72,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
     void initTable() {
         getTable().addColumn(new AuditLogSeverityColumn(), "", "30px");
 
-        TextColumn<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
+        TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
             @Override
             protected Date getRawValue(AuditLog object) {
                 return object.getlog_time();

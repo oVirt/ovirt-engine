@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmTemplate, TemplateListModel> implements MainTabTemplatePresenter.ViewDef {
@@ -43,7 +42,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         };
         getTable().addColumn(domainColumn, "Domain");
 
-        TextColumn<VmTemplate> creationDateColumn = new GeneralDateTimeColumn<VmTemplate>() {
+        TextColumnWithTooltip<VmTemplate> creationDateColumn = new GeneralDateTimeColumn<VmTemplate>() {
             @Override
             protected Date getRawValue(VmTemplate object) {
                 return object.getcreation_date();
@@ -51,7 +50,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         };
         getTable().addColumn(creationDateColumn, "Creation Date");
 
-        TextColumn<VmTemplate> statusColumn = new EnumColumn<VmTemplate, VmTemplateStatus>() {
+        TextColumnWithTooltip<VmTemplate> statusColumn = new EnumColumn<VmTemplate, VmTemplateStatus>() {
             @Override
             protected VmTemplateStatus getRawValue(VmTemplate object) {
                 return object.getstatus();

@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.webadmin.widget.table.column.IsLockedImageTypeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ObjectNameColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.RoleTypeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -23,7 +24,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -148,7 +148,7 @@ public class RoleView extends Composite {
     private void initRoleTable() {
         this.table =
                 new SimpleActionTable<roles>(roleModelProvider, getTableHeaderlessResources(), getTableResources());
-        TextColumn<roles> nameColumn = new TextColumn<roles>() {
+        TextColumnWithTooltip<roles> nameColumn = new TextColumnWithTooltip<roles>() {
             @Override
             public String getValue(roles object) {
                 return object.getname();
@@ -161,7 +161,7 @@ public class RoleView extends Composite {
 
         table.addColumn(nameColumn, "Name", "100px");
 
-        TextColumn<roles> descColumn = new TextColumn<roles>() {
+        TextColumnWithTooltip<roles> descColumn = new TextColumnWithTooltip<roles>() {
             @Override
             public String getValue(roles object) {
                 return object.getdescription();
@@ -215,12 +215,10 @@ public class RoleView extends Composite {
     }
 
     private void initPermissionTable() {
-        permissionTable =
-                new SimpleActionTable<permissions>(permissionModelProvider,
-                        getTableHeaderlessResources(),
-                        getTableResources());
+        permissionTable = new SimpleActionTable<permissions>(permissionModelProvider,
+                        getTableHeaderlessResources(), getTableResources());
 
-        TextColumn<permissions> userColumn = new TextColumn<permissions>() {
+        TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
             @Override
             public String getValue(permissions object) {
                 return object.getOwnerName();
@@ -228,8 +226,7 @@ public class RoleView extends Composite {
         };
         permissionTable.addColumn(userColumn, "User");
 
-        TextColumn<permissions> permissionColumn = new ObjectNameColumn<permissions>() {
-
+        TextColumnWithTooltip<permissions> permissionColumn = new ObjectNameColumn<permissions>() {
             @Override
             protected Object[] getRawValue(permissions object) {
                 return new Object[] { object.getObjectType(), object.getObjectName() };

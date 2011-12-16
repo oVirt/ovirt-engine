@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pools, PoolListModel> implements MainTabPoolPresenter.ViewDef {
@@ -48,7 +47,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
         };
         getTable().addColumn(runningColumn, "Running VMs");
 
-        TextColumn<vm_pools> typeColumn = new EnumColumn<vm_pools, VmPoolType>() {
+        TextColumnWithTooltip<vm_pools> typeColumn = new EnumColumn<vm_pools, VmPoolType>() {
             @Override
             public VmPoolType getRawValue(vm_pools object) {
                 return object.getvm_pool_type();

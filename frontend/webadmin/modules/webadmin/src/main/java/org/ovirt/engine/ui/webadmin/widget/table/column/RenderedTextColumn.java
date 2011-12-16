@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import com.google.gwt.text.shared.Renderer;
-import com.google.gwt.user.cellview.client.TextColumn;
 
 /**
  * Base class for text columns that use {@link Renderer} to render the given column type into its text-based
@@ -12,7 +11,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
  * @param <C>
  *            Column value type.
  */
-public abstract class RenderedTextColumn<T, C> extends TextColumn<T> {
+public abstract class RenderedTextColumn<T, C> extends TextColumnWithTooltip<T> {
 
     protected final Renderer<C> renderer;
 

@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM, TemplateListModel, TemplateVmListModel>
@@ -56,7 +55,7 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
         };
         getTable().addColumn(ipColumn, "IP Address");
 
-        TextColumn<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
+        TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {
                 return object.getstatus();
@@ -64,7 +63,7 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
         };
         getTable().addColumn(statusColumn, "Status");
 
-        TextColumn<VM> uptimeColumn = new UptimeColumn<VM>() {
+        TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
                 return object.getRoundedElapsedTime();

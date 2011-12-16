@@ -17,8 +17,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
-
 public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage_pool, storage_domains, DataCenterListModel, DataCenterStorageListModel>
         implements SubTabDataCenterStoragePresenter.ViewDef {
 
@@ -40,7 +38,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(nameColumn, "Domain Name");
 
-        TextColumn<storage_domains> typeColumn = new EnumColumn<storage_domains, StorageDomainType>() {
+        TextColumnWithTooltip<storage_domains> typeColumn = new EnumColumn<storage_domains, StorageDomainType>() {
             @Override
             public StorageDomainType getRawValue(storage_domains object) {
                 return object.getstorage_domain_type();
@@ -48,7 +46,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(typeColumn, "Domain Type");
 
-        TextColumn<storage_domains> statusColumn = new EnumColumn<storage_domains, StorageDomainStatus>() {
+        TextColumnWithTooltip<storage_domains> statusColumn = new EnumColumn<storage_domains, StorageDomainStatus>() {
             @Override
             public StorageDomainStatus getRawValue(storage_domains object) {
                 return object.getstatus();

@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableView<VM, VmListModel> implements MainTabVirtualMachinePresenter.ViewDef {
@@ -97,7 +96,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(networkColumn, "Network", "60px");
 
-        TextColumn<VM> displayColumn = new EnumColumn<VM, DisplayType>() {
+        TextColumnWithTooltip<VM> displayColumn = new EnumColumn<VM, DisplayType>() {
             @Override
             protected DisplayType getRawValue(VM object) {
                 return object.getdisplay_type();
@@ -113,7 +112,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(displayColumn, "Display", "70px");
 
-        TextColumn<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
+        TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
             public VMStatus getRawValue(VM object) {
                 return object.getstatus();
@@ -121,7 +120,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(statusColumn, "Status", "90px");
 
-        TextColumn<VM> uptimeColumn = new UptimeColumn<VM>() {
+        TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
             @Override
             public Double getRawValue(VM object) {
                 return object.getRoundedElapsedTime();

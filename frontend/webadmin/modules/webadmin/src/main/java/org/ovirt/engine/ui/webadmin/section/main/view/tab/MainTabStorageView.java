@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainSharedStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<storage_domains, StorageListModel> implements MainTabStoragePresenter.ViewDef {
@@ -38,7 +37,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
         };
         getTable().addColumn(nameColumn, "Domain Name");
 
-        TextColumn<storage_domains> domainTypeColumn = new EnumColumn<storage_domains, StorageDomainType>() {
+        TextColumnWithTooltip<storage_domains> domainTypeColumn = new EnumColumn<storage_domains, StorageDomainType>() {
             @Override
             protected StorageDomainType getRawValue(storage_domains object) {
                 return object.getstorage_domain_type();
@@ -46,7 +45,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
         };
         getTable().addColumn(domainTypeColumn, "Domain Type");
 
-        TextColumn<storage_domains> storageTypeColumn = new EnumColumn<storage_domains, StorageType>() {
+        TextColumnWithTooltip<storage_domains> storageTypeColumn = new EnumColumn<storage_domains, StorageType>() {
             @Override
             protected StorageType getRawValue(storage_domains object) {
                 return object.getstorage_type();
@@ -54,7 +53,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
         };
         getTable().addColumn(storageTypeColumn, "Storage Type");
 
-        TextColumn<storage_domains> formatColumn = new EnumColumn<storage_domains, StorageFormatType>() {
+        TextColumnWithTooltip<storage_domains> formatColumn = new EnumColumn<storage_domains, StorageFormatType>() {
             @Override
             protected StorageFormatType getRawValue(storage_domains object) {
                 return object.getStorageFormat();
@@ -62,7 +61,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
         };
         getTable().addColumn(formatColumn, "Format");
 
-        TextColumn<storage_domains> crossDataCenterStatusColumn =
+        TextColumnWithTooltip<storage_domains> crossDataCenterStatusColumn =
                 new EnumColumn<storage_domains, StorageDomainSharedStatus>() {
                     @Override
                     protected StorageDomainSharedStatus getRawValue(storage_domains object) {

@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class SubTabStorageVmView extends AbstractSubTabTableView<storage_domains, VM, StorageListModel, StorageVmListModel>
@@ -70,7 +69,7 @@ public class SubTabStorageVmView extends AbstractSubTabTableView<storage_domains
         };
         getTable().addColumn(actualSizeColumn, "Actual Size");
 
-        TextColumn<VM> creationDateColumn = new GeneralDateTimeColumn<VM>() {
+        TextColumnWithTooltip<VM> creationDateColumn = new GeneralDateTimeColumn<VM>() {
             @Override
             protected Date getRawValue(VM object) {
                 return object.getvm_creation_date();

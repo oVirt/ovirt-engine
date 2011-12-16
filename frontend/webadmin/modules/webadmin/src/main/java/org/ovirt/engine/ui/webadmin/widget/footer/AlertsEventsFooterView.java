@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.FullDateTimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
@@ -26,7 +27,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
@@ -194,7 +194,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     void initTable(SimpleActionTable<AuditLog> table) {
         table.addColumn(new AuditLogSeverityColumn(), "", "40px");
 
-        TextColumn<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
+        TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
             @Override
             protected Date getRawValue(AuditLog object) {
                 return object.getlog_time();
@@ -202,7 +202,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         };
         table.addColumn(logTimeColumn, "Time", "160px");
 
-        TextColumn<AuditLog> messageColumn = new TextColumn<AuditLog>() {
+        TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
                 return object.getmessage();

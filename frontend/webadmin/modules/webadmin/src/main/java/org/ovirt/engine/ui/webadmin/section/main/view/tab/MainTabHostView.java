@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ProgressBarColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, HostListModel> implements MainTabHostPresenter.ViewDef {
@@ -54,7 +53,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         };
         getTable().addColumn(clusterColumn, "Cluster");
 
-        TextColumn<VDS> statusColumn = new EnumColumn<VDS, VDSStatus>() {
+        TextColumnWithTooltip<VDS> statusColumn = new EnumColumn<VDS, VDSStatus>() {
             @Override
             public VDSStatus getRawValue(VDS object) {
                 return object.getstatus();
@@ -100,7 +99,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         };
         getTable().addColumn(netColumn, "Network", "60px");
 
-        TextColumn<VDS> spmColumn = new EnumColumn<VDS, VdsSpmStatus>() {
+        TextColumnWithTooltip<VDS> spmColumn = new EnumColumn<VDS, VdsSpmStatus>() {
             @Override
             public VdsSpmStatus getRawValue(VDS object) {
                 return object.getspm_status();

@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.inject.Inject;
 
 public class SubTabTemplateInterfaceView extends AbstractSubTabTableView<VmTemplate, VmNetworkInterface, TemplateListModel, TemplateInterfaceListModel>
@@ -43,7 +42,7 @@ public class SubTabTemplateInterfaceView extends AbstractSubTabTableView<VmTempl
         };
         getTable().addColumn(networkNameColumn, "Network Name");
 
-        TextColumn<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
+        TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
             protected VmInterfaceType getRawValue(VmNetworkInterface object) {
                 return VmInterfaceType.forValue(object.getType());

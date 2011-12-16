@@ -16,8 +16,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
-import com.google.gwt.user.cellview.client.TextColumn;
-
 public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, ClusterListModel, ClusterVmListModel>
         implements SubTabClusterVmPresenter.ViewDef {
 
@@ -42,7 +40,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
 
         getTable().addColumn(new VmTypeColumn(), "", "30px");
 
-        TextColumn<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
+        TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {
                 return object.getstatus();
@@ -50,7 +48,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
         };
         getTable().addColumn(statusColumn, "Status");
 
-        TextColumn<VM> uptimeColumn = new UptimeColumn<VM>() {
+        TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
                 return object.getRoundedElapsedTime();

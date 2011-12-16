@@ -10,8 +10,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
-
 /**
  * Base class for sub tab views used to show events ({@link AuditLog} table).
  * 
@@ -32,7 +30,7 @@ public abstract class AbstractSubTabEventView<I, M extends ListWithDetailsModel,
     void initTable() {
         getTable().addColumn(new AuditLogSeverityColumn(), "", "20px");
 
-        TextColumn<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
+        TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
             @Override
             protected Date getRawValue(AuditLog object) {
                 return object.getlog_time();

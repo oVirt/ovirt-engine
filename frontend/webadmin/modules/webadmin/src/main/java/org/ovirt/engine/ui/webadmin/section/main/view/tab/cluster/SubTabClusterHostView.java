@@ -14,8 +14,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
-import com.google.gwt.user.cellview.client.TextColumn;
-
 public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS, ClusterListModel, ClusterHostListModel>
         implements SubTabClusterHostPresenter.ViewDef {
 
@@ -45,7 +43,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
         };
         getTable().addColumn(hostColumn, "Host/IP");
 
-        TextColumn<VDS> statusColumn = new EnumColumn<VDS, VDSStatus>() {
+        TextColumnWithTooltip<VDS> statusColumn = new EnumColumn<VDS, VDSStatus>() {
             @Override
             public VDSStatus getRawValue(VDS object) {
                 return object.getstatus();
