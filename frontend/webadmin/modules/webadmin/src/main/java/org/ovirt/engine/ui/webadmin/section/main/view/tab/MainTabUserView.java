@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabUserPresen
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.PopupTextColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UserStatusColumn;
 
@@ -39,16 +38,16 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
             }
         }, "Last Name");
 
-        getTable().addColumn(new PopupTextColumn<DbUser>(40) {
+        getTable().addColumn(new TextColumnWithTooltip<DbUser>(40) {
             @Override
-            public String getRawValue(DbUser object) {
+            public String getValue(DbUser object) {
                 return object.getusername();
             }
         }, "User Name");
 
-        getTable().addColumn(new PopupTextColumn<DbUser>(40) {
+        getTable().addColumn(new TextColumnWithTooltip<DbUser>(40) {
             @Override
-            public String getRawValue(DbUser object) {
+            public String getValue(DbUser object) {
                 return object.getgroups();
             }
         }, "Group");

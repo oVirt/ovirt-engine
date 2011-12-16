@@ -17,15 +17,28 @@ import com.google.gwt.text.shared.SimpleSafeHtmlRenderer;
  */
 public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
 
-    public TextCellWithTooltip() {
+    public static final int UNLIMITED_LENGTH = -1;
+    private static final String TOO_LONG_TEXT_POSTFIX = " ...";
+
+    // Text longer than this value will be shortened, providing a tooltip with original text
+    private final int maxTextLength;
+
+    public TextCellWithTooltip(int maxTextLength) {
         super(SimpleSafeHtmlRenderer.getInstance(), "mouseover");
+        this.maxTextLength = maxTextLength;
     }
 
     @Override
     public void render(Context context, SafeHtml value, SafeHtmlBuilder sb) {
-        if (value != null) {
-            sb.append(value);
+        if (value == null) {
+            // Don't render null values
+            return;
         }
+
+        String text = value.asString();
+
+        // This is safe because text is retrieved from SafeHtml
+        sb.appendHtmlConstant(getRenderedValue(text));
     }
 
     @Override
@@ -38,12 +51,30 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
             return;
         }
 
+        // Enforce tooltip when the presented text doesn't match original value
+        boolean forceTooltip = (value != null && !value.equals(getRenderedValue(value)));
+
         // If the parent element content overflows its area, provide tooltip to the element
-        if (contentOverflows(parent)) {
-            parent.setTitle(value.trim());
+        if (forceTooltip || contentOverflows(parent)) {
+            parent.setTitle(value);
         } else {
             parent.setTitle("");
         }
+    }
+
+    /**
+     * Returns the text value to be rendered by this cell.
+     */
+    String getRenderedValue(final String text) {
+        String result = text;
+
+        // Check if the text needs to be shortened
+        if (maxTextLength > 0 && text.length() > maxTextLength) {
+            result = result.substring(0, Math.max(maxTextLength - TOO_LONG_TEXT_POSTFIX.length(), 0));
+            result = result + TOO_LONG_TEXT_POSTFIX;
+        }
+
+        return result;
     }
 
     /**

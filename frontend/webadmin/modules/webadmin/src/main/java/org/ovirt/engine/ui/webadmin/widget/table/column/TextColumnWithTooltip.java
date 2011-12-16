@@ -11,7 +11,11 @@ import com.google.gwt.user.cellview.client.Column;
 public abstract class TextColumnWithTooltip<T> extends Column<T, String> {
 
     public TextColumnWithTooltip() {
-        super(new TextCellWithTooltip());
+        this(TextCellWithTooltip.UNLIMITED_LENGTH);
+    }
+
+    public TextColumnWithTooltip(int maxTextLength) {
+        super(new TextCellWithTooltip(maxTextLength));
     }
 
 }
