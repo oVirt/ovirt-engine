@@ -236,6 +236,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         getVmTemplate().setinitrd_url(getParameters().getMasterVm().getinitrd_url());
         getVmTemplate().setkernel_url(getParameters().getMasterVm().getkernel_url());
         getVmTemplate().setkernel_params(getParameters().getMasterVm().getkernel_params());
+        getVmTemplate().setis_stateless(getParameters().getMasterVm().getis_stateless());
         DbFacade.getInstance().getVmTemplateDAO().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());
