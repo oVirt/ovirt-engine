@@ -9,12 +9,13 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ObjectNameColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PermissionTypeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 
-public abstract class AbstrctSubTabPermissionsView<I, M extends ListWithDetailsModel> extends AbstractSubTabTableView<I, permissions, M, PermissionListModel> {
+public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetailsModel> extends AbstractSubTabTableView<I, permissions, M, PermissionListModel> {
 
-    public AbstrctSubTabPermissionsView(SearchableDetailModelProvider<permissions, M, PermissionListModel> modelProvider) {
+    public AbstractSubTabPermissionsView(SearchableDetailModelProvider<permissions, M, PermissionListModel> modelProvider) {
         super(modelProvider);
         initTable();
     }
@@ -22,7 +23,7 @@ public abstract class AbstrctSubTabPermissionsView<I, M extends ListWithDetailsM
     protected void initTable() {
         getTable().addColumn(new PermissionTypeColumn(), "", "30px");
 
-        TextColumn<permissions> userColumn = new TextColumn<permissions>() {
+        TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
             @Override
             public String getValue(permissions object) {
                 return object.getOwnerName();
@@ -30,7 +31,7 @@ public abstract class AbstrctSubTabPermissionsView<I, M extends ListWithDetailsM
         };
         getTable().addColumn(userColumn, "User");
 
-        TextColumn<permissions> roleColumn = new TextColumn<permissions>() {
+        TextColumnWithTooltip<permissions> roleColumn = new TextColumnWithTooltip<permissions>() {
             @Override
             public String getValue(permissions object) {
                 return object.getRoleName();
@@ -39,7 +40,6 @@ public abstract class AbstrctSubTabPermissionsView<I, M extends ListWithDetailsM
         getTable().addColumn(roleColumn, "Role");
 
         TextColumn<permissions> permissionColumn = new ObjectNameColumn<permissions>() {
-
             @Override
             protected Object[] getRawValue(permissions object) {
                 return new Object[] { object.getObjectType(), object.getObjectName(), getDetailModel().getEntity(),

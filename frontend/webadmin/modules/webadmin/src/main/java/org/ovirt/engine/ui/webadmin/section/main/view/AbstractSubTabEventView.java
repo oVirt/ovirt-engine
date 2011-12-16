@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.FullDateTimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 
@@ -39,7 +40,7 @@ public abstract class AbstractSubTabEventView<I, M extends ListWithDetailsModel,
         };
         getTable().addColumn(logTimeColumn, "Time");
 
-        TextColumn<AuditLog> messageColumn = new TextColumn<AuditLog>() {
+        TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
                 return object.getmessage();
