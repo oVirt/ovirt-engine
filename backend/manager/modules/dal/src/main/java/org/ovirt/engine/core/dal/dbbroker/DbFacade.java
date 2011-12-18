@@ -61,6 +61,7 @@ import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.NetworkClusterDAO;
 import org.ovirt.engine.core.dao.NetworkDAO;
 import org.ovirt.engine.core.dao.PermissionDAO;
+import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.RepoFileMetaDataDAO;
 import org.ovirt.engine.core.dao.RoleDAO;
 import org.ovirt.engine.core.dao.RoleGroupMapDAO;
@@ -719,6 +720,16 @@ public class DbFacade {
     public VmStatisticsDAO getVmStatisticsDAO() {
         return getDAO(VmStatisticsDAO.class);
     }
+
+    /**
+     * Returns the singleton instance of {@link QuotaDAO}.
+     *
+     * @return the dao
+     */
+    public QuotaDAO getQuotaDAO() {
+        return getDAO(QuotaDAO.class);
+    }
+
 
     public void setOnStartConnectionTimeout(int onStartConnectionTimeout) {
         this.onStartConnectionTimeout = onStartConnectionTimeout;
