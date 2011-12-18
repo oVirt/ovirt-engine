@@ -1020,6 +1020,22 @@ public enum ConfigValues {
     @DefaultValueAttribute("rhevh")
     OvirtIsoPrefix(330),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("80")
+    QuotaThresholdVdsGroup(331),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("80")
+    QuotaThresholdStorage(332),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("20")
+    QuotaGraceVdsGroup(333),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("20")
+    QuotaGraceStorage(334),
+
     Invalid(65535);
 
     private int intValue;
