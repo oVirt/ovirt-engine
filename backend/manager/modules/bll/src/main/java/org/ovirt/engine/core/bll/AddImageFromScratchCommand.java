@@ -34,29 +34,28 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         setImageGroupId(Guid.NewGuid());
 
         if (ProcessImageInIrs()) {
-            DiskImage tempVar = new DiskImage();
-            tempVar.setId(getDestinationImageId());
-            tempVar.setinternal_drive_mapping(getParameters().getDiskInfo().getinternal_drive_mapping());
-            tempVar.setboot(getParameters().getDiskInfo().getboot());
-            tempVar.setdisk_interface(getParameters().getDiskInfo().getdisk_interface());
-            tempVar.setpropagate_errors(getParameters().getDiskInfo().getpropagate_errors());
-            tempVar.setwipe_after_delete(getParameters().getDiskInfo().getwipe_after_delete());
-            tempVar.setvm_guid(getVmId());
-            tempVar.setimage_group_id(getImageGroupId());
-            tempVar.setstorage_pool_id(getVm().getstorage_pool_id());
-            tempVar.setstorage_id(getParameters().getStorageDomainId());
-            tempVar.setsize(getParameters().getDiskInfo().getsize());
-            tempVar.setvolume_type(getParameters().getDiskInfo().getvolume_type());
-            tempVar.setvolume_format(getParameters().getDiskInfo().getvolume_format());
-            tempVar.setdisk_type(getParameters().getDiskInfo().getdisk_type());
-            tempVar.setdescription(CalculateImageDescription());
-            tempVar.setcreation_date(getNow());
-            tempVar.setlastModified(getNow());
-            tempVar.setactive(true);
-            tempVar.setimageStatus(ImageStatus.LOCKED);
-            tempVar.setvm_snapshot_id(getParameters().getVmSnapshotId());
-            mNewCreatedDiskImage = tempVar;
-            // override disk info
+            mNewCreatedDiskImage = new DiskImage();
+            mNewCreatedDiskImage.setId(getDestinationImageId());
+            mNewCreatedDiskImage.setinternal_drive_mapping(getParameters().getDiskInfo().getinternal_drive_mapping());
+            mNewCreatedDiskImage.setboot(getParameters().getDiskInfo().getboot());
+            mNewCreatedDiskImage.setdisk_interface(getParameters().getDiskInfo().getdisk_interface());
+            mNewCreatedDiskImage.setpropagate_errors(getParameters().getDiskInfo().getpropagate_errors());
+            mNewCreatedDiskImage.setwipe_after_delete(getParameters().getDiskInfo().getwipe_after_delete());
+            mNewCreatedDiskImage.setvm_guid(getVmId());
+            mNewCreatedDiskImage.setimage_group_id(getImageGroupId());
+            mNewCreatedDiskImage.setstorage_pool_id(getVm().getstorage_pool_id());
+            mNewCreatedDiskImage.setstorage_id(getParameters().getStorageDomainId());
+            mNewCreatedDiskImage.setsize(getParameters().getDiskInfo().getsize());
+            mNewCreatedDiskImage.setvolume_type(getParameters().getDiskInfo().getvolume_type());
+            mNewCreatedDiskImage.setvolume_format(getParameters().getDiskInfo().getvolume_format());
+            mNewCreatedDiskImage.setdisk_type(getParameters().getDiskInfo().getdisk_type());
+            mNewCreatedDiskImage.setdescription(CalculateImageDescription());
+            mNewCreatedDiskImage.setcreation_date(getNow());
+            mNewCreatedDiskImage.setlastModified(getNow());
+            mNewCreatedDiskImage.setactive(true);
+            mNewCreatedDiskImage.setimageStatus(ImageStatus.LOCKED);
+            mNewCreatedDiskImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
+
             AddDiskImageToDb(mNewCreatedDiskImage);
             getReturnValue().setActionReturnValue(mNewCreatedDiskImage.getId());
             setSucceeded(true);
