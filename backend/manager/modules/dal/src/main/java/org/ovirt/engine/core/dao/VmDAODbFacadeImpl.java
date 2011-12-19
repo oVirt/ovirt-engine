@@ -27,7 +27,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
@@ -40,10 +39,8 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
 
     @Override
     public VM get(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_guid", id);
-        ParameterizedRowMapper<VM> mapper = new VMRowMapper();
-        return getCallsHandler().executeRead("GetVmByVmGuid", mapper, parameterSource);
+        return getCallsHandler().executeRead("GetVmByVmGuid", new VMRowMapper(), getCustomMapSqlParameterSource()
+                .addValue("vm_guid", id));
     }
 
     @Override
@@ -57,91 +54,72 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
 
     @Override
     public VM getForHibernationImage(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("image_id", id);
-
-        ParameterizedRowMapper<VM> mapper = new VMRowMapper();
-        return getCallsHandler().executeRead("GetVmByHibernationImageId", mapper, parameterSource);
+        return getCallsHandler().executeRead("GetVmByHibernationImageId",
+                new VMRowMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("image_id", id));
     }
 
     @Override
     public VM getForImage(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("image_guid", id);
-
-        ParameterizedRowMapper<VM> mapper = new VMRowMapper();
-        return getCallsHandler().executeRead("GetVmByImageId", mapper, parameterSource);
+        return getCallsHandler().executeRead("GetVmByImageId", new VMRowMapper(), getCustomMapSqlParameterSource()
+                .addValue("image_guid", id));
     }
 
     @Override
     public VM getForImageGroup(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("image_group_id", id);
-
-        ParameterizedRowMapper<VM> mapper = new VMRowMapper();
-        return getCallsHandler().executeRead("GetVmByImageGroupId", mapper, parameterSource);
+        return getCallsHandler().executeRead("GetVmByImageGroupId", new VMRowMapper(), getCustomMapSqlParameterSource()
+                .addValue("image_group_id", id));
     }
 
     @Override
     public List<VM> getAllForUser(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("user_id", id);
-
-        return getCallsHandler().executeReadList("GetVmsByUserId", new VMRowMapper(), parameterSource);
+        return getCallsHandler().executeReadList("GetVmsByUserId", new VMRowMapper(), getCustomMapSqlParameterSource()
+                .addValue("user_id", id));
     }
 
     @Override
     public List<VM> getAllForUserWithGroupsAndUserRoles(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("user_id", id);
-
         return getCallsHandler().executeReadList("GetVmsByUserIdWithGroupsAndUserRoles", new VMRowMapper(),
-                parameterSource);
+                getCustomMapSqlParameterSource()
+                        .addValue("user_id", id));
     }
 
     @Override
     public List<VM> getAllForAdGroupByName(String name) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("ad_group_names", name);
-
-        ParameterizedRowMapper<VM> mapper = new VMRowMapper();
-        return getCallsHandler().executeReadList("GetVmsByAdGroupNames", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetVmsByAdGroupNames",
+                new VMRowMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("ad_group_names", name));
     }
 
     @Override
     public List<VM> getAllWithTemplate(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vmt_guid", id);
-
-        ParameterizedRowMapper<VM> mapper = new VMRowMapper();
-        return getCallsHandler().executeReadList("GetVmsByVmtGuid", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetVmsByVmtGuid", new VMRowMapper(), getCustomMapSqlParameterSource()
+                .addValue("vmt_guid", id));
     }
 
     @Override
     public List<VM> getAllRunningForVds(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vds_id", id);
-
-        ParameterizedRowMapper<VM> mapper = new VMRowMapper();
-
-        return getCallsHandler().executeReadList("GetVmsRunningOnVds", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetVmsRunningOnVds",
+                new VMRowMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_id", id));
     }
 
     @Override
     public List<VM> getAllForDedicatedPowerClientByVds(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("dedicated_vm_for_vds", id);
-
-        ParameterizedRowMapper<VM> mapper = new VMRowMapper();
-        return getCallsHandler().executeReadList("GetVmsDedicatedToPowerClientByVdsId", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetVmsDedicatedToPowerClientByVdsId",
+                new VMRowMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("dedicated_vm_for_vds", id));
     }
 
     @Override
     public Map<Guid, VM> getAllRunningByVds(Guid id) {
         HashMap<Guid, VM> map = new HashMap<Guid, VM>();
 
-        List<VM> vms = getAllRunningForVds(id);
-        for (VM vm : vms) {
+        for (VM vm : getAllRunningForVds(id)) {
             map.put(vm.getvm_guid(), vm);
         }
 
@@ -150,39 +128,33 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
 
     @Override
     public List<VM> getAllUsingQuery(String query) {
-        ParameterizedRowMapper<VM> mapper = new VMRowMapper();
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, mapper);
+        return new SimpleJdbcTemplate(jdbcTemplate).query(query, new VMRowMapper());
     }
 
     @Override
     public List<VM> getAllForStorageDomain(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("storage_domain_id", id);
-
-        ParameterizedRowMapper<VM> mapper = new VMRowMapper();
-        return getCallsHandler().executeReadList("GetVmsByStorageDomainId", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetVmsByStorageDomainId",
+                new VMRowMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("storage_domain_id", id));
     }
 
     @Override
     public List<VM> getAllRunningForStorageDomain(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("storage_domain_id", id);
-
-        ParameterizedRowMapper<VM> mapper = new VMRowMapper();
-        return getCallsHandler().executeReadList("GetRunningVmsByStorageDomainId", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetRunningVmsByStorageDomainId",
+                new VMRowMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("storage_domain_id", id));
     }
 
     @Override
     public List<VM> getAll() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
-        ParameterizedRowMapper<VM> mapper = new VMRowMapper();
-        return getCallsHandler().executeReadList("GetAllFromVms", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromVms", new VMRowMapper(), getCustomMapSqlParameterSource());
     }
 
     @Override
     public void save(VM vm) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+        getCallsHandler().executeModification("InsertVm", getCustomMapSqlParameterSource()
                 .addValue("description", vm.getdescription())
                 .addValue("mem_size_mb", vm.getmem_size_mb())
                 .addValue("os", vm.getos())
@@ -219,16 +191,13 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                 .addValue("predefined_properties", vm.getPredefinedProperties())
                 .addValue("userdefined_properties",
                         vm.getUserDefinedProperties())
-                .addValue("min_allocated_mem", vm.getMinAllocatedMem());
-
-        getCallsHandler().executeModification("InsertVm", parameterSource);
+                .addValue("min_allocated_mem", vm.getMinAllocatedMem()));
     }
 
     @Override
     public void remove(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_guid", id);
-        getCallsHandler().executeModification("DeleteVm", parameterSource);
+        getCallsHandler().executeModification("DeleteVm", getCustomMapSqlParameterSource()
+                .addValue("vm_guid", id));
     }
 
     static final class VMRowMapper implements ParameterizedRowMapper<VM> {
@@ -326,11 +295,9 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
 
             entity.setvds_group_compatibility_version(new Version(rs.getString("vds_group_compatibility_version")));
 
-            VmExitStatus exitStatus = VmExitStatus.forValue(rs.getInt("exit_status"));
-            VmPauseStatus pauseStatus = VmPauseStatus.forValue(rs.getInt("pause_status"));
             entity.setExitMessage(rs.getString("exit_message"));
-            entity.setExitStatus(exitStatus);
-            entity.setVmPauseStatus(pauseStatus);
+            entity.setExitStatus(VmExitStatus.forValue(rs.getInt("exit_status")));
+            entity.setVmPauseStatus(VmPauseStatus.forValue(rs.getInt("pause_status")));
             entity.setMigrationSupport(MigrationSupport.forValue(rs.getInt("migration_support")));
             String predefinedProperties = rs.getString("predefined_properties");
             String userDefinedProperties = rs.getString("userdefined_properties");

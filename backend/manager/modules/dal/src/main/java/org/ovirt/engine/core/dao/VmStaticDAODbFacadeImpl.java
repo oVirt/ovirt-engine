@@ -5,9 +5,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.VMStaticRowMapper;
+import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.dal.dbbroker.AbstractVmRowMapper;
+import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
@@ -194,4 +198,39 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
         return getCallsHandler().executeReadList("GetNamesOfVmStaticDedicatedToVds", mapper,
                 parameterSource);
     }
+
+    /**
+     * JDBC row mapper for VM static
+     */
+    static class VMStaticRowMapper extends AbstractVmRowMapper<VmStatic> {
+
+        @Override
+        public VmStatic mapRow(ResultSet rs, int rowNum) throws SQLException {
+            final VmStatic entity = new VmStatic();
+            map(rs, entity);
+
+            entity.setId(Guid.createGuidFromString(rs.getString("vm_guid")));
+            entity.setmem_size_mb(rs.getInt("mem_size_mb"));
+            entity.setvds_group_id(Guid.createGuidFromString(rs.getString("vds_group_id")));
+
+            entity.setvm_name(rs.getString("vm_name"));
+            entity.setvmt_guid(Guid.createGuidFromString(rs.getString("vmt_guid")));
+            entity.setdomain(rs.getString("domain"));
+            entity.setnum_of_monitors(rs.getInt("num_of_monitors"));
+            entity.setis_initialized(rs.getBoolean("is_initialized"));
+            entity.setcpu_per_socket(rs.getInt("cpu_per_socket"));
+            entity.setdedicated_vm_for_vds(NGuid.createGuidFromString(rs.getString("dedicated_vm_for_vds")));
+            entity.setdefault_display_type(DisplayType.forValue(rs.getInt("default_display_type")));
+            entity.setMigrationSupport(MigrationSupport.forValue(rs.getInt("migration_support")));
+            String predefinedProperties = rs.getString("predefined_properties");
+            String userDefinedProperties = rs.getString("userdefined_properties");
+            entity.setPredefinedProperties(predefinedProperties);
+            entity.setUserDefinedProperties(userDefinedProperties);
+            entity.setCustomProperties(VmPropertiesUtils.customProperties(predefinedProperties, userDefinedProperties));
+            entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
+
+            return entity;
+        }
+    }
+
 }
