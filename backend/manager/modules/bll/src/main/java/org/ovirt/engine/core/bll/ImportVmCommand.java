@@ -459,6 +459,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 }
 
                 DbFacade.getInstance().getDiskImageDAO().save(disk);
+                DbFacade.getInstance().getDiskDao().save(disk.getDisk());
 
                 DiskImageDynamic diskDynamic = new DiskImageDynamic();
                 diskDynamic.setId(disk.getId());
@@ -480,8 +481,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
             for (String drive : images.keySet()) {
                 java.util.ArrayList<DiskImage> list = images.get(drive);
+                DiskImage disk = list.get(list.size() - 1);
                 DbFacade.getInstance().getImageVmMapDAO().save(
-                        new image_vm_map(true, list.get(list.size() - 1).getId(), getVm().getvm_guid()));
+                        new image_vm_map(true, disk.getId(), getVm().getvm_guid()));
+                DbFacade.getInstance().getDiskDao().save(disk.getDisk());
             }
         }
     }

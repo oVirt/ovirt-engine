@@ -35,6 +35,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
 
     private static final int TOTAL_DISK_IMAGES = 4;
     private DiskImageDynamicDAO diskImageDynamicDao;
+    private DiskDao diskDao;
     private DiskImage newImage;
     private image_vm_pool_map existingVmPoolMapping;
     private image_vm_pool_map newImageVmPoolMapping;
@@ -76,6 +77,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         super.setUp();
 
         diskImageDynamicDao = prepareDAO(dbFacade.getDiskImageDynamicDAO());
+        diskDao = prepareDAO(dbFacade.getDiskDao());
 
         existingVmPoolMapping = dao.getImageVmPoolMapByImageId(EXISTING_IMAGE_ID);
 
@@ -111,6 +113,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         }
         DiskImageDynamic dynamic = new DiskImageDynamic();
         dynamic.setId(newImage.getId());
+        diskDao.save(newImage.getDisk());
         diskImageDynamicDao.save(dynamic);
         DiskImageDynamic dynamicFromDB = diskImageDynamicDao.get(dynamic.getId());
         assertNotNull(dynamicFromDB);

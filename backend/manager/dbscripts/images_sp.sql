@@ -29,36 +29,6 @@ INSERT INTO images(creation_date, description, image_guid, it_guid, size, Parent
     storage_id, vm_snapshot_id, volume_type, image_group_id, volume_format, boot)
 	VALUES(v_creation_date, v_description, v_image_guid, v_it_guid, v_size, v_ParentId, v_imageStatus, v_lastModified,v_app_list,
 	v_storage_id, v_vm_snapshot_id, v_volume_type, v_image_group_id, v_volume_format, v_boot);
-
--- TODO: Delete this once the disks table is updated directly from code.
-IF NOT EXISTS (SELECT * FROM disks WHERE disk_id = v_image_group_id) THEN
-    EXECUTE InsertDisk(
-        v_image_group_id,
-        CASE WHEN v_imageStatus = 1 THEN 'OK'
-             WHEN v_imageStatus = 2 THEN 'LOCKED'
-             WHEN v_imageStatus = 3 THEN 'INVALID'
-             WHEN v_imageStatus = 4 THEN 'ILLEGAL'
-             ELSE 'Unassigned'
-        END,
-        CAST (v_internal_drive_mapping AS INTEGER),
-                       v_image_guid,
-        CASE WHEN v_disk_type = 1 THEN 'System'
-             WHEN v_disk_type = 2 THEN 'Data'
-             WHEN v_disk_type = 3 THEN 'Shared'
-             WHEN v_disk_type = 4 THEN 'Swap'
-             WHEN v_disk_type = 5 THEN 'Temp'
-             ELSE 'Unassigned'
-        END,
-        CASE WHEN v_disk_interface = 1 THEN 'SCSI'
-             WHEN v_disk_interface = 2 THEN 'VirtIO'
-             ELSE 'IDE'
-        END,
-        v_wipe_after_delete,
-        CASE WHEN v_propagate_errors = 1 THEN 'On'
-             ELSE 'Off'
-        END);
-END IF;
-
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -177,7 +147,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAncestralImageByImageGuid(v_image_guid UUID)
-RETURNS SETOF images
+RETURNS SETOF images_storage_domain_view
    AS $procedure$
 BEGIN
       RETURN QUERY WITH RECURSIVE ancestor_image(image_guid, parentid) AS (
@@ -190,7 +160,7 @@ BEGIN
          WHERE i.image_guid = ai.parentid
       )
       SELECT i.*
-      FROM ancestor_image ai, images i
+      FROM ancestor_image ai, images_storage_domain_view i
       WHERE ai.parentid = '00000000-0000-0000-0000-000000000000'
       AND ai.image_guid = i.image_guid;
 END; $procedure$

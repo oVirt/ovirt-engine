@@ -43,6 +43,7 @@ public class AddTemplateImagesFromImportCommand<T extends AddImagesFromImportPar
                     DbFacade.getInstance().getDiskImageTemplateDAO().save(dt);
                     importedImage.setimageStatus(ImageStatus.LOCKED);
                     DbFacade.getInstance().getDiskImageDAO().save(importedImage);
+                    saveDiskIfNotExists(importedImage);
                 }
 
                 catch (RuntimeException e) {
