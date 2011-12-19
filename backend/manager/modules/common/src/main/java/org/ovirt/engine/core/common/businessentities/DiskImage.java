@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
@@ -469,18 +468,18 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         OnPropertyChanged(new PropertyChangedEventArgs("storage_path"));
     }
 
-    private NGuid imageGroupId = null;
+    private Guid imageGroupId = null;
 
     // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
     // .NET attributes:
     @XmlElement
     @Column(name = "image_group_id")
     @Type(type = "guid")
-    public NGuid getimage_group_id() {
+    public Guid getimage_group_id() {
         return imageGroupId;
     }
 
-    public void setimage_group_id(NGuid value) {
+    public void setimage_group_id(Guid value) {
         imageGroupId = value;
         OnPropertyChanged(new PropertyChangedEventArgs("image_group_id"));
     }
@@ -678,7 +677,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         di.storageId = new NGuid(diskImage.storageId.getUuid());
         di.vmSnapshotId = new NGuid(diskImage.vmSnapshotId.getUuid());
         di.mstorage_path = diskImage.mstorage_path;
-        di.imageGroupId = new NGuid(diskImage.imageGroupId.getUuid());
+        di.imageGroupId = new Guid(diskImage.imageGroupId.getUuid());
         di.storage_pool_idField = new NGuid(diskImage.storage_pool_idField.getUuid());
         di.actualSize = diskImage.actualSize;
         di.childrenIdField = new Guid[diskImage.childrenIdField.length];

@@ -68,7 +68,7 @@ public class OvfParser {
         return retVal;
     }
 
-    public static NGuid GetImageGrupIdFromImageFile(String imageFile) {
+    public static Guid GetImageGrupIdFromImageFile(String imageFile) {
         if (!StringHelper.isNullOrEmpty(imageFile)) {
             return new Guid(imageFile.split("[/]", -1)[0]);
         }
