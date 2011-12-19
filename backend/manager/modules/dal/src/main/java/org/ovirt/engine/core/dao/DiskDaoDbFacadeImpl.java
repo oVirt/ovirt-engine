@@ -77,4 +77,9 @@ public class DiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Disk, Guid> i
             }
         };
     }
+
+    @Override
+    public boolean exists(Guid id) {
+        return get(id) != null;
+    }
 }
