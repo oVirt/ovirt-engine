@@ -66,7 +66,9 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
                     }
                 });
                 setVmTemplate(template);
-                getParameters().setImages(images);
+                if (images != null) {
+                    getParameters().setImages(images);
+                }
                 retVal = !(images == null);
             }
         }
