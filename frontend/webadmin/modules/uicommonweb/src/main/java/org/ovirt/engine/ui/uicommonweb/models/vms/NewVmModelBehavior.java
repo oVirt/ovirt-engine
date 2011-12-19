@@ -88,6 +88,9 @@ public class NewVmModelBehavior extends IVmModelBehavior
 			getModel().setBootSequence(template.getdefault_boot_sequence());
 			getModel().getIsHighlyAvailable().setEntity(template.getauto_startup());
 
+			if (getModel().getVmType() == VmType.Desktop) {
+				getModel().getIsStateless().setEntity(template.getis_stateless());
+			}
 
 			getModel().getCdImage().setIsChangable(!StringHelper.isNullOrEmpty(template.getiso_path()));
 			if (getModel().getCdImage().getIsChangable())
