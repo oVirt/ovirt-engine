@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.webadmin.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable;
@@ -20,7 +21,9 @@ import com.google.gwt.user.cellview.client.CellTable.Resources;
 public abstract class AbstractMainTabTableView<T, M extends SearchableListModel> extends AbstractView {
 
     private final MainModelProvider<T, M> modelProvider;
-    private final SimpleActionTable<T> table;
+
+    @WithElementId
+    public final SimpleActionTable<T> table;
 
     public AbstractMainTabTableView(MainModelProvider<T, M> modelProvider) {
         this.modelProvider = modelProvider;

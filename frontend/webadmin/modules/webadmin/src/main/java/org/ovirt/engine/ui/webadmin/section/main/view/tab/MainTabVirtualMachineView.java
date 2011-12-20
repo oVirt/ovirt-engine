@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVirtualMachinePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
@@ -19,14 +20,20 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
+import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
 public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableView<VM, VmListModel> implements MainTabVirtualMachinePresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<MainTabVirtualMachineView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     @Inject
     public MainTabVirtualMachineView(MainModelProvider<VM, VmListModel> modelProvider,
             ApplicationResources resources) {
         super(modelProvider);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(resources);
         initWidget(getTable());
     }

@@ -5,6 +5,8 @@ import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DeferredModelCommandInvoker;
@@ -39,22 +41,30 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<LoginPopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     SimplePopupPanel popup;
 
     @UiField
     @Path("userName.entity")
+    @WithElementId("userName")
     EntityModelTextBoxEditor userNameEditor;
 
     @UiField
     @Path("password.entity")
+    @WithElementId("password")
     EntityModelPasswordBoxEditor passwordEditor;
 
     @UiField
     @Path("domain.selectedItem")
+    @WithElementId("domain")
     ListModelListBoxEditor<Object> domainEditor;
 
     @UiField
+    @WithElementId
     SimpleDialogButton loginButton;
 
     @UiField
@@ -77,6 +87,7 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
         localize(constants);
         passwordEditor.setAutoComplete("off");
         Driver.driver.initialize(this);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
 
         if (!intConf.isCurrentBrowserSupported()) {
             // Browser is not supported

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget;
 
+import org.ovirt.engine.ui.webadmin.idhandler.HasElementId;
 import org.ovirt.engine.ui.webadmin.widget.editor.EditorWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -26,7 +27,8 @@ import com.google.gwt.user.client.ui.Widget;
  * @param <W>
  *            Content widget type.
  */
-public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget<T, ?>> extends AbstractValidatedWidget implements HasLabel, HasEnabled, HasAccess, HasAllKeyHandlers, Focusable {
+public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget<T, ?>> extends AbstractValidatedWidget
+        implements HasLabel, HasEnabled, HasAccess, HasAllKeyHandlers, Focusable, HasElementId {
 
     interface WidgetUiBinder extends UiBinder<Widget, AbstractValidatedWidgetWithLabel<?, ?>> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -68,6 +70,10 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         contentWidget.asWidget().setWidth("100%");
 
         // Connect label with content widget for better accessibility
+        updateLabelElementId();
+    }
+
+    protected void updateLabelElementId() {
         labelElement.setHtmlFor(getContentWidgetId());
     }
 
@@ -91,6 +97,12 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     protected LabelElement getLabelElement() {
         return labelElement;
+    }
+
+    @Override
+    public void setElementId(String elementId) {
+        contentWidget.asWidget().getElement().setId(elementId);
+        updateLabelElementId();
     }
 
     @Override
@@ -180,4 +192,5 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     public void addLabelStyleName(String styleName) {
         labelElement.addClassName(styleName);
     }
+
 }

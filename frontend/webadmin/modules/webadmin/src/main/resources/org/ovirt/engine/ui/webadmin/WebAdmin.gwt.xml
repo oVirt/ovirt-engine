@@ -25,7 +25,7 @@
 	<inherits name="com.google.gwt.rpc.RPC" />
 
 	<!-- Supported browsers (defined via maven property) -->
-	<set-property name="user.agent" value="${gwt.userAgent}"/>
+	<set-property name="user.agent" value="${gwt.userAgent}" />
 
 	<!-- Tell GWTP proxy generator the location of our Ginjector -->
 	<define-configuration-property name="gin.ginjector" is-multi-valued="false" />
@@ -40,6 +40,10 @@
 	<!-- Use custom GWT Editor Driver generator -->
 	<generate-with class="org.ovirt.engine.ui.webadmin.binding.WebAdminEditorDriverGenerator">
 		<when-type-assignable class="com.google.gwt.editor.client.SimpleBeanEditorDriver" />
+	</generate-with>
+
+	<generate-with class="org.ovirt.engine.ui.webadmin.binding.ElementIdHandlerGenerator">
+		<when-type-assignable class="org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler" />
 	</generate-with>
 
 	<!-- Specify the application entry point class -->

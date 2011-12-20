@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.idhandler.HasElementId;
 import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelChangeEvent;
 import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelChangeEvent.CommonModelChangeHandler;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableModelProvider;
@@ -19,6 +20,7 @@ import com.google.gwt.event.logical.shared.InitializeEvent;
 import com.google.gwt.event.logical.shared.InitializeHandler;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -37,7 +39,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @param <T>
  *            Action panel item type.
  */
-public abstract class AbstractActionPanel<T> extends Composite {
+public abstract class AbstractActionPanel<T> extends Composite implements HasElementId {
 
     @UiField
     public FlowPanel actionPanel;
@@ -49,6 +51,8 @@ public abstract class AbstractActionPanel<T> extends Composite {
 
     private final PopupPanel contextPopupPanel;
     private final MenuBar contextMenuBar;
+
+    private String elementId = DOM.createUniqueId();
 
     public AbstractActionPanel(SearchableModelProvider<T, ?> dataProvider) {
         this.dataProvider = dataProvider;
@@ -66,6 +70,11 @@ public abstract class AbstractActionPanel<T> extends Composite {
         contextPopupPanel.setWidget(contextMenuBar);
     }
 
+    @Override
+    public void setElementId(String elementId) {
+        this.elementId = elementId;
+    }
+
     /**
      * Adds a new button to the action panel.
      */
@@ -76,6 +85,10 @@ public abstract class AbstractActionPanel<T> extends Composite {
         newActionButton.setEnabledHtml(buttonDef.getEnabledHtml());
         newActionButton.setDisabledHtml(buttonDef.getDisabledHtml());
         newActionButton.setTitle(buttonDef.getTitle());
+
+        // Set button element ID for better accessibility
+        newActionButton.asWidget().getElement().setId(
+                getActionButtonElementId(buttonDef.getTitle()));
 
         // Add the button to the action panel
         if (!buttonDef.isAvailableOnlyFromContext()) {
@@ -110,6 +123,10 @@ public abstract class AbstractActionPanel<T> extends Composite {
         });
 
         updateActionButton(newActionButton, buttonDef);
+    }
+
+    String getActionButtonElementId(String buttonTitle) {
+        return elementId + "_" + buttonTitle.replaceAll("\\s", "_");
     }
 
     private void registerSelectionChangeHandler(final ActionButtonDefinition<T> buttonDef) {
