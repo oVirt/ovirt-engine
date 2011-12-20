@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.uicommon.model;
 
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 /**
@@ -13,7 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 public interface MainModelProvider<T, M extends SearchableListModel> extends SearchableTableModelProvider<T, M> {
 
     /**
-     * Notifies the model that the corresponding main tab has been selected.
+     * Notifies {@link CommonModel} that the corresponding main tab has been selected.
      */
     void onMainTabSelected();
 

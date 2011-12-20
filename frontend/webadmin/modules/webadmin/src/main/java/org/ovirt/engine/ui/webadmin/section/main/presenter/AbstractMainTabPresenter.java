@@ -46,7 +46,7 @@ public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel,
     protected void onReveal() {
         super.onReveal();
 
-        // Notify main model that the tab has been revealed
+        // Notify model provider that the tab has been revealed
         modelProvider.onMainTabSelected();
     }
 

@@ -29,4 +29,13 @@ public class DetailTabModelProvider<M extends ListWithDetailsModel, D extends En
         return UiCommonModelResolver.getDetailListModel(getCommonModel(), mainModelClass, detailModelClass);
     }
 
+    protected M getMainModel() {
+        return UiCommonModelResolver.getMainListModel(getCommonModel(), mainModelClass);
+    }
+
+    @Override
+    public void onSubTabSelected() {
+        getMainModel().setActiveDetailModel(getModel());
+    }
+
 }

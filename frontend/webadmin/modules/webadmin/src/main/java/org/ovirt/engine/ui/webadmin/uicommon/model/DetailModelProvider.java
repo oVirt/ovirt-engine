@@ -15,4 +15,9 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
  */
 public interface DetailModelProvider<M extends ListWithDetailsModel, D extends EntityModel> extends ModelProvider<D> {
 
+    /**
+     * Notifies main model that the corresponding sub tab has been selected.
+     */
+    void onSubTabSelected();
+
 }

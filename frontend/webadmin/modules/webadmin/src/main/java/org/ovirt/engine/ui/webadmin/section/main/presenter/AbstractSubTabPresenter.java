@@ -87,6 +87,14 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     }
 
     @Override
+    protected void onReveal() {
+        super.onReveal();
+
+        // Notify model provider that the tab has been revealed
+        modelProvider.onSubTabSelected();
+    }
+
+    @Override
     protected void onReset() {
         super.onReset();
 

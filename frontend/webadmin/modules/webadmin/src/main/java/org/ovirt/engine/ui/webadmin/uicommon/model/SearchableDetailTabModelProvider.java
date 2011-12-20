@@ -31,4 +31,13 @@ public class SearchableDetailTabModelProvider<T, M extends ListWithDetailsModel,
         return UiCommonModelResolver.getDetailListModel(getCommonModel(), mainModelClass, detailModelClass);
     }
 
+    protected M getMainModel() {
+        return UiCommonModelResolver.getMainListModel(getCommonModel(), mainModelClass);
+    }
+
+    @Override
+    public void onSubTabSelected() {
+        getMainModel().setActiveDetailModel(getModel());
+    }
+
 }
