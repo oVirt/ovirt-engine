@@ -566,6 +566,12 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         List<Guid> imagesList = new ArrayList<Guid>();
         for (DiskImage image : getAllForVm(id)) {
             imagesList.add(image.getId());
+
+            List<DiskImage> imagesForDisk =
+                DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(image.getimage_group_id());
+            if (imagesForDisk == null || imagesForDisk.isEmpty()) {
+                DbFacade.getInstance().getDiskDao().remove(image.getimage_group_id());
+            }
         }
         // TODO this will be fixed when we have ORM and object relationships
         for (Guid guid : imagesList) {

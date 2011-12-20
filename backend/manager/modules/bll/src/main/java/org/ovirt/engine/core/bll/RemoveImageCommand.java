@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -86,10 +88,11 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     private void RemoveImageFromDB() {
-        if (getDiskImage() != null) {
-            DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDiskImage().getId());
-            Guid imageTemplate = getDiskImage().getit_guid();
-            Guid currentGuid = getDiskImage().getId();
+        DiskImage diskImage = getDiskImage();
+        if (diskImage != null) {
+            DbFacade.getInstance().getDiskImageDynamicDAO().remove(diskImage.getId());
+            Guid imageTemplate = diskImage.getit_guid();
+            Guid currentGuid = diskImage.getId();
             // next 'while' statement removes snapshots from DB only (the
             // 'DeleteImageGroup'
             // VDS Command should take care of removing all the snapshots from
@@ -108,8 +111,16 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                     currentGuid = Guid.Empty;
                     log.warnFormat(
                             "RemoveImageCommand::RemoveImageFromDB: 'image' (snapshot of image '{0}') is null, cannot remove it.",
-                            getDiskImage().getId());
+                            diskImage.getId());
                 }
+            }
+
+            List<DiskImage> imagesForDisk =
+                    DbFacade.getInstance()
+                            .getDiskImageDAO()
+                            .getAllSnapshotsForImageGroup(diskImage.getimage_group_id());
+            if (imagesForDisk == null || imagesForDisk.isEmpty()) {
+                DbFacade.getInstance().getDiskDao().remove(diskImage.getimage_group_id());
             }
         } else {
             log.warn("RemoveImageCommand::RemoveImageFromDB: DiskImage is null, nothing to remove.");

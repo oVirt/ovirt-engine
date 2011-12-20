@@ -98,22 +98,13 @@ RETURNS VOID
    AS $procedure$
    DECLARE
    v_val  UUID;
-   v_disk_id UUID;
 BEGIN
 		-- Get (and keep) a shared lock with "right to upgrade to exclusive"
 		-- in order to force locking parent before children 
       select   image_guid INTO v_val FROM images  WHERE image_guid = v_image_guid     FOR UPDATE;
-      SELECT image_group_id INTO v_disk_id FROM images WHERE image_guid = v_image_guid;
-      SELECT disk_id INTO v_disk_id FROM disks WHERE disk_id = v_disk_id FOR UPDATE;
 
       DELETE FROM images
       WHERE image_guid = v_image_guid;
-
-      -- TODO: Delete this once the disks table is used directly from code.
-      IF (SELECT COUNT(*) FROM images WHERE image_group_id = v_disk_id) = 0 THEN
-          DELETE FROM disks
-          WHERE disk_id = v_disk_id;
-      END IF;
 END; $procedure$
 LANGUAGE plpgsql;
 

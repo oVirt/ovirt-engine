@@ -677,6 +677,12 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             for (DiskImage disk : getParameters().getImages()) {
                 DbFacade.getInstance().getDiskImageDynamicDAO().remove(disk.getId());
                 DbFacade.getInstance().getDiskImageDAO().remove(disk.getId());
+
+                List<DiskImage> imagesForDisk =
+                        DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(disk.getimage_group_id());
+                if (imagesForDisk == null || imagesForDisk.isEmpty()) {
+                    DbFacade.getInstance().getDiskDao().remove(disk.getimage_group_id());
+                }
             }
             RemoveVmNetwork();
             DbFacade.getInstance().getVmDynamicDAO().remove(getVmId());

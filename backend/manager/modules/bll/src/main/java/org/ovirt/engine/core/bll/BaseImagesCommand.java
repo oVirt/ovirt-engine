@@ -420,7 +420,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected void UndoActionOnSourceAndDestination() {
         if (getDestinationDiskImage() != null) {
-            RemoveSnapshotFromDB(getDestinationImageId());
+            RemoveSnapshotFromDB(getDestinationDiskImage());
         }
 
         if (getDiskImage() != null) {
@@ -434,15 +434,20 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      */
 
     protected void RemoveSnapshot(DiskImage snapshot) {
-        RemoveSnapshotFromDB(snapshot.getId());
+        RemoveSnapshotFromDB(snapshot);
         AdditionalImageRemoveTreatment(snapshot);
     }
 
     protected void AdditionalImageRemoveTreatment(DiskImage snapshot) {
     }
 
-    protected void RemoveSnapshotFromDB(Guid snapshotGUID) {
-        DbFacade.getInstance().getDiskImageDAO().remove(snapshotGUID);
+    protected void RemoveSnapshotFromDB(DiskImage snapshot) {
+        DbFacade.getInstance().getDiskImageDAO().remove(snapshot.getId());
+        List<DiskImage> imagesForDisk =
+                DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(snapshot.getimage_group_id());
+        if (imagesForDisk == null || imagesForDisk.isEmpty()) {
+            getDiskDao().remove(snapshot.getimage_group_id());
+        }
     }
 
     public static void GetImageChildren(Guid snapshot, RefObject<java.util.ArrayList<Guid>> children) {

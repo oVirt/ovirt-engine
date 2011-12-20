@@ -349,6 +349,7 @@ public class ImportVmTemplateCommand<T extends ImprotVmTemplateParameters> exten
             DbFacade.getInstance().getDiskImageDynamicDAO().remove(image.getId());
             DbFacade.getInstance().getDiskImageTemplateDAO().remove(image.getId());
             DbFacade.getInstance().getDiskImageDAO().remove(image.getId());
+            DbFacade.getInstance().getDiskDao().remove(image.getimage_group_id());
         }
     }
 
