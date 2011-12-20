@@ -1261,7 +1261,7 @@ public enum ConfigValues {
     SASL_QOP(286),
 
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("%JBOSS_HOME%\\server\\engine-slimmed\\deploy\\engine.ear")
+    @DefaultValueAttribute("%JBOSS_HOME%\\standalone\\deployments\\engine.ear")
     ENGINEEarLib(287),
 
     @TypeConverterAttribute(Integer.class)

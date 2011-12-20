@@ -17,6 +17,8 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 
+import javax.xml.xpath.XPathExpressionException;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -28,11 +30,11 @@ import org.ovirt.engine.core.utils.ipa.SimpleAuthenticationCheck;
 
 public class ManageDomains {
 
-    public static final String CONF_FILE_PATH = "/etc/engine/engine-manage-domains/engine-manage-domains.conf";
+    public static final String CONF_FILE_PATH = "/etc/ovirt-engine/engine-manage-domains/engine-manage-domains.conf";
     private final String WARNING_ABOUT_TO_DELETE_LAST_DOMAIN =
             "WARNING: Domain %1$s is the last domain in the configuration. After deleting it you will have to either add another domain, or to use the internal admin user in order to login.";
     private final String SERVICE_RESTART_MESSAGE =
-            "oVirt Engine restart is required in order for the changes to take place (service jbossas restart).";
+            "oVirt Engine restart is required in order for the changes to take place (service jboss-as restart).";
     private final String DELETE_DOMAIN_SUCCESS =
             "Successfully deleted domain %1$s. Please remove all users and groups of this domain using the Administration portal or the API. "
                     + SERVICE_RESTART_MESSAGE;
@@ -126,8 +128,9 @@ public class ManageDomains {
             throw new ManageDomainsResult(ManageDomainsResultEnum.DB_EXCEPTION, e.getMessage());
         } catch (SQLException e) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.DB_EXCEPTION, e.getMessage());
+        } catch (XPathExpressionException e) {
+            throw new ManageDomainsResult(ManageDomainsResultEnum.DB_EXCEPTION, e.getMessage());
         }
-
     }
 
     private static void exitOnError(ManageDomainsResult result) {

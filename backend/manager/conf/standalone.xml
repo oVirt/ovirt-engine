@@ -130,6 +130,13 @@
                         <user-name>
                             postgres
                         </user-name>
+                        <!-- IF NEEDED CHANGE THIS TO THE CORRECT PASSWORD/SECURITY DOMAIN -->
+                        <!--password>
+                            password
+                        </password-->
+                        <!--security-domain>
+                            EncryptDBPassword
+                        </security-domain-->
                     </security>
                     <statement>
                         <prepared-statement-cache-size>
@@ -276,8 +283,8 @@
                 </security-domain>
                 <security-domain name="EncryptDBPassword">
                     <authentication>
-                        <login-module code="org.jboss.resource.security.SecureIdentityLoginModule" flag="required">
-                            <module-option name="username" value="sa"/>
+                        <login-module code="org.picketbox.datasource.security.SecureIdentityLoginModule" flag="required">
+                            <module-option name="username" value="engine"/>
                             <module-option name="password" value="EncryptDBPassword"/>
                             <module-option name="managedConnectionFactoryName" value="jboss.jca:name=ENGINEDataSource,service=LocalTxCM"/>
                         </login-module>

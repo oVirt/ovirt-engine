@@ -9,6 +9,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.xpath.XPathExpressionException;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.ovirt.engine.core.config.entity.ConfigKey;
@@ -29,7 +31,7 @@ public class ConfigDaoImpl implements ConfigDAO {
     private Connection connection;
 
     public ConfigDaoImpl(Configuration appConfig) throws ClassNotFoundException, SQLException, ConfigurationException,
-            ConnectException {
+            ConnectException, XPathExpressionException {
         this.appConfig = appConfig;
         valueColumn = appConfig.getString("configColumnValue");
         configTable = appConfig.getString("configTable");
@@ -96,7 +98,7 @@ public class ConfigDaoImpl implements ConfigDAO {
         return ckReturn;
     }
 
-    private Connection getDbConnection() throws ClassNotFoundException, SQLException, ConfigurationException, ConnectException {
+    private Connection getDbConnection() throws ClassNotFoundException, SQLException, ConfigurationException, ConnectException, XPathExpressionException {
         ConnectionFactory factory =
                 new JbossConnectionFactory(appConfig.getString("jbossDataSourceFile"),
                         appConfig.getString("jbossLoginConfigFile"));

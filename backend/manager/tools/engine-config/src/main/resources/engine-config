@@ -34,7 +34,7 @@ usage () {
         printf "\t\tdisplay this help and exit.\n"
         printf "\n"
         printf "### Note: In order for your change(s) to take effect,\n"
-        printf "### restart the JBoss service (using: 'service jbossas restart').\n"
+        printf "### restart the JBoss service (using: 'service jboss-as restart').\n"
         printf "#############################################################################\n"
 
         return 0

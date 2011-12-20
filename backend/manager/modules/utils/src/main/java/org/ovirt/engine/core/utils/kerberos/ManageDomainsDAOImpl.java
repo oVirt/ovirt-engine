@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import javax.xml.xpath.XPathExpressionException;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.tools.common.db.ConnectionFactory;
@@ -18,7 +20,7 @@ public class ManageDomainsDAOImpl implements ManageDomainsDAO {
     private final static Logger log = Logger.getLogger(ManageDomainsDAOImpl.class);
 
     public ManageDomainsDAOImpl(ManageDomainsConfiguration utilityConfiguration) throws ConnectException,
-            ConfigurationException, ClassNotFoundException, SQLException {
+            ConfigurationException, ClassNotFoundException, SQLException, XPathExpressionException {
         this.utilityConfiguration = utilityConfiguration;
         connection = getDbConnection();
     }
@@ -42,7 +44,7 @@ public class ManageDomainsDAOImpl implements ManageDomainsDAO {
         return result;
     }
 
-    private Connection getDbConnection() throws ClassNotFoundException, SQLException, ConfigurationException, ConnectException {
+    private Connection getDbConnection() throws ClassNotFoundException, SQLException, ConnectException, XPathExpressionException {
         ConnectionFactory factory =
                 new JbossConnectionFactory(utilityConfiguration.getJbossDataSourceFilePath(),
                         utilityConfiguration.getLoginConfigFilePath());

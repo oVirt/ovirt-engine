@@ -14,7 +14,7 @@ die () {
 # Import configurations
 PUSHDIR=`readlink -f $0`
 pushd `dirname $PUSHDIR` > /dev/null
-CONF_DIR=/etc/engine/engine-manage-domains
+CONF_DIR=/etc/ovirt-engine/engine-manage-domains
 CONF_FILE=$CONF_DIR/engine-manage-domains.conf
 
 found=0
@@ -103,7 +103,7 @@ if [ ! -d $JAVA_LIB_HOME ]; then
 		die "Error: java library path does not exist"
 fi
 
-CP=$CONF_DIR:$JAVA_LIB_HOME/commons-logging.jar:$JAVA_LIB_HOME/commons-collections.jar:$JAVA_LIB_HOME/commons-lang.jar:$JAVA_LIB_HOME/commons-configuration.jar:$JAVA_LIB_HOME/commons-jxpath.jar:$JAVA_LIB_HOME/log4j.jar:$JAVA_LIB_HOME/commons-codec.jar:$JAVA_LIB_HOME/postgresql-jdbc.jar:$LOCAL_LIB/engine-compat.jar:$JAVA_LIB_HOME/engine-tools-common.jar:$ENGINE_LIB_PATH/utils-3.0.0-0001.jar:$ENGINE_LIB_PATH/engine-common.jar:$ENGINE_LIB_PATH/spring-tx-2.5.6.SEC02.jar:$ENGINE_LIB_PATH/commons-lang-2.4.jar:$JAVA_LIB_HOME/spring2/beans-2.5.6.jar:$JAVA_LIB_HOME/spring2/core-2.5.6.jar:$ENGINE_LIB_PATH/spring-ldap-core-1.3.0.RELEASE.jar:$ENGINE_LIB_PATH/engineencryptutils-3.0.0-0001.jar
+CP=$CONF_DIR:$JAVA_LIB_HOME/commons-logging.jar:$JAVA_LIB_HOME/commons-collections.jar:$JAVA_LIB_HOME/commons-lang.jar:$JAVA_LIB_HOME/commons-configuration.jar:$JAVA_LIB_HOME/commons-jxpath.jar:$JAVA_LIB_HOME/log4j.jar:$JAVA_LIB_HOME/commons-codec.jar:$JAVA_LIB_HOME/postgresql-jdbc.jar:$LOCAL_LIB/engine-compat.jar:$JAVA_LIB_HOME/engine-tools-common.jar:$ENGINE_LIB_PATH/utils-3.0.0-0001.jar:$ENGINE_LIB_PATH/engine-common.jar:$ENGINE_LIB_PATH/spring-tx-2.5.6.SEC02.jar:$ENGINE_LIB_PATH/commons-lang-2.4.jar:$ENGINE_LIB_PATH/spring-beans-2.5.6.SEC02.jar:$ENGINE_LIB_PATH/spring-core-2.5.6.SEC02.jar:$ENGINE_LIB_PATH/spring-ldap-core-1.3.0.RELEASE.jar:$ENGINE_LIB_PATH/engineencryptutils-3.0.0-0001.jar
 
 for f in $(echo $CP|sed 's/:/ /g')
 do

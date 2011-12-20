@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 
+import javax.xml.xpath.XPathExpressionException;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
 
@@ -47,9 +49,9 @@ public class ConnectionHelper {
             try {
                 log.debug("Obtaining database connectivity using application server configuration files.");
                 credentials = JbossConnectionFactory.getConnectivityCredentials(dataSourceXmlFile, loginConfigXmlFile);
-            } catch (ConfigurationException e) {
-                throw new NaiveConnectionHelperException("Failed to parse application server data source configuration files", e);
-            }
+            } catch (XPathExpressionException e) {
+	            throw new NaiveConnectionHelperException("Failed to parse application server data source configuration files", e);
+	        }
         } else {
             log.debug("Obtaining database connectivity using parameters of service configuration files.");
             credentials = new ConnectivityCredentials();

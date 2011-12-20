@@ -5,9 +5,9 @@ CA_DIR=`dirname ${0}`
 KEY_STORE="${CA_DIR}/.keystore"
 KEY_ALIAS="engine"
 STORE_PASS="NoSoup4U"
-JBOSS_HOME="/usr/local/jboss"
-EAR_LIB="${JBOSS_HOME}/server/default/deploy/engine.ear/lib"
-CLASS_PATH="${EAR_LIB}/engineencryptutils-3.0.0-0001.jar:${EAR_LIB}/engine-compat.jar:${JBOSS_HOME}/common/lib/commons-logging.jar:${EAR_LIB}/commons-codec-1.4.jar"
+JBOSS_HOME="/usr/share/jboss-as"
+EAR_LIB="${JBOSS_HOME}/standalone/deployments/engine.ear/lib"
+CLASS_PATH="${EAR_LIB}/engineencryptutils-3.0.0-0001.jar:${EAR_LIB}/engine-compat.jar:${JBOSS_HOME}/modules/org/jboss/logging/main/jboss-logging-3.1.0.CR2.jar:${EAR_LIB}/commons-codec-1.4.jar"
 SSH_PRIV_KEY="${CA_DIR}/keys/engine_id_rsa"
 PKEY_8="${CA_DIR}/keys/privatekey.pkcs8"
 

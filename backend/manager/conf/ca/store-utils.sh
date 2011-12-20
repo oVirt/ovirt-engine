@@ -32,7 +32,7 @@ if [ -z "$JB_HOME" ]; then
 fi
 
 if [ -z "$6" ]; then
-        EAR_LIB=$JB_HOME/server/engine-slimmed/deploy/engine.ear/lib
+        EAR_LIB=$JB_HOME/standalone/deployments/engine.ear/lib
 else
         EAR_LIB=$6
 fi
