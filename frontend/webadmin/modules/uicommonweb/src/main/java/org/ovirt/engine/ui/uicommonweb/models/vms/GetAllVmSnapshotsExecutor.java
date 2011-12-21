@@ -25,11 +25,13 @@ public class GetAllVmSnapshotsExecutor implements IFrontendMultipleQueryAsyncCal
 	private Guid vmId = new Guid();
 	private AsyncQuery query;
 	private java.util.List<DiskImage> disks;
+    private boolean isRefresh;
 
-	public GetAllVmSnapshotsExecutor(Guid vmId, AsyncQuery query)
+	public GetAllVmSnapshotsExecutor(Guid vmId, AsyncQuery query, boolean isRefresh)
 	{
 		this.vmId = vmId;
 		this.query = query;
+		this.isRefresh = isRefresh;
 	}
 
 	public void Execute()
@@ -43,7 +45,7 @@ public class GetAllVmSnapshotsExecutor implements IFrontendMultipleQueryAsyncCal
 			model.PostExecute(returnValue);
 
 			}
-		}), vmId);
+		}), vmId, isRefresh);
 	}
 
 	public void PostExecute(Object returnValue)

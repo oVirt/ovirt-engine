@@ -840,7 +840,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 					
 					vmListModel.PostMoveGetVmDiskList(disks, storageDomains);	
 				}
-			}), vm.getvm_guid());		
+			}), vm.getvm_guid(), true);		
 	}
 	
 	private void PostMoveGetVmDiskList(java.util.ArrayList<DiskImage> disks, java.util.ArrayList<storage_domains> storageDomains)

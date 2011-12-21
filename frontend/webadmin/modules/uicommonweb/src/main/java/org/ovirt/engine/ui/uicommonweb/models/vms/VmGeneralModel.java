@@ -588,7 +588,9 @@ public class VmGeneralModel extends EntityModel
 				}};
 
 				DiskImage firstDisk = (DiskImage)disksIterator.next();
-				Frontend.RunQuery(VdcQueryType.GetStorageDomainById, new StorageDomainQueryParametersBase(firstDisk.getstorage_id().getValue()), _asyncQuery1);
+				StorageDomainQueryParametersBase params = new StorageDomainQueryParametersBase(firstDisk.getstorage_id().getValue());
+				params.setRefresh(false);
+				Frontend.RunQuery(VdcQueryType.GetStorageDomainById, params, _asyncQuery1);
 			}
 			else
 			{
@@ -599,7 +601,10 @@ public class VmGeneralModel extends EntityModel
 		}};
 
 		VM vm = (VM)getEntity();
-		Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getvm_guid()), _asyncQuery);
+		
+		GetAllDisksByVmIdParameters params = new GetAllDisksByVmIdParameters(vm.getvm_guid());
+		params.setRefresh(false);
+		Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, params, _asyncQuery);
 	}
 
 	//TODO: Find a better place for this code. It must be something common,

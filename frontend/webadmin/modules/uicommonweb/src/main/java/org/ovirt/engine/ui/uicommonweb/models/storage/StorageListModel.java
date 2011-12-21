@@ -340,7 +340,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 			nfsStorageModel.getPath().setEntity(connection.getconnection());
 
 			}
-		}), storage.getstorage());
+		}), storage.getstorage(), true);
 
 		return model;
 	}
@@ -361,7 +361,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 			localStorageModel.getPath().setEntity(connection.getconnection());
 
 			}
-		}), storage.getstorage());
+		}), storage.getstorage(), true);
 
 		return model;
 	}

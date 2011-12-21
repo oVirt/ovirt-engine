@@ -122,7 +122,7 @@ public class StorageGeneralModel extends EntityModel
 						generalModel.setLocalPath(path);
 					}
 				}};
-				AsyncDataProvider.GetStorageConnectionById(_asyncQuery, storageDomain.getstorage());
+				AsyncDataProvider.GetStorageConnectionById(_asyncQuery, storageDomain.getstorage(), true);
 			}
 			else
 			{

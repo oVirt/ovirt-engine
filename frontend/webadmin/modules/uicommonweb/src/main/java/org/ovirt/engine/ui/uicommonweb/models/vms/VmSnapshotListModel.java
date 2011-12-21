@@ -563,7 +563,7 @@ public class VmSnapshotListModel extends SearchableListModel
 			model.PostUpdateData(returnValue1);
 
 			}
-		})).Execute();
+		}), getIsQueryFirstTime()).Execute();
 	}
 
 	public void PostUpdateData(Object returnValue)

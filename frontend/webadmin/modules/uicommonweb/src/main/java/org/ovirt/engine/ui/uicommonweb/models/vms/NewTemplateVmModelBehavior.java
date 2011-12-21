@@ -103,7 +103,7 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
 			}
 
 			}
-		}, getModel().getHash()), vm.getvm_guid());
+		}, getModel().getHash()), vm.getvm_guid(), true);
 	}
 
 	@Override

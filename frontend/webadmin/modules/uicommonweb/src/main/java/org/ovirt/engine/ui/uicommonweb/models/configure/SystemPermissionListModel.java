@@ -81,9 +81,10 @@ public class SystemPermissionListModel extends SearchableListModel
 			SystemPermissionListModel systemPermissionListModel = (SystemPermissionListModel)model;
 			systemPermissionListModel.setItems((Iterable)((VdcQueryReturnValue)ReturnValue).getReturnValue());
 		}};
-
-
-		Frontend.RunQuery(VdcQueryType.GetSystemPermissions, new VdcQueryParametersBase(), _asyncQuery);
+		VdcQueryParametersBase params = new VdcQueryParametersBase();
+		params.setRefresh(false);
+		
+		Frontend.RunQuery(VdcQueryType.GetSystemPermissions, params, _asyncQuery);
 	}
 
 	private void UpdateActionAvailability()

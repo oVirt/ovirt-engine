@@ -496,7 +496,7 @@ public final class AsyncDataProvider
 		Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: datacenter = " + dataCenterName + " sortby name", SearchType.VDS), aQuery);
 	}
 
-	public static void GetVmDiskList(AsyncQuery aQuery, Guid vmId)
+	public static void GetVmDiskList(AsyncQuery aQuery, Guid vmId, boolean isRefresh)
 	{
 		aQuery.converterCallback = new IAsyncConverter() { public Object Convert(Object source, AsyncQuery _asyncQuery)
 		{
@@ -506,7 +506,9 @@ public final class AsyncDataProvider
 			}
 			return new java.util.ArrayList<DiskImage>();
 		} };
-		Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vmId), aQuery);
+		GetAllDisksByVmIdParameters params = new GetAllDisksByVmIdParameters(vmId);
+		params.setRefresh(isRefresh);
+		Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, params, aQuery);
 	}
 
 	public final static class GetSnapshotListQueryResult
@@ -849,13 +851,15 @@ public final class AsyncDataProvider
 		Frontend.RunQuery(VdcQueryType.GetConfigurationValue, new GetConfigurationValueParameters(ConfigurationValues.EnableUSBAsDefault), aQuery);
 	}
 
-	public static void GetStorageConnectionById(AsyncQuery aQuery, String id)
+	public static void GetStorageConnectionById(AsyncQuery aQuery, String id, boolean isRefresh)
 	{
 		aQuery.converterCallback = new IAsyncConverter() { public Object Convert(Object source, AsyncQuery _asyncQuery)
 		{
 			return source != null ? (storage_server_connections)source : null;
 		} };
-		Frontend.RunQuery(VdcQueryType.GetStorageServerConnectionById, new StorageServerConnectionQueryParametersBase(id), aQuery);
+		StorageServerConnectionQueryParametersBase params = new StorageServerConnectionQueryParametersBase(id);
+		params.setRefresh(isRefresh);
+		Frontend.RunQuery(VdcQueryType.GetStorageServerConnectionById, params, aQuery);
 	}
 
 	public static void GetDataCentersByStorageDomain(AsyncQuery aQuery, Guid storageDomainId)
