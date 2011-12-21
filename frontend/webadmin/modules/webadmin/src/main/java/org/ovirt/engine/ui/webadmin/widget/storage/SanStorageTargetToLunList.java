@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.webadmin.widget.UiCommandButton;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.webadmin.widget.table.column.LunSelectionColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.LunTextColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.ScrollableTextColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -123,21 +124,21 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
     }
 
     private void initRootNodeTable(EntityModelCellTable<ListModel> table) {
-        table.addColumn(new TextColumn<SanTargetModel>() {
+        table.addColumn(new ScrollableTextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
                 return model.getName();
             }
         }, "Target Name");
 
-        table.addColumn(new TextColumn<SanTargetModel>() {
+        table.addColumn(new ScrollableTextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
                 return model.getAddress();
             }
         }, "Address", "100px");
 
-        table.addColumn(new TextColumn<SanTargetModel>() {
+        table.addColumn(new ScrollableTextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
                 return model.getPort();

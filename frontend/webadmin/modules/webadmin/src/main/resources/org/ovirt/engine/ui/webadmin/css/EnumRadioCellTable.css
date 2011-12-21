@@ -42,7 +42,7 @@
 
 .cellTableDisabledRow {
 	background-color: inactivecaption;
-	cursor: default; !important;
+	cursor: default !important;
 }
 
 .cellTableSelectedRow {
