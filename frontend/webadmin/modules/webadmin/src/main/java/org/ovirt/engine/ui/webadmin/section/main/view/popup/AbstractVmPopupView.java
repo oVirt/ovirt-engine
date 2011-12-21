@@ -533,6 +533,7 @@ public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 defaultHostEditor.setEnabled(specificHost.getValue());
+                ValueChangeEvent.fire(isAutoAssignEditor.asRadioButton(), false);
             }
         });
 
@@ -543,6 +544,16 @@ public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel
                 defaultHostEditor.setEnabled(false);
             }
         }, ClickEvent.getType());
+
+        vm.getIsAutoAssign().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (!isAutoAssignEditor.asRadioButton().getValue())
+                    specificHost.setValue(true, true);
+            }
+        });
+
     }
 
     @Override
