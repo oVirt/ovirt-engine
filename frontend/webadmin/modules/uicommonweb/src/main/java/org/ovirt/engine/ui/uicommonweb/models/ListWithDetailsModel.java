@@ -127,27 +127,18 @@ public class ListWithDetailsModel extends SearchableListModel
 				((SearchableListModel)getActiveDetailModel()).EnsureAsyncSearchStopped();
 			}
 		}
-
+		
 		// Synchronize selected item with the entity of an active details model.
-		// if (ActiveDetailModel != null)
-		// {
-		//	ActiveDetailModel.Entity = ProvideDetailModelEntity(SelectedItem);
-		// }
-
-		// Synchronize all detail models.
-		// TODO: synchronize only the active detail model after changing current gwt sub-tab presenters beahivour
-		// (currently the presenters activate all detail models instead of activating only the active detail model).
-		if (getSelectedItem() != null)
-		{
-			for (EntityModel detailModel : getDetailModels())
+		EntityModel activeDetailModel = getActiveDetailModel();
+		if (getSelectedItem() != null && activeDetailModel != null)
+		{			
+			if (activeDetailModel instanceof HostInterfaceListModel) 
 			{
-				if (detailModel instanceof HostInterfaceListModel)
-				{
-					((HostInterfaceListModel)detailModel).setEntity((VDS)ProvideDetailModelEntity(getSelectedItem()));
-					continue;
-				}
-
-				detailModel.setEntity(ProvideDetailModelEntity(getSelectedItem()));
+				((HostInterfaceListModel)activeDetailModel).setEntity((VDS)ProvideDetailModelEntity(getSelectedItem()));
+			}
+			else 
+			{
+				activeDetailModel.setEntity(ProvideDetailModelEntity(getSelectedItem()));
 			}
 		}
 	}
