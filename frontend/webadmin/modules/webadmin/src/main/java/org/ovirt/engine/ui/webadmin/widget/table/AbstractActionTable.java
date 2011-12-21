@@ -21,6 +21,7 @@ import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 import com.google.gwt.user.cellview.client.TextHeader;
 import com.google.gwt.user.client.Event;
@@ -327,6 +328,10 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
     @Override
     protected List<T> getSelectedItems() {
         return new ArrayList<T>(selectionModel.getSelectedList());
+    }
+
+    public void setLoadingState(LoadingState state) {
+        table.setLoadingState(state);
     }
 
 }

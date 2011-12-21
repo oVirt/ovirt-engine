@@ -7,6 +7,8 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.widget.table.OrderedMultiSelectionModel;
 
+import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
+
 /**
  * Base class for form-based sub tab views.
  * 
@@ -33,6 +35,11 @@ public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, 
     public OrderedMultiSelectionModel<?> getTableSelectionModel() {
         // Form-based sub tab views have no table selection model
         return null;
+    }
+
+    @Override
+    public void setLoadingState(LoadingState state) {
+        setLoadingState(state);
     }
 
 }

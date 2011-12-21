@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 
 /**
  * Base class for table-based sub tab views.
@@ -76,6 +77,10 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
     @Override
     public OrderedMultiSelectionModel<?> getTableSelectionModel() {
         return getTable().getSelectionModel();
+    }
+
+    public void setLoadingState(LoadingState state) {
+        getTable().setLoadingState(state);
     }
 
 }

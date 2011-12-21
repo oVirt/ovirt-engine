@@ -86,6 +86,8 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
 	public StorageIsoListModel()
 	{
 		setTitle("Images");
+
+		setIsTimerDisabled(true);
 	}
 
 	@Override
@@ -96,6 +98,14 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
 		if (getIsAvailable())
 		{
 			getSearchCommand().Execute();
+		}
+	}
+
+	@Override
+	public void setEntity(Object value)
+	{
+		if (value == null || !value.equals(getEntity())) {
+			super.setEntity(value);
 		}
 	}
 
@@ -214,6 +224,6 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
 			}
 		}
 
-		setItems(newItems);
+		setItems(newItems.isEmpty() ? items : newItems);
 	}
 }

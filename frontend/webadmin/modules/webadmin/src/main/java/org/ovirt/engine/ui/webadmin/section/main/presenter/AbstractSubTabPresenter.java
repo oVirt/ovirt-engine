@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelChangeEvent;
@@ -13,6 +14,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider
 import org.ovirt.engine.ui.webadmin.widget.table.OrderedMultiSelectionModel;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -51,6 +53,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
          */
         OrderedMultiSelectionModel<?> getTableSelectionModel();
 
+        void setLoadingState(LoadingState state);
     }
 
     private final PlaceManager placeManager;
@@ -190,6 +193,17 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
                 }
             }
         });
-    }
 
+        modelProvider.getModel().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
+                if ("Progress".equals(pcArgs.PropertyName)) {
+                    if (modelProvider.getModel().getProgress() != null) {
+                        getView().setLoadingState(LoadingState.LOADING);
+                    }
+                }
+            }
+        });
+    }
 }
