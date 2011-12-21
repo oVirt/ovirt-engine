@@ -20,7 +20,7 @@ public class DetailsRenderer<V> extends AbstractRenderer<ArrayList<ValueLabel<V>
         String formattedStr = "";
 
         for (int i = 0; i < widgets.size(); i++) {
-            formattedStr += widgets.get(i).toString() + " " + delimiters[i];
+            formattedStr += widgets.get(i).getElement().getInnerHTML() + " " + delimiters[i];
             if (i < widgets.size() - 1) {
                 formattedStr += ", ";
             }
