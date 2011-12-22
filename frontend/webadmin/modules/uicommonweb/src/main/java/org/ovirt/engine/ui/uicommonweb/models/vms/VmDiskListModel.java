@@ -82,6 +82,10 @@ public class VmDiskListModel extends SearchableListModel
 	@Override
 	protected void SyncSearch()
 	{
+	    if (getEntity() == null)
+        {
+            return;
+        }
 		VM vm = (VM)getEntity();
 
 		super.SyncSearch(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getvm_guid()));

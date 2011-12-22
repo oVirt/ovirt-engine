@@ -141,9 +141,6 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
         T firstSelectedItem = getMainTabSelectedItem();
 
-        // Update detail model entity
-        modelProvider.setEntity(firstSelectedItem);
-
         // Notify view of selection change
         if (firstSelectedItem != null) {
             getView().setMainTabSelectedItem(firstSelectedItem);

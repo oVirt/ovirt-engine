@@ -83,6 +83,10 @@ public class VmInterfaceListModel extends SearchableListModel
 	@Override
 	protected void SyncSearch()
 	{
+	    if (getEntity() == null)
+        {
+            return;
+        }
 		VM vm = (VM)getEntity();
 		super.SyncSearch(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getvm_guid()));
 	}
