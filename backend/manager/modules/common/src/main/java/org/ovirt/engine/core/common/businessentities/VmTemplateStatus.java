@@ -6,24 +6,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//using VdcDAL.DbBroker;
-
-//[Serializable]
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VmTemplateStatus")
 public enum VmTemplateStatus {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
-    // [EnumMember]
     OK(0),
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
-    // [EnumMember]
     Locked(1),
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
-    // [EnumMember]
     Illegal(2);
 
     private int intValue;
