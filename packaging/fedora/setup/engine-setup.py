@@ -2103,13 +2103,13 @@ def runMainFunctions(conf):
 
 def isSecondRun():
     keystore = os.path.join(basedefs.DIR_OVIRT_PKI, ".keystore")
-    slimmed = os.path.join(basedefs.DIR_JBOSS, "server", basedefs.JBOSS_PROFILE_NAME)
+    engineLink = os.path.join(basedefs.DIR_JBOSS, "server", basedefs.JBOSS_PROFILE_NAME,"deploy","engine.ear")
 
     if os.path.exists(keystore):
         logging.debug("%s exists, second run detected", keystore)
         return True
-    elif os.path.exists(slimmed):
-        logging.debug("%s exists, second run detected", slimmed)
+    elif os.path.exists(engineLink):
+        logging.debug("%s exists, second run detected", engineLink)
         return True
     else:
         return False

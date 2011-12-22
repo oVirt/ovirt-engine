@@ -31,16 +31,12 @@ Requires: bind-utils
 Requires: postgresql-server >= 8.4.7
 Requires: postgresql-contrib >= 8.4.7
 Requires: postgresql-jdbc
+Requires: %{name}-setup
 Requires: %{name}-jboss-deps
 Requires: %{name}-backend
 Requires: %{name}-restapi
 Requires: %{name}-genericapi
 Requires: %{name}-userportal
-#Requires: %{name}-admin-portal-wpf
-#Requires: %{name}-spice-client-x86-msi
-#Requires: %{name}-spice-client-x64-msi
-#Requires: %{name}-spice-client-x86-cab
-#Requires: %{name}-spice-client-x64-cab
 Requires: %{name}-config
 Requires: %{name}-notification-service
 Requires: %{name}-iso-uploader

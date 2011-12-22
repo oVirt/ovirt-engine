@@ -125,7 +125,7 @@ verifyPkgIsInstalled()
 verifyPostgresService()
 {
    echo "[$SCRIPT_NAME] verifying postgres service exists." >> $LOG_FILE 
-   if [ ! -f /etc/systemd/system/multi-user.target.wants/postgresql.service ]
+   if [ ! -f /lib/systemd/system/postgresql.service ]
    then
         echo "[$SCRIPT_NAME] postgresql service cannot be executed from $PGSQL_SERVICE" 
         exit 1 
