@@ -13,7 +13,7 @@ import string
 import random
 import re
 
-SUPPORTED_PLATFORMS = [ "RedHatEnterpriseServer" ]
+SUPPORTED_PLATFORMS = [ "RedHatEnterpriseServer", "Fedora" ]
 HYPERVISOR_PLATFORMS = [ "RedHatEnterpriseVirtualizationHypervisor", "RedHatEnterpriseHypervisor" ]
 HYPERVISOR_RELEASE_FILE = '/etc/rhev-hypervisor-release'
 REDHAT_RELEASE_FILE = '/etc/redhat-release'
