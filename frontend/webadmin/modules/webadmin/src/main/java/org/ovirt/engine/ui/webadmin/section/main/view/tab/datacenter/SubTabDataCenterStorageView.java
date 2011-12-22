@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTab
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
@@ -54,26 +55,29 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(statusColumn, "Status");
 
-        TextColumnWithTooltip<storage_domains> freeColumn = new TextColumnWithTooltip<storage_domains>() {
+        DiskSizeColumn<storage_domains> freeColumn = new DiskSizeColumn<storage_domains>() {
             @Override
-            public String getValue(storage_domains object) {
-                return object.getTotalDiskSize() - object.getused_disk_size() + " GB";
+            public Long getRawValue(storage_domains object) {
+                long availableDiskSize = object.getavailable_disk_size() != null ? object.getavailable_disk_size() : 0;
+                return (long) (availableDiskSize * Math.pow(1024, 3));
             }
         };
         getTable().addColumn(freeColumn, "Free Space");
 
-        TextColumnWithTooltip<storage_domains> usedColumn = new TextColumnWithTooltip<storage_domains>() {
+        DiskSizeColumn<storage_domains> usedColumn = new DiskSizeColumn<storage_domains>() {
             @Override
-            public String getValue(storage_domains object) {
-                return object.getused_disk_size() + " GB";
+            public Long getRawValue(storage_domains object) {
+                long usedDiskSize = object.getused_disk_size() != null ? object.getused_disk_size() : 0;
+                return (long) (usedDiskSize * Math.pow(1024, 3));
             }
         };
         getTable().addColumn(usedColumn, "Used Space");
 
-        TextColumnWithTooltip<storage_domains> totalColumn = new TextColumnWithTooltip<storage_domains>() {
+        DiskSizeColumn<storage_domains> totalColumn = new DiskSizeColumn<storage_domains>() {
             @Override
-            public String getValue(storage_domains object) {
-                return object.getTotalDiskSize() + " GB";
+            public Long getRawValue(storage_domains object) {
+                long totalDiskSize = object.getTotalDiskSize() != null ? object.getTotalDiskSize() : 0;
+                return (long) (totalDiskSize * Math.pow(1024, 3));
             }
         };
         getTable().addColumn(totalColumn, "Total Space");

@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePre
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainSharedStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
@@ -70,10 +71,11 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
                 };
         getTable().addColumn(crossDataCenterStatusColumn, "Cross Data-Center Status");
 
-        TextColumnWithTooltip<storage_domains> freeSpaceColumn = new TextColumnWithTooltip<storage_domains>() {
+        DiskSizeColumn<storage_domains> freeSpaceColumn = new DiskSizeColumn<storage_domains>() {
             @Override
-            public String getValue(storage_domains object) {
-                return String.valueOf(object.getTotalDiskSize() - object.getused_disk_size()) + " GB";
+            public Long getRawValue(storage_domains object) {
+                long availableDiskSize = object.getavailable_disk_size() != null ? object.getavailable_disk_size() : 0;
+                return (long) (availableDiskSize * Math.pow(1024, 3));
             }
         };
         getTable().addColumn(freeSpaceColumn, "Free Space");
