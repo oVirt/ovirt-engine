@@ -1,13 +1,14 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+import org.ovirt.engine.core.compat.INotifyPropertyChanged;
+
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VmBase")
 public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
@@ -17,22 +18,15 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Ser
         mOs = VmOsType.Unassigned;
     }
 
-    private VmOsType mOs = VmOsType.forValue(0);
+    private VmOsType mOs = VmOsType.Unassigned;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public VmOsType getos() {
-        // if (/*string.IsNullOrEmpty(mOs) &&*/ mVmOsType != VmOsType.Other)
-        // {
-        // mOs = mVmOsType/*.toString()*/;
-        // }
         return mOs;
     }
 
     public void setos(VmOsType value) {
         mOs = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("os"));
     }
 
     @Deprecated
@@ -44,15 +38,4 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Ser
     public void setOsType(VmOsType value) {
         setos(value);
     }
-
-    // C# TO JAVA CONVERTER TODO TASK: Events are not available in Java:
-    // public event PropertyChangedEventHandler PropertyChanged;
-
-    protected void OnPropertyChanged(PropertyChangedEventArgs e) {
-        /* if (PropertyChanged != null) */
-        {
-            /* PropertyChanged(this, e); */
-        }
-    }
-
 }

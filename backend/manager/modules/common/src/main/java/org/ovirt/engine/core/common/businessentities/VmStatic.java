@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.ArrayList;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,7 +27,6 @@ import org.ovirt.engine.core.common.validation.group.DesktopVM;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 
 @XmlType(name = "VmStatic")
 @Entity
@@ -471,7 +472,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setDiskSize(int value) {
         m_nDiskSize = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("nDiskSize"));
     }
 
     public boolean getIsFirstRun() {
@@ -551,7 +551,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setmem_size_mb(int value) {
         this.mem_size_mb = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("mem_size_mb"));
     }
 
     @XmlElement
@@ -561,7 +560,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setvds_group_id(Guid value) {
         this.vds_group_id = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("vds_group_id"));
     }
 
     @XmlElement
@@ -571,7 +569,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setvm_name(String value) {
         this.name = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("vm_name"));
     }
 
     @XmlElement
@@ -590,7 +587,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setdomain(String value) {
         domain = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("domain"));
     }
 
     @XmlElement
@@ -609,7 +605,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setnum_of_monitors(int value) {
         num_of_monitors = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("num_of_monitors"));
     }
 
     @XmlElement
@@ -619,7 +614,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setis_initialized(boolean value) {
         is_initialized = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("is_initialized"));
     }
 
     @XmlElement
@@ -629,7 +623,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setis_auto_suspend(boolean value) {
         is_auto_suspend = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("is_auto_suspend"));
     }
 
     @XmlElement
@@ -662,7 +655,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setusb_policy(UsbPolicy value) {
         usb_policy = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("usb_policy"));
     }
 
     @XmlElement
@@ -672,7 +664,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void settime_zone(String value) {
         time_zone = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("time_zone"));
     }
 
     @XmlElement
@@ -682,7 +673,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setauto_startup(boolean value) {
         auto_startup = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("auto_startup"));
     }
 
     @XmlElement
@@ -692,7 +682,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setis_stateless(boolean value) {
         is_stateless = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("is_stateless"));
     }
 
     @XmlElement(nillable = true)
@@ -702,7 +691,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setdedicated_vm_for_vds(NGuid value) {
         dedicated_vm_for_vds = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("dedicated_vm_for_vds"));
     }
 
     @XmlElement
@@ -720,7 +708,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setfail_back(boolean value) {
         fail_back = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("fail_back"));
     }
 
     public BootSequence getdefault_boot_sequence() {
@@ -793,7 +780,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setinitrd_url(String value) {
         initrd_url = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("initrd_url"));
     }
 
     public String getkernel_url() {
@@ -802,7 +788,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setkernel_url(String value) {
         kernel_url = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("kernel_url"));
     }
 
     public String getkernel_params() {
@@ -811,7 +796,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setkernel_params(String value) {
         kernel_params = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("kernel_params"));
     }
 
     public int getMinAllocatedMem() {
@@ -824,7 +808,6 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
 
     public void setMinAllocatedMem(int value) {
         minAllocatedMemField = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("MinAllocatedMem"));
     }
 
     @Override
@@ -833,7 +816,7 @@ public class VmStatic extends VmBase implements BusinessEntity<Guid> {
     }
 
     @Override
-    public java.util.ArrayList<String> getChangeablePropertiesList() {
+    public ArrayList<String> getChangeablePropertiesList() {
         // Actual implementation is TBD
         return null;
     }
