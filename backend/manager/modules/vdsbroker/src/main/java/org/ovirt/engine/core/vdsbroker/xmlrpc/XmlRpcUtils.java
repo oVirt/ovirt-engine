@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
@@ -154,6 +155,9 @@ public class XmlRpcUtils {
             try {
                 result = future.get(timeoutInMilisec, TimeUnit.MILLISECONDS);
             } catch (Exception e) {
+                if (e instanceof TimeoutException) {
+                    future.cancel(true);
+                }
                 throw new UndeclaredThrowableException(e);
             }
 
