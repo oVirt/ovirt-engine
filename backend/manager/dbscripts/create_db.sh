@@ -73,16 +73,6 @@ insert_initial_data
 # Running upgrade scripts
 printf "Running upgrade scripts...\n"
 run_upgrade_files
-
-printf "Creating views...\n"
-execute_file "create_views.sql" ${DATABASE} > /dev/null
-
-
-printf "Creating stored procedures...\n"
-
-for sql in $(ls *sp.sql); do
-    printf "creating stored procedures from $sql ...\n"
-    execute_file $sql ${DATABASE} > /dev/null
-done
+run_post_upgrade
 
 exit $?
