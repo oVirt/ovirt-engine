@@ -1,4 +1,4 @@
-<backend | restapi | cli | gwt | wpf | tools | history | engine | userportal | webadmin>: short summary under 50 chars (#xxxxxx)
+<core | restapi | tools | history | engine | userportal | webadmin>: short summary under 50 chars (#xxxxxx)
 
 https://bugzilla.redhat.com/XXXXXX
 
