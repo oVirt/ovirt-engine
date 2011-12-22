@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -1326,8 +1327,12 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
         }
     }
 
-    public java.util.Map<String, DiskImage> getDiskMap() {
+    public Map<String, DiskImage> getDiskMap() {
         return mDiskMap;
+    }
+
+    public void setDiskMap(Map<String,DiskImage> diskMap) {
+        mDiskMap = diskMap;
     }
 
     public int getDiskMapCount() {
