@@ -36,8 +36,66 @@ import org.ovirt.engine.core.compat.StringHelper;
 @TypeDef(name = "guid", typeClass = GuidType.class)
 public class VmTemplate extends VmBase {
     private static final long serialVersionUID = -522552511046744989L;
+
+    private static final ArrayList<String> _vmProperties = new ArrayList<String>(
+            Arrays.asList(new String[] { "name", "domain", "child_count", "description",
+                    "default_display_type", "mem_size_mb", "vds_group_name", "status", "time_zone", "num_of_monitors",
+                    "vds_group_id", "usb_policy", "num_of_sockets", "cpu_per_socket", "os", "is_auto_suspend",
+                    "auto_startup", "priority", "default_boot_sequence", "is_stateless", "iso_path", "initrd_url",
+                    "kernel_url", "kernel_params" }));
+
     @Transient
     private List<VmNetworkInterface> _Interfaces = new ArrayList<VmNetworkInterface>();
+
+    @Column(name = "child_count", nullable = false)
+    private int childCount;
+
+    @Size(min = 1, max = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE,
+            message = "VALIDATION.VM_TEMPLATE.NAME.MAX",
+            groups = { CreateEntity.class, UpdateEntity.class })
+    @ValidName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,
+            UpdateEntity.class })
+    @Column(name = "name", length = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE, nullable = false)
+    private String name;
+
+    @Column(name = "num_of_monitors", nullable = false)
+    private int numOfMonitors;
+
+    @Column(name = "status", nullable = false)
+    @Enumerated
+    private VmTemplateStatus status = VmTemplateStatus.OK;
+
+    private String vdsGroupName;
+
+    @XmlElement(name = "storage_pool_id")
+    @Column(name = "storage_pool_id")
+    @Type(type = "guid")
+    private NGuid storagePoolId;
+
+    @XmlElement(name = "storage_pool_name")
+    @Transient
+    private String storagePoolName;
+
+    @XmlElement(name = "default_display_type")
+    @Column(name = "default_display_type", nullable = false)
+    @Enumerated
+    private DisplayType defaultDisplayType = DisplayType.vnc;
+
+    @Transient
+    private Map<String, DiskImage> diskMap = new HashMap<String, DiskImage>();
+
+    @Transient
+    private final ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
+
+    @Transient
+    private HashMap<String, DiskImageTemplate> diskTemplateMap = new HashMap<String, DiskImageTemplate>();
+
+    @XmlElement(name = "SizeGB")
+    @Transient
+    private double bootDiskSizeGB;
+
+    @Transient
+    private double actualDiskSize = 0;
 
     public VmTemplate() {
         setis_auto_suspend(false);
@@ -85,9 +143,6 @@ public class VmTemplate extends VmBase {
         this.setstatus(VmTemplateStatus.forValue(status));
     }
 
-    @Column(name = "child_count", nullable = false)
-    private int childCount;
-
     @XmlElement
     public int getchild_count() {
         return this.childCount;
@@ -96,14 +151,6 @@ public class VmTemplate extends VmBase {
     public void setchild_count(int value) {
         this.childCount = value;
     }
-
-    @Size(min = 1, max = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE,
-            message = "VALIDATION.VM_TEMPLATE.NAME.MAX",
-            groups = { CreateEntity.class, UpdateEntity.class })
-    @ValidName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,
-            UpdateEntity.class })
-    @Column(name = "name", length = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE, nullable = false)
-    private String name;
 
     @XmlElement
     public String getname() {
@@ -128,9 +175,6 @@ public class VmTemplate extends VmBase {
     public void setnum_of_cpus(int val) {
     }
 
-    @Column(name = "num_of_monitors", nullable = false)
-    private int numOfMonitors;
-
     @XmlElement
     public int getnum_of_monitors() {
         return numOfMonitors;
@@ -139,10 +183,6 @@ public class VmTemplate extends VmBase {
     public void setnum_of_monitors(int value) {
         numOfMonitors = value;
     }
-
-    @Column(name = "status", nullable = false)
-    @Enumerated
-    private VmTemplateStatus status = VmTemplateStatus.OK;
 
     @XmlElement
     public VmTemplateStatus getstatus() {
@@ -154,8 +194,6 @@ public class VmTemplate extends VmBase {
             status = value;
         }
     }
-
-    private String vdsGroupName;
 
     @XmlElement
     public String getvds_group_name() {
@@ -175,11 +213,6 @@ public class VmTemplate extends VmBase {
         _Interfaces = value;
     }
 
-    @XmlElement(name = "storage_pool_id")
-    @Column(name = "storage_pool_id")
-    @Type(type = "guid")
-    private NGuid storagePoolId;
-
     public NGuid getstorage_pool_id() {
         return storagePoolId;
     }
@@ -187,10 +220,6 @@ public class VmTemplate extends VmBase {
     public void setstorage_pool_id(NGuid value) {
         storagePoolId = value;
     }
-
-    @XmlElement(name = "storage_pool_name")
-    @Transient
-    private String storagePoolName;
 
     public String getstorage_pool_name() {
         return storagePoolName;
@@ -200,11 +229,6 @@ public class VmTemplate extends VmBase {
         storagePoolName = value;
     }
 
-    @XmlElement(name = "default_display_type")
-    @Column(name = "default_display_type", nullable = false)
-    @Enumerated
-    private DisplayType defaultDisplayType = DisplayType.vnc;
-
     public DisplayType getdefault_display_type() {
         return defaultDisplayType;
     }
@@ -212,19 +236,6 @@ public class VmTemplate extends VmBase {
     public void setdefault_display_type(DisplayType value) {
         defaultDisplayType = value;
     }
-
-    @Transient
-    private Map<String, DiskImage> diskMap = new HashMap<String, DiskImage>();
-
-    @Transient
-    private final ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
-
-    @Transient
-    private HashMap<String, DiskImageTemplate> diskTemplateMap = new HashMap<String, DiskImageTemplate>();
-
-    @XmlElement(name = "SizeGB")
-    @Transient
-    private double bootDiskSizeGB;
 
     public double getSizeGB() {
         return bootDiskSizeGB;
@@ -242,13 +253,6 @@ public class VmTemplate extends VmBase {
     public Object getQueryableId() {
         return getId();
     }
-
-    private static final ArrayList<String> _vmProperties = new ArrayList<String>(
-            Arrays.asList(new String[] { "name", "domain", "child_count", "description",
-                    "default_display_type", "mem_size_mb", "vds_group_name", "status", "time_zone", "num_of_monitors",
-                    "vds_group_id", "usb_policy", "num_of_sockets", "cpu_per_socket", "os", "is_auto_suspend",
-                    "auto_startup", "priority", "default_boot_sequence", "is_stateless", "iso_path", "initrd_url",
-                    "kernel_url", "kernel_params" }));
 
     @Override
     public ArrayList<String> getChangeablePropertiesList() {
@@ -292,9 +296,6 @@ public class VmTemplate extends VmBase {
         return diskList;
     }
 
-
-    @Transient
-    private double actualDiskSize = 0;
 
     public boolean addDiskImageTemplate(DiskImageTemplate dit) {
         boolean retval = false;

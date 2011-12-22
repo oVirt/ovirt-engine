@@ -83,112 +83,17 @@ public class VmStatic extends VmBase {
     @Transient
     private String customProperties;
 
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((dedicated_vm_for_vds == null) ? 0 : dedicated_vm_for_vds.hashCode());
-        result = prime * result + ((default_display_type == null) ? 0 : default_display_type.hashCode());
-        result = prime * result + (is_initialized ? 1231 : 1237);
-        result = prime * result + m_nDiskSize;
-        result = prime * result + ((migrationSupport == null) ? 0 : migrationSupport.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + num_of_monitors;
-        result = prime * result + ((predefinedProperties == null) ? 0 : predefinedProperties.hashCode());
-        result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
-        result = prime * result + ((vmt_guid == null) ? 0 : vmt_guid.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (!(obj instanceof VmStatic)) {
-            return false;
-        }
-        VmStatic other = (VmStatic) obj;
-        if (dedicated_vm_for_vds == null) {
-            if (other.dedicated_vm_for_vds != null) {
-                return false;
-            }
-        } else if (!dedicated_vm_for_vds.equals(other.dedicated_vm_for_vds)) {
-            return false;
-        }
-        if (default_display_type != other.default_display_type) {
-            return false;
-        }
-        if (is_initialized != other.is_initialized) {
-            return false;
-        }
-        if (m_nDiskSize != other.m_nDiskSize) {
-            return false;
-        }
-        if (migrationSupport != other.migrationSupport) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (num_of_monitors != other.num_of_monitors) {
-            return false;
-        }
-        if (predefinedProperties == null) {
-            if (other.predefinedProperties != null) {
-                return false;
-            }
-        } else if (!predefinedProperties.equals(other.predefinedProperties)) {
-            return false;
-        }
-        if (userDefinedProperties == null) {
-            if (other.userDefinedProperties != null) {
-                return false;
-            }
-        } else if (!userDefinedProperties.equals(other.userDefinedProperties)) {
-            return false;
-        }
-        if (vmt_guid == null) {
-            if (other.vmt_guid != null) {
-                return false;
-            }
-        } else if (!vmt_guid.equals(other.vmt_guid)) {
-            return false;
-        }
-        return true;
-    }
-
-    @XmlElement(name = "CustomProperties")
-    public String getCustomProperties() {
-        return customProperties;
-    }
-
-    public void setCustomProperties(String customProperties) {
-        this.customProperties = customProperties;
-    }
-
-    public String getPredefinedProperties() {
-        return predefinedProperties;
-    }
-
-    public void setPredefinedProperties(String predefinedProperties) {
-        this.predefinedProperties = predefinedProperties;
-    }
-
-    public String getUserDefinedProperties() {
-        return userDefinedProperties;
-    }
-
-    public void setUserDefinedProperties(String userDefinedProperties) {
-        this.userDefinedProperties = userDefinedProperties;
+    public VmStatic() {
+        num_of_monitors = 1;
+        is_initialized = false;
+        setis_auto_suspend(false);
+        setnice_level(0);
+        setdefault_boot_sequence(BootSequence.C);
+        default_display_type = DisplayType.qxl;
+        setvm_type(VmType.Desktop);
+        sethypervisor_type(HypervisorType.KVM);
+        setoperation_mode(OperationMode.FullVirtualized);
+        migrationSupport = MigrationSupport.MIGRATABLE;
     }
 
     public VmStatic(VmStatic vmStatic) {
@@ -226,41 +131,6 @@ public class VmStatic extends VmBase {
         setdedicated_vm_for_vds(vmStatic.getdedicated_vm_for_vds());
         setMigrationSupport(vmStatic.getMigrationSupport());
         setMinAllocatedMem(vmStatic.getMinAllocatedMem());
-    }
-
-    @XmlElement(name = "DiskSize")
-    public int getDiskSize() {
-        return m_nDiskSize;
-    }
-
-    public void setDiskSize(int value) {
-        m_nDiskSize = value;
-    }
-
-    public boolean getIsFirstRun() {
-        return !getis_initialized();
-    }
-
-    @XmlElement(name = "MigrationSupport")
-    public MigrationSupport getMigrationSupport() {
-        return migrationSupport;
-    }
-
-    public void setMigrationSupport(MigrationSupport migrationSupport) {
-        this.migrationSupport = migrationSupport;
-    }
-
-    public VmStatic() {
-        num_of_monitors = 1;
-        is_initialized = false;
-        setis_auto_suspend(false);
-        setnice_level(0);
-        setdefault_boot_sequence(BootSequence.C);
-        default_display_type = DisplayType.qxl;
-        setvm_type(VmType.Desktop);
-        sethypervisor_type(HypervisorType.KVM);
-        setoperation_mode(OperationMode.FullVirtualized);
-        migrationSupport = MigrationSupport.MIGRATABLE;
     }
 
     public VmStatic(String description, int mem_size_mb, VmOsType os, Guid vds_group_id, Guid vm_guid, String vm_name,
@@ -303,6 +173,53 @@ public class VmStatic extends VmBase {
         this.setusb_policy(usb_policy);
         this.setdedicated_vm_for_vds(dedicated_vm_for_vds);
         this.setMinAllocatedMem(minAllocatedMem);
+    }
+
+    @XmlElement(name = "CustomProperties")
+    public String getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties(String customProperties) {
+        this.customProperties = customProperties;
+    }
+
+    public String getPredefinedProperties() {
+        return predefinedProperties;
+    }
+
+    public void setPredefinedProperties(String predefinedProperties) {
+        this.predefinedProperties = predefinedProperties;
+    }
+
+    public String getUserDefinedProperties() {
+        return userDefinedProperties;
+    }
+
+    public void setUserDefinedProperties(String userDefinedProperties) {
+        this.userDefinedProperties = userDefinedProperties;
+    }
+
+    @XmlElement(name = "DiskSize")
+    public int getDiskSize() {
+        return m_nDiskSize;
+    }
+
+    public void setDiskSize(int value) {
+        m_nDiskSize = value;
+    }
+
+    public boolean getIsFirstRun() {
+        return !getis_initialized();
+    }
+
+    @XmlElement(name = "MigrationSupport")
+    public MigrationSupport getMigrationSupport() {
+        return migrationSupport;
+    }
+
+    public void setMigrationSupport(MigrationSupport migrationSupport) {
+        this.migrationSupport = migrationSupport;
     }
 
     @XmlElement
@@ -384,6 +301,88 @@ public class VmStatic extends VmBase {
     public ArrayList<String> getChangeablePropertiesList() {
         // Actual implementation is TBD
         return null;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((dedicated_vm_for_vds == null) ? 0 : dedicated_vm_for_vds.hashCode());
+        result = prime * result + ((default_display_type == null) ? 0 : default_display_type.hashCode());
+        result = prime * result + (is_initialized ? 1231 : 1237);
+        result = prime * result + m_nDiskSize;
+        result = prime * result + ((migrationSupport == null) ? 0 : migrationSupport.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + num_of_monitors;
+        result = prime * result + ((predefinedProperties == null) ? 0 : predefinedProperties.hashCode());
+        result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
+        result = prime * result + ((vmt_guid == null) ? 0 : vmt_guid.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!(obj instanceof VmStatic)) {
+            return false;
+        }
+        VmStatic other = (VmStatic) obj;
+        if (dedicated_vm_for_vds == null) {
+            if (other.dedicated_vm_for_vds != null) {
+                return false;
+            }
+        } else if (!dedicated_vm_for_vds.equals(other.dedicated_vm_for_vds)) {
+            return false;
+        }
+        if (default_display_type != other.default_display_type) {
+            return false;
+        }
+        if (is_initialized != other.is_initialized) {
+            return false;
+        }
+        if (m_nDiskSize != other.m_nDiskSize) {
+            return false;
+        }
+        if (migrationSupport != other.migrationSupport) {
+            return false;
+        }
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (num_of_monitors != other.num_of_monitors) {
+            return false;
+        }
+        if (predefinedProperties == null) {
+            if (other.predefinedProperties != null) {
+                return false;
+            }
+        } else if (!predefinedProperties.equals(other.predefinedProperties)) {
+            return false;
+        }
+        if (userDefinedProperties == null) {
+            if (other.userDefinedProperties != null) {
+                return false;
+            }
+        } else if (!userDefinedProperties.equals(other.userDefinedProperties)) {
+            return false;
+        }
+        if (vmt_guid == null) {
+            if (other.vmt_guid != null) {
+                return false;
+            }
+        } else if (!vmt_guid.equals(other.vmt_guid)) {
+            return false;
+        }
+        return true;
     }
 
 }

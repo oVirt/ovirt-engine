@@ -26,65 +26,6 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
     private static final long serialVersionUID = 1078548170257965614L;
 
-    public VmBase() {
-        mOs = VmOsType.Unassigned;
-    }
-
-    public VmBase(Guid id,
-            Guid vds_group_id,
-            VmOsType mOs,
-            Date creationDate,
-            String description,
-            int memSizeMB,
-            int numOfSockets,
-            int cpusPerSocket,
-            String domain,
-            String timezone,
-            VmType vmType,
-            UsbPolicy usbPolicy,
-            boolean fail_back,
-            BootSequence defaultBootSequence,
-            HypervisorType hypervisorType,
-            OperationMode operationMode,
-            int niceLevel,
-            boolean autosuspend,
-            int priority,
-            boolean autoStartup,
-            boolean stateless,
-            String isoPath,
-            OriginType origin,
-            String kernelUrl,
-            String kernelParams,
-            String initrdUrl) {
-        super();
-        this.id = id;
-        this.vds_group_id = vds_group_id;
-        this.mOs = mOs;
-        this.creationDate = creationDate;
-        this.description = description;
-        this.memSizeMB = memSizeMB;
-        this.numOfSockets = numOfSockets;
-        this.cpusPerSocket = cpusPerSocket;
-        this.domain = domain;
-        this.timezone = timezone;
-        this.vmType = vmType;
-        this.usbPolicy = usbPolicy;
-        this.fail_back = fail_back;
-        this.defaultBootSequence = defaultBootSequence;
-        this.hypervisorType = hypervisorType;
-        this.operationMode = operationMode;
-        this.niceLevel = niceLevel;
-        this.autosuspend = autosuspend;
-        this.priority = priority;
-        this.autoStartup = autoStartup;
-        this.stateless = stateless;
-        this.isoPath = isoPath;
-        this.origin = origin;
-        this.kernelUrl = kernelUrl;
-        this.kernelParams = kernelParams;
-        this.initrdUrl = initrdUrl;
-    }
-
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
@@ -188,6 +129,64 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "initrd_url", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String initrdUrl;
+
+    public VmBase() {
+    }
+
+    public VmBase(Guid id,
+            Guid vds_group_id,
+            VmOsType mOs,
+            Date creationDate,
+            String description,
+            int memSizeMB,
+            int numOfSockets,
+            int cpusPerSocket,
+            String domain,
+            String timezone,
+            VmType vmType,
+            UsbPolicy usbPolicy,
+            boolean fail_back,
+            BootSequence defaultBootSequence,
+            HypervisorType hypervisorType,
+            OperationMode operationMode,
+            int niceLevel,
+            boolean autosuspend,
+            int priority,
+            boolean autoStartup,
+            boolean stateless,
+            String isoPath,
+            OriginType origin,
+            String kernelUrl,
+            String kernelParams,
+            String initrdUrl) {
+        super();
+        this.id = id;
+        this.vds_group_id = vds_group_id;
+        this.mOs = mOs;
+        this.creationDate = creationDate;
+        this.description = description;
+        this.memSizeMB = memSizeMB;
+        this.numOfSockets = numOfSockets;
+        this.cpusPerSocket = cpusPerSocket;
+        this.domain = domain;
+        this.timezone = timezone;
+        this.vmType = vmType;
+        this.usbPolicy = usbPolicy;
+        this.fail_back = fail_back;
+        this.defaultBootSequence = defaultBootSequence;
+        this.hypervisorType = hypervisorType;
+        this.operationMode = operationMode;
+        this.niceLevel = niceLevel;
+        this.autosuspend = autosuspend;
+        this.priority = priority;
+        this.autoStartup = autoStartup;
+        this.stateless = stateless;
+        this.isoPath = isoPath;
+        this.origin = origin;
+        this.kernelUrl = kernelUrl;
+        this.kernelParams = kernelParams;
+        this.initrdUrl = initrdUrl;
+    }
 
     @XmlElement(name = "Id")
     public Guid getId() {
