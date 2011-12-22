@@ -13,6 +13,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.SerializationExeption;
@@ -30,6 +31,7 @@ public class JsonObjectSerializer implements Serializer {
         mapper.getSerializationConfig().addMixInAnnotations(Guid.class, JsonNGuidMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(VdcActionParametersBase.class, JsonVdcActionParametersBaseMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(IVdcQueryable.class, JsonIVdcQueryableMixIn.class);
+        mapper.getSerializationConfig().addMixInAnnotations(VM.class, JsonVmMixIn.class);
         mapper.configure(Feature.INDENT_OUTPUT, true);
         mapper.enableDefaultTyping();
         return writeJsonAsString(payload, mapper);
