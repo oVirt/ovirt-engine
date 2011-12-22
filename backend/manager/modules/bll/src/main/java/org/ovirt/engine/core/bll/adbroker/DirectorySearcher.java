@@ -89,35 +89,18 @@ public class DirectorySearcher {
             if (log.isDebugEnabled()) {
                 log.debug("Using Ldap server " + ldapURI);
             }
+            setException(null);
+            FutureTask<List> searchTask = newSearchTask(queryData, resultCount, domainName, ldapURI);
+
             try {
-                setException(null);
-                final GetRootDSETask getRootDSETask = new GetRootDSETask(this, domainName, ldapURI);
-                final PrepareLdapConnectionTask prepareLdapConnectionTask = new PrepareLdapConnectionTask(this, ldapCredentials, domainName, ldapURI);
-
-                FutureTask<List> searchTask = new FutureTask<List>(new Callable<List>() {
-
-                    @Override
-                    public List call() throws Exception {
-                        getRootDSETask.call();
-                        final LdapQueryExecution queryExecution =
-                                LdapQueryExecutionBuilderImpl.getInstance()
-                                        .build(getDomainObject(domainName).getLdapProviderType(), queryData);
-                        if (queryExecution.getBaseDN() != null && !queryExecution.getBaseDN().isEmpty()) {
-                            setExplicitBaseDN(queryExecution.getBaseDN());
-                        }
-                        LDAPTemplateWrapper ldapTemplate = prepareLdapConnectionTask.call();
-                        if (ldapTemplate == null) {
-                            return Collections.emptyList();
-                        }
-                        return new DirectorySearchTask(ldapTemplate, queryExecution, resultCount).call();
-                    }
-                });
-
                 ThreadPoolUtil.execute(searchTask);
                 response = searchTask.get(Config.<Integer> GetValue(ConfigValues.LDAPQueryTimeout), TimeUnit.SECONDS);
                 domain.scoreLdapServer(ldapURI, Score.HIGH);
                 return response; // No point in continuing to next LDAP server if we have success.
             } catch (Exception exception) {
+                if (searchTask != null) {
+                    searchTask.cancel(true);
+                }
                 LdapSearchExceptionHandlingResponse handlingResponse = handler.handle(exception);
                 setException(handlingResponse.getTranslatedException());
                 domain.scoreLdapServer(ldapURI, handlingResponse.getServerScore());
@@ -131,6 +114,34 @@ public class DirectorySearcher {
             }
         }
         return response;
+    }
+
+    private FutureTask<List> newSearchTask(final LdapQueryData queryData,
+            final long resultCount,
+            final String domainName,
+            URI ldapURI) {
+        final GetRootDSETask getRootDSETask = new GetRootDSETask(this, domainName, ldapURI);
+        final PrepareLdapConnectionTask prepareLdapConnectionTask = new PrepareLdapConnectionTask(this, ldapCredentials, domainName, ldapURI);
+
+        FutureTask<List> searchTask = new FutureTask<List>(new Callable<List>() {
+
+            @Override
+            public List call() throws Exception {
+                getRootDSETask.call();
+                final LdapQueryExecution queryExecution =
+                        LdapQueryExecutionBuilderImpl.getInstance()
+                                .build(getDomainObject(domainName).getLdapProviderType(), queryData);
+                if (queryExecution.getBaseDN() != null && !queryExecution.getBaseDN().isEmpty()) {
+                    setExplicitBaseDN(queryExecution.getBaseDN());
+                }
+                LDAPTemplateWrapper ldapTemplate = prepareLdapConnectionTask.call();
+                if (ldapTemplate == null) {
+                    return Collections.emptyList();
+                }
+                return new DirectorySearchTask(ldapTemplate, queryExecution, resultCount).call();
+            }
+        });
+        return searchTask;
     }
 
     public void setException(Exception ex) {
