@@ -46,9 +46,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
             if (getStoragePool().getstatus() == StoragePoolStatus.Uninitialized) {
                 StoragePoolWithStoragesParameter parameters = new StoragePoolWithStoragesParameter(getStoragePool(),
                         new java.util.ArrayList<Guid>(
-                                java.util.Arrays.asList(new Guid[] { getStorageDomain().getid() })));
-                // parameters.ParametersCurrentUser = CurrentUser;
-                parameters.setSessionId(getParameters().getSessionId());
+                                java.util.Arrays.asList(new Guid[] { getStorageDomain().getid() })), getParameters().getSessionId());
                 parameters.setIsInternal(true);
                 parameters.setTransactionScopeOption(TransactionScopeOption.Suppress);
                 setSucceeded(Backend.getInstance()

@@ -33,9 +33,10 @@ public class StoragePoolWithStoragesParameter extends StoragePoolManagementParam
         privateIsInternal = value;
     }
 
-    public StoragePoolWithStoragesParameter(storage_pool storagePool, java.util.ArrayList<Guid> storage_domain_ids) {
+    public StoragePoolWithStoragesParameter(storage_pool storagePool, java.util.ArrayList<Guid> storage_domain_ids, String sessionId) {
         super(storagePool);
         setStorages(storage_domain_ids);
+        setSessionId(sessionId);
     }
 
     public StoragePoolWithStoragesParameter() {

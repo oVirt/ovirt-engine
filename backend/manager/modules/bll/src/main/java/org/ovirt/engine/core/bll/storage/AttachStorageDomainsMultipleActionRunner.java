@@ -27,7 +27,8 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
                 }
                 java.util.ArrayList<VdcActionParametersBase> parameters =
                         new java.util.ArrayList<VdcActionParametersBase>();
-                parameters.add(new StoragePoolWithStoragesParameter(pool, storageDomainIds));
+                parameters.add(new StoragePoolWithStoragesParameter(pool, storageDomainIds, getParameters().get(0)
+                        .getSessionId()));
                 if (isInternal) {
                     return Backend.getInstance().runInternalMultipleActions(VdcActionType.AddStoragePoolWithStorages,
                             parameters);
