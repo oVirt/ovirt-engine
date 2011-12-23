@@ -92,7 +92,10 @@ public class ElementIdTypeParser {
                             grandParents.toString()));
                 }
 
-                String fieldId = field.getAnnotation(WithElementId.class).value();
+                WithElementId idAnnotation = field.getAnnotation(WithElementId.class);
+                assert idAnnotation != null : "idAnnotation was null";
+
+                String fieldId = idAnnotation.value();
                 if ("".equals(fieldId)) {
                     fieldId = fieldName;
                 }
@@ -103,10 +106,12 @@ public class ElementIdTypeParser {
 
                 statements.add(new ElementIdStatement(fieldExpression, elementId));
 
-                List<JClassType> newGrandParents = new ArrayList<JClassType>(grandParents);
-                newGrandParents.add(fieldType);
+                if (idAnnotation.processType()) {
+                    List<JClassType> newGrandParents = new ArrayList<JClassType>(grandParents);
+                    newGrandParents.add(fieldType);
 
-                doParse(fieldType, newGrandParents, parentFieldExpression + fieldName + ".", elementId);
+                    doParse(fieldType, newGrandParents, parentFieldExpression + fieldName + ".", elementId);
+                }
             }
         }
     }

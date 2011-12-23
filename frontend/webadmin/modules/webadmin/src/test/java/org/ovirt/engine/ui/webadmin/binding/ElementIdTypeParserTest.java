@@ -108,10 +108,11 @@ public class ElementIdTypeParserTest {
         when(field.isPrivate()).thenReturn(false);
         when(field.isStatic()).thenReturn(false);
         when(field.getType()).thenReturn(fieldType);
+        when(field.getName()).thenReturn(fieldName);
         when(fieldType.isClass()).thenReturn(fieldType);
         when(field.getAnnotation(WithElementId.class)).thenReturn(idAnnotation);
         when(idAnnotation.value()).thenReturn("");
-        when(field.getName()).thenReturn(fieldName);
+        when(idAnnotation.processType()).thenReturn(true);
     }
 
     @Test
@@ -170,7 +171,7 @@ public class ElementIdTypeParserTest {
     }
 
     @Test
-    public void doParse_expectedBehavior() throws UnableToCompleteException {
+    public void doParse_defaultBehavior() throws UnableToCompleteException {
         tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix");
 
         List<ElementIdStatement> expected = Arrays.asList(
@@ -186,19 +187,29 @@ public class ElementIdTypeParserTest {
     }
 
     @Test
-    public void doParse_customIdAnnotationValue() throws UnableToCompleteException {
-        WithElementId idAnnotation = mock(WithElementId.class);
-        when(ownerTypeParentField.getAnnotation(WithElementId.class)).thenReturn(idAnnotation);
-        when(idAnnotation.value()).thenReturn("ownerTypeParentFieldCustomId");
-
+    public void doParse_customFieldId() throws UnableToCompleteException {
+        stubFieldIdAnnotation(ownerTypeParentField, "ownerTypeParentFieldCustomId", true);
         tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix");
 
         assertTrue(tested.statements.contains(getExpectedStatement(
                 "ownerTypeParentField", "IdPrefix_ownerTypeParentFieldCustomId")));
     }
 
+    @Test
+    public void doParse_limitedFieldTypeRecursion() throws UnableToCompleteException {
+        stubFieldIdAnnotation(ownerTypeParentField, "", false);
+        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix");
+
+        List<ElementIdStatement> expected = Arrays.asList(
+                getExpectedStatement("ownerTypeParentField", "IdPrefix_ownerTypeParentField"),
+                getExpectedStatement("ownerTypeField1", "IdPrefix_ownerTypeField1"),
+                getExpectedStatement("ownerTypeField2", "IdPrefix_ownerTypeField2"));
+        assertTrue(tested.statements.containsAll(expected));
+        assertThat(tested.statements.size(), is(equalTo(expected.size())));
+    }
+
     @Test(expected = UnableToCompleteException.class)
-    public void doParse_fieldTypeRecursion() throws UnableToCompleteException {
+    public void doParse_unhandledFieldTypeRecursion() throws UnableToCompleteException {
         Set<? extends JClassType> ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy =
                 new HashSet<JClassType>(Arrays.asList(ownerTypeParentFieldTypeSubField1Type));
         doReturn(ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy)
@@ -206,6 +217,33 @@ public class ElementIdTypeParserTest {
         when(ownerTypeParentFieldTypeSubField1Type.getFields()).thenReturn(new JField[] { ownerTypeParentField });
 
         tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix");
+    }
+
+    @Test
+    public void doParse_handledFieldTypeRecursion() throws UnableToCompleteException {
+        stubFieldIdAnnotation(ownerTypeParentField, "", false);
+
+        Set<? extends JClassType> ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy =
+                new HashSet<JClassType>(Arrays.asList(ownerTypeParentFieldTypeSubField1Type));
+        doReturn(ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy)
+                .when(ownerTypeParentFieldTypeSubField1Type).getFlattenedSupertypeHierarchy();
+        when(ownerTypeParentFieldTypeSubField1Type.getFields()).thenReturn(new JField[] { ownerTypeParentField });
+
+        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix");
+
+        List<ElementIdStatement> expected = Arrays.asList(
+                getExpectedStatement("ownerTypeParentField", "IdPrefix_ownerTypeParentField"),
+                getExpectedStatement("ownerTypeField1", "IdPrefix_ownerTypeField1"),
+                getExpectedStatement("ownerTypeField2", "IdPrefix_ownerTypeField2"));
+        assertTrue(tested.statements.containsAll(expected));
+        assertThat(tested.statements.size(), is(equalTo(expected.size())));
+    }
+
+    void stubFieldIdAnnotation(JField field, String fieldId, boolean processType) {
+        WithElementId idAnnotation = mock(WithElementId.class);
+        when(field.getAnnotation(WithElementId.class)).thenReturn(idAnnotation);
+        when(idAnnotation.value()).thenReturn(fieldId);
+        when(idAnnotation.processType()).thenReturn(processType);
     }
 
     ElementIdStatement getExpectedStatement(String pathToField, String elementId) {

@@ -19,17 +19,17 @@ package org.ovirt.engine.ui.webadmin.idhandler;
  *     Label label;
  * 
  *     public HelloWorld() {
- *         // initialize label widget
+ *         label = new Label(&quot;Hello World&quot;);
  *         idHandler.generateAndSetIds(this);
  *     }
  * 
  * }
  * </pre>
  * 
- * In the example above, the label widget's DOM element have its ID set to {@code HelloWorld_label}.
+ * In the example above, the label widget's DOM element will have its ID set to {@code HelloWorld_label}.
  * 
  * @param <T>
- *            The type of an object that contains {@literal @}WithElementId fields.
+ *            The type of an object that contains {@literal @WithElementId} fields.
  * 
  * @see WithElementId
  * @see HasElementId
@@ -40,7 +40,7 @@ public interface ElementIdHandler<T> {
      * Generates and sets DOM element IDs into appropriate fields of the given root object.
      * 
      * @param owner
-     *            The object whose {@literal @}WithElementId fields need to be processed.
+     *            The object whose {@literal @WithElementId} fields need to be processed.
      */
     void generateAndSetIds(T owner);
 

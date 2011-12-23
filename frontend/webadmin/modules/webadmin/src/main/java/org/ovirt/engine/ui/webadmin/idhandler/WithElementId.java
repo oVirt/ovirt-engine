@@ -59,4 +59,13 @@ public @interface WithElementId {
      */
     String value() default "";
 
+    /**
+     * If {@code true}, declared type of the given field will be recursively processed with regard to
+     * {@literal @WithElementId} fields. If {@code false}, no further action will be taken on the field type.
+     * 
+     * @return {@code true} if the field type should be recursively processed with regard to {@literal @WithElementId}
+     *         fields, {@code false} otherwise.
+     */
+    boolean processType() default true;
+
 }
