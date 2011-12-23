@@ -21,6 +21,8 @@ import com.google.gwt.editor.rebind.model.ModelUtils;
  */
 public class ElementIdTypeParser {
 
+    private static final String ID_ELEMENT_SEPARATOR = "_";
+
     private final TreeLogger logger;
     private final JClassType ownerType;
 
@@ -71,7 +73,10 @@ public class ElementIdTypeParser {
 
     public ElementIdStatement[] parseStatements() throws UnableToCompleteException {
         statements.clear();
-        doParse(ownerType, new ArrayList<JClassType>(), ".", ownerType.getSimpleSourceName());
+
+        doParse(ownerType, new ArrayList<JClassType>(), ".",
+                ownerType.getName().replace(".", ID_ELEMENT_SEPARATOR));
+
         return statements.toArray(new ElementIdStatement[0]);
     }
 
@@ -98,7 +103,7 @@ public class ElementIdTypeParser {
                     fieldId = fieldName;
                 }
 
-                String elementId = idPrefix + "_" + fieldId;
+                String elementId = idPrefix + ID_ELEMENT_SEPARATOR + fieldId;
                 String fieldExpression = ElementIdHandlerGenerator.ElementIdHandler_generateAndSetIds_owner
                         + parentFieldExpression + fieldName;
                 ElementIdStatement statement = new ElementIdStatement(fieldExpression, elementId);
