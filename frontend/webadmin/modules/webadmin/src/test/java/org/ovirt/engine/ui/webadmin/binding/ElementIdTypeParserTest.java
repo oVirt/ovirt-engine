@@ -195,6 +195,13 @@ public class ElementIdTypeParserTest {
                 "ownerTypeParentField", "IdPrefix_ownerTypeParentFieldCustomId")));
     }
 
+    @Test(expected = UnableToCompleteException.class)
+    public void doParse_duplicateFieldIds() throws UnableToCompleteException {
+        stubFieldIdAnnotation(ownerTypeParentFieldTypeSubField1, "customId", true);
+        stubFieldIdAnnotation(ownerTypeParentFieldTypeSubField2, "customId", true);
+        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix");
+    }
+
     @Test
     public void doParse_limitedFieldTypeRecursion() throws UnableToCompleteException {
         stubFieldIdAnnotation(ownerTypeParentField, "", false);
@@ -221,14 +228,13 @@ public class ElementIdTypeParserTest {
 
     @Test
     public void doParse_handledFieldTypeRecursion() throws UnableToCompleteException {
-        stubFieldIdAnnotation(ownerTypeParentField, "", false);
-
         Set<? extends JClassType> ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy =
                 new HashSet<JClassType>(Arrays.asList(ownerTypeParentFieldTypeSubField1Type));
         doReturn(ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy)
                 .when(ownerTypeParentFieldTypeSubField1Type).getFlattenedSupertypeHierarchy();
         when(ownerTypeParentFieldTypeSubField1Type.getFields()).thenReturn(new JField[] { ownerTypeParentField });
 
+        stubFieldIdAnnotation(ownerTypeParentField, "", false);
         tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix");
 
         List<ElementIdStatement> expected = Arrays.asList(

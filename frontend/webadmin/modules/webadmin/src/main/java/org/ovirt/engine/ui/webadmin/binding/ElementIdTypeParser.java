@@ -93,8 +93,6 @@ public class ElementIdTypeParser {
                 }
 
                 WithElementId idAnnotation = field.getAnnotation(WithElementId.class);
-                assert idAnnotation != null : "idAnnotation was null";
-
                 String fieldId = idAnnotation.value();
                 if ("".equals(fieldId)) {
                     fieldId = fieldName;
@@ -103,8 +101,14 @@ public class ElementIdTypeParser {
                 String elementId = idPrefix + "_" + fieldId;
                 String fieldExpression = ElementIdHandlerGenerator.ElementIdHandler_generateAndSetIds_owner
                         + parentFieldExpression + fieldName;
+                ElementIdStatement statement = new ElementIdStatement(fieldExpression, elementId);
 
-                statements.add(new ElementIdStatement(fieldExpression, elementId));
+                if (statements.contains(statement)) {
+                    die(String.format("Duplicate element ID %s for field %s of type %s",
+                            elementId, fieldName, fieldType.getQualifiedSourceName()));
+                }
+
+                statements.add(statement);
 
                 if (idAnnotation.processType()) {
                     List<JClassType> newGrandParents = new ArrayList<JClassType>(grandParents);

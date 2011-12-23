@@ -33,15 +33,15 @@ public class ElementIdHandlerGenerator extends Generator {
             throw new UnableToCompleteException();
         }
 
+        ElementIdTypeParser parser = new ElementIdTypeParser(logger, toGenerate);
+        ElementIdStatement[] statements = parser.parseStatements();
+
         String packageName = toGenerate.getPackage().getName();
         String simpleSourceName = toGenerate.getName().replace('.', '_') + "Impl";
         PrintWriter pw = context.tryCreate(logger, packageName, simpleSourceName);
         if (pw == null) {
             return packageName + "." + simpleSourceName;
         }
-
-        ElementIdTypeParser parser = new ElementIdTypeParser(logger, toGenerate);
-        ElementIdStatement[] statements = parser.parseStatements();
 
         JClassType superclass = oracle.findType(BaseElementIdHandler.class.getName()).isClass();
         assert superclass != null : "No BaseElementIdHandler type";

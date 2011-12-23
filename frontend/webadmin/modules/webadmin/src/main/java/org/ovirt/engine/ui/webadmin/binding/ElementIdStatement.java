@@ -54,11 +54,15 @@ public class ElementIdStatement {
     }
 
     @Override
+    public String toString() {
+        return elementId;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((elementId == null) ? 0 : elementId.hashCode());
-        result = prime * result + ((fieldExpression == null) ? 0 : fieldExpression.hashCode());
         return result;
     }
 
@@ -75,11 +79,6 @@ public class ElementIdStatement {
             if (other.elementId != null)
                 return false;
         } else if (!elementId.equals(other.elementId))
-            return false;
-        if (fieldExpression == null) {
-            if (other.fieldExpression != null)
-                return false;
-        } else if (!fieldExpression.equals(other.fieldExpression))
             return false;
         return true;
     }
