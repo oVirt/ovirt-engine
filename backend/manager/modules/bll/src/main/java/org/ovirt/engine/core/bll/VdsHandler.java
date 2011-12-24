@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -10,11 +11,15 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.LogCompat;
+import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 
 public class VdsHandler extends BaseHandler {
+    private static LogCompat log = LogFactoryCompat.getLog(VdsHandler.class);
     public static ObjectIdentityChecker mUpdateVdsStatic;
 
     /**
@@ -150,4 +155,41 @@ public class VdsHandler extends BaseHandler {
     static public boolean isPendingOvirt(VDS vds) {
         return isPendingOvirt(vds.getvds_type(), vds.getstatus());
     }
+
+    /**
+     * Extracts the oVirt OS version from raw material of {@code VDS.gethost_os()} field.
+     *
+     * @param vds
+     *            the ovirt host which its OS version in a format of: [OS Name - OS Version - OS release]
+     * @return a version class of the oVirt OS version, or null if failed to parse.
+     */
+    static public RpmVersion getOvirtHostOsVersion(VDS vds) {
+        RpmVersion vdsOsVersion = null;
+        try {
+            vdsOsVersion = new RpmVersion(vds.gethost_os(), "RHEV Hypervisor -", true);
+        } catch (RuntimeException e) {
+            log.errorFormat("Failed to parse version of Host {0},{1} and Host OS '{2}' with error {3}",
+                    vds.getvds_id(),
+                    vds.getvds_name(),
+                    vds.gethost_os(),
+                    ExceptionUtils.getMessage(e));
+        }
+        return vdsOsVersion;
+    }
+
+    /**
+     * Checks if an ISO file is compatible for upgrading a given oVirt host
+     *
+     * @param ovirtOsVersion
+     *            oVirt host version
+     * @param isoVersion
+     *            suggested ISO version for upgrade
+     * @return true is version matches or if a any version isn't provided, else false.
+     */
+    public static boolean isIsoVersionCompatibleForUpgrade(RpmVersion ovirtOsVersion, RpmVersion isoVersion) {
+        return isoVersion.getMajor() == ovirtOsVersion.getMajor()
+                || ovirtOsVersion.getMajor() == -1
+                || isoVersion.getMajor() == -1;
+    }
+
 }
