@@ -30,8 +30,6 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
             new EventDefinition("spiceVersionFileFetched", WebAdminConfigurator.class);
     public Event spiceVersionFileFetchedEvent = new Event(spiceVersionFileFetchedEvent_Definition);
 
-    private boolean isUsbEnabled;
-
     private boolean isInitialized;
 
     public WebAdminConfigurator()
@@ -46,14 +44,6 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
         // Update Spice version if needed
         updateSpiceVersion();
-    }
-
-    public Boolean getIsUsbEnabled() {
-        return isUsbEnabled;
-    }
-
-    public void setIsUsbEnabled(Boolean isUsbEnabled) {
-        this.isUsbEnabled = isUsbEnabled;
     }
 
     private void updateSpiceVersion() {
@@ -84,8 +74,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         // Update IsUsbEnabled value
-                        isUsbEnabled = (Boolean) returnValue;
-                        spice.setUsbListenPort(isUsbEnabled ? getSpiceDefaultUsbPort() : getSpiceDisableUsbListenPort());
+                        setIsUsbEnabled((Boolean) returnValue);
                     }
                 }));
     }
@@ -171,10 +160,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         spice.setAdminConsole(getSpiceAdminConsole());
         spice.setFullScreen(getSpiceFullScreen());
 
-        if (isInitialized) {
-            spice.setUsbListenPort(isUsbEnabled ? getSpiceDefaultUsbPort() : getSpiceDisableUsbListenPort());
-        }
-        else {
+        if (!isInitialized) {
             updateIsUsbEnabled(spice);
             isInitialized = true;
         }

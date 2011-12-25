@@ -76,6 +76,15 @@ public class Configurator
 	{
 		privateSpiceDisableUsbListenPort = value;
 	}
+	private boolean privateIsUsbEnabled;
+	public boolean getIsUsbEnabled()
+	{
+		return privateIsUsbEnabled;
+	}
+	protected void setIsUsbEnabled(boolean value)
+	{
+		privateIsUsbEnabled = value;
+	}
 	private boolean privateSpiceAdminConsole;
 	public boolean getSpiceAdminConsole()
 	{
@@ -160,8 +169,8 @@ public class Configurator
 
 	public void Configure(ISpice spice)
 	{
-		boolean isUsbEnabled = DataProvider.IsUSBEnabledByDefault();
-		int usbListenPort = isUsbEnabled ? getSpiceDefaultUsbPort() : getSpiceDisableUsbListenPort();
+		setIsUsbEnabled(DataProvider.IsUSBEnabledByDefault());
+		int usbListenPort = getIsUsbEnabled() ? getSpiceDefaultUsbPort() : getSpiceDisableUsbListenPort();
 		spice.setUsbListenPort(usbListenPort);
 
 		spice.setDesiredVersion(getSpiceVersion());
