@@ -3,6 +3,11 @@ package org.ovirt.engine.ui.userportal.client.components;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicommon.models.Model;
 import org.ovirt.engine.ui.userportal.client.common.Severity;
 
 import com.smartgwt.client.types.Alignment;
@@ -13,6 +18,8 @@ import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
 import com.smartgwt.client.widgets.events.CloseClientEvent;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
@@ -20,6 +27,8 @@ public class NonDraggableModalPanel extends Dialog {
     protected HLayout footerLayout = new HLayout(5);
 	protected HLayout headerLayout = new HLayout();
 	protected VLayout contextArea = new VLayout();
+	protected ProgressPanel progressPanel;
+	protected Model model;
 	
 	final private static Map<Severity,String> CONTEXT_LAYOUT_FRAME_COLORS = new HashMap<Severity, String>() {{
 		put(Severity.ERROR, "#FF3300");
@@ -147,5 +156,46 @@ public class NonDraggableModalPanel extends Dialog {
 	}	
 
     public void onClose() {
-	}
+    }
+
+    @Override
+    public void destroy() {
+        if (model != null) {
+            model.getPropertyChangedEvent().getListeners().clear();
+            progressPanel.destroy();
+        }
+        super.destroy();
+    }
+
+    protected void subscribeProgressChangedEvent(final Model model, final FormItem focusedItem, final Canvas innerCanvas) {
+        this.model = model;
+        if (model == null) {
+            return;
+        }
+
+        progressPanel = new ProgressPanel(getWidth(), getHeight());
+        progressPanel.setVisible(false);
+        progressPanel.setLeft(-2);
+        addChild(progressPanel);
+
+        model.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
+                if (propertyName.equals("Progress")) {
+                    boolean inProgress = model.getProgress() != null;
+                    innerCanvas.setDisabled(inProgress);
+                    if (inProgress) {
+                        progressPanel.show();
+                    } else {
+                        progressPanel.hide();
+                        if (focusedItem != null) {
+                            focusedItem.focusInItem();
+                        }
+                    }
+                }
+            }
+        });
+        model.getPropertyChangedEvent().raise(this, new PropertyChangedEventArgs("Progress"));
+    }
 }

@@ -41,6 +41,13 @@ public class UserPortalTemplateListModel extends TemplateListModel implements IF
 		Frontend.RunQuery(VdcQueryType.GetPermissionsByAdElementId, parameters, _asyncQuery);
 	}
 
+	@Override
+	public void Search()
+	{
+		EnsureAsyncSearchStopped();
+		SyncSearch();
+	}
+
 	public void PostGetUserPermissions(java.util.ArrayList<permissions> userPermissions)
 	{
 		java.util.ArrayList<VdcQueryType> listQueryType = new java.util.ArrayList<VdcQueryType>();

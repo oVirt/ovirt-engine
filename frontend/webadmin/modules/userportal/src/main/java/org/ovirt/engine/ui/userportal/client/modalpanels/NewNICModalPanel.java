@@ -109,6 +109,8 @@ public class NewNICModalPanel extends NonDraggableModalPanel {
 		addItem(inPanel);
 	
 		setFooterButtons(Alignment.RIGHT, okButton, cancelButton);
+
+		subscribeProgressChangedEvent(vmInterfaceModel, nameTextItem, inPanel);
 	}
 
 	@Override

@@ -105,6 +105,8 @@ public class NewSnapshotModalPanel extends NonDraggableModalPanel {
 		{
 			setFooterButtons(Alignment.RIGHT, okButton, cancelButton);
 		}
+
+        subscribeProgressChangedEvent(snapshotModel, descriptionTextItem, inPanel);
 	}
 
 	@Override

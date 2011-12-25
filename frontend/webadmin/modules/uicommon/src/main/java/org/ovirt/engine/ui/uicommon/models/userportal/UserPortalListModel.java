@@ -298,6 +298,13 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 	}
 
 	@Override
+	public void Search()
+	{
+		EnsureAsyncSearchStopped();
+		SyncSearch();
+	}
+
+	@Override
 	protected void InitDetailModels()
 	{
 		super.InitDetailModels();

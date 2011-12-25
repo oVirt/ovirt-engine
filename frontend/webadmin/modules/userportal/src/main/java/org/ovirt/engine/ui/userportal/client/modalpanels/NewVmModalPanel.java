@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.ovirt.engine.ui.userportal.client.components.ProgressPanel;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -86,7 +85,6 @@ public class NewVmModalPanel extends NonDraggableModalPanel {
 	WarningLabel noDatacenterAvailableLabel;
 	FormItem focusedItem;
 	DynamicForm focusedForm;
-	ProgressPanel progressPanel;
 	
 	boolean isServer;
 
@@ -179,16 +177,8 @@ public class NewVmModalPanel extends NonDraggableModalPanel {
 		selectedButton.select();
 		
 		GridRefreshManager.getInstance().suspendRefresh();
-		subscribeProgressChangedEvent();
+		subscribeProgressChangedEvent(userVmModel, focusedItem, tabPaneContainer);
 	}
-	
-	@Override
-    public void destroy() {
-        userVmModel.getPropertyChangedEvent().getListeners().clear();
-        progressPanel.destroy();
-        
-        super.destroy();
-    }
 	
 // Supertypes for all components
 	
@@ -673,38 +663,6 @@ public class NewVmModalPanel extends NonDraggableModalPanel {
         });
         
         return vncConsoleSelectedMessageLabel;
-    }
-    
-    private void subscribeProgressChangedEvent() {
-        progressPanel = new ProgressPanel(getWidth(), getHeight());
-        progressPanel.setVisible(false);
-        progressPanel.setLeft(-2);
-        addChild(progressPanel);
-    
-        userVmModel.getPropertyChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
-                if (propertyName.equals("Progress")) {
-                    boolean inProgress = userVmModel.getProgress() != null;
-    
-                    tabPaneContainer.setDisabled(inProgress);
-    
-                    if (inProgress) {
-                        progressPanel.show();                        
-                    }
-                    else {    
-                        progressPanel.hide();
-                        
-                        if (focusedForm != null) {
-                            focusedForm.focusInItem(1);
-                            focusedForm.focusInItem(focusedItem);
-                        }
-                    }
-                }
-            }
-        });
-        userVmModel.getPropertyChangedEvent().raise(this, new PropertyChangedEventArgs("Progress"));
     }
 	
 	class UserVmModelPropertyChangedListener implements IEventListener {

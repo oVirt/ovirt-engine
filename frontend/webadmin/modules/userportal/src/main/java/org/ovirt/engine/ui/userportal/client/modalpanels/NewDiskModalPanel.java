@@ -104,6 +104,8 @@ public class NewDiskModalPanel extends NonDraggableModalPanel {
 		addItem(inPanel);
 		
 		setFooterButtons(Alignment.RIGHT, okButton, cancelButton);
+
+		subscribeProgressChangedEvent(diskModel, sizeTextItem, inPanel);
 	}
 
 	@Override

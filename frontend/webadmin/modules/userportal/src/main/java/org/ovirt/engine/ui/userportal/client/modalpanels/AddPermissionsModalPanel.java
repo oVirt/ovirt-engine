@@ -230,7 +230,7 @@ public class AddPermissionsModalPanel extends NonDraggableModalPanel {
 		
 		setFooterButtons(Alignment.RIGHT, okButton, cancelButton);
 		
-	
+        subscribeProgressChangedEvent(adElementListModel, searchStringBox, inPanel);
 	}
 
 	public void onClose() {
