@@ -243,18 +243,20 @@ public abstract class SearchableListModel extends ListModel
 		}
 		return gettimer();
 	}
-	
+
 	@Override
 	public void setSelectedItem(Object value) {
 	    setIsQueryFirstTime(true);
 	    super.setSelectedItem(value);
 	    setIsQueryFirstTime(false);
 	}
-	
+
     @Override
     public void setEntity(Object value) {
-        if(getEntity() == null)
+        if(getEntity() == null){
             super.setEntity(value);
+            return;
+        }
         //Equals doesn't always has the same outcome as checking the ids of the elements.
         if(getEntity() instanceof IVdcQueryable) {
             if(value != null){
@@ -264,13 +266,14 @@ public abstract class SearchableListModel extends ListModel
                     return;
                 } else {
                     super.setEntity(value);
+                    return;
                 }
             }
         }
         if(!getEntity().equals(value)){
             super.setEntity(value);
         }
-    }	
+    }
 
 	protected void SearchStringChanged()
 	{
