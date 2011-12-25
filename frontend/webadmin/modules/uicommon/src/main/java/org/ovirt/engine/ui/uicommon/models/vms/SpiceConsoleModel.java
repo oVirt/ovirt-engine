@@ -348,25 +348,11 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
 		getspice().setTitle(getEntity().getvm_name() + ":%d" + (StringHelper.isNullOrEmpty(releaseCursorKeysTranslated) ? "" : (" - Press " + releaseCursorKeysTranslated + " to Release Cursor")));
 
-		// In 'Admin' mode, set fullscreen by the configurator value; otherwise, true (force fullscreen in the UserPortal)
-		getspice().setFullScreen(getConfigurator().getIsAdmin() ? getConfigurator().getSpiceFullScreen() : true);
-
 		// If 'AdminConsole' is true, send true; otherwise, false should be sent only for VMs with SPICE driver installed.
 		getspice().setAdminConsole(getConfigurator().getSpiceAdminConsole() ? true : getEntity().getSpiceDriverVersion() != null ? false : true);
 
-		// Call configure for setting 'UsbListenPort' value
-		if (!getConfigurator().getIsAdmin())
-		{
-			getConfigurator().Configure(getspice());
-		}
-		
-		// 'UsbListenPort' is different than 'SpiceDisableUsbListenPort' when 'EnableUSBAsDefault' database configuration parameter is true
-		// (initialized in the configurator)
-		if (getspice().getUsbListenPort() != getConfigurator().getSpiceDisableUsbListenPort())
-		{
-			// Set 'UsbListenPort' according to 'UsbPolicy'
-			getspice().setUsbListenPort(getEntity().getusb_policy() == UsbPolicy.Enabled ? getspice().getUsbListenPort() : getConfigurator().getSpiceDisableUsbListenPort());
-		}
+		// Update 'UsbListenPort' value
+		getspice().setUsbListenPort(getConfigurator().getIsUsbEnabled() && getEntity().getusb_policy() == UsbPolicy.Enabled ? getConfigurator().getSpiceDefaultUsbPort() : getConfigurator().getSpiceDisableUsbListenPort());
 
 		//At lease one of the hot-keys is not empty -> send it to SPICE:
 		if (!StringHelper.isNullOrEmpty(releaseCursorKeys) || !StringHelper.isNullOrEmpty(toggleFullScreenKeys))

@@ -11,6 +11,8 @@ import org.ovirt.engine.ui.uicommon.Configurator;
 import org.ovirt.engine.ui.uicommon.DataProvider;
 import org.ovirt.engine.ui.uicommon.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommon.models.vms.ISpice;
+import org.ovirt.engine.ui.userportal.client.Masthead;
+import org.ovirt.engine.ui.userportal.client.common.UserPortalMode;
 import org.ovirt.engine.ui.userportal.client.util.ClientAgentType;
 
 import com.google.gwt.http.client.Request;
@@ -31,8 +33,6 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
     private final String DEFAULT_USB_FILTER = "-1,-1,-1,-1,0";
     private String usbFilter = DEFAULT_USB_FILTER;
-    
-    private boolean isUsbEnabled;
     
     private boolean isInitialized;
     
@@ -62,14 +62,6 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         return instance;
     }
     
-    public Boolean getIsUsbEnabled() {
-        return isUsbEnabled;
-    }
-    
-    public void setIsUsbEnabled(Boolean isUsbEnabled) {
-        this.isUsbEnabled = isUsbEnabled;
-    }
-    
     protected void setUsbFilter(String usbFilter) {
         this.usbFilter = usbFilter;
     }
@@ -97,8 +89,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
                 @Override
                 public void OnSuccess(Object target, Object returnValue) {
                     // Update IsUsbEnabled value
-                    isUsbEnabled = (Boolean) returnValue;
-                    spice.setUsbListenPort(isUsbEnabled ? getSpiceDefaultUsbPort() : getSpiceDisableUsbListenPort());
+                    setIsUsbEnabled((Boolean) returnValue);
                 }
             }));
     }
@@ -157,7 +148,13 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
             setFileContent(fileContent);
         }
     }
-    
+
+    @Override
+    public boolean getSpiceFullScreen()
+	{
+		return Masthead.getInstance().getUserPortalMode() == UserPortalMode.BASIC;
+	}
+
     @Override
     public void Configure(ISpice spice)
     {
@@ -168,11 +165,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 		
 		if (!isInitialized) {
 	        updateIsUsbEnabled(spice);
-			
-			isInitialized = true;
-		} 
-		else {        
-			spice.setUsbListenPort(isUsbEnabled ? getSpiceDefaultUsbPort() : getSpiceDisableUsbListenPort());
+	        isInitialized = true;
 		}
     }
 }

@@ -139,9 +139,18 @@ public class ConsoleEditPanel extends NonDraggableModalPanel {
 		    spice.setUsbAutoShare((Boolean)event.getValue());				    
 		}
 	    });
+	    CheckboxItem fullscreen = new CheckboxItem("fullscreen", "Open in Full Screen");
+	    fullscreen.setDefaultValue(spice.getFullScreen());
+	    fullscreen.setShowTitle(false);
+	    fullscreen.addChangedHandler(new ChangedHandler() {
+		@Override
+		public void onChanged(ChangedEvent event) {
+		    spice.setFullScreen((Boolean)event.getValue());
+		}
+	    });
 	
 	    // Add header and check boxes
-	    spiceOptionsForm.setItems(spiceOptionsHeader, sendCtrlAltDelete, usbAutoShare);
+	    spiceOptionsForm.setItems(spiceOptionsHeader, sendCtrlAltDelete, usbAutoShare, fullscreen);
 		
 	    return spiceOptionsForm;
 	}
