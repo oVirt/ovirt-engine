@@ -85,22 +85,32 @@ public class UICommand extends Model implements ICommand
 
 
 	private ICommandTarget target;
+    private final boolean autoRefresh;
 
-	public UICommand(String name, ICommandTarget target)
+	public UICommand(String name, ICommandTarget target, boolean autoRefresh)
 	{
-		this();
+		this(autoRefresh);
 		setName(name);
 		this.target = target;
 	}
 
-	private UICommand()
+	public UICommand(String name, ICommandTarget target) {
+	    this(name, target, false);
+	}
+
+	private UICommand(boolean autoRefresh)
 	{
 		setExecuteProhibitionReasons(new ObservableCollection<String>());
 		setIsExecutionAllowed(true);
+        this.autoRefresh = autoRefresh;
 	}
 
 
-	public boolean CanExecute(Object parameter)
+	public boolean isAutoRefresh() {
+        return autoRefresh;
+    }
+
+    public boolean CanExecute(Object parameter)
 	{
 		return true;
 	}

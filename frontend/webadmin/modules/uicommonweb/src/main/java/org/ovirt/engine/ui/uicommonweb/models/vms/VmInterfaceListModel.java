@@ -447,4 +447,8 @@ public class VmInterfaceListModel extends SearchableListModel
 			OnRemove();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "VmInterfaceListModel";
+    }
 }

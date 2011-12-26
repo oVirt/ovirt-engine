@@ -676,4 +676,8 @@ public class RoleListModel extends ListWithDetailsModel
 			CloneRole();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "RoleListModel";
+    }
 }

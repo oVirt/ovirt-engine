@@ -303,4 +303,8 @@ public class SystemPermissionListModel extends SearchableListModel
 			Cancel();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "SystemPermissionListModel";
+    }
 }

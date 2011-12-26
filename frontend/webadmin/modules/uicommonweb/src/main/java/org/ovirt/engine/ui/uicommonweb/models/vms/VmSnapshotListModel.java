@@ -905,4 +905,8 @@ public class VmSnapshotListModel extends SearchableListModel
 			OnNew();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "VmSnapshotListModel";
+    }
 }

@@ -338,4 +338,8 @@ public class VmBackupModel extends ManageBackupModel
 			OnRestore();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "VmBackupModel";
+    }
 }

@@ -87,4 +87,8 @@ public class StorageTemplateListModel extends SearchableListModel
 		super.AsyncSearch();
 		SyncSearch();
 	}
+    @Override
+    protected String getListName() {
+        return "StorageTemplateListModel";
+    }
 }

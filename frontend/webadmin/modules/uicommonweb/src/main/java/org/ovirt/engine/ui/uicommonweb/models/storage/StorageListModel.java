@@ -1567,4 +1567,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 	{
 		UpdateActionAvailability();
 	}
+    @Override
+    protected String getListName() {
+        return "StorageListModel";
+    }
 }

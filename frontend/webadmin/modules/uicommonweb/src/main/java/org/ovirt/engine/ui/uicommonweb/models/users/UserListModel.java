@@ -644,4 +644,8 @@ public class UserListModel extends ListWithDetailsModel
 			OnRemove();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "UserListModel";
+    }
 }

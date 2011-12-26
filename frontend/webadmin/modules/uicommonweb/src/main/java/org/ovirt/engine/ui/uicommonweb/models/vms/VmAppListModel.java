@@ -96,4 +96,8 @@ public class VmAppListModel extends SearchableListModel
 		UpdateAppList();
 		setIsQueryFirstTime(false);
 	}
+    @Override
+    protected String getListName() {
+        return "VmAppListModel";
+    }
 }

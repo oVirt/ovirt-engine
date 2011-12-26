@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.*;
 import org.ovirt.engine.ui.uicommonweb.*;
 
 @SuppressWarnings("unused")
-public class ListWithDetailsModel extends SearchableListModel
+public abstract class ListWithDetailsModel extends SearchableListModel
 {
 
 	private java.util.List<EntityModel> detailModels;
@@ -165,4 +165,5 @@ public class ListWithDetailsModel extends SearchableListModel
 			}
 		}
 	}
+ 
 }

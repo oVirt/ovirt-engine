@@ -27,4 +27,9 @@ public class FcpStorageModel extends SanStorageModel
 	{
 		return StorageType.FCP;
 	}
+
+    @Override
+    protected String getListName() {
+        return "FcpStorageModel";
+    }
 }

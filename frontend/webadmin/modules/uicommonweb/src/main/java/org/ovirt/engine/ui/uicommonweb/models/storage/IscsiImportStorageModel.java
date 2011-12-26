@@ -26,4 +26,9 @@ public class IscsiImportStorageModel extends ImportSanStorageModel
 	{
 		return StorageType.ISCSI;
 	}
+
+    @Override
+    protected String getListName() {
+        return "IscsiImportStorageModel";
+    }
 }

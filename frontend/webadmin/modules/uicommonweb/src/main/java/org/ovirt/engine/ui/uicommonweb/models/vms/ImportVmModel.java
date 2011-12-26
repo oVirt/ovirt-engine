@@ -252,4 +252,8 @@ public class ImportVmModel extends ListWithDetailsModel
 		}
 
 	}
+    @Override
+    protected String getListName() {
+        return "ImportVmModel";
+    }
 }

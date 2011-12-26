@@ -346,4 +346,8 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
 			}
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "UserPortalBasicListModel";
+    }
 }

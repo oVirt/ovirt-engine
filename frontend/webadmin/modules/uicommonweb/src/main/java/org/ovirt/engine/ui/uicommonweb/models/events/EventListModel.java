@@ -21,12 +21,13 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.ProvideTickEvent;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 @SuppressWarnings("unused")
 public class EventListModel extends SearchableListModel
 {
-    private ITimer timer;
+    private GridTimer timer;
 
     private UICommand privateRefreshCommand;
 
@@ -86,9 +87,15 @@ public class EventListModel extends SearchableListModel
 
         setIsTimerDisabled(true);
 
-        timer = (ITimer) TypeResolver.getInstance().Resolve(ITimer.class);
-        timer.setInterval(getConfigurator().getPollingTimerInterval());
-        timer.getTickEvent().addListener(this);
+        timer = new GridTimer(getListName()) {
+
+            @Override
+            public void execute() {
+                getRefreshCommand().Execute();
+            }
+        };
+
+        timer.setRefreshRate(getConfigurator().getPollingTimerInterval());
     }
 
     @Override
@@ -135,17 +142,6 @@ public class EventListModel extends SearchableListModel
         SearchParameters searchParameters = tempVar;
 
         Frontend.RunQuery(VdcQueryType.Search, searchParameters, _asyncQuery);
-    }
-
-    @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
-    {
-        // base.eventRaised(ev, sender, args);
-
-        if (ev.equals(ProvideTickEvent.Definition))
-        {
-            getRefreshCommand().Execute();
-        }
     }
 
     @Override
@@ -203,7 +199,7 @@ public class EventListModel extends SearchableListModel
     /**
      * Returns true if and only if the two entities: <li>are not null <li>implement the IVdcQueryable.getQueryableId()
      * method <li>the old.getQueryableId().equals(new.getQueryableId())
-     * 
+     *
      */
     private boolean calculateEntitiesChanged(Object newValue, Object oldValue) {
         if (newValue == null || oldValue == null) {
@@ -232,7 +228,7 @@ public class EventListModel extends SearchableListModel
 
     /**
      * Runs the onEntityContentChanged() only when the calculateEntitiesChanged(new, old) returns true
-     * 
+     *
      */
     @Override
     protected void OnEntityChanged() {
@@ -248,6 +244,11 @@ public class EventListModel extends SearchableListModel
      * IVdcQueryable). Override it in child classes to refresh your model.
      */
     protected void onEntityContentChanged() {
+    }
+
+    @Override
+    protected String getListName() {
+        return "EventListModel";
     }
 
 }

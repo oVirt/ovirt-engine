@@ -317,4 +317,8 @@ public class TemplateBackupModel extends ManageBackupModel
 			OnRestore();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "TemplateBackupModel";
+    }
 }

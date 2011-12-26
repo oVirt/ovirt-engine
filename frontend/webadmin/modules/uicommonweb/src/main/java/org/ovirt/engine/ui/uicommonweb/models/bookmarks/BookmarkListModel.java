@@ -324,4 +324,8 @@ public class BookmarkListModel extends SearchableListModel
 			Cancel();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "BookmarkListModel";
+    }
 }

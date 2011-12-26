@@ -808,4 +808,8 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 			OnRemove();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "TemplateListModel";
+    }
 }

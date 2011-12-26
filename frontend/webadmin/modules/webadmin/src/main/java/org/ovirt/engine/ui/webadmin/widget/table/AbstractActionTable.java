@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.AbstractActionPanel;
+import org.ovirt.engine.ui.webadmin.widget.table.refresh.RefreshManager;
+import org.ovirt.engine.ui.webadmin.widget.table.refresh.RefreshPanel;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -54,8 +56,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
     @UiField
     ButtonBase nextPageButton;
 
-    @UiField
-    ButtonBase refreshPageButton;
+    @UiField(provided = true)
+    RefreshPanel refreshPanel;
 
     @UiField
     SimplePanel tableContainer;
@@ -71,6 +73,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
     private boolean multiSelectionDisabled;
     protected boolean showDefaultHeader;
 
+    private final RefreshManager refreshManager;
+
     public AbstractActionTable(SearchableTableModelProvider<T, ?> dataProvider) {
         this(dataProvider, null);
     }
@@ -84,6 +88,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
             Resources resources, Resources headerRresources) {
         super(dataProvider);
         this.selectionModel = new OrderedMultiSelectionModel<T>(dataProvider);
+        refreshManager = new RefreshManager(dataProvider.getModel());
+        refreshPanel = refreshManager.getRefreshPanel();
 
         this.table = new ActionCellTable<T>(dataProvider, resources) {
             @Override
@@ -252,8 +258,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         getDataProvider().goForward();
     }
 
-    @UiHandler("refreshPageButton")
-    void handleRefreshPageButtonClick(ClickEvent event) {
+    @UiHandler("refreshPanel")
+    void handleRefreshPanelClick(ClickEvent event) {
         getDataProvider().refresh();
     }
 
@@ -323,6 +329,14 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
 
     public void setMultiSelectionDisabled(boolean multiSelectionDisabled) {
         this.multiSelectionDisabled = multiSelectionDisabled;
+    }
+
+    public void onFocus() {
+        refreshManager.onFocus();
+    }
+
+    public void onBlur() {
+        refreshManager.onBlur();
     }
 
     @Override

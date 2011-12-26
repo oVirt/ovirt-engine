@@ -319,7 +319,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		setNewDesktopCommand(new UICommand("NewDesktop", this));
 		setEditCommand(new UICommand("Edit", this));
 		setRemoveCommand(new UICommand("Remove", this));
-		setRunCommand(new UICommand("Run", this));
+		setRunCommand(new UICommand("Run", this, true));
 		setPauseCommand(new UICommand("Pause", this));
 		setStopCommand(new UICommand("Stop", this));
 		setShutdownCommand(new UICommand("Shutdown", this));
@@ -2872,5 +2872,9 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		systemTreeSelectedItem = value;
 		OnPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem"));
 	}
+    @Override
+    protected String getListName() {
+        return "VmListModel";
+    }
 
 }

@@ -193,12 +193,12 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
 		setNewCommand(new UICommand("New", this));
 		setEditCommand(new UICommand("Edit", this));
 		setRemoveCommand(new UICommand("Remove", this));
-		setActivateCommand(new UICommand("Activate", this));
-		setMaintenanceCommand(new UICommand("Maintenance", this));
+		setActivateCommand(new UICommand("Activate", this, true));
+		setMaintenanceCommand(new UICommand("Maintenance", this, true));
 		setApproveCommand(new UICommand("Approve", this));
-		setRestartCommand(new UICommand("Restart", this));
-		setStartCommand(new UICommand("Start", this));
-		setStopCommand(new UICommand("Stop", this));
+		setRestartCommand(new UICommand("Restart", this, true));
+		setStartCommand(new UICommand("Start", this, true));
+		setStopCommand(new UICommand("Stop", this, true));
 		setManualFenceCommand(new UICommand("ManualFence", this));
 		setAssignTagsCommand(new UICommand("AssignTags", this));
 		setConfigureLocalStorageCommand(new UICommand("ConfigureLocalStorage", this));
@@ -1532,4 +1532,8 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
 	{
 		UpdateActionAvailability();
 	}
+    @Override
+    protected String getListName() {
+        return "HostListModel";
+    }
 }

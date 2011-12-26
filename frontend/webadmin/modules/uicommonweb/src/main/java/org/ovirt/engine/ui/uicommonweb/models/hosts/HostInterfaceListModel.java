@@ -2072,4 +2072,8 @@ public class HostInterfaceListModel extends SearchableListModel
 			CancelConfirm();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "HostInterfaceListModel";
+    }
 }

@@ -70,4 +70,8 @@ public class UserGroupListModel extends SearchableListModel
 		tempVar.setDomain(domain);
 		return tempVar;
 	}
+    @Override
+    protected String getListName() {
+        return "UserGroupListModel";
+    }
 }

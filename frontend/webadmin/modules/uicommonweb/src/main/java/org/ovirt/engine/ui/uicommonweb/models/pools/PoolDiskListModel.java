@@ -47,4 +47,9 @@ public class PoolDiskListModel extends SearchableListModel
 			AsyncDataProvider.GetAnyVm(_asyncQuery, pool.getvm_pool_name());
 		}
 	}
+
+    @Override
+    protected String getListName() {
+        return "PoolDiskListModel";
+    }
 }

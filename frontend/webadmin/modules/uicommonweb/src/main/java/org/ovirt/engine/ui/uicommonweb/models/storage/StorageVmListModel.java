@@ -88,4 +88,8 @@ public class StorageVmListModel extends SearchableListModel
 		super.AsyncSearch();
 		SyncSearch();
 	}
+    @Override
+    protected String getListName() {
+        return "StorageVmListModel";
+    }
 }

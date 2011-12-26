@@ -203,4 +203,8 @@ public class RolePermissionListModel extends SearchableListModel
 			Cancel();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "RolePermissionListModel";
+    }
 }

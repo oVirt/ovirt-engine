@@ -118,4 +118,8 @@ public class ImportTemplateModel extends ListWithDetailsModel
 		}
 
 	}
+    @Override
+    protected String getListName() {
+        return "ImportTemplateModel";
+    }
 }

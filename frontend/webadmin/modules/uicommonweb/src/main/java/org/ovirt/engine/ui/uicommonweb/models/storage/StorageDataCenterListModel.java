@@ -619,4 +619,8 @@ public class StorageDataCenterListModel extends SearchableListModel
 			Cancel();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "StorageDataCenterListModel";
+    }
 }

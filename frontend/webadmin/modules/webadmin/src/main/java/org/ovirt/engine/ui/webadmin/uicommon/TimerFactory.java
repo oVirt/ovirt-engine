@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.webadmin.uicommon;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 
 /**
@@ -13,16 +13,17 @@ import com.google.gwt.user.client.Timer;
 public abstract class TimerFactory {
 
     private static Map<String, Timer> timerList = new HashMap<String, Timer>();
+    private static Logger logger = Logger.getLogger(TimerFactory.class.getName());
 
     public static Timer factoryTimer(String timerName, Timer timer) {
-        GWT.log("Adding timer '" + timerName + "' to the timers list");
+        logger.info("Adding timer '" + timerName + "' to the timers list");
         timerList.put(timerName, timer);
         return timer;
     }
 
     public static void cancelAllTimers() {
         for (String name : timerList.keySet()) {
-            GWT.log("Cancelling the timer '" + name + "'");
+            logger.info("Cancelling the timer '" + name + "'");
             timerList.get(name).cancel();
         }
     }
@@ -30,7 +31,7 @@ public abstract class TimerFactory {
     public static void cancelTimer(String timerName) {
         for (String name : timerList.keySet()) {
             if (name.equals(timerName)) {
-                GWT.log("Cancelling the timer '" + name + "'");
+                logger.info("Cancelling the timer '" + name + "'");
                 timerList.get(name).cancel();
             }
         }

@@ -235,4 +235,8 @@ public class AlertListModel extends SearchableListModel
 		setTitle(StringFormat.format("%1$s Alerts", (getItems() == null || getItems().isEmpty()) ? "No" : String.valueOf(getItems().size())));
 		setHasAlerts(getItems() != null && getItems().size() > 0);
 	}
+    @Override
+    protected String getListName() {
+        return "AlertListModel";
+    }
 }

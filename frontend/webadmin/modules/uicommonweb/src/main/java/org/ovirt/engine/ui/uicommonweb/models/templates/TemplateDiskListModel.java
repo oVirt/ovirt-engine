@@ -68,4 +68,10 @@ public class TemplateDiskListModel extends SearchableListModel
 		setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetVmTemplatesDisks, new GetVmTemplatesDisksParameters(getEntityStronglyTyped().getId())));
 		setItems(getAsyncResult().getData());
 	}
+
+
+    @Override
+    protected String getListName() {
+        return "TemplateDiskListModel";
+    }
 }

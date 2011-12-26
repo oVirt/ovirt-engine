@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.section.main.view.ApplicationFocusChangeEvent;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.OrderedMultiSelectionModel;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
@@ -35,6 +38,10 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
          * Returns the selection model used by the main tab table widget.
          */
         OrderedMultiSelectionModel<T> getTableSelectionModel();
+
+        void onFocus();
+
+        void onBlur();
 
     }
 
@@ -129,5 +136,15 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
      * Will be revealed when the table selection is not empty.
      */
     protected abstract PlaceRequest getDefaultSubTabRequest();
+
+    @ProxyEvent
+    public void onApplicationFocusChange(ApplicationFocusChangeEvent event) {
+        GWT.log("ApplicationFocusChangeEvent(" + event.isInFocus() + ") caught by handler");
+        if (event.isInFocus()) {
+            getView().onFocus();
+        } else {
+            getView().onBlur();
+        }
+    }
 
 }

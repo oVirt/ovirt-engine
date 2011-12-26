@@ -628,4 +628,8 @@ public class PoolListModel extends ListWithDetailsModel
 			OnRemove();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "PoolListModel";
+    }
 }

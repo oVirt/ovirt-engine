@@ -255,5 +255,10 @@ public class ResourcesModel extends SearchableListModel
 	{
 		return ((sizeInMb >= 1024 && sizeInMb % 1024 == 0) ? (sizeInMb / 1024 + "GB") : (sizeInMb + "MB"));
 	}
+	
+    @Override
+    protected String getListName() {
+        return "ResourcesModel";
+    }
 
 }

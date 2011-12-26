@@ -396,4 +396,8 @@ public class PermissionListModel extends SearchableListModel
 			Cancel();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "PermissionListModel";
+    }
 }

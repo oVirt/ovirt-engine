@@ -88,4 +88,8 @@ public class FindDesktopModel extends SearchableListModel
 		super.AsyncSearch();
 		SyncSearch();
 	}
+    @Override
+    protected String getListName() {
+        return "FindDesktopModel";
+    }
 }

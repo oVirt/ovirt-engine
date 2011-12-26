@@ -598,4 +598,8 @@ public class TagListModel extends SearchableListModel
 			OnRemove();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "TagListModel";
+    }
 }

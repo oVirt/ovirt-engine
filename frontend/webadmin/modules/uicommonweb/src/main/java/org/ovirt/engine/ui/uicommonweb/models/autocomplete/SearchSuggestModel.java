@@ -195,4 +195,8 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
 	{
 		UpdateOptionsAsync(getPrefix() + getSearchString());
 	}
+    @Override
+    protected String getListName() {
+        return "SearchSuggestModel";
+    }
 }

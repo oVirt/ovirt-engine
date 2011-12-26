@@ -350,5 +350,9 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 		}
 		setItems(new java.util.ArrayList<SystemTreeItemModel>(java.util.Arrays.asList(new SystemTreeItemModel[] { systemItem })));
 	}
+    @Override
+    protected String getListName() {
+        return "SystemTreeModel";
+    }
 
 }

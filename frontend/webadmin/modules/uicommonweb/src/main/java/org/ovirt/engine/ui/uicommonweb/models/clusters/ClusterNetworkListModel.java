@@ -423,5 +423,9 @@ public class ClusterNetworkListModel extends SearchableListModel
 			Cancel();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "ClusterNetworkListModel";
+    }
 
 }

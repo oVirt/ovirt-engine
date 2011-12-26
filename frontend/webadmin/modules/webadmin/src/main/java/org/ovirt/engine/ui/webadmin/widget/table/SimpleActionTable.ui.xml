@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:r="urn:import:org.ovirt.engine.ui.webadmin.widget.table.refresh">
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
 
@@ -33,6 +34,14 @@
 			border: 1px solid transparent;
 		}
 		
+		.refreshPanel {
+			float: right;
+			cursor: hand;
+			cursor: pointer;
+			border: 1px solid transparent;
+			display: table-cell;
+		}
+		
 		.content {
 			overflow-y: scroll;
 			position: absolute !important;
@@ -63,9 +72,7 @@
 			<g:FlowPanel ui:field="actionPanel" />
 			<g:PushButton ui:field="nextPageButton" addStyleNames="{style.linkButton}" />
 			<g:PushButton ui:field="prevPageButton" addStyleNames="{style.linkButton}" />
-			<g:PushButton ui:field="refreshPageButton" addStyleNames="{style.refreshButton}">
-				<g:upFace image='{resources.refreshButtonImage}' />
-			</g:PushButton>
+			<r:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}" />
 			<div style="clear: both;" />
 		</g:HTMLPanel>
 		<g:SimplePanel ui:field="tableHeaderContainer" addStyleNames="{style.headerContainer}" />

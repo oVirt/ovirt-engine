@@ -191,4 +191,8 @@ public class TemplateStorageListModel extends SearchableListModel
 			OnRemove();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "TemplateStorageListModel";
+    }
 }

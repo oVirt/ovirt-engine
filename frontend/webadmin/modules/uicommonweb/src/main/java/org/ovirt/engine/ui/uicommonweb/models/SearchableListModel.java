@@ -1,37 +1,43 @@
 package org.ovirt.engine.ui.uicommonweb.models;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
+import java.util.logging.Logger;
 
-import org.ovirt.engine.ui.uicommonweb.dataprovider.*;
-import org.ovirt.engine.core.common.interfaces.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.IntegerCompat;
+import org.ovirt.engine.core.compat.Match;
+import org.ovirt.engine.core.compat.NotifyCollectionChangedEventArgs;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.compat.Regex;
+import org.ovirt.engine.core.compat.RegexOptions;
+import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.RegistrationResult;
+import org.ovirt.engine.ui.uicommonweb.ProvideTickEvent;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicompat.IteratorUtils;
 
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.ui.uicommonweb.*;
+import com.google.gwt.core.client.GWT;
 
 /**
  Represents a list model with ability to fetch items both sync and async.
 */
 @SuppressWarnings("unused")
-public abstract class SearchableListModel extends ListModel
+public abstract class SearchableListModel extends ListModel implements GridController
 {
-
-	private static final int UnknownInteger = -1;
-
+    private static final int UnknownInteger = -1;
+    private static Logger logger = Logger.getLogger(SearchableListModel.class.getName());
 	private static final String PAGE_STRING_REGEX = "[\\s]+page[\\s]+[1-9]+[0-9]*[\\s]*$";
 	private static final String PAGE_NUMBER_REGEX = "[1-9]+[0-9]*$";
-
-
 
 	private UICommand privateSearchCommand;
 	public UICommand getSearchCommand()
@@ -224,22 +230,37 @@ public abstract class SearchableListModel extends ListModel
 		return true;
 	}
 
-	private ITimer privatetimer;
-	public ITimer gettimer()
+	private GridTimer privatetimer;
+
+    private boolean rapidTimerRunning;
+
+	public GridTimer gettimer()
 	{
 		return privatetimer;
 	}
-	public void settimer(ITimer value)
+	public void settimer(GridTimer value)
 	{
 		privatetimer = value;
 	}
-	public ITimer getTimer()
+	public GridTimer getTimer()
 	{
 		if (gettimer() == null)
 		{
-			settimer((ITimer)TypeResolver.getInstance().Resolve(ITimer.class));
-			gettimer().setInterval(getConfigurator().getPollingTimerInterval());
-			gettimer().getTickEvent().addListener(this);
+			settimer(new GridTimer(getListName()) {
+
+                @Override
+                public void execute() {
+                    logger.info(SearchableListModel.this.getClass().getName() + ": Executing search");
+                    if (getIsAsync())
+                    {
+                        AsyncSearch();
+                    } else {
+                        SyncSearch();
+                    }
+                }
+
+			});
+			gettimer().setRefreshRate(getConfigurator().getPollingTimerInterval());
 		}
 		return gettimer();
 	}
@@ -275,7 +296,9 @@ public abstract class SearchableListModel extends ListModel
         }
     }
 
-	protected void SearchStringChanged()
+	protected abstract String getListName() ;
+
+    protected void SearchStringChanged()
 	{
 	}
 
@@ -641,6 +664,10 @@ public abstract class SearchableListModel extends ListModel
 		{
 			ForceRefresh();
 		}
+
+		if(command.isAutoRefresh()) {
+		    getTimer().fastForward();
+		}
 	}
 
 
@@ -682,5 +709,39 @@ public abstract class SearchableListModel extends ListModel
 			model.UpdatePagingAvailability();
 		}
 	}
+
+    // ////////////////////////////
+    // GridController methods
+    // ///////////////////////////
+
+    @Override
+    public void setRefreshRate(int currentRefreshRate) {
+        getTimer().setRefreshRate(currentRefreshRate);
+    }
+
+    @Override
+    public int getRefreshRate() {
+        return getTimer().getRefreshRate();
+    }
+
+    @Override
+    public void toBackground() {
+        // move to slow
+        logger.info("toBackground(): pausing timer");
+        getTimer().pause();
+    }
+
+    @Override
+    public void toForground() {
+        // move to normal
+        logger.info("toForground(): resuming timer");
+        getTimer().resume();
+    }
+
+    @Override
+    public String getId() {
+        return getListName();
+    }
+
 
 }

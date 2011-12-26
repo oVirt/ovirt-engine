@@ -324,4 +324,8 @@ public class AdElementListModel extends SearchableListModel
 			}
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "AdElementListModel";
+    }
 }

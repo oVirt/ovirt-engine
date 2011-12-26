@@ -523,4 +523,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 	{
 		UpdateActionAvailability();
 	}
+    @Override
+    protected String getListName() {
+        return "ClusterListModel";
+    }
 }

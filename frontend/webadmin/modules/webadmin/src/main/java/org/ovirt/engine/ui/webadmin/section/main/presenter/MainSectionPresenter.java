@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
+import org.ovirt.engine.ui.webadmin.section.main.view.ApplicationFocusChangeEvent.HasApplicationFocusChangeHandlers;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
@@ -18,7 +20,7 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
     public interface ProxyDef extends Proxy<MainSectionPresenter> {
     }
 
-    public interface ViewDef extends View, HasUiHandlers<MainTabBarOffsetUiHandlers> {
+    public interface ViewDef extends View, HasUiHandlers<MainTabBarOffsetUiHandlers>, HasApplicationFocusChangeHandlers {
     }
 
     @ContentSlot

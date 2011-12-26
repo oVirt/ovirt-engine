@@ -322,4 +322,8 @@ public class UserEventNotifierListModel extends SearchableListModel
 			Cancel();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "UserEventNotifierListModel";
+    }
 }

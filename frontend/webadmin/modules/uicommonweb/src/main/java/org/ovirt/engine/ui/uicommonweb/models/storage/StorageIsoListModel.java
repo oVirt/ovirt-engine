@@ -226,4 +226,8 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
 
 		setItems(newItems.isEmpty() ? items : newItems);
 	}
+    @Override
+    protected String getListName() {
+        return "StorageIsoListModel";
+    }
 }

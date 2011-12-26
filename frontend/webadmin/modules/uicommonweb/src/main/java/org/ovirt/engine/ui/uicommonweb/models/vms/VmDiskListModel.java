@@ -624,4 +624,8 @@ public class VmDiskListModel extends SearchableListModel
 			}
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "VmDiskListModel";
+    }
 }

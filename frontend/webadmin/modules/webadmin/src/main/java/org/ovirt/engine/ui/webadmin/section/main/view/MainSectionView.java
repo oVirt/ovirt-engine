@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabBarOffsetUiHandlers;
+import org.ovirt.engine.ui.webadmin.section.main.view.ApplicationFocusChangeEvent.ApplicationFocusChangeHandler;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
@@ -22,8 +23,12 @@ import org.ovirt.engine.ui.webadmin.widget.tags.TagList;
 import org.ovirt.engine.ui.webadmin.widget.tree.SystemTree;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -59,6 +64,14 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     @UiField
     Label footerMessage;
 
+    private final EventBus eventBus;
+
+    private final SystemTreeModelProvider treeModelProvider;
+
+    private final AlertModelProvider alertModelProvider;
+
+    private final EventModelProvider eventModelProvider;
+
     @Inject
     public MainSectionView(SystemTreeModelProvider treeModelProvider,
             BookmarkModelProvider bookmarkModelProvider,
@@ -70,7 +83,13 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             InternalConfiguration intConf,
             ApplicationResources resources,
             ApplicationTemplates templates,
-            ApplicationMessages messages) {
+            ApplicationMessages messages,
+            EventBus eventBus) {
+        attachWindowFocusEvents();
+        this.eventBus = eventBus;
+        this.treeModelProvider = treeModelProvider;
+        this.alertModelProvider = alertModelProvider;
+        this.eventModelProvider = eventModelProvider;
         this.westStackPanel = createWestStackPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initAlertEventFooterPanel(alertModelProvider, alertFirstRowModelProvider,
@@ -118,6 +137,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
                 alertModelProvider, alertFirstRowModelProvider,
                 eventModelProvider, eventFirstRowModelProvider,
                 resources, templates));
+        lastEventWasBlur = false;
     }
 
     @Override
@@ -135,5 +155,67 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     public void setUiHandlers(MainTabBarOffsetUiHandlers uiHandlers) {
         this.uiHandlers = uiHandlers;
     }
+
+    @Override
+    public HandlerRegistration addApplicationFocusChangeHandler(ApplicationFocusChangeHandler handler) {
+        return eventBus.addHandler(ApplicationFocusChangeEvent.getType(), handler);
+    }
+
+    @Override
+    public void fireEvent(GwtEvent<?> event) {
+        eventBus.fireEvent(event);
+    }
+
+    private JavaScriptObject activeElement;
+
+    private boolean lastEventWasBlur;
+
+    public void onWindowFocus() {
+        GWT.log("onWindowFocus() called");
+        ApplicationFocusChangeEvent.fire(this, true);
+        alertModelProvider.getModel().toForground();
+        eventModelProvider.getModel().toForground();
+        treeModelProvider.getModel().toForground();
+    }
+
+    public void onWindowBlur() {
+        GWT.log("onWindowBlur() called");
+        ApplicationFocusChangeEvent.fire(this, false);
+        alertModelProvider.getModel().toBackground();
+        eventModelProvider.getModel().toBackground();
+        treeModelProvider.getModel().toBackground();
+    }
+
+    native void attachWindowFocusEvents() /*-{
+		var clientAgentType = @org.ovirt.engine.ui.webadmin.uicommon.ClientAgentType::new()();
+		var browser = clientAgentType.@org.ovirt.engine.ui.webadmin.uicommon.ClientAgentType::browser;
+		var isIE = browser.toLowerCase() == "explorer";
+
+		if (isIE) {
+			$doc.attachEvent("onfocusin", onFocus);
+			$doc.attachEvent("onfocusout", onBlur);
+		} else {
+			$wnd.addEventListener("focus", onFocus, false);
+			$wnd.addEventListener("blur", onBlur, false);
+		}
+
+		var context = this;
+		function onFocus() {
+			// only focus if previous event was a blur or we get lots of focus events (On IE)
+			if (context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::lastEventWasBlur) {
+				context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::lastEventWasBlur = false;
+				context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::onWindowFocus()();
+			}
+		}
+		function onBlur() {
+			debugger;
+			if (context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::activeElement != $doc.activeElement) {
+				context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::activeElement = $doc.activeElement;
+			} else {
+				context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::lastEventWasBlur = true;
+				context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::onWindowBlur()();
+			}
+		}
+    }-*/;
 
 }

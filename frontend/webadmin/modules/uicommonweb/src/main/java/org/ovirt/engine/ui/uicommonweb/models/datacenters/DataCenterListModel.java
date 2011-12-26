@@ -787,4 +787,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 	{
 		UpdateActionAvailability();
 	}
+    @Override
+    protected String getListName() {
+        return "DataCenterListModel";
+    }
 }

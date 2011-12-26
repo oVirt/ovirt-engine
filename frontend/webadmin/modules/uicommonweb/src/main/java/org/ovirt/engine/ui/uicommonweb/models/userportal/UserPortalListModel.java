@@ -1563,4 +1563,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 			}
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "UserPortalListModel";
+    }
 }

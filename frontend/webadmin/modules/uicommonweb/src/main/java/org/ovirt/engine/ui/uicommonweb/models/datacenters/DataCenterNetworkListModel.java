@@ -630,5 +630,9 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
 			model.getCommands().add(tempVar3);
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "DataCenterNetworkListModel";
+    }
 
 }

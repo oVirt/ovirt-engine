@@ -123,4 +123,8 @@ public class HostHooksListModel extends SearchableListModel
 		super.AsyncSearch();
 		SyncSearch();
 	}
+    @Override
+    protected String getListName() {
+        return "HostHooksListModel";
+    }
 }

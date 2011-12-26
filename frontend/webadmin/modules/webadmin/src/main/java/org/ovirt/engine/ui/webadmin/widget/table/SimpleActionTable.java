@@ -42,7 +42,7 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         localize(ClientGinjectorProvider.instance().getApplicationConstants());
         initStyles();
-        refreshPageButton.setVisible(false);
+        refreshPanel.setVisible(false);
         prevPageButton.setVisible(false);
         nextPageButton.setVisible(false);
     }
@@ -57,7 +57,7 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     }
 
     public void showRefreshButton() {
-        refreshPageButton.setVisible(true);
+        refreshPanel.setVisible(true);
     }
 
     public void showPagingButtons() {

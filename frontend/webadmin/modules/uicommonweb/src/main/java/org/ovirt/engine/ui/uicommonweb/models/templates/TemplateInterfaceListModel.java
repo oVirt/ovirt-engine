@@ -411,4 +411,8 @@ public class TemplateInterfaceListModel extends SearchableListModel
 			OnRemove();
 		}
 	}
+    @Override
+    protected String getListName() {
+        return "TemplateInterfaceListModel";
+    }
 }
