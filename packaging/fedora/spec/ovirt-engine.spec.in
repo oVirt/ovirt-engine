@@ -282,7 +282,9 @@ ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/nul
 %attr (755,root,root) %{_datadir}/%{name}/scripts/output_messages.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/nfsutils.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/engine-setup.py*
+%attr (755,root,root) %{_datadir}/%{name}/scripts/engine-cleanup.py*
 %attr (750,root,root) %{_bindir}/engine-setup
+%attr (750,root,root) %{_bindir}/engine-cleanup
 
 %files dbscripts
 %attr (755,root,root) %{_datadir}/%{name}/dbscripts

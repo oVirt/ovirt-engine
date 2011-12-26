@@ -135,6 +135,9 @@ install_setup:
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/output_messages.py
 	ln -s /usr/share/ovirt-engine/scripts/engine-setup.py $(PREFIX)/usr/bin/engine-setup
 	cp -af ./packaging/fedora/setup/resources/jboss/* $(PREFIX)/usr/share/ovirt-engine/resources/jboss/
+	cp -f ./packaging/fedora/setup/engine-cleanup.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/engine-cleanup.py
+	ln -s /usr/share/ovirt-engine/scripts/engine-cleanup.py $(PREFIX)/usr/bin/engine-cleanup
 	sed -i "s/MYVERSION/$(RPM_VERSION)/" $(PREFIX)/usr/share/ovirt-engine/resources/jboss/engineVersion.js
 
 install_sec:
