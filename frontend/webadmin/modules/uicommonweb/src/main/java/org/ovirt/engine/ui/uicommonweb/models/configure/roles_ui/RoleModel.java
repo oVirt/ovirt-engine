@@ -144,8 +144,11 @@ public class RoleModel extends Model
 		tempVar2.setExpression("^[A-Za-z0-9_-]+$");
 		tempVar2.setMessage("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters.");
 		getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
+		LengthValidation lengthValidation = new LengthValidation();
+		lengthValidation.setMaxLength(4000);
+		getDescription().ValidateEntity(new IValidation[] { lengthValidation });
 
-		return getName().getIsValid();
+		return getName().getIsValid() && getDescription().getIsValid();
 	}
 
 	@Override
