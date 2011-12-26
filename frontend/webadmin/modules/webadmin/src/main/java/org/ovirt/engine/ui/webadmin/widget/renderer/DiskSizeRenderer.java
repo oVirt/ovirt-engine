@@ -9,7 +9,7 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
         GIGABYTE;
     }
 
-    private DiskSizeUnit unit;
+    private final DiskSizeUnit unit;
 
     public DiskSizeRenderer(DiskSizeUnit unit) {
         if (unit == null) {
@@ -21,6 +21,10 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
 
     @Override
     public String render(T size) {
+        if (size == null) {
+            return "< 1 GB";
+        }
+
         long sizeInGB = -1;
 
         switch (unit) {

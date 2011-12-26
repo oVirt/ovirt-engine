@@ -53,6 +53,9 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
 
             @Override
             public String getValue(storage_domains storage) {
+                if (storage.getavailable_disk_size() == null || storage.getavailable_disk_size() < 1) {
+                    return "< 1 GB";
+                }
                 return storage.getavailable_disk_size() + " GB";
             }
         }, "Free Space");
