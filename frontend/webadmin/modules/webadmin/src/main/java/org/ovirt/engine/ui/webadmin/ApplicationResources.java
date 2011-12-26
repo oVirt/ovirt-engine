@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.webadmin;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.resources.client.ClientBundle.Source;
+import com.google.gwt.resources.client.CssResource.NotStrict;
 
 public interface ApplicationResources extends ClientBundle {
 
@@ -325,4 +327,33 @@ public interface ApplicationResources extends ClientBundle {
 
     @Source("images/button/button_Disabled_end.png")
     ImageResource dialogButtonUpDisabledEnd();
+    
+    //Slider
+    /**
+	 * An image used for the sliding knob.
+	 * 
+	 * @return a prototype of this image
+	 */
+	@Source("images/slider.gif")
+	ImageResource slider();
+
+	/**
+	 * An image used for the sliding knob.
+	 * 
+	 * @return a prototype of this image
+	 */
+	@Source("images/sliderDisabled.gif")
+	ImageResource sliderDisabled();
+
+	/**
+	 * An image used for the sliding knob while sliding.
+	 * 
+	 * @return a prototype of this image
+	 */
+	@Source("images/sliderSliding.gif")
+	ImageResource sliderSliding();
+
+	@NotStrict
+	@Source("css/SliderBar.css")
+	CssResource sliderBarCss();
 }

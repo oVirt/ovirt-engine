@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.webadmin.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelRadioButtonEditor;
+import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelSliderWithTextBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.parser.MemorySizeParser;
@@ -92,13 +93,13 @@ public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel
     @Path(value = "memSize.entity")
     EntityModelTextBoxEditor memSizeEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "totalCPUCores.entity")
-    EntityModelTextBoxEditor totalCPUCoresEditor;
+    EntityModelSliderWithTextBoxEditor totalCPUCoresEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "numOfSockets.entity")
-    EntityModelTextBoxEditor numOfSocketsEditor;
+    EntityModelSliderWithTextBoxEditor numOfSocketsEditor;
 
     @UiField(provided = true)
     @Path(value = "oSType.selectedItem")
@@ -247,6 +248,8 @@ public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel
         // Contains a special parser/renderer
         memSizeEditor = new EntityModelTextBoxEditor(new MemorySizeRenderer(), new MemorySizeParser());
         minAllocatedMemoryEditor = new EntityModelTextBoxEditor(new MemorySizeRenderer(), new MemorySizeParser());
+        totalCPUCoresEditor = new EntityModelSliderWithTextBoxEditor(1, 16);
+        numOfSocketsEditor = new EntityModelSliderWithTextBoxEditor(1, 16);
 
         // TODO: How to align right without creating the widget manually?
         runVMOnSpecificHostEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -449,7 +452,32 @@ public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel
         priorityEditor.setRowData(new ArrayList<EntityModel>());
         priorityEditor.edit(object.getPriority());
         Driver.driver.edit(object);
+        initSliders(object);
         initTabAvailabilityListeners(object);
+    }
+
+    private void initSliders(final UnitVmModel object) {
+        object.getTotalCPUCores().getPropertyChangedEvent()
+                .addListener(new IEventListener() {
+                    @Override
+                    public void eventRaised(Event ev, Object sender,
+                            EventArgs args) {
+                        PropertyChangedEventArgs rangeArgs = (PropertyChangedEventArgs) args;
+                        if (rangeArgs.PropertyName.equalsIgnoreCase("Min")) {
+                            totalCPUCoresEditor.setMin(((Double) object
+                                    .getTotalCPUCores().getMin()).intValue());
+                        } else if (rangeArgs.PropertyName
+                                .equalsIgnoreCase("Max")) {
+                            totalCPUCoresEditor.setMax(((Double) object
+                                    .getTotalCPUCores().getMax()).intValue());
+                        } else if (rangeArgs.PropertyName
+                                .equalsIgnoreCase("Interval")) {
+                            totalCPUCoresEditor.setStepSize(((Double) object
+                                    .getTotalCPUCores().getInterval())
+                                    .intValue());
+                        }
+                    }
+                });
     }
 
     private void initTabAvailabilityListeners(final UnitVmModel vm) {
