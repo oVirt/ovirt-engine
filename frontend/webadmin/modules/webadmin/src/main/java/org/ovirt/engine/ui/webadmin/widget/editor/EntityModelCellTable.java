@@ -103,7 +103,8 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
             @SuppressWarnings("unchecked")
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
-                if (EntityModelCellTable.this.listModel == null) {
+                if ((EntityModelCellTable.this.listModel == null)
+                        || (EntityModelCellTable.this.listModel.getItems() == null)) {
                     return;
                 }
 
