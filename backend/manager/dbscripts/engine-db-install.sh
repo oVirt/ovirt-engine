@@ -306,6 +306,7 @@ initPgsqlDB
 #adding md5 to support re-entrance install
 #since the user might change the db password so the .pgpass wont work
 #till we change the password again
+changePgAuthScheme peer ident
 changePgAuthScheme ident trust md5
 #update postgres user pass and create engine user
 turnPgsqlOnStartup
