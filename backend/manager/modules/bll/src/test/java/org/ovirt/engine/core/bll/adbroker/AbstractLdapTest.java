@@ -10,6 +10,7 @@ import java.util.List;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
@@ -49,7 +50,8 @@ public class AbstractLdapTest {
     }
 
     protected DirContext mockDirContext() throws NamingException {
-        final Attributes attributes = mock(Attributes.class);
+        Attributes attributes = new BasicAttributes();
+        attributes.put("namingContexts", "DC=example,DC=com");
         final List<SearchResult> searchResults = new ArrayList<SearchResult>();
         searchResults.add(new SearchResult("1", "dummy", attributes));
         searchResults.add(new SearchResult("2", "dummy2", attributes));
