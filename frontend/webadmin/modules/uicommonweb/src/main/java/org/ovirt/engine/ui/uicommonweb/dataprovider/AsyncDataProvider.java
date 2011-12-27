@@ -69,6 +69,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
+import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringFormat;
@@ -1605,7 +1606,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetTagsByVdsId, new GetTagsByVdsIdParameters(id.toString()), aQuery);
     }
 
-    public static void GetoVirtISOsList(AsyncQuery aQuery)
+    public static void GetoVirtISOsList(AsyncQuery aQuery, Guid id)
     {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -1615,7 +1616,7 @@ public final class AsyncDataProvider
                         : new java.util.ArrayList<String>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetoVirtISOs, new VdcQueryParametersBase(), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetoVirtISOs, new VdsIdParametersBase(id), aQuery);
     }
 
     public static void GetLunsByVgId(AsyncQuery aQuery, String vgId)

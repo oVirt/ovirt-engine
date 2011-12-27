@@ -19,6 +19,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -697,7 +698,7 @@ public class HostGeneralModel extends EntityModel
                             installModel.getOVirtISO().setIsChangable(true);
 
                         }
-                    }));
+                    }), getEntity().getvds_id());
         } else {
             model.getRootPassword().setIsAvailable(true);
             model.getRootPassword().setIsChangable(true);
@@ -746,7 +747,7 @@ public class HostGeneralModel extends EntityModel
         param.setRootPassword((String) model.getRootPassword().getEntity());
         param.setIsReinstallOrUpgrade(true);
         param.setInstallVds(true);
-        param.setoVirtIsoFile(isOVirt ? (String) model.getOVirtISO().getSelectedItem() : null);
+        param.setoVirtIsoFile(isOVirt ? ((RpmVersion) model.getOVirtISO().getSelectedItem()).getRpmName() : null);
         param.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
 
         Frontend.RunAction(
@@ -907,7 +908,7 @@ public class HostGeneralModel extends EntityModel
                             }
 
                         }
-                    }));
+                    }), getEntity().getvds_id());
         }
 
         setNonOperationalReasonEntity((getEntity().getNonOperationalReason() == NonOperationalReason.NONE ? null
