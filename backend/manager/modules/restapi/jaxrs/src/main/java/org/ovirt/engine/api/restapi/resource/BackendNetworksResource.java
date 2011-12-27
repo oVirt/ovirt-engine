@@ -1,13 +1,14 @@
 package org.ovirt.engine.api.restapi.resource;
 
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
 
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -28,6 +29,16 @@ public class BackendNetworksResource
     }
 
     @Override
+    public Response add(Network network) {
+        validateParameters(network, getRequiredAddFields());
+        network entity = map(network);
+        AddNetworkStoragePoolParameters params = getActionParameters(network, entity);
+        return performCreation(addAction,
+                               params,
+                               new DataCenterNetworkIdResolver(network.getName(), params.getStoragePoolId().toString()));
+    }
+
+    @Override
     public Networks list() {
         Networks networks = mapCollection(getBackendCollection(queryType, getQueryParameters()));
         for (Network network : networks.getNetworks()) {
@@ -42,14 +53,13 @@ public class BackendNetworksResource
     }
 
     @Override
-    protected VdcActionParametersBase getActionParameters(Network network, network entity) {
+    protected AddNetworkStoragePoolParameters getActionParameters(Network network, network entity) {
         if (namedDataCenter(network)) {
             entity.setstorage_pool_id(getDataCenterId(network));
         }
         return new AddNetworkStoragePoolParameters(entity.getstorage_pool_id().getValue(), entity);
     }
 
-    @Override
     protected String[] getRequiredAddFields() {
         return new String[] { "name", "dataCenter.name|id" };
     }

@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
@@ -32,14 +31,6 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
 
     public Networks list() {
         return mapCollection(getBackendCollection(queryType, getQueryParameters()));
-    }
-
-    public Response add(Network network) {
-        validateParameters(network, getRequiredAddFields());
-        network entity = map(network);
-        return performCreation(addAction,
-                               getActionParameters(network, entity),
-                               new NetworkIdResolver(network.getName()));
     }
 
     public void performRemove(String id) {
@@ -73,15 +64,24 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
         return null;
     }
 
+    public network lookupNetwork(Guid id, String name, String dataCenterId) {
+        for (network entity : getBackendCollection(queryType, getQueryParameters())) {
+            if ((id != null && id.equals(entity.getId())) ||
+                (name != null && name.equals(entity.getname()))
+                && (entity.getstorage_pool_id()!=null) && (entity.getstorage_pool_id().toString().equals(dataCenterId))) {
+                return entity;
+            }
+        }
+        return null;
+    }
+
     public EntityIdResolver getNetworkIdResolver() {
         return new NetworkIdResolver();
     }
 
-    protected abstract String[] getRequiredAddFields();
-
     protected class NetworkIdResolver extends EntityIdResolver {
 
-        private String name;
+        protected String name;
 
         NetworkIdResolver() {}
 
@@ -92,6 +92,21 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
         @Override
         public network lookupEntity(Guid id) throws BackendFailureException {
             return lookupNetwork(id, name);
+        }
+    }
+
+    protected class DataCenterNetworkIdResolver extends NetworkIdResolver {
+
+        private String dataCenterId;
+
+        DataCenterNetworkIdResolver(String name, String dataCenterId) {
+            super(name);
+            this.dataCenterId = dataCenterId;
+        }
+
+        @Override
+        public network lookupEntity(Guid id) throws BackendFailureException {
+            return lookupNetwork(id, name, dataCenterId);
         }
     }
 }

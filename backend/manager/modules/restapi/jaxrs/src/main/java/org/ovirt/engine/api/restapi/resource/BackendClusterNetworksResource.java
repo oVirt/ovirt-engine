@@ -58,7 +58,6 @@ public class BackendClusterNetworksResource
         return new AttachNetworkToVdsGroupParameter(getVDSGroup(), entity);
     }
 
-    @Override
     protected String[] getRequiredAddFields() {
         return new String[] { "id" };
     }
