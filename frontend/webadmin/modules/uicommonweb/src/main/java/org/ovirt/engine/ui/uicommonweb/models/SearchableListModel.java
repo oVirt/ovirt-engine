@@ -283,9 +283,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             if(value != null){
                 IVdcQueryable ivdcq_value = (IVdcQueryable)value;
                 IVdcQueryable ivdcq_entity = (IVdcQueryable)getEntity();
-                if(ivdcq_value.getQueryableId().equals(ivdcq_entity.getQueryableId())){
-                    return;
-                } else {
+                if(!ivdcq_value.getQueryableId().equals(ivdcq_entity.getQueryableId())){
                     super.setEntity(value);
                     return;
                 }
