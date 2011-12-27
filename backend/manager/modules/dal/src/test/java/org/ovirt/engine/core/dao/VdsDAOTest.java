@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.junit.Test;
-
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.compat.Guid;
@@ -13,6 +16,7 @@ import org.ovirt.engine.core.compat.NGuid;
 
 public class VdsDAOTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
+
      private static final String IP_ADDRESS = "192.168.122.17";
     private VdsDAO dao;
     private VDS existingVds;
@@ -198,5 +202,15 @@ public class VdsDAOTest extends BaseDAOTestCase {
         for (VDS vds : result) {
             assertEquals(existingVds.getvds_group_id(), vds.getvds_group_id());
         }
+    }
+
+    /**
+     * Ensures that the VDS instances are returned according to spm priority
+     */
+    @Test
+    public void testGetListForSpmSelection() {
+        final Guid STORAGE_POOL_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+        List<VDS> result = dao.getListForSpmSelection(STORAGE_POOL_ID);
+        assertTrue(result.get(0).getVdsSpmPriority() >= result.get(1).getVdsSpmPriority());
     }
 }

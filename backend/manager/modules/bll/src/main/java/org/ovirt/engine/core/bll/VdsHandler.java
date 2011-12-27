@@ -40,6 +40,7 @@ public class VdsHandler extends BaseHandler {
         mUpdateVdsStatic.AddPermittedField("pm_options");
         mUpdateVdsStatic.AddPermittedField("pm_enabled");
         mUpdateVdsStatic.AddPermittedField("PmOptionsMap");
+        mUpdateVdsStatic.AddPermittedField("vdsSpmPriority");
         mUpdateVdsStatic.AddFields(
                 java.util.Arrays.asList(new Enum[] { VDSStatus.NonResponsive, VDSStatus.Maintenance, VDSStatus.Down,
                         VDSStatus.Unassigned, VDSStatus.InstallFailed, VDSStatus.PendingApproval }),

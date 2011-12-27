@@ -1219,6 +1219,14 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         mVdsStatic.setOtpValidity(value);
     }
 
+    public int getVdsSpmPriority() {
+        return mVdsStatic.getVdsSpmPriority();
+    }
+
+    public void setVdsSpmPriority(int value) {
+        mVdsStatic.setVdsSpmPriority(value);
+    }
+
     @Override
     public Object getQueryableId() {
         return getvds_id();

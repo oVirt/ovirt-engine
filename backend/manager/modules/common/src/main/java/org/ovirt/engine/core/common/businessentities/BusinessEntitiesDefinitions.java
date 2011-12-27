@@ -27,6 +27,8 @@ public final class BusinessEntitiesDefinitions {
     public static final int HOST_PM_USER_SIZE = 50;
     public static final int HOST_PM_PASSWD_SIZE = 50;
     public static final int HOST_PM_TYPE_SIZE = 20;
+    public static final int HOST_MIN_SPM_PRIORITY = -1;
+    public static final int HOST_MAX_SPM_PRIORITY = 10;
 
     // Network Interface (vm_interface)
     public static final int NETWORK_NAME_SIZE = 50;

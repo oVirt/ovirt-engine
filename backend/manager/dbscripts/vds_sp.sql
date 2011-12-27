@@ -331,14 +331,15 @@ Create or replace FUNCTION InsertVdsStatic(v_host_name VARCHAR(255),
     v_pm_password VARCHAR(50) ,
     v_pm_port INTEGER ,
     v_pm_options VARCHAR(4000) ,
-    v_pm_enabled BOOLEAN)
+    v_pm_enabled BOOLEAN,
+    v_vds_spm_priority INTEGER)
    AS $procedure$
 BEGIN
    IF v_vds_unique_id IS NULL OR NOT EXISTS(SELECT vds_name FROM vds_static WHERE vds_unique_id = v_vds_unique_id) then
       BEGIN
          v_vds_id := uuid_generate_v1();
-         INSERT INTO vds_static(vds_id,host_name, ip, vds_unique_id, port, vds_group_id, vds_name, server_SSL_enabled,vds_type,vds_strength,pm_type,pm_user,pm_password,pm_port,pm_options,pm_enabled)
-			VALUES(v_vds_id,v_host_name, v_ip, v_vds_unique_id, v_port, v_vds_group_id, v_vds_name, v_server_SSL_enabled,v_vds_type,v_vds_strength,v_pm_type,v_pm_user,v_pm_password,v_pm_port,v_pm_options,v_pm_enabled);
+         INSERT INTO vds_static(vds_id,host_name, ip, vds_unique_id, port, vds_group_id, vds_name, server_SSL_enabled,vds_type,vds_strength,pm_type,pm_user,pm_password,pm_port,pm_options,pm_enabled, vds_spm_priority)
+			VALUES(v_vds_id,v_host_name, v_ip, v_vds_unique_id, v_port, v_vds_group_id, v_vds_name, v_server_SSL_enabled,v_vds_type,v_vds_strength,v_pm_type,v_pm_user,v_pm_password,v_pm_port,v_pm_options,v_pm_enabled, v_vds_spm_priority);
       END;
    end if;
    RETURN;
@@ -365,7 +366,8 @@ Create or replace FUNCTION UpdateVdsStatic(v_host_name VARCHAR(255),
     v_pm_port INTEGER ,
     v_pm_options VARCHAR(4000) ,
     v_pm_enabled BOOLEAN,
-    v_otp_validity BIGINT)
+    v_otp_validity BIGINT,
+    v_vds_spm_priority INTEGER)
 RETURNS VOID
 
 	--The [vds_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -379,7 +381,7 @@ BEGIN
       vds_type = v_vds_type, 
       _update_date = LOCALTIMESTAMP,vds_strength = v_vds_strength, 
       pm_type = v_pm_type,pm_user = v_pm_user,pm_password = v_pm_password, 
-      pm_port = v_pm_port,pm_options = v_pm_options,pm_enabled = v_pm_enabled, otp_validity = v_otp_validity
+      pm_port = v_pm_port,pm_options = v_pm_options,pm_enabled = v_pm_enabled, otp_validity = v_otp_validity, vds_spm_priority = v_vds_spm_priority
       WHERE vds_id = v_vds_id;
    END;	
 
@@ -538,6 +540,22 @@ LANGUAGE plpgsql;
 
 
 
+CREATE OR REPLACE FUNCTION GetUpAndPrioritizedVds(v_storage_pool_id UUID) RETURNS SETOF vds
+AS $procedure$
+
+BEGIN
+BEGIN
+      RETURN QUERY SELECT vds.*
+      FROM vds
+      WHERE (status = 3) AND (storage_pool_id = v_storage_pool_id) AND (vds_spm_priority IS NULL OR vds_spm_priority > (-1))
+      ORDER BY vds_spm_priority DESC, RANDOM();
+   END;
+   RETURN;
+END; $procedure$
+  LANGUAGE plpgsql;
+
+
+
 Create or replace FUNCTION GetAllFromVds() RETURNS SETOF vds
    AS $procedure$
 BEGIN
@@ -615,14 +633,15 @@ Create or replace FUNCTION InsertVds(v_host_name VARCHAR(255),
     v_pm_password VARCHAR(50) ,  
  v_pm_port INTEGER ,  
     v_pm_options VARCHAR(4000) ,  
-    v_pm_enabled BOOLEAN)
+    v_pm_enabled BOOLEAN,
+    v_vds_spm_priority INTEGER)
    AS $procedure$
 BEGIN
 	
    BEGIN
       v_vds_id := uuid_generate_v1();
-      INSERT INTO vds_static(vds_id,host_name, ip, vds_unique_id, port, vds_group_id, vds_name, server_SSL_enabled,vds_type,vds_strength,pm_type,pm_user,pm_password, pm_port, pm_options, pm_enabled)
-	VALUES(v_vds_id,v_host_name, v_ip, v_vds_unique_id, v_port, v_vds_group_id, v_vds_name, v_server_SSL_enabled,v_vds_type, v_vds_strength,v_pm_type,v_pm_user,v_pm_password,v_pm_port, v_pm_options, v_pm_enabled);
+      INSERT INTO vds_static(vds_id,host_name, ip, vds_unique_id, port, vds_group_id, vds_name, server_SSL_enabled,vds_type,vds_strength,pm_type,pm_user,pm_password, pm_port, pm_options, pm_enabled, vds_spm_priority)
+	VALUES(v_vds_id,v_host_name, v_ip, v_vds_unique_id, v_port, v_vds_group_id, v_vds_name, v_server_SSL_enabled,v_vds_type, v_vds_strength,v_pm_type,v_pm_user,v_pm_password,v_pm_port, v_pm_options, v_pm_enabled, v_vds_spm_priority);
     
       INSERT INTO vds_dynamic(vds_id, status) VALUES(v_vds_id, 0);
     

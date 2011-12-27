@@ -109,4 +109,11 @@ public interface VdsDAO extends DAO {
      */
     List<VDS> getAllForVdsGroup(Guid vdsGroup);
 
+    /**
+     * Retrieves all VDS instances in the given Storage Pool, that are in status "UP"
+     * ordered by their vds_spm_priority, not including -1
+     * @return the list of VDS instances
+     */
+    List<VDS> getListForSpmSelection(Guid storagePoolId);
+
 }

@@ -13,6 +13,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Max;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -48,6 +50,7 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
               public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -1425566208615075937L;
+    private final int HOST_DEFAULT_SPM_PRIORITY = 5;
 
     @Id
     @GeneratedValue(generator = "system-uuid")
@@ -126,10 +129,16 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
     @Column(name = "otp_validity")
     private long otpValidity;
 
+    @Min(BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY)
+    @Max(BusinessEntitiesDefinitions.HOST_MAX_SPM_PRIORITY)
+    @Column(name = "vds_spm_priority")
+    private int vdsSpmPriority;
+
     public VdsStatic() {
         serverSslEnabled = false;
         vdsStrength = 100;
         this.setpm_options("");
+        this.vdsSpmPriority = HOST_DEFAULT_SPM_PRIORITY;
     }
 
     public VdsStatic(String host_name, String ip, String uniqueId, int port, Guid vds_group_id, Guid vds_id,
@@ -146,6 +155,7 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
         this.serverSslEnabled = server_SSL_enabled;
         this.setvds_type(vds_type);
         this.setpm_options("");
+        this.vdsSpmPriority = HOST_DEFAULT_SPM_PRIORITY;
     }
 
     @XmlElement
@@ -306,6 +316,14 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
     public void setOtpValidity(long otpValidity) {
         this.otpValidity = otpValidity;
+    }
+
+    public int getVdsSpmPriority() {
+        return vdsSpmPriority;
+    }
+
+    public void setVdsSpmPriority(int value) {
+        this.vdsSpmPriority = value;
     }
 
     /**

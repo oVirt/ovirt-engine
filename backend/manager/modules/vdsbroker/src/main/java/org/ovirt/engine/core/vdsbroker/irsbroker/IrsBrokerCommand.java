@@ -19,6 +19,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.SpmStatus;
 import org.ovirt.engine.core.common.businessentities.SpmStatusResult;
@@ -590,23 +591,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             }
         }
 
-        private List<VDS> GetVdssInPool() {
-            Guid curVdsId = (mCurrentVdsId != null) ? mCurrentVdsId : Guid.Empty;
-            // LINQ 31899
-            // DbFacade.Instance.GetAllFrom_vds().Where( s => s.status ==
-            // VDSStatus.Up && s.storage_pool_id == _storagePoolId &&
-            // !TriedVdssList.Contains(s.vds_id) && s.vds_id != curVdsId);
-            List<VDS> allVds = DbFacade.getInstance().getVdsDAO().getAll();
-            List<VDS> vdsInPool = new ArrayList<VDS>();
-            for (VDS vds : allVds) {
-                if (VDSStatus.Up == vds.getstatus() && _storagePoolId.equals(vds.getstorage_pool_id())
-                        && !mTriedVdssList.contains(vds.getvds_id()) && !vds.getvds_id().equals(curVdsId)) {
-                    vdsInPool.add(vds);
-                }
-            }
-            return vdsInPool;
-        }
-
         private List<VDS> GetNonOperationalVdssInPool() {
             List<VDS> allVds = DbFacade.getInstance().getVdsDAO().getAll();
             List<VDS> nonOperationalvdsInPool = new ArrayList<VDS>();
@@ -622,9 +606,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
          * Returns True if there are other vdss in pool
          */
         public boolean getHasVdssForSpmSelection() {
-            // LINQ 31899
-            // GetVdssInPool().Count() > 0;
-            return (GetVdssInPool().size() > 0);
+            return (GetPrioritizedVdsInPool().size() > 0);
         }
 
         private String gethostFromVds() {
@@ -638,7 +620,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 return null;
             }
 
-            List<VDS> vdsByPool = GetVdssInPool();
+            List<VDS> prioritizedVdsInPool = GetPrioritizedVdsInPool();
 
             // If VDS is in initialize status, wait for it to be up (or until
             // configurable timeout is reached)
@@ -659,21 +641,17 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             }
             VDS selectedVds = null;
             SpmStatusResult spmStatus = null;
-            // LINQ 29456
-            // if ((vdsByPool.Count != 0))
-            if (vdsByPool.size() != 0) {
-                // get a random index within [0,size()-1]
-                int randomIndex = (int) (Math.random() * (vdsByPool.size()));
-                // LINQ 29456
-                // vdsByPool.ToList()[rnd.Next(vdsByPool.Count())];
-                selectedVds = vdsByPool.get(randomIndex);
 
+            if (prioritizedVdsInPool != null && prioritizedVdsInPool.size() > 0) {
+                selectedVds = prioritizedVdsInPool.get(0);
             } else if (!curVdsId.equals(Guid.Empty) && !getTriedVdssList().contains(curVdsId)) {
                 selectedVds = DbFacade.getInstance().getVdsDAO().get(curVdsId);
-                if (selectedVds.getstatus() != VDSStatus.Up) {
+                if (selectedVds.getstatus() != VDSStatus.Up
+                        || selectedVds.getVdsSpmPriority() == BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY) {
                     selectedVds = null;
                 }
             }
+
             if (selectedVds != null) {
                 mCurrentVdsId = selectedVds.getvds_id();
                 // Stores origin host id in case and will be needed to disconnect from storage pool
@@ -717,7 +695,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                 storagePool.getname());
                     }
                     RefObject<VDS> tempRefObject = new RefObject<VDS>(selectedVds);
-                    spmStatus = HandleSpmStatusResult(curVdsId, vdsByPool, storagePool, tempRefObject, spmStatus);
+                    spmStatus =
+                            HandleSpmStatusResult(curVdsId, prioritizedVdsInPool, storagePool, tempRefObject, spmStatus);
                     selectedVds = tempRefObject.argvalue;
 
                     if (selectedVds != null) {
@@ -748,6 +727,21 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 }
             }
             return returnValue;
+        }
+
+        private List<VDS> GetPrioritizedVdsInPool() {
+            Guid curVdsId = (mCurrentVdsId != null) ? mCurrentVdsId : Guid.Empty;
+            // Gets a list of the hosts in the storagePool, that are "UP", ordered
+            // by vds_spm_priority (not including -1) and secondly ordered by RANDOM(), to
+            // deal with the case that there are several hosts with the same priority.
+            List<VDS> allVds = DbFacade.getInstance().getVdsDAO().getListForSpmSelection(_storagePoolId);
+            List<VDS> vdsRelevantForSpmSelection = new ArrayList<VDS>();
+            for (VDS vds : allVds) {
+                if (!mTriedVdssList.contains(vds.getvds_id()) && !vds.getvds_id().equals(curVdsId)) {
+                    vdsRelevantForSpmSelection.add(vds);
+                }
+            }
+            return vdsRelevantForSpmSelection;
         }
 
         private boolean _isSpmStartCalled;
@@ -845,6 +839,10 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         // spmId).FirstOrDefault();
                         for (VDS tempVds : vdsByPool) {
                             if (tempVds.getvds_spm_id() == spmId) {
+                                log.infoFormat("Found spm host {0}, host name: {1}, according to spmId: {2}.",
+                                        tempVds.getvds_id(),
+                                        tempVds.getvds_name(),
+                                        spmId);
                                 spmVds = tempVds;
                                 break;
                             }

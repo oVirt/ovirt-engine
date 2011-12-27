@@ -661,6 +661,7 @@
         <column>pm_enabled</column>
         <column>_create_date</column>
         <column>_update_date</column>
+        <column>vds_spm_priority</column>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>magenta-vdsc</value>
@@ -680,6 +681,7 @@
             <value>0</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
+            <value>8</value>
             <value>21</value>
         </row>
         <row>
@@ -701,6 +703,7 @@
             <value>0</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
+            <value>6</value>
             <value>21</value>
         </row>
     </table>

@@ -6,7 +6,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -268,4 +267,10 @@ public class VdsDAOWrapperImpl extends BaseDAOWrapperImpl implements VdsDAO {
         return null;
     }
     */
+
+    @Override
+    public List<VDS> getListForSpmSelection(Guid storagePoolId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

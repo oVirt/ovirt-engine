@@ -11,9 +11,10 @@ import org.ovirt.engine.api.model.HostStatus;
 import org.ovirt.engine.api.model.HostType;
 import org.ovirt.engine.api.model.IscsiDetails;
 import org.ovirt.engine.api.model.KSM;
-import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
+import org.ovirt.engine.api.model.PowerManagement;
+import org.ovirt.engine.api.model.StorageManager;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.VmSummary;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -55,6 +56,12 @@ public class HostMapper {
         if (model.isSetPowerManagement()) {
             entity = map(model.getPowerManagement(), entity);
         }
+        if (model.isSetStorageManager()) {
+            if (model.getStorageManager().isSetPriority()) {
+                entity.setVdsSpmPriority(model.getStorageManager().getPriority());
+            }
+        }
+
         return entity;
     }
 
@@ -125,12 +132,15 @@ public class HostMapper {
         if (status==HostStatus.NON_OPERATIONAL) {
             model.getStatus().setDetail(entity.getNonOperationalReason().name().toLowerCase());
         }
-        model.setStorageManager(entity.getspm_status() == VdsSpmStatus.SPM);
+        StorageManager sm = new StorageManager();
+        sm.setPriority(entity.getVdsSpmPriority());
+        sm.setValue(entity.getspm_status() == VdsSpmStatus.SPM);
+        model.setStorageManager(sm);
         model.setKsm(new KSM());
         model.getKsm().setEnabled(Boolean.TRUE.equals(entity.getksm_state()));
         model.setTransparentHugepages(new TransparentHugePages());
         model.getTransparentHugepages().setEnabled(!(entity.getTransparentHugePagesState() == null ||
-                                                     entity.getTransparentHugePagesState() == VdsTransparentHugePagesState.Never));
+                entity.getTransparentHugePagesState() == VdsTransparentHugePagesState.Never));
         if (entity.getIScsiInitiatorName() != null) {
             model.setIscsi(new IscsiDetails());
             model.getIscsi().setInitiator(entity.getIScsiInitiatorName());
@@ -230,12 +240,12 @@ public class HostMapper {
     @Mapping(from = VDSType.class, to = HostType.class)
     public static HostType map(VDSType type, HostType template) {
         switch (type) {
-            case VDS:
-                return HostType.RHEL;
-            case oVirtNode:
-                return HostType.RHEV_H;
-            default:
-                return null;
+        case VDS:
+            return HostType.RHEL;
+        case oVirtNode:
+            return HostType.RHEV_H;
+        default:
+            return null;
         }
     }
 }

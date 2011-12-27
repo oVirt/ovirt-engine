@@ -239,7 +239,8 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("pm_port", vds.getpm_port())
                 .addValue("pm_options", vds.getpm_options())
                 .addValue("pm_enabled", vds.getpm_enabled())
-                .addValue("otpValidity", vds.getOtpValidity());
+                .addValue("otpValidity", vds.getOtpValidity())
+                .addValue("vds_spm_priority", vds.getVdsSpmPriority());
         Map<String, Object> dbResults = new SimpleJdbcCall(jdbcTemplate)
                 .withProcedureName("InsertVdsStatic").execute(parameterSource);
 
@@ -265,8 +266,8 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("pm_port", vds.getpm_port())
                 .addValue("pm_options", vds.getpm_options())
                 .addValue("pm_enabled", vds.getpm_enabled())
-                .addValue("otp_validity", vds.getOtpValidity());
-
+                .addValue("otp_validity", vds.getOtpValidity())
+                .addValue("vds_spm_priority", vds.getVdsSpmPriority());
         getCallsHandler().executeModification("UpdateVdsStatic", parameterSource);
     }
 
