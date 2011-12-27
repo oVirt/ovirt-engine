@@ -107,8 +107,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
                                   new Object[] { CLUSTER_ID },
                                   asList(getEntity(0)));
         Network model = getModel(0);
-
-        Response response = collection.add(model);
+        Response response = ((BackendClusterNetworksResource)collection).add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Network);
         verifyModel((Network) response.getEntity(), 0);
@@ -136,7 +135,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         Network model = getModel(0);
 
         try {
-            collection.add(model);
+            ((BackendClusterNetworksResource)collection).add(model);
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyFault(wae, detail);
@@ -159,7 +158,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
                 new Object[] { vdsGroup },
                 true,
                 true);
-        collection.add(model);
+        ((BackendClusterNetworksResource)collection).add(model);
     }
 
     @Test
@@ -170,7 +169,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
-            collection.add(model);
+            ((BackendClusterNetworksResource)collection).add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
              verifyIncompleteException(wae, "Network", "add", "name");

@@ -122,7 +122,7 @@ public class BackendNetworksResourceTest
         model.setDataCenter(new DataCenter());
         model.getDataCenter().setId(DATA_CENTER_ID.toString());
 
-        Response response = collection.add(model);
+        Response response = ((BackendNetworksResource)collection).add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Network);
         verifyModel((Network) response.getEntity(), 0);
@@ -151,7 +151,7 @@ public class BackendNetworksResourceTest
         model.setDataCenter(new DataCenter());
         model.getDataCenter().setName(NAMES[1]);
 
-        Response response = collection.add(model);
+        Response response = ((BackendNetworksResource)collection).add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Network);
         verifyModel((Network) response.getEntity(), 0);
@@ -179,7 +179,7 @@ public class BackendNetworksResourceTest
         model.getDataCenter().setId(DATA_CENTER_ID.toString());
 
         try {
-            collection.add(model);
+            ((BackendNetworksResource)collection).add(model);
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyFault(wae, detail);
@@ -193,7 +193,7 @@ public class BackendNetworksResourceTest
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
-            collection.add(model);
+            ((BackendNetworksResource)collection).add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
              verifyIncompleteException(wae, "Network", "add", "dataCenter.name|id");
