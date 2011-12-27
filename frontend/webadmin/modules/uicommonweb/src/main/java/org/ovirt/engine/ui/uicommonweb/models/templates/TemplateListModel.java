@@ -1,26 +1,57 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicommonweb.models.configure.*;
-import org.ovirt.engine.ui.uicommonweb.models.vms.*;
-import org.ovirt.engine.core.common.interfaces.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.*;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
+import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.ObservableCollection;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Cloner;
+import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class TemplateListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
@@ -130,29 +161,65 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 		model.setTitle("Copy Template");
 		model.setHashName("copy_template");
 
-		//Select all active data storage domains where the template is not copied to.
-		java.util.ArrayList<storage_domains> domainsWithTemplate = DataProvider.GetStorageDomainListByTemplate(template.getId());
-		Guid storagePoolId = template.getstorage_pool_id() != null ? template.getstorage_pool_id().getValue() : Guid.Empty;
-		java.util.ArrayList<storage_domains> list = DataProvider.GetStorageDomainList(storagePoolId);
-		Collections.sort(list, new Linq.StorageDomainByNameComparer());
+		// Select all active data storage domains where the template is not
+		// copied to.
+		AsyncDataProvider.GetStorageDomainListByTemplate(new AsyncQuery(this,
+				new INewAsyncCallback() {
+					@Override
+					public void OnSuccess(Object target, Object returnValue) {
+						TemplateListModel templateListModel = (TemplateListModel) target;
+						java.util.ArrayList<storage_domains> domainsWithTemplate = (java.util.ArrayList<storage_domains>) returnValue;
+						templateListModel
+								.PostCopyGetStorageDomains(domainsWithTemplate);
+					}
+				}), template.getId());
+	}
 
+	private void PostCopyGetStorageDomains(java.util.ArrayList<storage_domains> domainsWithTemplate)
+	{
+		VmTemplate template = (VmTemplate) getSelectedItem();
+		Guid storagePoolId = template.getstorage_pool_id() != null ? template
+				.getstorage_pool_id().getValue() : Guid.Empty;
+
+		AsyncDataProvider.GetStorageDomainList(new AsyncQuery(new Object[] {
+				this, domainsWithTemplate }, new INewAsyncCallback() {
+			@Override
+			public void OnSuccess(Object target, Object returnValue) {
+				Object[] array = (Object[]) target;
+				TemplateListModel templateListModel = (TemplateListModel) array[0];
+				java.util.ArrayList<storage_domains> domainsWithTemplate = (java.util.ArrayList<storage_domains>) array[1];
+				java.util.ArrayList<storage_domains> storageDomains = (java.util.ArrayList<storage_domains>) returnValue;
+
+				Collections.sort(storageDomains,
+						new Linq.StorageDomainByNameComparer());
+				templateListModel.PostCopyGetStorageDomainList(storageDomains,
+						domainsWithTemplate);
+			}
+		}), storagePoolId);
+	}
+
+	private void PostCopyGetStorageDomainList(
+			java.util.ArrayList<storage_domains> storageDomains,
+			java.util.ArrayList<storage_domains> domainsWithTemplate)
+	{
 		java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
 		boolean isTemplateExistInOneActiveDomain = false;
-		for (storage_domains a : list)
-		{
+		for (storage_domains a : storageDomains) {
 			boolean templateNotExistInAnyDomain_iter = true;
-			for (storage_domains b : domainsWithTemplate)
-			{
-				if (b.getid().equals(a.getid()) && (b.getstatus() == null ? StorageDomainStatus.InActive : b.getstatus()) == StorageDomainStatus.Active)
-				{
+			for (storage_domains b : domainsWithTemplate) {
+				if (b.getid().equals(a.getid())
+						&& (b.getstatus() == null ? StorageDomainStatus.InActive
+								: b.getstatus()) == StorageDomainStatus.Active) {
 					templateNotExistInAnyDomain_iter = false;
 					isTemplateExistInOneActiveDomain = true;
 					break;
 				}
 			}
 
-			if ((a.getstorage_domain_type() == StorageDomainType.Data || a.getstorage_domain_type() == StorageDomainType.Master) && templateNotExistInAnyDomain_iter && (a.getstatus() == null ? null : a.getstatus()) == StorageDomainStatus.Active)
-			{
+			if ((a.getstorage_domain_type() == StorageDomainType.Data || a
+					.getstorage_domain_type() == StorageDomainType.Master)
+					&& templateNotExistInAnyDomain_iter
+					&& (a.getstatus() == null ? null : a.getstatus()) == StorageDomainStatus.Active) {
 				EntityModel entityModel = new EntityModel();
 				entityModel.setEntity(a);
 
@@ -160,21 +227,17 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 			}
 		}
 
+		ListModel model = (ListModel) getWindow();
 		model.setItems(items);
 
-		if (items.size() == 1)
-		{
+		if (items.size() == 1) {
 			items.get(0).setIsSelected(true);
 		}
 
-		if (items.isEmpty())
-		{
-			if (isTemplateExistInOneActiveDomain)
-			{
+		if (items.isEmpty()) {
+			if (isTemplateExistInOneActiveDomain) {
 				model.setMessage("Template already exists on all available Storage Domains.");
-			}
-			else
-			{
+			} else {
 				model.setMessage("No Storage Domain is available - check Storage Domains and Hosts status.");
 			}
 
@@ -183,9 +246,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 			tempVar.setIsDefault(true);
 			tempVar.setIsCancel(true);
 			model.getCommands().add(tempVar);
-		}
-		else
-		{
+		} else {
 			UICommand tempVar2 = new UICommand("OnCopy", this);
 			tempVar2.setTitle("OK");
 			tempVar2.setIsDefault(true);
@@ -242,10 +303,9 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 
 	private void Export()
 	{
-		VmTemplate template = (VmTemplate)getSelectedItem();
+		VmTemplate template = (VmTemplate) getSelectedItem();
 
-		if (getWindow() != null)
-		{
+		if (getWindow() != null) {
 			return;
 		}
 
@@ -254,35 +314,43 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 		model.setTitle("Backup Template");
 		model.setHashName("backup_template");
 
-		// 			var storages = DataProvider.GetStorageDomainList(template.storage_pool_id.Value)
-		// 				.Where(a => a.storage_domain_type == StorageDomainType.ImportExport)
-		// 				.ToList();
-		java.util.ArrayList<storage_domains> storages = new java.util.ArrayList<storage_domains>();
-		java.util.ArrayList<storage_domains> domains = DataProvider.GetStorageDomainList(template.getstorage_pool_id().getValue());
-		for (storage_domains a : domains)
-		{
-			if (a.getstorage_domain_type() == StorageDomainType.ImportExport)
-			{
-				storages.add(a);
-			}
-		}
+		model.getCollapseSnapshots().setIsAvailable(false);
 
-		model.getStorage().setItems(storages);
-		model.getStorage().setSelectedItem(Linq.FirstOrDefault(storages));
+		AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+				new INewAsyncCallback() {
+					@Override
+					public void OnSuccess(Object target, Object returnValue) {
+						TemplateListModel templateListModel = (TemplateListModel) target;
+						java.util.ArrayList<storage_domains> storageDomains = (java.util.ArrayList<storage_domains>) returnValue;
+						java.util.ArrayList<storage_domains> filteredStorageDomains = new java.util.ArrayList<storage_domains>();
 
+						for (storage_domains a : storageDomains) {
+							if (a.getstorage_domain_type() == StorageDomainType.ImportExport) {
+								filteredStorageDomains.add(a);
+							}
+						}
+
+						templateListModel
+								.PostExportGetStorageDomainList(filteredStorageDomains);
+					}
+				}), template.getstorage_pool_id().getValue());
+	}
+
+	private void PostExportGetStorageDomainList(java.util.ArrayList<storage_domains> storageDomains)
+	{
+		ExportVmModel model = (ExportVmModel) getWindow();
+		model.getStorage().setItems(storageDomains);
+		model.getStorage().setSelectedItem(Linq.FirstOrDefault(storageDomains));
 
 		boolean isAllStoragesActive = true;
-		for (storage_domains a : storages)
-		{
-			if (a.getstatus() != StorageDomainStatus.Active)
-			{
+		for (storage_domains a : storageDomains) {
+			if (a.getstatus() != StorageDomainStatus.Active) {
 				isAllStoragesActive = false;
 				break;
 			}
 		}
 
-		if (SelectedTemplatesOnDifferentDataCenters())
-		{
+		if (SelectedTemplatesOnDifferentDataCenters()) {
 			model.getCollapseSnapshots().setIsChangable(false);
 			model.getForceOverride().setIsChangable(false);
 
@@ -295,8 +363,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 			model.getCommands().add(tempVar);
 		}
 
-		else if (storages.isEmpty())
-		{
+		else if (storageDomains.isEmpty()) {
 			model.getForceOverride().setIsChangable(false);
 
 			model.setMessage("There is no Export Domain to export the Template into. Please attach an Export Domain to the Template's Data Center.");
@@ -306,9 +373,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 			tempVar2.setIsDefault(true);
 			tempVar2.setIsCancel(true);
 			model.getCommands().add(tempVar2);
-		}
-		else if (!isAllStoragesActive)
-		{
+		} else if (!isAllStoragesActive) {
 			model.getForceOverride().setIsChangable(false);
 
 			model.setMessage("The relevant Export Domain in not active. Please activate it.");
@@ -318,9 +383,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 			tempVar3.setIsDefault(true);
 			tempVar3.setIsCancel(true);
 			model.getCommands().add(tempVar3);
-		}
-		else
-		{
+		} else {
 			showWarningOnExistingTemplates(model);
 
 			UICommand tempVar4 = new UICommand("OnExport", this);

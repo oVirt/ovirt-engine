@@ -22,8 +22,10 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindSingleStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateNewPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
@@ -44,6 +46,8 @@ public class TemplateModule extends AbstractGinModule {
     @Singleton
     public MainModelProvider<VmTemplate, TemplateListModel> getTemplateListProvider(ClientGinjector ginjector,
             final Provider<TemplateNewPresenterWidget> popupProvider,
+            final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
+            final Provider<FindSingleStoragePopupPresenterWidget> copyPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new MainTabModelProvider<VmTemplate, TemplateListModel>(ginjector, TemplateListModel.class) {
             @Override
@@ -52,6 +56,10 @@ public class TemplateModule extends AbstractGinModule {
 
                 if (lastExecutedCommand == model.getEditCommand()) {
                     return popupProvider.get();
+                } else if (lastExecutedCommand == getModel().getExportCommand()) {
+                    return exportPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getCopyCommand()) {
+                    return copyPopupProvider.get();
                 } else {
                     return super.getModelPopup(lastExecutedCommand);
                 }

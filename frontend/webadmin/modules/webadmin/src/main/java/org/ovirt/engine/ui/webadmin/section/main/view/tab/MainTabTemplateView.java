@@ -87,13 +87,13 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
             }
         });
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>("Export", false, false) {
+        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>("Export") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getExportCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>("Copy", false, false) {
+        getTable().addActionButton(new UiCommandButtonDefinition<VmTemplate>("Copy") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getCopyCommand();
