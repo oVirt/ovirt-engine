@@ -45,8 +45,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     protected boolean canDoAction() {
         super.canDoAction();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ACTIVATE);
-        boolean returnValue = !IsObjecteLocked()
-                && CheckStoragePool()
+        boolean returnValue = CheckStoragePool()
                 && CheckStoragePoolStatusNotEqual(StoragePoolStatus.Uninitialized,
                                                   VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
                 && CheckStorageDomain()
@@ -60,6 +59,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
         final storage_pool_iso_map map = DbFacade.getInstance().getStoragePoolIsoMapDAO().get(new StoragePoolIsoMapId(getParameters().getStorageDomainId(),getParameters().getStoragePoolId()));
         changeStorageDomainStatusInTransaction(map,StorageDomainStatus.Locked);
+        freeLock();
 
         log.infoFormat("ActivateStorage Domain. Before Connect all hosts to pool. Time:{0}", new java.util.Date());
         ConnectAllHostsToPool();

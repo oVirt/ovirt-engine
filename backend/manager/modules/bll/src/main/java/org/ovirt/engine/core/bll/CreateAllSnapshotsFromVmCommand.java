@@ -50,6 +50,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         if (getDisksList().size() > 0) {
             if (getParameters().getParentCommand() != VdcActionType.RunVm) {
                 lockVmWithCompensationIfNeeded();
+                freeLock();
             }
 
             Guid vmSnapshotId = Guid.NewGuid();
@@ -112,8 +113,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                             getParameters().getParentCommand() != VdcActionType.RunVm,
                             true);
         }
-
-        result = result && !IsObjecteLocked();
 
         if (!result) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);

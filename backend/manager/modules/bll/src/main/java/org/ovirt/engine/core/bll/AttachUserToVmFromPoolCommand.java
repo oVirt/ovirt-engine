@@ -69,8 +69,6 @@ public class AttachUserToVmFromPoolCommand<T extends VmPoolUserParameters> exten
             }
         }
 
-        returnValue = returnValue && !IsObjecteLocked();
-
         if (!returnValue) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ALLOCATE_AND_RUN);
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_FROM_VM_POOL);

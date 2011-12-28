@@ -39,26 +39,14 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Override
     protected void ExecuteVmCommand() {
-        resetVmObjectReference();
-        if (getVm()  == null || !CanRemoveVm(getVmId())) {
+        if (!CanRemoveVm(getVmId())) {
             return;
         }
         if (getVm().getstatus() != VMStatus.ImageLocked || !getParameters().getForce()) {
             VmHandler.checkStatusAndLockVm(getVmId(), getCompensationContext());
         }
+        freeLock();
         setSucceeded(removeVm());
-    }
-
-
-
-    /*** NON-JAVADOC
-     * Resets the VM entity if exists, as the command may hold
-     * a VM entity that is no longer exist, for example - in a scenario where
-     * there are two close executions of multiple VMs removals, which include common
-     * VMs between these two multiple removals
-     ***/
-    private void resetVmObjectReference() {
-       setVm(null);
     }
 
     private boolean removeVm() {
@@ -90,7 +78,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         List<String> messages = getReturnValue().getCanDoActionMessages();
         messages.add(VdcBllMessages.VAR__ACTION__REMOVE.toString());
         messages.add(VdcBllMessages.VAR__TYPE__VM.toString());
-        return super.canDoAction() && !IsObjecteLocked() && isUnlockedOrForced(messages) && CanRemoveVm(getVmId(), messages);
+        return super.canDoAction() && isUnlockedOrForced(messages) && CanRemoveVm(getVmId(), messages);
     }
 
     private boolean isUnlockedOrForced(List<String> message) {
@@ -201,7 +189,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     @Override
     protected void EndVmCommand() {
         try {
-            if (AquireLock()) {
+            if (acquireLock()) {
                 // Ensures the lock on the VM guid can be acquired. This prevents a race
                 // between ExecuteVmCommand (for example, of a first multiple VMs removal that includes VM A,
                 // and a second multiple VMs removal that include the same VM).
@@ -213,7 +201,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
             setSucceeded(true);
         } finally {
-            FreeLock();
+            freeLock();
         }
     }
 }

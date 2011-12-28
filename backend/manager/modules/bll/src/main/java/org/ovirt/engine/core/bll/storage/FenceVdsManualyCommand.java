@@ -56,7 +56,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = !IsObjecteLocked();
+        boolean returnValue = true;
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MANUAL_FENCE);
         // check problematic vds status

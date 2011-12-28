@@ -135,6 +135,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                 return null;
             }
         });
+        freeLock();
         // if create succeeded activate
         if (getSucceeded()) {
             ActivateStorageDomains();
@@ -269,7 +270,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = super.canDoAction() && !IsObjecteLocked() && CheckStoragePool()
+        boolean returnValue = super.canDoAction() && CheckStoragePool()
                 && CheckStoragePoolStatus(StoragePoolStatus.Uninitialized) && InitializeVds()
                 && checkStorageDomainsInPool();
         return returnValue;
