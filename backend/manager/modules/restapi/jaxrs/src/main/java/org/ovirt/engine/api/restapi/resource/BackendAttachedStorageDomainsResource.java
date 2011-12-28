@@ -5,10 +5,12 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
+import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.AttachedStorageDomainResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
 
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
+import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -65,8 +67,15 @@ public class BackendAttachedStorageDomainsResource
 
     @Override
     public Response performRemove(String id) {
-        return performAction(VdcActionType.DetachStorageDomainFromPool,
-                             new DetachStorageDomainFromPoolParameters(asGuid(id), dataCenterId));
+        StorageDomain storageDomain = getAttachedStorageDomainSubResource(id).get();
+        if (storageDomain.getStorage().getType().equals(StorageType.LOCALFS.value())) {
+            RemoveStorageDomainParameters params = new RemoveStorageDomainParameters(asGuid(id));
+            params.setDoFormat(true);
+            return (performAction(VdcActionType.RemoveStorageDomain, params));
+        } else {
+            return (performAction(VdcActionType.DetachStorageDomainFromPool,
+                    new DetachStorageDomainFromPoolParameters(asGuid(id), dataCenterId)));
+        }
     }
 
     @Override

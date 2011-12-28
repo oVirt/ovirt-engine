@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
@@ -162,7 +163,7 @@ public class BackendAttachedStorageDomainResourceTest
 
     @Override
     protected storage_domains getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(storage_domains.class), index);
+        return setUpEntityExpectations(control.createMock(storage_domains.class), index, StorageType.NFS);
     }
 
     static storage_server_connections setUpStorageServerConnection() {

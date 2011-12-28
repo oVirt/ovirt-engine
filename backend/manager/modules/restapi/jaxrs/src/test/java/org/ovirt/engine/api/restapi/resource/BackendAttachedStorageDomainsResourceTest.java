@@ -12,6 +12,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
+import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -28,7 +29,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.expect;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
 
 public class BackendAttachedStorageDomainsResourceTest
@@ -49,11 +49,7 @@ public class BackendAttachedStorageDomainsResourceTest
     public void testAdd() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
-                StorageServerConnectionQueryParametersBase.class,
-                new String[] { "ServerConnectionId" },
-                new Object[] { GUIDS[0].toString() },
-                setUpStorageServerConnection());
+        setUpGetConnection(1);
 
         setUpCreationExpectations(VdcActionType.AttachStorageDomainToPool,
                                   DetachStorageDomainFromPoolParameters.class,
@@ -88,11 +84,7 @@ public class BackendAttachedStorageDomainsResourceTest
     public void testAddByName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
-                StorageServerConnectionQueryParametersBase.class,
-                new String[] { "ServerConnectionId" },
-                new Object[] { GUIDS[0].toString() },
-                setUpStorageServerConnection());
+        setUpGetConnection(1);
         setUpGetEntityExpectations("Storage: name=" + NAMES[0],
                                    SearchType.StorageDomain,
                                    getEntity(0));
@@ -163,12 +155,8 @@ public class BackendAttachedStorageDomainsResourceTest
 
     @Test
     public void testRemove() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
-                StorageServerConnectionQueryParametersBase.class,
-                new String[] { "ServerConnectionId" },
-                new Object[] { GUIDS[0].toString() },
-                setUpStorageServerConnection());
-        setUpGetEntityExpectations(GUIDS[0]);
+        setUpGetConnection(2);
+        setUpGetEntityExpectations(GUIDS[0], 2, getEntity(0));
         setUriInfo(setUpActionExpectations(VdcActionType.DetachStorageDomainFromPool,
                                            DetachStorageDomainFromPoolParameters.class,
                                            new String[] { "StorageDomainId", "StoragePoolId" },
@@ -178,13 +166,38 @@ public class BackendAttachedStorageDomainsResourceTest
         verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
-    private void setUpGetEntityExpectations(Guid guid) throws Exception {
-        setUpGetEntityExpectations(guid, false);
+    @Test
+    public void testRemoveLocalStorage() throws Exception {
+        setUpGetConnection(2);
+        setUpGetEntityExpectations(GUIDS[0], 2, getEntity(0, StorageType.LOCALFS));
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageDomain,
+                                           RemoveStorageDomainParameters.class,
+                                           new String[] { "StorageDomainId"},
+                                           new Object[] { GUIDS[0] },
+                                           true,
+                                           true));
+        verifyRemove(collection.remove(GUIDS[0].toString()));
+    }
+
+    private void setUpGetConnection(int times) throws Exception {
+        for (int i=0; i<times; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
+                    StorageServerConnectionQueryParametersBase.class,
+                    new String[] { "ServerConnectionId" },
+                    new Object[] { GUIDS[0].toString() },
+                    setUpStorageServerConnection());
+        }
+    }
+
+    private void setUpGetEntityExpectations(Guid guid, int times, storage_domains entity) throws Exception {
+        for (int i=0; i<times; i++) {
+            setUpGetEntityExpectations(guid, entity);
+        }
     }
 
     @Test
     public void testRemoveNonExistant() throws Exception{
-        setUpGetEntityExpectations(NON_EXISTANT_GUID, true);
+        setUpGetEntityExpectations(NON_EXISTANT_GUID, null);
         control.replay();
         try {
             collection.remove(NON_EXISTANT_GUID.toString());
@@ -195,12 +208,12 @@ public class BackendAttachedStorageDomainsResourceTest
         }
     }
 
-    private void setUpGetEntityExpectations(Guid entityId, boolean returnNull) throws Exception {
+    private void setUpGetEntityExpectations(Guid entityId, storage_domains entity) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetStorageDomainByIdAndStoragePoolId,
                 StorageDomainAndPoolQueryParameters.class,
                 new String[] { "StorageDomainId", "StoragePoolId" },
                 new Object[] { entityId, GUIDS[NAMES.length-1] },
-                returnNull ? null : getEntity(0));
+                entity);
     }
 
     @Test
@@ -230,12 +243,8 @@ public class BackendAttachedStorageDomainsResourceTest
     }
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
-                StorageServerConnectionQueryParametersBase.class,
-                new String[] { "ServerConnectionId" },
-                new Object[] { GUIDS[0].toString() },
-                setUpStorageServerConnection());
-        setUpGetEntityExpectations(GUIDS[0]);
+        setUpGetConnection(2);
+        setUpGetEntityExpectations(GUIDS[0], 2, getEntity(0));
         setUriInfo(setUpActionExpectations(VdcActionType.DetachStorageDomainFromPool,
                                            DetachStorageDomainFromPoolParameters.class,
                                            new String[] { "StorageDomainId", "StoragePoolId" },
@@ -273,14 +282,19 @@ public class BackendAttachedStorageDomainsResourceTest
 
     protected storage_domains getEntity(int index) {
         storage_domains entity = control.createMock(storage_domains.class);
-        return setUpEntityExpectations(entity, index);
+        return setUpEntityExpectations(entity, index, StorageType.NFS);
     }
 
-    static storage_domains setUpEntityExpectations(storage_domains entity, int index) {
+    protected storage_domains getEntity(int index, StorageType storageType) {
+        storage_domains entity = control.createMock(storage_domains.class);
+        return setUpEntityExpectations(entity, index, storageType);
+    }
+
+    static storage_domains setUpEntityExpectations(storage_domains entity, int index, StorageType storageType) {
         expect(entity.getid()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getstatus()).andReturn(StorageDomainStatus.Active).anyTimes();
         expect(entity.getstorage_domain_type()).andReturn(StorageDomainType.Master).anyTimes();
-        expect(entity.getstorage_type()).andReturn(StorageType.NFS).anyTimes();
+        expect(entity.getstorage_type()).andReturn(storageType).anyTimes();
         expect(entity.getstorage()).andReturn(GUIDS[0].toString()).anyTimes();
         return entity;
     }
