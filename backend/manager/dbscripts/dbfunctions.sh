@@ -149,6 +149,18 @@ is_view_or_sp_changed() {
     return $result
 }
 
+validate_version_uniqueness() {
+    prev=""
+    for file in upgrade/??_??_????*.sql; do
+        ver="${file:8:2}${file:11:2}${file:14:4}"
+        if [ "$ver" = "$prev" ]; then
+            echo "Operation aborted, found duplicate version : $ver"
+            exit 1
+        fi
+        prev=$ver
+    done
+}
+
 run_upgrade_files() {
     set_version
     current=$(get_current_version)
@@ -156,6 +168,7 @@ run_upgrade_files() {
     if [ $res -gt 0 ]; then
         state="FAILED"
         updated=0
+        validate_version_uniqueness
         is_view_or_sp_changed
 
         # Checks if a view or sp file has been changed
