@@ -296,9 +296,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("1")
     NumberVmRefreshesBeforeSave(97),
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("0")
-    ImagesSyncronizationTimeout(98),
-    @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
     AutoRepoDomainRefreshTime(99),
     @TypeConverterAttribute(String.class)

@@ -19,9 +19,6 @@ public interface IrsServerConnector {
     public Map<String, Object> setVolumeDescription(String sdUUID, String spUUID, String imgGUID, String volUUID,
             String description);
 
-    public Map<String, Object> setVolumeLegality(String sdUUID, String spUUID, String imgGUID, String volUUID,
-            String legality);
-
     public Map<String, Object> mergeSnapshots(String sdUUID, String spUUID, String vmGUID, String imgGUID,
             String ancestorUUID, String successorUUID);
 
@@ -33,8 +30,6 @@ public interface IrsServerConnector {
 
     public Map<String, Object> deleteVolume(String sdUUID, String spUUID, String imgGUID, String[] volUUID,
             String postZero, String force);
-
-    public Map<String, Object> getVolumesList(String sdUUID, String spUUID, String imgGUID);
 
     public Map<String, Object> getVolumeInfo(String sdUUID, String spUUID, String imgGUID, String volUUID);
 

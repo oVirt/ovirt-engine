@@ -42,7 +42,6 @@ public final class AuditLogDirector {
         initBookmarkSeverities();
         initVMSeverities();
         initTagSeverities();
-        initImageSynchronizerSeverities();
         initClusterSeverities();
         initMLASeverities();
         initHostSeverities();
@@ -488,18 +487,6 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_MOVE_TAG_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.UPDATE_TAGS_VM_DEFAULT_DISPLAY_TYPE, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.UPDATE_TAGS_VM_DEFAULT_DISPLAY_TYPE_FAILED, AuditLogSeverity.NORMAL);
-    }
-
-    private static void initImageSynchronizerSeverities() {
-        mSeverities.put(AuditLogType.IMAGES_SYNCRONIZER_DESKTOP_NOT_EXIST_IN_VDC, AuditLogSeverity.WARNING);
-        mSeverities.put(AuditLogType.IMAGES_SYNCRONIZER_TEMPLATE_NOT_EXIST_IMAGE_EXIST, AuditLogSeverity.ERROR);
-        mSeverities.put(AuditLogType.IMAGES_SYNCRONIZER_SNAPSHOT_NOT_EXIST_IN_VDC, AuditLogSeverity.WARNING);
-        mSeverities.put(AuditLogType.IMAGES_SYNCRONIZER_SNAPSHOTS_NOT_ATTACHED_TO_VM_IN_VDC, AuditLogSeverity.ERROR);
-        mSeverities.put(AuditLogType.IMAGES_SYNCRONIZER_TEMPLATE_NOT_EXIST_IN_VDC, AuditLogSeverity.WARNING);
-        mSeverities.put(AuditLogType.IMAGES_SYNCRONIZER_DESKTOP_NOT_EXIST_IN_IRS, AuditLogSeverity.WARNING);
-        mSeverities.put(AuditLogType.IMAGES_SYNCRONIZER_SNAPSHOT_NOT_EXIST_IN_IRS, AuditLogSeverity.WARNING);
-        mSeverities.put(AuditLogType.IMAGES_SYNCRONIZER_DESKTOP_WITHOUT_TEMPLATE_VDC, AuditLogSeverity.WARNING);
-        mSeverities.put(AuditLogType.IMAGES_SYNCRONIZER_IMAGE_TEMPLATE_NOT_EXIST, AuditLogSeverity.WARNING);
     }
 
     private static void initImportExportSeverities() {

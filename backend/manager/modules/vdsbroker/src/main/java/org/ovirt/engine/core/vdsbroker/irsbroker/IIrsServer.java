@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.vdsbroker.vdsbroker.*;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
-
 import java.util.Map;
+
+import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.StorageDomainListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 
 public interface IIrsServer {
@@ -18,16 +19,11 @@ public interface IIrsServer {
     StatusOnlyReturnForXmlRpc setVolumeDescription(String sdUUID, String spUUID, String imgGUID, String volUUID,
             String description);
 
-    StatusOnlyReturnForXmlRpc setVolumeLegality(String sdUUID, String spUUID, String imgGUID, String volUUID,
-            String legality);
-
     OneUuidReturnForXmlRpc mergeSnapshots(String sdUUID, String spUUID, String vmGUID, String imgGUID,
             String ancestorUUID, String successorUUID, String postZero);
 
     OneUuidReturnForXmlRpc deleteVolume(String sdUUID, String spUUID, String imgGUID, String[] volUUID,
             String postZero, String force);
-
-    UuidListReturnForXmlRpc getVolumesList(String sdUUID, String spUUID, String imgGUID);
 
     OneImageInfoReturnForXmlRpc getVolumeInfo(String sdUUID, String spUUID, String imgGUID, String volUUID);
 

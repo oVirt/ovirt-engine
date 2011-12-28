@@ -51,32 +51,6 @@ public final class ImagesHandler {
         return snapshots;
     }
 
-    public static Iterable<DiskImage> getAllImageSnapshotsFromIrs(Guid imageId, Guid imageTemplateId) {
-        List<DiskImage> snapshots = new ArrayList<DiskImage>();
-        Guid curImage = imageId;
-        while (!imageTemplateId.equals(curImage) && !curImage.equals(Guid.Empty)) {
-            DiskImage image = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(curImage);
-            Guid storagePoolId = image.getstorage_pool_id() != null ? image.getstorage_pool_id().getValue()
-                    : Guid.Empty;
-            Guid storageDomainId = image.getstorage_id() != null ? image.getstorage_id().getValue() : Guid.Empty;
-            Guid imageGroupId = image.getimage_group_id() != null ? image.getimage_group_id().getValue() : Guid.Empty;
-            DiskImage curDiskImage =
-                    (DiskImage) Backend
-                            .getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(
-                                    VDSCommandType.GetImageInfo,
-                                    new GetImageInfoVDSCommandParameters(storagePoolId,
-                                            storageDomainId,
-                                            imageGroupId,
-                                            curImage))
-                            .getReturnValue();
-            snapshots.add(curDiskImage);
-            curImage = curDiskImage.getParentId();
-        }
-        return snapshots;
-    }
-
     public static int getImagesMappedToDrive(Guid vmId, String drive, RefObject<DiskImage> activeImage,
             RefObject<DiskImage> inactiveImage) {
         return getImagesMappedToDrive(DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId),

@@ -187,8 +187,6 @@ public class Backend implements BackendInternal, BackendRemote {
 
         TagsDirector.getInstance();
         log.infoFormat("TagsDirector: {0}", new Date());
-        ImagesSyncronizer.getInstance();
-        log.infoFormat("ImagesSyncronizer: {0}", new Date());
         IsoDomainListSyncronizer.getInstance();
         log.infoFormat("IsoDomainListSyncronizer: {0}", new Date());
         InitHandlers();
