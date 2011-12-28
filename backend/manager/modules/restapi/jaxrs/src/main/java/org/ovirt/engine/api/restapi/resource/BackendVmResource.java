@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -310,5 +311,11 @@ public class BackendVmResource extends
                     entity.getStaticData());
             return new VmManagementParametersBase(updated);
         }
+    }
+
+    @Override
+    public Response cancelMigration(Action action) {
+        return doAction(VdcActionType.CancelMigrateVm,
+                new VmOperationParameterBase(guid), action);
     }
 }

@@ -38,7 +38,7 @@ import org.ovirt.engine.api.model.VM;
 @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
 public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreatedResource, MeasurableResource {
 
-    @Path("{action: (start|stop|shutdown|suspend|detach|migrate|export|move|ticket)}/{oid}")
+    @Path("{action: (start|stop|shutdown|suspend|detach|migrate|export|move|ticket|cancelmigration)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
 
     @POST
@@ -103,6 +103,13 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
     @Actionable
     @Path("ticket")
     public Response ticket(Action action);
+
+    @POST
+    @Formatted
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
+    @Actionable
+    @Path("cancelmigration")
+    public Response cancelMigration(Action action);
 
     @Path("cdroms")
     public DevicesResource<CdRom, CdRoms> getCdRomsResource();

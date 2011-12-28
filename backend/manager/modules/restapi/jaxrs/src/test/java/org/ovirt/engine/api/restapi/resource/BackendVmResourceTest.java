@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.queries.GetVdsByNameParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 
 import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.setUpEntityExpectations;
@@ -392,6 +393,16 @@ public class BackendVmResourceTest
                                            new Object[] { GUIDS[0], StopVmTypeEnum.NORMAL }));
 
         verifyActionResponse(resource.stop(new Action()));
+    }
+
+    @Test
+    public void testCancelMigration() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.CancelMigrateVm,
+                                           VmOperationParameterBase.class,
+                                           new String[] { "VmId" },
+                                           new Object[] { GUIDS[0] }));
+
+        verifyActionResponse(resource.cancelMigration(new Action()));
     }
 
     @Test
