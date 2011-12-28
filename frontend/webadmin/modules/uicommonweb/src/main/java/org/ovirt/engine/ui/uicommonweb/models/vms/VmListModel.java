@@ -1816,6 +1816,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		setWindow(model);
 		model.setTitle("Migrate Virtual Machine(s)");
 		model.setHashName("migrate_virtual_machine");
+		model.setVmsOnSameCluster(true);
 		model.setIsAutoSelect(true);
 		model.setVmList(Linq.<VM>Cast(getSelectedItems()));
 
@@ -1832,7 +1833,6 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 	private void PostMigrateGetUpHosts(java.util.ArrayList<VDS> hosts)
 	{
 		MigrateModel model = (MigrateModel) getWindow();
-		model.setVmsOnSameCluster(true);
 		NGuid run_on_vds = null;
 		boolean allRunOnSameVds = true;
 
