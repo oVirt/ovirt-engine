@@ -75,6 +75,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         storage_domains dom = getStorageDomain();
         VDS vds = getVds();
         boolean format = getParameters().getDoFormat();
+        boolean localFs = isLocalFs(dom);
 
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
 
@@ -82,17 +83,23 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             return false;
         }
 
-        if (!isLocalFs(dom) && !CheckStorageDomainNotInPool()) {
+        if (!localFs && !CheckStorageDomainNotInPool()) {
             return false;
         }
 
-        if (isLocalFs(dom) && isDomainAttached(dom) && !canDetachDomain(getParameters().getDestroyingPool(), false, true)) {
+        if (localFs && isDomainAttached(dom) && !canDetachDomain(getParameters().getDestroyingPool(), false, true)) {
             return false;
         }
 
         if (vds == null) {
-            addCanDoActionMessage(VdcBllMessages.CANNOT_REMOVE_STORAGE_DOMAIN_INVALID_HOST_ID);
-            return false;
+            if (localFs) {
+                if (!InitializeVds()) {
+                    return false;
+                }
+            } else {
+                addCanDoActionMessage(VdcBllMessages.CANNOT_REMOVE_STORAGE_DOMAIN_INVALID_HOST_ID);
+                return false;
+            }
         }
 
         if (isDataDomain(dom) && !format) {
