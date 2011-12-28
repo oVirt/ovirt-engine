@@ -33,7 +33,7 @@
 			white-space: nowrap;
 			font-family: Arial,sans-serif;		
 			color: #777777;
-			padding-left: 10px;				
+			padding-left: 4px;
 		}
 		
 		@external formPanel_viewerNamesColumn;

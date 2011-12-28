@@ -11,13 +11,13 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.form.FormBuilder;
 import org.ovirt.engine.ui.webadmin.widget.form.FormItem;
 import org.ovirt.engine.ui.webadmin.widget.form.GeneralFormPanel;
+import org.ovirt.engine.ui.webadmin.widget.label.TextBoxLabel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, VmListModel, VmGeneralModel> implements SubTabVirtualMachineGeneralPresenter.ViewDef, Editor<VmGeneralModel> {
@@ -30,27 +30,27 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
         Driver driver = GWT.create(Driver.class);
     }
 
-    Label name = new Label();
-    Label description = new Label();
-    Label template = new Label();
-    Label definedMemory = new Label();
-    Label minAllocatedMemory = new Label();
-    Label oS = new Label();
-    Label cpuInfo = new Label();
-    Label defaultDisplayType = new Label();
-    Label storageDomain = new Label();
-    Label origin = new Label();
-    Label priority = new Label();
-    Label usbPolicy = new Label();
-    Label defaultHost = new Label();
-    Label customProperties = new Label();
-    Label domain = new Label();
-    Label timeZone = new Label();
+    TextBoxLabel name = new TextBoxLabel();
+    TextBoxLabel description = new TextBoxLabel();
+    TextBoxLabel template = new TextBoxLabel();
+    TextBoxLabel definedMemory = new TextBoxLabel();
+    TextBoxLabel minAllocatedMemory = new TextBoxLabel();
+    TextBoxLabel oS = new TextBoxLabel();
+    TextBoxLabel cpuInfo = new TextBoxLabel();
+    TextBoxLabel defaultDisplayType = new TextBoxLabel();
+    TextBoxLabel storageDomain = new TextBoxLabel();
+    TextBoxLabel origin = new TextBoxLabel();
+    TextBoxLabel priority = new TextBoxLabel();
+    TextBoxLabel usbPolicy = new TextBoxLabel();
+    TextBoxLabel defaultHost = new TextBoxLabel();
+    TextBoxLabel customProperties = new TextBoxLabel();
+    TextBoxLabel domain = new TextBoxLabel();
+    TextBoxLabel timeZone = new TextBoxLabel();
 
     @Ignore
-    Label monitorCount = new Label();
+    TextBoxLabel monitorCount = new TextBoxLabel();
     @Ignore
-    Label isHighlyAvailable = new Label();
+    TextBoxLabel isHighlyAvailable = new TextBoxLabel();
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
@@ -69,6 +69,7 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 7);
+        formBuilder.setColumnsWidth("120px", "240px", "160px");
         formBuilder.addFormItem(new FormItem("Name", name, 0, 0));
         formBuilder.addFormItem(new FormItem("Description", description, 1, 0));
         formBuilder.addFormItem(new FormItem("Template", template, 2, 0));

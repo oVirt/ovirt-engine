@@ -16,7 +16,7 @@ public class NullableNumberRenderer extends NumberFormatRenderer {
     @Override
     public String render(Number object) {
         String formattedNumber = super.render(object);
-        return new EmptyValueRenderer<String>().render(formattedNumber);
+        return new EmptyValueRenderer<String>(true).render(formattedNumber);
     }
 
 }

@@ -2,11 +2,14 @@ package org.ovirt.engine.ui.webadmin.widget.form;
 
 import java.util.List;
 
+import org.ovirt.engine.ui.webadmin.widget.label.TextBoxLabel;
+
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AbstractFormPanel extends Composite {
@@ -38,8 +41,16 @@ public abstract class AbstractFormPanel extends Composite {
         }
 
         // Create FormItem value label
-        Widget value = item.getValue();
+        Widget widget = item.getValue();
+        TextBoxLabel value = new TextBoxLabel();
         value.setStyleName("formPanel_itemValue");
+
+        if (widget instanceof TextBoxLabel) {
+            value = (TextBoxLabel) widget;
+        }
+        else if (widget instanceof ValueLabel<?>) {
+            value.setText(((ValueLabel<?>) widget).getElement().getInnerHTML());
+        }
 
         // Add FormItem at the appropriate position (by the row/column specified in FormItem)
         detailViewers.get(item.getColumn()).setWidget(item.getRow(), 0, name);
@@ -57,6 +68,12 @@ public abstract class AbstractFormPanel extends Composite {
     public void clear() {
         for (Grid detailViewer : detailViewers) {
             detailViewer.clear(true);
+        }
+    }
+
+    public void setColumnsWidth(String... columnsWidth) {
+        for (int i = 0; i < detailViewers.size(); i++) {
+            detailViewers.get(i).getColumnFormatter().setWidth(1, columnsWidth[i]);
         }
     }
 }

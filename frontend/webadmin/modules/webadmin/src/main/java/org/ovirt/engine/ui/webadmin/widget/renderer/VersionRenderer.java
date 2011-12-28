@@ -10,7 +10,7 @@ public class VersionRenderer extends AbstractRenderer<Version> {
     @Override
     public String render(Version version) {
         String formattedVersion = Extensions.GetFriendlyVersion(version).toString();
-        return new EmptyValueRenderer<String>().render(formattedVersion);
+        return new EmptyValueRenderer<String>(true).render(formattedVersion);
     }
 
 }

@@ -11,13 +11,13 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.form.FormBuilder;
 import org.ovirt.engine.ui.webadmin.widget.form.FormItem;
 import org.ovirt.engine.ui.webadmin.widget.form.GeneralFormPanel;
+import org.ovirt.engine.ui.webadmin.widget.label.TextBoxLabel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SubTabPoolGeneralView extends AbstractSubTabFormView<vm_pools, PoolListModel, PoolGeneralModel> implements SubTabPoolGeneralPresenter.ViewDef, Editor<PoolGeneralModel> {
@@ -30,28 +30,28 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<vm_pools, Pool
         Driver driver = GWT.create(Driver.class);
     }
 
-    Label cpuInfo = new Label();
-    Label defaultDisplayType = new Label();
-    Label defaultHost = new Label();
-    Label definedMemory = new Label();
-    Label description = new Label();
-    Label domain = new Label();
-    Label minAllocatedMemory = new Label();
-    Label name = new Label();
-    Label origin = new Label();
-    Label oS = new Label();
-    Label storageDomain = new Label();
-    Label template = new Label();
-    Label timeZone = new Label();
-    Label usbPolicy = new Label();
+    TextBoxLabel cpuInfo = new TextBoxLabel();
+    TextBoxLabel defaultDisplayType = new TextBoxLabel();
+    TextBoxLabel defaultHost = new TextBoxLabel();
+    TextBoxLabel definedMemory = new TextBoxLabel();
+    TextBoxLabel description = new TextBoxLabel();
+    TextBoxLabel domain = new TextBoxLabel();
+    TextBoxLabel minAllocatedMemory = new TextBoxLabel();
+    TextBoxLabel name = new TextBoxLabel();
+    TextBoxLabel origin = new TextBoxLabel();
+    TextBoxLabel oS = new TextBoxLabel();
+    TextBoxLabel storageDomain = new TextBoxLabel();
+    TextBoxLabel template = new TextBoxLabel();
+    TextBoxLabel timeZone = new TextBoxLabel();
+    TextBoxLabel usbPolicy = new TextBoxLabel();
 
     @Ignore
     // TODO: primitive field
-    Label isStateless = new Label();
+    TextBoxLabel isStateless = new TextBoxLabel();
 
     @Ignore
     // TODO: primitive field
-    Label monitorCount = new Label();
+    TextBoxLabel monitorCount = new TextBoxLabel();
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
@@ -70,6 +70,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<vm_pools, Pool
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 6);
+        formBuilder.setColumnsWidth("120px", "240px", "160px");
         formBuilder.addFormItem(new FormItem("Name", name, 0, 0));
         formBuilder.addFormItem(new FormItem("Description", description, 1, 0));
         formBuilder.addFormItem(new FormItem("Template", template, 2, 0));

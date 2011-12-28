@@ -83,4 +83,9 @@ public class FormBuilder {
 
         }
     };
+
+    public void setColumnsWidth(String... columnsWidth) {
+        formPanel.setColumnsWidth(columnsWidth);
+    }
+
 }

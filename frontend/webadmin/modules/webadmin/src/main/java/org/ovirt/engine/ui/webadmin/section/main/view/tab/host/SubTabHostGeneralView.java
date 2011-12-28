@@ -44,15 +44,15 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     }
 
     // We need this in order to find the icon for alert messages:
-    private ApplicationResources resources;
+    private final ApplicationResources resources;
 
-    TextBoxLabel oS = new TextBoxLabel();
-    TextBoxLabel kvmVersion = new TextBoxLabel();
-    TextBoxLabel spiceVersion = new TextBoxLabel();
-    TextBoxLabel kernelVersion = new TextBoxLabel();
-    TextBoxLabel iScsiInitiatorName = new TextBoxLabel();
-    TextBoxLabel cpuName = new TextBoxLabel();
-    TextBoxLabel cpuType = new TextBoxLabel();
+    TextBoxLabel oS = new TextBoxLabel(true);
+    TextBoxLabel kvmVersion = new TextBoxLabel(true);
+    TextBoxLabel spiceVersion = new TextBoxLabel(true);
+    TextBoxLabel kernelVersion = new TextBoxLabel(true);
+    TextBoxLabel iScsiInitiatorName = new TextBoxLabel(true);
+    TextBoxLabel cpuName = new TextBoxLabel(true);
+    TextBoxLabel cpuType = new TextBoxLabel(true);
     VersionLabel vdsmVersion = new VersionLabel();
     PercentLabel<Integer> sharedMemory = new PercentLabel<Integer>();
     BooleanLabel memoryPageSharing = new BooleanLabel("Active", "Inactive");
@@ -114,6 +114,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 6);
+        formBuilder.setColumnsWidth("230px", "120px", "270px");
         formBuilder.addFormItem(new FormItem("OS Version", oS, 0, 0));
         formBuilder.addFormItem(new FormItem("Kernel Version", kernelVersion, 1, 0));
         formBuilder.addFormItem(new FormItem("KVM Version", kvmVersion, 2, 0));
@@ -152,12 +153,14 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formBuilder.showForm(getDetailModel(), Driver.driver);
     }
 
+    @Override
     public void clearAlerts() {
         // Remove all the alert widgets and make the panel invisible:
         alertsList.clear();
         alertsPanel.setVisible(false);
     }
 
+    @Override
     public void addAlert(Widget alertWidget) {
         // Create a composite panel that contains the alert icon and the widget provided
         // by the caller, both rendered horizontally:

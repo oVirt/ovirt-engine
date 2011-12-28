@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.webadmin.widget.form.FormItem;
 import org.ovirt.engine.ui.webadmin.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.webadmin.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentLabel;
+import org.ovirt.engine.ui.webadmin.widget.label.TextBoxLabel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
@@ -19,7 +20,6 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -50,10 +50,10 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<storage_dom
     PercentLabel<Integer> overAllocationRatio = new PercentLabel<Integer>();
 
     @Path("nfsPath")
-    Label nfsExportPath = new Label();
+    TextBoxLabel nfsExportPath = new TextBoxLabel();
 
     @Path("localPath")
-    Label hostLocalPath = new Label();
+    TextBoxLabel hostLocalPath = new TextBoxLabel();
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
@@ -72,6 +72,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<storage_dom
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 6);
+        formBuilder.setColumnsWidth("100%");
         formBuilder.addFormItem(new FormItem("Size", totalSize, 0, 0));
         formBuilder.addFormItem(new FormItem("Available", availableSize, 1, 0));
         formBuilder.addFormItem(new FormItem("Used", usedSize, 2, 0));

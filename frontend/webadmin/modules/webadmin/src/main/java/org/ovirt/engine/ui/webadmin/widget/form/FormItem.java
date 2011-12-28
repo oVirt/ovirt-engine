@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.webadmin.widget.form;
 
+import org.ovirt.engine.ui.webadmin.widget.label.TextBoxLabel;
+
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.LabelBase;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FormItem extends Composite {
@@ -43,7 +44,8 @@ public class FormItem extends Composite {
         return value;
     }
 
-    public void setValue(LabelBase<?> value) {
+    public void setValue(Widget value) {
+        TextBoxLabel textBoxLabel = new TextBoxLabel(value.toString());
         this.value = value;
     }
 

@@ -6,11 +6,18 @@ import com.google.gwt.text.shared.AbstractRenderer;
 
 public class EmptyValueRenderer<T> extends AbstractRenderer<T> {
 
-    private static String unAvailablePropertyLabel;
+    private String unAvailablePropertyLabel = "";
+
+    boolean showUnAvailableLabel;
 
     public EmptyValueRenderer() {
-        unAvailablePropertyLabel =
-                ClientGinjectorProvider.instance().getApplicationConstants().unAvailablePropertyLabel();
+    }
+
+    public EmptyValueRenderer(boolean showUnAvailableLabel) {
+        if (showUnAvailableLabel) {
+            unAvailablePropertyLabel =
+                    ClientGinjectorProvider.instance().getApplicationConstants().unAvailablePropertyLabel();
+        }
     }
 
     @Override

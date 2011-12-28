@@ -7,13 +7,28 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class TextBoxLabel extends TextBox {
 
+    boolean handleEmptyValue;
+
     public TextBoxLabel() {
         setReadOnly(true);
         getElement().getStyle().setBorderWidth(0, Unit.PX);
+        getElement().getStyle().setWidth(100, Unit.PCT);
+    }
+
+    public TextBoxLabel(String text) {
+        super();
+        setText(text);
+    }
+
+    public TextBoxLabel(boolean handleEmptyValue) {
+        this();
+        this.handleEmptyValue = handleEmptyValue;
     }
 
     @Override
     public void setText(String text) {
-        super.setText(new EmptyValueRenderer<String>().render(text));
+        String renderedText = new EmptyValueRenderer<String>(handleEmptyValue).render(text);
+        super.setText(renderedText);
+        super.setTitle(renderedText);
     }
 }
