@@ -48,17 +48,19 @@ public class JsonObjectSerializationEntitiesTest {
     @Parameters
     public static Collection<Object[]> data() {
         RandomUtils random = RandomUtils.instance();
+        VdsStatic vdsStatic = new VdsStatic(random.nextString(10),
+                                    random.nextString(10),
+                                    random.nextString(10),
+                                    random.nextInt(),
+                                    Guid.NewGuid(),
+                                    Guid.NewGuid(),
+                                    random.nextString(10),
+                                    random.nextBoolean(),
+                                    random.nextEnum(VDSType.class));
+        vdsStatic.setpm_options("option1=value1,option2=value2");
         Object[][] data =
                 new Object[][] {
-                        { new VdsStatic(random.nextString(10),
-                                random.nextString(10),
-                                random.nextString(10),
-                                random.nextInt(),
-                                Guid.NewGuid(),
-                                Guid.NewGuid(),
-                                random.nextString(10),
-                                random.nextBoolean(),
-                                random.nextEnum(VDSType.class)) },
+                        { vdsStatic },
                         { new VdsDynamic(random.nextInt(),
                                 random.nextString(10),
                                 random.nextDouble(),
