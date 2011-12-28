@@ -30,7 +30,10 @@
 				<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 				<e:ListModelListBoxEditor ui:field="networkEditor" />
 				<e:ListModelListBoxEditor ui:field="nicTypeEditor" />
-				<g:CheckBox ui:field="enableManualMacCheckbox" addStyleNames="isTemplatePrivateEditor" />
+				<g:HorizontalPanel>
+					<g:CheckBox ui:field="enableManualMacCheckbox" addStyleNames="isTemplatePrivateEditor" />
+					<g:Label ui:field="enableManualMacCheckboxLabel"/>
+				</g:HorizontalPanel>
 				<e:EntityModelTextBoxEditor ui:field="MACEditor" />
 				<g:Label addStyleNames="{style.macExample}">Example: 00:14:4a:23:67:55</g:Label>
 			</g:FlowPanel>

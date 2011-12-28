@@ -231,7 +231,6 @@ public class VmInterfaceListModel extends SearchableListModel
 					VmNetworkInterface nic1 = (VmNetworkInterface)vmInterfaceListModel.getSelectedItem();
 
 					vmInterfaceModel.getNetwork().setItems(networks);
-					vmInterfaceModel.getNetwork().setSelectedItem(null);
 					for (network a : networks)
 					{
 						if (StringHelper.stringsEqual(a.getname(), nic1.getNetworkName()))

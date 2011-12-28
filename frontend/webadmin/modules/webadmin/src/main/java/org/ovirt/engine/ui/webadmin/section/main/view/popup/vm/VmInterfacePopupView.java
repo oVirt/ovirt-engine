@@ -20,6 +20,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class VmInterfacePopupView extends AbstractModelBoundPopupView<VmInterfaceModel> implements VmInterfacePopupPresenterWidget.ViewDef {
@@ -46,6 +47,10 @@ public class VmInterfacePopupView extends AbstractModelBoundPopupView<VmInterfac
     @UiField
     @Ignore
     CheckBox enableManualMacCheckbox;
+    
+    @UiField
+    @Ignore
+    Label enableManualMacCheckboxLabel;
 
     @UiField
     @Path("MAC.entity")
@@ -66,6 +71,7 @@ public class VmInterfacePopupView extends AbstractModelBoundPopupView<VmInterfac
         nameEditor.setLabel("Name");
         networkEditor.setLabel("Network");
         nicTypeEditor.setLabel("Type");
+        enableManualMacCheckboxLabel.setText("Specify custom MAC address");
     }
 
     private void initManualWidgets() {
