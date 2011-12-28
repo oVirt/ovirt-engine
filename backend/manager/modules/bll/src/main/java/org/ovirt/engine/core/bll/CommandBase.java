@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -66,6 +67,8 @@ import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
+import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.RollbackHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -186,11 +189,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private TransactionScopeOption endActionScope;
 
     public VdcReturnValueBase CanDoActionOnly() {
-        // if (OperationContext.Current != null)
-        // {
-        // JWS _backendCallBack =
-        // OperationContext.Current.GetCallbackChannel<IBackendCallBack>();
-        // }
+        setActionMessageParameters();
         getReturnValue().setCanDoAction(InternalCanDoAction());
         String tempVar = getDescription();
         getReturnValue().setDescription((tempVar != null) ? tempVar : getReturnValue().getDescription());
@@ -202,7 +201,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         String tempVar = getDescription();
         getReturnValue().setDescription((tempVar != null) ? tempVar : getReturnValue().getDescription());
-        if (getReturnValue().getCanDoAction() || InternalCanDoAction()) {
+        setActionMessageParameters();
+        if (acquireLock() && (getReturnValue().getCanDoAction() || InternalCanDoAction())) {
             getReturnValue().setCanDoAction(true);
             getReturnValue().setIsSyncronious(true);
             getParameters().setTaskStartTime(System.currentTimeMillis());
@@ -410,7 +410,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *         validation
      */
     protected boolean validateInputs() {
-        setActionMessageParameters();
         List<Class<?>> validationGroupList = getValidationGroups();
         Set<ConstraintViolation<T>> violations =
                 validator.validate(getParameters(),
@@ -707,7 +706,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         // If we didn't managed to acquire lock for command or the object wasn't managed to execute properly, then
         // rollback the transaction.
-        if (!AquireLock() || !ExecuteWithoutTransaction()) {
+        if (!ExecuteWithoutTransaction()) {
             if (TransactionSupport.current() == null) {
                 cancelTasks();
             }
@@ -726,7 +725,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             //Transaction was aborted - we must sure we compensation for all previous applicative stages of the command
             compensate();
         } finally {
-            FreeLock();
+            freeLock();
             if (getCommandShouldBeLogged()) {
                 LogCommand();
             }
@@ -924,14 +923,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    protected static final java.util.HashMap<String, java.util.HashSet<Guid>> _objectLocksTable =
-            new java.util.HashMap<String, java.util.HashSet<Guid>>();
-
     protected Guid getObjectLockingId() {
         Guid returnValue = Guid.Empty;
         Class<?> type = getClass();
-        // Object[] attributes = new Object[] {}; // FIXED
-        // type.GetCustomAttributes(LockIdNameAttribute.class, false);
         LockIdNameAttribute annotation = type.getAnnotation(LockIdNameAttribute.class);
         if (annotation != null) {
             PropertyInfo propertyInfo = TypeCompat.GetProperty(type, annotation.fieldName());
@@ -945,65 +939,37 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-     * Flag indicating if the current command instance is locking the command, so that only the locking instance can
-     * free the lock that it took.
+     * Object which is representing a lock that some commands will acquire
      */
-    private boolean lockAcquired = false;
+    private EngineLock commandLock = null;
 
-    protected boolean AquireLock() {
+    protected boolean acquireLock() {
         Guid objectLockingId = getObjectLockingId();
         boolean returnValue = true;
-        if (!objectLockingId.equals(Guid.Empty)) {
+        if (!Guid.Empty.equals(objectLockingId)) {
+            EngineLock lock = new EngineLock();
             String currType = getClass().getName();
-            if (!_objectLocksTable.containsKey(currType)) {
-                _objectLocksTable.put(currType, new java.util.HashSet<Guid>());
-            }
-            synchronized (_objectLocksTable.get(currType)) {
-                if (!_objectLocksTable.get(currType).contains(objectLockingId)) {
-                    log.infoFormat("Lock Aquired to object {0}", objectLockingId);
-
-                    _objectLocksTable.get(currType).add(objectLockingId);
-                    lockAcquired = true;
-                } else {
-                    log.infoFormat("Failed to Aquire Lock to object {0}", objectLockingId);
-                    returnValue = false;
-                }
+            Map<String, Guid> exclusiveLock = Collections.singletonMap(currType, objectLockingId);
+            lock.setExclusiveLocks(exclusiveLock);
+            if (LockManagerFactory.getLockManager().acquireLock(lock)) {
+                log.infoFormat("Lock Acquired to object {0}", lock);
+                commandLock = lock;
+            } else {
+                log.infoFormat("Failed to Acquire Lock to object {0}", lock);
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
+                returnValue = false;
             }
         }
         return returnValue;
 
     }
 
-    protected boolean FreeLock() {
-        Guid objectLockingId = getObjectLockingId();
-        boolean returnValue = true;
-        if (!objectLockingId.equals(Guid.Empty)) {
-            String currType = getClass().getName();
-            if (_objectLocksTable.containsKey(currType) && lockAcquired) {
-                synchronized (_objectLocksTable.get(currType)) {
-                    log.infoFormat("Lock freed to object {0}", objectLockingId);
-                    _objectLocksTable.get(currType).remove(objectLockingId);
-                    lockAcquired = false;
-                }
-            }
+    protected void freeLock() {
+        if (commandLock != null) {
+            LockManagerFactory.getLockManager().releaseLock(commandLock);
+            log.infoFormat("Lock freed to object {0}", commandLock);
+            commandLock = null;
         }
-        return returnValue;
-    }
-
-    protected boolean IsObjecteLocked() {
-        boolean returnValue = false;
-        Guid objectLockingId = getObjectLockingId();
-        String currType = getClass().getName();
-        if (!objectLockingId.equals(Guid.Empty) && _objectLocksTable.containsKey(currType)) {
-            synchronized (_objectLocksTable.get(currType)) {
-                returnValue = _objectLocksTable.get(currType).contains(objectLockingId);
-                if (returnValue) {
-                    log.infoFormat("Object {0} locked", objectLockingId);
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
-                }
-            }
-        }
-        return returnValue;
     }
 
     @Override
