@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -32,9 +31,16 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCommand<T> {
+
     static {
         CommandParametersInitializer initializer = new CommandParametersInitializer();
         initializer.AddParameter(VdsStatic.class, "mVds");
+    }
+
+    private VDS _oldVds;
+
+    public UpdateVdsCommand(T parameters) {
+        super(parameters);
     }
 
     @Override
@@ -118,13 +124,6 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
         return returnValue;
     }
 
-    public UpdateVdsCommand(T parameters) {
-        super(parameters);
-    }
-
-    private VDS _oldVds;
-    private VDSGroup _newGroup;
-
     @Override
     protected void executeCommand() {
         UpdateVdsData();
@@ -186,17 +185,12 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
                 return null;
             }
         });
-        // ResourceManager.Instance.updateVdsStaticData(UpdateVdsParameters.VdsStaticData);
+
         if (getParameters().getInstallVds()) {
             Backend.getInstance()
             .getResourceManager()
             .RunVdsCommand(VDSCommandType.SetVdsStatus,
                     new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Installing));
-            // VDS vds = ResourceManager.Instance.getVds(VdsId);
-            // if (vds != null)
-            // {
-            // vds.setStatus(VDSStatus.Installing);
-            // }
         }
     }
 
