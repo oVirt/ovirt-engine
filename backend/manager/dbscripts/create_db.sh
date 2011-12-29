@@ -70,9 +70,11 @@ execute_file "common_sp.sql" ${DATABASE} > /dev/null
 #inserting initial data
 insert_initial_data
 
+#remove checksum file in clean install in order to run views/sp creation
+rm -f .scripts.md5 >& /dev/null
+
 # Running upgrade scripts
 printf "Running upgrade scripts...\n"
 run_upgrade_files
-run_post_upgrade
 
 exit $?
