@@ -85,13 +85,19 @@ public class HostGeneralModel extends EntityModel
 	}
 
 
+	private boolean isEntityChanged;
 
 	public VDS getEntity()
 	{
 		return (VDS)super.getEntity();
 	}
-	public void setEntity(VDS value)
+
+	@Override
+	public void setEntity(Object value)
 	{
+		VDS vds = (VDS)value;
+		isEntityChanged = vds == null || getEntity() == null || !vds.getvds_id().equals(getEntity().getvds_id());
+
 		super.setEntity(value);
 	}
 
@@ -776,7 +782,7 @@ public class HostGeneralModel extends EntityModel
 		// TODO: Need to come up with a logic to show the Upgrade action-item.
 		// Currently, this action-item will be shown for all oVirts assuming there are
 		// available oVirt ISOs that are returned by the backend's GetoVirtISOs query.
-		else if (getEntity().getvds_type() == VDSType.oVirtNode)
+		else if (getEntity().getvds_type() == VDSType.oVirtNode && isEntityChanged)
 		{
 			AsyncDataProvider.GetoVirtISOsList(new AsyncQuery(this,
 		new INewAsyncCallback() {
