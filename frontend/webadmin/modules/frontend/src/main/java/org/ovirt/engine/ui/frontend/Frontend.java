@@ -142,7 +142,6 @@ public class Frontend {
 					if (getEventsHandler() != null) {
 						ArrayList<VdcQueryReturnValue> failedResult = new ArrayList<VdcQueryReturnValue>();
 						failedResult.add(result);
-						getEventsHandler().runQueryFailed(failedResult);
 						if (getEventsHandler().isRaiseErrorModalPanel(queryType))
 							failureEventHandler(result.getExceptionString());
 					}
@@ -157,7 +156,6 @@ public class Frontend {
 	public static void RunQuery(final VdcQueryType queryType, final VdcQueryParametersBase parameters, final AsyncQuery callback) {
 		dumpQueryDetails(queryType, parameters);
 		logger.finer("Frontend: Invoking async runQuery.");
-
 		raiseQueryStartedEvent(queryType, callback.getContext());
 		
 		GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
@@ -183,8 +181,10 @@ public class Frontend {
 						ArrayList<VdcQueryReturnValue> failedResult = new ArrayList<VdcQueryReturnValue>();
 						failedResult.add(result);
 						//getEventsHandler().runQueryFailed(failedResult);
-						//if (getEventsHandler().isRaiseErrorModalPanel(queryType))
-							//failureEventHandler(result.getExceptionString());
+						String errorMessage = result.getExceptionString();
+						if (errorMessage.equals("USER_IS_NOT_LOGGED_IN") || errorMessage.equals("User is not logged in.")) {
+				            frontendNotLoggedInEvent.raise(Frontend.class, EventArgs.Empty);
+				        }
 						if(callback.isHandleFailure()){
 							callback.getDel().OnSuccess(callback.getModel(), result);
 						}
@@ -274,11 +274,12 @@ public class Frontend {
 				if (!result.getSucceeded()) {
 					logger.log(Level.WARNING, "Failure while invoking ReturnQuery [" + result.getExceptionString() + "]");
 					if (getEventsHandler() != null) {
+					    
 						ArrayList<VdcQueryReturnValue> failedResult = new ArrayList<VdcQueryReturnValue>();
 						failedResult.add(result);
 						getEventsHandler().runQueryFailed(failedResult);
-						if (getEventsHandler().isRaiseErrorModalPanel(queryType))
-							failureEventHandler(result.getExceptionString());
+						//if (getEventsHandler().isRaiseErrorModalPanel(queryType))
+						failureEventHandler(result.getExceptionString());
 						if(callback.isHandleFailure()){
 							callback.getDel().OnSuccess(callback.getModel(), result);
 						}
@@ -312,7 +313,9 @@ public class Frontend {
 		logger.finer("Frontend: Invoking async runMultipleQueries.");
 		
 		raiseQueryStartedEvent(queryTypeList, context);
-
+		for (VdcQueryParametersBase vdcQueryParametersBase : queryParamsList) {
+		    vdcQueryParametersBase.setRefresh(false);
+        }
 		GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
 		service.RunMultipleQueries(queryTypeList, queryParamsList, new AsyncCallback<ArrayList<VdcQueryReturnValue>>() {
 			@Override
@@ -470,7 +473,7 @@ public class Frontend {
                 failureEventHandler(messages);
             }
                      
-            FrontendMultipleActionAsyncResult f = new FrontendMultipleActionAsyncResult(actionType, prms, null, state);
+            FrontendMultipleActionAsyncResult f = new FrontendMultipleActionAsyncResult(actionType, prms, result, state);
             callback.Executed(f);
             }
         });
@@ -729,6 +732,11 @@ public class Frontend {
 			runActionExecutionFailed(actionType, result.getFault());
 			if (callback != null)
 				callback.Executed(f);
+			
+			// Prevent another (untranslated) error message pop-up display 
+			// ('runActionExecutionFailed' invokes an error pop-up displaying, 
+			// therefore calling 'failureEventHandler' is redundant)
+			success = true;
 		} else {
 			success = true;
 			if (callback != null)

@@ -7,10 +7,10 @@
     <version>3.0.0-0001</version>
   </parent>
 
-  <artifactId>frontend</artifactId>
+  <artifactId>frontend-webadmin</artifactId>
   <packaging>jar</packaging>
 
-  <name>Frontend</name>
+  <name>Frontend for WebAdmin</name>
 
   <dependencies>
     <dependency>
@@ -49,13 +49,6 @@
     <dependency>
       <groupId>javax.ejb</groupId>
       <artifactId>ejb-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.smartgwt</groupId>
-      <artifactId>smartgwt</artifactId>
-      <version>2.2</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
