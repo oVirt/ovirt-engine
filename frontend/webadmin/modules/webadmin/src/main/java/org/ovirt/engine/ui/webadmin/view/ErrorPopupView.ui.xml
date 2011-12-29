@@ -8,6 +8,7 @@
 	<ui:style>
 		.content {
 			height: 270px;
+			overflow: auto;
 		}
 	</ui:style>
 
@@ -22,7 +23,7 @@
 
 		<d:content>
 			<g:SimplePanel addStyleNames="{style.content}">
-				<g:Label ui:field="messageLabel" />
+				<g:HTML ui:field="messageLabel" />
 			</g:SimplePanel>
 		</d:content>
 

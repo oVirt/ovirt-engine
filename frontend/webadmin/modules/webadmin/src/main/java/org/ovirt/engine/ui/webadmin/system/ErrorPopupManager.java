@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.system;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.ovirt.engine.ui.webadmin.presenter.ErrorPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
@@ -37,6 +40,13 @@ public class ErrorPopupManager implements HasHandlers {
     public void show(String errorMessage) {
         if (showPopups) {
             errorPopup.prepare(errorMessage);
+            RevealRootPopupContentEvent.fire(this, errorPopup);
+        }
+    }
+
+    public void show(Map<String, Set<String>> des2Msgs) {
+        if (showPopups) {
+            errorPopup.prepare(des2Msgs);
             RevealRootPopupContentEvent.fire(this, errorPopup);
         }
     }
