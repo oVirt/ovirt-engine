@@ -15,6 +15,8 @@ public class SpiceInterfaceImpl implements ISpice {
 
 	private Event disconnectedEvent = new Event(
 			SpiceConsoleModel.SpiceDisconnectedEventDefinition);
+    private Event connectedEvent = new Event(
+            SpiceConsoleModel.SpiceConnectedEventDefinition);
 	private Event menuItemSelectedEvent = new Event(
 			SpiceConsoleModel.SpiceMenuItemSelectedEventDefinition);
 	private Version currentVersion = new Version(4, 4);
@@ -54,6 +56,15 @@ public class SpiceInterfaceImpl implements ISpice {
 	public void setDisconnectedEvent(Event disconnectedEvent) {
 		this.disconnectedEvent = disconnectedEvent;
 	}
+
+    @Override
+    public Event getConnectedEvent() {
+        return connectedEvent;
+    }
+
+    public void setConnectedEvent(Event connectedEvent) {
+        this.connectedEvent = connectedEvent;
+    }
 
 	public Event getMenuItemSelectedEvent() {
 		return menuItemSelectedEvent;
@@ -363,6 +374,7 @@ public class SpiceInterfaceImpl implements ISpice {
 		var usbAutoShare = this.@org.ovirt.engine.ui.userportal.client.uicommonext.SpiceInterfaceImpl::getUsbAutoShare()();
 		var usbFilter = this.@org.ovirt.engine.ui.userportal.client.uicommonext.SpiceInterfaceImpl::getUsbFilter()();
 		var disconnectedEvent = this.@org.ovirt.engine.ui.userportal.client.uicommonext.SpiceInterfaceImpl::getDisconnectedEvent()();
+		var connectedEvent = this.@org.ovirt.engine.ui.userportal.client.uicommonext.SpiceInterfaceImpl::getConnectedEvent()();
 		var model = this;
 
 		//alert("Host IP ["+hostIp+"], port ["+port+"], fullScreen ["+fullScreen+"], password ["+password+"], numberOfMonitors ["+numberOfMonitors+"], Usb Listen Port ["+usbListenPort+"], Admin Console ["+adminConsole+"], Guest HostName ["+guestHostName+"], Secure Port ["+securePort+"], Ssl Chanels ["+sslChanels+"], cipherSuite ["+cipherSuite+"], Host Subject ["+hostSubject+"], Title [" + title+"], Hot Key ["+hotKey+"], Menu ["+menu+"], GuestID [" + guestID+"], version ["+version+"]");
@@ -393,7 +405,9 @@ public class SpiceInterfaceImpl implements ISpice {
 		client.UsbAutoShare = usbAutoShare;
 		client.SetUsbFilter(usbFilter);
 		client.connect();
-		
+
+		connectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, null);
+
 		//since the 'ondisconnected' event doesn't work well in linux, we use polling instead:
 		var checkConnectStatusIntervalID = setInterval(checkConnectStatus, 2000);  
 		function checkConnectStatus() {
@@ -459,6 +473,7 @@ public class SpiceInterfaceImpl implements ISpice {
 		var usbAutoShare = this.@org.ovirt.engine.ui.userportal.client.uicommonext.SpiceInterfaceImpl::getUsbAutoShare()();
 		var usbFilter = this.@org.ovirt.engine.ui.userportal.client.uicommonext.SpiceInterfaceImpl::getUsbFilter()();
 		var disconnectedEvent = this.@org.ovirt.engine.ui.userportal.client.uicommonext.SpiceInterfaceImpl::getDisconnectedEvent()();
+		var connectedEvent = this.@org.ovirt.engine.ui.userportal.client.uicommonext.SpiceInterfaceImpl::getConnectedEvent()();
 		var codebase = spiceCabURL + "#version=" + version;
 		var model = this;
 		var id = "SpiceX_" + guestHostName;		
@@ -503,6 +518,8 @@ public class SpiceInterfaceImpl implements ISpice {
                     
                     client.attachEvent('ondisconnected', onDisconnected);
                     client.connect();
+
+                    connectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, null);
                 }
                 catch (ex) {
                     onDisconnected();

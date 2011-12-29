@@ -23,6 +23,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 {
 
 	public static EventDefinition SpiceDisconnectedEventDefinition;
+	public static EventDefinition SpiceConnectedEventDefinition;
 	public static EventDefinition SpiceMenuItemSelectedEventDefinition;
 
 
@@ -56,6 +57,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 	static
 	{
 		SpiceDisconnectedEventDefinition = new EventDefinition("SpiceDisconnected", SpiceConsoleModel.class);
+		SpiceConnectedEventDefinition = new EventDefinition("SpiceConnected", SpiceConsoleModel.class);
 		SpiceMenuItemSelectedEventDefinition = new EventDefinition("SpiceMenuItemSelected", SpiceConsoleModel.class);
 	}
 
@@ -65,6 +67,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
 		setspice((ISpice)TypeResolver.getInstance().Resolve(ISpice.class));
 		getConfigurator().Configure(getspice());
+
+		getspice().getConnectedEvent().addListener(this);
 	}
 
 	@Override
@@ -107,6 +111,10 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 		if (ev.equals(getspice().getDisconnectedEvent()))
 		{
 			Spice_Disconnected(sender, (ErrorCodeEventArgs)args);
+		}
+		else if (ev.equals(getspice().getConnectedEvent()))
+		{
+			Spice_Connected(sender);
 		}
 		else if (ev.equals(getspice().getMenuItemSelectedEvent()))
 		{
@@ -178,6 +186,12 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 		{
 			getErrorEvent().raise(this, e);
 		}
+	}
+
+	private void Spice_Connected(Object sender)
+	{
+		setIsConnected(true);
+		UpdateActionAvailability();
 	}
 
 	private void Cancel()
@@ -530,8 +544,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 		try
 		{
 			getspice().Connect();
-			setIsConnected(true);
-			UpdateActionAvailability();
 		}
 		catch (RuntimeException ex)
 		{

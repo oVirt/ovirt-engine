@@ -28,6 +28,7 @@ public interface ISpice
 	//event EventHandler<SpiceMenuItemEventArgs> MenuItemSelected;
 
 	Event getDisconnectedEvent();
+	Event getConnectedEvent();
 	Event getMenuItemSelectedEvent();
 
 
