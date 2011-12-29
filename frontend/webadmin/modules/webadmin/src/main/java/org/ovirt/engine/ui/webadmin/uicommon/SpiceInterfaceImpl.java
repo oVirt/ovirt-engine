@@ -13,6 +13,8 @@ public class SpiceInterfaceImpl implements ISpice {
 
     private Event disconnectedEvent = new Event(
             SpiceConsoleModel.SpiceDisconnectedEventDefinition);
+    private Event connectedEvent = new Event(
+            SpiceConsoleModel.SpiceConnectedEventDefinition);
     private Event menuItemSelectedEvent = new Event(
             SpiceConsoleModel.SpiceMenuItemSelectedEventDefinition);
     private Version currentVersion = new Version(4, 4);
@@ -52,6 +54,15 @@ public class SpiceInterfaceImpl implements ISpice {
 
     public void setDisconnectedEvent(Event disconnectedEvent) {
         this.disconnectedEvent = disconnectedEvent;
+    }
+
+    @Override
+    public Event getConnectedEvent() {
+        return connectedEvent;
+    }
+
+    public void setConnectedEvent(Event connectedEvent) {
+        this.connectedEvent = connectedEvent;
     }
 
     @Override
@@ -415,6 +426,7 @@ public class SpiceInterfaceImpl implements ISpice {
 		var usbAutoShare = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbAutoShare()();
 		var usbFilter = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbFilter()();
 		var disconnectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getDisconnectedEvent()();
+		var connectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getConnectedEvent()();
 		var menuItemSelectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getMenuItemSelectedEvent()();
 		var model = this;
 
@@ -456,6 +468,8 @@ public class SpiceInterfaceImpl implements ISpice {
 		client.SendCtrlAltDelete = sendCtrlAltDelete;
 		client.UsbAutoShare = usbAutoShare;
 		client.connect();
+
+		connectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, null);
 
 		//since the 'ondisconnected' event doesn't work well in linux, we use polling instead:
 		var checkConnectStatusIntervalID = setInterval(checkConnectStatus, 2000);
@@ -521,6 +535,7 @@ public class SpiceInterfaceImpl implements ISpice {
 		var usbFilter = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbFilter()();
 		var menu = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getMenu()();
 		var disconnectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getDisconnectedEvent()();
+        var connectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getConnectedEvent()();
 		var menuItemSelectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getMenuItemSelectedEvent()();
 		var codebase = spiceCabURL + "#version=" + version;
 		var model = this;
@@ -578,6 +593,9 @@ public class SpiceInterfaceImpl implements ISpice {
 					client.attachEvent('ondisconnected', onDisconnected);
 
 					client.connect();
+
+					connectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, null);
+
 				} catch (ex) {
 					onDisconnected();
 				}
