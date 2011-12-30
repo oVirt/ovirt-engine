@@ -85,6 +85,7 @@ public class VmMapper {
         staticVm.sethypervisor_type(entity.gethypervisor_type());
         staticVm.settime_zone(entity.gettime_zone());
         staticVm.setnum_of_monitors(entity.getnum_of_monitors());
+        staticVm.setAllowConsoleReconnect(entity.getAllowConsoleReconnect());
         staticVm.setpriority(entity.getpriority());
         staticVm.setusb_policy(entity.getusb_policy());
         return staticVm;
@@ -171,6 +172,9 @@ public class VmMapper {
             }
             if (vm.getDisplay().isSetMonitors()) {
                 staticVm.setnum_of_monitors(vm.getDisplay().getMonitors());
+            }
+            if (vm.getDisplay().isSetAllowReconnect()) {
+                staticVm.setAllowConsoleReconnect(vm.getDisplay().isAllowReconnect());
             }
         }
         if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetAffinity()) {
@@ -302,6 +306,7 @@ public class VmMapper {
             Integer displaySecurePort = entity.getdisplay_secure_port();
             model.getDisplay().setSecurePort(displaySecurePort==null || displaySecurePort==-1 ? null : displaySecurePort);
             model.getDisplay().setMonitors(entity.getnum_of_monitors());
+            model.getDisplay().setAllowReconnect(entity.getAllowConsoleReconnect());
         }
         model.setType(map(entity.getvm_type(), null));
         model.setStateless(entity.getis_stateless());

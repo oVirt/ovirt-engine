@@ -44,6 +44,7 @@ actions:
           vm.os.initRd: xs:string
           vm.display.monitors: xs:int
           vm.display.type: xs:string
+          vm.display.allow_reconnect: xs:boolean
           vm.os.cmdline: xs:string
           vm.cpu.topology.cores: xs:int
           vm.memory: xs:long
@@ -75,6 +76,7 @@ actions:
           vm.os.initRd: xs:string
           vm.display.monitors: xs:int
           vm.display.type: xs:string
+          vm.display.allow_reconnect: xs:boolean
           vm.os.cmdline: xs:string
           vm.cpu.topology.cores: xs:int
           vm.memory: xs:long
@@ -1612,6 +1614,7 @@ actions:
           template.os.kernel: xs:string
           template.display.type: xs:string
           template.display.monitors: xs:int
+          template.display.allow_reconnect: xs:boolean
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
     urlparams: {}
@@ -1642,6 +1645,7 @@ actions:
           template.os.kernel: xs:string
           template.display.type: xs:string
           template.display.monitors: xs:int
+          template.display.allow_reconnect: xs:boolean
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
           template.vm.disks.disk--COLLECTION: {id: 'xs:string', storage_domains.storage_domain--COLLECTION: {id: 'xs:string'}}

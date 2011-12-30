@@ -31,6 +31,7 @@ public enum PermitType {
     CONFIGURE_VM_STORAGE(10, RoleType.USER),
     MOVE_VM(11, RoleType.USER),
     MANIPULATE_VM_SNAPSHOTS(12, RoleType.USER),
+    RECONNECT_TO_VM(13, RoleType.ADMIN),
     // host (vds) actions groups
     CREATE_HOST(100, RoleType.ADMIN),
     EDIT_HOST_CONFIGURATION(101, RoleType.ADMIN),

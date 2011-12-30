@@ -65,6 +65,7 @@ public class TemplateMapperTest
         assertNotNull(model.getDisplay());
         assertEquals(model.getDisplay().getType(), transform.getDisplay().getType());
         assertEquals(model.getDisplay().getMonitors(), transform.getDisplay().getMonitors());
+        assertEquals(model.getDisplay().isAllowReconnect(), transform.getDisplay().isAllowReconnect());
         assertEquals(model.getDomain().getName(), transform.getDomain().getName());
         assertEquals(model.getTimezone(), transform.getTimezone());
         assertEquals(model.getUsb().isEnabled(), transform.getUsb().isEnabled());

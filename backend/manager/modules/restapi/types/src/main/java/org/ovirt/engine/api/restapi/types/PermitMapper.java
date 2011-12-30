@@ -64,6 +64,8 @@ public class PermitMapper {
             return PermitType.MOVE_VM;
         case MANIPULATE_VM_SNAPSHOTS:
             return PermitType.MANIPULATE_VM_SNAPSHOTS;
+        case RECONNECT_TO_VM:
+            return PermitType.RECONNECT_TO_VM;
         case CREATE_HOST:
             return PermitType.CREATE_HOST;
         case EDIT_HOST_CONFIGURATION:
