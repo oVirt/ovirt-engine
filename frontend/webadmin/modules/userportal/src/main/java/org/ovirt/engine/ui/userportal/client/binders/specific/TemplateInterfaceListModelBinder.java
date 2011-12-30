@@ -1,9 +1,14 @@
 package org.ovirt.engine.ui.userportal.client.binders.specific;
 
+import java.util.ArrayList;
+
+import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.ui.uicommon.models.Model;
 import org.ovirt.engine.ui.uicommon.models.templates.TemplateInterfaceListModel;
 import org.ovirt.engine.ui.uicommon.models.vms.VmInterfaceModel;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.uicompat.Translator;
 import org.ovirt.engine.ui.userportal.client.binders.ObjectNameResolver;
 import org.ovirt.engine.ui.userportal.client.binders.RendererType;
 import org.ovirt.engine.ui.userportal.client.binders.ToolbarAction;
@@ -11,17 +16,26 @@ import org.ovirt.engine.ui.userportal.client.binders.interfaces.ListModelWithAct
 import org.ovirt.engine.ui.userportal.client.components.GridController;
 import org.ovirt.engine.ui.userportal.client.modalpanels.ItemRemoveModalPanel;
 import org.ovirt.engine.ui.userportal.client.modalpanels.NewNICModalPanel;
+
+import com.smartgwt.client.data.RecordList;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 
-public class TemplateInterfaceListModelBinder extends PoolInterfaceListModelBinder implements ListModelWithActionsBinder {
+public class TemplateInterfaceListModelBinder  implements ListModelWithActionsBinder {
 
 	TemplateInterfaceListModel model;
 
 	RendererType rendererType = RendererType.GridWithToolbar;
 	
+	private static ListGridField[] fields = {
+		new ListGridField("name", "Name"),
+		new ListGridField("networkName", "Network Name"),
+		new ListGridField("type", "Type", 120),
+};
+	
 	public void setModel(Model model) {
-		super.setModel(model);
 		this.model = (TemplateInterfaceListModel)model;
 	}
 
@@ -65,5 +79,32 @@ public class TemplateInterfaceListModelBinder extends PoolInterfaceListModelBind
 		};
 				
 		return actions;
+	}
+
+	@Override
+	public ListGridField[] getFields() {
+		return fields;
+	}
+
+	@Override
+	public RecordList calcRecords() {
+		RecordList records = new RecordList();
+
+		ArrayList<VmNetworkInterface> interfaces = (ArrayList<VmNetworkInterface>)model.getItems();
+
+		Translator translator = EnumTranslator.Create(VmInterfaceType.class);
+
+		if (interfaces != null) {
+			for (VmNetworkInterface intrface : interfaces) {
+				ListGridRecord r = new ListGridRecord();
+				r.setAttribute("name", intrface.getName());
+				r.setAttribute("networkName", intrface.getNetworkName());
+				r.setAttribute("type", translator.get(VmInterfaceType.forValue(intrface.getType())));
+				r.setAttribute("entity", intrface);
+				r.setAttribute("entityGuid", intrface.getId());
+				records.add(r);
+			}
+		}
+		return records;
 	}
 }
