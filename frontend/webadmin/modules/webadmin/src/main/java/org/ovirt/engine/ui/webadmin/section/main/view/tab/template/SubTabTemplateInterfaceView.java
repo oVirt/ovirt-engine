@@ -50,14 +50,6 @@ public class SubTabTemplateInterfaceView extends AbstractSubTabTableView<VmTempl
         };
         getTable().addColumn(typeColumn, "Type");
 
-        TextColumnWithTooltip<VmNetworkInterface> macAddressColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
-            @Override
-            public String getValue(VmNetworkInterface object) {
-                return object.getMacAddress();
-            }
-        };
-        getTable().addColumn(macAddressColumn, "MAC");
-
         getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>("New") {
             @Override
             protected UICommand resolveCommand() {
