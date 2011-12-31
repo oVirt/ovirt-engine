@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.compat;
 
-public class Event implements IEquatable<EventDefinition> {
+public class Event {
     private java.util.List<IEventListener> listeners;
     private java.util.Map<IEventListener, Object> contexts;
     private java.lang.Class privateOwnerType;

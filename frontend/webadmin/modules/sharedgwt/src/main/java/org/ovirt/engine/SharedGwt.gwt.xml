@@ -290,7 +290,6 @@
 <!--		<include name="core/compat/javax/**" />-->
 		<include name="core/compat/Event.java"/>
 		<include name="core/compat/EventDefinition.java"/>
-		<include name="core/compat/IEquatable.java"/>
 		<include name="core/compat/IEventListener.java"/>
 		<include name="core/compat/ObservableCollection.java"/>
 		<include name="core/compat/NotifyCollectionChangedAction.java"/>
