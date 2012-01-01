@@ -715,6 +715,7 @@
         <column>migration_support</column>
         <column>userdefined_properties</column>
         <column>predefined_properties</column>
+        <column>quota_id</column>
 
         <!-- Templates -->
         <row>
@@ -758,6 +759,7 @@
             <value>0</value>
             <null />
             <null />
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -800,6 +802,7 @@
             <value>0</value>
             <null />
             <null />
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
@@ -840,6 +843,7 @@
             <value></value>
             <value>0</value>
             <value>0</value>
+            <null />
             <null />
             <null />
         </row>
@@ -886,6 +890,7 @@
             <value>0</value>
             <null />
             <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -928,6 +933,7 @@
             <value>2</value>
             <null />
             <null />
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
@@ -970,6 +976,7 @@
             <value>0</value>
             <null />
             <null />
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -1012,6 +1019,7 @@
             <value>0</value>
             <null />
             <null />
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5001</value>
@@ -1054,6 +1062,7 @@
             <value>0</value>
             <null />
             <null />
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
         </row>
     </table>
 
@@ -1579,6 +1588,7 @@
         <column>propagate_errors</column>
         <column>_create_date</column>
         <column>_update_date</column>
+        <column>quota_id</column>
         <row>
             <value>00000000-0000-0000-0000-000000000000</value>
             <value>2010-11-12 19:49:24</value>
@@ -1602,6 +1612,7 @@
             <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
         </row>
         <row>
             <value>42058975-3d5e-484a-80c1-01c31207f578</value>
@@ -1626,6 +1637,7 @@
             <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
         </row>
         <row>
             <value>42058975-3d5e-484a-80c1-01c31207f579</value>
@@ -1650,6 +1662,7 @@
             <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
         </row>
         <row>
             <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
@@ -1674,6 +1687,7 @@
             <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
         </row>
     </table>
 
@@ -2322,6 +2336,136 @@
             <value>1</value> <!--  Add VM -->
             <value>2</value> <!--  Running -->
             <value>0</value> <!--  Success -->
+            <null />
+        </row>
+    </table>
+    <table name="quota">
+        <column>id</column>
+        <column>storage_pool_id</column>
+        <column>quota_name</column>
+        <column>description</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <column>threshold_vds_group_percentage</column>
+        <column>threshold_storage_percentage</column>
+        <column>grace_vds_group_percentage</column>
+        <column>grace_storage_percentage</column>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <value>Quota General</value>
+            <value>General quota with general parameters</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>80</value>
+            <value>80</value>
+            <value>20</value>
+            <value>20</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4400</value>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <value>Quota Specific</value>
+            <value>Quota with specific limitations</value>
+            <value>2010-11-12 03:38:36</value>
+            <value>2010-11-27 12:18:51</value>
+            <value>80</value>
+            <value>80</value>
+            <value>20</value>
+            <value>20</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <value>Quota General and Specific</value>
+            <value>Quota with General and specific limitations</value>
+            <value>2010-12-12 03:38:36</value>
+            <value>2010-12-27 12:18:51</value>
+            <value>80</value>
+            <value>80</value>
+            <value>20</value>
+            <value>20</value>
+        </row>
+    </table>
+
+    <table name="quota_limitation">
+        <column>id</column>
+	    <column>quota_id</column>
+		<column>storage_id</column>
+		<column>vds_group_id</column>
+	    <column>virtual_cpu</column>
+	    <column>mem_size_mb</column>
+		<column>storage_size_gb</column>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
+			<null />
+            <null />
+            <value>100</value>
+            <value>10000</value>
+            <value>1000000</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4534</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
+			<value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
+            <null />
+            <null />
+            <null />
+            <null />
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4400</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4400</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+        </row>
+        <row>
+            <value>68c96e11-0aad-4e3a-9091-12897b7f2387</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4400</value>
+            <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
+            <null />
+            <null />
+            <null />
+            <value>1000</value>
+        </row>
+        <row>
+            <value>68c96e11-0aad-4e3a-9091-12897b7f2388</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4400</value>
+            <null />
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>10</value>
+            <value>-1</value>
+            <null />
+        </row>
+        <row>
+            <value>68c96e11-0aad-4e3a-9091-12897b7f2389</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4400</value>
+            <null />
+            <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
+            <value>1000</value>
+            <value>-1</value>
+            <null />
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>-1</value>
+        </row>
+        <row>
+            <value>68c96e11-0aad-4e3a-9091-12897b7f2400</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
+            <null />
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>1000</value>
+            <value>0</value>
             <null />
         </row>
     </table>
