@@ -21,7 +21,13 @@
     <!-- Hack until module inheritance will be fixed -->
     <smartgwt.version>2.2</smartgwt.version>
     <!--This can be overidded by setting this property in your personal settings.xml-->
-    <gwt-plugin.extraJvmArgs>-Xms1024M -Xmx1024M -XX:PermSize=256M -XX:MaxPermSize=256M</gwt-plugin.extraJvmArgs>
+    <gwt-plugin.extraJvmArgs>${aspectj.agent} -Xms1024M -Xmx1024M -XX:PermSize=256M -XX:MaxPermSize=256M ${gwt.dontPrune}</gwt-plugin.extraJvmArgs>
+
+    <!-- Activate load time weaving of the aspects -->
+    <aspectj.agent>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</aspectj.agent>
+    <!-- Regular expression that matches the types that the GWT compiler shouldn't  prune -->
+    <gwt.dontPrune>-Dgwt.dontPrune=org\.ovirt\.engine\.core\.(common|compat)\..*</gwt.dontPrune>
+    <gwt.version>2.3.0</gwt.version>
   </properties>
 
   <dependencies>
@@ -71,7 +77,7 @@
 
     <dependency>
       <groupId>${engine.groupId}</groupId>
-      <artifactId>sharedgwt-deployment</artifactId>
+      <artifactId>gwt-extension</artifactId>
       <version>${engine.version}</version>
     </dependency>
 
@@ -86,6 +92,13 @@
       <groupId>org.jboss.spec.javax.ejb</groupId>
       <artifactId>jboss-ejb-api_3.1_spec</artifactId>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+      <scope>provided</scope>
+      <version>${aspectj.version}</version>
     </dependency>
   </dependencies>
 
@@ -121,13 +134,37 @@
               <style>OBF</style>
               <gwtVersion>${gwt.version}</gwtVersion>
               <runTarget>userportal/UserPortal.html</runTarget>
-              <!--<extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs-->
+              <extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs>
               <copyWebapp>true</copyWebapp>
               <compileSourcesArtifacts>
-                <compileSourcesArtifact>${engine.groupId}:sharedgwt-deployment</compileSourcesArtifact>
+                <compileSourcesArtifact>${engine.groupId}:gwt-extension</compileSourcesArtifact>
                 <compileSourcesArtifact>${engine.groupId}:uicommon</compileSourcesArtifact>
               </compileSourcesArtifacts>
             </configuration>
+            <dependencies>
+              <!-- Add gwt-extension aspjects to the GWT compiler classpath -->
+              <dependency>
+              	<groupId>com.google.gwt</groupId>
+                <artifactId>gwt-user</artifactId>
+                <version>${gwt.version}</version>
+              </dependency>
+              <dependency>
+              	<groupId>com.google.gwt</groupId>
+                <artifactId>gwt-dev</artifactId>
+                <version>${gwt.version}</version>
+              </dependency>
+              <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-servlet</artifactId>
+                <version>${gwt.version}</version>
+              </dependency>
+              <dependency>
+              	<groupId>${engine.groupId}</groupId>
+              	<artifactId>gwt-extension</artifactId>
+              	<version>${engine.version}</version>
+              </dependency>
+              
+            </dependencies>
           </plugin>
           <plugin>
             <artifactId>maven-clean-plugin</artifactId>
@@ -174,7 +211,7 @@
                 <configuration>
                   <sources>
                     <source>../uicommon/src/main/java</source>
-                    <source>../sharedgwt-deployment/src/main/java</source>
+                    <source>../gwt-extension/src/main/java</source>
                     <source>../frontend/src/main/java</source>
                   </sources>
                 </configuration>
@@ -189,7 +226,7 @@
                   <resources>
                     <resource>
                       <directory>../uicommon/src/main/resources</directory>
-                      <directory>../sharedgwt-deployment/src/main/resources</directory>
+                      <directory>../gwt-extension/src/main/resources</directory>
                       <directory>../frontend/src/main/resources</directory>
                       <targetPath>resources</targetPath>
                     </resource>

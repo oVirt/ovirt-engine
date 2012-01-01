@@ -17,7 +17,6 @@
 
   <modules>
     <module>sharedgwt</module>
-    <module>sharedgwt-deployment</module>
     <module>gwt-extension</module>
     <module>uicompat</module>
     <module>frontend</module>
