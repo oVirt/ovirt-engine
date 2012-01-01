@@ -272,7 +272,7 @@ jar_names='
     jaxb-impl
     engine-common
     engine-compat
-    engineencryptutils
+    engine-encryptutils
 '
 for jar_name in ${jar_names}
 do

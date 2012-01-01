@@ -4,7 +4,7 @@ usage () {
         printf "store-utils.sh - A collection of encryption/decryption utilities using keystore.\n"
         printf "USAGE:\n"
         printf "Main mode:\n"
-        printf "\tstore-utils {-enc|-dec|-pfx} {store} {pass} {alias} {string} {ear} [jboss home]\n"
+        printf "\tstore-utils {-enc|-dec|-pfx} {store} {pass} {alias} {string} {ear}\n"
         printf "Upgrade mode:\n"
         printf "\tstore-utils -jks {store} {pass} {alias} {PFX file} {CA PEM file}\n"
         printf "Where:\n"
@@ -12,7 +12,6 @@ usage () {
         printf "\tPass         = keystore password.\n"
         printf "\tAlias        = Certificate alias in keystore.\n"
         printf "\tString       = string to encrypt or decrypt. You may use double quotes (\" \") to encrypt a phrase.\n"
-        printf "\tjboss home   = Path to jboss-as dir.\n"
         printf "\tear          = Path to engine ear dir.\n"
         printf "\tPFX file     = Path to exiting PFX file, with private key and a certificate.\n"
         printf "\tCA PEM file  = Path to a CA certificate file in PEM format.\n"
@@ -26,18 +25,13 @@ if [ ! "$#" -ge 5 ]; then
 	exit 1
 fi
 
-JB_HOME=$7
-if [ -z "$JB_HOME" ]; then
-        JB_HOME=/usr/local/jboss-eap-5.0/jboss-as
-fi
-
 if [ -z "$6" ]; then
-        EAR_LIB=$JB_HOME/standalone/deployments/engine.ear/lib
+        EAR_LIB=/usr/share/ovirt-engine/engine.ear/lib
 else
         EAR_LIB=$6
 fi
 
-CP=$EAR_LIB/engineencryptutils-3.0.0-0001.jar:$EAR_LIB/engine-compat.jar:$JB_HOME/common/lib/commons-logging.jar:$EAR_LIB/commons-codec-1.4.jar
+CP=$EAR_LIB/engine-encryptutils.jar:$EAR_LIB/engine-compat.jar:/usr/share/java/commons-logging.jar:$EAR_LIB/commons-codec-1.4.jar
 
 if [ "$1" == "-pfx" ]; then
 	PKEY_8=privatekey.pkcs8

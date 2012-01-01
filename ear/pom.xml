@@ -207,6 +207,18 @@
               <bundleFileName>engine-dal.jar</bundleFileName>
             </jarModule>
 
+            <jarModule>
+              <groupId>org.ovirt.engine.core</groupId>
+              <artifactId>utils</artifactId>
+              <bundleFileName>engine-utils.jar</bundleFileName>
+            </jarModule>
+
+            <jarModule>
+              <groupId>org.ovirt.engine.core</groupId>
+              <artifactId>engineencryptutils</artifactId>
+              <bundleFileName>engine-encryptutils.jar</bundleFileName>
+            </jarModule>
+
             <!-- ** WARs -->
             <webModule>
               <groupId>org.ovirt.engine.ui</groupId>

@@ -92,7 +92,7 @@ fi
 # Verify all classpath elements available
 JAVA_LIB_HOME=/usr/share/java
 LOCAL_LIB=lib
-CP=$JAVA_LIB_HOME/commons-logging.jar:$JAVA_LIB_HOME/commons-collections.jar:$JAVA_LIB_HOME/commons-lang.jar:$JAVA_LIB_HOME/commons-configuration.jar:$JAVA_LIB_HOME/commons-jxpath.jar:$JAVA_LIB_HOME/log4j.jar:$JAVA_LIB_HOME/commons-codec.jar:$JAVA_LIB_HOME/postgresql-jdbc.jar:$LOCAL_LIB/engineencryptutils-3.0.0-0001.jar:$LOCAL_LIB/engine-compat.jar:$LOCAL_LIB/engine-config.jar:$JAVA_LIB_HOME/engine-tools-common.jar
+CP=$JAVA_LIB_HOME/commons-logging.jar:$JAVA_LIB_HOME/commons-collections.jar:$JAVA_LIB_HOME/commons-lang.jar:$JAVA_LIB_HOME/commons-configuration.jar:$JAVA_LIB_HOME/commons-jxpath.jar:$JAVA_LIB_HOME/log4j.jar:$JAVA_LIB_HOME/commons-codec.jar:$JAVA_LIB_HOME/postgresql-jdbc.jar:$LOCAL_LIB/engine-encryptutils.jar:$LOCAL_LIB/engine-compat.jar:$LOCAL_LIB/engine-config.jar:$JAVA_LIB_HOME/engine-tools-common.jar
 
 for f in $(echo $CP|sed 's/:/ /g')
 do
