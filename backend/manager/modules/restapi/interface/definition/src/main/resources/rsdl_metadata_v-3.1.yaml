@@ -491,7 +491,7 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
+      - mandatoryArguments: {action.cluster.id|name: 'xs:string', action.storagedomain.id|name: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
     headers: {Content-Type: application/xml}
@@ -514,7 +514,7 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
+      - mandatoryArguments: {action.cluster.id|name: 'xs:string', action.storagedomain.id|name: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
     headers: {Content-Type: application/xml}
