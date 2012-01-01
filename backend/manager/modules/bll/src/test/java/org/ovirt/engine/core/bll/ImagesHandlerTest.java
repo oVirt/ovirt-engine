@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 
 import org.junit.Test;
-
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -25,15 +24,15 @@ public class ImagesHandlerTest {
     @Test
     public void isVmInPreviewReturnsFalseForNoPreview() throws Exception {
         ArrayList<DiskImage> images = new ArrayList<DiskImage>();
-        addDiskImage(images, RandomUtils.instance().nextString(1, 10));
-        addDiskImage(images, RandomUtils.instance().nextString(1, 10));
+        addDiskImage(images, RandomUtils.instance().nextNumericString(5));
+        addDiskImage(images, RandomUtils.instance().nextNumericString(5));
         assertFalse(ImagesHandler.isVmInPreview(images));
     }
 
     @Test
     public void isVmInPreviewReturnsTrueForPreview() throws Exception {
         ArrayList<DiskImage> images = new ArrayList<DiskImage>();
-        String internalMapping = RandomUtils.instance().nextString(1, 10);
+        String internalMapping = RandomUtils.instance().nextNumericString(5);
         addDiskImage(images, internalMapping);
         addDiskImage(images, internalMapping);
         assertTrue(ImagesHandler.isVmInPreview(images));

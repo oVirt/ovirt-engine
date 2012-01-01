@@ -10,7 +10,6 @@
 Create or replace FUNCTION InsertImage(v_creation_date TIMESTAMP WITH TIME ZONE,
 	v_description VARCHAR(4000) ,
 	v_image_guid UUID,
-	v_internal_drive_mapping VARCHAR(50) ,
 	v_it_guid UUID,
 	v_size BIGINT,
 	v_ParentId UUID,
@@ -21,19 +20,15 @@ Create or replace FUNCTION InsertImage(v_creation_date TIMESTAMP WITH TIME ZONE,
 	v_vm_snapshot_id UUID ,
 	v_volume_type INTEGER,
 	v_volume_format INTEGER,
-	v_disk_type INTEGER,
 	v_image_group_id UUID ,
-	v_disk_interface INTEGER,
-    v_boot BOOLEAN,
-    v_wipe_after_delete BOOLEAN,
-    v_propagate_errors INTEGER)
+    v_boot BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO images(creation_date, description, image_guid, internal_drive_mapping, it_guid, size, ParentId,imageStatus,lastModified, app_list,
-    storage_id, vm_snapshot_id, volume_type, image_group_id, volume_format, disk_type, disk_interface, boot, wipe_after_delete, propagate_errors)
-	VALUES(v_creation_date, v_description, v_image_guid, v_internal_drive_mapping, v_it_guid, v_size, v_ParentId, v_imageStatus, v_lastModified,v_app_list,
-	v_storage_id, v_vm_snapshot_id, v_volume_type, v_image_group_id, v_volume_format, v_disk_type, v_disk_interface, v_boot, v_wipe_after_delete, v_propagate_errors);
+INSERT INTO images(creation_date, description, image_guid, it_guid, size, ParentId,imageStatus,lastModified, app_list,
+    storage_id, vm_snapshot_id, volume_type, image_group_id, volume_format, boot)
+	VALUES(v_creation_date, v_description, v_image_guid, v_it_guid, v_size, v_ParentId, v_imageStatus, v_lastModified,v_app_list,
+	v_storage_id, v_vm_snapshot_id, v_volume_type, v_image_group_id, v_volume_format, v_boot);
 
 -- TODO: Delete this once the disks table is updated directly from code.
 IF NOT EXISTS (SELECT * FROM disks WHERE disk_id = v_image_group_id) THEN
@@ -74,7 +69,6 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION UpdateImage(v_creation_date TIMESTAMP WITH TIME ZONE,
 	v_description VARCHAR(4000) ,
 	v_image_guid UUID,
-	v_internal_drive_mapping VARCHAR(50) ,
 	v_it_guid UUID,
 	v_size BIGINT,
 	v_ParentId UUID,
@@ -85,26 +79,21 @@ Create or replace FUNCTION UpdateImage(v_creation_date TIMESTAMP WITH TIME ZONE,
 	v_vm_snapshot_id UUID ,
 	v_volume_type INTEGER,
 	v_volume_format INTEGER,
-	v_disk_type INTEGER,
 	v_image_group_id UUID ,
-	v_disk_interface INTEGER,
-    v_boot BOOLEAN,
-    v_wipe_after_delete BOOLEAN,
-    v_propagate_errors INTEGER)
+    v_boot BOOLEAN)
 RETURNS VOID
 
 	--The [images] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
    AS $procedure$
 BEGIN
       UPDATE images
-      SET creation_date = v_creation_date,description = v_description,internal_drive_mapping = v_internal_drive_mapping, 
+      SET creation_date = v_creation_date,description = v_description,
       it_guid = v_it_guid,size = v_size, 
       ParentId = v_ParentId,imageStatus = v_imageStatus,lastModified = v_lastModified, 
       app_list = v_app_list,storage_id = v_storage_id, 
       vm_snapshot_id = v_vm_snapshot_id,volume_type = v_volume_type,image_group_id = v_image_group_id, 
-      volume_format = v_volume_format,disk_type = v_disk_type, 
-      disk_interface = v_disk_interface,boot = v_boot,wipe_after_delete = v_wipe_after_delete, 
-      propagate_errors = v_propagate_errors, 
+      volume_format = v_volume_format,
+      boot = v_boot,
       _update_date = LOCALTIMESTAMP
       WHERE image_guid = v_image_guid;
 

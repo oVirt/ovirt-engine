@@ -27,10 +27,8 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
     @NotNull(message = "VALIDATION.VOLUME_FORMAT.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private VolumeFormat volumeFormat;
 
-    @NotNull(message = "VALIDATION.DISK_TYPE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private DiskType mdisk_type;
 
-    @NotNull(message = "VALIDATION.DISK_INTERFACE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private DiskInterface diskInterface;
 
 
@@ -59,6 +57,7 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
     }
 
     @XmlElement
+    @NotNull(message = "VALIDATION.DISK_TYPE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     public DiskType getdisk_type() {
         return mdisk_type;
     }
@@ -100,6 +99,7 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
     }
 
     @XmlElement
+    @NotNull(message = "VALIDATION.DISK_INTERFACE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     public DiskInterface getdisk_interface() {
         return diskInterface;
     }

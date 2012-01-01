@@ -44,6 +44,7 @@ public abstract class AbstractBackendTest {
     private static BasicTestSetup basicTestSetup;
 
     public static String testSequence;
+    public static long testSequenceNumber;
     private static VdcUser user;
     private static String sessionId;
 
@@ -84,7 +85,8 @@ public abstract class AbstractBackendTest {
 
     @Before
     public void setup() throws Exception {
-        testSequence = "-JUnit-" + System.currentTimeMillis();
+        testSequenceNumber = System.currentTimeMillis();
+        testSequence = "-JUnit-" + testSequenceNumber;
         System.out.println("\n\tReady to run tests.\n\t your test sequence is " + testSequence);
         generateUserSession();
     }

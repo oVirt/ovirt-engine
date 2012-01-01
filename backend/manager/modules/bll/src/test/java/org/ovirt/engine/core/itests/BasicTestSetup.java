@@ -182,13 +182,26 @@ public class BasicTestSetup {
     private void createVmDiskImage(VmStatic vm, Date now) {
         Guid vmId = vm.getId();
         Guid ImageId = Guid.NewGuid();
-        DiskImageBase disk = new DiskImage(false, now, now, 100, "", ImageId, "", Guid.NewGuid(), 100, vmId, vmId,
-                ImageStatus.OK, now, "");
+        DiskImageBase disk =
+                new DiskImage(false,
+                        now,
+                        now,
+                        100,
+                        Long.toString(AbstractBackendTest.testSequenceNumber),
+                        ImageId,
+                        "",
+                        Guid.NewGuid(),
+                        100,
+                        vmId,
+                        vmId,
+                        ImageStatus.OK,
+                        now,
+                        "");
         disk.setvolume_type(VolumeType.Sparse);
         disk.setvolume_format(VolumeFormat.COW);
         disk.setdisk_type(DiskType.Data);
         disk.setsize(100);
-        disk.setinternal_drive_mapping("/" + testSequence);
+        disk.setinternal_drive_mapping(Long.toString(AbstractBackendTest.testSequenceNumber));
         disk.setdisk_interface(DiskInterface.IDE);
         disk.setboot(false);
         disk.setwipe_after_delete(false);

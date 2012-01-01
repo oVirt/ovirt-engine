@@ -61,6 +61,8 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         this.setappList(appList);
     }
 
+    private Disk disk = new Disk();
+
     // TODO comes from image_vm_map
     private Boolean activeField;
 
@@ -87,7 +89,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
                 + ((status == null) ? 0 : status.hashCode());
         result = prime
                 * result
-                + ((imageGroupId == null) ? 0 : imageGroupId
+                + ((disk == null) ? 0 : disk
                         .hashCode());
         result = prime * result
                 + ((id == null) ? 0 : id.hashCode());
@@ -148,10 +150,10 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
             return false;
         if (status != other.status)
             return false;
-        if (imageGroupId == null) {
-            if (other.imageGroupId != null)
+        if (disk == null) {
+            if (other.disk != null)
                 return false;
-        } else if (!imageGroupId.equals(other.imageGroupId))
+        } else if (!disk.equals(other.disk))
             return false;
         if (id == null) {
             if (other.id != null)
@@ -441,11 +443,11 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     @Column(name = "image_group_id")
     @Type(type = "guid")
     public Guid getimage_group_id() {
-        return imageGroupId;
+        return disk.getId();
     }
 
     public void setimage_group_id(Guid value) {
-        imageGroupId = value;
+        disk.setId(value);
         OnPropertyChanged(new PropertyChangedEventArgs("image_group_id"));
     }
 
@@ -621,7 +623,14 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         di.storageId = new NGuid(diskImage.storageId.getUuid());
         di.vmSnapshotId = new NGuid(diskImage.vmSnapshotId.getUuid());
         di.mstorage_path = diskImage.mstorage_path;
-        di.imageGroupId = new Guid(diskImage.imageGroupId.getUuid());
+        Disk otherDisk = diskImage.getDisk();
+        di.setDisk(new Disk(otherDisk.getId(),
+                otherDisk.getInternalDriveMapping(),
+                otherDisk.getActiveImage(),
+                otherDisk.getDiskType(),
+                otherDisk.getDiskInterface(),
+                otherDisk.isWipeAfterDelete(),
+                otherDisk.getPropagateErrors()));
         di.storage_pool_idField = new NGuid(diskImage.storage_pool_idField.getUuid());
         di.actualSize = diskImage.actualSize;
         di.childrenIdField = new Guid[diskImage.childrenIdField.length];
@@ -671,12 +680,12 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     @Column(name = "disk_type", nullable = false)
     @Enumerated
     public DiskType getdisk_type() {
-        return super.getdisk_type();
+        return disk.getDiskType();
     }
 
     @Override
     public void setdisk_type(DiskType value) {
-        super.setdisk_type(value);
+        disk.setDiskType(value);
     }
 
     @Override
@@ -693,24 +702,24 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     @Override
     @Column(name = "internal_drive_mapping", length = 50)
     public String getinternal_drive_mapping() {
-        return super.getinternal_drive_mapping();
+        return Integer.toString(disk.getInternalDriveMapping());
     }
 
     @Override
     public void setinternal_drive_mapping(String value) {
-        super.setinternal_drive_mapping(value);
+        disk.setInternalDriveMapping(Integer.parseInt(value));
     }
 
     @Override
     @Column(name = "disk_interface", nullable = false)
     @Enumerated
     public DiskInterface getdisk_interface() {
-        return super.getdisk_interface();
+        return disk.getDiskInterface();
     }
 
     @Override
     public void setdisk_interface(DiskInterface value) {
-        super.setdisk_interface(value);
+        disk.setDiskInterface(value);
     }
 
     @Override
@@ -727,24 +736,24 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     @Override
     @Column(name = "wipe_after_delete", nullable = false)
     public boolean getwipe_after_delete() {
-        return super.getwipe_after_delete();
+        return disk.isWipeAfterDelete();
     }
 
     @Override
     public void setwipe_after_delete(boolean value) {
-        super.setwipe_after_delete(value);
+        disk.setWipeAfterDelete(value);
     }
 
     @Override
     @Column(name = "propagate_errors", nullable = false)
     @Enumerated
     public PropagateErrors getpropagate_errors() {
-        return super.getpropagate_errors();
+        return disk.getPropagateErrors();
     }
 
     @Override
     public void setpropagate_errors(PropagateErrors value) {
-        super.setpropagate_errors(value);
+        disk.setPropagateErrors(value);
     }
 
     @Override
@@ -761,5 +770,13 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     @Override
     public void setId(Guid id) {
         this.id = id;
+    }
+
+    public Disk getDisk() {
+        return disk;
+    }
+
+    public void setDisk(Disk disk) {
+        this.disk = disk;
     }
 }

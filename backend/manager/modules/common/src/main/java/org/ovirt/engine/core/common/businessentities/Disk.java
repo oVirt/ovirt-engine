@@ -57,7 +57,7 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * Should disk errors be propagated to the guest?
      */
-    private PropagateErrors propagateErrors;
+    private PropagateErrors propagateErrors = PropagateErrors.Off;
 
 
     public Disk() {
