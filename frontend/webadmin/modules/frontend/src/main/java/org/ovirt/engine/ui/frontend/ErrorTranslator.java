@@ -80,6 +80,7 @@ public class ErrorTranslator {
         String ret = "";
         try {
         	if ((errorMsg != null) && (errorMsg.length() > 0)) {
+                errorMsg = errorMsg.replace('.', '_');
         		if (errors.getString(errorMsg) != null) {
         			// if (mMessages.containsKey(errorMsg)) {
         			ret = errors.getString(errorMsg).replace("\n", "<br/>");
