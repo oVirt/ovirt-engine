@@ -8,7 +8,7 @@
 MVN=$(shell which mvn)
 BUILD_FLAGS=-P gwt-admin,gwt-user
 DEPLOY_FLAGS=-f deploy.xml
-JBOSS_HOME=/usr/local/jboss-5.1.0.GA
+JBOSS_HOME=/usr/share/jboss-as
 EAR_DIR=/usr/share/ovirt-engine/engine.ear
 EAR_SRC_DIR=ear/target/engine
 PY_SITE_PKGS:=$(shell python -c "from distutils.sysconfig import get_python_lib as f;print f()")
@@ -82,18 +82,15 @@ create_dirs:
 	@mkdir -p $(PREFIX)/usr/share/man/man8
 	@mkdir -p $(PREFIX)$(PY_SITE_PKGS)/sos/plugins
 	@mkdir -p $(PREFIX)/etc/ovirt-engine/notifier
-	@mkdir -p $(PREFIX)/var/log/ovirt-engine/notifier
-	@mkdir -p $(PREFIX)/var/log/ovirt-engine/engine-manage-domains
+	@mkdir -p $(PREFIX)/var/log/ovirt-engine/{notifier,engine-manage-domains}
 	@mkdir -p $(PREFIX)/var/run/ovirt-engine/notifier
 	@mkdir -p $(PREFIX)/var/lock/ovirt-engine
 	@mkdir -p $(PREFIX)/etc/init.d/
 	@mkdir -p $(PREFIX)/etc/cron.daily/
 	@mkdir -p $(PREFIX)/etc/ovirt-engine/{engine-config,engine-manage-domains}
 	@mkdir -p $(PREFIX)$(EAR_DIR)
-	@mkdir -p $(PREFIX)$(JBOSS_HOME)/common/lib
-	@mkdir -p $(PREFIX)$(JBOSS_HOME)/server/default/deploy
-	@mkdir -p $(PREFIX)$(JBOSS_HOME)/server/default/conf
-	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/resources/jboss/
+	@mkdir -p $(PREFIX)$(JBOSS_HOME)/modules/org/postgresql/main/
+	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/resources/jboss/modules/org
 	@mkdir -p $(PREFIX)/etc/pki/ovirt-engine/{keys,private,requests,certs}
 
 install_ear:
@@ -103,7 +100,7 @@ install_ear:
 
 install_quartz:
 	@echo "*** Deploying quartz.jar to $(PREFIX)"
-	cp -f ear/target/quartz/quartz*.jar $(PREFIX)$(JBOSS_HOME)/common/lib/
+#	cp -f ear/target/quartz/quartz*.jar $(PREFIX)$(JBOSS_HOME)/common/lib/
 
 install_tools:
 	@echo "*** Installing Common Tools"
@@ -135,10 +132,12 @@ install_setup:
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/output_messages.py
 	ln -s /usr/share/ovirt-engine/scripts/engine-setup.py $(PREFIX)/usr/bin/engine-setup
 	cp -af ./packaging/fedora/setup/resources/jboss/* $(PREFIX)/usr/share/ovirt-engine/resources/jboss/
+	cp -af ./deployment/modules/org/* $(PREFIX)/usr/share/ovirt-engine/resources/jboss/modules/org/
+	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)/usr/share/ovirt-engine/resources/jboss/modules/org/postgresql/main/
 	cp -f ./packaging/fedora/setup/engine-cleanup.py $(PREFIX)/usr/share/ovirt-engine/scripts
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/engine-cleanup.py
 	ln -s /usr/share/ovirt-engine/scripts/engine-cleanup.py $(PREFIX)/usr/bin/engine-cleanup
-	sed -i "s/MYVERSION/$(RPM_VERSION)/" $(PREFIX)/usr/share/ovirt-engine/resources/jboss/engineVersion.js
+	sed -i "s/MYVERSION/$(RPM_VERSION)/" $(PREFIX)/usr/share/ovirt-engine/resources/jboss/ROOT.war/engineVersion.js
 
 install_sec:
 	cd backend/manager/3rdparty/pub2ssh/; chmod +x pubkey2ssh.sh; mkdir -p bin; ./pubkey2ssh.sh; cd -
@@ -244,7 +243,7 @@ install_misc:
 	cp -f ./backend/manager/conf/vds_installer.py $(PREFIX)/usr/share/ovirt-engine/scripts
 	cp -f ./packaging/ovirtlogrot.sh $(PREFIX)/usr/share/ovirt-engine/scripts
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/vds_installer.py
-	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)$(JBOSS_HOME)/common/lib/postgresql-jdbc.jar
+	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)$(JBOSS_HOME)/modules/org/postgresql/main/postgresql-jdbc.jar
 	cp -f ./backend/manager/conf/jboss-log4j.xml $(PREFIX)/usr/share/ovirt-engine/conf
 	cp -f ./packaging/fedora/setup/resources/postgres/postgres-ds.xml $(PREFIX)/usr/share/ovirt-engine/conf
 	cp -f ./LICENSE $(PREFIX)/usr/share/ovirt-engine

@@ -43,7 +43,7 @@ PG_HBA_FILE=/var/lib/pgsql/data/pg_hba.conf
 
 #uuid generate sql 
 UUID_SQL=/usr/share/pgsql/contrib/uuid-ossp.sql
-LOG_PATH=/var/log/engine
+LOG_PATH=/var/log/ovirt-engine
 USER=`/usr/bin/whoami`
 
 #EXTERNAL ARGS

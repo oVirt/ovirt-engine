@@ -28,14 +28,16 @@ fi
 
 
 pushd  $JBOSS_HOME
-if [ -e "common/lib/jbosssx.jar" ]; then
-    $JAVA_BIN -cp client/jboss-logging-spi.jar:common/lib/jbosssx.jar org.jboss.resource.security.SecureIdentityLoginModule $1
-elif [ -e "lib/jbosssx.jar" ]; then
-	$JAVA_BIN -cp client/jboss-logging-spi.jar:lib/jbosssx.jar org.jboss.resource.security.SecureIdentityLoginModule $1
-else
-        echo "unable to find jbosssx jar..."
-        exit 1
-fi
+#if [ -e "common/lib/jbosssx.jar" ]; then
+#    $JAVA_BIN -cp client/jboss-logging-spi.jar:common/lib/jbosssx.jar org.jboss.resource.security.SecureIdentityLoginModule $1
+#elif [ -e "lib/jbosssx.jar" ]; then
+#	$JAVA_BIN -cp client/jboss-logging-spi.jar:lib/jbosssx.jar org.jboss.resource.security.SecureIdentityLoginModule $1
+#else
+#        echo "unable to find jbosssx jar..."
+#        exit 1
+#fi
+
+$JAVA_BIN -cp "./modules/org/jboss/logging/main/jboss-logging-3.1.0.CR2.jar:./modules/org/picketbox/main/picketbox-4.0.6.Beta1.jar" org.picketbox.datasource.security.SecureIdentityLoginModule $1
 
 popd
 

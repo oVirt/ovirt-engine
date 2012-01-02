@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+  <display-name>Welcome to JBoss</display-name>
+  <description>
+     Welcome to JBoss
+  </description>
+  <mime-mapping>
+    <extension>crt</extension>
+    <mime-type>application/x-x509-ca-cert</mime-type>
+  </mime-mapping>
+  <welcome-file-list>
+    <welcome-file>engine_index.html</welcome-file>
+  </welcome-file-list>
+  <!-- A security constraint that restricts access to the status servlet
+   to users with the role JBossAdmin. Edit the roles to what you want and
+   uncomment the WEB-INF/jboss-web.xml/security-domain element to enable
+   secured access to the HTML JMX console.
+   -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>HtmlAdaptor</web-resource-name>
+      <description>An example security config that only allows users with the
+         role JBossAdmin to access the HTML JMX console web application
+       </description>
+      <url-pattern>/status/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>JBossAdmin</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>Tomcat STATUS</realm-name>
+  </login-config>
+  <security-role>
+    <role-name>JBossAdmin</role-name>
+  </security-role>
+</web-app>

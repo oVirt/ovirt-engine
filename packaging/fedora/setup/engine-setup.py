@@ -586,22 +586,11 @@ def _editJbossasConf():
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_UPD_JBOSS_CONF%(basedefs.FILE_JBOSSAS_CONF))
 
-def _copyJbossRhevmFiles():
+def _linkHttpParams():
     #copy context.xml to ROOT.war/WEB-INF
     try:
-        if os.path.exists(basedefs.FILE_JBOSS_ROOT_WAR_CONTEXT_DEST):
-            logging.debug("Backing up %s" % basedefs.FILE_JBOSS_ROOT_WAR_CONTEXT_DEST)
-            shutil.move(basedefs.FILE_JBOSS_ROOT_WAR_CONTEXT_DEST, "%s.backup" % basedefs.FILE_JBOSS_ROOT_WAR_CONTEXT_DEST)
-        logging.debug("copying %s over %s" % (basedefs.FILE_JBOSS_ROOT_WAR_CONTEXT_SRC, basedefs.FILE_JBOSS_ROOT_WAR_CONTEXT_DEST))
-        shutil.copy(basedefs.FILE_JBOSS_ROOT_WAR_CONTEXT_SRC, basedefs.FILE_JBOSS_ROOT_WAR_CONTEXT_DEST)
-
         #create links for files in /usr/share/rhevm/reosurces/jboss
-        targetsList = ["%s/%s" % (basedefs.DIR_JBOSS_RESOURCES, basedefs.FILE_JBOSS_ROOT_WAR_HTML),\
-                    "%s/%s" % (basedefs.DIR_JBOSS_RESOURCES, basedefs.FILE_JBOSS_ROOT_WAR_FAVICON),\
-                    "%s/%s" % (basedefs.DIR_JBOSS_RESOURCES, basedefs.FILE_JBOSS_ROOT_WAR_CSS),\
-                    "%s/%s" % (basedefs.DIR_JBOSS_RESOURCES, basedefs.FILE_JBOSS_ROOT_WAR_JS_VERSION),\
-                    "%s/%s" % (basedefs.DIR_JBOSS_RESOURCES, "images"),\
-                    basedefs.FILE_JBOSS_HTTP_PARAMS]
+        targetsList = [ basedefs.FILE_JBOSS_HTTP_PARAMS ]
 
         for target in targetsList:
             #first, remove existing destination
@@ -620,7 +609,7 @@ def _copyJbossRhevmFiles():
                     os.remove(link)
 
             logging.debug("Linking %s to %s" % (target, link))
-            os.symlink(target, link)
+            os.link(target, link)
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_FAILED_ROOT_WAR)
@@ -653,13 +642,13 @@ def _changeDefaultWelcomePage():
 
 def _addMimeMapNode(webXmlHandler):
     """
-    adds a new mime-mapping node after servlet-mapping
+    adds a new mime-mapping node after description
     """
-    servletMapNode = utils.getXmlNode(webXmlHandler, "/web-app/servlet-mapping")
+    descMapNode = utils.getXmlNode(webXmlHandler, "/web-app/description")
     mimeMapListNode = libxml2.newNode('mime-mapping') 
 
     #add the new node as a next sibling to the servletMapNode
-    servletMapNode.addNextSibling(mimeMapListNode)
+    descMapNode.addNextSibling(mimeMapListNode)
 
     #add the extention node
     extFileNode = libxml2.newNode('extension')
@@ -691,7 +680,7 @@ def _handleJbossCertFile():
         raise Exception(output_messages.ERR_EXP_CANT_FIND_CA_FILE % (basedefs.FILE_CA_CRT_SRC))
 
     # change ownership to jboss
-    os.chown(destCaFile, utils.getUsernameId("jboss"), utils.getGroupId("jboss"))
+    os.chown(destCaFile, utils.getUsernameId("jboss-as"), utils.getGroupId("jboss-as"))
 
     # update mime type in web.xml
     logging.debug("editing jboss conf file %s" % (basedefs.FILE_JBOSS_WEB_XML_SRC))
@@ -720,7 +709,7 @@ def _handleJbossCertFile():
 def _editRootWar():
     try:
         # Copy new files and images to rhevm-slimmed profile
-        _copyJbossRhevmFiles()
+        _linkHttpParams()
 
         # Update rhevm_index.html file with consts
         logging.debug("update %s with http & ssl urls"%(basedefs.FILE_JBOSS_HTTP_PARAMS))
@@ -735,92 +724,9 @@ def _editRootWar():
         # Handle ca.crt
         _handleJbossCertFile()
 
-        # Edit web.xml - (change html welcome page)
-        _changeDefaultWelcomePage()
-
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_UPD_ROOT_WAR)
-
-def _editServerXml():
-    try:
-        serverxmlHandler = utils.XMLConfigFileHandler(basedefs.FILE_JBOSS_SERVER_XML)
-        serverxmlHandler.open()
-        httpPort = conf["HTTP_PORT"]
-        httpsPort = conf["HTTPS_PORT"]
-        node = utils.getXmlNode(serverxmlHandler, "//Connector[@protocol='HTTP/1.1' and not(@SSLEnabled='true')]")
-        node.setProp("port", httpPort)
-        node.setProp("redirectPort", httpsPort)
-
-        node = utils.getXmlNode(serverxmlHandler, "//Connector[@protocol='AJP/1.3']")
-        node.setProp("port", basedefs.CONST_AJP_BASE_PORT)
-        node.setProp("redirectPort", httpsPort)
-
-        check = serverxmlHandler.xpathEval("//Connector[@protocol='HTTP/1.1' and (@SSLEnabled='true')]")
-        # Create new HTTPS connector if needed
-        if len(check) == 0:
-            # Create Node
-            baseNode = libxml2.newNode("Connector")
-
-            # Set HTTPS Properties
-            baseNode.setProp("protocol", "HTTP/1.1")
-            baseNode.setProp("SSLEnabled", "true")
-
-            # Append Changes
-            baseDoc = utils.getXmlNode(serverxmlHandler, "//Service[@name='jboss.web']")
-            baseDoc.addChild(baseNode)
-
-        # Get existing HTTP Connector Node
-        node = utils.getXmlNode(serverxmlHandler, "//Connector[@protocol='HTTP/1.1' and (@SSLEnabled='true')]" )
-
-        # Set right properties
-        node.setProp("port", httpsPort)
-        node.setProp("address", "${jboss.bind.address}")
-        node.setProp("scheme", "https")
-        node.setProp("secure", "true")
-        node.setProp("clientAuth", "false")
-        node.setProp("keystoreFile", "/etc/pki/ovirt-engine/.keystore")
-        node.setProp("keystorePass", "mypass")
-        node.setProp("keyAlias", "engine")
-        node.setProp("sslProtocol", "TLS")
-
-        serverxmlHandler.close()
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_UPD_XML_FILE%(basedefs.FILE_JBOSS_SERVER_XML))
-
-def _editJbossBeans():
-    try:
-        jbeansHandler = utils.XMLConfigFileHandler(basedefs.FILE_JBOSS_BEANS_XML)
-        jbeansHandler.open()
-
-        http_port = utils.getXmlNode(jbeansHandler, "//*[local-name()='property' and text()='JBoss Web HTTP connector socket; also drives the values for the HTTPS and AJP sockets']/../*[local-name()='property' and @name='port']")
-        http_port.setContent(conf["HTTP_PORT"])
-
-        https_port = utils.getXmlNode(jbeansHandler, "//*[local-name()='property' and text()='JBoss Web HTTPS connector socket']/../*[local-name()='property' and @name='port']")
-        https_port.setContent(conf["HTTPS_PORT"])
-
-        jbeansHandler.close()
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_UPD_JBOSS_BEANS%(basedefs.FILE_JBOSS_BEANS_XML))
-
-def _editTransTimeout():
-    '''
-        edit transaction-jboss-beans.xml
-        set transactionTimeout propery to 600
-    '''
-    try:
-        xmlFileHandler = utils.XMLConfigFileHandler(basedefs.FILE_JBOSS_TRANS_XML_SRC)
-        xmlFileHandler.open()
-
-        #Update the property node for transaction timeout
-        utils.setXmlContent(xmlFileHandler, "//*[contains(@name,'transactionTimeout')]", basedefs.CONST_JBOSS_TRANS_TIMEOUT)
-
-        xmlFileHandler.close()
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_UPD_TRANS_TIMEOUT % basedefs.FILE_JBOSS_TRANS_XML_SRC)
 
 def _editExternalConfig():
     try:
@@ -843,92 +749,6 @@ def _editDefaultHtml():
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_UPD_HTML_FILE%(basedefs.FILE_DEFAULT_HTML))
-
-def _updateRhevKerbAuthPolicy(loginConfigHandler):
-    # Check if EngineKerberosAuth  node exists
-    check = loginConfigHandler.xpathEval(basedefs.XPATH_LOGIN_CFG_APP_POLICY_KERB)
-    if len(check) == 0:
-        # Create new node
-        logging.debug("adding kerberos %s section to login-config.xml jboss find" % (basedefs.JBOSS_KERB_AUTH))
-        baseNode = libxml2.newNode("application-policy")
-        baseNode.setProp("name", basedefs.JBOSS_KERB_AUTH)
-
-        #add the app policy to the root xml
-        baseDoc = utils.getXmlNode(loginConfigHandler, "/policy")
-        baseDoc.addChild(baseNode)
-
-        authNode = libxml2.newNode("authentication")
-        baseNode.addChild(authNode)
-
-        #add login module node
-        loginNode = libxml2.newNode("login-module")
-        authNode.addChild(loginNode)
-
-        #set login node attributes
-        loginNode.setProp("code", "com.sun.security.auth.module.Krb5LoginModule")
-        loginNode.setProp("flag", "required")
-
-def _addEncryptDbPassPolicy(loginConfigHandler):
-    #check if EncryptPolicy exists
-    dbPassNode = loginConfigHandler.xpathEval(basedefs.XPATH_LOGIN_CFG_APP_POLICY_PASS)
-    if len(dbPassNode) == 0:
-        #create new application policy node
-        logging.debug("adding password encryption %s section to login-config.xml jboss find" % (basedefs.JBOSS_SECURITY_DOMAIN))
-        appPolicyNode = libxml2.newNode("application-policy")
-        appPolicyNode.setProp("name", basedefs.JBOSS_SECURITY_DOMAIN)
-
-        #add the app policy to the root xml
-        baseDoc = utils.getXmlNode(loginConfigHandler, "/policy")
-        baseDoc.addChild(appPolicyNode)
-
-        authNode = libxml2.newNode("authentication")
-        appPolicyNode.addChild(authNode)
-
-        #add login module node
-        loginNode = libxml2.newNode("login-module")
-        authNode.addChild(loginNode)
-
-        #update login node attributes
-        loginNode.setProp("code", "org.jboss.resource.security.SecureIdentityLoginModule")
-        loginNode.setProp("flag", "required")
-
-        #add modules option managed conn node
-        moduleNode = libxml2.newNode("module-option")
-        moduleNode.setProp("name", "managedConnectionFactoryName")
-        moduleNode.setContent("jboss.jca:name=ENGINEDataSource,service=LocalTxCM")
-        loginNode.addChild(moduleNode)
-
-        moduleNode = libxml2.newNode("module-option")
-        moduleNode.setProp("name", "username")
-        loginNode.addChild(moduleNode)
-
-        moduleNode = libxml2.newNode("module-option")
-        moduleNode.setProp("name", "password")
-        loginNode.addChild(moduleNode)
-
-    #node exists, update the encrypted password & username
-    logging.debug("updating db user and enrypted password in login-config.xml file")
-    utils.setXmlContent(loginConfigHandler, basedefs.XPATH_LOGIN_CFG_UPD_PASS, conf["ENCRYPTED_DB_PASS"])
-    utils.setXmlContent(loginConfigHandler, basedefs.XPATH_LOGIN_CFG_UPD_USER, basedefs.DB_USER)
-
-def _editLoginConfig():
-    try:
-        loginConfigHandler = utils.XMLConfigFileHandler(basedefs.FILE_LOGIN_CONFIG_XML)
-        loginConfigHandler.open()
-
-        #update rhev kerberos auth application policy
-        _updateRhevKerbAuthPolicy(loginConfigHandler)
-
-        #add EncryptDBPassword application policy
-        _addEncryptDbPassPolicy(loginConfigHandler)
-
-        loginConfigHandler.close()
-
-        # Change mod for login config
-        os.chmod(basedefs.FILE_LOGIN_CONFIG_XML, 0640)
-    except:
-       logging.error(traceback.format_exc())
-       raise Exception(output_messages.ERR_EXP_UPD_LOGIN_CONFIG_FILE % (basedefs.FILE_LOGIN_CONFIG_XML))
 
 def _createCA():
     global messages
@@ -976,7 +796,7 @@ def _createCA():
             out, rc = utils.execCmd(cmd, None, True, output_messages.ERR_RC_CODE, [basedefs.CONST_CA_PASS])
 
             # Copy publich ssh key to ROOT site
-            utils.copyFile(basedefs.FILE_PUBLIC_SSH_KEY, "/usr/local/jboss/server/%s/deploy/ROOT.war/"%(basedefs.JBOSS_PROFILE_NAME))
+            utils.copyFile(basedefs.FILE_PUBLIC_SSH_KEY, basedefs.DIR_JBOSS_ROOT_WAR)
 
             # Extract CA fingerprint
             cmd = [basedefs.EXEC_OPENSSL, "x509", "-in", basedefs.FILE_CA_CRT_SRC, "-fingerprint", "-noout"]
@@ -1012,8 +832,8 @@ def _changeCaPermissions(pkiDir):
                     os.path.join(pkiDir, "private", "ca.pem"),
                     os.path.join(pkiDir,".truststore")
                     ]
-    jbossUid = utils.getUsernameId("jboss")
-    jbossGid = utils.getGroupId("jboss")
+    jbossUid = utils.getUsernameId("jboss-as")
+    jbossGid = utils.getGroupId("jboss-as")
 
     for item in changeList:
         logging.debug("changing ownership of %s to %s/%s (uid/gid)" % (item, jbossUid, jbossGid))
@@ -1098,76 +918,29 @@ def _configIptables():
 def _createJbossProfile():
     logging.debug("creating jboss profile")
     try:
-        # Create EAR link
-        ear = os.path.join(basedefs.DIR_JBOSS, "server", basedefs.JBOSS_PROFILE_NAME, "deploy", "engine.ear")
-        if not os.path.exists(ear):
-            linkDest = ear
-            if os.path.islink(linkDest) and os.readlink(linkDest) != basedefs.DIR_ENGINE_EAR_SRC:
-                os.remove(linkDest)
-            os.symlink(basedefs.DIR_ENGINE_EAR_SRC, linkDest)
-        else:
-            logging.debug("%s Already exists, skipping link creation" % (ear)) 
+        dirs = [
+                   {'src'  : basedefs.DIR_ENGINE_EAR_SRC,
+                    'dest' : os.path.join(basedefs.DIR_JBOSS, "standalone", "deployments", "engine.ear")},
+                   {'src'  : basedefs.DIR_ROOT_WAR_SRC,
+                    'dest' : os.path.join(basedefs.DIR_JBOSS, "standalone", "deployments", "ROOT.war")}
+                   ]
 
-	# Create PGSQL_DS link
-	if not os.path.exists(basedefs.FILE_JBOSS_PGSQL_DS_XML_DEST):
-            linkDest = basedefs.FILE_JBOSS_PGSQL_DS_XML_DEST
-            linkSrc = basedefs.FILE_JBOSS_PGSQL_DS_XML_SRC
-            if os.path.islink(linkDest) and os.readlink(linkDest) != linkSrc:
-                os.remove(linkDest)
-            os.symlink(linkSrc, linkDest)
-        else:
-            logging.debug("%s Already exists, skipping link creation" % (basedefs.FILE_JBOSS_PGSQL_DS_XML_DEST))
+        for item in dirs:
+            if not os.path.exists(item['dest']):
+                if os.path.islink(item['dest']) and os.readlink(item['dest']) != item['src']:
+                    os.remove(item['dest'])
+                os.symlink(item['src'], item['dest'])
+
+                logging.debug("Successfully created jboss profile %s"%(basedefs.JBOSS_PROFILE_NAME))
+            else:
+                logging.debug("%s profile already exists, doing nothing"%(basedefs.JBOSS_PROFILE_NAME))
+
+            logging.debug("touching .dodeploy file for %s" % item['dest'])
+            open("%s.dodeploy" % item['dest'], 'w').close()
+
     except:
         logging.error(traceback.format_exc())
         raise Exception("Failed to create JBoss profile")
-
-def _editLog4jXml():
-    try:
-        utils.copyFile(basedefs.FILE_JBOSS_LOG4J_XML_SRC, basedefs.FILE_JBOSS_LOG4J_XML_DEST)
-        logging.debug("editing log file %s"%(basedefs.FILE_JBOSS_LOG4J_XML_DEST))
-        logHandler = utils.XMLConfigFileHandler(basedefs.FILE_JBOSS_LOG4J_XML_DEST)
-        logHandler.open()
-        nodes = logHandler.xpathEval("//appender[@name='RHEVM_LOG' or @name='PUBLICAPI_LOG']/param[@name='File']")
-        logging.debug(nodes)
-        for node in nodes:
-            string = node.prop("value")
-            logging.debug(node)
-            logging.debug("Current value is %s"%(string))
-            newString = string.replace("${jboss.server.log.dir}","/var/log")
-            node.setProp("value",newString)
-        logHandler.close()
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_FAILED_UPD_LOG4J % basedefs.FILE_JBOSS_LOG4J_XML_DEST)
-
-def _updatePostgresDs():
-    """
-    sym link pre-defined postgres-ds.xml file
-    from conf dir to jboss deploy dir
-    to allow encrypted db password
-    """
-    try:
-        #TODO: export create symlink to utils and reuse in all rhevm-setup
-        link = basedefs.FILE_JBOSS_PGSQL_DS_XML_DEST
-        target = basedefs.FILE_JBOSS_PGSQL_DS_XML_SRC
-        if os.path.exists(link):
-            if os.path.islink(link):
-                logging.debug("removing link %s" % link)
-                os.unlink(link)
-            elif os.path.isdir(link):
-                #remove dir using shutil.rmtree
-                logging.debug("removing directory %s" % link)
-                shutil.rmtree(link)
-            else:
-                logging.debug("removing file %s" % link)
-                os.remove(link)
-
-        logging.debug("Linking %s to %s" % (target, link))
-        os.symlink(target, link)
-
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_SYM_LINK_JBOSS_PSSQL_DS_FILE)
 
 def _createDB():
     """
@@ -1244,7 +1017,7 @@ def _updateVDCOptions():
             "CertificateFileName":"/etc/pki/ovirt-engine/certs/engine.cer",
             "CAEngineKey":"/etc/pki/ovirt-engine/private/ca.pem",
             "TruststoreUrl":"/etc/pki/ovirt-engine/.keystore",
-            "ENGINEEARLib":"/usr/local/jboss/server/%s/deploy/engine.ear"%(basedefs.JBOSS_PROFILE_NAME),
+            "ENGINEEARLib":"/usr/share/jboss-as/standalone/deployments/engine.ear",
             "CACertificatePath":"/etc/pki/ovirt-engine/ca.pem",
             "CertAlias":"engine",
         },
@@ -1708,7 +1481,7 @@ def _displaySummary():
 
 def _startJboss():
     logging.debug("using chkconfig to enable jboss to load on system startup.")
-    output, rc = utils.execExternalCmd("/sbin/chkconfig jboss on", True, output_messages.ERR_FAILED_CHKCFG_JBOSS)
+    output, rc = utils.execExternalCmd("/sbin/chkconfig jboss-as on", True, output_messages.ERR_FAILED_CHKCFG_JBOSS)
     _handleJbossService('stop', output_messages.INFO_STOP_JBOSS, output_messages.ERR_FAILED_STP_JBOSS_SERVICE, False)
     _handleJbossService('start', output_messages.INFO_START_JBOSS, output_messages.ERR_FAILED_START_JBOSS_SERVICE, False)
     
@@ -1833,10 +1606,10 @@ def _addFinalInfoMsg():
 
 def _checkJbossService(configFile):
     logging.debug("checking the status of jboss")
-    cmd = "%s jboss status" % (basedefs.EXEC_SERVICE)
+    cmd = "%s jboss-as status" % (basedefs.EXEC_SERVICE)
     output, rc = utils.execExternalCmd(cmd)
     if 0 == rc:
-        logging.debug("jbossas is up and running")
+        logging.debug("jboss-as is up and running")
 
         #if we don't use an answer file, we need to ask the user if to stop jboss
         if not configFile:
@@ -1857,7 +1630,7 @@ def _handleJbossService(action, infoMsg, errMsg, printToStdout=False):
         according to action param
     '''
 #    cmd = "%s jboss %s"  % (basedefs.EXEC_SERVICE, action)
-    cmd = ["%s" % basedefs.EXEC_SERVICE, "jboss", "%s" % action]
+    cmd = ["%s" % basedefs.EXEC_SERVICE, "jboss-as", "%s" % action]
     logging.debug(infoMsg)
     if printToStdout:
         print infoMsg
@@ -2037,6 +1810,348 @@ def stopRhevmDbRelatedServices(etlService, notificationService):
             logging.warn(traceback.format_exc())
             messages.append(output_messages.ERR_FAILED_STOP_SERVICE % "rhevm-notiferd")
 
+def deployJbossModules():
+    """
+    deploy the postgres module and edit the xml for the jdk module
+    """
+    try:
+        # Copy module(s) from /usr/share/ovirt-engine/resources/jboss/modules
+        logging.debug("Adding modules to jboss's modules")
+        modules = [ { 'target' : "%s/org/postgresql" % basedefs.DIR_MODULES_SRC,
+                      'link'   : "%s/org/postgresql" % basedefs.DIR_MODULES_DEST}
+                  ]
+        for module in modules:
+            utils.replaceWithLink(module['target'], module['link'])
+
+        # edit module.xml for the jdk module
+        backupFile = "%s.%i" % (basedefs.FILE_JDK_MODULE_XML, random.randint(1000000,9999999))
+        editFile = "%s.%s.%i" % (basedefs.FILE_JDK_MODULE_XML, "EDIT", random.randint(1000000,9999999))
+        logging.debug("Backing up %s into %s", basedefs.FILE_JDK_MODULE_XML, backupFile)
+        utils.copyFile(basedefs.FILE_JDK_MODULE_XML, backupFile)
+        utils.copyFile(basedefs.FILE_JDK_MODULE_XML, editFile)
+
+        logging.debug("loading xml file handler")
+        xmlObj = utils.XMLConfigFileHandler(editFile)
+        xmlObj.open()
+
+        logging.debug("registering name space")
+        xmlObj.registerNs('module','urn:jboss:module:1.1')
+
+        paths = ['''<path name="sun/security"/>''', '''<path name="sun/security/krb5"/>''']
+
+        for path in paths:
+            logging.debug("adding %s as node", path)
+            xmlObj.addNodes("//module:module/module:dependencies/module:system/module:paths", path)
+
+        xmlObj.close()
+
+        shutil.move(editFile, basedefs.FILE_JDK_MODULE_XML)
+        logging.debug("JDK module configuration has been saved")
+
+    except:
+        logging.error("Failed to deploy modules into jboss")
+        logging.error(traceback.format_exc())
+        raise output_messages.ERR_EXP_FAILED_DEPLOY_MODULES
+
+def configEncryptedPass():
+    """
+    push the encrypted password into standalone.xml
+    """
+    editFile = None
+    backupFile = None
+    try:
+        #1. Backup standalone xml file
+        editFile = "%s.%s.%i" % (basedefs.FILE_JBOSS_STANDALONE, "EDIT", random.randint(1000000,9999999))
+        logging.debug("Backing up %s into %s", basedefs.FILE_JBOSS_STANDALONE, backupFile)
+        utils.copyFile(basedefs.FILE_JBOSS_STANDALONE, editFile)
+
+        #2. Configure the xml file
+        logging.debug("loading xml file handler")
+        xmlObj = utils.XMLConfigFileHandler(editFile)
+        xmlObj.open()
+
+        xmlObj.registerNs('security', 'urn:jboss:domain:security:1.1')
+
+        configJbossSecurity(xmlObj)
+
+        xmlObj.close()
+
+        shutil.move(editFile, basedefs.FILE_JBOSS_STANDALONE)
+        os.chown(basedefs.FILE_JBOSS_STANDALONE, utils.getUsernameId("jboss-as"), utils.getGroupId("jboss-as"))
+        logging.debug("Jboss configuration has been saved")
+
+    except:
+        logging.error("ERROR Editing jboss's configuration file")
+        logging.error(traceback.format_exc())
+        raise output_messages.ERR_EXP_FAILED_CONFIG_JBOSS
+
+def configJbossXml():
+    """
+    configure JBoss-AS's stadnalone.xml
+    """
+    editFile = None
+    backupFile = None
+    try:
+        #1. Backup standalone xml file
+        backupFile = "%s.%s.%i" % (basedefs.FILE_JBOSS_STANDALONE, "BACKUP", random.randint(1000000,9999999))
+        editFile = "%s.%s.%i" % (basedefs.FILE_JBOSS_STANDALONE, "EDIT", random.randint(1000000,9999999))
+        logging.debug("Backing up %s into %s", basedefs.FILE_JBOSS_STANDALONE, backupFile)
+        utils.copyFile(basedefs.FILE_JBOSS_STANDALONE, backupFile)
+        utils.copyFile(basedefs.FILE_JBOSS_STANDALONE, editFile)
+
+        #2. Configure the xml file
+        logging.debug("loading xml file handler")
+        xmlObj = utils.XMLConfigFileHandler(editFile)
+        xmlObj.open()
+
+        #2a. Register the main domain Namespace
+        xmlObj.registerNs('domain','urn:jboss:domain:1.1')
+
+        logging.debug("Configuring Jboss")
+        configJbossLogging(xmlObj)
+        configJbossDatasource(xmlObj)
+        configJbossNetwork(xmlObj)
+        configJbossSSL(xmlObj)
+        logging.debug("Jboss has been configured")
+
+        xmlObj.close()
+
+        shutil.move(editFile, basedefs.FILE_JBOSS_STANDALONE)
+        os.chown(basedefs.FILE_JBOSS_STANDALONE, utils.getUsernameId("jboss-as"), utils.getGroupId("jboss-as"))
+        logging.debug("Jboss configuration has been saved")
+
+    except:
+        logging.error("ERROR Editing jboss's configuration file")
+        logging.error(traceback.format_exc())
+        raise output_messages.ERR_EXP_FAILED_CONFIG_JBOSS
+
+def configJbossLogging(xmlObj):
+    """
+    Configure the Logging for jboss
+    """
+    logging.debug("Configuring logging for jboss")
+
+    logging.debug("Registering logging namespace")
+    xmlObj.registerNs('logging', 'urn:jboss:domain:logging:1.1')
+
+    logging.debug("setting attributes")
+    nodes = xmlObj.xpathEval("//logging:subsystem/logging:console-handler[@name='CONSOLE']")
+    nodes[0].setProp("autoflush", "true")
+
+    logging.debug("Adding level node with attribute: name, value: INFO")
+    nodes = xmlObj.xpathEval("//logging:subsystem/logging:periodic-rotating-file-handler[@name='FILE']")
+    nodes[0].setProp("autoflush", "true")
+
+
+    xmlObj.removeNodes("//logging:subsystem/logging:periodic-rotating-file-handler[@name='FILE']/logging:level")
+    levelStr = '''<level name="INFO" />'''
+    xmlObj.addNodes("//logging:subsystem/logging:periodic-rotating-file-handler[@name='FILE']", levelStr)
+
+    xmlObj.removeNodes("//logging:subsystem/logging:size-rotating-file-handler[@name='ENGINE_LOG']")
+    logging.debug("Adding file handler for ENGINE_LOG")
+    fileHandlerStr = '''
+    <size-rotating-file-handler name="ENGINE_LOG" autoflush="true">
+        <level name="INFO"/>
+        <formatter>
+            <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
+        </formatter>
+        <file path="/var/log/ovirt-engine/engine.log"/>
+        <rotate-size value="1M"/>
+        <max-backup-index value="30"/>
+        <append value="true"/>
+    </size-rotating-file-handler>
+'''
+    xmlObj.addNodes("//logging:subsystem", fileHandlerStr)
+
+    logging.debug("Adding Loggers for ovirt-engine")
+    loggerCats = ["org.ovirt", "org.ovirt.engine.core.bll", "org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect$PostgresJdbcTemplate","org.springframework.ldap"]
+    for loggerCat in loggerCats:
+        xmlObj.removeNodes("//logging:subsystem/logging:logger[@category='%s']" % loggerCat)
+
+    loggers = ['''
+    <logger category="org.ovirt">
+        <level name="INFO"/>
+        <handlers>
+            <handler name="ENGINE_LOG"/>
+        </handlers>
+    </logger>
+    ''','''
+    <logger category="org.ovirt.engine.core.bll">
+        <level name="INFO"/>
+    </logger>
+    ''','''
+    <logger category="org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect$PostgresJdbcTemplate">
+        <level name="WARN"/>
+    </logger>
+    ''','''
+    <logger category="org.springframework.ldap">
+        <level name="ERROR"/>
+    </logger>
+    ''']
+
+    for logger in loggers:
+        xmlObj.addNodes("//logging:subsystem", logger)
+
+    logging.debug("Logging is enabled and configured in jboss's configuration")
+
+def configJbossDatasource(xmlObj):
+    """
+    configure the datasource for jboss
+    """
+    logging.debug("Configuring logging for jboss")
+
+    logging.debug("Registering datasource namespaces")
+    xmlObj.registerNs('datasource', 'urn:jboss:domain:datasources:1.0')
+    xmlObj.registerNs('deployment-scanner', 'urn:jboss:domain:deployment-scanner:1.0')
+
+    logging.debug("looking for ENGINEDatasource datasource")
+
+    # removeNodes will remove the node if it exists and will do nothing if it does not exist
+    xmlObj.removeNodes("//datasource:subsystem/datasource:datasources/datasource:datasource[@jndi-name='java:/ENGINEDataSource']")
+
+    datasourceStr = '''
+        <datasource jndi-name="java:/ENGINEDataSource" pool-name="ENGINEDataSource" enabled="true">
+        <connection-url>
+            jdbc:postgresql://localhost:5432/engine
+        </connection-url>
+        <driver>
+            postgresql
+        </driver>
+        <transaction-isolation>
+            TRANSACTION_READ_COMMITTED
+        </transaction-isolation>
+        <pool>
+            <min-pool-size>
+                1
+            </min-pool-size>
+            <max-pool-size>
+                100
+            </max-pool-size>
+            <prefill>
+                true
+            </prefill>
+        </pool>
+        <security>
+            <user-name>
+                engine
+            </user-name>
+            <security-domain>
+                EncryptDBPassword
+            </security-domain>
+        </security>
+        <statement>
+            <prepared-statement-cache-size>
+                100
+            </prepared-statement-cache-size>
+        </statement>
+    </datasource>
+'''
+    logging.debug("Adding ENGINE datasource")
+    xmlObj.addNodes("//datasource:subsystem/datasource:datasources", datasourceStr)
+
+    logging.debug("Adding drivers to datasource")
+    xmlObj.removeNodes("//datasource:subsystem/datasource:datasources/datasource:drivers/datasource:driver[@name='postgresql']")
+    driversStr='''
+    <drivers>
+        <driver name="postgresql" module="org.postgresql">
+            <xa-datasource-class>
+                org.postgresql.xa.PGXADataSource
+            </xa-datasource-class>
+        </driver>
+    </drivers>
+'''
+    xmlObj.addNodes("//datasource:subsystem/datasource:datasources", driversStr)
+
+    logging.debug("configuring deployment-scanner")
+    node = xmlObj.xpathEval("//deployment-scanner:subsystem/deployment-scanner:deployment-scanner")[0]
+    node.setProp("name","default")
+    node.setProp("path","deployments")
+    node.setProp("scan-enabled","true")
+    node.setProp("deployment-timeout","60")
+    logging.debug("Datasource has been added into jboss's configuration")
+
+def configJbossSecurity(xmlObj):
+    """
+    configure security for jboss
+    """
+    logging.debug("Configuring security for jboss")
+
+    logging.debug("Registering security namespaces")
+    xmlObj.registerNs('security', 'urn:jboss:domain:security:1.1')
+
+    xmlObj.removeNodes("//security:subsystem/security:security-domains/security:security-domain[@name='EngineKerberosAuth']")
+    securityKerbStr='''
+        <security-domain name="EngineKerberosAuth">
+            <authentication>
+                <login-module code="com.sun.security.auth.module.Krb5LoginModule" flag="required"/>
+            </authentication>
+        </security-domain>
+'''
+    xmlObj.addNodes("//security:subsystem/security:security-domains", securityKerbStr)
+
+    xmlObj.removeNodes("//security:subsystem/security:security-domains/security:security-domain[@name='EncryptDBPassword']")
+    securityPassStr='''
+        <security-domain name="EncryptDBPassword">
+            <authentication>
+                <login-module code="org.picketbox.datasource.security.SecureIdentityLoginModule" flag="required">
+                    <module-option name="username" value="engine"/>
+                    <module-option name="password" value="'''+ conf["ENCRYPTED_DB_PASS"] +'''"/>
+                    <module-option name="managedConnectionFactoryName" value="jboss.jca:name=ENGINEDataSource,service=LocalTxCM"/>
+                </login-module>
+            </authentication>
+        </security-domain>
+'''
+    xmlObj.addNodes("//security:subsystem/security:security-domains", securityPassStr)
+
+#    node = xmlObj.xpathEval("//security:subsystem/security:security-domains/security:security-domain[@name='EncryptDBPassword']/security:authentication/security:login-module/security:module-option[@name='password']")[0]
+#    node.setProp('value', conf["ENCRYPTED_DB_PASS"])
+
+    logging.debug("Security has been configured for jboss")
+
+def configJbossNetwork(xmlObj):
+    """
+    configure access for the public interface on jboss
+    and set the ports for HTTP/S
+    """
+    logging.debug("Configuring Jboss's network")
+
+    logging.debug("Removing all interfaces from the public interface")
+    xmlObj.removeNodes("//domain:server/domain:interfaces/domain:interface[@name='public']/*")
+
+    logging.debug("Adding access to public interface")
+    xmlObj.addNodes("//domain:server/domain:interfaces/domain:interface[@name='public']", "<any-address/>")
+
+    logging.debug("Setting ports")
+    httpNode = xmlObj.xpathEval("//domain:server/domain:socket-binding-group[@name='standard-sockets']/domain:socket-binding[@name='http']")[0]
+    httpNode.setProp("port", conf["HTTP_PORT"])
+
+    httpsNode = xmlObj.xpathEval("//domain:server/domain:socket-binding-group[@name='standard-sockets']/domain:socket-binding[@name='https']")[0]
+    httpsNode.setProp("port", conf["HTTPS_PORT"])
+
+    logging.debug("Network has been configured for jboss")
+
+def configJbossSSL(xmlObj):
+    """
+    configure SSL for jboss
+    """
+    logging.debug("Configuring SSL for jboss")
+
+    logging.debug("Registering web namespaces")
+    xmlObj.registerNs('web', 'urn:jboss:domain:web:1.1')
+    sslConnectorStr='''
+    <connector name="https" protocol="HTTP/1.1" socket-binding="https" scheme="https" enable-lookups="false" secure="true">
+        <ssl name="ssl" password="mypass" certificate-key-file="/etc/pki/ovirt-engine/.keystore" protocol="TLSv1" verify-client="false"/>
+    </connector>
+'''
+    xmlObj.removeNodes("//web:subsystem/web:connector[@name='https']")
+    xmlObj.addNodes("//web:subsystem", sslConnectorStr)
+
+    logging.debug("Disabling default welcome-content")
+    node = xmlObj.xpathEval("//web:subsystem/web:virtual-server[@name='default-host']")[0]
+    node.setProp("enable-welcome-root", "false")
+
+    logging.debug("SSL has been configured for jboss")
+
 def startRhevmDbRelatedServices(etlService, notificationService):
     """
     bring back any service we stopped
@@ -2055,15 +2170,18 @@ def startRhevmDbRelatedServices(etlService, notificationService):
 
 def runMainFunctions(conf):
     # Create rhevm-slimmed jboss profile
-    runFunction([_createJbossProfile, setMaxSharedMemory, _editLog4jXml], output_messages.INFO_CONFIG_OVIRT_ENGINE)
+    runFunction([_createJbossProfile, setMaxSharedMemory], output_messages.INFO_CONFIG_OVIRT_ENGINE)
 
     # Create CA
     runFunction(_createCA, output_messages.INFO_CREATE_CA)
 
+    # Edit JBoss configuration
+    runFunction([configJbossXml, deployJbossModules, _editRootWar], output_messages.INFO_UPD_JBOSS_CONF)
+
     # Install rhevm db if it's not installed and running already
     if _isDbAlreadyInstalled() == False:
         # Handle db authtication and password encryption
-        runFunction([_updatePgPassFile, _encryptDBPass, _updatePostgresDs, _editLoginConfig], output_messages.INFO_SET_DB_SECURITY)
+        runFunction([_updatePgPassFile, _encryptDBPass, configEncryptedPass], output_messages.INFO_SET_DB_SECURITY)
 
         # Create db, update vdc_options table and attach user to su role
         runFunction([_createDB,  _updateVDCOptions], output_messages.INFO_CREATE_DB)
@@ -2085,16 +2203,13 @@ def runMainFunctions(conf):
         # Bring up any services we shut down before db upgrade
         startRhevmDbRelatedServices(etlService, notificationService)
 
-    #runFunction([_editServerXml, _editJbossasConf, _editRootWar, _editTransTimeout], output_messages.INFO_UPD_JBOSS_CONF)
-    runFunction([_editServerXml, _editRootWar, _editTransTimeout], output_messages.INFO_UPD_JBOSS_CONF)
-
     # Update default html welcome pages & conf files for isouploader & logcollector
     #runFunction([_editExternalConfig, _editDefaultHtml, _editToolsConfFile, editPostgresConf, updateFileDescriptors], output_messages.INFO_UPD_RHEVM_CONF)
     runFunction([_editToolsConfFile, editPostgresConf, updateFileDescriptors], output_messages.INFO_UPD_RHEVM_CONF)
 
     if utils.compareStrIgnoreCase(conf["CONFIG_NFS"], "yes"):
         # Config iso domain folder and load existing iso files
-        runFunction([_configNfsShare, _loadFilesToIsoDomain], output_messages.INFO_CFG_NFS)
+        runFunction([_configNfsShare], output_messages.INFO_CFG_NFS)
 
     # Config iptables
     runFunction(_configIptables, output_messages.INFO_CFG_IPTABLES)

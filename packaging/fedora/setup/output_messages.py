@@ -182,7 +182,7 @@ ERR_CANT_FIND_RHEVM_CONFIG_FILE="Unexpected error, Cannot find %s"
 ERR_FAILED_UPD_VDC_OPTIONS="Failed updating configuration parameter: %s"
 
 #start_jboss
-ERR_FAILED_CHKCFG_JBOSS="Failed to configure jbossas service to start on boot"
+ERR_FAILED_CHKCFG_JBOSS="Failed to configure jboss-as service to start on boot"
 ERR_FAILED_STP_JBOSS_SERVICE="Failed stopping JBoss service"
 ERR_FAILED_START_JBOSS_SERVICE="Failed starting JBoss service"
 ERR_FAILED_STATUS_JBOSS_SERVICE="Failed getting the status of the JBoss service"
@@ -265,7 +265,10 @@ ERR_EXP_UPD_JBOSS_CONF="Error while editing %s"
 ERR_EXP_FIND_AND_REPLACE="Failed to replace content in %s"
 
 #set xml content & get node
-ERR_EXP_UPD_XML_CONTENT="Unexpected error: XML query %s returned %s results" 
+ERR_EXP_UPD_XML_CONTENT="Unexpected error: XML query %s returned %s results"
+ERR_EXP_UNKN_XML_OBJ="Unexpected error: given XML is neither string nor instance"
+
+ERR_EXP_FAILED_CONFIG_JBOSS="Failed updating JBoss configuration" 
 
 #edit transaction timeout
 ERR_EXP_UPD_TRANS_TIMEOUT="Failed updating JBoss transaction timeout in %s"
@@ -314,7 +317,7 @@ ERR_EXP_ENCRYPT_PASS="Internal Error: Can't encrypt database password"
 ERR_ENCRYPT_TOOL_NOT_FOUND="Internal Error: Encryption tool not found at %s " % (basedefs.EXEC_ENCRYPT_PASS)
 
 #update postgres-ds.xml
-ERR_SYM_LINK_JBOSS_PSSQL_DS_FILE="Internal Error: can't add symbolic link to file %s" % (basedefs.FILE_JBOSS_PGSQL_DS_XML_DEST)
+#ERR_SYM_LINK_JBOSS_PSSQL_DS_FILE="Internal Error: can't add symbolic link to file %s" % (basedefs.FILE_JBOSS_PGSQL_DS_XML_DEST)
 
 ERR_EXP_LSOF="Error while trying to determine the list of 'open TCP ports' on the host"
 ERR_EXP_UNKWN_ERROR="Unknown error occurred during validation"
@@ -325,6 +328,9 @@ ERR_EXP_NOT_EMOUGH_MEMORY="Error, Not enough available memory on the Host\n(the 
 
 #import iso files
 ERR_FAILED_TO_COPY_FILE_TO_ISO_DOMAIN="Failed to copy files to iso domain"
+
+ERR_FAILED_TO_COPY_MODULE="Failed to copy modules into Jboss"
+ERR_EXP_FAILED_DEPLOY_MODULES="Failed to deploy modules into Jboss"
 
 #copy file
 ERR_SOURCE_DIR_NOT_SUPPORTED="Error: function supports copy of files only and not directories"

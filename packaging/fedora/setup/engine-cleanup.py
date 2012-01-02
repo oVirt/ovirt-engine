@@ -197,58 +197,6 @@ class CA():
 
         logging.debug("CA Remove completed successfully")
 
-class Slimmed():
-    def __init__(self):
-        pass
-
-    def backup(self):
-        """
-        Backup slimmed JBoss profile
-        """
-        logging.debug("Slimmed profile backup started")
-
-        now = utils.getCurrentDateTime()
-
-        # Backup profile under /var
-        if os.path.exists(VAR_SLIMMED_DIR):
-            backupDir = os.path.join(JBOSS_SERVER_DIR, "%s-%s" % (basedefs.JBOSS_PROFILE_NAME, now))
-            logging.debug("Copy %s to %s", VAR_SLIMMED_DIR, backupDir)
-            shutil.copytree(VAR_SLIMMED_DIR, backupDir, True)
-        else:
-            logging.debug("%s doesn't exists", VAR_SLIMMED_DIR)
-
-        # Backup profile under /etc
-        if os.path.exists(ETC_SLIMMED_DIR):
-            backupDir = os.path.join(ETC_JBOSS_DIR, "%s-%s" % (basedefs.JBOSS_PROFILE_NAME, now))
-            logging.debug("Copy %s to %s", ETC_SLIMMED_DIR, backupDir)
-            shutil.copytree(ETC_SLIMMED_DIR, backupDir, True)
-        else:
-            logging.debug("%s doesn't exists", ETC_SLIMMED_DIR)
-
-        logging.debug("Slimmed profile backup completed successfully")
-
-    def remove(self):
-        """
-        Remove slimmed JBoss profile
-        """
-        logging.debug("Slimmed profile remove started")
-
-        # Remove profile from /etc/jboss
-        if os.path.exists(ETC_SLIMMED_DIR):
-            logging.debug("Removing %s", ETC_SLIMMED_DIR)
-            shutil.rmtree(ETC_SLIMMED_DIR)
-        else:
-            logging.debug("%s doesn't exists", ETC_SLIMMED_DIR)
-
-        # Remvoe profile from /var/lib/jboss
-        if os.path.exists(VAR_SLIMMED_DIR):
-            logging.debug("Removing %s", VAR_SLIMMED_DIR)
-            shutil.rmtree(VAR_SLIMMED_DIR)
-        else:
-            logging.debug("%s doesn't exists", VAR_SLIMMED_DIR)
-
-        logging.debug("Slimmed profile remove completed successfully")
-
 class DB():
     def __init__(self):
         self.sqlfile = tempfile.mkstemp(suffix=".sql", dir=basedefs.DIR_DB_BACKUPS)[1]
@@ -312,7 +260,7 @@ class DB():
 def stopJboss():
     logging.debug("stoping jboss service.")
 
-    cmd = [basedefs.EXEC_SERVICE, "jbossas", "stop"]
+    cmd = [basedefs.EXEC_SERVICE, "jboss-as", "stop"]
     output, rc = utils.execCmd(cmd, None, True, MSG_ERR_FAILED_STP_JBOSS_SERVICE, [])
 
     # JBoss service sometimes return zero rc even if service is still up
@@ -354,14 +302,16 @@ def _printErrlMessages():
         print ('%s'%(msg))
 
 def unlinkEar():
-    engineEar = os.path.join(basedefs.DIR_JBOSS, "server", basedefs.JBOSS_PROFILE_NAME,"deploy","engine.ear")
-    if os.path.exists(engineEar):
-        os.unlink(engineEar)
+    links = [os.path.join(basedefs.DIR_JBOSS, "standalone", "deployments", "engine.ear"),
+             os.path.join(basedefs.DIR_JBOSS, "standalone", "deployments", "ROOT.war")]
+
+    for link in links:
+        if os.path.exists(link):
+            os.unlink(link)
 
 def main(options):
     db = DB()
     ca = CA()
-    slimmed = Slimmed()
 
     if not options.unattended_clean:
         # Ask user to proceed
@@ -383,14 +333,10 @@ def main(options):
     if options.remove_ca:
         runFunc([ca.backup, ca.remove], MSG_INFO_REMOVE_CA)
 
-    # Remove Slimmed profile
-    #if options.remove_slimmed:
-    #    runFunc([slimmed.backup, slimmed.remove], MSG_INFO_REMOVE_SLIMMED)
-
     # Unlink ear link in JBoss
     if options.unlink_ear:
         runFunc([unlinkEar], MSG_INFO_UNLINK_EAR)
-    
+
 
     if len(err_messages) == 0:
         print MSG_INFO_CLEANUP_OK

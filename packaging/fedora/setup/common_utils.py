@@ -84,6 +84,9 @@ class XMLConfigFileHandler(ConfigFileHandler):
     def xpathEval(self, xpath):
         return self.ctxt.xpathEval(xpath)
 
+    def registerNs(self, nsPrefix, uri):
+        return self.ctxt.xpathRegisterNs(nsPrefix, uri)
+
     def editParams(self, paramsDict):
         editAllOkFlag = True
         if type(paramsDict) != types.DictType:
@@ -111,20 +114,39 @@ class XMLConfigFileHandler(ConfigFileHandler):
     def delParams(self, paramsDict):
         pass
 
+    def removeNodes(self, xpath):
+        nodes = self.xpathEval(xpath)
+
+       #delete the node
+        for node in nodes:
+            node.unlinkNode()
+            node.freeNode()
+
+    def addNodes(self, xpath, xml):
+        """
+        Add a given xml into a specific point specified by the given xpath path into the xml object 
+        xml can be either a libxml2 instance or a string which contains a valid xml
+        """
+        parentNode = self.xpathEval(xpath)[0]
+        if not parentNode:
+            raise Exception(output_messages.ERR_EXP_UPD_XML_CONTENT%(xpath, len(parentNode)))
+
+        if isinstance(xml, str):
+            newNode = libxml2.parseDoc(xml)
+        elif isinstance(xml, libxml2.xmlDoc):
+            newNode = xml
+        else:
+            raise Exception(output_messages.ERR_EXP_UNKN_XML_OBJ)
+
+        # Call xpathEval to strip the metadata string from the top of the new xml node
+        parentNode.addChild(newNode.xpathEval('/*')[0])
+
+
 def getXmlNode(xml, xpath):
     nodes = xml.xpathEval(xpath)
     if len(nodes) != 1:
         raise Exception(output_messages.ERR_EXP_UPD_XML_CONTENT%(xpath, len(nodes)))
     return nodes[0]
-
-def removeXmlNode(xml, xpath):
-    nodes = xml.xpathEval(xpath)
-    if len(nodes) != 1:
-        raise Exception(output_messages.ERR_EXP_UPD_XML_CONTENT%(xpath, len(nodes)))
-
-    #delete the node
-    nodes[0].unlinkNode()
-    nodes[0].freeNode()
 
 def setXmlContent(xml,xpath,content):
     node = xml.xpathEval(xpath)
@@ -213,6 +235,32 @@ def execSqlCommand(userName, dbName, sqlQuery, failOnError=False, errMsg=output_
     logging.debug("running sql query %s on db: \'%s\'."%(dbName, sqlQuery))
     cmd = "/usr/bin/psql -U %s -d %s -c \"%s\""%(userName, dbName, sqlQuery)
     return execExternalCmd(cmd, failOnError, errMsg)
+
+def replaceWithLink(target, link):
+    """
+    replace link with a symbolic link to source
+    if link does not exist, simply create the link
+    """
+    try:
+        #TODO: export create symlink to utils and reuse in all rhevm-setup
+        if os.path.exists(link):
+            if os.path.islink(link):
+                logging.debug("removing link %s" % link)
+                os.unlink(link)
+            elif os.path.isdir(link):
+                #remove dir using shutil.rmtree
+                logging.debug("removing directory %s" % link)
+                shutil.rmtree(link)
+            else:
+                logging.debug("removing file %s" % link)
+                os.remove(link)
+
+        logging.debug("Linking %s to %s" % (target, link))
+        os.symlink(target, link)
+
+    except:
+        logging.error(traceback.format_exc())
+        raise
 
 def getUsernameId(username):
     return pwd.getpwnam(username)[2]

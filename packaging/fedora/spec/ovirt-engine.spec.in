@@ -1,8 +1,8 @@
 %define py_site_pkgs %(python -c "from distutils.sysconfig import get_python_lib as f;print f()")
 %define __os_install_post %{nil}
 %define _localdir %{_usr}/local
-%define _jbossdir %{_localdir}/jboss-5.1.0.GA
-%define _jbossprofiledir %{_jbossdir}/server/default
+%define _sharedir %{_usr}/share
+%define _jbossdir %{_sharedir}/jboss-as
 %define __getent /usr/bin/getent
 %define __groupadd /usr/sbin/groupadd
 %define __useradd /usr/sbin/useradd
@@ -204,7 +204,10 @@ fi
 #end raw
 
 %post
-ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/null || /bin/true
+#ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/null || /bin/true
+# TODO: remove copy of vds dir after Jboss7.x will support symbolic links
+mkdir -p %{_engineeardir}/components.war/vds &> /dev/null || /bin/true
+cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /dev/null || /bin/true
 
 %pre
 %{__getent} group kvm > /dev/null || %{__groupadd} -g 36 -r kvm
@@ -212,12 +215,12 @@ ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/nul
 
 %{__getent} group ovirt > /dev/null || %{__groupadd} -g 108 ovirt
 %{__getent} passwd ovirt > /dev/null || %{__useradd} -u 108 -g ovirt -o -r ovirt -c "Ovirt Manager" -d /var/lib/ovirt -s /sbin/nologin
-%{__getent} passwd jboss > /dev/null && %{__usermod} -a -G jboss ovirt > /dev/null
+%{__getent} passwd jboss-as > /dev/null && %{__usermod} -a -G jboss-as ovirt > /dev/null
 
 %pre notification-service
 %{__getent} group ovirt > /dev/null || %{__groupadd} -g 108 ovirt
 %{__getent} passwd ovirt > /dev/null || %{__useradd} -u 108 -g ovirt -o -r ovirt -c "Ovirt Manager" -d /var/lib/ovirt -s /sbin/nologin
-%{__getent} passwd jboss > /dev/null && %{__usermod} -a -G jboss ovirt > /dev/null
+%{__getent} passwd jboss-as > /dev/null && %{__usermod} -a -G jboss-as ovirt > /dev/null
 
 %post notification-service
 %{__chown} ovirt:ovirt /etc/ovirt-engine/notifier/notifier.conf > /dev/null || /bin/true
@@ -234,8 +237,8 @@ ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/nul
 %dir %{_datadir}/%{name}/db-backups
 %dir %{_datadir}/%{name}/scripts
 %dir %{_localstatedir}/run/%{name}
-%dir %attr (755,jboss,jboss) %{_var}/log/%{name}
-%dir %attr (755,jboss,jboss) %{_var}/lock/%{name}
+%dir %attr (755,jboss-as,jboss-as) %{_var}/log/%{name}
+%dir %attr (755,jboss-as,jboss-as) %{_var}/lock/%{name}
 %dir %{_datadir}/%{name}/sysprep
 %attr (755,root,root) %{_datadir}/%{name}/kerberos
 %{_datadir}/%{name}/conf
@@ -243,10 +246,10 @@ ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/nul
 %attr (755,root,root) %{_datadir}/%{name}/scripts/vds_installer.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/ovirtlogrot.sh
 %attr (755,root,root) %{_sysconfdir}/cron.daily/ovirt-cron
-%attr (755,jboss,jboss) %{_datadir}/%{name}/resources/jboss
+%attr (755,jboss-as,jboss-as) %{_datadir}/%{name}/resources/jboss
 %dir %{_sysconfdir}/%{name}
-%attr (755,jboss,jboss) %{_sysconfdir}/pki/%{name}
-%attr (640,jboss,jboss) %config(noreplace) %{_sysconfdir}/%{name}/engine.conf
+%attr (755,jboss-as,jboss-as) %{_sysconfdir}/pki/%{name}
+%attr (640,jboss-as,jboss-as) %config(noreplace) %{_sysconfdir}/%{name}/engine.conf
 
 %config(noreplace) %{_sysconfdir}/pki/%{name}/database.txt
 %config(noreplace) %{_sysconfdir}/pki/%{name}/serial.txt
@@ -259,8 +262,7 @@ ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/nul
 %config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.w7
 %config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.w7x64
 %config(noreplace) %{_datadir}/%{name}/sysprep/sysprep.xp
-%{_jbossdir}/common/lib/quartz-1.8.3.jar
-%{_jbossdir}/common/lib/postgresql-jdbc.jar
+%{_jbossdir}/modules/org/postgresql/main/postgresql-jdbc.jar
 %attr (755,root,root) %{_sysconfdir}/pki/%{name}/pubkey2ssh
 
 %files backend
@@ -346,8 +348,10 @@ ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/nul
 %config(noreplace) %{_sysconfdir}/%{name}/notifier/notifier.conf
 
 %changelog
-* Sun Dec 11 2011 Ronen Angluster <ranglust@redhat.com> - 3.0.0
+* Wed Jan 04 2012 Ronen Angluste <ranglust@redhat.com> - 3.0.0-1
+- Adjust code for Jboss AS 7.1
+* Sun Dec 11 2011 Ronen Angluster <ranglust@redhat.com> - 3.0.0-1
 - Moved all hard coded paths to macros
-* Wed Oct 26 2011 Ronen Angluster <ranglust@redhat.com> - 3.0.0
+* Wed Oct 26 2011 Ronen Angluster <ranglust@redhat.com> - 3.0.0-1
 - Initial build
 - Cloned from RHEVM spec file
