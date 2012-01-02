@@ -167,8 +167,7 @@ run_upgrade_files() {
 
 	for file in upgrade/??_??_????*.sql; do
             before=$(get_db_time)
-            checksum=$(md5sum $file)
-
+            checksum=$(md5sum $file | cut -d " " -f1)
             # upgrade/dd_dd_dddd* => dddddddd
 	    ver="${file:8:2}${file:11:2}${file:14:4}"
 	    if [ "$ver" -gt "$current" ] ; then
