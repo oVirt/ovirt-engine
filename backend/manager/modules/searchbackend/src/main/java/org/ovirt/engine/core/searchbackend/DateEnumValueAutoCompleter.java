@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 public class DateEnumValueAutoCompleter extends BaseAutoCompleter implements IConditionValueAutoCompleter {
     private java.util.HashMap<String, Integer> mEnumValues = new java.util.HashMap<String, Integer>();
 
-    public DateEnumValueAutoCompleter(java.lang.Class enumerationType) {
+    public DateEnumValueAutoCompleter(Class enumerationType) {
         super();
         for (int val : EnumCompat.GetIntValues(enumerationType)) {
             String ValName = EnumCompat.GetName(enumerationType, val).toUpperCase();
@@ -42,7 +42,7 @@ public class DateEnumValueAutoCompleter extends BaseAutoCompleter implements ICo
         }
 
         // check for rest of the week
-        for (DayOfWeek day : EnumCompat.GetValues(DayOfWeek.class)) {
+        for (DayOfWeek day : DayOfWeek.values()) {
             if (StringHelper.EqOp(fieldValue.toUpperCase(), day.toString().toUpperCase())) {
                 return day.toString();
             }

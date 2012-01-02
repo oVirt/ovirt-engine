@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +13,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DictionaryEntry;
-import org.ovirt.engine.core.compat.EnumCompat;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
@@ -24,8 +24,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public final class AuditLogDirector {
     private static LogCompat log = LogFactoryCompat.getLog(AuditLogDirector.class);
-    private static Map<AuditLogType, String> mMessages = new HashMap<AuditLogType, String>();
-    private static Map<AuditLogType, AuditLogSeverity> mSeverities = new HashMap<AuditLogType, AuditLogSeverity>();
+    private static Map<AuditLogType, String> mMessages = new EnumMap<AuditLogType, String>(AuditLogType.class);
+    private static Map<AuditLogType, AuditLogSeverity> mSeverities = new EnumMap<AuditLogType, AuditLogSeverity>(AuditLogType.class);
     private static final Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match ${<alphanumeric>...}
 
     static {
@@ -584,17 +584,23 @@ public final class AuditLogDirector {
     }
 
     static void checkMessages() {
-        for (AuditLogType value : EnumCompat.GetValues(AuditLogType.class)) {
-            if (!mMessages.containsKey(value)) {
-                log.infoFormat("AuditLogType: {0} not exist in string table", value.toString());
+        AuditLogType[] values = AuditLogType.values();
+        if (values.length != mMessages.size()) {
+            for (AuditLogType value : values) {
+                if (!mMessages.containsKey(value)) {
+                    log.infoFormat("AuditLogType: {0} not exist in string table", value.toString());
+                }
             }
         }
     }
 
     static void checkSeverities() {
-        for (AuditLogType value : EnumCompat.GetValues(AuditLogType.class)) {
-            if (!mSeverities.containsKey(value)) {
-                log.warnFormat("AuditLogType: {0} not have severity. Assumed Normal", value.toString());
+        AuditLogType[] values = AuditLogType.values();
+        if (values.length != mSeverities.size()) {
+            for (AuditLogType value : values) {
+                if (!mSeverities.containsKey(value)) {
+                    log.warnFormat("AuditLogType: {0} not have severity. Assumed Normal", value.toString());
+                }
             }
         }
     }

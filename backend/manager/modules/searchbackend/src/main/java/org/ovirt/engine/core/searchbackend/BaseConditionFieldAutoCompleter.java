@@ -16,13 +16,13 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     public static final int DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
 
     protected java.util.HashMap<String, java.util.ArrayList<valueValidationFunction>> mValidationDict = null;
-    private java.util.HashMap<String, java.lang.Class> mTypeDict = null;
+    private java.util.HashMap<String, Class> mTypeDict = null;
     protected java.util.HashMap<String, String> mColumnNameDict = null;
     protected java.util.ArrayList<String> mNotFreeTextSearchableFieldsList = new java.util.ArrayList<String>();
 
     public BaseConditionFieldAutoCompleter() {
         mValidationDict = new java.util.HashMap<String, java.util.ArrayList<valueValidationFunction>>();
-        mTypeDict = new java.util.HashMap<String, java.lang.Class>();
+        mTypeDict = new java.util.HashMap<String, Class>();
         mColumnNameDict = new java.util.HashMap<String, String>();
     }
 
@@ -172,7 +172,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                     return true;
                 }
             } else { // check for enum
-                for (DateEnumForSearch val : EnumCompat.GetValues(DateEnumForSearch.class)) {
+                for (DateEnumForSearch val : DateEnumForSearch.values()) {
                     if (StringHelper.EqOp(value.toUpperCase(), val.name().toUpperCase())) {
                         return true;
                     }
@@ -240,7 +240,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             }
             if (!retval) // check for week before
             {
-                for (DayOfWeek day : EnumCompat.GetValues(DayOfWeek.class)) {
+                for (DayOfWeek day : DayOfWeek.values()) {
                     if (StringHelper.EqOp(value.toUpperCase(), day.toString().toUpperCase())) // Enum.GetName(typeof(DayOfWeek),
                                                                                               // day).ToUpper()
                     {
