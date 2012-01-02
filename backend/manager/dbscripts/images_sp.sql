@@ -66,26 +66,6 @@ BEGIN
       boot = v_boot,
       _update_date = LOCALTIMESTAMP
       WHERE image_guid = v_image_guid;
-
-      -- TODO: Delete this once the disks table is updated directly from code.
-      UPDATE disks
-      SET    internal_drive_mapping = CAST (v_internal_drive_mapping AS INTEGER),
-             disk_type = CASE WHEN v_disk_type = 1 THEN 'System'
-                              WHEN v_disk_type = 2 THEN 'Data'
-                              WHEN v_disk_type = 3 THEN 'Shared'
-                              WHEN v_disk_type = 4 THEN 'Swap'
-                              WHEN v_disk_type = 5 THEN 'Temp'
-                              ELSE 'Unassigned'
-                         END,
-             disk_interface = CASE WHEN v_disk_interface = 1 THEN 'SCSI'
-                                   WHEN v_disk_interface = 2 THEN 'VirtIO'
-                                   ELSE 'IDE'
-                              END,
-             wipe_after_delete = v_wipe_after_delete,
-             propagate_errors = CASE WHEN v_propagate_errors = 1 THEN 'On'
-                                     ELSE 'Off'
-                                END
-      WHERE  disk_id = v_image_group_id;
 END; $procedure$
 LANGUAGE plpgsql;
 

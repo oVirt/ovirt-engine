@@ -28,6 +28,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
         _oldDisk.setdisk_interface(getParameters().getDiskInfo().getdisk_interface());
         _oldDisk.setpropagate_errors(getParameters().getDiskInfo().getpropagate_errors());
         _oldDisk.setwipe_after_delete(getParameters().getDiskInfo().getwipe_after_delete());
+        DbFacade.getInstance().getDiskDao().update(_oldDisk.getDisk());
         DbFacade.getInstance().getDiskImageDAO().update(_oldDisk);
         setSucceeded(UpdateVmInSpm(getVm().getstorage_pool_id(),
                 new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { getVm() }))));
