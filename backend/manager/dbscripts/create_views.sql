@@ -40,13 +40,8 @@ storage_domain_static_view.storage as storage_path,
     images.volume_type as volume_type,
     images.volume_format as volume_format,
     images.boot as boot,
+    images.imageStatus as imageStatus,
     disks.disk_id as image_group_id,
-    CASE WHEN disks.status = 'OK' THEN 1
-         WHEN disks.status = 'LOCKED' THEN 2
-         WHEN disks.status = 'INVALID' THEN 3
-         WHEN disks.status = 'ILLEGAL' THEN 4
-         ELSE 0
-    END AS imageStatus,
     CAST (disks.internal_drive_mapping AS VARCHAR(50)) as internal_drive_mapping,
     CASE WHEN disks.disk_type = 'System' THEN 1
          WHEN disks.disk_type = 'Data' THEN 2

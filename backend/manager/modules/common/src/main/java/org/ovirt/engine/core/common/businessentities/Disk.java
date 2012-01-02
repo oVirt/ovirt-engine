@@ -30,11 +30,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
     private Guid id;
 
     /**
-     * The status of the disk (locked/ok/etc).
-     */
-    private ImageStatus status;
-
-    /**
      * The order of the drive in the VM/Template.
      */
     private int internalDriveMapping;
@@ -69,7 +64,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
     }
 
     public Disk(Guid id,
-            ImageStatus status,
             int internalDriveMapping,
             DiskImage activeImage,
             DiskType diskType,
@@ -78,7 +72,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
             PropagateErrors propagateErrors) {
         super();
         this.id = id;
-        this.status = status;
         this.internalDriveMapping = internalDriveMapping;
         this.activeImage = activeImage;
         this.diskType = diskType;
@@ -105,14 +98,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
     @Override
     public void setId(Guid id) {
         this.id = id;
-    }
-
-    public ImageStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ImageStatus status) {
-        this.status = status;
     }
 
     public DiskImage getActiveImage() {
@@ -173,7 +158,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + internalDriveMapping;
         result = prime * result + ((propagateErrors == null) ? 0 : propagateErrors.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + (wipeAfterDelete ? 1231 : 1237);
         return result;
     }
@@ -214,9 +198,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
             return false;
         }
         if (propagateErrors != other.propagateErrors) {
-            return false;
-        }
-        if (status != other.status) {
             return false;
         }
         if (wipeAfterDelete != other.wipeAfterDelete) {

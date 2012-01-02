@@ -9,7 +9,6 @@
 
 Create or replace FUNCTION InsertDisk(
     v_disk_id UUID,
-    v_status VARCHAR(32),
     v_internal_drive_mapping INTEGER,
     v_active_image_id UUID,
     v_disk_type VARCHAR(32),
@@ -21,7 +20,6 @@ AS $procedure$
 BEGIN
     INSERT INTO disks(
         disk_id,
-        status,
         internal_drive_mapping,
         active_image_id,
         disk_type,
@@ -30,7 +28,6 @@ BEGIN
         propagate_errors)
     VALUES(
         v_disk_id,
-        v_status,
         v_internal_drive_mapping,
         v_active_image_id,
         v_disk_type,
@@ -46,7 +43,6 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION UpdateDisk(
     v_disk_id UUID,
-    v_status VARCHAR(32),
     v_internal_drive_mapping INTEGER,
     v_active_image_id UUID,
     v_disk_type VARCHAR(32),
@@ -57,8 +53,7 @@ RETURNS VOID
 AS $procedure$
 BEGIN
     UPDATE disks
-    SET    status = v_status,
-           internal_drive_mapping = v_internal_drive_mapping,
+    SET    internal_drive_mapping = v_internal_drive_mapping,
            active_image_id = v_active_image_id,
            disk_type = v_disk_type,
            disk_interface = v_disk_interface,

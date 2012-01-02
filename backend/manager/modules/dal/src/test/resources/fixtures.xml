@@ -1679,7 +1679,6 @@
 
     <table name="disks">
         <column>disk_id</column>
-        <column>status</column>
         <column>internal_drive_mapping</column>
         <column>active_image_id</column>
         <column>disk_type</column>
@@ -1688,7 +1687,6 @@
         <column>propagate_errors</column>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
-            <value>OK</value>
             <value>2</value>
             <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
             <value>System</value>

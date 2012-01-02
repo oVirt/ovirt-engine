@@ -110,13 +110,7 @@ BEGIN
 
       -- TODO: Delete this once the disks table is updated directly from code.
       UPDATE disks
-      SET    status = CASE WHEN v_imageStatus = 1 THEN 'OK'
-                           WHEN v_imageStatus = 2 THEN 'LOCKED'
-                           WHEN v_imageStatus = 3 THEN 'INVALID'
-                           WHEN v_imageStatus = 4 THEN 'ILLEGAL'
-                           ELSE 'Unassigned'
-                      END,
-             internal_drive_mapping = CAST (v_internal_drive_mapping AS INTEGER),
+      SET    internal_drive_mapping = CAST (v_internal_drive_mapping AS INTEGER),
              disk_type = CASE WHEN v_disk_type = 1 THEN 'System'
                               WHEN v_disk_type = 2 THEN 'Data'
                               WHEN v_disk_type = 3 THEN 'Shared'

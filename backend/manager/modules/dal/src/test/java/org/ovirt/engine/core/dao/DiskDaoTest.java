@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DiskType;
-import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -32,7 +31,6 @@ public class DiskDaoTest extends BaseGenericDaoTestCase<Guid, Disk, DiskDao> {
     @Override
     protected Disk generateNewEntity() {
         return new Disk(Guid.NewGuid(),
-                ImageStatus.OK,
                 1,
                 null,
                 DiskType.Data,

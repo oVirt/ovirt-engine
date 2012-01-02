@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DiskType;
-import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -48,7 +47,6 @@ public class DiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Disk, Guid> i
     @Override
     protected MapSqlParameterSource createFullParametersMapper(Disk entity) {
         return createIdParameterMapper(entity.getId())
-                .addValue("status", EnumUtils.nameOrNull(entity.getStatus()))
                 .addValue("internal_drive_mapping", entity.getInternalDriveMapping())
                 .addValue("active_image_id", (entity.getActiveImage() == null ? null : entity.getActiveImage().getId()))
                 .addValue("disk_type", EnumUtils.nameOrNull(entity.getDiskType()))
@@ -66,7 +64,6 @@ public class DiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Disk, Guid> i
                 Disk disk = new Disk();
 
                 disk.setId(Guid.createGuidFromString(rs.getString("disk_id")));
-                disk.setStatus(ImageStatus.valueOf(rs.getString("status")));
                 disk.setInternalDriveMapping(rs.getInt("internal_drive_mapping"));
                 disk.setDiskType(DiskType.valueOf(rs.getString("disk_type")));
                 disk.setDiskInterface(DiskInterface.valueOf(rs.getString("disk_interface")));
