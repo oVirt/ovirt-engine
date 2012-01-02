@@ -3,7 +3,7 @@
 <module>
     <inherits name='org.ovirt.engine.SharedGwt'/>
 	<inherits name='org.ovirt.engine.ui.UiCompat'/>
-	<inherits name='org.ovirt.engine.ui.FrontendWebadmin'/>
+	<inherits name='org.ovirt.engine.ui.Frontend'/>
     
     <source path="uicommonweb"/>
 </module>

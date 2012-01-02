@@ -15,7 +15,7 @@
   <dependencies>
     <dependency>
       <groupId>${engine.groupId}</groupId>
-      <artifactId>frontend-webadmin</artifactId>
+      <artifactId>frontend</artifactId>
       <version>${engine.version}</version>
       <scope>provided</scope>
     </dependency>

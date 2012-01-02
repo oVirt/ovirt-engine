@@ -170,7 +170,7 @@
 
 		<dependency>
 			<groupId>${engine.groupId}</groupId>
-			<artifactId>frontend-webadmin</artifactId>
+			<artifactId>frontend</artifactId>
 			<version>${engine.version}</version>
 		</dependency>
 
@@ -373,7 +373,7 @@
 									<sources>
 										<source>../uicommonweb/src/main/java</source>
 										<source>../gwt-extension/src/main/java</source>
-										<source>../frontend-webadmin/src/main/java</source>
+										<source>../frontend/src/main/java</source>
 									</sources>
 								</configuration>
 							</execution>
@@ -389,7 +389,7 @@
 											<directory>../uicommonweb/src/main/resources</directory>
 											<directory>../gwt-extension/src/main/resources
 											</directory>
-											<directory>../frontend-webadmin/src/main/resources</directory>
+											<directory>../frontend/src/main/resources</directory>
 											<targetPath>resources</targetPath>
 										</resource>
 									</resources>

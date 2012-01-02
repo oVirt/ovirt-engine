@@ -7,10 +7,10 @@
     <version>3.0.0-0001</version>
   </parent>
 
-  <artifactId>frontend-webadmin</artifactId>
+  <artifactId>frontend</artifactId>
   <packaging>jar</packaging>
 
-  <name>Frontend for WebAdmin</name>
+  <name>Frontend for GWT UI Projects</name>
 
   <dependencies>
     <dependency>
