@@ -44,7 +44,7 @@ public class FrontendFailureEventListener implements IEventListener {
             if (desc == null) {
                 desc = "";
             }
-            desc.trim();
+            desc = desc.trim();
 
             Set<String> msgs = desc2Msgs.get(desc);
 
