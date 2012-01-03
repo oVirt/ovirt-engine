@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -77,6 +78,13 @@ public class BackendVmsResource extends
             staticVm.setvds_group_id(getClusterId(vm));
         }
 
+        //if the user set the host-name within placement-policy, rather than the host-id (legal) -
+        //resolve the host's ID, because it will be needed down the line
+        if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()
+                && vm.getPlacementPolicy().getHost().isSetName() && !vm.getPlacementPolicy().getHost().isSetId()) {
+            vm.getPlacementPolicy().getHost().setId(getHostId(vm.getPlacementPolicy().getHost().getName()));
+        }
+
         Response response = null;
         Guid storageDomainId = ( vm.isSetStorageDomain() && vm.getStorageDomain().isSetId() ) ? asGuid(vm.getStorageDomain().getId()) : Guid.Empty;
         if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()){
@@ -89,6 +97,10 @@ public class BackendVmsResource extends
             response = addVm(staticVm, storageDomainId.equals(Guid.Empty) ? getTemplateStorageDomain(templateId) : storageDomainId);
         }
         return response;
+    }
+
+    private String getHostId(String hostName) {
+        return getEntity(VDS.class, SearchType.VDS, "Hosts: name=" + hostName).getvds_id().toString();
     }
 
     private Response cloneVmFromTemplate(VmStatic staticVm, Disks disks, Guid templateId) {

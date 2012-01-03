@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -88,11 +89,20 @@ public class BackendVmResource extends
                               new ChangeVMClusterParameters(clusterId, guid));
             }
         }
-
+        //if the user updated the host within placement-policy, but supplied host-name rather than the host-id (legal) -
+        //resolve the host's ID, because it will be needed down the line
+        if (incoming.isSetPlacementPolicy() && incoming.getPlacementPolicy().isSetHost()
+                && incoming.getPlacementPolicy().getHost().isSetName() && !incoming.getPlacementPolicy().getHost().isSetId()) {
+            incoming.getPlacementPolicy().getHost().setId(getHostId(incoming.getPlacementPolicy().getHost().getName()));
+        }
         return performUpdate(incoming,
                              new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class),
                              VdcActionType.UpdateVm,
                              new UpdateParametersProvider());
+    }
+
+    private String getHostId(String hostName) {
+        return getEntity(VDS.class, SearchType.VDS, "Hosts: name=" + hostName).getvds_id().toString();
     }
 
     protected Guid lookupClusterId(VM vm) {

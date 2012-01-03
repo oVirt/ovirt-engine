@@ -13,10 +13,12 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
@@ -27,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -462,6 +465,47 @@ public class BackendVmsResourceTest
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof VM);
         verifyModel((VM) response.getEntity(), 2);
+    }
+
+    @Test
+    public void testAddWithPlacementPolicy() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpStorageDomainsExpectations(0, 1);
+        setUpGetEntityExpectations("Hosts: name=" + NAMES[1],
+                SearchType.VDS,
+                getHost());
+        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+                                     GetVmTemplateParameters.class,
+                                     new String[] { "Id" },
+                                     new Object[] { GUIDS[1] },
+                                     getTemplateEntity(0));
+        setUpCreationExpectations(VdcActionType.AddVm,
+                                  VmManagementParametersBase.class,
+                                  new String[] { "StorageDomainId" },
+                                  new Object[] { GUIDS[0] },
+                                  true,
+                                  true,
+                                  GUIDS[2],
+                                  VdcQueryType.GetVmByVmId,
+                                  GetVmByVmIdParameters.class,
+                                  new String[] { "Id" },
+                                  new Object[] { GUIDS[2] },
+                                  getEntity(2));
+
+        VM model = createModel(null);
+        model.setPlacementPolicy(new VmPlacementPolicy());
+        model.getPlacementPolicy().setHost(new Host());
+        model.getPlacementPolicy().getHost().setName(NAMES[1]);
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VM);
+        verifyModel((VM) response.getEntity(), 2);
+    }
+
+    private VDS getHost() {
+        VDS vds = new VDS();
+        vds.setvds_id(GUIDS[2]);
+        return vds;
     }
 
     @Test

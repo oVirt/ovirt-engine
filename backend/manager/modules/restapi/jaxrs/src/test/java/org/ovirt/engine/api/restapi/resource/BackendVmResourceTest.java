@@ -149,6 +149,32 @@ public class BackendVmResourceTest
     }
 
     @Test
+    public void testUpdateVmPolicy() throws Exception {
+        setUpGetEntityExpectations(2);
+        setUpGetEntityExpectations("Hosts: name=" + NAMES[1],
+                SearchType.VDS,
+                getHost());
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+                                           VmManagementParametersBase.class,
+                                           new String[] {},
+                                           new Object[] {},
+                                           true,
+                                           true));
+
+        VM model = getModel(0);
+        model.setPlacementPolicy(new VmPlacementPolicy());
+        model.getPlacementPolicy().setHost(new Host());
+        model.getPlacementPolicy().getHost().setName(NAMES[1]);
+        verifyModel(resource.update(model), 0);
+    }
+
+    private VDS getHost() {
+        VDS vds = new VDS();
+        vds.setvds_id(GUIDS[2]);
+        return vds;
+    }
+
+    @Test
     public void testUpdateMovingCluster() throws Exception {
         setUpGetEntityExpectations(3);
 
