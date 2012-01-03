@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.webadmin.widget.UiCommandButton;
+import org.ovirt.engine.ui.webadmin.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.webadmin.widget.editor.ListModelListBoxEditor;
@@ -24,6 +25,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyPressHandlers;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HasValue;
@@ -79,10 +81,12 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
 
     @UiField
     HorizontalPanel roleSelectionPanel;
-    
+
     @UiField
     ScrollPanel searchItemsScrollPanel;
-    
+
+    private PopupNativeKeyPressHandler nativeKeyPressHandler;
+
     @Inject
     public PermissionsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -190,6 +194,20 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
         return specificUserOrGroupRadio;
     }
 
+    public PopupNativeKeyPressHandler getNativeKeyPressHandler() {
+        return nativeKeyPressHandler;
+    }
+
+    public HasHandlers getSearchStringEditor() {
+        return searchStringEditor;
+    }
+
+    @Override
+    public void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler) {
+        super.setPopupKeyPressHandler(handler);
+        this.nativeKeyPressHandler = handler;
+    }
+
     @Override
     public void changeStateOfElementsWhenAccessIsForEveryone(boolean isEveryone) {
         domainSelection.setEnabled(!isEveryone);
@@ -212,4 +230,5 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
     public void hideEveryoneSelection(Boolean indic) {
         everyonePanel.setVisible(!indic);
     }
+
 }
