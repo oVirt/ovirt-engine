@@ -21,6 +21,8 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -78,8 +80,9 @@ VdsGroupOperationCommandBase<T> {
         List<network> networks = DbFacade.getInstance().getNetworkDAO()
                 .getAllForCluster(getVdsGroup().getID());
         boolean exists = false;
+        String managementNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
         for (network net : networks) {
-            if (StringHelper.EqOp(net.getname(), AddVdsGroupCommand.DefaultNetwork)) {
+            if (StringHelper.EqOp(net.getname(), managementNetwork)) {
                 exists = true;
             }
         }
@@ -92,7 +95,7 @@ VdsGroupOperationCommandBase<T> {
                                     getVdsGroup().getstorage_pool_id()
                                             .getValue());
                 for (network net : storagePoolNets) {
-                    if (StringHelper.EqOp(net.getname(), AddVdsGroupCommand.DefaultNetwork)) {
+                    if (StringHelper.EqOp(net.getname(), managementNetwork)) {
                         DbFacade.getInstance().getNetworkClusterDAO().save(
                                     new network_cluster(getVdsGroup().getID(), net.getId(),
                                             NetworkStatus.Operational.getValue(), true));

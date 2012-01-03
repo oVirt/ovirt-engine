@@ -7,6 +7,8 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -90,8 +92,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         // check defalut network name is not renamed
-        if (oldNetwork.getname().equals(org.ovirt.engine.core.bll.AddVdsGroupCommand.DefaultNetwork) &&
-                !getParameters().getNetwork().getname().equals(org.ovirt.engine.core.bll.AddVdsGroupCommand.DefaultNetwork)) {
+        String defaultNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
+        if (oldNetwork.getname().equals(defaultNetwork) &&
+                !getParameters().getNetwork().getname().equals(defaultNetwork)) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK);
             return false;
         }

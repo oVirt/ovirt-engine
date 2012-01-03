@@ -9,6 +9,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.SearchReturnValue;
@@ -41,7 +43,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     protected boolean canDoAction() {
         // check that we are not removing the management network
         if (StringHelper.EqOp(getParameters().getNetwork().getname(),
-                AddVdsGroupCommand.DefaultNetwork)) {
+                Config.<String> GetValue(ConfigValues.ManagementNetwork))) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK);
             return false;
         }

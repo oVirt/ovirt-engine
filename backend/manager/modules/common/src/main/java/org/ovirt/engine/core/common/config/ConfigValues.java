@@ -1437,6 +1437,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("1")
     InitStorageSparseSizeInGB(326),
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("ovirtmgmt")
+    ManagementNetwork(328),
+
     Invalid(65535);
 
     private int intValue;

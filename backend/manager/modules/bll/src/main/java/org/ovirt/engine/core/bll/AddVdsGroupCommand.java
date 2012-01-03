@@ -25,7 +25,6 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         VdsGroupOperationCommandBase<T> {
-    public static final String DefaultNetwork = "engine";
     public static final String DefaultNetworkDescription = "Management Network";
 
     public AddVdsGroupCommand(T parameters) {
@@ -70,7 +69,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
 
         // add default network
         if (getParameters().getVdsGroup().getstorage_pool_id() != null) {
-            final String networkName = DefaultNetwork;
+            final String networkName = Config.<String> GetValue(ConfigValues.ManagementNetwork);
             List<network> networks = DbFacade
                     .getInstance()
                     .getNetworkDAO()
