@@ -80,7 +80,7 @@ public class ErrorPopupView extends AbstractPopupView<DialogBox> implements Erro
             String desc = entry.getKey();
 
             for (String msg : entry.getValue()) {
-                listSb.append(templates.listItem(msg));
+                listSb.append(templates.listItem(SafeHtmlUtils.fromSafeConstant(msg)));
             }
 
             SafeHtml sh = templates.unsignedList(listSb.toSafeHtml());
@@ -92,7 +92,7 @@ public class ErrorPopupView extends AbstractPopupView<DialogBox> implements Erro
             allSb.append(sh);
         }
 
-        SafeHtml sh = SafeHtmlUtils.fromTrustedString(messages.uiCommonFrontendFailure(allSb.toSafeHtml().asString()));
+        SafeHtml sh = SafeHtmlUtils.fromSafeConstant(messages.uiCommonFrontendFailure(allSb.toSafeHtml().asString()));
         messageLabel.setHTML(sh);
     }
 

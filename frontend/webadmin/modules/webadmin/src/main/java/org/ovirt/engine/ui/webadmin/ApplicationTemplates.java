@@ -85,5 +85,5 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
     SafeHtml unsignedList(SafeHtml list);
 
     @Template("<li>{0}")
-    SafeHtml listItem(String item);
+    SafeHtml listItem(SafeHtml item);
 }
