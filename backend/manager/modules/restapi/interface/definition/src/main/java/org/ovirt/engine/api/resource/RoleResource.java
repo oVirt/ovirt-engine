@@ -16,21 +16,13 @@
 
 package org.ovirt.engine.api.resource;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Path;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
-
 import org.ovirt.engine.api.model.Role;
 
-
 @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
-public interface RoleResource {
-
-    @GET
-    @Formatted
-    public Role get();
+public interface RoleResource extends UpdatableResource<Role> {
 
     @Path("permits")
     public PermitsResource getPermitsResource();

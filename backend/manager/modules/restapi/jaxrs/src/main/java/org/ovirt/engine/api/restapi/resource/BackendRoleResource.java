@@ -6,6 +6,9 @@ import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.PermitsResource;
 import org.ovirt.engine.api.resource.RoleResource;
+import org.ovirt.engine.core.common.action.RolesOperationsParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -46,4 +49,21 @@ public class BackendRoleResource
         return inject(new BackendPermitsResource(guid));
     }
 
+    @Override
+    public Role update(Role role) {
+        return performUpdate(role,
+                new QueryIdResolver(VdcQueryType.GetRoleById, MultilevelAdministrationByRoleIdParameters.class),
+                VdcActionType.UpdateRole,
+                new UpdateParametersProvider());
+    }
+
+    public class UpdateParametersProvider implements ParametersProvider<Role, roles> {
+        @Override
+        public VdcActionParametersBase getParameters(Role model, roles entity) {
+            RolesOperationsParameters params = new RolesOperationsParameters();
+            params.setRoleId(guid);
+            params.setRole(map(model, entity));
+            return params;
+        }
+    }
 }
