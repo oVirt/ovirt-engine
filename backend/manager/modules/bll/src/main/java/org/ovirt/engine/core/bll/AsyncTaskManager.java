@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,22 +44,19 @@ import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
-//VB & C# TO JAVA CONVERTER NOTE: There is no Java equivalent to C# namespace aliases:
-//using Timer = System.Timers.Timer;
-
 /**
  * AsyncTaskManager: Singleton, manages all tasks in the system.
  */
 public final class AsyncTaskManager {
     private static LogCompat log = LogFactoryCompat.getLog(AsyncTaskManager.class);
 
-    // private TimerCompat _timer;
-    private java.util.Map<Guid, SPMAsyncTask> _tasks;
+    /** Map which consist all tasks that currently are monitored **/
+    private Map<Guid, SPMAsyncTask> _tasks;
 
-    // Indication if _tasks has changed for logging process.
+    /** Indication if _tasks has changed for logging process. **/
     private boolean logChangedMap = true;
 
-    // private TimerCompat _cacheTimer;
+    /** The period of time (in minutes) to hold the asynchronous tasks' statuses in the asynchronous tasks cache **/
     private final int _cacheTimeInMinutes;
 
     private static final AsyncTaskManager _taskManager = new AsyncTaskManager();
@@ -67,7 +66,7 @@ public final class AsyncTaskManager {
     }
 
     private AsyncTaskManager() {
-        _tasks = new java.util.HashMap<Guid, SPMAsyncTask>();
+        _tasks = new HashMap<Guid, SPMAsyncTask>();
 
         SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
         scheduler.scheduleAFixedDelayJob(this, "_timer_Elapsed", new Class[] {},
@@ -107,8 +106,8 @@ public final class AsyncTaskManager {
     }
 
     @OnTimerMethodAnnotation("_cacheTimer_Elapsed")
-    public synchronized void _cacheTimer_Elapsed() {
-        RemoveOldAndCleanedTasks();
+    public void _cacheTimer_Elapsed() {
+        removeOldAndCleanedTasks();
     }
 
     /**
@@ -176,7 +175,7 @@ public final class AsyncTaskManager {
             if (task.getParameters().getDbAsyncTask().getaction_parameters().getTaskStartTime() < maxTime) {
                 AuditLogableBase logable = new AuditLogableBase();
                 logable.AddCustomValue("CommandName", task.getParameters().getDbAsyncTask().getaction_type().toString());
-                logable.AddCustomValue("Date", new java.util.Date(task.getParameters().getDbAsyncTask()
+                logable.AddCustomValue("Date", new Date(task.getParameters().getDbAsyncTask()
                         .getaction_parameters().getTaskStartTime()).toString());
 
                 // if task is not finish and not unknown then it's in running
@@ -186,7 +185,7 @@ public final class AsyncTaskManager {
                     AuditLogDirector.log(logable, AuditLogType.TASK_STOPPING_ASYNC_TASK);
 
                     log.infoFormat("AsyncTaskManager::CleanZombieTasks: Stoping async task {0} that started at {1}",
-                            task.getParameters().getDbAsyncTask().getaction_type(), new java.util.Date(task
+                            task.getParameters().getDbAsyncTask().getaction_type(), new Date(task
                                     .getParameters().getDbAsyncTask().getaction_parameters().getTaskStartTime()));
 
                     task.StopTask();
@@ -194,7 +193,7 @@ public final class AsyncTaskManager {
                     AuditLogDirector.log(logable, AuditLogType.TASK_CLEARING_ASYNC_TASK);
 
                     log.infoFormat("AsyncTaskManager::CleanZombieTasks: Clearing async task {0} that started at {1}",
-                            task.getParameters().getDbAsyncTask().getaction_type(), new java.util.Date(task
+                            task.getParameters().getDbAsyncTask().getaction_type(), new Date(task
                                     .getParameters().getDbAsyncTask().getaction_parameters().getTaskStartTime()));
 
                     task.ClearAsyncTask();
@@ -329,10 +328,10 @@ public final class AsyncTaskManager {
      *
      * @return
      */
-    private Set<Guid> removeClearedAndOldTasks() {
+    synchronized private Set<Guid> removeClearedAndOldTasks() {
         Set<Guid> poolsOfActiveTasks = new HashSet<Guid>();
         Set<Guid> poolsOfClearedAndOldTasks = new HashSet<Guid>();
-        Map<Guid, SPMAsyncTask> activeTaskMap = new java.util.HashMap<Guid, SPMAsyncTask>();
+        Map<Guid, SPMAsyncTask> activeTaskMap = new HashMap<Guid, SPMAsyncTask>();
         for (SPMAsyncTask task : _tasks.values()) {
             if (!CachingOver(task)) {
                 activeTaskMap.put(task.getTaskID(), task);
@@ -343,13 +342,15 @@ public final class AsyncTaskManager {
         }
 
         // Check if _tasks need to be updated with less tasks (activated tasks).
-        SetNewMap(activeTaskMap);
+        if (poolsOfClearedAndOldTasks.size() > 0) {
+            setNewMap(activeTaskMap);
+            poolsOfClearedAndOldTasks.removeAll(poolsOfActiveTasks);
+        }
 
-        poolsOfClearedAndOldTasks.removeAll(poolsOfActiveTasks);
         return poolsOfClearedAndOldTasks;
     }
 
-    private void RemoveOldAndCleanedTasks() {
+    private void removeOldAndCleanedTasks() {
 
         Set<Guid> poolsOfClearedAndOldTasks = removeClearedAndOldTasks();
 
@@ -393,15 +394,7 @@ public final class AsyncTaskManager {
                 // Set the indication to true for logging _tasks status on next
                 // quartz execution.
                 AddTaskToMap(task.getTaskID(), task);
-            }
-
-            // Not needed (GREGM)
-            // if (!_timer.getEnabled() && task.getShouldPoll())
-            // {
-            // log.info("AsyncTaskManager::AddTaskToManager: Added a task that we should poll - starting timer.");
-            // _timer.setEnabled(true);
-            // }
-            else {
+            } else {
                 SPMAsyncTask existingTask = _tasks.get(task.getTaskID());
                 if (existingTask.getParameters().getDbAsyncTask().getaction_type() == VdcActionType.Unknown
                         && task.getParameters().getDbAsyncTask().getaction_type() != VdcActionType.Unknown) {
@@ -433,25 +426,21 @@ public final class AsyncTaskManager {
     }
 
     /**
-     * Check if the maps are equal , if not ,set asyncTaskMap as _tasks map. We
-     * set the indication to true when _tasks map changes for logging _tasks
+     * We set the indication to true when _tasks map changes for logging _tasks
      * status on next quartz execution.
      *
      * @param asyncTaskMap
      *            - Map to copy to _tasks map.
      */
-    private void SetNewMap(Map<Guid, SPMAsyncTask> asyncTaskMap) {
-        // Check if maps representing the same mapping.
-        if (!_tasks.equals(asyncTaskMap)) {
-            // If not the same set _tasks to be as asyncTaskMap.
-            _tasks = asyncTaskMap;
+    private void setNewMap(Map<Guid, SPMAsyncTask> asyncTaskMap) {
+        // If not the same set _tasks to be as asyncTaskMap.
+        _tasks = asyncTaskMap;
 
-            // Set the indication to true for logging.
-            logChangedMap = true;
+        // Set the indication to true for logging.
+        logChangedMap = true;
 
-            // Log tasks to poll now.
-            log.infoFormat("AsyncTaskManager::SetNewMap: The map contains now {0} tasks", _tasks.size());
-        }
+        // Log tasks to poll now.
+        log.infoFormat("AsyncTaskManager::SetNewMap: The map contains now {0} tasks", _tasks.size());
     }
 
     public synchronized Guid CreateTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters,
@@ -475,8 +464,8 @@ public final class AsyncTaskManager {
         }
     }
 
-    public synchronized java.util.ArrayList<AsyncTaskStatus> PollTasks(java.util.ArrayList<Guid> taskIdList) {
-        java.util.ArrayList<AsyncTaskStatus> returnValue = new java.util.ArrayList<AsyncTaskStatus>();
+    public synchronized ArrayList<AsyncTaskStatus> PollTasks(java.util.ArrayList<Guid> taskIdList) {
+        ArrayList<AsyncTaskStatus> returnValue = new ArrayList<AsyncTaskStatus>();
 
         if (taskIdList != null && taskIdList.size() > 0) {
             for (Guid taskId : taskIdList) {
@@ -512,8 +501,8 @@ public final class AsyncTaskManager {
      * @param sp
      *            the storage pool to retrieve running tasks from
      */
-    public synchronized void AddStoragePoolExistingTasks(storage_pool sp) {
-        java.util.ArrayList<AsyncTaskCreationInfo> currPoolTasks = null;
+    public void AddStoragePoolExistingTasks(storage_pool sp) {
+        List<AsyncTaskCreationInfo> currPoolTasks = null;
         try {
             currPoolTasks = (java.util.ArrayList<AsyncTaskCreationInfo>) Backend.getInstance().getResourceManager()
                     .RunVdsCommand(VDSCommandType.SPMGetAllTasksInfo, new IrsBaseVDSCommandParameters(sp.getId()))
@@ -527,32 +516,34 @@ public final class AsyncTaskManager {
         }
 
         if (currPoolTasks != null && currPoolTasks.size() > 0) {
-            java.util.ArrayList<Guid> newlyAddedTaskIDs = new java.util.ArrayList<Guid>();
+            synchronized (this) {
+                List<Guid> newlyAddedTaskIDs = new ArrayList<Guid>();
 
-            for (AsyncTaskCreationInfo creationInfo : currPoolTasks) {
-                creationInfo.setStoragePoolID(sp.getId());
-                if (!_tasks.containsKey(creationInfo.getTaskID())) {
-                    try {
-                        SPMAsyncTask task = AsyncTaskFactory.Construct(creationInfo);
-                        AddTaskToManager(task);
-                        newlyAddedTaskIDs.add(task.getTaskID());
-                    } catch (Exception e) {
-                        log.errorFormat("Failed to load task of type {0} with id {1}, due to: {2}.",
+                for (AsyncTaskCreationInfo creationInfo : currPoolTasks) {
+                    creationInfo.setStoragePoolID(sp.getId());
+                    if (!_tasks.containsKey(creationInfo.getTaskID())) {
+                        try {
+                            SPMAsyncTask task = AsyncTaskFactory.Construct(creationInfo);
+                            AddTaskToManager(task);
+                            newlyAddedTaskIDs.add(task.getTaskID());
+                        } catch (Exception e) {
+                            log.errorFormat("Failed to load task of type {0} with id {1}, due to: {2}.",
                                        creationInfo.getTaskType(), creationInfo.getTaskID(),
                                        ExceptionUtils.getRootCauseMessage(e));
+                        }
                     }
                 }
-            }
 
-            for (Guid taskID : newlyAddedTaskIDs) {
-                StartPollingTask(taskID);
-            }
+                for (Guid taskID : newlyAddedTaskIDs) {
+                    StartPollingTask(taskID);
+                }
 
-            log.infoFormat(
-                    "AsyncTaskManager::AddStoragePoolExistingTasks: Discovered {0} tasks on Storage Pool '{1}', {2} added to manager.",
-                    currPoolTasks.size(),
-                    sp.getname(),
-                    newlyAddedTaskIDs.size());
+                log.infoFormat(
+                        "AsyncTaskManager::AddStoragePoolExistingTasks: Discovered {0} tasks on Storage Pool '{1}', {2} added to manager.",
+                        currPoolTasks.size(),
+                        sp.getname(),
+                        newlyAddedTaskIDs.size());
+            }
         }
 
         else {
@@ -571,13 +562,6 @@ public final class AsyncTaskManager {
                 sp.getname());
 
         AddStoragePoolExistingTasks(sp);
-
-        // LINQ 29456
-        // foreach (SPMAsyncTask asyncTask in _tasks.Values.Where(a =>
-        // a.StoragePoolID == sp.id))
-        // {
-        // asyncTask.StopTask();
-        // }
 
         List<SPMAsyncTask> list = LinqUtils.filter(_tasks.values(), new Predicate<SPMAsyncTask>() {
             @Override
@@ -607,12 +591,6 @@ public final class AsyncTaskManager {
             log.infoFormat("AsyncTaskManager::CancelTask: Attempting to cancel task '{0}'.", taskID);
             _tasks.get(taskID).StopTask();
             _tasks.get(taskID).ConcreteStartPollingTask();
-            // Not needed (GREGM)
-            // if (_tasks.get(taskID).getShouldPoll() && !_timer.getEnabled())
-            // {
-            // log.info("AsyncTaskManager::CancelTask: Starting timer");
-            // _timer.setEnabled(true);
-            // }
         }
     }
 
