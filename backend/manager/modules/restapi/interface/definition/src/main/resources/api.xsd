@@ -601,7 +601,7 @@
 
   <xs:complexType name="NicInterfaces">
     <xs:sequence>
-      <xs:element name="nic_interfaces" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="nic_interface" type="xs:string" minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="NicInterfaces"/>
