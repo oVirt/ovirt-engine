@@ -99,6 +99,8 @@ public class ResourceManager implements IVdsEventListener {
                     * Config.<Integer> GetValue(ConfigValues.NumberVmRefreshesBeforeSave) * 1000 / allVdsList.size();
             // Populate the VDS dictionary
             for (VDS curVds : allVdsList) {
+                log.debugFormat("Putting thread to sleep for {0} milliseconds before adding VDS {1}, with name {2}",
+                        sleepTimout, curVds.getvds_id(), curVds.getvds_name());
                 ThreadUtils.sleep(sleepTimout);
                 AddVds(curVds, true);
             }
