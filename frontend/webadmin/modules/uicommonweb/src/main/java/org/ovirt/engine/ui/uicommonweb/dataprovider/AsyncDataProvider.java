@@ -1,4 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.dataprovider;
+import java.util.ArrayList;
 import java.util.Collections;
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.ui.uicompat.*;
@@ -1240,5 +1241,38 @@ public final class AsyncDataProvider
 		} };
 
 		Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + clusterName + " and status = up", SearchType.VDS), aQuery);
+	}
+
+	public static void GetClusterListByStorageDomain(AsyncQuery _AsyncQuery,
+			Guid storageDomainId) {
+		Frontend.RunQuery(VdcQueryType.GetStoragePoolsByStorageDomainId, new StorageDomainQueryParametersBase(storageDomainId), new AsyncQuery(_AsyncQuery, new INewAsyncCallback() {
+
+			@Override
+			public void OnSuccess(Object model, Object returnValue) {
+				ArrayList<storage_pool> pools = (ArrayList<storage_pool>) ((VdcQueryReturnValue)returnValue).getReturnValue();
+				if (pools != null && pools.size() > 0) {
+					storage_pool pool = pools.get(0);
+					GetClusterList((AsyncQuery)model, pool.getId());
+				}
+			}
+				}));
+	}
+
+	public static void GetDataDomainsListByDomain(AsyncQuery _asyncQuery,
+			Guid storageDomainId) {
+		GetDataCentersByStorageDomain(new AsyncQuery(_asyncQuery,
+				new INewAsyncCallback() {
+
+					@Override
+					public void OnSuccess(Object model, Object returnValue) {
+						ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
+						storage_pool pool = pools.get(0);
+						if (pool != null) {
+							GetStorageDomainList((AsyncQuery) model,
+									pool.getId());
+						}
+
+					}
+				}), storageDomainId);
 	}
 }

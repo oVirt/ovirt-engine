@@ -1,0 +1,16 @@
+package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup;
+
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineGeneralView;
+import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
+
+import com.google.gwt.user.client.ui.IsWidget;
+
+public class ImportVmGeneralSubTabView extends SubTabVirtualMachineGeneralView implements IsWidget {
+
+    public ImportVmGeneralSubTabView(DetailModelProvider<VmListModel, VmGeneralModel> modelProvider) {
+        super(modelProvider);
+    }
+
+}

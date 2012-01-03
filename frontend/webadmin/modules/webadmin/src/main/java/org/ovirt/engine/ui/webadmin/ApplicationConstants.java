@@ -659,4 +659,12 @@ public interface ApplicationConstants extends Constants {
     @DefaultStringValue("Host:")
     String vmMigratePopupHostsListLabel();
 
+    @DefaultStringValue("Destination Cluster")
+    String importVm_destCluster();
+
+    @DefaultStringValue("Destination Storage")
+    String importVm_destStorage();
+
+    @DefaultStringValue("Collapse All Snapshots")
+    String importVm_collapseSnapshots();
 }

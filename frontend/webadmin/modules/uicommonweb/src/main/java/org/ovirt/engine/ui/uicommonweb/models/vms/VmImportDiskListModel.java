@@ -56,37 +56,38 @@ public class VmImportDiskListModel extends VmDiskListModel
 	protected void OnEntityChanged()
 	{
 		super.OnEntityChanged();
-
 		VM vm = (VM)getEntity();
 		if (vm != null && vm.getDiskMap() != null)
 		{
-			java.util.ArrayList<DiskModel> list = new java.util.ArrayList<DiskModel>();
+			java.util.ArrayList<DiskImage> list = new java.util.ArrayList<DiskImage>();
 			for (DiskImage img : vm.getDiskMap().values())
 			{
-				DiskModel model = new DiskModel();
-				model.setName(img.getinternal_drive_mapping());
-				EntityModel tempVar = new EntityModel();
-				tempVar.setEntity(img.getSizeInGigabytes());
-				model.setSize(tempVar);
-				model.getVolumeType().setSelectedItem(img.getvolume_type());
-				//model.VolumeType.SelectedItemChanged += new EventHandler(VolumeType_SelectedItemChanged);
-				model.getVolumeType().getSelectedItemChangedEvent().addListener(this);
-				model.setDiskType(img.getdisk_type());
-				model.setVolumeFormat(img.getvolume_format());
-				model.setCreationDate(img.getcreation_date());
-				//NOTE: The following code won't pass conversion to Java.
-				//model.ActualSize = Convert.ToInt32(img.ActualDiskWithSnapshotsSize);
-				list.add(model);
+				list.add(img);
 			}
+//			for (DiskImage img : vm.getDiskMap().values())
+//			{
+//				DiskModel model = new DiskModel();
+//				model.setName(img.getinternal_drive_mapping());
+//				EntityModel tempVar = new EntityModel();
+//				tempVar.setEntity(img.getSizeInGigabytes());
+//				model.setSize(tempVar);
+//				model.getVolumeType().setSelectedItem(img.getvolume_type());
+//				//model.VolumeType.SelectedItemChanged += new EventHandler(VolumeType_SelectedItemChanged);
+//				model.getVolumeType().getSelectedItemChangedEvent().addListener(this);
+//				model.setDiskType(img.getdisk_type());
+//				model.setVolumeFormat(img.getvolume_format());
+//				model.setCreationDate(img.getcreation_date());
+//				//NOTE: The following code won't pass conversion to Java.
+//				//model.ActualSize = Convert.ToInt32(img.ActualDiskWithSnapshotsSize);
+//				list.add(model);
+//			}
 			setItems(list);
-
 		}
 		else
 		{
 			setItems(null);
 		}
-
-		SetDisksVolumeTypeAvailability();
+		//SetDisksVolumeTypeAvailability();
 	}
 
 	@Override
@@ -96,26 +97,23 @@ public class VmImportDiskListModel extends VmDiskListModel
 
 		if (ev.equals(SelectedItemChangedEventDefinition) && sender instanceof ListModel)
 		{
-			VolumeType_SelectedItemChanged(args);
+			//VolumeType_SelectedItemChanged(args);
 		}
 	}
 
-	private void VolumeType_SelectedItemChanged(EventArgs e)
+	public void VolumeType_SelectedItemChanged(DiskImage disk, VolumeType selectedVolumeType)
 	{
 		VM vm = (VM)getEntity();
 		if (vm != null)
 		{
 			for (Object item : getItems())
 			{
-				DiskModel model = (DiskModel)item;
-				//Entity.DiskMap.Values.FirstOrDefault(a => a.internal_drive_mapping == model.Name).volume_type = (VolumeType)model.VolumeType.getSelectedItem();
 				for (java.util.Map.Entry<String, DiskImage> kvp : vm.getDiskMap().entrySet())
 				{
-					DiskImage disk = kvp.getValue();
-					ListModel volumeType = model.getVolumeType();
-					if (StringHelper.stringsEqual(disk.getinternal_drive_mapping(), model.getName()))
+					DiskImage innerDisk = kvp.getValue();
+					if (StringHelper.stringsEqual(innerDisk.getinternal_drive_mapping(), disk.getinternal_drive_mapping()))
 					{
-						disk.setvolume_type((VolumeType)volumeType.getSelectedItem());
+						innerDisk.setvolume_type(selectedVolumeType);
 						break;
 					}
 				}
