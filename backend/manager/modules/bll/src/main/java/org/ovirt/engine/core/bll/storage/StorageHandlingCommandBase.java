@@ -268,7 +268,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         // if master not active maintenance
         StoragePoolStatus newStatus =
                 (masterDomain == null) ? StoragePoolStatus.Uninitialized
-                        : (masterDomain.getstatus() != null && masterDomain.getstatus() == StorageDomainStatus.InActive) ? StoragePoolStatus.Maintanance
+                        : (masterDomain.getstatus() != null && masterDomain.getstatus() == StorageDomainStatus.Maintenance) ? StoragePoolStatus.Maintanance
                                 : (masterDomain.getstatus() != null && masterDomain.getstatus() == StorageDomainStatus.Active) ? StoragePoolStatus.Up
                                         : StoragePoolStatus.Problematic;
         if (newStatus != getStoragePool().getstatus()) {
