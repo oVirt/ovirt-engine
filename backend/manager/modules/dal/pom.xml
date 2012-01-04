@@ -14,6 +14,7 @@
     <engine.db>pgsql</engine.db>
     <engine.db.username>postgres</engine.db.username>
     <engine.db.schema>engine</engine.db.schema>
+    <version.info.dir>/etc/engine</version.info.dir>
     <junit.version>4.4</junit.version>
     <skip.db.checksum.check>true</skip.db.checksum.check>
     <skip.db.checksum.store>true</skip.db.checksum.store>
@@ -153,12 +154,14 @@
               </goals>
               <configuration>
                 <skip>${skip.db.checksum.check}</skip>
-                <executable>${basedir}/../../tools/db_schema_version_check/check_db_schema_checksum.sh</executable>
+                <executable>${basedir}/../../dbscripts/db_schema_version_check/check_db_schema_checksum.sh</executable>
                 <arguments>
                   <argument>-u</argument>
                   <argument>${engine.db.username}</argument>
                   <argument>-d</argument>
                   <argument>${engine.db.schema}</argument>
+                  <argument>-f</argument>
+                  <argument>${version.info.dir}</argument>
                </arguments>
               </configuration>
            </execution>
@@ -170,7 +173,7 @@
               </goals>
               <configuration>
                 <skip>${skip.db.checksum.store}</skip>
-                <executable>${basedir}/../../tools/db_schema_version_check/store_db_schema_checksum.sh</executable>
+                <executable>${basedir}/../../dbscripts/db_schema_version_check/store_db_schema_checksum.sh</executable>
               </configuration>
            </execution>
         </executions>
