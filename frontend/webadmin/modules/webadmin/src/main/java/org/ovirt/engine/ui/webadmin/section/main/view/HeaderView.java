@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget;
 import org.ovirt.engine.ui.webadmin.view.AbstractSingleSlotView;
 
@@ -24,9 +26,14 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<HeaderView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     private static final int mainTabBarInitialOffset = 250;
 
     @UiField
+    @WithElementId
     InlineLabel userNameLabel;
 
     @UiField(provided = true)
@@ -62,6 +69,7 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
 
         // Ensure proper main tab bar position
         setMainTabBarOffset(mainTabBarInitialOffset);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override

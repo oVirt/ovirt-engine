@@ -74,8 +74,11 @@ public class ElementIdTypeParser {
     public ElementIdStatement[] parseStatements() throws UnableToCompleteException {
         statements.clear();
 
-        doParse(ownerType, new ArrayList<JClassType>(), ".",
-                ownerType.getName().replace(".", ID_ELEMENT_SEPARATOR));
+        doParse(ownerType, new ArrayList<JClassType>(), ".", ownerTypeId());
+
+        statements.add(new ElementIdStatement(
+                ElementIdHandlerGenerator.ElementIdHandler_generateAndSetIds_owner,
+                ownerTypeId()));
 
         return statements.toArray(new ElementIdStatement[0]);
     }
@@ -123,6 +126,10 @@ public class ElementIdTypeParser {
                 }
             }
         }
+    }
+
+    String ownerTypeId() {
+        return ownerType.getName().replace(".", ID_ELEMENT_SEPARATOR);
     }
 
     boolean processField(JField field) {

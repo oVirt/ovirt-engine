@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.binding;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -84,6 +83,7 @@ public class ElementIdTypeParserTest {
         doReturn(ownerTypeFlattenedSupertypeHierarchy).when(ownerType).getFlattenedSupertypeHierarchy();
         when(ownerType.getFields()).thenReturn(new JField[] { ownerTypeField1, ownerTypeField2 });
         when(ownerTypeParent.getFields()).thenReturn(new JField[] { ownerTypeParentField });
+        when(ownerType.getName()).thenReturn("OwnerTypeName");
 
         JClassType ownerTypeParentFieldType = mock(JClassType.class, "ownerTypeParentFieldType");
         stubPassingField(ownerTypeField1, mock(JClassType.class), "ownerTypeField1");
@@ -182,8 +182,9 @@ public class ElementIdTypeParserTest {
                         "IdPrefix_ownerTypeParentField_ownerTypeParentFieldTypeSubField2"),
                 getExpectedStatement("ownerTypeField1", "IdPrefix_ownerTypeField1"),
                 getExpectedStatement("ownerTypeField2", "IdPrefix_ownerTypeField2"));
-        assertTrue(tested.statements.containsAll(expected));
+
         assertThat(tested.statements.size(), is(equalTo(expected.size())));
+        assertThat(tested.statements.containsAll(expected), is(equalTo(true)));
     }
 
     @Test
@@ -191,8 +192,8 @@ public class ElementIdTypeParserTest {
         stubFieldIdAnnotation(ownerTypeParentField, "ownerTypeParentFieldCustomId", true);
         tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix");
 
-        assertTrue(tested.statements.contains(getExpectedStatement(
-                "ownerTypeParentField", "IdPrefix_ownerTypeParentFieldCustomId")));
+        assertThat(tested.statements.contains(getExpectedStatement(
+                "ownerTypeParentField", "IdPrefix_ownerTypeParentFieldCustomId")), is(equalTo(true)));
     }
 
     @Test(expected = UnableToCompleteException.class)
@@ -211,8 +212,9 @@ public class ElementIdTypeParserTest {
                 getExpectedStatement("ownerTypeParentField", "IdPrefix_ownerTypeParentField"),
                 getExpectedStatement("ownerTypeField1", "IdPrefix_ownerTypeField1"),
                 getExpectedStatement("ownerTypeField2", "IdPrefix_ownerTypeField2"));
-        assertTrue(tested.statements.containsAll(expected));
+
         assertThat(tested.statements.size(), is(equalTo(expected.size())));
+        assertThat(tested.statements.containsAll(expected), is(equalTo(true)));
     }
 
     @Test(expected = UnableToCompleteException.class)
@@ -241,8 +243,28 @@ public class ElementIdTypeParserTest {
                 getExpectedStatement("ownerTypeParentField", "IdPrefix_ownerTypeParentField"),
                 getExpectedStatement("ownerTypeField1", "IdPrefix_ownerTypeField1"),
                 getExpectedStatement("ownerTypeField2", "IdPrefix_ownerTypeField2"));
-        assertTrue(tested.statements.containsAll(expected));
+
         assertThat(tested.statements.size(), is(equalTo(expected.size())));
+        assertThat(tested.statements.containsAll(expected), is(equalTo(true)));
+    }
+
+    @Test
+    public void parseStatements_defaultBehavior() throws UnableToCompleteException {
+        tested.parseStatements();
+
+        List<ElementIdStatement> expected = Arrays.asList(
+                getExpectedStatement("ownerTypeParentField", "OwnerTypeName_ownerTypeParentField"),
+                getExpectedStatement("ownerTypeParentField.ownerTypeParentFieldTypeSubField1",
+                        "OwnerTypeName_ownerTypeParentField_ownerTypeParentFieldTypeSubField1"),
+                getExpectedStatement("ownerTypeParentField.ownerTypeParentFieldTypeSubField2",
+                        "OwnerTypeName_ownerTypeParentField_ownerTypeParentFieldTypeSubField2"),
+                getExpectedStatement("ownerTypeField1", "OwnerTypeName_ownerTypeField1"),
+                getExpectedStatement("ownerTypeField2", "OwnerTypeName_ownerTypeField2"),
+                getExpectedStatement(null, "OwnerTypeName")
+                );
+
+        assertThat(tested.statements.size(), is(equalTo(expected.size())));
+        assertThat(tested.statements.containsAll(expected), is(equalTo(true)));
     }
 
     void stubFieldIdAnnotation(JField field, String fieldId, boolean processType) {
@@ -253,8 +275,13 @@ public class ElementIdTypeParserTest {
     }
 
     ElementIdStatement getExpectedStatement(String pathToField, String elementId) {
-        return new ElementIdStatement(ElementIdHandlerGenerator.ElementIdHandler_generateAndSetIds_owner
-                + "." + pathToField, elementId);
+        String fieldExpression = ElementIdHandlerGenerator.ElementIdHandler_generateAndSetIds_owner;
+
+        if (pathToField != null) {
+            fieldExpression += "." + pathToField;
+        }
+
+        return new ElementIdStatement(fieldExpression, elementId);
     }
 
 }
