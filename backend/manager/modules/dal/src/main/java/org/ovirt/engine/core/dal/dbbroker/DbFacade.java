@@ -81,6 +81,7 @@ import org.ovirt.engine.core.dao.VdsSpmIdMapDAO;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.VdsStatisticsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.dao.VmNetworkStatisticsDAO;
@@ -730,6 +731,9 @@ public class DbFacade {
         return getDAO(QuotaDAO.class);
     }
 
+    public VmDeviceDAO getVmDeviceDAO() {
+        return getDAO(VmDeviceDAO.class);
+    }
 
     public void setOnStartConnectionTimeout(int onStartConnectionTimeout) {
         this.onStartConnectionTimeout = onStartConnectionTimeout;
