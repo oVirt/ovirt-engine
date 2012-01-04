@@ -38,7 +38,7 @@
     <jboss.ejb3.ext.api.version>2.0.0-beta-1</jboss.ejb3.ext.api.version>
     <jboss.ejb3.core.version>1.1.18</jboss.ejb3.core.version>
     <javax.ejb.api.version>1.0.1.Final</javax.ejb.api.version>
-    <javax.servlet.api.version>2.3</javax.servlet.api.version>
+    <javax.servlet.api.version>3.0</javax.servlet.api.version>
     <jcraft.jsch.version>0.1.42</jcraft.jsch.version>
     <postgresql.version>8.4-701.jdbc4</postgresql.version>
     <dozer.version>5.2.0</dozer.version>
@@ -129,9 +129,9 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>${javax.servlet.api.version}</version>
+        <groupId>org.jboss.spec.javax.servlet</groupId>
+        <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+        <version>1.0.1.Final</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
