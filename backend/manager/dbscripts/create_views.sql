@@ -895,24 +895,30 @@ FROM       vm_interface_statistics;
 
 CREATE OR REPLACE VIEW dwh_vm_disk_configuration_history_view
 AS
-SELECT     	images.image_guid AS vm_disk_id,
-			images.storage_id as storage_domain_id,
-			cast(images.internal_drive_mapping as smallint) as vm_internal_drive_mapping,
-			images.description as vm_disk_description,
-			cast(images.size / 1048576 as int) as vm_disk_size_mb,
-			cast(images.volume_type as smallint) AS vm_disk_type,
-			cast(images.volume_format as smallint) AS vm_disk_format,
-			cast(images.disk_interface as smallint) as vm_disk_interface,
-			images._create_date AS create_date,
-            images._update_date AS update_date
-FROM	images
-			INNER JOIN
-				disk_image_dynamic ON images.image_guid = disk_image_dynamic.image_id
-WHERE     (_create_date >
+SELECT i.image_guid AS vm_disk_id,
+       i.storage_id as storage_domain_id,
+       cast(d.internal_drive_mapping as smallint) as vm_internal_drive_mapping,
+       i.description as vm_disk_description,
+       cast(i.size / 1048576 as int) as vm_disk_size_mb,
+       cast(i.volume_type as smallint) AS vm_disk_type,
+       cast(i.volume_format as smallint) AS vm_disk_format,
+       CASE
+           WHEN d.disk_interface = 'IDE' THEN cast(0 as smallint)
+           WHEN d.disk_interface = 'SCSI' THEN cast(1 as smallint)
+           WHEN d.disk_interface = 'VirtIO' THEN cast(2 as smallint)
+       END AS disk_interface,
+       i._create_date AS create_date,
+       i._update_date AS update_date
+FROM   images as i
+           INNER JOIN
+	       disk_image_dynamic ON i.image_guid = disk_image_dynamic.image_id
+           INNER JOIN
+               disks as d ON i.image_group_id = d.disk_id
+WHERE     (i._create_date >
                           (SELECT     var_datetime
                            FROM         dwh_history_timekeeping
                            WHERE      (var_name = 'lastSync'))) OR
-          (_update_date >
+          (i._update_date >
                           (SELECT     var_datetime
                            FROM         dwh_history_timekeeping AS history_timekeeping_1
                            WHERE      (var_name = 'lastSync')));
