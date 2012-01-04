@@ -14,7 +14,7 @@
 		}
 		
 		.loginFormTable {
-			width: 85%;
+			width: 86%;
 			margin: auto;
 		}
 		
