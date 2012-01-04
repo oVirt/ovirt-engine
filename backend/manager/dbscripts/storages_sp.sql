@@ -87,6 +87,12 @@ BEGIN
 	
          -- Get (and keep) a shared lock with "right to upgrade to exclusive"
     select vm_guid INTO v_val FROM vm_static where vm_guid in (select vm_guid from vms where storage_pool_id = v_id) FOR UPDATE;
+    DELETE
+    FROM   snapshots
+    WHERE  vm_id IN (
+        SELECT vm_guid
+        FROM   vms
+        WHERE  storage_pool_id = v_id);
     delete FROM vm_static where vm_guid in (select vm_guid from vms where storage_pool_id = v_id);
 
 	-- Get (and keep) a shared lock with "right to upgrade to exclusive"

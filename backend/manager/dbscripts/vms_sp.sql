@@ -669,6 +669,9 @@ BEGIN
       WHERE vm_guid = v_vmt_guid;
       DELETE FROM tags_vm_map
       WHERE vm_id = v_vm_guid;
+      DELETE
+      FROM   snapshots
+      WHERE  vm_id = v_vm_guid;
       DELETE FROM vm_statistics WHERE vm_guid = v_vm_guid;
       DELETE FROM vm_dynamic WHERE vm_guid = v_vm_guid;
       DELETE FROM vm_static WHERE vm_guid = v_vm_guid;

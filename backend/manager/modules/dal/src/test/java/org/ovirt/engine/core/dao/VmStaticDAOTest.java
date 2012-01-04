@@ -14,6 +14,7 @@ import java.util.List;
 import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
@@ -167,6 +168,10 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testRemove() {
+        for (Snapshot s : dbFacade.getSnapshotDao().getAll()) {
+            dbFacade.getSnapshotDao().remove(s.getId());
+        }
+
         dao.remove(EXISTING_VM_ID);
         VmStatic result = dao.get(EXISTING_VM_ID);
         assertNull(result);
