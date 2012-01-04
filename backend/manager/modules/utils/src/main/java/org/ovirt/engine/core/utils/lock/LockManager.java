@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils.lock;
 
+
 /**
  * The following interface is represent a lock mechanism
  */

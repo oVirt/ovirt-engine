@@ -10,6 +10,7 @@ public enum BeanType {
     SCHEDULER, // SchedulerUtil
     VDS_BROKER, // ResourceManagerProxy/VDSBroker
     USERS_DOMAINS_CACHE,
-    VDS_EVENT_LISTENER
+    VDS_EVENT_LISTENER,
+    LOCK_MANAGER
 
 }

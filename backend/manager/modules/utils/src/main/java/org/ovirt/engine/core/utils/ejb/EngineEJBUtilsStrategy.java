@@ -20,7 +20,9 @@ public class EngineEJBUtilsStrategy extends EJBUtilsStrategy {
         addBeanJNDIName(BeanType.SCHEDULER, StringUtils.concat(ENGINE_CONTEXT_PREFIX, "engine-scheduler/Scheduler"));
         addBeanJNDIName(BeanType.USERS_DOMAINS_CACHE,
                         StringUtils.concat(ENGINE_CONTEXT_PREFIX, "engine-bll/UsersDomainsCacheManagerService"));
-        addBeanJNDIName(BeanType.VDS_EVENT_LISTENER, StringUtils.concat(ENGINE_CONTEXT_PREFIX, "engine-bll/VdsEventListener"));
+        addBeanJNDIName(BeanType.VDS_EVENT_LISTENER,
+                StringUtils.concat(ENGINE_CONTEXT_PREFIX, "engine-bll/VdsEventListener"));
+        addBeanJNDIName(BeanType.LOCK_MANAGER, StringUtils.concat(ENGINE_CONTEXT_PREFIX, "engine-bll/LockManager"));
     }
 
     @Override
