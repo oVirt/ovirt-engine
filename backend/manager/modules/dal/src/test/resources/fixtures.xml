@@ -1565,6 +1565,31 @@
         </row>
     </table>
 
+    <table name="snapshots">
+        <column>snapshot_id</column>
+        <column>vm_id</column>
+        <column>snapshot_type</column>
+        <column>status</column>
+        <column>description</column>
+        <column>creation_date</column>
+        <column>app_list</column>
+        <column>vm_configuration</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>REGULAR</value>
+            <value>OK</value>
+            <value>Test snapshot!</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>oVirt, Winamp, eclipse</value>
+            <value></value>
+            <value>2010-11-18 11:11:35</value>
+            <value>2010-11-18 11:11:35</value>
+        </row>
+    </table>
+
     <table name="images">
         <column>image_guid</column>
         <column>creation_date</column>

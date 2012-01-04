@@ -1,11 +1,15 @@
 package org.ovirt.engine.core.dao;
 
-import org.springframework.jdbc.core.JdbcTemplate;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.SimpleJdbcCallsHandler;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public abstract class BaseDAODbFacade {
 
@@ -28,6 +32,34 @@ public abstract class BaseDAODbFacade {
 
     protected CustomMapSqlParameterSource getCustomMapSqlParameterSource() {
         return new CustomMapSqlParameterSource(dialect);
+    }
+
+    /**
+     * @return A generic boolean result mapper which always takes the boolean result, regardless of how it's column is
+     *         called.
+     */
+    protected ParameterizedRowMapper<Boolean> createBooleanMapper() {
+        return new ParameterizedRowMapper<Boolean>() {
+
+            @Override
+            public Boolean mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return rs.getBoolean(1);
+            }
+        };
+    }
+
+    /**
+     * @return A generic {@link Guid} result mapper which always takes the {@link Guid} result, regardless of how it's
+     *         column is called.
+     */
+    protected ParameterizedRowMapper<Guid> createGuidMapper() {
+        return new ParameterizedRowMapper<Guid>() {
+
+            @Override
+            public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return new Guid(rs.getString(1));
+            }
+        };
     }
 
     protected SimpleJdbcCallsHandler getCallsHandler() {

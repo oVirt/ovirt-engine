@@ -6,8 +6,10 @@
 
 DROP TYPE IF EXISTS idTextType CASCADE;
 DROP TYPE IF EXISTS idUuidType CASCADE;
+DROP TYPE IF EXISTS booleanResultType CASCADE;
 CREATE TYPE idTextType AS(id text);
 CREATE TYPE idUuidType AS(id UUID);
+CREATE TYPE booleanResultType AS(result BOOLEAN);
 
 
 CREATE OR REPLACE FUNCTION getGlobalIds(v_name VARCHAR(4000))

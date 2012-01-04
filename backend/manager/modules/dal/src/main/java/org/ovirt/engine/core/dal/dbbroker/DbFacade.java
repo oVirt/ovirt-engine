@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -69,6 +70,7 @@ import org.ovirt.engine.core.dao.RepoFileMetaDataDAO;
 import org.ovirt.engine.core.dao.RoleDAO;
 import org.ovirt.engine.core.dao.RoleGroupMapDAO;
 import org.ovirt.engine.core.dao.StepDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
@@ -131,6 +133,7 @@ public class DbFacade {
             put(VmNetworkInterface.class, VmNetworkInterfaceDAO.class);
             put(VmNetworkStatistics.class, VmNetworkStatisticsDAO.class);
             put(network.class, NetworkDAO.class);
+            put(Snapshot.class, SnapshotDao.class);
         }
     };
 
@@ -649,6 +652,15 @@ public class DbFacade {
      */
     public RepoFileMetaDataDAO getRepoFileMetaDataDao() {
         return getDAO(RepoFileMetaDataDAO.class);
+    }
+
+    /**
+     * Retrieves the singleton instance of {@link SnapshotDao}.
+     *
+     * @return the dao
+     */
+    public SnapshotDao getSnapshotDao() {
+        return getDAO(SnapshotDao.class);
     }
 
     /**
