@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.bookmark;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
@@ -25,12 +27,18 @@ public class BookmarkPopupView extends AbstractModelBoundPopupView<BookmarkModel
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<BookmarkPopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     @Path(value = "name.entity")
+    @WithElementId("name")
     EntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "searchString.entity")
+    @WithElementId("searchString")
     EntityModelTextBoxEditor searchStringEditor;
 
     @Inject
@@ -39,6 +47,7 @@ public class BookmarkPopupView extends AbstractModelBoundPopupView<BookmarkModel
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         Driver.driver.initialize(this);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void localize(ApplicationConstants constants) {

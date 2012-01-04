@@ -2,7 +2,9 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.HasElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.utils.ElementIdUtils;
 import org.ovirt.engine.ui.webadmin.view.AbstractPopupView;
 import org.ovirt.engine.ui.webadmin.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.webadmin.widget.UiCommandButton;
@@ -11,6 +13,7 @@ import org.ovirt.engine.ui.webadmin.widget.dialog.ProgressPopupContent;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -20,7 +23,8 @@ import com.google.gwt.user.client.ui.Widget;
  * @param <T>
  *            Window model type.
  */
-public abstract class AbstractModelBoundPopupView<T extends Model> extends AbstractPopupView<SimpleDialogPanel> implements AbstractModelBoundPopupPresenterWidget.ViewDef<T> {
+public abstract class AbstractModelBoundPopupView<T extends Model> extends AbstractPopupView<SimpleDialogPanel>
+        implements AbstractModelBoundPopupPresenterWidget.ViewDef<T>, HasElementId {
 
     /**
      * Popup progress indicator widget
@@ -36,6 +40,8 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
      * Popup hash-name
      */
     private String hashName;
+
+    private String elementId = DOM.createUniqueId();
 
     public AbstractModelBoundPopupView(EventBus eventBus, ApplicationResources resources) {
         super(eventBus, resources);
@@ -71,6 +77,11 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
     public HasUiCommandClickHandlers addFooterButton(String label) {
         UiCommandButton button = new UiCommandButton(label);
         asWidget().addFooterButton(button);
+
+        // Set button element ID for better accessibility
+        button.asWidget().getElement().setId(
+                ElementIdUtils.createElementId(elementId, label));
+
         return button;
     }
 
@@ -106,6 +117,11 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
     @Override
     public void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler) {
         asWidget().setKeyPressHandler(handler);
+    }
+
+    @Override
+    public void setElementId(String elementId) {
+        this.elementId = elementId;
     }
 
     protected String getHashName() {

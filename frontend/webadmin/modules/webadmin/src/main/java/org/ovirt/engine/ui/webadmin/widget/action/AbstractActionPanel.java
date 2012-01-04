@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.webadmin.idhandler.HasElementId;
 import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelChangeEvent;
 import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelChangeEvent.CommonModelChangeHandler;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableModelProvider;
+import org.ovirt.engine.ui.webadmin.utils.ElementIdUtils;
 import org.ovirt.engine.ui.webadmin.widget.FeatureNotImplementedYetPopup;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -88,7 +89,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
 
         // Set button element ID for better accessibility
         newActionButton.asWidget().getElement().setId(
-                getActionButtonElementId(buttonDef.getTitle()));
+                ElementIdUtils.createElementId(elementId, buttonDef.getTitle()));
 
         // Add the button to the action panel
         if (!buttonDef.isAvailableOnlyFromContext()) {
@@ -123,10 +124,6 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
         });
 
         updateActionButton(newActionButton, buttonDef);
-    }
-
-    String getActionButtonElementId(String buttonTitle) {
-        return elementId + "_" + buttonTitle.replaceAll("\\s", "_");
     }
 
     private void registerSelectionChangeHandler(final ActionButtonDefinition<T> buttonDef) {

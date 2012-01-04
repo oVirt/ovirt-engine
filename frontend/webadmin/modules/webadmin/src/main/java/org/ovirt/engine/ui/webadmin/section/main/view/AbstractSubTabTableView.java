@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.webadmin.view.AbstractView;
@@ -28,7 +29,9 @@ import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsModel, D extends SearchableListModel> extends AbstractView implements AbstractSubTabPresenter.ViewDef<I> {
 
     private final SearchableDetailModelProvider<T, M, D> modelProvider;
-    private final SimpleActionTable<T> table;
+
+    @WithElementId
+    public final SimpleActionTable<T> table;
 
     public AbstractSubTabTableView(SearchableDetailModelProvider<T, M, D> modelProvider) {
         this.modelProvider = modelProvider;
@@ -79,6 +82,7 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
         return getTable().getSelectionModel();
     }
 
+    @Override
     public void setLoadingState(LoadingState state) {
         getTable().setLoadingState(state);
     }
