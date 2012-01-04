@@ -317,6 +317,18 @@ public interface ApplicationConstants extends Constants {
     @DefaultStringValue("RHEV-H ISO Name")
     String hostInstallIsoLabel();
 
+    @DefaultStringValue("Executing this operation on a Host that was not properly manually rebooted could lead to a condition where VMs start on multiple hosts and lead to VM corruption!")
+    String manaulFencePopupNoneSpmWarningLabel();
+
+    @DefaultStringValue("This Host is the SPM. Executing this operation on a Host that was not properly manually rebooted could lead to Storage corruption condition!")
+    String manaulFencePopupSpmWarningLabel();
+
+    @DefaultStringValue("This Host is Contending to be SPM. Executing this operation on a Host that was not properly manually rebooted could lead to Storage corruption condition!")
+    String manaulFencePopupContendingSpmWarningLabel();
+
+    @DefaultStringValue("If the host has not been manually rebooted hit 'Cancel'.")
+    String manaulFencePopupWarningLabel();
+
     @DefaultStringValue("General")
     String poolGeneralSubTabLabel();
 

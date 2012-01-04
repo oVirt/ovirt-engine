@@ -138,6 +138,12 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return getMainModel().getMaintenanceCommand();
             }
         });
+        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Confirm 'Host has been Rebooted'", true) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getManualFenceCommand();
+            }
+        });
         // TODO: separator
         getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Approve") {
             @Override

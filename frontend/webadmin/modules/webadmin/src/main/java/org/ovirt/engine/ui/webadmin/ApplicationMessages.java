@@ -63,4 +63,7 @@ public interface ApplicationMessages extends Messages {
 
     @DefaultMessage("No available Host to migrate to.")
     String migrateNoAvailableHost();
+
+    @DefaultMessage("Please make sure the Host ''{0}'' has been manually shut down or rebooted.")
+    String manaulFencePopupMessageLabel(String hostName);
 }

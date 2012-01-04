@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstal
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
@@ -50,6 +51,7 @@ public class HostModule extends AbstractGinModule {
     public MainModelProvider<VDS, HostListModel> getHostListProvider(ClientGinjector ginjector,
             final Provider<HostPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<ManualFencePopupPresenterWidget> manualFenceConfirmPopupProvider,
             final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider) {
         return new MainTabModelProvider<VDS, HostListModel>(ginjector, HostListModel.class) {
             @Override
@@ -68,7 +70,10 @@ public class HostModule extends AbstractGinModule {
             protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
-                } else {
+                } else if (lastExecutedCommand == getModel().getManualFenceCommand()) {
+                    return manualFenceConfirmPopupProvider.get();
+                }
+                else {
                     return super.getConfirmModelPopup(lastExecutedCommand);
                 }
             }
