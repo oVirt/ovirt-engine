@@ -157,7 +157,7 @@ DECLARE
 	system_root_id uuid;
 	cluster_id uuid;
 	ds_id uuid;
-	image_id uuid;
+	v_image_id uuid;
 	v_storage_id uuid;
 
 BEGIN
@@ -194,9 +194,9 @@ BEGIN
 			SELECT v_entity_id AS id;
 	WHEN v_entity_type = 4 THEN -- Template
 		-- get image id first
-		image_id := ( SELECT image_id FROM image_vm_map WHERE vm_id = v_entity_id limit 1);
+		v_image_id := ( SELECT image_id FROM image_vm_map WHERE vm_id = v_entity_id limit 1);
 		-- get the storage id from images
-		v_storage_id := ( SELECT storage_id FROM images WHERE image_guid = image_id );
+		v_storage_id := ( SELECT storage_id FROM images WHERE image_guid = v_image_id );
 		-- finally get data center id
 		ds_id := ( SELECT storage_pool_id FROM storage_pool_iso_map WHERE storage_id = v_storage_id );
 
