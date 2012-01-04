@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineSnapshotPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
@@ -45,6 +46,10 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableView<VM
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<SubTabVirtualMachineSnapshotView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     ActionCellTable<String> applicationsTable;
 
     @UiField
@@ -59,6 +64,7 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableView<VM
     @Inject
     public SubTabVirtualMachineSnapshotView(SearchableDetailModelProvider<SnapshotModel, VmListModel, VmSnapshotListModel> modelProvider) {
         super(modelProvider);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         initSnapshotsTable();
         initApplicationsTable();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

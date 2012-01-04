@@ -7,6 +7,8 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostInterfacePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView.SubTableResources;
@@ -24,6 +26,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostListModel, HostInterfaceListModel>
         implements SubTabHostInterfacePresenter.ViewDef {
 
+    interface ViewIdHandler extends ElementIdHandler<SubTabHostInterfaceView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     /**
      * An empty column, used to render Host NIC table header.
      */
@@ -34,13 +40,15 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         }
     }
 
-    private final SimpleActionTable<HostInterfaceLineModel> table;
+    @WithElementId
+    final SimpleActionTable<HostInterfaceLineModel> table;
     private final VerticalPanel contentPanel;
 
     @Inject
     public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> modelProvider) {
         super(modelProvider);
         this.table = new SimpleActionTable<HostInterfaceLineModel>(modelProvider, getTableResources());
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
 
         contentPanel = new VerticalPanel();
