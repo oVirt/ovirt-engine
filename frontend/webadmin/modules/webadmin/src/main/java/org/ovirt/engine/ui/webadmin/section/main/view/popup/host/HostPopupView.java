@@ -70,6 +70,10 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @Path(value = "rootPassword.entity")
     EntityModelPasswordBoxEditor rootPasswordEditor;
 
+    @UiField
+    @Path(value = "OverrideIpTables.entity")
+    EntityModelCheckBoxEditor overrideIpTablesEditor;
+
     @UiField(provided = true)
     @Path(value = "isPm.entity")
     EntityModelCheckBoxEditor pmEnabledEditor;
@@ -162,6 +166,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         nameEditor.setLabel(constants.hostPopupNameLabel());
         hostAddressEditor.setLabel(constants.hostPopupHostAddressLabel());
         rootPasswordEditor.setLabel(constants.hostPopupRootPasswordLabel());
+        overrideIpTablesEditor.setLabel(constants.hostPopupOverrideIpTablesLabel());
 
         // Power Management tab
         powerManagementTab.setLabel(constants.hostPopupPowerManagementTabLabel());

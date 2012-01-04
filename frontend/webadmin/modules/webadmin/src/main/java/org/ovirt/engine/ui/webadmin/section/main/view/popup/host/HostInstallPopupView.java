@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.renderer.NullSafeRenderer;
@@ -41,6 +42,10 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @Path(value = "oVirtISO.selectedItem")
     ListModelListBoxEditor<Object> isoEditor;
 
+    @UiField
+    @Path(value = "OverrideIpTables.entity")
+    EntityModelCheckBoxEditor overrideIpTablesEditor;
+
     @Inject
     public HostInstallPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -62,6 +67,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     void localize(ApplicationConstants constants) {
         passwordEditor.setLabel(constants.hostInstallPasswordLabel());
         isoEditor.setLabel(constants.hostInstallIsoLabel());
+        overrideIpTablesEditor.setLabel(constants.hostInstallOverrideIpTablesLabel());
     }
 
     @Override

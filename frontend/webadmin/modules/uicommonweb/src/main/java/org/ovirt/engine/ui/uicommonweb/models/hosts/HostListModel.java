@@ -423,7 +423,31 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
 		hostModel.setHashName("new_host");
 		hostModel.getPort().setEntity(54321);
 		hostModel.getPmType().setSelectedItem(null);
-		hostModel.getOverrideIpTables().setEntity(true);
+        hostModel.getOverrideIpTables().setIsAvailable(false);
+
+        hostModel.getCluster().getSelectedItemChangedEvent().addListener(
+                new IEventListener() {
+                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+
+                        HostModel localModel = (HostModel) ev.getContext();
+                        ListModel clusterModel = localModel.getCluster();
+
+                        if (clusterModel.getSelectedItem() != null) {
+
+                            Version v3 = new Version(3, 0);
+                            VDSGroup cluster = (VDSGroup) clusterModel.getSelectedItem();
+
+                            boolean isLessThan3 = cluster.getcompatibility_version().compareTo(v3) < 0;
+
+                            localModel.getOverrideIpTables().setIsAvailable(!isLessThan3);
+                            localModel.getOverrideIpTables().setEntity(!isLessThan3);
+                        }
+                    }
+                },
+                hostModel
+        );
+
+
 		AsyncQuery _asyncQuery = new AsyncQuery();
 		_asyncQuery.setModel(this);
 		_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object result)

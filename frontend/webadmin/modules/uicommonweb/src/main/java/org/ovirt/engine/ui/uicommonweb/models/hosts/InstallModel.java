@@ -48,14 +48,13 @@ public class InstallModel extends Model
 	}
 
 
-	public InstallModel()
-	{
-		setRootPassword(new EntityModel());
-		setOVirtISO(new ListModel());
-		EntityModel tempVar = new EntityModel();
-		tempVar.setEntity(false);
-		setOverrideIpTables(tempVar);
-	}
+    public InstallModel() {
+        setRootPassword(new EntityModel());
+        setOVirtISO(new ListModel());
+
+        setOverrideIpTables(new EntityModel());
+        getOverrideIpTables().setEntity(false);
+    }
 
 	public boolean Validate(boolean isOVirt)
 	{

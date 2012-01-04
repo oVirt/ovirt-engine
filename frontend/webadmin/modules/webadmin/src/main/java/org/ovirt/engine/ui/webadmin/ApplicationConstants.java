@@ -278,6 +278,9 @@ public interface ApplicationConstants extends Constants {
     @DefaultStringValue("Root Password")
     String hostPopupRootPasswordLabel();
 
+    @DefaultStringValue("Override IP tables")
+    String hostPopupOverrideIpTablesLabel();
+
     @DefaultStringValue("Enable Power Management")
     String hostPopupPmEnabledLabel();
 
@@ -316,6 +319,9 @@ public interface ApplicationConstants extends Constants {
 
     @DefaultStringValue("RHEV-H ISO Name")
     String hostInstallIsoLabel();
+
+    @DefaultStringValue("Override IP tables")
+    String hostInstallOverrideIpTablesLabel();
 
     @DefaultStringValue("Executing this operation on a Host that was not properly manually rebooted could lead to a condition where VMs start on multiple hosts and lead to VM corruption!")
     String manaulFencePopupNoneSpmWarningLabel();

@@ -52,6 +52,7 @@
 								<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 								<e:EntityModelTextBoxEditor ui:field="hostAddressEditor" />
 								<e:EntityModelPasswordBoxEditor ui:field="rootPasswordEditor" />
+                                <e:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor" />
 							</g:FlowPanel>
 						</t:content>
 					</t:DialogTab>

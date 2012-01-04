@@ -1,4 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
+import java.util.ArrayList;
 import java.util.Collections;
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.ui.uicompat.*;
@@ -582,40 +583,47 @@ public class HostGeneralModel extends EntityModel
 		model.getRootPassword().setIsAvailable(false);
 		model.getOverrideIpTables().setIsAvailable(false);
 
-		if (getEntity().getvds_type() == VDSType.oVirtNode)
-		{
-			AsyncDataProvider.GetoVirtISOsList(new AsyncQuery(model,
-		new INewAsyncCallback() {
-			@Override
-			public void OnSuccess(Object target, Object returnValue) {
+        if (getEntity().getvds_type() == VDSType.oVirtNode) {
+            AsyncDataProvider.GetoVirtISOsList(new AsyncQuery(model,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
 
-				InstallModel installModel = (InstallModel)target;
-				java.util.ArrayList<String> isos = (java.util.ArrayList<String>)returnValue;
-				installModel.getOVirtISO().setItems(isos);
-				installModel.getOVirtISO().setSelectedItem(Linq.FirstOrDefault(isos));
-				installModel.getOVirtISO().setIsAvailable(true);
-				installModel.getOVirtISO().setIsChangable(true);
+                            InstallModel installModel = (InstallModel) target;
+                            ArrayList<String> isos = (ArrayList<String>) returnValue;
+                            installModel.getOVirtISO().setItems(isos);
+                            installModel.getOVirtISO().setSelectedItem(Linq.FirstOrDefault(isos));
+                            installModel.getOVirtISO().setIsAvailable(true);
+                            installModel.getOVirtISO().setIsChangable(true);
 
-			}
-		}));
-		}
-		else
-		{
-			model.getRootPassword().setIsAvailable(true);
-			model.getRootPassword().setIsChangable(true);
-			model.getOverrideIpTables().setIsAvailable(true);
-			model.getOverrideIpTables().setEntity(true);
-		}
+                        }
+                    }));
+        } else {
+            model.getRootPassword().setIsAvailable(true);
+            model.getRootPassword().setIsChangable(true);
 
-		UICommand tempVar = new UICommand("OnInstall", this);
-		tempVar.setTitle("OK");
-		tempVar.setIsDefault(true);
-		model.getCommands().add(tempVar);
-		UICommand tempVar2 = new UICommand("Cancel", this);
-		tempVar2.setTitle("Cancel");
-		tempVar2.setIsCancel(true);
-		model.getCommands().add(tempVar2);
-	}
+            Version v3 = new Version(3, 0);
+            boolean isLessThan3 = getEntity().getvds_group_compatibility_version().compareTo(v3) < 0;
+
+            if (!isLessThan3) {
+                model.getOverrideIpTables().setIsAvailable(true);
+                model.getOverrideIpTables().setEntity(true);
+            }
+        }
+
+
+        UICommand command;
+
+        command = new UICommand("OnInstall", this);
+        command.setTitle("OK");
+        command.setIsDefault(true);
+        model.getCommands().add(command);
+
+        command = new UICommand("Cancel", this);
+        command.setTitle("Cancel");
+        command.setIsCancel(true);
+        model.getCommands().add(command);
+    }
 
 	public void EditHost()
 	{

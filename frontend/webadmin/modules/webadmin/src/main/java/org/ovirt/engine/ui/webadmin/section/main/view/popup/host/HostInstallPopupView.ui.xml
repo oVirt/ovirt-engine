@@ -13,6 +13,7 @@
             <g:FlowPanel>
                 <e:EntityModelPasswordBoxEditor ui:field="passwordEditor"/>
                 <e:ListModelListBoxEditor ui:field="isoEditor"/>
+                <e:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor" />
             </g:FlowPanel>
         </d:content>
     </d:SimpleDialogPanel>
