@@ -35,11 +35,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
     private int internalDriveMapping;
 
     /**
-     * The image that is currently active for the VM/Template.
-     */
-    private DiskImage activeImage;
-
-    /**
      * The type of disk (Data/System/etc).
      */
     private DiskType diskType;
@@ -65,7 +60,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
 
     public Disk(Guid id,
             int internalDriveMapping,
-            DiskImage activeImage,
             DiskType diskType,
             DiskInterface diskInterface,
             boolean wipeAfterDelete,
@@ -73,7 +67,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
         super();
         this.id = id;
         this.internalDriveMapping = internalDriveMapping;
-        this.activeImage = activeImage;
         this.diskType = diskType;
         this.diskInterface = diskInterface;
         this.wipeAfterDelete = wipeAfterDelete;
@@ -98,14 +91,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
     @Override
     public void setId(Guid id) {
         this.id = id;
-    }
-
-    public DiskImage getActiveImage() {
-        return activeImage;
-    }
-
-    public void setActiveImage(DiskImage activeImage) {
-        this.activeImage = activeImage;
     }
 
     public int getInternalDriveMapping() {
@@ -152,7 +137,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((activeImage == null) ? 0 : activeImage.hashCode());
         result = prime * result + ((diskInterface == null) ? 0 : diskInterface.hashCode());
         result = prime * result + ((diskType == null) ? 0 : diskType.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
@@ -174,13 +158,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
             return false;
         }
         Disk other = (Disk) obj;
-        if (activeImage == null) {
-            if (other.activeImage != null) {
-                return false;
-            }
-        } else if (!activeImage.equals(other.activeImage)) {
-            return false;
-        }
         if (diskInterface != other.diskInterface) {
             return false;
         }

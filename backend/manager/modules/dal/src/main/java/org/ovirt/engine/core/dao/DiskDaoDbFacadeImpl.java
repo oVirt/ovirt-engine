@@ -48,7 +48,6 @@ public class DiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Disk, Guid> i
     protected MapSqlParameterSource createFullParametersMapper(Disk entity) {
         return createIdParameterMapper(entity.getId())
                 .addValue("internal_drive_mapping", entity.getInternalDriveMapping())
-                .addValue("active_image_id", (entity.getActiveImage() == null ? null : entity.getActiveImage().getId()))
                 .addValue("disk_type", EnumUtils.nameOrNull(entity.getDiskType()))
                 .addValue("disk_interface", EnumUtils.nameOrNull(entity.getDiskInterface()))
                 .addValue("wipe_after_delete", entity.isWipeAfterDelete())

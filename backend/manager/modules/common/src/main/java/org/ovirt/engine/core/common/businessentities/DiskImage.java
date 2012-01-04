@@ -626,7 +626,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         Disk otherDisk = diskImage.getDisk();
         di.setDisk(new Disk(otherDisk.getId(),
                 otherDisk.getInternalDriveMapping(),
-                otherDisk.getActiveImage(),
                 otherDisk.getDiskType(),
                 otherDisk.getDiskInterface(),
                 otherDisk.isWipeAfterDelete(),

@@ -32,7 +32,6 @@ public class DiskDaoTest extends BaseGenericDaoTestCase<Guid, Disk, DiskDao> {
     protected Disk generateNewEntity() {
         return new Disk(Guid.NewGuid(),
                 1,
-                null,
                 DiskType.Data,
                 DiskInterface.SCSI,
                 true,
