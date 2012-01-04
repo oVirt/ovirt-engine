@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameter
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
-public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters> extends VdsBrokerCommand<T> {
+public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters> extends FutureVDSCommand<T> {
 
     public SetupNetworksVDSCommand(T parameters) {
         super(parameters);
@@ -42,13 +42,13 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 break;
             case StaticIp:
                 if (!StringHelper.isNullOrEmpty(i.getAddress())) {
-                    opts.put("ipaddr", net.getaddr());
+                    opts.put("ipaddr", i.getAddress());
                 }
-                if (!StringHelper.isNullOrEmpty(net.getsubnet())) {
-                    opts.put("netmask", net.getsubnet());
+                if (!StringHelper.isNullOrEmpty(i.getSubnet())) {
+                    opts.put("netmask", i.getSubnet());
                 }
-                if (!StringHelper.isNullOrEmpty(net.getgateway())) {
-                    opts.put("gateway", net.getgateway());
+                if (!StringHelper.isNullOrEmpty(i.getGateway())) {
+                    opts.put("gateway", i.getGateway());
                 }
                 break;
             }
@@ -92,8 +92,8 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                     (new Integer(getParameters().getConectivityTimeout())).toString());
         }
 
-        status = getBroker().setupNetworks(networks, bonds, options);
-        ProceedProxyReturnValue();
+        httpTask = getBroker().setupNetworks(networks, bonds, options);
+
     }
 
     private List<String> getBondNics(VdsNetworkInterface bond, List<VdsNetworkInterface> interfaces) {
@@ -124,4 +124,5 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
         return null;
     }
+
 }

@@ -1,15 +1,33 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
+import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
+import org.ovirt.engine.core.compat.LogCompat;
+import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute
 public class SetupNetworksCommand<T extends SetupNetworksParameters> extends VdsCommand<T> {
+
+    private static Log log = LogFactory.getLog(SetupNetworksCommand.class);
+    private SetupNetworksHelper helper;
 
     public SetupNetworksCommand(T parameters) {
         super(parameters);
@@ -40,6 +58,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
         return retVal;
     }
+
 
     private boolean networksOrInterfacesEmpty() {
         T params = getParameters();
@@ -138,8 +157,8 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
     @Override
     protected void executeCommand() {
-        T bckndCmdParams = getParameters();
-        SetupNetworksVdsCommandParameters vdsCmdParams = new SetupNetworksVdsCommandParameters(
+        final T bckndCmdParams = getParameters();
+        final SetupNetworksVdsCommandParameters vdsCmdParams = new SetupNetworksVdsCommandParameters(
                 getVdsId(),
                 bckndCmdParams.getNetworks(),
                 bckndCmdParams.getRemovedNetworks(),
@@ -150,22 +169,80 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         vdsCmdParams.setCheckConnectivity(bckndCmdParams.isCheckConnectivity());
         vdsCmdParams.setConectivityTimeout(bckndCmdParams.getConectivityTimeout());
 
-        VDSReturnValue retVal = Backend.getInstance().getResourceManager()
-                .RunVdsCommand(VDSCommandType.SetupNetworks, vdsCmdParams);
+        FutureVDSCall<VDSReturnValue> setupNetworksTask = createFutureTask(vdsCmdParams);
 
-        if (retVal != null && retVal.getSucceeded()) {
-            // Refresh VDS networking to DB
-            retVal = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                            new VdsIdAndVdsVDSCommandParametersBase(bckndCmdParams.getVdsId()));
+        if (bckndCmdParams.isCheckConnectivity()) {
+            pollInterruptively(setupNetworksTask);
+        }
 
-            // Update cluster networks (i.e. check if need to activate each new network)
-            for (network net : bckndCmdParams.getNetworks()) {
-                AttachNetworkToVdsGroupCommand.SetNetworkStatus(getVdsGroupId(), net);
+        long timeout =
+                bckndCmdParams.getConectivityTimeout() > 0 ? bckndCmdParams.getConectivityTimeout()
+                        : Config.<Integer> GetValue(ConfigValues.vdsTimeout);
+        try {
+            VDSReturnValue retVal = setupNetworksTask.get(timeout, TimeUnit.SECONDS);
+            if (retVal != null && retVal.getSucceeded()) {
+                setSucceeded(TransactionSupport.executeInNewTransaction(updateVdsNetworksInTx(bckndCmdParams)));
             }
-            setSucceeded(true);
+        } catch (TimeoutException e) {
+            log.debugFormat("Setup networks command timed out for {0} seconds", timeout);
         }
     }
+
+    /**
+     * use FutureTask to poll the vdsm (with getCapabilities) while setupNetworks task is not done. during the poll task
+     * try to fetch the setupNetwork task answer with a timeout equal to getConnectitivtyTimeout defined in the command
+     * parameters and stop both tasks when its done
+     *
+     * @param setupNetworksTask
+     * @param timeout
+     */
+    private void pollInterruptively(final FutureVDSCall<VDSReturnValue> setupNetworksTask) {
+        while (!setupNetworksTask.isDone()) {
+            pollVds();
+        }
+    }
+
+    /**
+     * update the new VDSM networks to DB in new transaction.
+     *
+     * @param bckndCmdParams
+     * @return
+     */
+    private TransactionMethod<Boolean> updateVdsNetworksInTx(final T bckndCmdParams) {
+        return new TransactionMethod<Boolean>() {
+
+            @Override
+            public Boolean runInTransaction() {
+                // save the new network topology to DB
+                Backend.getInstance().getResourceManager()
+                        .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
+                                new VdsIdAndVdsVDSCommandParametersBase(bckndCmdParams.getVdsId()));
+
+                // Update cluster networks (i.e. check if need to activate each new network)
+                for (network net : getNetworks()) {
+                    AttachNetworkToVdsGroupCommand.SetNetworkStatus(getVdsGroupId(), net);
+                }
+                return Boolean.TRUE;
+            }
+        };
+    }
+
+    private void pollVds() {
+        FutureVDSCall<VDSReturnValue> task =
+                Backend.getInstance().getResourceManager().runFutureVdsCommand(FutureVDSCommandType.Poll,
+                        new VdsIdAndVdsVDSCommandParametersBase(getVds()));
+        try {
+            log.debugFormat("polling host {0}", getVdsName());
+            task.get(Config.<Integer> GetValue(ConfigValues.SetupNetworksPollingTimeout), TimeUnit.SECONDS);
+        } catch (Exception e) {
+            // ignore failure. network can go down due to VDSM changing the network
+        }
+    }
+
+    private FutureVDSCall<VDSReturnValue> createFutureTask(final SetupNetworksVdsCommandParameters vdsCmdParams) {
+        return Backend.getInstance()
+                .getResourceManager()
+                .runFutureVdsCommand(FutureVDSCommandType.SetupNetworks, vdsCmdParams);
+    }
+
 }

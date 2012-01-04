@@ -69,8 +69,10 @@ public interface VdsServerConnector {
     public Map<String, Object> editNetwork(String oldBridge, String newBridge, String vlan, String bond, String[] nics,
             Map<String, String> options);
 
-    @FutureCall
-    public FutureTask<Map<String, Object>> setupNetworks(Map networks, Map bonding, Map options);
+    public Map<String, Object> setupNetworks(Map networks, Map bonding, Map options);
+
+    @FutureCall(delegeteTo="setupNetworks")
+    public FutureTask<Map<String, Object>> futureSetupNetworks(Map networks, Map bonding, Map options);
 
     public Map<String, Object> setSafeNetworkConfig();
 

@@ -1062,6 +1062,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     AllowDuplicateMacAddresses(339),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("3")
+    SetupNetworksPollingTimeout(340),
     Invalid(65535);
 
     private int intValue;
