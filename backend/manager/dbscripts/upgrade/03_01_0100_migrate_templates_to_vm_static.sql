@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION Upgrade_MergeTemplatesToVmStatic_03_01_0090()
+CREATE OR REPLACE FUNCTION Upgrade_MergeTemplatesToVmStatic_03_01_0100()
 RETURNS void
 AS $function$
 DECLARE
@@ -15,7 +15,6 @@ WHERE  vm_guid IN (SELECT vm_guid FROM vm_dynamic);
 
 ALTER TABLE vm_static ALTER COLUMN entity_type SET NOT NULL;
 ALTER TABLE vm_static DROP CONSTRAINT vm_templates_vm_static;
-ALTER TABLE vm_static ADD CONSTRAINT vm_templates_vm_static FOREIGN KEY (vmt_guid) REFERENCES vm_static (vm_guid);
 
 INSERT INTO vm_static (
     vm_guid,
@@ -92,6 +91,8 @@ WHERE  vmt_guid NOT IN (
     FROM   vm_static
     WHERE  entity_type = 'TEMPLATE');
 
+ALTER TABLE vm_static ADD CONSTRAINT vm_templates_vm_static FOREIGN KEY (vmt_guid) REFERENCES vm_static (vm_guid);
+
 INSERT
 INTO   image_vm_map(
     image_id,
@@ -116,7 +117,7 @@ END; $function$
 LANGUAGE plpgsql;
 
 
-SELECT * FROM Upgrade_MergeTemplatesToVmStatic_03_01_0090();
+SELECT * FROM Upgrade_MergeTemplatesToVmStatic_03_01_0100();
 
-DROP FUNCTION Upgrade_MergeTemplatesToVmStatic_03_01_0090();
+DROP FUNCTION Upgrade_MergeTemplatesToVmStatic_03_01_0100();
 
