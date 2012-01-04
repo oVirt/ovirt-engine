@@ -814,7 +814,7 @@ SELECT     	a.vm_guid AS vm_id,
 			cast(a.vm_type as smallint) as vm_type,
 			a.vds_group_id AS cluster_id,
 			a.vmt_guid AS template_id,
-            b.name AS template_name,
+            b.vm_name AS template_name,
 			cast(a.cpu_per_socket as smallint) as cpu_per_socket,
 			cast(a.num_of_sockets as smallint) AS number_of_sockets,
 			a.mem_size_mb AS memory_size_mb,
@@ -831,8 +831,9 @@ SELECT     	a.vm_guid AS vm_id,
 			a._create_date AS create_date,
             a._update_date AS update_date
 FROM        vm_static as a INNER JOIN
-                      vm_templates as b ON a.vmt_guid = b.vmt_guid
-WHERE     (a._create_date >
+                      vm_static as b ON a.vmt_guid = b.vm_guid
+WHERE     (a.entity_type = 'VM' AND b.entity_type = 'TEMPLATE') AND
+          ((a._create_date >
                           (SELECT     var_datetime
                            FROM       dwh_history_timekeeping
                            WHERE      (var_name = 'lastSync'))) OR
@@ -843,7 +844,7 @@ WHERE     (a._create_date >
           (b._update_date >
                           (SELECT     var_datetime
                            FROM       dwh_history_timekeeping AS history_timekeeping_1
-                           WHERE      (var_name = 'lastSync')));
+                           WHERE      (var_name = 'lastSync'))));
 
 CREATE OR REPLACE VIEW dwh_vm_history_view
 AS
