@@ -205,6 +205,8 @@ run_upgrade_files() {
         # restore views & SPs if dropped
         if [ $updated -eq 1 ]; then
             run_post_upgrade
+            # aoto generate .schema file
+            pg_dump -f .schema -F p -n public -s -U ${USERNAME} ${DATABASE}  >& /dev/null
         else
 	    echo "database is up to date."
         fi
