@@ -88,6 +88,7 @@ public class BackendVmsResourceTest
 
     @Test
     public void testRemove() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
         setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
                 "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
@@ -96,6 +97,7 @@ public class BackendVmsResourceTest
 
     @Test
     public void testRemoveForced() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
         setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
             "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.TRUE }, true, true);
@@ -104,7 +106,8 @@ public class BackendVmsResourceTest
 
     @Test
     public void testRemoveForcedIncomplete() throws Exception {
-    setUpGetEntityExpectations();
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations();
         setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
                                 "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
         collection.remove(GUIDS[0].toString(), new Action(){{}});

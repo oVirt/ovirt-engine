@@ -17,9 +17,11 @@
 package org.ovirt.engine.api.common.util;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.Cluster;
@@ -136,6 +138,20 @@ public class QueryHelper {
 
     public static boolean hasConstraint(UriInfo uriInfo, String constraint) {
             return hasConstraint(uriInfo.getQueryParameters(), constraint);
+    }
+
+    public static boolean hasMatrixParam(UriInfo uriInfo, String param) {
+        return hasMatrixParam(uriInfo.getPathSegments(), param);
+    }
+
+    private static boolean hasMatrixParam(List<PathSegment> pathSegments, String param) {
+        if (pathSegments != null)
+            for (PathSegment segement : pathSegments) {
+                MultivaluedMap<String, String> matrixParams = segement.getMatrixParameters();
+                if (matrixParams != null && !matrixParams.isEmpty() && matrixParams.containsKey(param))
+                    return true;
+            }
+        return false;
     }
 
     public static HashMap<String, String> getConstraints(MultivaluedMap<String, String> queries, String... constraints) {

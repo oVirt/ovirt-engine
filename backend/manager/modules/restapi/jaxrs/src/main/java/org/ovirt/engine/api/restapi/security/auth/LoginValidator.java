@@ -11,6 +11,7 @@ import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
 import org.ovirt.engine.api.common.security.auth.Validator;
 import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.common.invocation.Current;
+import org.ovirt.engine.api.common.invocation.MetaData;
 
 import org.ovirt.engine.api.restapi.util.SessionHelper;
 
@@ -94,11 +95,14 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
 
     @Override
     public void postProcess(ServerResponse response) {
-        VdcUser user = current.get(VdcUser.class);
-        if (user != null) {
-            backend.Logoff(
-                sessionHelper.sessionize(new LogoutUserParameters(user.getUserId())));
+        if (!current.get(MetaData.class).hasKey("async") ||
+                ((Boolean)current.get(MetaData.class).get("async")) != Boolean.TRUE) {
+            VdcUser user = current.get(VdcUser.class);
+            if (user != null) {
+                backend.Logoff(
+                    sessionHelper.sessionize(new LogoutUserParameters(user.getUserId())));
+            }
+            sessionHelper.clean();
         }
-        sessionHelper.clean();
     }
 }

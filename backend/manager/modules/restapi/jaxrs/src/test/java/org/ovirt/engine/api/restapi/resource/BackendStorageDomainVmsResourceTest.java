@@ -80,6 +80,7 @@ public class BackendStorageDomainVmsResourceTest
 
     @Test
     public void testRemove() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
         setUpQueryExpectations("", null, StorageDomainType.ImportExport, false);
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
         org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();

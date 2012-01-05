@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.security.auth;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.easymock.IMocksControl;
 import org.easymock.classextension.EasyMock;
 import org.jboss.resteasy.core.ServerResponse;
@@ -9,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.ovirt.engine.api.common.invocation.Current;
+import org.ovirt.engine.api.common.invocation.MetaData;
 import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
@@ -70,7 +74,27 @@ public class LoginValidatorTest extends Assert {
 
     @Test
     public void testLogoff() {
+        setUpMetaDataExpectations(null);
         validator.postProcess(setUpLogoutExpectations());
+    }
+
+    @Test
+    public void testNonBlockingLogoffCancelation() {
+        setUpMetaDataExpectations(new HashMap<String, Object>(){{put("async", true);}});
+        validator.postProcess(setUpAsyncLogoutExpectations());
+    }
+
+    protected void setUpMetaDataExpectations(Map<String, Object> metaItems) {
+        MetaData meta = control.createMock(MetaData.class);
+        if (metaItems != null && !metaItems.isEmpty()) {
+            expect(current.get(MetaData.class)).andReturn(meta).anyTimes();
+            for (Map.Entry<String, Object> item : metaItems.entrySet()) {
+                expect(meta.hasKey(item.getKey())).andReturn(true);
+                expect(meta.get(item.getKey())).andReturn(item.getValue());
+            }
+        } else {
+            expect(current.get(MetaData.class)).andReturn(meta);
+        }
     }
 
     private Principal setUpLoginExpectations(boolean canDo, boolean success) {
@@ -108,4 +132,9 @@ public class LoginValidatorTest extends Assert {
         return response;
     }
 
+    private ServerResponse setUpAsyncLogoutExpectations() {
+        ServerResponse response = control.createMock(ServerResponse.class);
+        control.replay();
+        return response;
+    }
 }

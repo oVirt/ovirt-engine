@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.Cluster;
@@ -29,10 +30,14 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VM;
 
+import org.easymock.IMocksControl;
+import org.easymock.classextension.EasyMock;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 
+import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.replay;
@@ -42,6 +47,14 @@ import static org.easymock.classextension.EasyMock.verify;
 public class QueryHelperTest extends Assert {
 
     private static final String QUERY = "name=zibert AND id=0*";
+    private static final String MATRIX_CONSTRAINT = "cons";
+
+    protected IMocksControl control;
+
+    @Before
+    public void setUp() {
+        control = EasyMock.createNiceControl();
+    }
 
     @Test
     public void testGetVMConstraint() throws Exception {
@@ -165,5 +178,32 @@ public class QueryHelperTest extends Assert {
         assertEquals(expectedConstraint, QueryHelper.getConstraint(uriInfo, "", clz));
 
         verify(uriInfo, queries);
+    }
+
+    @Test
+    public void testHasMatrixParam() throws Exception {
+        UriInfo uriInfo = setUpMatrixParamExpectations();
+        assertEquals(QueryHelper.hasMatrixParam(uriInfo, MATRIX_CONSTRAINT), true);
+    }
+
+    private UriInfo setUpMatrixParamExpectations() {
+
+        UriInfo uriInfo = control.createMock(UriInfo.class);;
+
+        List<PathSegment> psl = new ArrayList<PathSegment>();
+
+        PathSegment ps = control.createMock(PathSegment.class);
+        MultivaluedMap<String, String> matrixParams = control.createMock(MultivaluedMap.class);
+        expect(matrixParams.isEmpty()).andReturn(false);
+        expect(matrixParams.containsKey(MATRIX_CONSTRAINT)).andReturn(true);
+        expect(ps.getMatrixParameters()).andReturn(matrixParams);
+
+        psl.add(ps);
+
+        expect(uriInfo.getPathSegments()).andReturn(psl).anyTimes();
+
+        control.replay();
+
+        return uriInfo;
     }
 }

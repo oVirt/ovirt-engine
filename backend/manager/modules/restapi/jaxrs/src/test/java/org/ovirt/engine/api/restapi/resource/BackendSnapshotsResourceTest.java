@@ -59,6 +59,7 @@ public class BackendSnapshotsResourceTest
 
     @Test
     public void testRemove() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(2);
         setUpActionExpectations(VdcActionType.MergeSnapshot,
                                 MergeSnapshotParamenters.class,

@@ -50,7 +50,7 @@ public class Current implements PostProcessInterceptor {
 
     private Map<Class<?>, Object> getMap() {
         if (currents.get() == null) {
-            currents.set(new HashMap<Class<?>, Object>());
+            currents.set(new HashMap<Class<?>, Object>(){{put(MetaData.class, new MetaData());}});
         }
         return currents.get();
     }
