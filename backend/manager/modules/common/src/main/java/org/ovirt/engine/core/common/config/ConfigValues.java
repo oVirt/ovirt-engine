@@ -1419,30 +1419,23 @@ public enum ConfigValues {
      * The minimal size of the internal thread pool. Minimal number of threads in pool
      */
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("10")
+    @DefaultValueAttribute("50")
     DefaultMinThreadPoolSize(323),
 
     /**
      * The size of the internal thread pool
      */
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("200")
+    @DefaultValueAttribute("500")
     DefaultMaxThreadPoolSize(324),
-
-    /**
-     * The max number of waiting tasks for thread
-     */
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("1500")
-    DefaultMaxSizeOfWaitingTasks(325),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    IsNeedSupportForOldVgAPI(326),
+    IsNeedSupportForOldVgAPI(325),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
-    InitStorageSparseSizeInGB(327),
+    InitStorageSparseSizeInGB(326),
 
     Invalid(65535);
 
