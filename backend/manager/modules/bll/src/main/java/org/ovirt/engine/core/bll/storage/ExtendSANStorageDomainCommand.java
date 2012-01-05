@@ -52,6 +52,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
                             .getLunIds()));
             if (!connectResult.getSucceeded()) {
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_EXTEND_CONNECTION_FAILED);
+                getReturnValue().getCanDoActionMessages().add(String.format("$hostName %1s$", getVds().getvds_name()));
                 returnValue = false;
             } else {
                 // use luns list from connect command
