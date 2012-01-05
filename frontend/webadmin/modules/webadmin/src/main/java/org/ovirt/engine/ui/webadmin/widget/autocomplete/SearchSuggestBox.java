@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.autocomplete;
 
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SuggestItemPartModel;
+import org.ovirt.engine.ui.webadmin.idhandler.HasElementId;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -15,7 +16,7 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class SearchSuggestBox extends SuggestBox {
+public class SearchSuggestBox extends SuggestBox implements HasElementId {
 
     public SearchSuggestBox(SuggestOracle suggestOracle) {
         super(suggestOracle, new TextBox(), new SearchSuggestionDisplay());
@@ -27,6 +28,7 @@ public class SearchSuggestBox extends SuggestBox {
                 showSuggestionList();
             }
         });
+
     }
 
     // Represent a suggestion cell (use safe html)
@@ -110,5 +112,10 @@ public class SearchSuggestBox extends SuggestBox {
 
     public void setSearchBoxPanel(VerticalPanel searchBoxPanel) {
         ((SearchSuggestionDisplay) this.getSuggestionDisplay()).setSearchBoxPanel(searchBoxPanel);
+    }
+
+    @Override
+    public void setElementId(String elementId) {
+        getTextBox().getElement().setId(elementId);
     }
 }

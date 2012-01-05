@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestBox;
@@ -30,6 +32,10 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<SearchPanelView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     InlineLabel searchLabel;
 
@@ -49,11 +55,14 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
     HTML searchBoxRight;
 
     @UiField(provided = true)
+    @WithElementId
     final SearchSuggestBox searchStringInput;
 
+    @WithElementId
     @UiField
     Image bookmarkButton;
 
+    @WithElementId
     @UiField
     Image searchButton;
 
@@ -80,6 +89,8 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
 
         bookmarkButton.setResource(applicationResources.bookmarkImage());
         searchButton.setResource(applicationResources.searchButtonImage());
+
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void localize(ApplicationConstants constants) {
