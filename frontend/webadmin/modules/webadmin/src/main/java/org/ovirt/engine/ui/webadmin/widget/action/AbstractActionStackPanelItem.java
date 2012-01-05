@@ -4,7 +4,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class AbstractActionStackPanelItem<T, W extends Widget> extends Composite {
+public abstract class AbstractActionStackPanelItem<M, T, W extends Widget> extends Composite {
 
     @UiField(provided = true)
     public SimpleActionPanel<T> actionPanel;
@@ -12,9 +12,9 @@ public abstract class AbstractActionStackPanelItem<T, W extends Widget> extends 
     @UiField(provided = true)
     public W dataDisplayWidget;
 
-    public AbstractActionStackPanelItem(W dataDisplayWidget, SimpleActionPanel<T> actionPanel) {
-        this.dataDisplayWidget = dataDisplayWidget;
-        this.actionPanel = actionPanel;
+    public AbstractActionStackPanelItem(M modelProvider) {
+        this.dataDisplayWidget = createDataDisplayWidget(modelProvider);
+        this.actionPanel = createActionPanel(modelProvider);
     }
 
     @Override
@@ -28,5 +28,9 @@ public abstract class AbstractActionStackPanelItem<T, W extends Widget> extends 
     public W getDataDisplayWidget() {
         return dataDisplayWidget;
     }
+
+    protected abstract W createDataDisplayWidget(M modelProvider);
+
+    protected abstract SimpleActionPanel<T> createActionPanel(M modelProvider);
 
 }

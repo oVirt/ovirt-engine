@@ -4,6 +4,8 @@ import org.ovirt.engine.core.common.businessentities.bookmarks;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.webadmin.widget.action.SimpleActionPanel;
@@ -21,22 +23,32 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.Range;
 
-public class BookmarkList extends AbstractActionStackPanelItem<bookmarks, CellList<bookmarks>> {
+public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProvider, bookmarks, CellList<bookmarks>> {
 
     interface WidgetUiBinder extends UiBinder<Widget, BookmarkList> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<BookmarkList> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     ScrollPanel scrollPanel;
 
+    @WithElementId
+    SimpleActionPanel<bookmarks> actionPanel;
+
     public BookmarkList(BookmarkModelProvider modelProvider) {
-        super(getBookmarkDisplayWidget(modelProvider), getActionPanel(modelProvider));
+        super(modelProvider);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
+        addActionButtons(modelProvider);
         addScrollEventHandler(scrollPanel);
     }
 
-    static CellList<bookmarks> getBookmarkDisplayWidget(BookmarkModelProvider modelProvider) {
+    @Override
+    protected CellList<bookmarks> createDataDisplayWidget(BookmarkModelProvider modelProvider) {
         ApplicationTemplates templates = ClientGinjectorProvider.instance().getApplicationTemplates();
 
         CellList<bookmarks> display = new CellList<bookmarks>(new BookmarkListItemCell(templates));
@@ -48,10 +60,13 @@ public class BookmarkList extends AbstractActionStackPanelItem<bookmarks, CellLi
         return display;
     }
 
-    static SimpleActionPanel<bookmarks> getActionPanel(final BookmarkModelProvider modelProvider) {
-        SimpleActionPanel<bookmarks> actionPanel = new SimpleActionPanel<bookmarks>(
-                modelProvider, modelProvider.getSelectionModel());
+    @Override
+    protected SimpleActionPanel<bookmarks> createActionPanel(final BookmarkModelProvider modelProvider) {
+        actionPanel = new SimpleActionPanel<bookmarks>(modelProvider, modelProvider.getSelectionModel());
+        return actionPanel;
+    }
 
+    private void addActionButtons(final BookmarkModelProvider modelProvider) {
         actionPanel.addActionButton(new UiCommandButtonDefinition<bookmarks>("New") {
             @Override
             protected UICommand resolveCommand() {
@@ -72,8 +87,6 @@ public class BookmarkList extends AbstractActionStackPanelItem<bookmarks, CellLi
                 return modelProvider.getModel().getRemoveCommand();
             }
         });
-
-        return actionPanel;
     }
 
     void addScrollEventHandler(final ScrollPanel scrollPanel) {
@@ -95,5 +108,4 @@ public class BookmarkList extends AbstractActionStackPanelItem<bookmarks, CellLi
             }
         });
     }
-
 }
