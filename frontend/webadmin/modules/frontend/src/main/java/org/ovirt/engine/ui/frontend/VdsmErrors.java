@@ -640,4 +640,24 @@ public interface VdsmErrors extends ConstantsWithLookup {
     String MIGRATION_DEST_INVALID_HOSTNAME();
 
     String MIGRATION_CANCEL_ERROR();
+
+    String DB();
+
+    String DB_NO_SUCH_VM();
+
+    String MAC_POOL_NO_MACS_LEFT();
+
+    String MAC_POOL_NOT_INITIALIZED();
+
+    String RESOURCE_MANAGER_CANT_ALLOC_VDS_MIGRATION();
+
+    String RESOURCE_MANAGER_MIGRATION_FAILED_AT_DST();
+
+    String RESOURCE_MANAGER_VDS_NOT_FOUND();
+
+    String RESOURCE_MANAGER_VM_SNAPSHOT_MISSMATCH();
+
+    String VM_TEMPLATE_CANT_LOCATE_DISKS_IN_DB();
+
+    String VM_WITH_SAME_NAME_EXIST();
 }

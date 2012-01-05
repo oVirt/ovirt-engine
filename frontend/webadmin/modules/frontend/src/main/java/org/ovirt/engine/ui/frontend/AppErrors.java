@@ -5,12 +5,6 @@ import com.google.gwt.i18n.client.ConstantsWithLookup;
 public interface AppErrors extends ConstantsWithLookup {
     String DIRECTORY_GROUP_CANNOT_REMOVE_DIRECTORY_GROUP_ATTACHED_TO_VM_POOL();
 
-    String DB();
-
-    String DB_INIT();
-
-    String DB_NO_SUCH_VM();
-
     String IO_CD_IMAGE_FILE_ALREADY_EXIST();
 
     String IO_CD_IMAGE_FILE_NOT_EXIST();
@@ -28,8 +22,6 @@ public interface AppErrors extends ConstantsWithLookup {
     String IRS_PROTOCOL_ERROR();
 
     String IRS_RESPONSE_ERROR();
-
-    String MAC_POOL_NO_MACS_LEFT();
 
     String MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES();
 
@@ -61,21 +53,11 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VM_CANNOT_RUN_STATELESS_HA();
 
-    String MAC_POOL_NOT_INITIALIZED();
-
-    String RESOURCE_MANAGER_CANT_ALLOC_VDS_MIGRATION();
-
     String RESOURCE_MANAGER_FAILED_ATTACHING_VM_TO_USERS();
 
     String RESOURCE_MANAGER_MIGRATING_VM_IS_NOT_UP();
 
-    String RESOURCE_MANAGER_MIGRATION_FAILED_AT_DST();
-
-    String RESOURCE_MANAGER_VDS_NOT_FOUND();
-
     String RESOURCE_MANAGER_VM_NOT_FOUND();
-
-    String RESOURCE_MANAGER_VM_SNAPSHOT_MISSMATCH();
 
     String SEARCH();
 
@@ -194,10 +176,6 @@ public interface AppErrors extends ConstantsWithLookup {
     String VM_POOL_CANNOT_REMOVE_RUNNING_VM_FROM_POOL();
 
     String VM_POOL_CANNOT_ADD_RUNNING_VM_TO_POOL();
-
-    String VM_TEMPLATE_CANT_LOCATE_DISKS_IN_DB();
-
-    String VM_WITH_SAME_NAME_EXIST();
 
     String VM_INVALID_SERVER_CLUSTER_ID();
 
@@ -995,8 +973,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ERROR_CANNOT_DETACH_ACTION_GROUP_TO_ROLE_NOT_ATTACHED();
 
-    String LICENSE();
-
     String ERROR_LICENSE_NO_LICENSE();
 
     String ERROR_LICENSE_ILLEGAL();
@@ -1098,4 +1074,16 @@ public interface AppErrors extends ConstantsWithLookup {
     String DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS();
 
     String VM_CANNOT_CANCEL_MIGRATION_WHEN_VM_IS_NOT_MIGRATING();
+
+    String CAN_DO_ACTION_GENERAL_FAILURE();
+
+    String ERROR_CANNOT_REMOVE_ACTIVE_STORAGE_POOL();
+
+    String ROLE_TYPE_CANNOT_BE_EMPTY();
+
+    String CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE();
+
+    String STORAGE_DOMAIN_NOT_ATTACHED_TO_STORAGE_POOL();
+
+    String VDS_APPROVE_VDS_NOT_FOUND();
 }
