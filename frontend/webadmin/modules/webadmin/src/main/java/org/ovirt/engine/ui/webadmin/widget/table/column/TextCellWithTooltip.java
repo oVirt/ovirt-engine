@@ -4,11 +4,14 @@ import com.google.gwt.cell.client.AbstractSafeHtmlCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.shared.SimpleSafeHtmlRenderer;
+import com.google.gwt.user.client.DOM;
 
 /**
  * A {@link Cell} used to render text, providing a tooltip in case the text does not fit within the parent element.
@@ -17,28 +20,48 @@ import com.google.gwt.text.shared.SimpleSafeHtmlRenderer;
  */
 public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
 
+    interface CellTemplate extends SafeHtmlTemplates {
+        @Template("<div id=\"{0}\">{1}</div>")
+        SafeHtml textContainer(String id, String text);
+    }
+
     public static final int UNLIMITED_LENGTH = -1;
-    private static final String TOO_LONG_TEXT_POSTFIX = " ...";
+    private static final String TOO_LONG_TEXT_POSTFIX = "...";
+
+    // DOM element ID settings for the text container element
+    private String elementIdPrefix = DOM.createUniqueId();
+    private String columnId;
 
     // Text longer than this value will be shortened, providing a tooltip with original text
     private final int maxTextLength;
 
+    private static CellTemplate template;
+
     public TextCellWithTooltip(int maxTextLength) {
         super(SimpleSafeHtmlRenderer.getInstance(), "mouseover");
         this.maxTextLength = maxTextLength;
+
+        // Delay cell template creation until the first time it's needed
+        if (template == null) {
+            template = GWT.create(CellTemplate.class);
+        }
+    }
+
+    public void setElementIdPrefix(String elementIdPrefix) {
+        this.elementIdPrefix = elementIdPrefix;
+    }
+
+    public void setColumnId(String columnId) {
+        this.columnId = columnId;
     }
 
     @Override
     public void render(Context context, SafeHtml value, SafeHtmlBuilder sb) {
-        if (value == null) {
-            // Don't render null values
-            return;
-        }
+        String rawData = value != null ? value.asString() : "";
 
-        String text = value.asString();
-
-        // This is safe because text is retrieved from SafeHtml
-        sb.appendHtmlConstant(getRenderedValue(text));
+        sb.append(template.textContainer(
+                getContainerElementId(context),
+                getRenderedValue(rawData)));
     }
 
     @Override
@@ -60,6 +83,18 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
         } else {
             parent.setTitle("");
         }
+    }
+
+    /**
+     * Returns the DOM element ID for the text container element.
+     */
+    String getContainerElementId(Cell.Context context) {
+        StringBuilder sb = new StringBuilder(elementIdPrefix);
+        sb.append("_");
+        sb.append(columnId != null ? columnId : "col" + String.valueOf(context.getColumn()));
+        sb.append("_row");
+        sb.append(String.valueOf(context.getIndex()));
+        return sb.toString();
     }
 
     /**

@@ -57,7 +57,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getvds_group_name();
             }
         };
-
         getTable().addColumn(clusterColumn, "Cluster", "100px");
 
         TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
@@ -66,7 +65,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getrun_on_vds_name();
             }
         };
-
         getTable().addColumn(hostColumn, "Host", "100px");
 
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
@@ -75,7 +73,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getvm_ip();
             }
         };
-
         getTable().addColumn(ipColumn, "IP Address", "100px");
 
         PercentColumn<VM> memoryColumn = new PercentColumn<VM>() {
@@ -84,7 +81,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getusage_mem_percent();
             }
         };
-
         getTable().addColumn(memoryColumn, "Memory", "60px");
 
         PercentColumn<VM> cpuColumn = new PercentColumn<VM>() {
@@ -253,5 +249,4 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         });
     }
-
 }

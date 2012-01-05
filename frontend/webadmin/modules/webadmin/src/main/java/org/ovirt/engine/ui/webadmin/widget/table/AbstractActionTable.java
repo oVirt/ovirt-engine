@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.AbstractActionPanel;
+import org.ovirt.engine.ui.webadmin.widget.table.column.ColumnWithElementId;
 import org.ovirt.engine.ui.webadmin.widget.table.refresh.RefreshManager;
 import org.ovirt.engine.ui.webadmin.widget.table.refresh.RefreshPanel;
 
@@ -23,6 +24,7 @@ import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 import com.google.gwt.user.cellview.client.TextHeader;
@@ -263,12 +265,30 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         getDataProvider().refresh();
     }
 
+    void configureColumnElementId(ColumnWithElementId column) {
+        column.configureElementId(getElementId(), null);
+    }
+
+    void addColumn(Column<T, ?> column, Header<?> header) {
+        table.addColumn(column, header);
+        tableHeader.addColumn(column, header);
+
+        // Configure column content element ID options if necessary
+        if (column instanceof ColumnWithElementId) {
+            configureColumnElementId((ColumnWithElementId) column);
+        }
+    }
+
+    void setColumnWidth(Column<T, ?> column, String width) {
+        table.setColumnWidth(column, width);
+        tableHeader.setColumnWidth(column, width);
+    }
+
     /**
      * Adds a new table column, without specifying the column width.
      */
     public void addColumn(Column<T, ?> column, String headerText) {
-        table.addColumn(column, new TextHeader(headerText));
-        tableHeader.addColumn(column, new TextHeader(headerText));
+        addColumn(column, new TextHeader(headerText));
     }
 
     /**
@@ -276,8 +296,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
      */
     public void addColumn(Column<T, ?> column, String headerText, String width) {
         addColumn(column, headerText);
-        table.setColumnWidth(column, width);
-        tableHeader.setColumnWidth(column, width);
+        setColumnWidth(column, width);
     }
 
     /**
@@ -291,8 +310,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
     public void addColumnWithHtmlHeader(Column<T, ?> column, String headerHtml, String width) {
         SafeHtml headerValue = SafeHtmlUtils.fromSafeConstant(headerHtml);
         SafeHtmlHeader header = new SafeHtmlHeader(headerValue);
-        table.addColumn(column, header);
-        table.setColumnWidth(column, width);
+
+        addColumn(column, header);
+        setColumnWidth(column, width);
     }
 
     /**

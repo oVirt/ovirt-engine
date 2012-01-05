@@ -8,7 +8,7 @@ import com.google.gwt.user.cellview.client.Column;
  * @param <T>
  *            Table row data type.
  */
-public abstract class TextColumnWithTooltip<T> extends Column<T, String> {
+public abstract class TextColumnWithTooltip<T> extends Column<T, String> implements ColumnWithElementId {
 
     public TextColumnWithTooltip() {
         this(TextCellWithTooltip.UNLIMITED_LENGTH);
@@ -16,6 +16,17 @@ public abstract class TextColumnWithTooltip<T> extends Column<T, String> {
 
     public TextColumnWithTooltip(int maxTextLength) {
         super(new TextCellWithTooltip(maxTextLength));
+    }
+
+    @Override
+    public void configureElementId(String elementIdPrefix, String columnId) {
+        getCell().setElementIdPrefix(elementIdPrefix);
+        getCell().setColumnId(columnId);
+    }
+
+    @Override
+    public TextCellWithTooltip getCell() {
+        return (TextCellWithTooltip) super.getCell();
     }
 
 }

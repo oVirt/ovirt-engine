@@ -76,6 +76,10 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
         this.elementId = elementId;
     }
 
+    protected String getElementId() {
+        return elementId;
+    }
+
     /**
      * Adds a new button to the action panel.
      */
