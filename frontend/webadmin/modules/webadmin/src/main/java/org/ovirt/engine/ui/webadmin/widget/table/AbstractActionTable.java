@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.table;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.AbstractActionPanel;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ColumnWithElementId;
@@ -53,10 +54,12 @@ import com.google.gwt.view.client.SelectionModel;
 public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
 
     @UiField
-    ButtonBase prevPageButton;
+    @WithElementId
+    public ButtonBase prevPageButton;
 
     @UiField
-    ButtonBase nextPageButton;
+    @WithElementId
+    public ButtonBase nextPageButton;
 
     @UiField(provided = true)
     RefreshPanel refreshPanel;

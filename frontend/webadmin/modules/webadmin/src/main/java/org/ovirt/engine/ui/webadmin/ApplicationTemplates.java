@@ -37,8 +37,8 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
      * @param text
      *            the bookmark title
      */
-    @Template("<span style='display: inline-block; padding: 5px;'>{0}</span>")
-    SafeHtml bookmarkItem(String text);
+    @Template("<span id='{0}' style='display: inline-block; padding: 5px;'>{1}</span>")
+    SafeHtml bookmarkItem(String id, String text);
 
     /**
      * Creates a tag-item HTML
