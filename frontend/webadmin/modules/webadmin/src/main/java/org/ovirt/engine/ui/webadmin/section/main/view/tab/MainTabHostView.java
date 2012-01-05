@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
@@ -15,13 +16,19 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ProgressBarColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
+import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
 public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, HostListModel> implements MainTabHostPresenter.ViewDef {
 
+    interface ViewIdHandler extends ElementIdHandler<MainTabHostView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @Inject
     public MainTabHostView(MainModelProvider<VDS, HostListModel> modelProvider) {
         super(modelProvider);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getTable());
     }

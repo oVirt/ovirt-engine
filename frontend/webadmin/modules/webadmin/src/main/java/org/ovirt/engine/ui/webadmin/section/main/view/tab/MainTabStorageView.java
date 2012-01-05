@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
@@ -16,13 +17,19 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainSharedStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
+import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
 public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<storage_domains, StorageListModel> implements MainTabStoragePresenter.ViewDef {
 
+    interface ViewIdHandler extends ElementIdHandler<MainTabStorageView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @Inject
     public MainTabStorageView(MainModelProvider<storage_domains, StorageListModel> modelProvider) {
         super(modelProvider);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getTable());
     }

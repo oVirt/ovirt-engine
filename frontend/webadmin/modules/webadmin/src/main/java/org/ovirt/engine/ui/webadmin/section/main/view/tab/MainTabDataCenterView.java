@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
@@ -13,13 +14,19 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.DcStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
+import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
 public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<storage_pool, DataCenterListModel> implements MainTabDataCenterPresenter.ViewDef {
 
+    interface ViewIdHandler extends ElementIdHandler<MainTabDataCenterView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @Inject
     public MainTabDataCenterView(MainModelProvider<storage_pool, DataCenterListModel> modelProvider) {
         super(modelProvider);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getTable());
     }

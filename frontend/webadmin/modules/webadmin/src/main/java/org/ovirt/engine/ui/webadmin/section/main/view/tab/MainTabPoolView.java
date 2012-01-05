@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
@@ -11,13 +12,19 @@ import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
+import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
 public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pools, PoolListModel> implements MainTabPoolPresenter.ViewDef {
 
+    interface ViewIdHandler extends ElementIdHandler<MainTabPoolView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @Inject
     public MainTabPoolView(MainModelProvider<vm_pools, PoolListModel> modelProvider) {
         super(modelProvider);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getTable());
     }
