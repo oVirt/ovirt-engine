@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 
@@ -21,10 +22,15 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<DefaultConfirmationPopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @Inject
     public DefaultConfirmationPopupView(EventBus eventBus, ApplicationResources resources) {
         super(eventBus, resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         Driver.driver.initialize(this);
     }
 

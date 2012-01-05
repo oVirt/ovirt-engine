@@ -10,6 +10,8 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
@@ -38,10 +40,15 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<ClusterPopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     WidgetStyle style;
 
     @UiField
+    @WithElementId
     DialogTab generalTab;
 
     @UiField(provided = true)
@@ -65,6 +72,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     ListModelListBoxEditor<Object> versionEditor;
 
     @UiField
+    @WithElementId
     DialogTab memoryOptimizationTab;
 
     @UiField(provided = true)
@@ -100,6 +108,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     Label optimizationCustomExplanationLabel;
 
     @UiField
+    @WithElementId
     DialogTab resiliencePolicyTab;
 
     @UiField(provided = true)
@@ -120,6 +129,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         initListBoxEditors();
         initRadioButtonEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
         localize(constants);
         Driver.driver.initialize(this);

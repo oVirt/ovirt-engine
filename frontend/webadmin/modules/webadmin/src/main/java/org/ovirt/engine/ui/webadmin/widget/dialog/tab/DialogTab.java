@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.webadmin.widget.dialog.tab;
 
+import org.ovirt.engine.ui.webadmin.idhandler.HasElementId;
 import org.ovirt.engine.ui.webadmin.widget.AbstractValidatedWidget;
 import org.ovirt.engine.ui.webadmin.widget.HasLabel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DialogTab extends AbstractValidatedWidget implements HasClickHandlers, HasLabel {
+public class DialogTab extends AbstractValidatedWidget implements HasClickHandlers, HasLabel, HasElementId {
 
     interface WidgetUiBinder extends UiBinder<Widget, DialogTab> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -32,7 +32,7 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
     }
 
     private Widget tabContent;
-    
+
     private boolean isActive;
 
     @UiField
@@ -55,7 +55,7 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
 
     @Override
     public void markAsValid() {
-    	tabContainer.getElement().addClassName(isActive ? style.active() : style.inactive());
+        tabContainer.getElement().addClassName(isActive ? style.active() : style.inactive());
     }
 
     @Override
@@ -83,17 +83,22 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
     }
 
     public void activate() {
-    	isActive = true;
+        isActive = true;
         tabContainer.getElement().replaceClassName(style.inactive(), style.active());
     }
 
     public void deactivate() {
-    	isActive = false;
+        isActive = false;
         tabContainer.getElement().replaceClassName(style.active(), style.inactive());
     }
 
     public void setTabLabelStyle(String styleName) {
         tabLabel.setStyleName(styleName);
+    }
+
+    @Override
+    public void setElementId(String elementId) {
+        tabContainer.getElement().setId(elementId);
     }
 
 }
