@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
@@ -38,6 +39,10 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<AssignTagsPopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField(provided = true)
     @Ignore
     EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> tree;
@@ -47,6 +52,7 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
         super(eventBus, resources);
         initTree();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         Driver.driver.initialize(this);
     }
@@ -66,7 +72,6 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
         // Listen to Properties
         object.getPropertyChangedEvent().addListener(new IEventListener() {
 
-            @SuppressWarnings("unchecked")
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 TagListModel model = (TagListModel) sender;
@@ -78,6 +83,7 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
         });
     }
 
+    @SuppressWarnings("unchecked")
     private void updateTree(TagListModel model) {
         // Get tag node list
         ArrayList<SelectionTreeNodeModel> tagTreeNodes = model.getSelectionNodeList();

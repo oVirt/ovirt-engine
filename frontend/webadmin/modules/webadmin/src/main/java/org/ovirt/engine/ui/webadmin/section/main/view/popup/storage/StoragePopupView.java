@@ -12,6 +12,8 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
@@ -40,33 +42,43 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<StoragePopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     WidgetStyle style;
 
     @UiField
     @Path(value = "name.entity")
+    @WithElementId("name")
     EntityModelTextBoxEditor nameEditor;
 
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
+    @WithElementId("dataCenter")
     ListModelListBoxEditor<Object> datacenterListEditor;
 
     @UiField(provided = true)
     @Path(value = "availableStorageItems.selectedItem")
+    @WithElementId("availableStorageItems")
     ListModelListBoxEditor<Object> storageTypeListEditor;
 
     @UiField(provided = true)
     @Path(value = "format.selectedItem")
+    @WithElementId("format")
     ListModelListBoxEditor<Object> formatListEditor;
 
     @UiField(provided = true)
     @Path(value = "host.selectedItem")
+    @WithElementId("host")
     ListModelListBoxEditor<Object> hostListEditor;
 
     @Ignore
     @UiField
     FlowPanel specificStorageTypePanel;
 
+    @SuppressWarnings("rawtypes")
     @Ignore
     AbstractStorageView storageView;
 
@@ -75,12 +87,13 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         super(eventBus, resources);
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         addStyles();
         Driver.driver.initialize(this);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     void initListBoxEditors() {
         datacenterListEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
             @Override
@@ -169,7 +182,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         });
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings("unchecked")
     private void revealStorageView(StorageModel object) {
         IStorageModel model = object.getSelectedItem();
         if (model.getType() == StorageType.NFS) {
@@ -179,15 +192,13 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         } else if (model.getType() == StorageType.FCP) {
             if (model.getRole() == StorageDomainType.ImportExport) {
                 storageView = new SanImportStorageView();
-            }
-            else {
+            } else {
                 storageView = new FcpStorageView();
             }
         } else if (model.getType() == StorageType.ISCSI) {
             if (model.getRole() == StorageDomainType.ImportExport) {
                 storageView = new IscsiImportStorageView();
-            }
-            else {
+            } else {
                 storageView = new IscsiStorageView();
             }
         }

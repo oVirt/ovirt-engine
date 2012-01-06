@@ -9,6 +9,8 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.Align;
@@ -41,69 +43,89 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<HostPopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     DialogTabPanel tabPanel;
 
     @UiField
+    @WithElementId
     DialogTab generalTab;
 
     @UiField
+    @WithElementId
     DialogTab powerManagementTab;
 
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
+    @WithElementId("dataCenter")
     ListModelListBoxEditor<Object> dataCenterEditor;
 
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
+    @WithElementId("cluster")
     ListModelListBoxEditor<Object> clusterEditor;
 
     @UiField
     @Path(value = "name.entity")
+    @WithElementId("name")
     EntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "host.entity")
+    @WithElementId("host")
     EntityModelTextBoxEditor hostAddressEditor;
 
     @UiField
     @Path(value = "rootPassword.entity")
+    @WithElementId("rootPassword")
     EntityModelPasswordBoxEditor rootPasswordEditor;
 
     @UiField
     @Path(value = "OverrideIpTables.entity")
+    @WithElementId("overrideIpTables")
     EntityModelCheckBoxEditor overrideIpTablesEditor;
 
     @UiField(provided = true)
     @Path(value = "isPm.entity")
+    @WithElementId("isPm")
     EntityModelCheckBoxEditor pmEnabledEditor;
 
     @UiField
     @Path(value = "managementIp.entity")
+    @WithElementId("managementIp")
     EntityModelTextBoxEditor pmAddressEditor;
 
     @UiField
     @Path(value = "pmUserName.entity")
+    @WithElementId("pmUserName")
     EntityModelTextBoxEditor pmUserNameEditor;
 
     @UiField
     @Path(value = "pmPassword.entity")
+    @WithElementId("pmPassword")
     EntityModelPasswordBoxEditor pmPasswordEditor;
 
     @UiField(provided = true)
     @Path(value = "pmType.selectedItem")
+    @WithElementId("pmType")
     ListModelListBoxEditor<Object> pmTypeEditor;
 
     @UiField
     @Path(value = "pmPort.entity")
+    @WithElementId("pmPort")
     EntityModelTextBoxEditor pmPortEditor;
 
     @UiField
     @Path(value = "pmSlot.entity")
+    @WithElementId("pmSlot")
     EntityModelTextBoxEditor pmSlotEditor;
 
     @UiField
     @Path(value = "pmOptions.entity")
+    @WithElementId("pmOptions")
     EntityModelTextBoxEditor pmOptionsEditor;
 
     @UiField
@@ -112,6 +134,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
     @UiField
     @Path(value = "pmSecure.entity")
+    @WithElementId("pmSecure")
     EntityModelCheckBoxEditor pmSecureEditor;
 
     @UiField
@@ -127,6 +150,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         initListBoxEditors();
         initCheckBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         Driver.driver.initialize(this);
     }

@@ -11,7 +11,8 @@ public class ElementIdUtils {
      *            Custom value used to extend the prefix.
      */
     public static String createElementId(String prefix, String value) {
-        return prefix + "_" + value.replaceAll("\\s", "_");
+        String sanitizedValue = value.replaceAll("[^\\w]", "_");
+        return prefix + "_" + sanitizedValue;
     }
 
 }

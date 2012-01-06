@@ -11,6 +11,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.Align;
@@ -33,10 +35,15 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ManualFenceConfirmationPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
-    };
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<ManualFenceConfirmationPopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     @UiField(provided = true)
     @Path(value = "latch.entity")
+    @WithElementId
     EntityModelCheckBoxEditor latch;
 
     @UiField
@@ -51,8 +58,8 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
     @Ignore
     Label messageLabel;
 
-    ApplicationConstants applicationConstants;
-    ApplicationMessages applicationMessages;
+    private final ApplicationConstants applicationConstants;
+    private final ApplicationMessages applicationMessages;
 
     @Inject
     public ManualFenceConfirmationPopupView(EventBus eventBus,
@@ -60,11 +67,12 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
             ApplicationConstants constants,
             ApplicationMessages applicationMessages) {
         super(eventBus, resources);
-        latch = new EntityModelCheckBoxEditor(Align.RIGHT);
-        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
         this.applicationConstants = constants;
         this.applicationMessages = applicationMessages;
+        latch = new EntityModelCheckBoxEditor(Align.RIGHT);
+        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
+        Driver.driver.initialize(this);
     }
 
     @Override
@@ -117,4 +125,5 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
     public ConfirmationModel flush() {
         return Driver.driver.flush();
     }
+
 }

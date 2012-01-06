@@ -9,6 +9,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDestroyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.Align;
@@ -34,10 +36,15 @@ public class StorageDestroyPopupView extends AbstractModelBoundPopupView<Confirm
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, StorageDestroyPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
-    };
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<StorageDestroyPopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     @UiField(provided = true)
     @Path(value = "latch.entity")
+    @WithElementId
     EntityModelCheckBoxEditor latch;
 
     @UiField
@@ -55,6 +62,7 @@ public class StorageDestroyPopupView extends AbstractModelBoundPopupView<Confirm
         super(eventBus, resources);
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         Driver.driver.initialize(this);
     }
@@ -101,4 +109,5 @@ public class StorageDestroyPopupView extends AbstractModelBoundPopupView<Confirm
     public ConfirmationModel flush() {
         return Driver.driver.flush();
     }
+
 }

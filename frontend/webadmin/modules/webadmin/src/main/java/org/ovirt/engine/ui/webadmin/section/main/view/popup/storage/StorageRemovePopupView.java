@@ -4,6 +4,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RemoveStorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.Align;
@@ -32,15 +34,21 @@ public class StorageRemovePopupView extends AbstractModelBoundPopupView<RemoveSt
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<StorageRemovePopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     WidgetStyle style;
 
     @UiField(provided = true)
     @Path(value = "hostList.selectedItem")
+    @WithElementId("hostList")
     ListModelListBoxEditor<Object> hostListEditor;
 
     @UiField(provided = true)
     @Path(value = "format.entity")
+    @WithElementId("format")
     EntityModelCheckBoxEditor formatEditor;
 
     @UiField
@@ -52,12 +60,12 @@ public class StorageRemovePopupView extends AbstractModelBoundPopupView<RemoveSt
         initListBoxEditors();
         initCheckBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         addStyles();
         Driver.driver.initialize(this);
     }
 
-    @SuppressWarnings("unchecked")
     void initListBoxEditors() {
         hostListEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
@@ -96,4 +104,5 @@ public class StorageRemovePopupView extends AbstractModelBoundPopupView<RemoveSt
 
         String formatContentWidget();
     }
+
 }
