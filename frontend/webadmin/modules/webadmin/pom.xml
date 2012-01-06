@@ -45,7 +45,7 @@
 		<gwt.dontPrune>-Dgwt.dontPrune=org\.ovirt\.engine\.core\.(common|compat)\..*</gwt.dontPrune>
 
 		<!-- This can be overidded by setting this property in your personal settings.xml -->
-		<gwt-plugin.extraJvmArgs>${aspectj.agent} -Xms1024M -Xmx1024M -XX:PermSize=256M -XX:MaxPermSize=256M ${gwt.dontPrune}</gwt-plugin.extraJvmArgs>
+		<gwt-plugin.extraJvmArgs>${aspectj.agent} -Xms1024M -Xmx2048M -XX:PermSize=256M -XX:MaxPermSize=256M ${gwt.dontPrune}</gwt-plugin.extraJvmArgs>
 
 		<!-- Set gwt.userAgent property via the resource plugin during the resource phase,
 		By default, all browsers are supported, see [gwt-user.jar:com/google/gwt/user/UserAgent.gwt.xml] for a complete list -->
