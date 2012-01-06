@@ -332,7 +332,6 @@ public enum VdcBllErrors {
     // oVirt errors
     ENGINE(5001),
     DB(5002),
-    LICENSE(5003),
     // The VDS does not exist in memory
     RESOURCE_MANAGER_VDS_NOT_FOUND(5004),
     IRS_IMAGE_STATUS_ILLEGAL(5006),
@@ -343,7 +342,6 @@ public enum VdcBllErrors {
     MAC_POOL_INITIALIZATION_FAILED(5010),
     MAC_POOL_NOT_INITIALIZED(5011),
     MAC_POOL_NO_MACS_LEFT(5012),
-    DB_INIT(5013),
     VM_POOL_CANNOT_ALLOCATE_VM(5014),
     // Could not allocate VDS for a new VM to run on
     RESOURCE_MANAGER_CANT_ALLOC_VDS_MIGRATION(5015),
