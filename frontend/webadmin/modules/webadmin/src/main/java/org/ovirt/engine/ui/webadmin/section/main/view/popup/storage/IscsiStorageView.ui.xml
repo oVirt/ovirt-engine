@@ -27,6 +27,10 @@
 			height: 161px;		
 		}
 		
+		.tabPanel {
+			display: inline-block;
+		}
+		
 		.tabContentPanel {
 			padding: 2px;
 			height: 336px;
@@ -63,7 +67,7 @@
 	
 	<g:FlowPanel>
 		<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />	
-		<t:DialogTabPanel ui:field="dialogTabPanel" height="340px" width="100%">
+		<t:DialogTabPanel ui:field="dialogTabPanel" height="340px" width="100%" addStyleNames="{style.tabPanel}">
 			<t:tab>
 				<t:DialogTab ui:field="targetsToLunTab" addStyleNames="{style.tab}">
 					<t:content height="100%">
