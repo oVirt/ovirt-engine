@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.queries.*;
 import org.ovirt.engine.core.common.action.*;
 import org.ovirt.engine.ui.frontend.*;
 import org.ovirt.engine.ui.uicommonweb.*;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.*;
 import org.ovirt.engine.core.common.*;
 
@@ -20,6 +21,8 @@ import org.ovirt.engine.ui.uicommonweb.models.*;
 @SuppressWarnings("unused")
 public class DiskModel extends Model
 {
+    static int maxDiskSize = 2047;
+    static boolean maxDiskSizeInited = false;
 
 	private boolean privateIsNew;
 	public boolean getIsNew()
@@ -161,6 +164,17 @@ public class DiskModel extends Model
 
 		setIsBootable(new EntityModel());
 		getIsBootable().setEntity(false);
+
+		AsyncDataProvider.GetDiskMaxSize(new AsyncQuery(this,
+	            new INewAsyncCallback() {
+	                @Override
+	                public void OnSuccess(Object target, Object returnValue) {
+	                    if (!DiskModel.maxDiskSizeInited){
+	                        DiskModel.maxDiskSizeInited = true;
+	                        DiskModel.maxDiskSize = ((Integer)returnValue);
+	                    }
+	                }
+	            }));
 	}
 
 	@Override
@@ -215,7 +229,7 @@ public class DiskModel extends Model
 	{
 		IntegerValidation tempVar = new IntegerValidation();
 		tempVar.setMinimum(1);
-		tempVar.setMaximum(DataProvider.GetDiskMaxSize());
+		tempVar.setMaximum(maxDiskSize);
 		IntegerValidation intValidation = tempVar;
 		getSize().ValidateEntity(new IValidation[] { new NotEmptyValidation(), intValidation });
 

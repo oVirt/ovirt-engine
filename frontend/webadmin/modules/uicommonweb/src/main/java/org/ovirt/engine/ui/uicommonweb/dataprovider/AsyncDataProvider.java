@@ -1275,4 +1275,14 @@ public final class AsyncDataProvider
 					}
 				}), storageDomainId);
 	}
+
+	public static void GetDiskMaxSize(AsyncQuery aQuery)
+    {
+	    aQuery.converterCallback = new IAsyncConverter() { public Object Convert(Object source, AsyncQuery _asyncQuery)
+        {
+	        return source != null ? ((Integer)source).intValue() : 2047;
+        } };
+
+        Frontend.RunQuery(VdcQueryType.GetConfigurationValue, new GetConfigurationValueParameters(ConfigurationValues.MaxDiskSize), aQuery);
+    }
 }

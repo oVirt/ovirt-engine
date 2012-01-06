@@ -50,6 +50,14 @@ public class EntityModel extends Model
 		}
 	}
 
+	public void setEntity(Object value, boolean fireEvents){
+	    if (fireEvents){
+	        setEntity(value);
+	    }
+	    else{
+	        entity = value;
+	    }
+	}
 
 	static
 	{

@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -291,7 +293,10 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         }
         if(!getEntity().equals(value)){
             super.setEntity(value);
+            return;
         }
+
+        setEntity(value, false);
     }
 
 	protected abstract String getListName() ;
@@ -567,7 +572,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 					java.util.Iterator iterator = value.iterator();
 					while (iterator.hasNext())
 					{
-						lastSelectedItems.add((IVdcQueryable)iterator.next());
+					    newItems.add((IVdcQueryable)iterator.next());
 					}
 				}
 
@@ -740,6 +745,4 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     public String getId() {
         return getListName();
     }
-
-
 }

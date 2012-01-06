@@ -450,4 +450,11 @@ public class VmInterfaceListModel extends SearchableListModel
     protected String getListName() {
         return "VmInterfaceListModel";
     }
+
+    @Override
+    protected void OnSelectedItemChanged()
+    {
+        super.OnSelectedItemChanged();
+        UpdateActionAvailability();
+    }
 }
