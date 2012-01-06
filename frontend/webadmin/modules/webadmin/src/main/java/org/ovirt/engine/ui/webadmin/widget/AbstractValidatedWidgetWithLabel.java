@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.webadmin.idhandler.HasElementId;
 import org.ovirt.engine.ui.webadmin.widget.editor.EditorWidget;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LabelElement;
 import com.google.gwt.event.dom.client.HasAllKeyHandlers;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -14,7 +15,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasEnabled;
@@ -69,26 +69,26 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         // Adjust content widget width
         contentWidget.asWidget().setWidth("100%");
 
-        // Connect label with content widget for better accessibility
-        updateLabelElementId();
-    }
-
-    protected void updateLabelElementId() {
-        labelElement.setHtmlFor(getContentWidgetId());
-    }
-
-    protected String getContentWidgetId() {
-        Element contentWidgetElement = contentWidget.asWidget().getElement();
-
+        // Assign ID to content widget element if it's missing or empty
+        Element contentWidgetElement = getContentWidgetElement();
         if (contentWidgetElement.getId() == null || contentWidgetElement.getId().isEmpty()) {
             contentWidgetElement.setId(DOM.createUniqueId());
         }
 
-        return contentWidgetElement.getId();
+        // Connect label with content widget for better accessibility
+        updateLabelElementId(contentWidgetElement.getId());
+    }
+
+    protected void updateLabelElementId(String elementId) {
+        labelElement.setHtmlFor(elementId);
     }
 
     protected W getContentWidget() {
         return contentWidget;
+    }
+
+    protected Element getContentWidgetElement() {
+        return contentWidget.asWidget().getElement();
     }
 
     protected SimplePanel getContentWidgetContainer() {
@@ -101,8 +101,8 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     @Override
     public void setElementId(String elementId) {
-        contentWidget.asWidget().getElement().setId(elementId);
-        updateLabelElementId();
+        getContentWidgetElement().setId(elementId);
+        updateLabelElementId(elementId);
     }
 
     @Override

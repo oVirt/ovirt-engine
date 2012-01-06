@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.webadmin.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.webadmin.widget.Align;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.LabelElement;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
@@ -69,10 +70,19 @@ public class EntityModelCheckBoxEditor extends AbstractValidatedWidgetWithLabel<
     }
 
     @Override
-    protected String getContentWidgetId() {
+    protected Element getContentWidgetElement() {
         // Actual check box input element is the first child of CheckBox element
         Node input = asCheckBox().getElement().getChild(0);
-        return Element.as(input).getId();
+        return Element.as(input);
+    }
+
+    @Override
+    protected void updateLabelElementId(String elementId) {
+        if (useCheckBoxWidgetLabel) {
+            LabelElement.as(Element.as(asCheckBox().getElement().getChild(1))).setHtmlFor(elementId);
+        } else {
+            super.updateLabelElementId(elementId);
+        }
     }
 
     @Override

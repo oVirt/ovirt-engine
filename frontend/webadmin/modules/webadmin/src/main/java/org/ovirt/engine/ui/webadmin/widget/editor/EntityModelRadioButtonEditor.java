@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.webadmin.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.webadmin.widget.Align;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.LabelElement;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
@@ -49,16 +50,25 @@ public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLab
 
     @Override
     protected void applyCommonValidationStyles() {
-        // Suppress check box styling, as different browsers behave
-        // differently when styling check box input elements
+        // Suppress radio button styling, as different browsers behave
+        // differently when styling radio button input elements
         getValidatedWidgetStyle().setBorderStyle(BorderStyle.NONE);
     }
 
     @Override
-    protected String getContentWidgetId() {
-        // Actual check box input element is the first child of RadioButton element
+    protected Element getContentWidgetElement() {
+        // Actual radio button input element is the first child of RadioButton element
         Node input = asRadioButton().getElement().getChild(0);
-        return Element.as(input).getId();
+        return Element.as(input);
+    }
+
+    @Override
+    protected void updateLabelElementId(String elementId) {
+        if (useRadioButtonWidgetLabel) {
+            LabelElement.as(Element.as(asRadioButton().getElement().getChild(1))).setHtmlFor(elementId);
+        } else {
+            super.updateLabelElementId(elementId);
+        }
     }
 
     @Override
