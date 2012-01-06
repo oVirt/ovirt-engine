@@ -6,7 +6,6 @@ import java.util.List;
 import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.AbstractActionPanel;
-import org.ovirt.engine.ui.webadmin.widget.table.column.ColumnWithElementId;
 import org.ovirt.engine.ui.webadmin.widget.table.refresh.RefreshManager;
 import org.ovirt.engine.ui.webadmin.widget.table.refresh.RefreshPanel;
 
@@ -72,7 +71,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
 
     private final OrderedMultiSelectionModel<T> selectionModel;
 
-    private final ActionCellTable<T> table;
+    @WithElementId
+    public final ActionCellTable<T> table;
     private final ActionCellTable<T> tableHeader;
 
     private boolean multiSelectionDisabled;
@@ -97,6 +97,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         refreshPanel = refreshManager.getRefreshPanel();
 
         this.table = new ActionCellTable<T>(dataProvider, resources) {
+
             @Override
             protected void onBrowserEvent2(Event event) {
                 // Enable multiple selection only when Control/Shift key is pressed
@@ -268,18 +269,12 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         getDataProvider().refresh();
     }
 
-    void configureColumnElementId(ColumnWithElementId column) {
-        column.configureElementId(getElementId(), null);
-    }
-
     void addColumn(Column<T, ?> column, Header<?> header) {
         table.addColumn(column, header);
         tableHeader.addColumn(column, header);
 
-        // Configure column content element ID options if necessary
-        if (column instanceof ColumnWithElementId) {
-            configureColumnElementId((ColumnWithElementId) column);
-        }
+        // Configure column content element ID options
+        table.configureElementId(column);
     }
 
     void setColumnWidth(Column<T, ?> column, String width) {

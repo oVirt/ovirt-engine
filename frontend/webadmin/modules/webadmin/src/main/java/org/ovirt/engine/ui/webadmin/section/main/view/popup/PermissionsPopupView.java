@@ -9,6 +9,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.webadmin.widget.UiCommandButton;
@@ -45,11 +47,17 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<PermissionsPopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
+    @WithElementId
     UiCommandButton searchButton;
 
     @UiField(provided = true)
     @Path("domain.selectedItem")
+    @WithElementId
     ListModelListBoxEditor<Object> domainSelection;
 
     @UiField
@@ -62,6 +70,7 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
 
     @UiField(provided = true)
     @Ignore
+    @WithElementId
     EntityModelCellTable<ListModel> searchItems;
 
     @UiField
@@ -74,6 +83,7 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
 
     @UiField
     @Path("searchString")
+    @WithElementId
     TextBoxChanger searchStringEditor;
 
     @UiField
@@ -93,6 +103,7 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
         initListBoxEditors();
         searchItems = new EntityModelCellTable<ListModel>(true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         specificUserOrGroupRadio.setValue(true);
         everyoneRadio.setValue(false);

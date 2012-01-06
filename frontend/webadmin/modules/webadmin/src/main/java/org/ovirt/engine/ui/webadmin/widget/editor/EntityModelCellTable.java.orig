@@ -200,15 +200,15 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         super.setColumnWidth(column, width);
     }
 
-
+<<<<<<< HEAD
     public void setLoadingState(LoadingState state) {
         super.onLoadingStateChanged(state);
-	}
-    
-	@Override
+=======
+    @Override
     public void insertColumn(int beforeIndex, Column col, Header header, Header footer) {
         super.insertColumn(beforeIndex, col, header, footer);
         configureElementId(col);
+>>>>>>> webadmin: Added IDs for PermissionPopupView
     }
 
     @SuppressWarnings("unchecked")

@@ -5,7 +5,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.view.client.ProvidesKey;
 
-public class ActionCellTable<T> extends CellTable<T> {
+public class ActionCellTable<T> extends ElementIdCellTable<T> {
 
     private static final int DEFAULT_PAGESIZE = 1000;
     private static Resources DEFAULT_RESOURCES = GWT.create(CellTable.Resources.class);
