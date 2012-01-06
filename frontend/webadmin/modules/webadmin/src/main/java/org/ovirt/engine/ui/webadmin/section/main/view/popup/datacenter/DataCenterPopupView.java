@@ -4,6 +4,8 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
@@ -30,32 +32,41 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<DataCenterPopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     @Path(value = "name.entity")
+    @WithElementId
     EntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
+    @WithElementId
     EntityModelTextBoxEditor descriptionEditor;
 
     @UiField(provided = true)
     @Path(value = "storageTypeList.selectedItem")
+    @WithElementId
     ListModelListBoxEditor<Object> storageTypeListEditor;
 
     @UiField(provided = true)
     @Path(value = "version.selectedItem")
+    @WithElementId
     ListModelListBoxEditor<Object> versionEditor;
 
     @UiField
     Style style;
-    
+
     @Inject
     public DataCenterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
-        addContentStyleName(style.contentStyle());        
+        addContentStyleName(style.contentStyle());
         Driver.driver.initialize(this);
     }
 
@@ -97,6 +108,6 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     }
 
     interface Style extends CssResource {
-    	String contentStyle();
+        String contentStyle();
     }
 }

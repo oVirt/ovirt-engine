@@ -53,22 +53,27 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
+    @WithElementId
     ListModelListBoxEditor<Object> dataCenterEditor;
 
     @UiField
     @Path(value = "name.entity")
+    @WithElementId
     EntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
+    @WithElementId
     EntityModelTextBoxEditor descriptionEditor;
 
     @UiField(provided = true)
     @Path(value = "cPU.selectedItem")
+    @WithElementId
     ListModelListBoxEditor<Object> cPUEditor;
 
     @UiField(provided = true)
     @Path(value = "version.selectedItem")
+    @WithElementId
     ListModelListBoxEditor<Object> versionEditor;
 
     @UiField
@@ -77,6 +82,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     @UiField(provided = true)
     @Path(value = "optimizationNone_IsSelected.entity")
+    @WithElementId
     EntityModelRadioButtonEditor optimizationNoneEditor;
 
     @UiField
@@ -85,6 +91,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     @UiField(provided = true)
     @Path(value = "optimizationForServer_IsSelected.entity")
+    @WithElementId
     EntityModelRadioButtonEditor optimizationForServerEditor;
 
     @UiField
@@ -93,6 +100,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     @UiField(provided = true)
     @Path(value = "optimizationForDesktop_IsSelected.entity")
+    @WithElementId
     EntityModelRadioButtonEditor optimizationForDesktopEditor;
 
     @UiField
@@ -101,6 +109,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     @UiField(provided = true)
     @Path(value = "optimizationCustom_IsSelected.entity")
+    @WithElementId
     EntityModelRadioButtonEditor optimizationCustomEditor;
 
     @UiField(provided = true)
@@ -113,14 +122,17 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     @UiField(provided = true)
     @Path(value = "migrateOnErrorOption_YES.entity")
+    @WithElementId
     EntityModelRadioButtonEditor migrateOnErrorOption_YESEditor;
 
     @UiField(provided = true)
     @Path(value = "migrateOnErrorOption_HA_ONLY.entity")
+    @WithElementId
     EntityModelRadioButtonEditor migrateOnErrorOption_HA_ONLYEditor;
 
     @UiField(provided = true)
     @Path(value = "migrateOnErrorOption_NO.entity")
+    @WithElementId
     EntityModelRadioButtonEditor migrateOnErrorOption_NOEditor;
 
     @Inject

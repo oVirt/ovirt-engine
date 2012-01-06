@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.Align;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
@@ -44,6 +45,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
 
     @UiField(provided = true)
     @Path(value = "latch.entity")
+    @WithElementId
     EntityModelCheckBoxEditor latch;
 
     @UiField
