@@ -9,4 +9,7 @@ public abstract class DiskSizeColumn<T> extends RenderedTextColumn<T, Long> {
         super(new DiskSizeRenderer<Long>(DiskSizeUnit.BYTE));
     }
 
+    public DiskSizeColumn(DiskSizeUnit diskSizeUnit) {
+        super(new DiskSizeRenderer<Long>(diskSizeUnit));
+    }
 }

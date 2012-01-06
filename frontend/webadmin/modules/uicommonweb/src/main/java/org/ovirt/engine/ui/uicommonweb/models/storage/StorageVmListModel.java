@@ -35,6 +35,8 @@ public class StorageVmListModel extends SearchableListModel
 	public StorageVmListModel()
 	{
 		setTitle("Virtual Machines");
+
+		setIsTimerDisabled(true);
 	}
 
 	@Override
@@ -43,6 +45,14 @@ public class StorageVmListModel extends SearchableListModel
 		super.OnEntityChanged();
 
 		getSearchCommand().Execute();
+	}
+
+	@Override
+	public void setEntity(Object value)
+	{
+		if (value == null || !value.equals(getEntity())) {
+			super.setEntity(value);
+		}
 	}
 
 	@Override

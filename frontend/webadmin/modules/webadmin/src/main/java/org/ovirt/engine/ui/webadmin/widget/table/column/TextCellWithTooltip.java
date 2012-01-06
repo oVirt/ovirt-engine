@@ -10,6 +10,7 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.SimpleSafeHtmlRenderer;
 import com.google.gwt.user.client.DOM;
 
@@ -22,7 +23,7 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
 
     interface CellTemplate extends SafeHtmlTemplates {
         @Template("<div id=\"{0}\">{1}</div>")
-        SafeHtml textContainer(String id, String text);
+        SafeHtml textContainer(String id, SafeHtml text);
     }
 
     public static final int UNLIMITED_LENGTH = -1;
@@ -100,7 +101,7 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
     /**
      * Returns the text value to be rendered by this cell.
      */
-    String getRenderedValue(final String text) {
+    SafeHtml getRenderedValue(final String text) {
         String result = text;
 
         // Check if the text needs to be shortened
@@ -109,7 +110,7 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
             result = result + TOO_LONG_TEXT_POSTFIX;
         }
 
-        return result;
+        return SafeHtmlUtils.fromSafeConstant(result);
     }
 
     /**

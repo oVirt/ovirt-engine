@@ -35,6 +35,8 @@ public class StorageTemplateListModel extends SearchableListModel
 	public StorageTemplateListModel()
 	{
 		setTitle("Templates");
+
+		setIsTimerDisabled(true);
 	}
 
 	@Override
@@ -43,6 +45,14 @@ public class StorageTemplateListModel extends SearchableListModel
 		super.OnEntityChanged();
 
 		getSearchCommand().Execute();
+	}
+
+	@Override
+	public void setEntity(Object value)
+	{
+		if (value == null || !value.equals(getEntity())) {
+			super.setEntity(value);
+		}
 	}
 
 	@Override

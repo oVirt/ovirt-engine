@@ -34,12 +34,12 @@
 		}
 		
 		.nameEditor {
-			width: 300px;
+			width: 340px;
 		}
 		
 		.datacenterListEditor,
 		.hostListEditor {
-			width: 300px;
+			width: 340px;
 		}
 		
 		.formatListEditor {

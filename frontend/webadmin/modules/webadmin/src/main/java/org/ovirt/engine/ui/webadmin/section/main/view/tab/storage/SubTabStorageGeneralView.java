@@ -107,6 +107,10 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<storage_dom
         // TODO required because of editor driver errors
         // Possible reasons: lowercase getters, StorageGeneralModel.getEntity() returns Object
         storage_domains entity = (storage_domains) getDetailModel().getEntity();
+
+        if (entity == null)
+            return;
+
         totalSize.setValue(entity.getTotalDiskSize());
         availableSize.setValue(entity.getavailable_disk_size());
         usedSize.setValue(entity.getused_disk_size());

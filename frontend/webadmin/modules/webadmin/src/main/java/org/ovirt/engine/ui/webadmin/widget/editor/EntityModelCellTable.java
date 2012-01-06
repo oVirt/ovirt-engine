@@ -18,6 +18,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
+import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -45,7 +46,7 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
     private static final int DEFAULT_PAGESIZE = 1000;
     private static Resources DEFAULT_RESOURCES = GWT.create(CellTable.Resources.class);
     private static final int CHECK_COLUMN_WIDTH = 27;
-    
+
     /**
      * Create a new {@link EntityModelCellTable} with Single Selection
      */
@@ -71,6 +72,10 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
      */
     public EntityModelCellTable(boolean multiSelection) {
         this(multiSelection, (Resources) GWT.create(EntityModelCellTableResources.class));
+    }
+
+    public EntityModelCellTable(boolean multiSelection, boolean hideCheckbox) {
+        this(multiSelection, (Resources) GWT.create(EntityModelCellTableResources.class), hideCheckbox);
     }
 
     /**
@@ -192,6 +197,10 @@ public class EntityModelCellTable<M extends ListModel> extends CellTable<EntityM
     public void insertColumn(int beforeIndex, Column column, String headerString, String width) {
         super.insertColumn(beforeIndex, column, headerString);
         super.setColumnWidth(column, width);
+    }
+
+    public void setLoadingState(LoadingState state) {
+        super.onLoadingStateChanged(state);
     }
 
     @SuppressWarnings("unchecked")

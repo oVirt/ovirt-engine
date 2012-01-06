@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateStorageListModel
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.webadmin.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainStatusColumn;
@@ -53,29 +54,29 @@ public class SubTabTemplateStorageView extends AbstractSubTabTableView<VmTemplat
         };
         getTable().addColumn(statusColumn, "Status");
 
-        DiskSizeColumn<storage_domains> freeColumn = new DiskSizeColumn<storage_domains>() {
+        DiskSizeColumn<storage_domains> freeColumn = new DiskSizeColumn<storage_domains>(DiskSizeUnit.GIGABYTE) {
             @Override
             public Long getRawValue(storage_domains object) {
                 long availableDiskSize = object.getavailable_disk_size() != null ? object.getavailable_disk_size() : 0;
-                return (long) (availableDiskSize * Math.pow(1024, 3));
+                return (long) availableDiskSize;
             }
         };
         getTable().addColumn(freeColumn, "Free Space");
 
-        DiskSizeColumn<storage_domains> usedColumn = new DiskSizeColumn<storage_domains>() {
+        DiskSizeColumn<storage_domains> usedColumn = new DiskSizeColumn<storage_domains>(DiskSizeUnit.GIGABYTE) {
             @Override
             public Long getRawValue(storage_domains object) {
                 long usedDiskSize = object.getused_disk_size() != null ? object.getused_disk_size() : 0;
-                return (long) (usedDiskSize * Math.pow(1024, 3));
+                return (long) usedDiskSize;
             }
         };
         getTable().addColumn(usedColumn, "Used Space");
 
-        DiskSizeColumn<storage_domains> totalColumn = new DiskSizeColumn<storage_domains>() {
+        DiskSizeColumn<storage_domains> totalColumn = new DiskSizeColumn<storage_domains>(DiskSizeUnit.GIGABYTE) {
             @Override
             public Long getRawValue(storage_domains object) {
                 long totalDiskSize = object.getTotalDiskSize() != null ? object.getTotalDiskSize() : 0;
-                return (long) (totalDiskSize * Math.pow(1024, 3));
+                return (long) totalDiskSize;
             }
         };
         getTable().addColumn(totalColumn, "Total Space");
