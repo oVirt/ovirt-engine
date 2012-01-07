@@ -51,8 +51,8 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.RemoveVdsGroup, new VdsGroupParametersBase(asGuid(id)));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.RemoveVdsGroup, new VdsGroupParametersBase(asGuid(id)));
     }
 
     private Clusters mapCollection(List<VDSGroup> entities) {

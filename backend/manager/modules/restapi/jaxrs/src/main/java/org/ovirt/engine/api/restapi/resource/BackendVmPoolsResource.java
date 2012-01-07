@@ -65,8 +65,8 @@ public class BackendVmPoolsResource
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.RemoveVmPool, new VmPoolParametersBase(asGuid(id)));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.RemoveVmPool, new VmPoolParametersBase(asGuid(id)));
     }
 
     @Override

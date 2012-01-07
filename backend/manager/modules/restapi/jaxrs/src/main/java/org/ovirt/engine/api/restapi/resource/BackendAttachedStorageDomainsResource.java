@@ -64,9 +64,9 @@ public class BackendAttachedStorageDomainsResource
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.DetachStorageDomainFromPool,
-                      new DetachStorageDomainFromPoolParameters(asGuid(id), dataCenterId));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.DetachStorageDomainFromPool,
+                             new DetachStorageDomainFromPoolParameters(asGuid(id), dataCenterId));
     }
 
     @Override

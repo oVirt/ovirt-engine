@@ -54,18 +54,18 @@ public class BackendDataCentersResource extends
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.RemoveStoragePool, new StoragePoolParametersBase(asGuid(id)));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.RemoveStoragePool, new StoragePoolParametersBase(asGuid(id)));
     }
 
     @Override
-    public void remove(String id, Action action) {
+    public Response remove(String id, Action action) {
         getEntity(id);
         StoragePoolParametersBase params = new StoragePoolParametersBase(asGuid(id));
         if (action != null && action.isSetForce()) {
             params.setForceDelete(action.isForce());
         }
-        performAction(VdcActionType.RemoveStoragePool, params);
+        return performAction(VdcActionType.RemoveStoragePool, params);
     }
 
     private DataCenters mapCollection(List<storage_pool> entities) {

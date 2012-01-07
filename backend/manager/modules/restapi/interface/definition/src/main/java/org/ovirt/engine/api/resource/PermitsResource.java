@@ -50,7 +50,7 @@ public interface PermitsResource {
 
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") String id);
+    public Response remove(@PathParam("id") String id);
 
     /**
      * Sub-resource locator method, returns individual PermitResource on which

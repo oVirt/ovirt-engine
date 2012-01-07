@@ -40,7 +40,7 @@ public interface DevicesResource<D extends BaseDevice, C extends BaseDevices>
 
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") String id);
+    public Response remove(@PathParam("id") String id);
 
     // Note the departure from the usual convention of naming the path
     // parameter as "id". This is to work-around a RESTEasy bug in handling

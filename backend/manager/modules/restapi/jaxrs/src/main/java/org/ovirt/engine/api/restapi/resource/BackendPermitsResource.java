@@ -45,14 +45,14 @@ public class BackendPermitsResource
     }
 
     @Override
-    public void performRemove(String id) {
+    public Response performRemove(String id) {
         ActionGroup entity = lookupId(id);
         if (entity == null) {
             notFound();
-            return;
+            return null;
         }
-        performAction(VdcActionType.DetachActionGroupsFromRole,
-                      new ActionGroupsToRoleParameter(roleId, asList(entity)));
+        return performAction(VdcActionType.DetachActionGroupsFromRole,
+                             new ActionGroupsToRoleParameter(roleId, asList(entity)));
     }
 
     @Override

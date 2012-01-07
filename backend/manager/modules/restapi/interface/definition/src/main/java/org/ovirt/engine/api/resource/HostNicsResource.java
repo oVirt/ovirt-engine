@@ -44,7 +44,7 @@ public interface HostNicsResource {
 
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") String id);
+    public Response remove(@PathParam("id") String id);
 
     /**
      * Sub-resource locator method, returns individual HostNicResource on which the

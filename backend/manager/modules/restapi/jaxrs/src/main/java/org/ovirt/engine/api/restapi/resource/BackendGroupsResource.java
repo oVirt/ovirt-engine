@@ -72,8 +72,8 @@ public class BackendGroupsResource extends AbstractBackendCollectionResource<Gro
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.RemoveAdGroup, new AdElementParametersBase(asGuid(id)));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.RemoveAdGroup, new AdElementParametersBase(asGuid(id)));
     }
 
     @Override

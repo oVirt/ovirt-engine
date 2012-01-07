@@ -40,7 +40,7 @@ public class BackendClustersResourceTest extends
                                            new Object[] { GUIDS[0] },
                                            true,
                                            true));
-        collection.remove(GUIDS[0].toString());
+        verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
     @Test

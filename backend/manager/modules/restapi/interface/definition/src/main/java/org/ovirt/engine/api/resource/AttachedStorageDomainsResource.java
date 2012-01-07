@@ -43,7 +43,7 @@ public interface AttachedStorageDomainsResource {
 
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") String id);
+    public Response remove(@PathParam("id") String id);
 
     @Path("{id}")
     public AttachedStorageDomainResource getAttachedStorageDomainSubResource(@PathParam("id") String id);

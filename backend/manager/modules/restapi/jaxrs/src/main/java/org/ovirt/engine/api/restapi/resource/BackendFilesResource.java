@@ -3,6 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Files;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -84,7 +86,7 @@ public class BackendFilesResource
     }
 
     @Override
-    protected void performRemove(String id) {
+    protected Response performRemove(String id) {
        throw new UnsupportedOperationException();
     }
 

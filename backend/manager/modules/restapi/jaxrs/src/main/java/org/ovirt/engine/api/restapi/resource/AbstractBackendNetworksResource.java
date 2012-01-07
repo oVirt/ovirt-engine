@@ -2,6 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -33,13 +35,13 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
         return mapCollection(getBackendCollection(queryType, getQueryParameters()));
     }
 
-    public void performRemove(String id) {
+    public Response performRemove(String id) {
         network entity = lookupNetwork(asGuidOr404(id));
         if (entity == null) {
             notFound();
-            return;
+            return null;
         }
-        performAction(removeAction, getActionParameters(null, entity));
+        return performAction(removeAction, getActionParameters(null, entity));
     }
 
     protected Networks mapCollection(List<network> entities) {

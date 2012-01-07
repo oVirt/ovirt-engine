@@ -75,8 +75,8 @@ public abstract class AbstractBackendAssignedTagsResource
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(detachAction, getAttachParams(id));
+    public Response performRemove(String id) {
+        return performAction(detachAction, getAttachParams(id));
     }
 
     @SingleEntityResource

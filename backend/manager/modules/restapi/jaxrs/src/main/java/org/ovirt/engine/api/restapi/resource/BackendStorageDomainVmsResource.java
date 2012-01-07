@@ -2,6 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.Collection;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.StorageDomainContentResource;
@@ -56,13 +58,13 @@ public class BackendStorageDomainVmsResource
     }
 
     @Override
-    public void performRemove(String id) {
+    public Response performRemove(String id) {
         org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
         vm.setvm_guid(Guid.createGuidFromString(id));
         RemoveVmFromImportExportParamenters params = new RemoveVmFromImportExportParamenters(
                 vm,
                 storageDomainId,
                 getDataCenterId(storageDomainId));
-        performAction(VdcActionType.RemoveVmFromImportExport, params);
+        return performAction(VdcActionType.RemoveVmFromImportExport, params);
     }
 }

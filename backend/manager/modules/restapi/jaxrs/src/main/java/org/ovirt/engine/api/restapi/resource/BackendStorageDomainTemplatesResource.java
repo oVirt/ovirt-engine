@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
@@ -51,11 +53,10 @@ public class BackendStorageDomainTemplatesResource
             new GetAllFromExportDomainQueryParamenters(getDataCenterId(storageDomainId), storageDomainId);
         params.setGetAll(true);
 
-        Map<VmTemplate, DiskImageList> ret =
-            (Map<VmTemplate, DiskImageList>)getEntity(HashMap.class,
-                                                      VdcQueryType.GetTemplatesFromExportDomain,
-                                                      params,
-                                                      "Templates under storage domain id : " + storageDomainId.toString());
+        Map<VmTemplate, DiskImageList> ret = getEntity(HashMap.class,
+                                                       VdcQueryType.GetTemplatesFromExportDomain,
+                                                       params,
+                                                       "Templates under storage domain id : " + storageDomainId.toString());
         return ret.keySet();
     }
 
@@ -66,10 +67,10 @@ public class BackendStorageDomainTemplatesResource
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.RemoveVmTemplateFromImportExport,
-                      new VmTemplateImportExportParameters(asGuid(id),
-                                                           storageDomainId,
-                                                           getDataCenterId(storageDomainId)));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.RemoveVmTemplateFromImportExport,
+                             new VmTemplateImportExportParameters(asGuid(id),
+                                                                  storageDomainId,
+                                                                  getDataCenterId(storageDomainId)));
     }
 }

@@ -61,7 +61,7 @@ public class BackendPermitsResourceTest extends AbstractBackendCollectionResourc
                                            new Object[] { GUIDS[1], actionGroups  },
                                            true,
                                            true));
-        collection.remove("1");
+        verifyRemove(collection.remove("1"));
     }
 
     @Test

@@ -63,8 +63,8 @@ public class BackendTemplatesResource
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.RemoveVmTemplate, new VmTemplateParametersBase(asGuid(id)));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.RemoveVmTemplate, new VmTemplateParametersBase(asGuid(id)));
     }
 
     protected Templates mapCollection(List<VmTemplate> entities) {

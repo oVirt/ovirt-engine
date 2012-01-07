@@ -56,8 +56,9 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
                                            new Object[] { vdsGroup },
                                            true,
                                            true));
-        collection.remove(GUIDS[0].toString());
+        verifyRemove(collection.remove(GUIDS[0].toString()));
     }
+
 
     @Test
     public void testRemoveCantDo() throws Exception {

@@ -2,6 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.Events;
 import org.ovirt.engine.api.resource.EventResource;
@@ -49,7 +51,7 @@ EventsResource {
     }
 
     @Override
-    protected void performRemove(String id) {
+    protected Response performRemove(String id) {
        throw new UnsupportedOperationException();
     }
 }

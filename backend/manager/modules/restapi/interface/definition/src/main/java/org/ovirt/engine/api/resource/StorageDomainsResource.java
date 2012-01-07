@@ -46,7 +46,7 @@ public interface StorageDomainsResource {
     @DELETE
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
     @Path("{id}")
-    public void remove(@PathParam("id") String id, StorageDomain storageDomain);
+    public Response remove(@PathParam("id") String id, StorageDomain storageDomain);
 
     /**
      * Sub-resource locator method, returns individual DataCenterResource on which the

@@ -45,7 +45,7 @@ public interface TemplatesResource {
 
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") String id);
+    public Response remove(@PathParam("id") String id);
 
     @Path("{id}")
     public TemplateResource getTemplateSubResource(@PathParam("id") String id);

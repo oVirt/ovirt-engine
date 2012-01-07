@@ -60,7 +60,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
                                            new Object[] { GUIDS[0], asList(PARENT_GUID) },
                                            true,
                                            true));
-        collection.remove(GUIDS[0].toString());
+        verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
     private void setUpGetEntityExpectations(Guid guid) throws Exception {

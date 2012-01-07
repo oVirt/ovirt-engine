@@ -43,7 +43,7 @@ public interface AssignedTagsResource {
 
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") String id);
+    public Response remove(@PathParam("id") String id);
 
     @Path("{id}")
     public AssignedTagResource getAssignedTagSubResource(@PathParam("id") String id);

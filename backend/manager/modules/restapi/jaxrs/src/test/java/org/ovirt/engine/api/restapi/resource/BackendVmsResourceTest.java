@@ -92,7 +92,7 @@ public class BackendVmsResourceTest
         setUpGetEntityExpectations();
         setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
                 "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
-        collection.remove(GUIDS[0].toString());
+        verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
     @Test
@@ -101,8 +101,8 @@ public class BackendVmsResourceTest
         setUpGetEntityExpectations();
         setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
             "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.TRUE }, true, true);
-        collection.remove(GUIDS[0].toString(), new Action(){{setForce(true);}});
-        }
+        verifyRemove(collection.remove(GUIDS[0].toString(), new Action(){{setForce(true);}}));
+    }
 
     @Test
     public void testRemoveForcedIncomplete() throws Exception {
@@ -110,7 +110,7 @@ public class BackendVmsResourceTest
         setUpGetEntityExpectations();
         setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
                                 "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
-        collection.remove(GUIDS[0].toString(), new Action(){{}});
+        verifyRemove(collection.remove(GUIDS[0].toString(), new Action(){{}}));
     }
 
     @Test

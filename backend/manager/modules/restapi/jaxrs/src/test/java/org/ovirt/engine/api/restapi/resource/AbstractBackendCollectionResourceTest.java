@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.BaseResource;
@@ -288,5 +289,10 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
         for (int i = 0; i < NAMES.length; i++) {
             verifyModel(collection.get(i), i);
         }
+    }
+
+    protected void verifyRemove(Response response) {
+        assertNotNull(response);
+        assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
     }
 }

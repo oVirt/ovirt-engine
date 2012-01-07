@@ -185,7 +185,7 @@ public class BackendStorageDomainTemplatesResourceTest
                                            new Object[] { GUIDS[0], GUIDS[3], GUIDS[0] },
                                            true,
                                            true));
-        collection.remove(GUIDS[0].toString());
+        verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
     @Test

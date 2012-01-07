@@ -56,7 +56,7 @@ public class BackendDisksResourceTest
                                            new Object[] { PARENT_ID, asList(GUIDS[0]) },
                                            true,
                                            true));
-        collection.remove(GUIDS[0].toString());
+        verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
     private void setUpGetEntityExpectations() {

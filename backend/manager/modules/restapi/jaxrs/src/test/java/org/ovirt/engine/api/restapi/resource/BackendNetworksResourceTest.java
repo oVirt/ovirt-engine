@@ -55,7 +55,7 @@ public class BackendNetworksResourceTest
                                            new Object[] { DATA_CENTER_ID },
                                            true,
                                            true));
-        collection.remove(GUIDS[0].toString());
+        verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
     @Test

@@ -58,7 +58,7 @@ public class BackendNicsResourceTest
                                            new Object[] { PARENT_ID, GUIDS[0] },
                                            true,
                                            true));
-        collection.remove(GUIDS[0].toString());
+        verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
     @Test

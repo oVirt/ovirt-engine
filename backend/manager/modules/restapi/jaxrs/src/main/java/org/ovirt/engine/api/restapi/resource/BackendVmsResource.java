@@ -212,16 +212,16 @@ public class BackendVmsResource extends
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.RemoveVm, new RemoveVmParameters(asGuid(id), false));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.RemoveVm, new RemoveVmParameters(asGuid(id), false));
     }
 
     @Override
-    public void remove(String id, Action action) {
+    public Response remove(String id, Action action) {
         getEntity(id);
-        performAction(VdcActionType.RemoveVm,
-                      new RemoveVmParameters(asGuid(id),
-                                             action != null && action.isSetForce() ? action.isForce()
+        return performAction(VdcActionType.RemoveVm,
+                             new RemoveVmParameters(asGuid(id),
+                                                    action != null && action.isSetForce() ? action.isForce()
                                                                                      :
                                                                                      false));
 
@@ -242,8 +242,7 @@ public class BackendVmsResource extends
                     VdcQueryType.GetStorageDomainsByVmTemplateId,
                     sessionize(new GetStorageDomainsByVmTemplateIdQueryParameters(templateId)));
             if (queryReturn.getSucceeded()) {
-                storage_domains domain = (storage_domains)
-                    (asCollection(storage_domains.class, queryReturn.getReturnValue())).get(0);
+                storage_domains domain = (asCollection(storage_domains.class, queryReturn.getReturnValue())).get(0);
                 if (domain != null) {
                     domainId = domain.getid();
                 }

@@ -175,7 +175,7 @@ public class BackendAttachedStorageDomainsResourceTest
                                            new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
                                            true,
                                            true));
-        collection.remove(GUIDS[0].toString());
+        verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
     private void setUpGetEntityExpectations(Guid guid) throws Exception {

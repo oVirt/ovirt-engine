@@ -45,8 +45,8 @@ public class BackendRolesResource
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.RemoveRole, new RolesParameterBase(asGuid(id)));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.RemoveRole, new RolesParameterBase(asGuid(id)));
     }
 
     @Override

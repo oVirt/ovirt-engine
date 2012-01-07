@@ -55,12 +55,12 @@ public interface VmsResource {
 
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") String id);
+    public Response remove(@PathParam("id") String id);
 
     @DELETE
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
     @Path("{id}")
-    public void remove(@PathParam("id") String id, Action action);
+    public Response remove(@PathParam("id") String id, Action action);
 
 
     /**

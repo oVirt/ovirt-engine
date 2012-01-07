@@ -3,6 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.LogicalUnit;
@@ -89,7 +91,7 @@ public class BackendHostStorageResource
     }
 
     @Override
-    protected void performRemove(String id) {
+    protected Response performRemove(String id) {
        throw new UnsupportedOperationException();
     }
 

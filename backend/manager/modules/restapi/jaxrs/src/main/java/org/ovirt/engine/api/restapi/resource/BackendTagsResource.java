@@ -54,8 +54,8 @@ public class BackendTagsResource
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.RemoveTag, new TagsActionParametersBase(asGuid(id)));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.RemoveTag, new TagsActionParametersBase(asGuid(id)));
     }
 
     protected List<tags> getTags() {

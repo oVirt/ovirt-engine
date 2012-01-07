@@ -39,7 +39,7 @@ public class BackendTemplateNicsResourceTest
                                            new Object[] {},
                                            true,
                                            true));
-        collection.remove(GUIDS[0].toString());
+        verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
     private VmNetworkInterface getInterface(int id, String name){

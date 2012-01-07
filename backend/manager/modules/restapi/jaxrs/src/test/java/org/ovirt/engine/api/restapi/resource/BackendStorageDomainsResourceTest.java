@@ -102,7 +102,7 @@ public class BackendStorageDomainsResourceTest
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setHost(new Host());
         storageDomain.getHost().setId(GUIDS[1].toString());
-        collection.remove(GUIDS[0].toString(), storageDomain);
+        verifyRemove(collection.remove(GUIDS[0].toString(), storageDomain));
     }
 
     private void setUpGetEntityExpectations() throws Exception {
@@ -127,7 +127,7 @@ public class BackendStorageDomainsResourceTest
         storageDomain.setHost(new Host());
         storageDomain.getHost().setId(GUIDS[1].toString());
         storageDomain.setFormat(true);
-        collection.remove(GUIDS[0].toString(), storageDomain);
+        verifyRemove(collection.remove(GUIDS[0].toString(), storageDomain));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class BackendStorageDomainsResourceTest
         storageDomain.setHost(new Host());
         storageDomain.getHost().setId(GUIDS[1].toString());
         storageDomain.setDestroy(true);
-        collection.remove(GUIDS[0].toString(), storageDomain);
+        verifyRemove(collection.remove(GUIDS[0].toString(), storageDomain));
     }
 
     @Test
@@ -165,7 +165,7 @@ public class BackendStorageDomainsResourceTest
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setHost(new Host());
         storageDomain.getHost().setName(NAMES[1]);
-        collection.remove(GUIDS[0].toString(), storageDomain);
+        verifyRemove(collection.remove(GUIDS[0].toString(), storageDomain));
     }
 
     @Test

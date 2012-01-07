@@ -45,7 +45,7 @@ public interface ClustersResource {
 
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") String id);
+    public Response remove(@PathParam("id") String id);
 
     /**
      * Sub-resource locator method, returns individual ClusterResource on which the

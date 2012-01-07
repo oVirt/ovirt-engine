@@ -60,8 +60,8 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.RemoveVds, new VdsActionParameters(asGuid(id)));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.RemoveVds, new VdsActionParameters(asGuid(id)));
     }
 
     @Override

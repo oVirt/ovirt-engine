@@ -45,7 +45,7 @@ public interface NetworksResource {
 
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") String id);
+    public Response remove(@PathParam("id") String id);
 
     @Path("{id}")
     public NetworkResource getNetworkSubResource(@PathParam("id") String id);

@@ -183,7 +183,7 @@ public class BackendStorageDomainsResource
     }
 
     @Override
-    public void remove(String id, StorageDomain storageDomain) {
+    public Response remove(String id, StorageDomain storageDomain) {
         if (storageDomain==null) {
             Fault fault = new Fault();
             fault.setReason("storage-domain parameter is missing");
@@ -191,7 +191,7 @@ public class BackendStorageDomainsResource
         }
         validateParameters(storageDomain, "host.id|name");
         this.storageDomain = storageDomain;
-        super.remove(id);
+        return super.remove(id);
     }
 
     protected storage_domain_static mapToStatic(StorageDomain model) {
@@ -341,18 +341,18 @@ public class BackendStorageDomainsResource
     }
 
     @Override
-    protected void performRemove(String id) {
+    protected Response performRemove(String id) {
         if (storageDomain.isSetDestroy() && storageDomain.isDestroy()) {
             StorageDomainParametersBase parameters = new StorageDomainParametersBase(asGuidOr404(id));
             parameters.setVdsId(getHostId(storageDomain));
-            performAction(VdcActionType.ForceRemoveStorageDomain, parameters);
+            return performAction(VdcActionType.ForceRemoveStorageDomain, parameters);
         } else {
             RemoveStorageDomainParameters parameters = new RemoveStorageDomainParameters(asGuidOr404(id));
             parameters.setVdsId(getHostId(storageDomain));
             if (storageDomain.isSetFormat()) {
                 parameters.setDoFormat(storageDomain.isFormat());
             }
-            performAction(VdcActionType.RemoveStorageDomain, parameters);
+            return performAction(VdcActionType.RemoveStorageDomain, parameters);
         }
     }
 }

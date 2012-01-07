@@ -67,7 +67,7 @@ public class BackendSnapshotsResourceTest
                                 new Object[] { SNAPSHOT_IDS[1], SNAPSHOT_IDS[2], VM_ID },
                                 true,
                                 true);
-        collection.remove(SNAPSHOT_IDS[1].toString());
+        verifyRemove(collection.remove(SNAPSHOT_IDS[1].toString()));
     }
 
     @Test

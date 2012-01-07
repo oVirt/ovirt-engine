@@ -55,7 +55,7 @@ public class BackendSnapshotsResource
     }
 
     @Override
-    public void performRemove(String id) {
+    public Response performRemove(String id) {
         for (DiskImage diskImage : getDisks()) {
             Map<NGuid, NGuid> parents = getParentage(diskImage);
             for (DiskImage snapshotImage : diskImage.getSnapshots()) {
@@ -63,16 +63,17 @@ public class BackendSnapshotsResource
                 if (id.equals(sourceVmSnapshotId.toString())) {
                     NGuid dest = findSnapshotParent(sourceVmSnapshotId, parents);
                     if (dest != null) {
-                        performAction(VdcActionType.MergeSnapshot,
-                                    new MergeSnapshotParamenters(sourceVmSnapshotId,
-                                                                 dest,
-                                                                 parentId));
+                        return performAction(VdcActionType.MergeSnapshot,
+                                             new MergeSnapshotParamenters(sourceVmSnapshotId,
+                                                                          dest,
+                                                                          parentId));
                     }
-                    return;
+                    break;
                 }
             }
         }
         notFound();
+        return null;
     }
 
     private NGuid findSnapshotParent(Guid snapshotId, Map<NGuid, NGuid> parents) {

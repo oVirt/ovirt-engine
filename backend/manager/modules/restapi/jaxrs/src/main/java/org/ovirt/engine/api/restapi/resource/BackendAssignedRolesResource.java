@@ -56,9 +56,9 @@ public class BackendAssignedRolesResource
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.RemovePermission,
-                      new PermissionsOperationsParametes(getPermission(id)));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.RemovePermission,
+                             new PermissionsOperationsParametes(getPermission(id)));
     }
 
     protected Roles mapCollection(List<permissions> entities) {

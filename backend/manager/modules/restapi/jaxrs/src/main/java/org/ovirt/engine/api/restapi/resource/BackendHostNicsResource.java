@@ -83,10 +83,10 @@ public class BackendHostNicsResource
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.RemoveBond,
-                      new RemoveBondParameters(asGuid(hostId),
-                                               lookupInterface(id).getName()));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.RemoveBond,
+                             new RemoveBondParameters(asGuid(hostId),
+                                                      lookupInterface(id).getName()));
     }
 
     @Override

@@ -48,8 +48,8 @@ public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C ext
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(removeAction, getRemoveParameters(id));
+    public Response performRemove(String id) {
+        return performAction(removeAction, getRemoveParameters(id));
     }
 
     @Override

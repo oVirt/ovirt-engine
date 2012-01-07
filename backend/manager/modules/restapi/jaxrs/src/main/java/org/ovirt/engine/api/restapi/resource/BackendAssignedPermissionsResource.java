@@ -78,8 +78,8 @@ public class BackendAssignedPermissionsResource
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.RemovePermission, new PermissionsOperationsParametes(getPermissions(id)));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.RemovePermission, new PermissionsOperationsParametes(getPermissions(id)));
     }
 
     @Override

@@ -66,7 +66,7 @@ public class BackendDataCentersResourceTest
                                            new Object[] { GUIDS[0] },
                                            true,
                                            true));
-        collection.remove(GUIDS[0].toString());
+        verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class BackendDataCentersResourceTest
                                            new Object[] { GUIDS[0], Boolean.TRUE },
                                            true,
                                            true));
-        collection.remove(GUIDS[0].toString(), new Action(){{setForce(true);}});
+        verifyRemove(collection.remove(GUIDS[0].toString(), new Action(){{setForce(true);}}));
     }
 
     @Test

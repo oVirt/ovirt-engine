@@ -128,8 +128,8 @@ public class BackendUsersResource extends AbstractBackendCollectionResource<User
     }
 
     @Override
-    public void performRemove(String id) {
-        performAction(VdcActionType.RemoveUser, new AdElementParametersBase(asGuid(id)));
+    public Response performRemove(String id) {
+        return performAction(VdcActionType.RemoveUser, new AdElementParametersBase(asGuid(id)));
     }
 
     @Override

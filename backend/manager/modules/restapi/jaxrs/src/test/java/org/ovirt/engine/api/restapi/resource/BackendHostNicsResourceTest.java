@@ -202,7 +202,7 @@ public class BackendHostNicsResourceTest
                                            new Object[] { PARENT_GUID, MASTER_NAME },
                                            true,
                                            true));
-        collection.remove(MASTER_GUID.toString());
+        verifyRemove(collection.remove(MASTER_GUID.toString()));
     }
 
     @Test

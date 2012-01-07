@@ -326,6 +326,11 @@ public abstract class AbstractBackendResourceTest<R extends BaseResource, Q /* e
         return s.startsWith("l10n...") ? s : "l10n..." + s;
     }
 
+    protected void verifyRemove(Response response) {
+        assertNotNull(response);
+        assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
+    }
+
     protected void verifyLinks(BaseResource model) {
         assertNotNull(model.getHref());
         assertTrue(model.getHref().startsWith("/api"));

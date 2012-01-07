@@ -48,7 +48,7 @@ public class BackendAssignedRolesResourceTest
                                            new Object[] { GUIDS[0], GUIDS[1] },
                                            true,
                                            true));
-        collection.remove(GUIDS[1].toString());
+        verifyRemove(collection.remove(GUIDS[1].toString()));
     }
 
     @Test
