@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+
+	<ui:style>
+		.titleLabel {
+			padding-top: 5px;
+			padding-left: 5px;
+		}
+
+		.descriptionEditor {
+			width: 100%;
+		}
+
+		.errorMessageLabel {
+			color: #CD2127;
+			margin-top: 10px;
+			margin-left: 5px;
+		}
+
+		.treePanel {
+			margin-top: 5px;
+		}
+
+		.buttonPanel {
+			padding-left: 5px;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="400px" height="560px">
+		<d:content>
+			<g:VerticalPanel>
+				<g:Label ui:field="titleLabel" addStyleNames="{style.titleLabel}" />
+				<g:HTML>
+					<hr style="width:100%;" />
+				</g:HTML>
+				<g:HorizontalPanel addStyleNames="{style.buttonPanel}">
+					<g:Button ui:field="expandAllButton" />
+					<g:Button ui:field="collapseAllButton" />
+				</g:HorizontalPanel>
+				<g:ScrollPanel height="385px" addStyleNames="{style.treePanel}">
+					<e:EntityModelCellTree ui:field="tree" />
+				</g:ScrollPanel>
+				<e:EntityModelTextBoxEditor ui:field="emailEditor" />
+			</g:VerticalPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

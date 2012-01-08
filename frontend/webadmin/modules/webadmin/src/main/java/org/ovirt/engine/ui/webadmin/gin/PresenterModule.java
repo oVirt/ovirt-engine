@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateNewPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
@@ -153,6 +154,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.Impor
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.tag.TagPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateNewPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.user.ManageEventsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDesktopNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskPopupView;
@@ -720,6 +722,11 @@ public class PresenterModule extends AbstractPresenterModule {
         bindPresenterWidget(TemplateInterfacePopupPresenterWidget.class,
                 TemplateInterfacePopupPresenterWidget.ViewDef.class,
                 TemplateInterfacePopupView.class);
+
+        // Users Manage Events
+        bindPresenterWidget(ManageEventsPopupPresenterWidget.class,
+                ManageEventsPopupPresenterWidget.ViewDef.class,
+                ManageEventsPopupView.class);
     }
 
 }

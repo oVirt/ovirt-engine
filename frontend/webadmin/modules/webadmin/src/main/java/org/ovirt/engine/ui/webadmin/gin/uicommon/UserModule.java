@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
@@ -79,10 +80,21 @@ public class UserModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> getUserEventNotifierListProvider(ClientGinjector ginjector) {
+    public SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> getUserEventNotifierListProvider(ClientGinjector ginjector,
+            final Provider<ManageEventsPopupPresenterWidget> manageEventsPopupProvider) {
         return new SearchableDetailTabModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel>(ginjector,
                 UserListModel.class,
-                UserEventNotifierListModel.class);
+                UserEventNotifierListModel.class) {
+
+            @Override
+            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getManageEventsCommand()) {
+                    return manageEventsPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(lastExecutedCommand);
+                }
+            }
+        };
     }
 
     @Provides

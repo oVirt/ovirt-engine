@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 import java.util.Collections;
+import java.util.MissingResourceException;
+
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.ui.uicompat.*;
 import org.ovirt.engine.core.common.businessentities.*;
@@ -96,14 +98,13 @@ public class UserEventNotifierListModel extends SearchableListModel
 	public void ManageEvents()
 	{
 		EventNotificationModel model = new EventNotificationModel();
+		setWindow(model);
+
 		model.setTitle("Add Event Notification");
 		model.setHashName("add_event_notification");
 
 		java.util.ArrayList<EventNotificationEntity> eventTypes = DataProvider.GetEventNotificationTypeList();
 		java.util.Map<EventNotificationEntity, java.util.HashSet<AuditLogType>> availableEvents = DataProvider.GetAvailableNotificationEvents();
-
-		//var tags = DataProvider.GetVisibleTagsList();
-		//tags.Insert(0, new tags("", null, null, -1, "none"));
 
 		Translator eventNotificationEntityTranslator = EnumTranslator.Create(EventNotificationEntity.class);
 		Translator auditLogTypeTranslator = EnumTranslator.Create(AuditLogType.class);
@@ -122,8 +123,15 @@ public class UserEventNotifierListModel extends SearchableListModel
 			{
 				SelectionTreeNodeModel eventGrp = new SelectionTreeNodeModel();
 
+				String description;
+				try {
+					description = auditLogTypeTranslator.get(logtype);
+		        } catch (MissingResourceException e) {
+					description = logtype.toString();
+		        }
+
 				eventGrp.setTitle(logtype.toString());
-				eventGrp.setDescription(auditLogTypeTranslator.containsKey(logtype) ? auditLogTypeTranslator.get(logtype) : logtype.toString());
+				eventGrp.setDescription(description);
 				eventGrp.setParent(list.get(list.size() - 1));
 				eventGrp.setIsSelectedNotificationPrevent(true);
 				eventGrp.setIsSelectedNullable(false);
@@ -135,7 +143,6 @@ public class UserEventNotifierListModel extends SearchableListModel
 						break;
 					}
 				}
-				//					eventGrp.IsSelected = items.Count(a => a.event_up_name.Equals(logtype.ToString())) > 0 ? true : false;
 
 				list.get(list.size() - 1).getChildren().add(eventGrp);
 				eventGrp.setIsSelectedNotificationPrevent(false);
@@ -147,8 +154,6 @@ public class UserEventNotifierListModel extends SearchableListModel
 		}
 
 		model.setEventGroupModels(list);
-		//AddModel.Tags = tags;
-		//AddModel.Tag = tags.FirstOrDefault();
 		if (!StringHelper.isNullOrEmpty(getEntity().getemail()))
 		{
 			model.getEmail().setEntity(getEntity().getemail());
@@ -159,8 +164,6 @@ public class UserEventNotifierListModel extends SearchableListModel
 		}
 
 		model.setOldEmail((String)model.getEmail().getEntity());
-
-		setWindow(model);
 
 		UICommand tempVar = new UICommand("OnSave", this);
 		tempVar.setTitle("OK");
@@ -190,7 +193,6 @@ public class UserEventNotifierListModel extends SearchableListModel
 		{
 			for (SelectionTreeNodeModel child : node.getChildren())
 			{
-//C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value logic:
 				if (child.getIsSelectedNullable() != null && child.getIsSelectedNullable().equals(true))
 				{
 					selected.add(child);
@@ -252,13 +254,11 @@ public class UserEventNotifierListModel extends SearchableListModel
 		}
 		else
 		{
-			//selected.Each(a => toAddList.Add(new EventSubscriptionParametesBase(new event_subscriber(a.Title, (int)EventNotificationMethods.EMAIL, model.Email.ValueAs<string>(), user.user_id, String.Empty), string.Empty)));
 			for (SelectionTreeNodeModel a : added)
 			{
 				toAddList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getTitle(), EventNotificationMethods.EMAIL.getValue(), (String)model.getEmail().getEntity(), getEntity().getuser_id(), ""), ""));
 			}
 
-			//existing.Each(a => toRemoveList.Add(new EventSubscriptionParametesBase(new event_subscriber(a.event_up_name, (int)EventNotificationMethods.EMAIL, a.method_address, a.subscriber_id, String.Empty), string.Empty)));
 			for (event_subscriber a : removed)
 			{
 				toRemoveList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getevent_up_name(), EventNotificationMethods.EMAIL.getValue(), a.getmethod_address(), a.getsubscriber_id(), ""), ""));
