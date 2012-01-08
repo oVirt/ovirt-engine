@@ -106,7 +106,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                         vm.gethibernation_vol_handle())
                 .addValue("exit_status", vm.getExitStatus().getValue())
                 .addValue("pause_status", vm.getPauseStatus().getValue())
-                .addValue("exit_message", vm.getExitMessage());
+                .addValue("exit_message", vm.getExitMessage())
+                .addValue("hash", vm.getHash());
     }
 
     @Override
@@ -166,7 +167,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 entity.setExitMessage(rs.getString("exit_message"));
                 entity.setExitStatus(exitStatus);
                 entity.setPauseStatus(pauseStatus);
-
+                entity.setHash(rs.getString("hash"));
                 return entity;
             }
         };

@@ -12,7 +12,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -121,6 +120,9 @@ public class VmDynamic implements BusinessEntity<Guid> {
 
     @Column(name = "pause_status")
     private VmPauseStatus pauseStatus = VmPauseStatus.NONE;
+
+    @Column(name = "hash")
+    private String hash;
 
     @Column(name = "exit_message")
     private String mExitMessage;
@@ -415,6 +417,13 @@ public class VmDynamic implements BusinessEntity<Guid> {
         mDisks = value;
     }
 
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
     @XmlElement(name = "Win2kHackEnable")
     public boolean getWin2kHackEnable() {
         return mWin2kHackEnable;

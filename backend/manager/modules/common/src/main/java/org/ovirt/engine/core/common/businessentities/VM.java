@@ -742,6 +742,15 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
         OnPropertyChanged(new PropertyChangedEventArgs("guest_requested_memory"));
     }
 
+    @XmlElement(name = "hash")
+    public String getHash() {
+        return mVmDynamic.getHash();
+    }
+
+    public void setHash(String hash) {
+        mVmDynamic.setHash(hash);
+    }
+
     @XmlElement(name = "cpu_user")
     public Double getcpu_user() {
         return this.mVmStatistics.getcpu_user();

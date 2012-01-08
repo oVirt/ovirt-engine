@@ -165,7 +165,8 @@ Create or replace FUNCTION UpdateVmDynamic(v_app_list VARCHAR(4000) ,
 	v_hibernation_vol_handle VARCHAR(255) ,
 	v_exit_status INTEGER,
 	v_pause_status INTEGER,
-	v_exit_message VARCHAR(4000))
+	v_exit_message VARCHAR(4000),
+        v_hash VARCHAR(30))
 RETURNS VOID
 
 	--The [vm_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -185,7 +186,7 @@ BEGIN
       utc_diff = v_utc_diff,last_vds_run_on = v_last_vds_run_on,client_ip = v_client_ip, 
       guest_requested_memory = v_guest_requested_memory, 
       hibernation_vol_handle = v_hibernation_vol_handle,exit_status = v_exit_status, 
-      pause_status = v_pause_status,exit_message = v_exit_message
+      pause_status = v_pause_status,exit_message = v_exit_message, hash=v_hash
       WHERE vm_guid = v_vm_guid;
 END; $procedure$
 LANGUAGE plpgsql;
