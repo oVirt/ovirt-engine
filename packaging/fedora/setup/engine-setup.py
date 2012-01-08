@@ -1098,24 +1098,25 @@ def _configIptables():
 def _createJbossProfile():
     logging.debug("creating jboss profile")
     try:
-        if not os.path.exists(os.path.join(basedefs.DIR_JBOSS, "server", basedefs.JBOSS_PROFILE_NAME, "deploy", "engine.ear")):
-#            cmd = "/bin/sh %s %s %s"%(basedefs.EXEC_SLIMMING_PROFILE, basedefs.DIR_JBOSS, basedefs.FILE_SLIMMING_PROFILE_CONF)
-#            output, rc = utils.execExternalCmd(cmd, True, "Profile Creation failed")
-
-            linkDest = "/usr/local/jboss/server/%s/deploy/engine.ear"%(basedefs.JBOSS_PROFILE_NAME)
+        # Create EAR link
+        ear = os.path.join(basedefs.DIR_JBOSS, "server", basedefs.JBOSS_PROFILE_NAME, "deploy", "engine.ear")
+        if not os.path.exists(ear):
+            linkDest = ear
             if os.path.islink(linkDest) and os.readlink(linkDest) != basedefs.DIR_ENGINE_EAR_SRC:
                 os.remove(linkDest)
             os.symlink(basedefs.DIR_ENGINE_EAR_SRC, linkDest)
+        else:
+            logging.debug("%s Already exists, skipping link creation" % (ear)) 
 
+	# Create PGSQL_DS link
+	if not os.path.exists(basedefs.FILE_JBOSS_PGSQL_DS_XML_DEST):
             linkDest = basedefs.FILE_JBOSS_PGSQL_DS_XML_DEST
             linkSrc = basedefs.FILE_JBOSS_PGSQL_DS_XML_SRC
             if os.path.islink(linkDest) and os.readlink(linkDest) != linkSrc:
                 os.remove(linkDest)
             os.symlink(linkSrc, linkDest)
-
-            logging.debug("Successfully created jboss profile %s"%(basedefs.JBOSS_PROFILE_NAME))
         else:
-            logging.debug("%s profile already exists, doing nothing"%(basedefs.JBOSS_PROFILE_NAME))
+            logging.debug("%s Already exists, skipping link creation" % (basedefs.FILE_JBOSS_PGSQL_DS_XML_DEST))
     except:
         logging.error(traceback.format_exc())
         raise Exception("Failed to create JBoss profile")
