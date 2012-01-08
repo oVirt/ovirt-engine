@@ -76,7 +76,8 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
         }
 
         // Enforce tooltip when the presented text doesn't match original value
-        boolean forceTooltip = (value != null && !value.equals(getRenderedValue(value)));
+        SafeHtml safeValue = value != null ? SafeHtmlUtils.fromSafeConstant(value) : null;
+        boolean forceTooltip = (safeValue != null && !safeValue.equals(getRenderedValue(value)));
 
         // If the parent element content overflows its area, provide tooltip to the element
         if (forceTooltip || contentOverflows(parent)) {
