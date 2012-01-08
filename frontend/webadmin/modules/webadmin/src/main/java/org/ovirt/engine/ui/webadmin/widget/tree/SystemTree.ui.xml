@@ -1,17 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
-
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:with field='resources'
+		type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
 	<ui:style>
 		.scrollPanel {
-			white-space: nowrap;
+		white-space: nowrap;
+		}
+		.refreshButton {
+		float:
+		right;
+		font-size: 12px;
+		height: 14px;
+		width: 12px;
+		margin-right: 5px;
+		margin-left: 55px;
+		background: transparent;
+		border: 1px solid transparent;
+		}
+		.button {
+			margin-top: 2px;
+			font-size: 10px;
+			margin-right: 3px;
 		}
 	</ui:style>
 
-	<g:ScrollPanel addStyleNames="{style.scrollPanel}">
-		<g:HorizontalPanel width="100%">
-			<g:Widget ui:field="treeDisplayWidget" />
-		</g:HorizontalPanel>
-	</g:ScrollPanel>
+	<g:DockLayoutPanel unit="PX">
+		<g:center>
+			<g:ScrollPanel width="100%" addStyleNames="{style.scrollPanel}">
+				<g:VerticalPanel width="100%">
+					<g:HorizontalPanel>
+						<g:PushButton ui:field="expandButton" addStyleNames="{style.button}"/>
+						<g:PushButton ui:field="collapseButton" addStyleNames="{style.button}"/>
+						<g:PushButton ui:field="refreshButton" addStyleNames="{style.refreshButton}">
+							<g:upFace image='{resources.refreshButtonImage}' />
+						</g:PushButton>
+					</g:HorizontalPanel>
+					<g:HorizontalPanel width="100%">
+						<g:Widget ui:field="treeDisplayWidget" />
+					</g:HorizontalPanel>
+				</g:VerticalPanel>
+			</g:ScrollPanel>
+		</g:center>
+	</g:DockLayoutPanel>
 
 </ui:UiBinder>

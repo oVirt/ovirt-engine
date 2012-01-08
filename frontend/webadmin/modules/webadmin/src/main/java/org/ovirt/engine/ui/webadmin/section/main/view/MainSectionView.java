@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -99,6 +100,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             ApplicationResources resources,
             ApplicationTemplates templates,
             ApplicationMessages messages,
+            ApplicationConstants constants,
             EventBus eventBus) {
         attachWindowFocusEvents();
         this.eventBus = eventBus;
@@ -111,7 +113,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
 
         initHeaders();
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        addContentToWestPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider, westStackPanel);
+        addContentToWestPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider, westStackPanel, constants);
 
         initAlertEventFooterPanel(alertModelProvider, alertFirstRowModelProvider,
                 eventModelProvider, eventFirstRowModelProvider, resources, templates);
@@ -153,8 +155,8 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     private void addContentToWestPanel(SystemTreeModelProvider treeModelProvider,
             BookmarkModelProvider bookmarkModelProvider,
             TagModelProvider tagModelProvider,
-            final StackLayoutPanel panel) {
-        panel.insert(new SystemTree(treeModelProvider), treeHeader, 26, panel.getWidgetCount());
+            final StackLayoutPanel panel, ApplicationConstants constants) {
+        panel.insert(new SystemTree(treeModelProvider, constants), treeHeader, 26, panel.getWidgetCount());
         panel.insert(new BookmarkList(bookmarkModelProvider), bookmarksHeader, 26, panel.getWidgetCount());
         panel.insert(new TagList(tagModelProvider), tagsHeader, 26, panel.getWidgetCount());
     }

@@ -673,4 +673,10 @@ public interface ApplicationConstants extends Constants {
 
     @DefaultStringValue("Collapse All Snapshots")
     String importVm_collapseSnapshots();
+
+    @DefaultStringValue("Expand All")
+    String treeExpandAll();
+
+    @DefaultStringValue("Collapse All")
+    String treeCollapseAll();
 }
