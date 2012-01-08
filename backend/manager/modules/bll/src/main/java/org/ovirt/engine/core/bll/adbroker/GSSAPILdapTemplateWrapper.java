@@ -13,15 +13,10 @@ import org.springframework.ldap.core.NameClassPairCallbackHandler;
 import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 import org.springframework.ldap.core.support.LdapContextSource;
 
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
-
 /**
  *
  */
 public class GSSAPILdapTemplateWrapper extends LDAPTemplateWrapper {
-
-    private static LogCompat log = LogFactoryCompat.getLog(GSSAPILdapTemplateWrapper.class);
 
     private LoginContext loginContext;
 
