@@ -34,7 +34,7 @@ import org.ovirt.engine.core.utils.kerberos.KerberosReturnCodeParser;
 public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthenticationStrategy {
 
     private static final String GSS_API_AUTHENTICATION = "GSSAPI";
-    private static final String LOGIN_MODULE_POLICY_NAME = "RHEVKerberosAuth";
+    private static final String LOGIN_MODULE_POLICY_NAME = "EngineKerberosAuth";
     private static LogCompat log = LogFactoryCompat.getLog(GSSAPIDirContextAuthenticationStrategy.class);
     private LoginContext loginContext;
     private String password;

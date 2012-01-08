@@ -131,7 +131,7 @@ $Revision: 87078 $
   </application-policy>
 -->
 
-<application-policy name="RHEVKerberosAuth">
+<application-policy name="EngineKerberosAuth">
 	<authentication>
 	      <login-module code="com.sun.security.auth.module.Krb5LoginModule" flag="required">
 	<!--

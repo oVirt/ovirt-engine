@@ -845,7 +845,7 @@ def _editDefaultHtml():
         raise Exception(output_messages.ERR_EXP_UPD_HTML_FILE%(basedefs.FILE_DEFAULT_HTML))
 
 def _updateRhevKerbAuthPolicy(loginConfigHandler):
-    # Check if RHEVKerberosAuth  node exists
+    # Check if EngineKerberosAuth  node exists
     check = loginConfigHandler.xpathEval(basedefs.XPATH_LOGIN_CFG_APP_POLICY_KERB)
     if len(check) == 0:
         # Create new node

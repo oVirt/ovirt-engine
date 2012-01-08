@@ -11,7 +11,7 @@ DB_PORT="5432"
 DB_PASS_FILE="/root/.pgpass"
 PGPASS_FILE_TEMPLATE="hostname:port:database:username:password"
 JBOSS_SECURITY_DOMAIN="EncryptDBPassword"
-JBOSS_KERB_AUTH="RHEVKerberosAuth"
+JBOSS_KERB_AUTH="EngineKerberosAuth"
 
 JBOSS_PROFILE_NAME="default"
 VDC_OPTION_CVER="general"
