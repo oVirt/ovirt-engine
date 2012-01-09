@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public abstract class AbstractBackendCollectionResource<R extends BaseResource, Q /* extends IVdcQueryable */>
         extends AbstractBackendResource<R, Q> {
@@ -31,6 +30,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     private static final String BLOCKING_EXPECTATION = "201-created";
     private static final String CREATION_STATUS_REL = "creation_status";
     public static final String FROM_CONSTRAINT_PARAMETER = "from";
+    public static final String CASE_SENSITIVE_CONSTRAINT_PARAMETER = "case-sensitive";
     protected static final LogCompat LOG = LogFactoryCompat.getLog(AbstractBackendCollectionResource.class);
 
     protected AbstractBackendCollectionResource(Class<R> modelType, Class<Q> entityType, String... subCollections) {
@@ -56,14 +56,27 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
 
     private SearchParameters getSearchParameters(SearchType searchType, String constraint) {
         SearchParameters searchParams = new SearchParameters(constraint, searchType);
-        HashMap<String, String> constraints = QueryHelper.getConstraints(getUriInfo().getQueryParameters(), FROM_CONSTRAINT_PARAMETER);
-        if (constraints != null && constraints.containsKey(FROM_CONSTRAINT_PARAMETER) && !StringHelper.isNullOrEmpty(constraints.get(FROM_CONSTRAINT_PARAMETER))) {
+        HashMap<String, String> queryConstraints = QueryHelper.getQueryConstraints(getUriInfo(),
+                                                                                   FROM_CONSTRAINT_PARAMETER);
+
+        HashMap<String, String> matrixConstraints = QueryHelper.getMatrixConstraints(getUriInfo(),
+                                                                                     CASE_SENSITIVE_CONSTRAINT_PARAMETER);
+
+        if (queryConstraints.containsKey(FROM_CONSTRAINT_PARAMETER)) {
             try {
-                searchParams.setSearchFrom(Long.parseLong(constraints.get(FROM_CONSTRAINT_PARAMETER)));
+                searchParams.setSearchFrom(Long.parseLong(queryConstraints.get(FROM_CONSTRAINT_PARAMETER)));
             } catch (Exception ex) {
-                LOG.error("Unwrapping of 'from' search parameter failed.", ex);
+                LOG.error("Unwrapping of '"+FROM_CONSTRAINT_PARAMETER+"' search parameter failed.", ex);
             }
         }
+        if (matrixConstraints.containsKey(CASE_SENSITIVE_CONSTRAINT_PARAMETER)) {
+            try {
+                searchParams.setCaseSensitive(Boolean.parseBoolean(matrixConstraints.get(CASE_SENSITIVE_CONSTRAINT_PARAMETER)));
+            } catch (Exception ex) {
+                LOG.error("Unwrapping of '"+CASE_SENSITIVE_CONSTRAINT_PARAMETER+"' search parameter failed.", ex);
+            }
+        }
+
         return searchParams;
     }
 

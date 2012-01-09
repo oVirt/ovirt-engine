@@ -113,9 +113,8 @@ public class QueryHelper {
      * @return              constraint in correct format
      */
     public static String getConstraint(UriInfo uriInfo, String defaultQuery, Class<?> clz, boolean typePrefix) {
-        MultivaluedMap<String, String> queries = uriInfo.getQueryParameters();
         String prefix = typePrefix ? RETURN_TYPES.get(clz) : "";
-        HashMap<String, String> constraints = getConstraints(queries, CONSTRAINT_PARAMETER);
+        HashMap<String, String> constraints = getQueryConstraints(uriInfo, CONSTRAINT_PARAMETER);
 
         return constraints != null && constraints.containsKey(CONSTRAINT_PARAMETER)
                ? prefix + constraints.get(CONSTRAINT_PARAMETER)
@@ -154,13 +153,27 @@ public class QueryHelper {
         return false;
     }
 
-    public static HashMap<String, String> getConstraints(MultivaluedMap<String, String> queries, String... constraints) {
+    public static HashMap<String, String> getQueryConstraints(UriInfo uriInfo, String... constraints) {
         HashMap<String, String> params = new HashMap<String, String>();
-        if (constraints != null && constraints.length >0) {
+        if (constraints != null && constraints.length > 0) {
             for (String key : constraints) {
-                String value = getConstraint(queries, key);
+                String value = getConstraint(uriInfo.getQueryParameters(), key);
                 if (value != null && !value.isEmpty()) {
                     params.put(key, value);
+                }
+            }
+        }
+        return params;
+    }
+
+    public static HashMap<String, String> getMatrixConstraints(UriInfo uriInfo, String... constraints) {
+        HashMap<String, String> params = new HashMap<String, String>();
+        if (uriInfo.getPathSegments() != null && constraints != null && constraints.length > 0) {
+            for (String key : constraints) {
+                for (PathSegment segement : uriInfo.getPathSegments()) {
+                    MultivaluedMap<String, String> matrixParams = segement.getMatrixParameters();
+                    if (matrixParams != null && !matrixParams.isEmpty() && matrixParams.containsKey(key))
+                        params.put(key, getConstraint(matrixParams, key));
                 }
             }
         }
