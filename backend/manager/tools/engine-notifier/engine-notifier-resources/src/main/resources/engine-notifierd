@@ -5,8 +5,8 @@
 # chkconfig: - 80 20
 # description: The oVirt event notification service
 # processname: notifierd
-# pidfile: /var/run/engine/notifier/engine-notifier.pid
-# config:  /etc/engine/notifier/notifier.conf
+# pidfile: /var/run/ovirt-engine/notifier/engine-notifier.pid
+# config:  /etc/ovirt-engine/notifier/notifier.conf
 #
 
 # Source function library.
@@ -14,14 +14,14 @@
 
 prog=engine-notifier
 RETVAL=0
-PID_FOLDER=/var/run/engine/notifier
+PID_FOLDER=/var/run/ovirt-engine/notifier
 ENGINE_USER="engine"
 
 [ -r /etc/java/java.conf ] && . /etc/java/java.conf
 export JAVA_HOME
 
 # Path to the engine-notifier launch script
-NOTIFIER_SCRIPT=/usr/share/engine/notifier/notifier.sh
+NOTIFIER_SCRIPT=/usr/share/ovirt-engine/notifier/notifier.sh
 
 if [ -z "$SHUTDOWN_WAIT" ]; then
     SHUTDOWN_WAIT=10

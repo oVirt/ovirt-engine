@@ -22,7 +22,7 @@ die_no_propset() {
     die "Error: $1 if defined can not be empty, please check for this in configuration file $CONF_FILE\n" 6
 }
 
-NOTIFIER_HOME=/usr/share/engine/notifier/
+NOTIFIER_HOME=/usr/share/ovirt-engine/notifier/
 if [ ! -d "$NOTIFIER_HOME" ]; then
     die "Error: daemon home directory is missing or not accessible: $NOTIFIER_HOME.\n" 5
 fi
@@ -45,7 +45,7 @@ if [ "$#" -eq 1 ]; then
     fi
     CONF_FILE="$1"
 else
-    CONF_FILE=/etc/engine/notifier/notifier.conf
+    CONF_FILE=/etc/ovirt-engine/notifier/notifier.conf
 fi
 
 # Import configurations
@@ -226,7 +226,7 @@ JAVA_LIB_HOME=/usr/share/java
 
 # Add the configuration directory to the classpath so that configuration
 # files can be loaded as resources:
-CP=/etc/engine/notifier/.
+CP=/etc/ovirt-engine/notifier/.
 
 # Add the required jar files from the system wide jars directory:
 jar_names='
@@ -239,7 +239,6 @@ jar_names='
     commons-jxpath
     postgresql-jdbc
     javamail
-    activation
     engine-tools-common
 '
 for jar_name in ${jar_names}
@@ -257,6 +256,7 @@ done
 # in order to make the script less dependent on the version of oVirt Engine
 # installed:
 jar_names='
+    activation
     stax-api
     jaxb-api
     slf4j-api
@@ -303,6 +303,6 @@ then
     NOTIFIER_PID=/dev/null
 fi
 
-exec java -cp .:$CP $JAVA_OPTS org.ovirt.engine.core.notifier.Notifier $@ 2>/dev/null &
+exec java -cp .:$CP $JAVA_OPTS org.ovirt.engine.core.notifier.Notifier $CONF_FILE 2>/dev/null &
 
 echo $! >$NOTIFIER_PID
