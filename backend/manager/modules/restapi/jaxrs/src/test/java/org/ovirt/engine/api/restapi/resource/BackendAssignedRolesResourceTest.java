@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleNameParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -132,6 +133,40 @@ public class BackendAssignedRolesResourceTest
         verifyModel((Role) response.getEntity(), 1);
     }
 
+    @Test
+    public void testAddAssignedRoleByName() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(VdcQueryType.GetRoleByName,
+                MultilevelAdministrationByRoleNameParameters.class,
+                new String[] { "RoleName" },
+                new Object[] { NAMES[1] },
+                getRole());
+        setUpCreationExpectations(VdcActionType.AddSystemPermission,
+                                  PermissionsOperationsParametes.class,
+                                  new String[] { "Permission.ad_element_id", "Permission.role_id" },
+                                  new Object[] { GUIDS[0], GUIDS[1] },
+                                  true,
+                                  true,
+                                  GUIDS[2],
+                                  VdcQueryType.GetPermissionById,
+                                  MultilevelAdministrationByPermissionIdParameters.class,
+                                  new String[] { "PermissionId" },
+                                  new Object[] { GUIDS[2] },
+                                  getEntity(1));
+        Role model = new Role();
+        model.setName(NAMES[1]);
+
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof Role);
+        verifyModel((Role) response.getEntity(), 1);
+    }
+
+    private roles getRole() {
+        roles role = new roles();
+        role.setId(GUIDS[1]);
+        return role;
+    }
 
     @Override
     protected List<Role> getCollection() {

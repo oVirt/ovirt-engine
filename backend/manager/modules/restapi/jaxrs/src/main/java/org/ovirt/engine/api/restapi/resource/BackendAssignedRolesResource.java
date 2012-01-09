@@ -14,8 +14,10 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
+import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleNameParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -35,8 +37,11 @@ public class BackendAssignedRolesResource
 
     @Override
     public Response add(Role role) {
-        // REVISIT support specifying role by-name
-        validateParameters(role, "id");
+        validateParameters(role, "id|name");
+        if (!role.isSetId()) {
+            roles entity = getEntity(roles.class, VdcQueryType.GetRoleByName, new MultilevelAdministrationByRoleNameParameters(role.getName()), role.getName());
+            role.setId(entity.getId().toString());
+        }
         return performCreation(VdcActionType.AddSystemPermission,
                                new PermissionsOperationsParametes(newPermission(role.getId())),
                                new QueryIdResolver(VdcQueryType.GetPermissionById,
