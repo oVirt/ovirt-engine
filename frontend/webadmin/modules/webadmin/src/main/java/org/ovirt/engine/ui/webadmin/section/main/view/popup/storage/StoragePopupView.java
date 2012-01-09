@@ -80,6 +80,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
     @SuppressWarnings("rawtypes")
     @Ignore
+    @WithElementId
     AbstractStorageView storageView;
 
     @Inject
@@ -202,6 +203,9 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                 storageView = new IscsiStorageView();
             }
         }
+
+        // Re-apply element IDs on 'storageView' change
+        ViewIdHandler.idHandler.generateAndSetIds(this);
 
         // Clear the current storage view
         specificStorageTypePanel.clear();

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
+import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.widget.HasEditorDriver;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
 
@@ -11,6 +12,7 @@ import com.google.gwt.user.client.ui.ValueBox;
 public abstract class AbstractStorageView<M extends IStorageModel> extends Composite implements HasEditorDriver<M> {
 
     @Ignore
+    @WithElementId("path")
     protected EntityModelTextBoxEditor pathEditor;
 
     public abstract void focus();
