@@ -719,8 +719,8 @@ public class BackendVmsResourceTest
         assertNotNull(model.getCluster().getId());
         assertNotNull(model.getCpu());
         assertNotNull(model.getCpu().getTopology());
-        assertEquals(4, model.getCpu().getTopology().getCores());
-        assertEquals(2, model.getCpu().getTopology().getSockets());
+        assertEquals(4, model.getCpu().getTopology().getCores().intValue());
+        assertEquals(2, model.getCpu().getTopology().getSockets().intValue());
     }
 
     private VM createModel(Disks disks) {

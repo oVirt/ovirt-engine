@@ -238,10 +238,10 @@ public class BackendApiResourceTest extends Assert {
         assertContainsBlankTemplate(api.getSpecialObjects());
         assertNotNull(api.getProductInfo());
         assertNotNull(api.getProductInfo().getVersion());
-        assertEquals(MAJOR,    api.getProductInfo().getVersion().getMajor());
-        assertEquals(MINOR,    api.getProductInfo().getVersion().getMinor());
-        assertEquals(BUILD,    api.getProductInfo().getVersion().getBuild());
-        assertEquals(REVISION, api.getProductInfo().getVersion().getRevision());
+        assertEquals(MAJOR,    api.getProductInfo().getVersion().getMajor().intValue());
+        assertEquals(MINOR,    api.getProductInfo().getVersion().getMinor().intValue());
+        assertEquals(BUILD,    api.getProductInfo().getVersion().getBuild().intValue());
+        assertEquals(REVISION, api.getProductInfo().getVersion().getRevision().intValue());
 
         assertNotNull(api.getSummary());
         assertEquals(TOTAL_VMS,              api.getSummary().getVMs().getTotal());

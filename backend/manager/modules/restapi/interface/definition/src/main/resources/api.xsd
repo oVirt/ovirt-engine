@@ -361,13 +361,25 @@
   <xs:element name="cpu" type="CPU"/>
 
   <xs:complexType name="CpuTopology">
-    <xs:attribute name="sockets" type="xs:int"/>
-    <xs:attribute name="cores" type="xs:int"/>
+    <xs:attribute name="sockets" type="xs:int" use="optional">
+            <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="cores" type="xs:int" use="optional">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="CPU">
     <xs:sequence>
-      <xs:element name="topology" type="CpuTopology" minOccurs="0"/>
+      <xs:element name="topology" type="CpuTopology" minOccurs="0" maxOccurs="1"/>
       <xs:element name="level" type="xs:int" minOccurs="0"/>
       <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="speed" type="xs:decimal" minOccurs="0" maxOccurs="1"/>      
@@ -392,11 +404,41 @@
 
   <xs:complexType name="Version">
     <xs:sequence/>
-    <xs:attribute name="major" type="xs:unsignedShort"/>
-    <xs:attribute name="minor" type="xs:unsignedShort"/>
-    <xs:attribute name="build" type="xs:unsignedShort"/>
-    <xs:attribute name="revision" type="xs:unsignedShort"/>
-    <xs:attribute name="full_version" type="xs:string"/>
+    <xs:attribute name="major" type="xs:unsignedShort">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="minor" type="xs:unsignedShort">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="build" type="xs:unsignedShort">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="revision" type="xs:unsignedShort">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="full_version" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:element name="product_info" type="ProductInfo"/>
@@ -833,7 +875,13 @@
   <xs:element name="clusters" type="Clusters"/>
 
   <xs:complexType name="MemoryOverCommit">
-    <xs:attribute name="percent" type="xs:int"/>
+    <xs:attribute name="percent" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="MemoryPolicy">
@@ -851,9 +899,27 @@
   </xs:complexType>
 
   <xs:complexType name="SchedulingPolicyThresholds">
-    <xs:attribute name="low" type="xs:int"/>
-    <xs:attribute name="high" type="xs:int"/>
-    <xs:attribute name="duration" type="xs:int"/>
+    <xs:attribute name="low" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="high" type="xs:int">
+         <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute> 
+    <xs:attribute name="duration" type="xs:int">
+            <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="SchedulingPolicy">
@@ -1367,7 +1433,13 @@
   <xs:element name="vlan" type="VLAN"/>
 
   <xs:complexType name="VLAN">
-    <xs:attribute name="id" type="xs:unsignedShort"/>
+    <xs:attribute name="id" type="xs:unsignedShort">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:element name="network" type="Network"/>

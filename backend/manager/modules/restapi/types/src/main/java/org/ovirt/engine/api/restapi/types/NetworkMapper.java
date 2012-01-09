@@ -40,7 +40,7 @@ public class NetworkMapper {
                 entity.setgateway(model.getIp().getGateway());
             }
         }
-        if (model.isSetVlan() && model.getVlan().isSetId()) {
+        if (model.isSetVlan() && model.getVlan().getId()!=null) {
             try {
                 entity.setvlan_id(model.getVlan().getId());
             } catch (NumberFormatException e) {

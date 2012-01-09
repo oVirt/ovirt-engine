@@ -36,7 +36,7 @@ public class DataCenterMapper {
                 entity.setStoragePoolFormatType(StorageFormatMapper.map(storageFormat, null));
             }
         }
-        if (model.isSetVersion() && model.getVersion().isSetMajor() && model.getVersion().isSetMinor()) {
+        if (model.isSetVersion() && model.getVersion().getMajor()!=null && model.getVersion().getMinor()!=null) {
             entity.setcompatibility_version(new org.ovirt.engine.core.compat.Version(model.getVersion().getMajor(),
                                                                                 model.getVersion().getMinor()));
         }

@@ -66,10 +66,10 @@ public class TemplateMapper {
             entity.setmem_size_mb((int)(model.getMemory() / BYTES_PER_MB));
         }
         if (model.isSetCpu() && model.getCpu().isSetTopology()) {
-            if (model.getCpu().getTopology().isSetCores()) {
+            if (model.getCpu().getTopology().getCores()!=null) {
                 entity.setcpu_per_socket(model.getCpu().getTopology().getCores());
             }
-            if (model.getCpu().getTopology().isSetSockets()) {
+            if (model.getCpu().getTopology().getSockets()!=null) {
                 entity.setnum_of_sockets(model.getCpu().getTopology().getSockets());
             }
         }
@@ -155,10 +155,10 @@ public class TemplateMapper {
             staticVm.setmem_size_mb((int)(model.getMemory() / BYTES_PER_MB));
         }
         if (model.isSetCpu() && model.getCpu().isSetTopology()) {
-            if (model.getCpu().getTopology().isSetCores()) {
+            if (model.getCpu().getTopology().getCores()!=null) {
                 staticVm.setcpu_per_socket(model.getCpu().getTopology().getCores());
             }
-            if (model.getCpu().getTopology().isSetSockets()) {
+            if (model.getCpu().getTopology().getSockets()!=null) {
                 staticVm.setnum_of_sockets(model.getCpu().getTopology().getSockets());
             }
         }

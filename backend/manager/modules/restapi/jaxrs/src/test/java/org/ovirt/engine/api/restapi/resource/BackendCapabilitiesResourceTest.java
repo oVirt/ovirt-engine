@@ -197,8 +197,8 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
     }
 
     private void verifyVersion(VersionCaps version, int major, int minor, boolean current, String cpuName, int cpuLevel, boolean localStorage, boolean hooks, boolean thp) {
-        assertEquals(major, version.getMajor());
-        assertEquals(minor, version.getMinor());
+        assertEquals(major, version.getMajor().intValue());
+        assertEquals(minor, version.getMinor().intValue());
         assertEquals(current, version.isCurrent());
         assertNotNull(version.getCPUs());
         assertTrue(version.getCPUs().getCPUs().size() == 1);

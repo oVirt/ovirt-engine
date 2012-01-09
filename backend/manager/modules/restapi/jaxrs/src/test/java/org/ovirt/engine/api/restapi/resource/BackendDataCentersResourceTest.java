@@ -265,8 +265,8 @@ public class BackendDataCentersResourceTest
         assertEquals(BASE_PATH + "/datacenters/" + GUIDS[index] + "/storagedomains", model.getLinks().get(0).getHref());
         assertTrue(model.isSetSupportedVersions());
         assertEquals(1, model.getSupportedVersions().getVersions().size());
-        assertEquals(2, model.getSupportedVersions().getVersions().get(0).getMajor());
-        assertEquals(3, model.getSupportedVersions().getVersions().get(0).getMinor());
+        assertEquals(2, model.getSupportedVersions().getVersions().get(0).getMajor().intValue());
+        assertEquals(3, model.getSupportedVersions().getVersions().get(0).getMinor().intValue());
     }
 
     protected void setUpGetEntityExpectations() throws Exception {

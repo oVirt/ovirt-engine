@@ -114,10 +114,10 @@ public class VmMapper {
             staticVm.setvds_group_id(new Guid(vm.getCluster().getId()));
         }
         if (vm.isSetCpu() && vm.getCpu().isSetTopology()) {
-            if (vm.getCpu().getTopology().isSetCores()) {
+            if (vm.getCpu().getTopology().getCores()!=null) {
                 staticVm.setcpu_per_socket(vm.getCpu().getTopology().getCores());
             }
-            if (vm.getCpu().getTopology().isSetSockets()) {
+            if (vm.getCpu().getTopology().getSockets()!=null) {
                 staticVm.setnum_of_sockets(vm.getCpu().getTopology().getSockets());
             }
         }

@@ -43,7 +43,7 @@ public class ClusterMapper {
         if (model.isSetDataCenter() && model.getDataCenter().isSetId()) {
             entity.setstorage_pool_id(new Guid(model.getDataCenter().getId()));
         }
-        if (model.isSetVersion() && model.getVersion().isSetMajor() && model.getVersion().isSetMinor()) {
+        if (model.isSetVersion() && model.getVersion().getMajor()!=null && model.getVersion().getMinor()!=null) {
             entity.setcompatibility_version(new org.ovirt.engine.core.compat.Version(model.getVersion().getMajor(),
                                                                                 model.getVersion().getMinor()));
         }
@@ -91,7 +91,7 @@ public class ClusterMapper {
     @Mapping(from = MemoryPolicy.class, to = VDSGroup.class)
     public static VDSGroup map(MemoryPolicy model, VDSGroup template) {
         VDSGroup entity = template != null ? template : new VDSGroup();
-        if (model.isSetOverCommit() && model.getOverCommit().isSetPercent()) {
+        if (model.isSetOverCommit() && model.getOverCommit().getPercent()!=null) {
             entity.setmax_vds_memory_over_commit(model.getOverCommit().getPercent());
         }
         if (model.isSetTransparentHugepages() &&
@@ -124,13 +124,13 @@ public class ClusterMapper {
         }
         if (model.isSetThresholds()) {
             SchedulingPolicyThresholds thresholds = model.getThresholds();
-            if (thresholds.isSetLow()) {
+            if (thresholds.getLow()!=null) {
                 entity.setlow_utilization(thresholds.getLow());
             }
-            if (thresholds.isSetHigh()) {
+            if (thresholds.getHigh()!=null) {
                 entity.sethigh_utilization(thresholds.getHigh());
             }
-            if (thresholds.isSetDuration()) {
+            if (thresholds.getDuration()!=null) {
                 entity.setcpu_over_commit_duration_minutes(Math.round(thresholds.getDuration() / 60.0f));
             }
         }
