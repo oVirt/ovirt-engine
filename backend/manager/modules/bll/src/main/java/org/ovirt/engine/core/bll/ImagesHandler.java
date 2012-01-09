@@ -121,8 +121,7 @@ public final class ImagesHandler {
         for (DiskImage image : images) {
             DiskImage fromIrs;
             try {
-                Guid storageDomainId = !domainId.equals(Guid.Empty) ? domainId : image.getstorage_id() != null ? image
-                        .getstorage_id().getValue() : Guid.Empty;
+                Guid storageDomainId = image.getstorage_id() != null ? image.getstorage_id().getValue() : domainId;
                 Guid imageGroupId = image.getimage_group_id() != null ? image.getimage_group_id().getValue()
                         : Guid.Empty;
                 fromIrs = (DiskImage) Backend

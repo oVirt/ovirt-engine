@@ -1,9 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -13,13 +9,13 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -35,6 +31,10 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateCommand<T> {
@@ -276,7 +276,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         for (DiskImage diskImage : mImages) {
             CreateImageTemplateParameters createParams = new CreateImageTemplateParameters(diskImage.getId(),
                         getVmTemplateId(), getVmTemplateName(), getVmId());
-            createParams.setStorageDomainId(srcStorageDomain);
+            if(!diskImage.getstorage_id().equals(Guid.Empty)) {
+                createParams.setStorageDomainId(diskImage.getstorage_id().getValue());
+            } else {
+                createParams.setStorageDomainId(srcStorageDomain);
+            }
             createParams.setVmSnapshotId(vmSnapshotId);
             createParams.setEntityId(getParameters().getEntityId());
             createParams.setDestinationStorageDomainId(getStorageDomainId().getValue());

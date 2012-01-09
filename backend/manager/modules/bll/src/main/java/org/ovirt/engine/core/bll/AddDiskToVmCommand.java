@@ -1,25 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
-import org.ovirt.engine.core.common.businessentities.DiskType;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.*;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -36,6 +23,10 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @CustomLogFields({ @CustomLogField("DiskName") })
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -126,13 +117,6 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
                             getStorageDomainId().getValue(), getVm().getstorage_pool_id())) == null) {
                         returnValue = false;
                         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
-                    } else if (!isDomainSameAsOnDisks()) {
-                        returnValue = false;
-                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_DOMAIN_MISMATCH);
-                        storage_domain_static disksStorageDomain =
-                                getStorageDomainStaticDao().get(getDisksStorageDomainId());
-                        addCanDoActionMessage(MessageFormat.format("$DomainName {0}",
-                                disksStorageDomain == null ? "[N/A]" : disksStorageDomain.getstorage_name()));
                     } else {
 
                         List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(getVmId());
@@ -239,14 +223,6 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
      */
     private Guid getDisksStorageDomainId() {
         return getVm().getDiskMap().values().iterator().next().getstorage_id().getValue();
-    }
-
-    /**
-     * @return Whether the domain of the new this is the same as on the existing VM disks.
-     */
-    private boolean isDomainSameAsOnDisks() {
-        Map<String, DiskImage> vmDisks = getVm().getDiskMap();
-        return (vmDisks == null || vmDisks.isEmpty() || getStorageDomainId().equals(getDisksStorageDomainId()));
     }
 
     @Override

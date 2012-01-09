@@ -1,19 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.mock;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
-
-import java.util.ArrayList;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +32,20 @@ import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ VmHandler.class, ImagesHandler.class, StorageDomainSpaceChecker.class, Config.class,
@@ -155,7 +155,7 @@ public class AddDiskToVmCommandTest {
     }
 
     @Test
-    public void canDoActionFailsOnDiskDomainCheckWhenStorageGuidInParamsMismatches() throws Exception {
+    public void canDoActionSucceedsOnDiskDomainCheckWhenStorageGuidInParamsMismatches() throws Exception {
         Guid storageId = Guid.NewGuid();
         initializeCommand(storageId);
 
@@ -165,9 +165,7 @@ public class AddDiskToVmCommandTest {
         mockStoragePoolIsoMap();
         doReturn(storageDomainStaticDAO).when(command).getStorageDomainStaticDao();
 
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue().getCanDoActionMessages().contains(
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_DOMAIN_MISMATCH.toString()));
+        assertTrue(command.canDoAction());
     }
 
     @Test
