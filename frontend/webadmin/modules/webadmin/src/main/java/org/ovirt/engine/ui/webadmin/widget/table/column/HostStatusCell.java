@@ -68,7 +68,8 @@ public class HostStatusCell extends AbstractCell<VDS> {
         ImageResource alertImage = resources.alertImage();
 
         // Generate the HTML for the images:
-        SafeHtml statusImageHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
+        SafeHtml statusImageHtml =
+                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
         SafeHtml alertImageHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(alertImage).getHTML());
 
         // Generate the HTML for the cell including the exclamation mark only if
@@ -76,10 +77,12 @@ public class HostStatusCell extends AbstractCell<VDS> {
         // changes that haven't been saved yet:
         sb.appendHtmlConstant("<div style=\"text-align: center; padding-top: 6px;\">");
         sb.append(statusImageHtml);
-        if (!vds.getpm_enabled() || vds.getnet_config_dirty()) {
+        boolean getnet_config_dirty =
+                vds.getnet_config_dirty() == null ? false : vds.getnet_config_dirty().booleanValue();
+        boolean getpm_enabled = vds.getpm_enabled();
+        if (!getpm_enabled || getnet_config_dirty) {
             sb.append(alertImageHtml);
         }
         sb.appendHtmlConstant("</div>");
     }
-
 }
