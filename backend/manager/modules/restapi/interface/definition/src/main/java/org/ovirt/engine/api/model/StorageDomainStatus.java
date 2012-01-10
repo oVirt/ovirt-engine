@@ -23,6 +23,7 @@ public enum StorageDomainStatus {
     LOCKED,
     MIXED,
     UNATTACHED,
+    MAINTENANCE,
     UNKNOWN;
 
     public String value() {
