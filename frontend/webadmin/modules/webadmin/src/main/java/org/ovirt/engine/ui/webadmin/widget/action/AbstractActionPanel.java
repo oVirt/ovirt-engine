@@ -93,7 +93,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
 
         // Set button element ID for better accessibility
         newActionButton.asWidget().getElement().setId(
-                ElementIdUtils.createElementId(elementId, buttonDef.getTitle()));
+                ElementIdUtils.createElementId(elementId, buttonDef.getUniqueId()));
 
         // Add the button to the action panel
         if (!buttonDef.isAvailableOnlyFromContext()) {

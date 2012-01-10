@@ -156,6 +156,11 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
     }
 
     @Override
+    public String getUniqueId() {
+        return command.getName();
+    }
+
+    @Override
     public boolean isAccessible() {
         return command.getIsAvailable();
     }

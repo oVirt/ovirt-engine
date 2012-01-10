@@ -71,7 +71,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
 
     private final OrderedMultiSelectionModel<T> selectionModel;
 
-    @WithElementId
+    @WithElementId("content")
     public final ActionCellTable<T> table;
     private final ActionCellTable<T> tableHeader;
 

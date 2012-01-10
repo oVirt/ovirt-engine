@@ -47,6 +47,11 @@ public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandl
     String getTitle();
 
     /**
+     * Returns the ID that uniquely identifies this button.
+     */
+    String getUniqueId();
+
+    /**
      * Indicates whether the action is implemented or not, This is only relevant for the first tech-preview of webadmin
      * where not all buttons may be implemented TODO: This is temporary and should be cleaned up when WebAdmin will be
      * fully implemented!
