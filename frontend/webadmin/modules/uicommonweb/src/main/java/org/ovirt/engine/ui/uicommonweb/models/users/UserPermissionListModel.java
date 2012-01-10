@@ -183,10 +183,10 @@ public class UserPermissionListModel extends SearchableListModel
 	    
 	    permissions p = (permissions)getSelectedItem();
         if (p != null && getEntity() != null) {
-            isInherited = p.getad_element_id().equals(getEntity().getuser_id());
+            isInherited = !p.getad_element_id().equals(getEntity().getuser_id());
         }
         
-		getRemoveCommand().setIsExecutionAllowed(isInherited && (getSelectedItem() != null
+		getRemoveCommand().setIsExecutionAllowed(!isInherited && (getSelectedItem() != null
 		        || (getSelectedItems() != null && getSelectedItems().size() > 0)));
 	}
 
