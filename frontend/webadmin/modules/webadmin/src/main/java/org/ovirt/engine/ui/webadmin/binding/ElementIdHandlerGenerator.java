@@ -16,7 +16,7 @@ import com.google.gwt.user.rebind.SourceWriter;
 
 /**
  * GWT deferred binding generator that provides {@link ElementIdHandler} implementations.
- * 
+ *
  * @see ElementIdHandler
  */
 public class ElementIdHandlerGenerator extends Generator {
@@ -48,7 +48,8 @@ public class ElementIdHandlerGenerator extends Generator {
 
         ClassSourceFileComposerFactory factory = new ClassSourceFileComposerFactory(
                 packageName, simpleSourceName);
-        factory.setSuperclass(superclass.getQualifiedSourceName());
+        factory.setSuperclass(superclass.getQualifiedSourceName()
+                + "<" + parser.getOwnerType().getParameterizedQualifiedSourceName() + ">");
         factory.addImplementedInterface(typeName);
 
         SourceWriter sw = factory.createSourceWriter(context, pw);

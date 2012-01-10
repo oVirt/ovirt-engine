@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.UIObject;
  * <p>
  * Semantics of this annotation for different types are shown in the following table:
  * <p>
- * 
+ *
  * <blockquote>
  * <table border="1" cellpadding="5" cellspacing="0">
  * <thead>
@@ -38,11 +38,11 @@ import com.google.gwt.user.client.ui.UIObject;
  * </tbody>
  * </table>
  * </blockquote>
- * 
+ *
  * <p>
  * Since {@link ElementIdHandler} implementations access field values directly through field declarations, annotated
  * fields should not be {@code private}.
- * 
+ *
  * @see ElementIdHandler
  * @see HasElementId
  */
@@ -54,7 +54,7 @@ public @interface WithElementId {
      * Overrides the default field ID that is part of the resulting DOM element ID.
      * <p>
      * When not specified, the name of the annotated field will be taken as the field ID value.
-     * 
+     *
      * @return Custom field ID or an empty string to use the default value.
      */
     String value() default "";
@@ -62,7 +62,7 @@ public @interface WithElementId {
     /**
      * If {@code true}, declared type of the given field will be recursively processed with regard to
      * {@literal @WithElementId} fields. If {@code false}, no further action will be taken on the field type.
-     * 
+     *
      * @return {@code true} if the field type should be recursively processed with regard to {@literal @WithElementId}
      *         fields, {@code false} otherwise.
      */

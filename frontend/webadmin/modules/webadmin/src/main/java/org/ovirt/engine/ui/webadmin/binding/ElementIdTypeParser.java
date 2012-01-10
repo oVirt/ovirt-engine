@@ -16,7 +16,7 @@ import com.google.gwt.editor.rebind.model.ModelUtils;
 /**
  * Walks through fields of an owner type for the given {@link ElementIdHandler} subinterface, generating DOM element IDs
  * and collecting corresponding field statements.
- * 
+ *
  * @see ElementIdStatement
  */
 public class ElementIdTypeParser {
@@ -74,11 +74,11 @@ public class ElementIdTypeParser {
     public ElementIdStatement[] parseStatements() throws UnableToCompleteException {
         statements.clear();
 
-        doParse(ownerType, new ArrayList<JClassType>(), ".", ownerTypeId());
-
         statements.add(new ElementIdStatement(
                 ElementIdHandlerGenerator.ElementIdHandler_generateAndSetIds_owner,
-                ownerTypeId()));
+                getOwnerTypeId()));
+
+        doParse(ownerType, new ArrayList<JClassType>(), ".", getOwnerTypeId());
 
         return statements.toArray(new ElementIdStatement[0]);
     }
@@ -128,7 +128,7 @@ public class ElementIdTypeParser {
         }
     }
 
-    String ownerTypeId() {
+    String getOwnerTypeId() {
         return ownerType.getName().replace(".", ID_ELEMENT_SEPARATOR);
     }
 
