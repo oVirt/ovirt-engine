@@ -29,9 +29,6 @@ public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewI
     protected void initWidget(T widget) {
         this.widget = widget;
 
-        // Hide the popup when GWTP place transition starts
-        setAutoHideOnNavigationEventEnabled(true);
-
         // All popups are modal by default
         widget.setModal(true);
 
