@@ -70,17 +70,17 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
 
     @Override
     public void setHashName(String name) {
-        hashName = name;
+        this.hashName = name;
     }
 
     @Override
-    public HasUiCommandClickHandlers addFooterButton(String label) {
+    public HasUiCommandClickHandlers addFooterButton(String label, String uniqueId) {
         UiCommandButton button = new UiCommandButton(label);
         asWidget().addFooterButton(button);
 
         // Set button element ID for better accessibility
         button.asWidget().getElement().setId(
-                ElementIdUtils.createElementId(elementId, label));
+                ElementIdUtils.createElementId(elementId, uniqueId));
 
         return button;
     }
