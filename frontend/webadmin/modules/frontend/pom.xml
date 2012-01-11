@@ -99,8 +99,9 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
-        <artifactId>maven-checkstyle-plugin</artifactId>
+      	<artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

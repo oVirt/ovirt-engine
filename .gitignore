@@ -17,6 +17,8 @@ target
 .settings
 .project
 .classpath
+.factorypath
+.pmd
 *.ipr
 *.iml
 .idea

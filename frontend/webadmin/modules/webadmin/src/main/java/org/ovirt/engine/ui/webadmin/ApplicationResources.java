@@ -1,11 +1,16 @@
 package org.ovirt.engine.ui.webadmin;
 
-import com.google.gwt.resources.client.ClientBundle;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.resources.client.ImageResource;
 
-public interface ApplicationResources extends ClientBundle {
+public interface ApplicationResources extends CommonApplicationResources {
+
+    @Override
+    @Source("css/DialogBox.css")
+    CssResource dialogBoxStyle();
 
     @Source("images/admin.png")
     ImageResource adminImage();
@@ -294,9 +299,6 @@ public interface ApplicationResources extends ClientBundle {
     @Source("images/enlarge_bottom_panel.png")
     ImageResource enlargeFooterPanelImage();
 
-    @Source("css/DialogBox.css")
-    CssResource dialogBoxStyle();
-
     @Source("images/button/button_start.png")
     ImageResource dialogButtonUpStart();
 
@@ -336,7 +338,6 @@ public interface ApplicationResources extends ClientBundle {
     // Slider
     /**
      * An image used for the sliding knob.
-     *
      * @return a prototype of this image
      */
     @Source("images/slider.gif")
@@ -344,7 +345,6 @@ public interface ApplicationResources extends ClientBundle {
 
     /**
      * An image used for the sliding knob.
-     *
      * @return a prototype of this image
      */
     @Source("images/sliderDisabled.gif")
@@ -352,7 +352,6 @@ public interface ApplicationResources extends ClientBundle {
 
     /**
      * An image used for the sliding knob while sliding.
-     *
      * @return a prototype of this image
      */
     @Source("images/sliderSliding.gif")

@@ -12,18 +12,15 @@ public abstract class LunTextColumn extends SafeHtmlColumn<LunModel> {
 
     @Override
     public final SafeHtml getValue(LunModel object) {
-        ScrollableTextCell.Template template = GWT.create(ScrollableTextCell.Template.class);
-
+        ScrollableTextCell.CellTemplate template = GWT.create(ScrollableTextCell.CellTemplate.class);
         String color = "";
 
         if (object != null) {
             if (object.getIsIncluded() || object.getIsSelected()) {
                 color = "black";
-            }
-            else if (!object.getIsAccessible()) {
+            } else if (!object.getIsAccessible()) {
                 color = "orange";
-            }
-            else {
+            } else {
                 color = "grey";
             }
         }
@@ -32,4 +29,5 @@ public abstract class LunTextColumn extends SafeHtmlColumn<LunModel> {
     }
 
     public abstract String getRawValue(LunModel object);
+
 }

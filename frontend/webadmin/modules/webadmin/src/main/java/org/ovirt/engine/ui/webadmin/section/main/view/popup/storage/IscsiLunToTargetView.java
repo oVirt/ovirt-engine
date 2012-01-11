@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-import org.ovirt.engine.ui.webadmin.widget.HasEditorDriver;
 import org.ovirt.engine.ui.webadmin.widget.storage.SanStorageLunToTargetList;
 
 import com.google.gwt.core.client.GWT;

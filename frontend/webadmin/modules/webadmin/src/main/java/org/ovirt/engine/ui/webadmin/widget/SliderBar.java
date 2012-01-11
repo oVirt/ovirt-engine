@@ -1037,4 +1037,5 @@ public class SliderBar extends FocusPanel implements RequiresResize,
     public void onResize() {
         redraw();
     }
+
 }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.gin;
 
-import org.ovirt.engine.ui.webadmin.presenter.ErrorPopupPresenterWidget;
+import org.ovirt.engine.ui.common.gin.BasePresenterModule;
+import org.ovirt.engine.ui.common.presenter.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.login.view.LoginPopupView;
@@ -12,7 +13,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
@@ -239,19 +239,15 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabV
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.VirtualMachineSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.view.ErrorPopupView;
 
-import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
-
 /**
- * GIN module containing GWTP presenter bindings.
+ * GIN module containing WebAdmin GWTP presenter bindings.
  */
-public class PresenterModule extends AbstractPresenterModule {
+public class PresenterModule extends BasePresenterModule {
 
     @Override
     protected void configure() {
         // Common stuff
-        bindSingletonPresenterWidget(ErrorPopupPresenterWidget.class,
-                ErrorPopupPresenterWidget.ViewDef.class,
-                ErrorPopupView.class);
+        bindCommonPresenters(ErrorPopupView.class);
 
         // Login section
         bindPresenter(LoginSectionPresenter.class,

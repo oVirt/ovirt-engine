@@ -15,9 +15,6 @@
   <description>oVirt Engine User Portal GUI</description>
 
   <properties>
-    <!--  tell the compiler we can use 1.6 -->
-    <maven.compiler.source>1.6</maven.compiler.source>
-    <maven.compiler.target>1.6</maven.compiler.target>
     <!-- Hack until module inheritance will be fixed -->
     <smartgwt.version>2.2</smartgwt.version>
     <!--This can be overidded by setting this property in your personal settings.xml-->

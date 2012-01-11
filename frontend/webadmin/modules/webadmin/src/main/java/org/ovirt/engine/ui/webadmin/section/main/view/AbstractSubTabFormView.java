@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
+import org.ovirt.engine.ui.common.view.AbstractView;
+import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.webadmin.view.AbstractView;
-import org.ovirt.engine.ui.webadmin.widget.table.OrderedMultiSelectionModel;
 
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 

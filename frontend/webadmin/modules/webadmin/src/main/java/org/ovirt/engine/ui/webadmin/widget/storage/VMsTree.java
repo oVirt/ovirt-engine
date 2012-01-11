@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageVmListModel;
@@ -18,7 +19,6 @@ import org.ovirt.engine.ui.webadmin.widget.renderer.DiskSizeRenderer.DiskSizeUni
 import org.ovirt.engine.ui.webadmin.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ImageResourceColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -32,6 +32,7 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel> {
     @Override
     public void updateTree(final StorageVmListModel listModel) {
         listModel.getItemsChangedEvent().addListener(new IEventListener() {
+            @SuppressWarnings("unchecked")
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 StorageVmListModel model = (StorageVmListModel) sender;

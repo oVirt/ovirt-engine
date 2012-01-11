@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.HasEditorDriver;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
-import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
-import org.ovirt.engine.ui.webadmin.widget.HasEditorDriver;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Composite;

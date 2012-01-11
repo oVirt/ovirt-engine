@@ -6,11 +6,11 @@ import java.util.List;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.widget.HasEditorDriver;
+import org.ovirt.engine.ui.common.widget.table.ElementIdCellTable;
+import org.ovirt.engine.ui.common.widget.table.column.RadioboxCell;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.webadmin.widget.HasEditorDriver;
-import org.ovirt.engine.ui.webadmin.widget.table.ElementIdCellTable;
-import org.ovirt.engine.ui.webadmin.widget.table.column.RadioboxCell;
 
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
@@ -29,8 +29,6 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
  * A CellTable of a {@link ListModel} of {@link EntityModel}s
- *
- * @param <M>
  */
 public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTable<EntityModel> implements HasEditorDriver<M> {
 
@@ -189,7 +187,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         super.setColumnWidth(column, width);
     }
 
-    public void addColumn(Column column, Header header, String width) {
+    public void addColumn(Column column, Header<?> header, String width) {
         super.addColumn(column, header);
         super.setColumnWidth(column, width);
     }

@@ -1,14 +1,14 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
+import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.common.view.AbstractPopupView;
+import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
+import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.idhandler.HasElementId;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBoundPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.utils.ElementIdUtils;
-import org.ovirt.engine.ui.webadmin.view.AbstractPopupView;
-import org.ovirt.engine.ui.webadmin.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.webadmin.widget.UiCommandButton;
-import org.ovirt.engine.ui.webadmin.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.webadmin.widget.dialog.ProgressPopupContent;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 

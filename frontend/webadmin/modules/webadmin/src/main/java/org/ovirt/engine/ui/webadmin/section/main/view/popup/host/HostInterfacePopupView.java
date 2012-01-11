@@ -7,6 +7,12 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
@@ -14,14 +20,8 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
-import org.ovirt.engine.ui.webadmin.widget.Align;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelLabelEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.EnumRadioEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.renderer.NullSafeRenderer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -92,7 +92,6 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         super(eventBus, resources);
 
         networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-
             @Override
             protected String renderNullSafe(Object object) {
                 return ((network) object).getname();
@@ -100,7 +99,6 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
         });
         bondingModeEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-
             @SuppressWarnings("unchecked")
             @Override
             protected String renderNullSafe(Object object) {
@@ -113,7 +111,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
                 return (String) value.getEntity();
             }
         });
-        bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class);
+        bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class, eventBus);
 
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -157,7 +155,6 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         });
 
         object.getBondingOptions().getSelectedItemChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 ListModel list = (ListModel) sender;
@@ -175,7 +172,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         });
 
         customEditor.asValueBox().addValueChangeHandler(new ValueChangeHandler<Object>() {
-
+            @SuppressWarnings("unchecked")
             @Override
             public void onValueChange(ValueChangeEvent<Object> event) {
                 for (Object item : object.getBondingOptions().getItems()) {

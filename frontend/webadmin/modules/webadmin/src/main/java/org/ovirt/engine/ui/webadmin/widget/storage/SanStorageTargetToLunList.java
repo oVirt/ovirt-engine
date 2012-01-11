@@ -157,6 +157,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         table.setWidth("100%", true);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected TreeItem createLeafNode(ListModel leafModel) {
         if (hideLeaf) {

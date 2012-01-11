@@ -5,18 +5,18 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DiskSizeColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainSharedStatusColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -88,31 +88,31 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
         };
         getTable().addColumn(freeSpaceColumn, "Free Space");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("New Domain") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("New Domain") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewDomainCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Import Domain") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Import Domain") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getImportDomainCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Edit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Edit") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Remove") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Destroy", true) {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Destroy", true) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getDestroyCommand();

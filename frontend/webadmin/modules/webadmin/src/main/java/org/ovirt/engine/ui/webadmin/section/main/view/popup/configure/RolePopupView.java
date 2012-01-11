@@ -7,6 +7,7 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleModel;
@@ -18,7 +19,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTree;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -160,7 +160,6 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
         // Listen to Properties
         object.getPropertyChangedEvent().addListener(new IEventListener() {
 
-            @SuppressWarnings("unchecked")
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 RoleModel model = (RoleModel) sender;
@@ -197,6 +196,7 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
 
     }
 
+    @SuppressWarnings("unchecked")
     private void updateTree(RoleModel model) {
         // Get tag node list
         ArrayList<SelectionTreeNodeModel> tagTreeNodes = model.getPermissionGroupModels();

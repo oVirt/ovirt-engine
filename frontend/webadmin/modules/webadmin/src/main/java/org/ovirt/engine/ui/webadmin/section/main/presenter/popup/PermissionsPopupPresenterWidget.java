@@ -3,9 +3,10 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.popup;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
+import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
-import org.ovirt.engine.ui.webadmin.widget.HasUiCommandClickHandlers;
-import org.ovirt.engine.ui.webadmin.widget.dialog.PopupNativeKeyPressHandler;
 
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -27,7 +28,9 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.inject.Inject;
 
 public class PermissionsPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<AdElementListModel, PermissionsPopupPresenterWidget.ViewDef> {
+
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<AdElementListModel> {
+
         HasUiCommandClickHandlers getSearchButton();
 
         HasKeyPressHandlers getKeyPressSearchInputBox();

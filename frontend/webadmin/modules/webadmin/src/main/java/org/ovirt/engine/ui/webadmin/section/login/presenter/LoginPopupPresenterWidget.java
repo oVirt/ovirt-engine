@@ -5,9 +5,9 @@ import java.util.logging.Logger;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.auth.SilentLoginData;
-import org.ovirt.engine.ui.webadmin.widget.HasEditorDriver;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;

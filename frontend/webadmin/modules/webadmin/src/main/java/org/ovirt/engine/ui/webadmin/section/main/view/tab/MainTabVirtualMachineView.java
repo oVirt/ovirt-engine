@@ -3,19 +3,19 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVirtualMachinePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.ImageUiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
@@ -142,66 +142,66 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(loggedInUserColumn, "Logged-in User", "90px");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("New Server") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("New Server") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewServerCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("New Desktop") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("New Desktop") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewDesktopCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Edit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Edit") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Remove") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
         });
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Run Once") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Run Once") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRunOnceCommand();
             }
         });
-        getTable().addActionButton(new ImageUiCommandButtonDefinition<VM>("Run",
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>("Run",
                 resources.runVmImage(), resources.runVmDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRunCommand();
             }
         });
-        getTable().addActionButton(new ImageUiCommandButtonDefinition<VM>("Suspend",
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>("Suspend",
                 resources.pauseVmImage(), resources.pauseVmDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getPauseCommand();
             }
         });
-        getTable().addActionButton(new ImageUiCommandButtonDefinition<VM>("Shut down",
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>("Shut down",
                 resources.stopVmImage(), resources.stopVmDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getShutdownCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Stop", true) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Stop", true) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStopCommand();
             }
         });
         // TODO: separator
-        getTable().addActionButton(new ImageUiCommandButtonDefinition<VM>("Console",
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>("Console",
                 resources.consoleImage(), resources.consoleDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
@@ -210,46 +210,46 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         });
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Migrate") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Migrate") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getMigrateCommand();
             }
         });
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Make Template") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Make Template") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewTemplateCommand();
             }
         });
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Export") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Export") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getExportCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Move") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Move") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getMoveCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Change CD") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Change CD") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getChangeCdCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Assign Tags") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Assign Tags") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getAssignTagsCommand();
             }
         });
 
-        getTable().addActionButton(new ImageUiCommandButtonDefinition<VM>("Guide Me",
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>("Guide Me",
                 resources.guideSmallImage(), resources.guideSmallDisabledImage(), true) {
             @Override
             protected UICommand resolveCommand() {
@@ -257,4 +257,5 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         });
     }
+
 }

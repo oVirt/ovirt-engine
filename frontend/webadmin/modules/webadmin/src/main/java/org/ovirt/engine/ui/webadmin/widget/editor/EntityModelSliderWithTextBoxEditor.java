@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.webadmin.widget.editor;
 
-import org.ovirt.engine.ui.webadmin.widget.AbstractValidatedWidgetWithLabel;
-import org.ovirt.engine.ui.webadmin.widget.Align;
+import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.editor.TakesValueWithChangeHandlersEditor;
+import org.ovirt.engine.ui.common.widget.editor.WidgetWithLabelEditor;
 
 import com.google.gwt.editor.client.IsEditor;
 

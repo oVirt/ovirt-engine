@@ -3,18 +3,18 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ProgressBarColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -114,57 +114,57 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         };
         getTable().addColumn(spmColumn, "SpmStatus");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("New") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("New") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Edit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Edit") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Remove") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
         });
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Activate") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Activate") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getActivateCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Maintenance") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Maintenance") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getMaintenanceCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Confirm 'Host has been Rebooted'", true) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Confirm 'Host has been Rebooted'", true) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getManualFenceCommand();
             }
         });
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Approve") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Approve") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getApproveCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Configure Local Storage") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Configure Local Storage") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getConfigureLocalStorageCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VDS>("Assign Tags") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Assign Tags") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getAssignTagsCommand();

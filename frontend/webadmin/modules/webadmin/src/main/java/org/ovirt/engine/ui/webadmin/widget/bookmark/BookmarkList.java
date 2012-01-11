@@ -1,15 +1,14 @@
 package org.ovirt.engine.ui.webadmin.widget.bookmark;
 
 import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.webadmin.widget.action.SimpleActionPanel;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ScrollEvent;
@@ -36,9 +35,6 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
     @UiField
     ScrollPanel scrollPanel;
 
-    @WithElementId
-    SimpleActionPanel<bookmarks> actionPanel;
-
     public BookmarkList(BookmarkModelProvider modelProvider) {
         super(modelProvider);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -61,27 +57,28 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
     }
 
     @Override
-    protected SimpleActionPanel<bookmarks> createActionPanel(final BookmarkModelProvider modelProvider) {
-        actionPanel = new SimpleActionPanel<bookmarks>(modelProvider, modelProvider.getSelectionModel());
-        return actionPanel;
+    protected SimpleActionPanel<bookmarks> createActionPanel(BookmarkModelProvider modelProvider) {
+        return new SimpleActionPanel<bookmarks>(modelProvider, modelProvider.getSelectionModel(),
+                ClientGinjectorProvider.instance().getEventBus(),
+                ClientGinjectorProvider.instance().getApplicationConstants());
     }
 
     private void addActionButtons(final BookmarkModelProvider modelProvider) {
-        actionPanel.addActionButton(new UiCommandButtonDefinition<bookmarks>("New") {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<bookmarks>("New") {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getNewCommand();
             }
         });
 
-        actionPanel.addActionButton(new UiCommandButtonDefinition<bookmarks>("Edit") {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<bookmarks>("Edit") {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getEditCommand();
             }
         });
 
-        actionPanel.addActionButton(new UiCommandButtonDefinition<bookmarks>("Remove") {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<bookmarks>("Remove") {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getRemoveCommand();
@@ -108,4 +105,5 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
             }
         });
     }
+
 }

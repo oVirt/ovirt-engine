@@ -3,23 +3,20 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.webadmin.widget.table.column.IsLockedImageTypeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ObjectNameColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.RoleTypeColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -51,23 +48,16 @@ public class RoleView extends Composite {
     Label showLabel;
 
     private SimpleActionTable<roles> table;
-
     private SimpleActionTable<permissions> permissionTable;
-
     private SplitLayoutPanel splitLayoutPanel;
 
     private final RoleModelProvider roleModelProvider;
-
     private final RolePermissionModelProvider permissionModelProvider;
 
     @Inject
-    public RoleView(ClientGinjector ginjector,
-            EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
+    public RoleView(ApplicationConstants constants,
             RoleModelProvider roleModelProvider,
             RolePermissionModelProvider permissionModelProvider) {
-        super();
         this.roleModelProvider = roleModelProvider;
         this.permissionModelProvider = permissionModelProvider;
 
@@ -169,28 +159,28 @@ public class RoleView extends Composite {
         };
         table.addColumn(descColumn, "Description", "300px");
 
-        table.addActionButton(new UiCommandButtonDefinition<roles>("New") {
+        table.addActionButton(new WebAdminButtonDefinition<roles>("New") {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getNewCommand();
             }
         });
 
-        table.addActionButton(new UiCommandButtonDefinition<roles>("Edit") {
+        table.addActionButton(new WebAdminButtonDefinition<roles>("Edit") {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getEditCommand();
             }
         });
 
-        table.addActionButton(new UiCommandButtonDefinition<roles>("Copy") {
+        table.addActionButton(new WebAdminButtonDefinition<roles>("Copy") {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getCloneCommand();
             }
         });
 
-        table.addActionButton(new UiCommandButtonDefinition<roles>("Remove") {
+        table.addActionButton(new WebAdminButtonDefinition<roles>("Remove") {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getRemoveCommand();
@@ -234,7 +224,7 @@ public class RoleView extends Composite {
         };
         permissionTable.addColumn(permissionColumn, "Object");
 
-        permissionTable.addActionButton(new UiCommandButtonDefinition<permissions>("Remove") {
+        permissionTable.addActionButton(new WebAdminButtonDefinition<permissions>("Remove") {
             @Override
             protected UICommand resolveCommand() {
                 return permissionModelProvider.getModel().getRemoveCommand();

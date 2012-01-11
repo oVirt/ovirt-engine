@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
-import org.ovirt.engine.ui.webadmin.auth.CurrentUser;
+import org.ovirt.engine.ui.common.auth.CurrentUser;
+import org.ovirt.engine.ui.common.utils.WebUtils;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.utils.WebUtils;
 import org.ovirt.engine.ui.webadmin.widget.tab.HeadlessTabPanel.TabWidgetHandler;
 
 import com.google.gwt.event.dom.client.ClickEvent;

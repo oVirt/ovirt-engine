@@ -2,10 +2,10 @@ package org.ovirt.engine.ui.webadmin.section.login.presenter;
 
 import java.util.logging.Logger;
 
-import org.ovirt.engine.ui.webadmin.auth.CurrentUser;
+import org.ovirt.engine.ui.common.auth.CurrentUser;
+import org.ovirt.engine.ui.common.system.ErrorPopupManager;
 import org.ovirt.engine.ui.webadmin.auth.SilentLoginData;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.system.ErrorPopupManager;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -97,10 +97,11 @@ public class LoginSectionPresenter extends Presenter<LoginSectionPresenter.ViewD
     protected void onReset() {
         super.onReset();
 
-        if (user.isLoggedIn())
+        if (user.isLoggedIn()) {
             placeManager.revealDefaultPlace();
-        else
+        } else {
             RevealRootPopupContentEvent.fire(this, loginPopup);
+        }
     }
 
 }

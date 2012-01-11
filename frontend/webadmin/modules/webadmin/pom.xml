@@ -17,64 +17,44 @@
 	<properties>
 		<!--TODO: Will be inherited from top module -->
 		<gwt.version>2.3.0</gwt.version>
-		<gwtp.version>0.6</gwtp.version>
-		<guice.version>3.0</guice.version>
-		<gin.version>1.5.0</gin.version>
-		<junit.version>4.8.1</junit.version>
-		<mockito.version>1.8.5</mockito.version>
-
-		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
-		<!--Version 2.5 is important? currently version is inherited from parent -->
-		<maven-resources-plugin.version>2.5</maven-resources-plugin.version>
-		<maven-war-plugin.version>2.1.1</maven-war-plugin.version>
-		<build-helper-maven-plugin.version>1.5
-		</build-helper-maven-plugin.version>
 		<gwt-maven-plugin.version>2.3.0-1</gwt-maven-plugin.version>
-
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-		<!-- tell the compiler we can use 1.6 -->
-		<maven.compiler.source>1.6</maven.compiler.source>
-		<maven.compiler.target>1.6</maven.compiler.target>
 
 		<!-- Activate load time weaving of the aspects -->
 		<aspectj.agent>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</aspectj.agent>
 
-		<!-- Regular expression that matches the types that the GWT compiler shouldn't 
-			prune -->
+		<!-- Regular expression that matches the types that the GWT compiler shouldn't prune -->
 		<gwt.dontPrune>-Dgwt.dontPrune=org\.ovirt\.engine\.core\.(common|compat)\..*</gwt.dontPrune>
 
 		<!-- This can be overidded by setting this property in your personal settings.xml -->
 		<gwt-plugin.extraJvmArgs>${aspectj.agent} -Xms1024M -Xmx2048M -XX:PermSize=256M -XX:MaxPermSize=256M ${gwt.dontPrune}</gwt-plugin.extraJvmArgs>
 
 		<!-- Set gwt.userAgent property via the resource plugin during the resource phase,
-		By default, all browsers are supported, see [gwt-user.jar:com/google/gwt/user/UserAgent.gwt.xml] for a complete list -->
+			By default, all browsers are supported, see [gwt-user.jar:com/google/gwt/user/UserAgent.gwt.xml] for a complete list -->
 		<gwt.userAgent>ie6,ie8,ie9,gecko1_8,safari,opera</gwt.userAgent>
-
-		<!-- Directory into which JSR 269 annotation processors generate their 
-			sources -->
-		<maven-compiler-plugin.generatedSourcesDirectory>${project.build.directory}/generated-sources/annotations
-		</maven-compiler-plugin.generatedSourcesDirectory>
-		<!--<apt-generated.directory>${project.build.directory}/generated-sources/apt</apt-generated.directory> -->
-
 	</properties>
 
 	<!-- TODO: Define SCM -->
 	<dependencies>
-		<!-- Internal modules dependencies -->
-		<!-- GWT dependencies (from central repo) -->
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-servlet</artifactId>
-			<version>${gwt.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-
+		<!-- Google Web Toolkit dependencies -->
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
 			<version>${gwt.version}</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-dev</artifactId>
+			<version>${gwt.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-servlet</artifactId>
+			<version>${gwt.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- GWTP MVP component -->
@@ -97,6 +77,7 @@
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
 			<version>${guice.version}</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -111,25 +92,7 @@
 			<artifactId>gin</artifactId>
 			<version>${gin.version}</version>
 			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.inject</groupId>
-					<artifactId>guice</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.google.inject.extensions</groupId>
-					<artifactId>guice-assistedinject</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
-
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-dev</artifactId>
-			<version>${gwt.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
 
 		<!-- Unit testing -->
 		<dependency>
@@ -150,6 +113,13 @@
 		<dependency>
 			<groupId>${engine.groupId}</groupId>
 			<artifactId>uicommonweb</artifactId>
+			<version>${engine.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>${engine.groupId}</groupId>
+			<artifactId>gwt-common</artifactId>
 			<version>${engine.version}</version>
 			<scope>provided</scope>
 		</dependency>
@@ -188,8 +158,8 @@
 		</dependency>
 
 		<dependency>
-            <groupId>org.jboss.spec.javax.ejb</groupId>
-            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
 			<scope>provided</scope>
 		</dependency>
 
@@ -205,7 +175,6 @@
 		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes
 		</outputDirectory>
 
-		<!-- <finalName>webadmin</finalName> -->
 		<!-- Currently maven resource sttructure contains all static content. -->
 		<resources>
 			<resource>
@@ -234,25 +203,30 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<encoding>${project.build.sourceEncoding}</encoding>
-					<generatedSourcesDirectory>${maven-compiler-plugin.generatedSourcesDirectory}
-					</generatedSourcesDirectory>
-				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.bsc.maven</groupId>
+				<artifactId>maven-processor-plugin</artifactId>
+				<version>${maven-processor-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>process</id>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<phase>generate-sources</phase>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<configuration>
-					<encoding>${project.build.sourceEncoding}</encoding>
-				</configuration>
+				<version>${maven-resources-plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.5</version>
+				<version>${build-helper-maven-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>add-apt-sources</id>
@@ -262,32 +236,32 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>${maven-compiler-plugin.generatedSourcesDirectory}</source>
+								<source>${project.build.directory}/${generatedSourcesDirectory}</source>
 								<source>${project.build.directory}/generated-sources/gwt</source>
 							</sources>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>gwt-maven-plugin</artifactId> 
-				<executions> <execution> <goals> <goal>compile</goal> <goal>test</goal> </goals> 
-				</execution> </executions> <configuration> <runTarget>webadmin/Application.html</runTarget> 
-				<extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs> <debugSuspend>false</debugSuspend> 
+			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>gwt-maven-plugin</artifactId>
+				<executions> <execution> <goals> <goal>compile</goal> <goal>test</goal> </goals>
+				</execution> </executions> <configuration> <runTarget>webadmin/Application.html</runTarget>
+				<extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs> <debugSuspend>false</debugSuspend>
 				</configuration> </plugin> -->
 
 			<!-- ====================================================================== -->
-			<!-- It's possible to use the target/web.xml file mergewebxml produces, 
+			<!-- It's possible to use the target/web.xml file mergewebxml produces,
 				by -->
 			<!-- making the war plugin to use it. It's possible to exclude what -->
 			<!-- neccessary from the final artifact here. -->
 			<!-- ====================================================================== -->
-			<!-- <plugin> <artifactId>maven-war-plugin</artifactId> <configuration> 
-				<webXml>target/web.xml</webXml> <warSourceExcludes>.gwt-tmp/**</warSourceExcludes> 
-				</configuration> </plugin> <plugin> <artifactId>maven-compiler-plugin</artifactId> 
-				<configuration> <source>${maven.compiler.source}</source> <target>${maven.compiler.target}</target> 
+			<!-- <plugin> <artifactId>maven-war-plugin</artifactId> <configuration>
+				<webXml>target/web.xml</webXml> <warSourceExcludes>.gwt-tmp/**</warSourceExcludes>
+				</configuration> </plugin> <plugin> <artifactId>maven-compiler-plugin</artifactId>
+				<configuration> <source>${maven.compiler.source}</source> <target>${maven.compiler.target}</target>
 				</configuration> </plugin> -->
 			<plugin>
-			    <artifactId>maven-checkstyle-plugin</artifactId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
@@ -332,7 +306,6 @@
 							<noServer>true</noServer>
 							<bindAddress>0.0.0.0</bindAddress>
 							<gen>gen</gen>
-							<!-- <modules> <module>${project.groupId}.WebAdmin</module> </modules> -->
 							<extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs>
 							<copyWebapp>true</copyWebapp>
 							<compileSourcesArtifacts>
@@ -344,7 +317,6 @@
 								<runClasspathExclude>asm-3.3.jar</runClasspathExclude>
 							</runClasspathExcludes>
 						</configuration>
-
 						<executions>
 							<execution>
 								<id>gwtcompile</id>
@@ -365,6 +337,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>${build-helper-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>add-source</id>
@@ -377,6 +350,8 @@
 										<source>../uicommonweb/src/main/java</source>
 										<source>../gwt-extension/src/main/java</source>
 										<source>../frontend/src/main/java</source>
+										<source>../gwt-common/src/main/java</source>
+										<source>../gwt-common/target/${generatedSourcesDirectory}</source>
 									</sources>
 								</configuration>
 							</execution>
@@ -390,9 +365,9 @@
 									<resources>
 										<resource>
 											<directory>../uicommonweb/src/main/resources</directory>
-											<directory>../gwt-extension/src/main/resources
-											</directory>
+											<directory>../gwt-extension/src/main/resources</directory>
 											<directory>../frontend/src/main/resources</directory>
+											<directory>../gwt-common/src/main/resources</directory>
 											<targetPath>resources</targetPath>
 										</resource>
 									</resources>
@@ -404,16 +379,5 @@
 			</build>
 		</profile>
 	</profiles>
-
-	<repositories>
-		<repository>
-			<id>codehaus</id>
-			<name>Codehaus Releases</name>
-			<url>http://repository.codehaus.org/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 
 </project>

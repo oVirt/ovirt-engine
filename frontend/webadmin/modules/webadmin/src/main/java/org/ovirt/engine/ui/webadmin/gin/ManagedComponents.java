@@ -16,6 +16,9 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
@@ -78,7 +81,6 @@ import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginSectionPresente
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
@@ -148,9 +150,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.Su
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineSnapshotPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineVirtualDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.VirtualMachineSubTabPanelPresenter;
-import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
 
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.inject.Provider;
@@ -158,9 +157,10 @@ import com.google.inject.Provider;
 /**
  * Contains methods for accessing managed components that participate in dependency injection.
  * <p>
- * There should be a method for each {@link com.gwtplatform.mvp.client.Presenter} (excluding
- * {@link com.gwtplatform.mvp.clientcom.gwtplatform.mvp.client.PresenterWidget} classes, unless they are referenced
- * through {@link ClientGinjector} directly). This is necessary due to the current limitation of GWTP-GIN integration.
+ * There should be a method for each {@link com.gwtplatform.mvp.client.Presenter Presenter} (excluding
+ * {@link com.gwtplatform.mvp.clientcom.gwtplatform.mvp.client.PresenterWidget PresenterWidget} classes, unless they are
+ * referenced through {@link ClientGinjector} directly). This is necessary due to the current limitation of GWTP-GIN
+ * integration.
  */
 public interface ManagedComponents {
 
@@ -173,8 +173,6 @@ public interface ManagedComponents {
     ApplicationMessages getApplicationMessages();
 
     // PresenterWidgets
-
-    Provider<DefaultConfirmationPopupPresenterWidget> getDefaultConfirmationPopupProvider();
 
     Provider<BookmarkPopupPresenterWidget> getBookmarkPopupPresenterWidgetProvider();
 

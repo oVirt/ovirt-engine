@@ -69,6 +69,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         model.getItemsChangedEvent().getListeners().clear();
     }
 
+    @SuppressWarnings("unchecked")
     protected void updateItems() {
         List<M> items = (List<M>) model.getItems();
         tree.clear();

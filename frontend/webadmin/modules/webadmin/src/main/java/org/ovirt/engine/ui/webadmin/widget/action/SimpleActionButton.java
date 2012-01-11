@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.action;
 
+import org.ovirt.engine.ui.common.widget.action.AbstractActionButton;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

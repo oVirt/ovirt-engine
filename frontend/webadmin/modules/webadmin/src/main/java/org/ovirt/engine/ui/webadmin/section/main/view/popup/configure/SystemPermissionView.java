@@ -1,15 +1,15 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PermissionTypeColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -88,14 +88,14 @@ public class SystemPermissionView extends Composite {
         };
         table.addColumn(roleColumn, "Role");
 
-        table.addActionButton(new UiCommandButtonDefinition<permissions>("Add") {
+        table.addActionButton(new WebAdminButtonDefinition<permissions>("Add") {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getAddCommand();
             }
         });
 
-        table.addActionButton(new UiCommandButtonDefinition<permissions>("Remove") {
+        table.addActionButton(new WebAdminButtonDefinition<permissions>("Remove") {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getRemoveCommand();

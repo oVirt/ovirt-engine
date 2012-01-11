@@ -1,16 +1,16 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.ImageUiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -55,26 +55,26 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         };
         getTable().addColumn(descColumn, "Description");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VDSGroup>("New") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>("New") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VDSGroup>("Edit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>("Edit") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VDSGroup>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>("Remove") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
         });
 
-        getTable().addActionButton(new ImageUiCommandButtonDefinition<VDSGroup>("Guide Me",
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VDSGroup>("Guide Me",
                 resources.guideSmallImage(), resources.guideSmallDisabledImage(), true) {
             @Override
             protected UICommand resolveCommand() {

@@ -1,9 +1,10 @@
 package org.ovirt.engine.ui.webadmin;
 
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 
-public interface ApplicationTemplates extends SafeHtmlTemplates {
+public interface ApplicationTemplates extends CommonApplicationTemplates {
 
     /**
      * Creates a progress bar template.
@@ -15,8 +16,7 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
      */
     @Template("<div class='engine-progress-box'>" +
             "<div style='background: {2}; width: {0}%; height: 100%'></div>" +
-            "<div class='engine-progress-text'>{1}</div>" +
-            "</div>")
+            "<div class='engine-progress-text'>{1}</div></div>")
     SafeHtml progressBar(int progress, String text, String color);
 
     /**
@@ -28,7 +28,8 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
      *            the node title
      * @return
      */
-    @Template("<span style='position: relative; bottom: 1px;'>{0}</span><span style='position: relative; bottom: 7px;'>{1}</span>")
+    @Template("<span style='position: relative; bottom: 1px;'>{0}</span>" +
+            "<span style='position: relative; bottom: 7px;'>{1}</span>")
     SafeHtml treeItem(SafeHtml imageHtml, String text);
 
     /**
@@ -68,10 +69,6 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
     @Template("<span style='position: relative; white-space: nowrap;'><span>{0}</span>{1} Alerts</span>")
     SafeHtml alertFooterHeader(SafeHtml imageHtml, int alertCount);
 
-    @Template("<span><span style='position: relative; vertical-align: middle;'>{0}</span>" +
-            "<span style='position: relative; margin-left: 3px; white-space: nowrap;'>{1}</span></span>")
-    SafeHtml imageTextButton(SafeHtml image, String text);
-
     @Template("<table cellspacing='0' cellpadding='0'><tr>" +
             "<td style='background: url({2});width:2px;'></td>" +
             "<td style='text-align:center;'>" +
@@ -88,4 +85,5 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("<li>{0}")
     SafeHtml listItem(SafeHtml item);
+
 }

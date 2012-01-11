@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.webadmin.widget.tags;
 
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.webadmin.widget.action.SimpleActionPanel;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -24,9 +24,6 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
     interface ViewIdHandler extends ElementIdHandler<TagList> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
-
-    @WithElementId
-    SimpleActionPanel<TagListModel> simpleActionPanel;
 
     public TagList(TagModelProvider modelProvider) {
         super(modelProvider);
@@ -50,27 +47,28 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    protected SimpleActionPanel<TagListModel> createActionPanel(final TagModelProvider modelProvider) {
-        simpleActionPanel = new SimpleActionPanel(modelProvider, modelProvider.getSelectionModel());
-        return simpleActionPanel;
+    protected SimpleActionPanel<TagListModel> createActionPanel(TagModelProvider modelProvider) {
+        return new SimpleActionPanel(modelProvider, modelProvider.getSelectionModel(),
+                ClientGinjectorProvider.instance().getEventBus(),
+                ClientGinjectorProvider.instance().getApplicationConstants());
     }
 
     private void addActionButtons(final TagModelProvider modelProvider) {
-        simpleActionPanel.addActionButton(new UiCommandButtonDefinition<TagListModel>("New") {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<TagListModel>("New") {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getNewCommand();
             }
         });
 
-        simpleActionPanel.addActionButton(new UiCommandButtonDefinition<TagListModel>("Edit") {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<TagListModel>("Edit") {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getEditCommand();
             }
         });
 
-        simpleActionPanel.addActionButton(new UiCommandButtonDefinition<TagListModel>("Remove") {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<TagListModel>("Remove") {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getRemoveCommand();
@@ -86,4 +84,5 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
         @Source({ CellTree.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/TagTree.css" })
         TableStyle cellTreeStyle();
     }
+
 }

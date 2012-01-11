@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget;
 
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;

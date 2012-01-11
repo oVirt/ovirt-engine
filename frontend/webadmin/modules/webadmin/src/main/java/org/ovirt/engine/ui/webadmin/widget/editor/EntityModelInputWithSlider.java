@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.editor;
 
+import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
+import org.ovirt.engine.ui.common.widget.editor.TakesValueWithChangeHandlersEditor;
 import org.ovirt.engine.ui.webadmin.widget.IntegerSlider;
 
 import com.google.gwt.editor.client.LeafValueEditor;
@@ -156,4 +158,5 @@ public class EntityModelInputWithSlider extends Composite implements
     public HandlerRegistration addValueChangeHandler(ValueChangeHandler handler) {
         return asSlider().addValueChangeHandler(handler);
     }
+
 }

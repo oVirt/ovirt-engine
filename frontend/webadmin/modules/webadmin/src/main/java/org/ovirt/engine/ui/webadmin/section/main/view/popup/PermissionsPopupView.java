@@ -4,22 +4,22 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
+import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.webadmin.widget.UiCommandButton;
-import org.ovirt.engine.ui.webadmin.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.webadmin.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.TextBoxChanger;
-import org.ovirt.engine.ui.webadmin.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EntityModelTextColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -205,10 +205,12 @@ public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementL
         return specificUserOrGroupRadio;
     }
 
+    @Override
     public PopupNativeKeyPressHandler getNativeKeyPressHandler() {
         return nativeKeyPressHandler;
     }
 
+    @Override
     public HasHandlers getSearchStringEditor() {
         return searchStringEditor;
     }

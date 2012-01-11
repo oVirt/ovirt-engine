@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.webadmin.widget.dialog.tab;
 
-import org.ovirt.engine.ui.webadmin.idhandler.HasElementId;
-import org.ovirt.engine.ui.webadmin.widget.AbstractValidatedWidget;
-import org.ovirt.engine.ui.webadmin.widget.HasLabel;
+import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.widget.AbstractValidatedWidget;
+import org.ovirt.engine.ui.common.widget.HasLabel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

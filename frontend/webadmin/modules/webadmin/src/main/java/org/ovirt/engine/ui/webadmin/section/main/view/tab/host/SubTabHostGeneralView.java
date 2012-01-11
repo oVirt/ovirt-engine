@@ -7,15 +7,16 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
+import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
+import org.ovirt.engine.ui.common.widget.form.FormBuilder;
+import org.ovirt.engine.ui.common.widget.form.FormItem;
+import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabFormView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.form.FormBuilder;
-import org.ovirt.engine.ui.webadmin.widget.form.FormItem;
 import org.ovirt.engine.ui.webadmin.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.webadmin.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.DetailsLabel;
@@ -23,7 +24,6 @@ import org.ovirt.engine.ui.webadmin.widget.label.EnumLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.MemorySizeLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentLabel;
-import org.ovirt.engine.ui.webadmin.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.VersionLabel;
 
 import com.google.gwt.core.client.GWT;
@@ -46,13 +46,13 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     // We need this in order to find the icon for alert messages:
     private final ApplicationResources resources;
 
-    TextBoxLabel oS = new TextBoxLabel(true);
-    TextBoxLabel kvmVersion = new TextBoxLabel(true);
-    TextBoxLabel spiceVersion = new TextBoxLabel(true);
-    TextBoxLabel kernelVersion = new TextBoxLabel(true);
-    TextBoxLabel iScsiInitiatorName = new TextBoxLabel(true);
-    TextBoxLabel cpuName = new TextBoxLabel(true);
-    TextBoxLabel cpuType = new TextBoxLabel(true);
+    TextBoxLabel oS = new TextBoxLabel();
+    TextBoxLabel kvmVersion = new TextBoxLabel();
+    TextBoxLabel spiceVersion = new TextBoxLabel();
+    TextBoxLabel kernelVersion = new TextBoxLabel();
+    TextBoxLabel iScsiInitiatorName = new TextBoxLabel();
+    TextBoxLabel cpuName = new TextBoxLabel();
+    TextBoxLabel cpuType = new TextBoxLabel();
     VersionLabel vdsmVersion = new VersionLabel();
     PercentLabel<Integer> sharedMemory = new PercentLabel<Integer>();
     BooleanLabel memoryPageSharing = new BooleanLabel("Active", "Inactive");

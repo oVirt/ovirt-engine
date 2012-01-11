@@ -2,7 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
 
 	<ui:style>
 		.dock {
@@ -50,7 +50,7 @@
 				<g:east size="50">
 					<g:VerticalPanel spacing="10">				
 						<g:Label ui:field="assignLabel" addStyleNames="{style.mainLabel}"/>
-						<e:EntityModelCellTree ui:field="tree" />
+						<we:EntityModelCellTree ui:field="tree" />
 						<g:Label ui:field="messageLabel" addStyleNames="{style.message}"/>
 						<d:SimpleDialogButton ui:field="detachAll" text="Detach ALL Clusters" visible="false" />
 					</g:VerticalPanel>

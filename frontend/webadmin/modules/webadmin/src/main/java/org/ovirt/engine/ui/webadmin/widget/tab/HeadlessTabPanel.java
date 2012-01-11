@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.widget.tab;
 
+import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
+import org.ovirt.engine.ui.common.widget.tab.TabDefinition;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;

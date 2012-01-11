@@ -6,19 +6,19 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListModel;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DiskSizeColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainStatusColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 
@@ -91,39 +91,39 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(totalColumn, "Total Space");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Attach Data") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Attach Data") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAttachStorageCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Attach ISO") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Attach ISO") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAttachISOCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Attach Export") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Attach Export") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAttachBackupCommand();
             }
         });
         // TODO: Separator
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Detach") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Detach") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getDetachCommand();
             }
         });
         // TODO: Separator
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Activate") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Activate") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getActivateCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Maintenance") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Maintenance") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getMaintenanceCommand();

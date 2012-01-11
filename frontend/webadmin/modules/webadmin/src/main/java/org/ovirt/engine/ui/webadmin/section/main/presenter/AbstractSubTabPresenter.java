@@ -6,12 +6,12 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.uicommon.model.CommonModelChangeEvent;
+import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
-import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelChangeEvent;
-import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.table.OrderedMultiSelectionModel;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
@@ -54,6 +54,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         OrderedMultiSelectionModel<?> getTableSelectionModel();
 
         void setLoadingState(LoadingState state);
+
     }
 
     private final PlaceManager placeManager;
@@ -206,7 +207,9 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             }
         });
     }
+
     protected DetailModelProvider<M, D> getModelProvider() {
         return modelProvider;
     }
+
 }

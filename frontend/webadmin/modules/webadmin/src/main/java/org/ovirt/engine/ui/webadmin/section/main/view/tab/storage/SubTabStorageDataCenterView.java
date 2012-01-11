@@ -2,17 +2,17 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainStatusColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -52,25 +52,25 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<storage
                 };
         getTable().addColumn(domainStatusColumn, "Domain Status in Data-Center", "300px");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Attach") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Attach") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAttachCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Detach") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Detach") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getDetachCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Activate") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Activate") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getActivateCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<storage_domains>("Maintenance") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Maintenance") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getMaintenanceCommand();

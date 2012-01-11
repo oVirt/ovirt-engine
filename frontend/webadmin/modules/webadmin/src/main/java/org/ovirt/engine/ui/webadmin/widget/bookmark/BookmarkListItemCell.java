@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.webadmin.widget.bookmark;
 
 import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.webadmin.idhandler.HasElementId;
-import org.ovirt.engine.ui.webadmin.utils.ElementIdUtils;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;

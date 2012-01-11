@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.system;
 
-import org.ovirt.engine.ui.webadmin.uicommon.ClientAgentType;
+import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 
 import com.google.inject.Inject;
 

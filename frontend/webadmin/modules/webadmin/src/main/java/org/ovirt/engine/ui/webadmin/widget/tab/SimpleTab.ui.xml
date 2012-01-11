@@ -2,7 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.widget.tab.AbstractTab.Style">
+	<ui:style type="org.ovirt.engine.ui.common.widget.tab.AbstractTab.Style">
 		.tab {
 			height: 28px;			
 			min-width: 80px;

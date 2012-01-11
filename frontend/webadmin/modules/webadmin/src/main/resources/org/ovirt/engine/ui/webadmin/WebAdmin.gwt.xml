@@ -3,26 +3,17 @@
 	"http://google-web-toolkit.googlecode.com/svn/tags/2.2.0/distro-source/core/src/gwt-module.dtd">
 <module rename-to="webadmin">
 
-	<!-- Inherit the core Web Toolkit stuff -->
-	<inherits name="com.google.gwt.user.User" />
-	<inherits name="com.google.gwt.inject.Inject" />
+	<!-- Inherit oVirt common GWT module -->
+	<inherits name="org.ovirt.engine.ui.common.GwtCommon" />
 
 	<!-- Inherit the default GWT theme -->
 	<inherits name="com.google.gwt.user.theme.standard.Standard" />
-
-	<!-- Inherit GWTP MVP module -->
-	<inherits name="com.gwtplatform.mvp.Mvp" />
 
 	<!-- Inherit GWT logging module and configure it -->
 	<inherits name="com.google.gwt.logging.Logging" />
 	<set-property name="gwt.logging.enabled" value="TRUE" />
 	<set-property name="gwt.logging.logLevel" value="INFO" />
 	<set-property name="gwt.logging.popupHandler" value="DISABLED" />
-
-	<!-- Inherit oVirt UiCommon Web modules and GWT deRPC module -->
-	<inherits name="org.ovirt.engine.ui.GwtExtension" />
-	<inherits name="org.ovirt.engine.ui.UICommonWeb" />
-	<inherits name="com.google.gwt.rpc.RPC" />
 
 	<!-- Supported browsers (defined via maven property) -->
 	<set-property name="user.agent" value="${gwt.userAgent}" />
@@ -36,15 +27,6 @@
 		<!-- Except deferred binding classes -->
 		<exclude name="binding/**" />
 	</source>
-
-	<!-- Use custom GWT Editor Driver generator -->
-	<generate-with class="org.ovirt.engine.ui.webadmin.binding.WebAdminEditorDriverGenerator">
-		<when-type-assignable class="com.google.gwt.editor.client.SimpleBeanEditorDriver" />
-	</generate-with>
-
-	<generate-with class="org.ovirt.engine.ui.webadmin.binding.ElementIdHandlerGenerator">
-		<when-type-assignable class="org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler" />
-	</generate-with>
 
 	<!-- Specify the application entry point class -->
 	<entry-point class="org.ovirt.engine.ui.webadmin.WebAdmin" />

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.uicommon.model;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.events.AlertListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 

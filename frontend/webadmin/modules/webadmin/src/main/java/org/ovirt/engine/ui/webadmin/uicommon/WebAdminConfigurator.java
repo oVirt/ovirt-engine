@@ -6,6 +6,8 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
+import org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
@@ -24,16 +26,16 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     // Temporarily save the locations of webadmin and userportal.
     // TODO: create a new SPICE RPM for webadmin
     private static final String WEBADMIN_ROOT_FOLDER = "/webadmin/webadmin/";
-    private static final String USERPORTAL_ROOT_FOLDER = "/UserPortal/org.ovirt.engine.ui.userportal.UserPortal/";
+    private static final String USERPORTAL_ROOT_FOLDER = "/userportal/userportal/";
 
     public EventDefinition spiceVersionFileFetchedEvent_Definition =
             new EventDefinition("spiceVersionFileFetched", WebAdminConfigurator.class);
+
     public Event spiceVersionFileFetchedEvent = new Event(spiceVersionFileFetchedEvent_Definition);
 
     private boolean isInitialized;
 
-    public WebAdminConfigurator()
-    {
+    public WebAdminConfigurator() {
         // Set default configuration values
         setIsAdmin(true);
         setSpiceAdminConsole(true);
@@ -69,14 +71,13 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
     public void updateIsUsbEnabled(final ISpice spice) {
         // Get 'EnableUSBAsDefault' value from database
-        AsyncDataProvider.IsUSBEnabledByDefault(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        // Update IsUsbEnabled value
-                        setIsUsbEnabled((Boolean) returnValue);
-                    }
-                }));
+        AsyncDataProvider.IsUSBEnabledByDefault(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                // Update IsUsbEnabled value
+                setIsUsbEnabled((Boolean) returnValue);
+            }
+        }));
     }
 
     public static String getSpiceBaseURL() {
@@ -109,17 +110,14 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
-    {
-        if (ev.equals(spiceVersionFileFetchedEvent_Definition))
-        {
+    public void eventRaised(Event ev, Object sender, EventArgs args) {
+        if (ev.equals(spiceVersionFileFetchedEvent_Definition)) {
             Version spiceVersion = parseVersion(((FileFetchEventArgs) args).getFileContent());
             setSpiceVersion(spiceVersion);
         }
     }
 
-    public final class FileFetchEventArgs extends EventArgs
-    {
+    public final class FileFetchEventArgs extends EventArgs {
         private String fileContent;
 
         public String getFileContent() {
@@ -152,17 +150,18 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     }
 
     @Override
-    public void Configure(ISpice spiceImpl)
-    {
+    public void Configure(ISpice spiceImpl) {
         SpiceInterfaceImpl spice = (SpiceInterfaceImpl) spiceImpl;
         spice.setDesiredVersion(getSpiceVersion());
         spice.setCurrentVersion(getSpiceVersion());
         spice.setAdminConsole(getSpiceAdminConsole());
         spice.setFullScreen(getSpiceFullScreen());
+        spice.setSpiceBaseURL(WebAdminConfigurator.getSpiceBaseURL());
 
         if (!isInitialized) {
             updateIsUsbEnabled(spice);
             isInitialized = true;
         }
     }
+
 }

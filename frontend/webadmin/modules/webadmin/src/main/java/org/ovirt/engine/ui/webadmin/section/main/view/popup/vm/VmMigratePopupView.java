@@ -5,6 +5,9 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MigrateModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
@@ -12,9 +15,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.renderer.NullSafeRenderer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -106,17 +106,14 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
 
         // Listen for changes in the properties of the model in order
         // to update the alerts panel:
-        object.getPropertyChangedEvent().addListener(
-                new IEventListener() {
-                    @Override
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
-                        if (args instanceof PropertyChangedEventArgs) {
-                            PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                            updateMessages(object);
-                        }
-                    }
+        object.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (args instanceof PropertyChangedEventArgs) {
+                    updateMessages(object);
                 }
-                );
+            }
+        });
     }
 
     @Override

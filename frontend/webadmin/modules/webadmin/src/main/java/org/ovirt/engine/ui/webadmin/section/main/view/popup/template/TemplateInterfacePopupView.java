@@ -1,16 +1,16 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.template;
 
 import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.renderer.EnumRenderer;
-import org.ovirt.engine.ui.webadmin.widget.renderer.NullSafeRenderer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -56,6 +56,7 @@ public class TemplateInterfacePopupView extends AbstractModelBoundPopupView<VmIn
         nicTypeEditor.setLabel("Type");
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void initManualWidgets() {
         networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override

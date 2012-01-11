@@ -5,17 +5,17 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
@@ -106,21 +106,21 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         };
         getTable().addColumn(hostColumn, "Uptime");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Suspend") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Suspend") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getPauseCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Shut down") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Shut down") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getShutdownCommand();
             }
         });
-        // getTable().addActionButton(new UiCommandButtonDefinition<VM>(getListModel().getStopCommand(), "Stop"));
+        // getTable().addActionButton(new WebAdminButtonDefinition<VM>(getListModel().getStopCommand(), "Stop"));
         // TODO: separator
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Migrate") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Migrate") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getMigrateCommand();

@@ -7,20 +7,20 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.table.ActionCellTable;
+import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineSnapshotPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.ActionCellTable;
-import org.ovirt.engine.ui.webadmin.widget.table.OrderedMultiSelectionModel;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.SafeHtmlColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -138,31 +138,31 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableView<VM
         };
         getTable().addColumn(diskColumn, "Disks");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>("Create") {
+        getTable().addActionButton(new WebAdminButtonDefinition<SnapshotModel>("Create") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>("Preview") {
+        getTable().addActionButton(new WebAdminButtonDefinition<SnapshotModel>("Preview") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getPreviewCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>("Commit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<SnapshotModel>("Commit") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getCommitCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>("Undo") {
+        getTable().addActionButton(new WebAdminButtonDefinition<SnapshotModel>("Undo") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getUndoCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<SnapshotModel>("Delete") {
+        getTable().addActionButton(new WebAdminButtonDefinition<SnapshotModel>("Delete") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
@@ -189,6 +189,7 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableView<VM
         applicationsTable.setRowData(new ArrayList<String>());
 
         getDetailModel().getPropertyChangedEvent().addListener(new IEventListener() {
+            @SuppressWarnings("unchecked")
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;

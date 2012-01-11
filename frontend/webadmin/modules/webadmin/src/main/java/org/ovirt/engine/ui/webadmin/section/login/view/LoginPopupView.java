@@ -1,22 +1,22 @@
 package org.ovirt.engine.ui.webadmin.section.login.view;
 
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
+import org.ovirt.engine.ui.common.view.AbstractPopupView;
+import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
-import org.ovirt.engine.ui.webadmin.uicommon.model.DeferredModelCommandInvoker;
-import org.ovirt.engine.ui.webadmin.view.AbstractPopupView;
-import org.ovirt.engine.ui.webadmin.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimplePopupPanel;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelPasswordBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.ListModelListBoxEditor;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;

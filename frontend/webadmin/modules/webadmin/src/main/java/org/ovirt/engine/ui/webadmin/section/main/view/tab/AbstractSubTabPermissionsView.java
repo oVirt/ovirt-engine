@@ -1,15 +1,15 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ObjectNameColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PermissionTypeColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetailsModel> extends AbstractSubTabTableView<I, permissions, M, PermissionListModel> {
 
@@ -47,13 +47,13 @@ public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetails
         };
         getTable().addColumn(permissionColumn, "Inherited Permission");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<permissions>("Add") {
+        getTable().addActionButton(new WebAdminButtonDefinition<permissions>("Add") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAddCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<permissions>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<permissions>("Remove") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();

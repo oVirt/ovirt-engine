@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import org.ovirt.engine.ui.common.view.AbstractPopupView;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AboutPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.view.AbstractPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogButton;
 
 import com.google.gwt.core.client.GWT;

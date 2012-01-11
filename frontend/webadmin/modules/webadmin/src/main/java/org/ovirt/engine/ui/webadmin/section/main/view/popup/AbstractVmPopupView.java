@@ -13,26 +13,26 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.widget.Align;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelLabelEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelSliderWithTextBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.parser.MemorySizeParser;
-import org.ovirt.engine.ui.webadmin.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.webadmin.widget.renderer.MemorySizeRenderer;
-import org.ovirt.engine.ui.webadmin.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EntityModelTextColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -261,6 +261,7 @@ public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel
     @Path(value = "customProperties.entity")
     EntityModelTextBoxEditor customPropertiesEditor;
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Inject
     public AbstractVmPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -298,6 +299,7 @@ public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel
         Driver.driver.initialize(this);
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void initListBoxEditors() {
         // General tab
         dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
@@ -633,4 +635,5 @@ public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel
         @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/ButtonCellTable.css" })
         TableStyle cellTableStyle();
     }
+
 }

@@ -30,4 +30,5 @@ public class SilentLoginData {
     public String getDomain() {
         return domain;
     }
+
 }

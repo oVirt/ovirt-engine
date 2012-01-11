@@ -4,9 +4,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.RadioboxCell;
+import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
+import org.ovirt.engine.ui.common.widget.editor.TakesValueWithChangeHandlersEditor;
+import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.RadioboxCell;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.LeafValueEditor;
@@ -89,6 +90,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
                 this.disabledSet = disabledSet;
             }
 
+            @SuppressWarnings("unchecked")
             @Override
             public void render(com.google.gwt.cell.client.Cell.Context context, Boolean value, SafeHtmlBuilder sb) {
                 // Get the view data.
@@ -210,11 +212,10 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
      * @param enumClass
      *            the enum class
      */
-    public EnumRadioEditor(Class<E> enumClass) {
-        bus = ClientGinjectorProvider.instance().getEventBus();
-        peer =
-                new EnumRadioCellTable<E>(enumClass,
-                        GWT.<EnumRadioCellTableResources> create(EnumRadioCellTableResources.class));
+    public EnumRadioEditor(Class<E> enumClass, EventBus bus) {
+        this.bus = bus;
+        peer = new EnumRadioCellTable<E>(enumClass,
+                GWT.<EnumRadioCellTableResources> create(EnumRadioCellTableResources.class));
 
         // Selection Model
         selectionModel = new SingleSelectionModel<E>() {
@@ -237,7 +238,6 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
                 ValueChangeEvent.<E> fire(EnumRadioEditor.this, selectedObject);
             }
         });
-
     }
 
     @Override
@@ -322,4 +322,5 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
     public void setValue(E value) {
         selectionModel.setSelected(value, true);
     }
+
 }

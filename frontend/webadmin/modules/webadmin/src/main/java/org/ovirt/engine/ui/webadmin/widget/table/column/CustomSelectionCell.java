@@ -11,7 +11,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
@@ -20,7 +19,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
  */
 public class CustomSelectionCell extends AbstractInputCell<String, String> {
 
-    interface Template extends SafeHtmlTemplates {
+    interface CellTemplate extends SafeHtmlTemplates {
         @Template("<option value=\"{0}\">{0}</option>")
         SafeHtml deselected(String option);
 
@@ -28,7 +27,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
         SafeHtml selected(String option);
     }
 
-    private static Template template;
+    private static CellTemplate template;
 
     private final HashMap<String, Integer> indexForOption = new HashMap<String, Integer>();
 
@@ -47,7 +46,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
     public CustomSelectionCell(List<String> options) {
         super("change");
         if (template == null) {
-            template = GWT.create(Template.class);
+            template = GWT.create(CellTemplate.class);
         }
         this.options = new ArrayList<String>(options);
         int index = 0;
@@ -112,4 +111,5 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
         this.isEnabled = isEnabled;
         this.tooltip = tooltip;
     }
+
 }

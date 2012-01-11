@@ -1,14 +1,14 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabUserPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UserStatusColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -66,19 +66,19 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
             }
         }, "e-mail");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<DbUser>("Add") {
+        getTable().addActionButton(new WebAdminButtonDefinition<DbUser>("Add") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getAddCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<DbUser>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<DbUser>("Remove") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<DbUser>("Assign Tags") {
+        getTable().addActionButton(new WebAdminButtonDefinition<DbUser>("Assign Tags") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getAssignTagsCommand();

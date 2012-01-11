@@ -9,19 +9,18 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.table.ActionCellTable;
+import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.VmBackupModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageVmBackupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.ActionCellTable;
-import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -127,14 +126,14 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         };
         getTable().addColumn(creationDateColumn, "Creation Date");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Restore") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Restore") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRestoreCommand();
             }
         });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VM>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Remove") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
@@ -161,15 +160,14 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         applicationsTable.setRowData(new ArrayList<String>());
 
         getDetailModel().getPropertyChangedEvent().addListener(new IEventListener() {
+            @SuppressWarnings("unchecked")
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
                 if (getDetailModel().getAppListModel().getItems() != null) {
                     applicationsTable.setRowData(Linq.ToList(getDetailModel().getAppListModel().getItems()));
                 } else {
                     applicationsTable.setRowData(new ArrayList<String>());
                 }
-
             }
         });
     }

@@ -205,6 +205,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         }, "Serial");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected TreeItem createLeafNode(ListModel leafModel) {
         if (hideLeaf) {

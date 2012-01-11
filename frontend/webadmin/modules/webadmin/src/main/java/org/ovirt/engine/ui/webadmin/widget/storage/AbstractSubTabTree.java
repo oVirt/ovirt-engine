@@ -21,7 +21,6 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel> extends 
 
     protected final ApplicationResources resources;
 
-    @SuppressWarnings("unchecked")
     public AbstractSubTabTree() {
         tree = new Tree();
         initWidget(tree);
@@ -69,4 +68,5 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel> extends 
 
         return entityModelList;
     }
+
 }

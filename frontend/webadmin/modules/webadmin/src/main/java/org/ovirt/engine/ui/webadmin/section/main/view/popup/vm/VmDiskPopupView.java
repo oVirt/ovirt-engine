@@ -2,18 +2,18 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
-import org.ovirt.engine.ui.webadmin.widget.Align;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.renderer.EnumRenderer;
-import org.ovirt.engine.ui.webadmin.widget.renderer.NullSafeRenderer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -83,6 +83,7 @@ public class VmDiskPopupView extends AbstractModelBoundPopupView<DiskModel> impl
         isBootableEditor.setLabel("Is bootable");
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void initManualWidgets() {
         storageDomainEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override

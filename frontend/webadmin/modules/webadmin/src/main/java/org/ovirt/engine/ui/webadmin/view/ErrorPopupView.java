@@ -3,11 +3,12 @@ package org.ovirt.engine.ui.webadmin.view;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.ui.common.presenter.ErrorPopupPresenterWidget;
+import org.ovirt.engine.ui.common.view.AbstractPopupView;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.presenter.ErrorPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -42,10 +43,8 @@ public class ErrorPopupView extends AbstractPopupView<DialogBox> implements Erro
     ApplicationTemplates templates;
 
     @Inject
-    public ErrorPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationMessages messages,
+    public ErrorPopupView(EventBus eventBus, ApplicationResources resources,
+            ApplicationConstants constants, ApplicationMessages messages,
             ApplicationTemplates templates) {
         super(eventBus, resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

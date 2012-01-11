@@ -4,15 +4,15 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkListModel;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 
@@ -48,19 +48,19 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(typeColumn, "Description");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<network>("New") {
+        getTable().addActionButton(new WebAdminButtonDefinition<network>("New") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<network>("Edit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<network>("Edit") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<network>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<network>("Remove") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();

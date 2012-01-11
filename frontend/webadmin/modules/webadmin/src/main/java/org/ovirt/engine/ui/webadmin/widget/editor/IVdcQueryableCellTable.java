@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.webadmin.widget.HasEditorDriver;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -28,10 +28,9 @@ public class IVdcQueryableCellTable<IVdcQueryable, M extends ListModel> extends 
         setSelectionModel(selectionModel);
 
         getSelectionModel().addSelectionChangeHandler(new Handler() {
-
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
-                listModel.setSelectedItem(((SingleSelectionModel) getSelectionModel()).getSelectedObject());
+                listModel.setSelectedItem(((SingleSelectionModel<?>) getSelectionModel()).getSelectedObject());
             }
         });
     }
@@ -47,17 +46,19 @@ public class IVdcQueryableCellTable<IVdcQueryable, M extends ListModel> extends 
         setColumnWidth(column, width);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void edit(M object) {
         this.listModel = object;
+
         if (listModel.getItems() != null) {
             if (listModel.getItems() != null) {
                 setRowData((ArrayList<IVdcQueryable>) listModel.getItems());
-            }
-            else {
+            } else {
                 setRowData(new ArrayList<IVdcQueryable>());
             }
         }
+
         listModel.getItemsChangedEvent().addListener(new IEventListener() {
 
             @Override
@@ -71,6 +72,7 @@ public class IVdcQueryableCellTable<IVdcQueryable, M extends ListModel> extends 
 
             }
         });
+
         listModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
 
             @Override

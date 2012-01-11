@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget.action">
+	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.action">
 
 	<ui:style>
 		.actionPanel {
@@ -11,7 +11,7 @@
 
 	<g:DockLayoutPanel unit="PX">
 		<g:north size="30">
-			<w:SimpleActionPanel ui:field="actionPanel" addStyleNames="{style.actionPanel}" />
+			<w:AbstractActionPanel ui:field="actionPanel" addStyleNames="{style.actionPanel}" />
 		</g:north>
 
 		<g:center>

@@ -82,16 +82,12 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
-				<version>1.4</version>
+				<version>${aspectj-maven-plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
 							<goal>compile</goal>
 						</goals>
-						<configuration>
-							<source>1.6</source>
-							<target>1.6</target>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>

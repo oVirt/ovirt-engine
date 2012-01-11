@@ -2,12 +2,13 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.webadmin.idhandler.WithElementId;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabBarOffsetUiHandlers;
 import org.ovirt.engine.ui.webadmin.section.main.view.ApplicationFocusChangeEvent.ApplicationFocusChangeHandler;
@@ -19,7 +20,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
-import org.ovirt.engine.ui.webadmin.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.widget.bookmark.BookmarkList;
 import org.ovirt.engine.ui.webadmin.widget.footer.AlertsEventsFooterView;
 import org.ovirt.engine.ui.webadmin.widget.tags.TagList;
@@ -81,11 +81,8 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     Label tagsHeader;
 
     private final EventBus eventBus;
-
     private final SystemTreeModelProvider treeModelProvider;
-
     private final AlertModelProvider alertModelProvider;
-
     private final EventModelProvider eventModelProvider;
 
     @Inject
@@ -221,8 +218,8 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     }
 
     native void attachWindowFocusEvents() /*-{
-                                          var clientAgentType = @org.ovirt.engine.ui.webadmin.uicommon.ClientAgentType::new()();
-                                          var browser = clientAgentType.@org.ovirt.engine.ui.webadmin.uicommon.ClientAgentType::browser;
+                                          var clientAgentType = @org.ovirt.engine.ui.common.uicommon.ClientAgentType::new()();
+                                          var browser = clientAgentType.@org.ovirt.engine.ui.common.uicommon.ClientAgentType::browser;
                                           var isIE = browser.toLowerCase() == "explorer";
 
                                           if (isIE) {

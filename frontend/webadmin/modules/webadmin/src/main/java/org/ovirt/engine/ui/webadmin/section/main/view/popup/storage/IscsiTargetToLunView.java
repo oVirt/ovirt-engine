@@ -4,8 +4,8 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-import org.ovirt.engine.ui.webadmin.widget.HasEditorDriver;
 import org.ovirt.engine.ui.webadmin.widget.storage.IscsiDiscoverTargetsView;
 import org.ovirt.engine.ui.webadmin.widget.storage.SanStorageTargetToLunList;
 

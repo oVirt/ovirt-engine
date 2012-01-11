@@ -1,29 +1,131 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.ovirt.engine.ui</groupId>
-    <artifactId>webadmin-all</artifactId>
-    <version>3.0.0-0001</version>
-  </parent>
+	<parent>
+		<groupId>org.ovirt.engine.ui</groupId>
+		<artifactId>webadmin-all</artifactId>
+		<version>3.0.0-0001</version>
+	</parent>
 
-  <groupId>org.ovirt.engine.ui</groupId>
-  <artifactId>webadmin-modules</artifactId>
-  <packaging>pom</packaging>
+	<groupId>org.ovirt.engine.ui</groupId>
+	<artifactId>webadmin-modules</artifactId>
+	<packaging>pom</packaging>
 
-  <name>oVirt Modules</name>
-  <description>parent POM for all oVirt modules</description>
+	<name>oVirt Modules</name>
+	<description>parent POM for all oVirt modules</description>
 
-  <modules>
-    <module>sharedgwt</module>
-    <module>gwt-extension</module>
-    <module>uicompat</module>
-    <module>frontend</module>
-    <module>uicommon</module>
-    <module>uicommonweb</module>
-    <module>webadmin</module>
-    <module>userportal</module>
-  </modules>
+	<modules>
+		<module>sharedgwt</module>
+		<module>gwt-extension</module>
+		<module>uicompat</module>
+		<module>frontend</module>
+		<module>uicommon</module>
+		<module>uicommonweb</module>
+		<module>gwt-common</module>
+		<module>webadmin</module>
+		<module>userportal</module>
+	</modules>
+
+	<properties>
+		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.6</maven.compiler.target>
+
+		<!-- Directory into which JSR-269 annotation processors will generate their sources -->
+		<generatedSourcesDirectory>generated-sources/annotations</generatedSourcesDirectory>
+
+		<junit.version>4.8.1</junit.version>
+		<gwtp.version>0.6</gwtp.version>
+		<guice.version>3.0</guice.version>
+		<gin.version>1.5.0</gin.version>
+
+		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
+		<maven-resources-plugin.version>2.5</maven-resources-plugin.version>
+		<maven-war-plugin.version>2.1.1</maven-war-plugin.version>
+		<build-helper-maven-plugin.version>1.5</build-helper-maven-plugin.version>
+		<aspectj-maven-plugin.version>1.4</aspectj-maven-plugin.version>
+		<maven-processor-plugin.version>2.0.5</maven-processor-plugin.version>
+		<maven-checkstyle-plugin.version>2.8</maven-checkstyle-plugin.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- Exclude Guice dependencies from GIN -->
+			<dependency>
+				<groupId>com.google.gwt.inject</groupId>
+				<artifactId>gin</artifactId>
+				<version>${gin.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.google.inject</groupId>
+						<artifactId>guice</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.google.inject.extensions</groupId>
+						<artifactId>guice-assistedinject</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin.version}</version>
+					<configuration>
+						<source>${maven.compiler.source}</source>
+						<target>${maven.compiler.target}</target>
+						<encoding>${project.build.sourceEncoding}</encoding>
+						<!-- We use maven-processor-plugin to invoke annotation processors -->
+						<compilerArgument>-proc:none</compilerArgument>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.bsc.maven</groupId>
+					<artifactId>maven-processor-plugin</artifactId>
+					<version>${maven-processor-plugin.version}</version>
+					<configuration>
+						<outputDirectory>${project.build.directory}/${generatedSourcesDirectory}</outputDirectory>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>${maven-resources-plugin.version}</version>
+					<configuration>
+						<encoding>${project.build.sourceEncoding}</encoding>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>aspectj-maven-plugin</artifactId>
+					<version>${aspectj-maven-plugin.version}</version>
+					<configuration>
+						<source>${maven.compiler.source}</source>
+						<target>${maven.compiler.target}</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>codehaus</id>
+			<name>Codehaus Releases</name>
+			<url>http://repository.codehaus.org/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 </project>

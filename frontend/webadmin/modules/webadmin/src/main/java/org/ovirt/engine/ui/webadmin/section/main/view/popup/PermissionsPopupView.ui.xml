@@ -2,7 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
 	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget">
 
 	<ui:style>
@@ -54,12 +54,12 @@
 				</g:SimplePanel>
 				<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.searchStringPanel}">
 					<e:ListModelListBoxEditor label="Search:" ui:field="domainSelection" />
-					<e:TextBoxChanger addStyleNames="{style.searchStringEditor}" ui:field="searchStringEditor" />
+					<we:TextBoxChanger addStyleNames="{style.searchStringEditor}" ui:field="searchStringEditor" />
 					<w:UiCommandButton ui:field="searchButton"
 						addStyleNames="{style.goButton}" />
 				</g:HorizontalPanel>
 				<g:ScrollPanel ui:field="searchItemsScrollPanel" addStyleNames="{style.searchItemsPanel}">
-					<e:EntityModelCellTable ui:field="searchItems" />
+					<we:EntityModelCellTable ui:field="searchItems" />
 				</g:ScrollPanel>
 				<g:HorizontalPanel spacing="10" ui:field="roleSelectionPanel" addStyleNames="{style.rolePanel}">
 					<g:Label ui:field="roleToAssignLabel" addStyleNames="{style.mainLabel}">Role to Assign:</g:Label>

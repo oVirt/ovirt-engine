@@ -126,7 +126,6 @@ public class Slider extends Composite {
 
             @Override
             public void onResize() {
-                // TODO Auto-generated method stub
                 super.onResize();
                 setSliderWidth();
             }

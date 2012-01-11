@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.widget.table.refresh;
 import java.util.Set;
 
 import org.ovirt.engine.ui.webadmin.widget.renderer.MilisecondRenderer;
-import org.ovirt.engine.ui.webadmin.widget.table.RefreshPanelCSS;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -40,8 +39,8 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ToggleButton;
 
 /**
- * A Panel that shows a refresh button, with popup menu to select the refresh rate<BR>
- * Works with a {@link RefreshManager}
+ * A Panel that shows a refresh button, with popup menu to select the refresh rate.<BR>
+ * Works with a {@link RefreshManager}.
  */
 public class RefreshPanel extends FocusPanel implements HasClickHandlers {
 
@@ -66,6 +65,7 @@ public class RefreshPanel extends FocusPanel implements HasClickHandlers {
         @Source("org/ovirt/engine/ui/webadmin/images/triangle_down.gif")
         @ImageOptions(width = 7, height = 5)
         ImageResource triangle_down();
+
     }
 
     private class RefreshRateOptionCommand implements Command {
@@ -83,13 +83,10 @@ public class RefreshPanel extends FocusPanel implements HasClickHandlers {
             refreshManager.setCurrentRefreshRate(menuItem.getRefreshRate());
         }
 
-        public RefreshRateOptionMenuItem getMenuItem() {
-            return menuItem;
-        }
-
         public void setMenuItem(RefreshRateOptionMenuItem menuItem) {
             this.menuItem = menuItem;
         }
+
     }
 
     /**
@@ -132,6 +129,7 @@ public class RefreshPanel extends FocusPanel implements HasClickHandlers {
         public void unselect() {
             checkItem.setVisible(false);
         }
+
     }
 
     /**
@@ -173,6 +171,7 @@ public class RefreshPanel extends FocusPanel implements HasClickHandlers {
 
             menuItem.select();
         }
+
     }
 
     private static final Resources RESOURCES = GWT.create(Resources.class);
@@ -362,4 +361,5 @@ public class RefreshPanel extends FocusPanel implements HasClickHandlers {
 
         return refreshOptionsMenu;
     }
+
 }

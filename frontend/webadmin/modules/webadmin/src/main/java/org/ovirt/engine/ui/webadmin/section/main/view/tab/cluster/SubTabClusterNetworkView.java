@@ -5,17 +5,17 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkStatusColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 
@@ -70,21 +70,21 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
         };
         getTable().addColumn(descColumn, "Description");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<network>("Add Network") {
+        getTable().addActionButton(new WebAdminButtonDefinition<network>("Add Network") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewNetworkCommand();
             }
         });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<network>("Assign/Detach Networks") {
+        getTable().addActionButton(new WebAdminButtonDefinition<network>("Assign/Detach Networks") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getManageCommand();
             }
         });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<network>("Set as Display") {
+        getTable().addActionButton(new WebAdminButtonDefinition<network>("Set as Display") {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getSetAsDisplayCommand();

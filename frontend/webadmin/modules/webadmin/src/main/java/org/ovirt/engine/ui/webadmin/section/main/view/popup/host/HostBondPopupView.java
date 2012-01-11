@@ -8,6 +8,11 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
@@ -15,13 +20,8 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
-import org.ovirt.engine.ui.webadmin.widget.Align;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.EnumRadioEditor;
-import org.ovirt.engine.ui.webadmin.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.renderer.NullSafeRenderer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -96,7 +96,6 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         super(eventBus, resources);
 
         bondEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-
             @Override
             protected String renderNullSafe(Object object) {
                 return ((VdsNetworkInterface) object).getName();
@@ -104,7 +103,6 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
 
         });
         networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-
             @Override
             protected String renderNullSafe(Object object) {
                 return ((network) object).getname();
@@ -112,7 +110,6 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
 
         });
         bondingModeEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-
             @SuppressWarnings("unchecked")
             @Override
             protected String renderNullSafe(Object object) {
@@ -125,7 +122,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
                 return (String) value.getEntity();
             }
         });
-        bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class);
+        bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class, eventBus);
 
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -152,7 +149,6 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         Driver.driver.edit(object);
 
         object.getPropertyChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 HostBondInterfaceModel model = (HostBondInterfaceModel) sender;
@@ -167,7 +163,6 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         });
 
         object.getBondingOptions().getSelectedItemChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 ListModel list = (ListModel) sender;
@@ -185,7 +180,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         });
 
         customEditor.asValueBox().addValueChangeHandler(new ValueChangeHandler<Object>() {
-
+            @SuppressWarnings("unchecked")
             @Override
             public void onValueChange(ValueChangeEvent<Object> event) {
                 for (Object item : object.getBondingOptions().getItems()) {

@@ -7,6 +7,8 @@ import com.google.gwt.core.client.GWT;
  * <p>
  * Accessing Ginjector this way is useful for non-managed components (application classes that don't participate in
  * dependency injection, such as custom widgets).
+ * <p>
+ * <em>Use this class wisely, always prefer dependency injection over static access!</em>
  */
 public class ClientGinjectorProvider {
 

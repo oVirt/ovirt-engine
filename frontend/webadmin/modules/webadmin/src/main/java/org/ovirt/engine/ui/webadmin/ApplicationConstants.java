@@ -1,19 +1,11 @@
 package org.ovirt.engine.ui.webadmin;
 
-import com.google.gwt.i18n.client.Constants;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 
-public interface ApplicationConstants extends Constants {
-
-    // Common stuff
-
-    @DefaultStringValue("Oops!")
-    String errorPopupCaption();
+public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("About")
     String aboutPopupCaption();
-
-    @DefaultStringValue("Close")
-    String closeButtonLabel();
 
     // Widgets
 
@@ -389,9 +381,6 @@ public interface ApplicationConstants extends Constants {
     @DefaultStringValue("Advanced View")
     String eventAdvancedViewLabel();
 
-    @DefaultStringValue("[N/A]")
-    String unAvailablePropertyLabel();
-
     @DefaultStringValue("General")
     String clusterPopupGeneralTabLabel();
 
@@ -460,12 +449,6 @@ public interface ApplicationConstants extends Constants {
 
     @DefaultStringValue("Description")
     String tagPopupDescriptionLabel();
-
-    @DefaultStringValue("This feature is not implemented in this version.")
-    String featureNotImplementedMessage();
-
-    @DefaultStringValue("This feature is not implemented but available in UserPortal for users assigned with PowerUser role.")
-    String featureNotImplementedButAvailInUserPortalMessage();
 
     @DefaultStringValue("None")
     String clusterPolicyNoneLabel();

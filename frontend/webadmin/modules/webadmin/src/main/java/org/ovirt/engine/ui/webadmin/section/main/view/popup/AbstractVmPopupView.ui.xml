@@ -2,8 +2,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"	xmlns:t="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog.tab"
-	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget">
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
+	xmlns:t="urn:import:org.ovirt.engine.ui.webadmin.widget.dialog.tab" xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractVmPopupView.Style">
 		.generalTabTopDecorator {
@@ -92,8 +92,8 @@
 								</g:FlowPanel>
 								<g:FlowPanel addStyleNames="{style.sectionPanel}">
 									<e:EntityModelTextBoxEditor ui:field="memSizeEditor" />
-									<e:EntityModelSliderWithTextBoxEditor ui:field="totalCPUCoresEditor"/>
-									<e:EntityModelSliderWithTextBoxEditor ui:field="numOfSocketsEditor" />
+									<we:EntityModelSliderWithTextBoxEditor ui:field="totalCPUCoresEditor"/>
+									<we:EntityModelSliderWithTextBoxEditor ui:field="numOfSocketsEditor" />
 								</g:FlowPanel>
 								<g:FlowPanel addStyleNames="{style.sectionPanel}">
 									<e:ListModelListBoxEditor ui:field="oSTypeEditor" />
@@ -162,7 +162,7 @@
 								</g:FlowPanel>
 								<g:FlowPanel addStyleNames="{style.sectionPanel}">
 									<g:Label addStyleNames="{style.sectionLabel}">Priority for Run/Migration queue:</g:Label>
-									<e:EntityModelCellTable ui:field="priorityEditor" />
+									<we:EntityModelCellTable ui:field="priorityEditor" />
 								</g:FlowPanel>
 							</g:FlowPanel>
 						</t:content>

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.autocomplete;
 
+import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SuggestItemPartModel;
-import org.ovirt.engine.ui.webadmin.idhandler.HasElementId;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.event.dom.client.FocusEvent;

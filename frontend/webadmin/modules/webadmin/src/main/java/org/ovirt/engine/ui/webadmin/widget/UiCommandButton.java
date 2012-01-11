@@ -1,27 +1,20 @@
 package org.ovirt.engine.ui.webadmin.widget;
 
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogButton;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.Widget;
 
-public class UiCommandButton extends Composite implements HasUiCommandClickHandlers, HasLabel {
+public class UiCommandButton extends AbstractUiCommandButton {
 
     interface WidgetUiBinder extends UiBinder<Widget, UiCommandButton> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
-
-    private UICommand command;
 
     @UiField
     SimpleDialogButton button;
@@ -45,37 +38,8 @@ public class UiCommandButton extends Composite implements HasUiCommandClickHandl
     }
 
     @Override
-    public HandlerRegistration addClickHandler(ClickHandler handler) {
-        return button.addClickHandler(handler);
-    }
-
-    @Override
-    public UICommand getCommand() {
-        return command;
-    }
-
-    @Override
-    public void setCommand(UICommand command) {
-        this.command = command;
-
-        command.getPropertyChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                updateButton();
-            }
-        });
-
-        updateButton();
-    }
-
-    @Override
-    public String getLabel() {
-        return button.getText();
-    }
-
-    @Override
-    public void setLabel(String label) {
-        button.setText(label);
+    protected ButtonBase getButtonWidget() {
+        return button;
     }
 
     public void setImage(ImageResource image) {
@@ -84,11 +48,6 @@ public class UiCommandButton extends Composite implements HasUiCommandClickHandl
 
     public void setCustomContentStyle(String customStyle) {
         button.setCustomContentStyle(customStyle);
-    }
-
-    void updateButton() {
-        button.setVisible(command.getIsAvailable());
-        button.setEnabled(command.getIsExecutionAllowed());
     }
 
 }
