@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
+
+	<ui:style>
+		.generalTabTopDecorator {
+			background-color: #D3D3D3;
+            width: 540px;
+            margin-top: 4px;
+		}
+
+        .horizontalPanelStyle {
+            width: 100%;
+            padding: 6px;
+        }
+
+        .verticalPanelStyle {
+            width: 395px;
+        }
+
+        .radioButtonsTabContent {
+            margin-top: 10px;
+        }
+
+        .titleLabelStyle {
+            font-weight: bold;
+            width: 80px;
+            margin-top: 8px;
+        }
+
+        .toggleButtonStyle {
+            text-decoration: underline:
+            cursor: default;
+        }
+
+        .explanationLabel {
+            font-style: italic;
+            margin-left: 40px;
+            margin-bottom: 10px;
+            width: 300px;
+        }
+
+        hr {
+            color: #C0C0C0;
+            margin: 6px;
+        }
+	</ui:style>
+
+	<d:SimpleDialogPanel width="723px" height="500px">
+		<d:content>
+			<t:DialogTabPanel height="100%">
+				<t:tab>
+					<t:DialogTab ui:field="generalTab">
+						<t:content>
+                            <g:VerticalPanel>
+                                <g:VerticalPanel addStyleNames="{style.generalTabTopDecorator}">
+                                    <g:HorizontalPanel addStyleNames="{style.horizontalPanelStyle}">
+                                        <g:Label addStyleNames="{style.titleLabelStyle}">Data Center</g:Label>
+                                        <g:VerticalPanel addStyleNames="{style.verticalPanelStyle}">
+                                            <e:EntityModelTextBoxEditor ui:field="dataCenterNameEditor" />
+                                            <g:VerticalPanel ui:field="dataCenterPanel" addStyleNames="{style.verticalPanelStyle}">
+                                                <e:EntityModelTextBoxEditor ui:field="dataCenterDescriptionEditor" />
+                                                <e:ListModelListBoxEditor ui:field="dataCenterVersionEditor" />
+                                            </g:VerticalPanel>
+                                        </g:VerticalPanel>
+                                        <g:Anchor ui:field="dataCenterButton" styleName="{style.toggleButtonStyle}" />
+                                    </g:HorizontalPanel>
+                                    <g:HTMLPanel>
+                                        <hr/>
+                                    </g:HTMLPanel>
+                                    <g:HorizontalPanel addStyleNames="{style.horizontalPanelStyle}">
+                                        <g:Label addStyleNames="{style.titleLabelStyle}">Cluster</g:Label>
+                                        <g:VerticalPanel addStyleNames="{style.verticalPanelStyle}">
+                                            <e:EntityModelTextBoxEditor ui:field="clusterNameEditor" />
+                                            <g:VerticalPanel ui:field="clusterPanel" addStyleNames="{style.verticalPanelStyle}">
+                                                <e:EntityModelTextBoxEditor ui:field="clusterDescriptionEditor" />
+                                                <e:ListModelListBoxEditor ui:field="clusterCpuNameEditor" />
+                                            </g:VerticalPanel>
+                                        </g:VerticalPanel>
+                                        <g:Anchor ui:field="clusterButton" styleName="{style.toggleButtonStyle}" />
+                                    </g:HorizontalPanel>
+                                    <g:HTMLPanel>
+                                        <hr/>
+                                    </g:HTMLPanel>
+                                    <g:HorizontalPanel addStyleNames="{style.horizontalPanelStyle}">
+                                        <g:Label addStyleNames="{style.titleLabelStyle}">Storage</g:Label>
+                                        <g:VerticalPanel addStyleNames="{style.verticalPanelStyle}">
+                                            <e:EntityModelTextBoxEditor ui:field="storageNameEditor" />
+                                        </g:VerticalPanel>
+                                        <g:Anchor ui:field="storageButton" styleName="{style.toggleButtonStyle}" />
+                                    </g:HorizontalPanel>
+                                </g:VerticalPanel>
+                                <g:Label ui:field="pathLabel" />
+                                <e:EntityModelTextBoxEditor ui:field="pathEditor" />
+                            </g:VerticalPanel>
+						</t:content>
+					</t:DialogTab>
+				</t:tab>
+				<t:tab>
+                    <t:DialogTab ui:field="memoryOptimizationTab">
+                        <t:content>
+                            <g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
+                                <e:EntityModelRadioButtonEditor ui:field="optimizationNoneEditor" />
+                                <g:Label ui:field="optimizationNoneExplanationLabel" addStyleNames="{style.explanationLabel},generalDialogComment" />
+                                <e:EntityModelRadioButtonEditor ui:field="optimizationForServerEditor" />
+                                <g:Label ui:field="optimizationForServerExplanationLabel" addStyleNames="{style.explanationLabel},generalDialogComment" />
+                                <e:EntityModelRadioButtonEditor ui:field="optimizationForDesktopEditor" />
+                                <g:Label ui:field="optimizationForDesktopExplanationLabel" addStyleNames="{style.explanationLabel},generalDialogComment" />
+                                <e:EntityModelRadioButtonEditor ui:field="optimizationCustomEditor" />
+                                <g:Label ui:field="optimizationCustomExplanationLabel" addStyleNames="{style.explanationLabel},generalDialogComment" />
+                            </g:FlowPanel>
+                        </t:content>
+                    </t:DialogTab>
+				</t:tab>
+			</t:DialogTabPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

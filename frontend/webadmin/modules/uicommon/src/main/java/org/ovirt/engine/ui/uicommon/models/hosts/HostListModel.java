@@ -56,11 +56,9 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ITaskTarget;
 import org.ovirt.engine.ui.uicompat.Task;
 import org.ovirt.engine.ui.uicompat.TaskContext;
-import org.ovirt.engine.ui.uicompat.TransactionAbortedException;
-import org.ovirt.engine.ui.uicompat.TransactionScope;
 
 @SuppressWarnings("unused")
-public class HostListModel extends ListWithDetailsModel implements ITaskTarget, ISupportSystemTreeContext
+public class HostListModel extends ListWithDetailsModel implements ISupportSystemTreeContext//, ITaskTarget
 {
 
 	private UICommand privateNewCommand;
@@ -1245,21 +1243,21 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
 
 	private void OnConfigureLocalStorage()
 	{
-		ConfigureLocalStorageModel model = (ConfigureLocalStorageModel)getWindow();
-
-		if (model.getProgress() != null)
-		{
-			return;
-		}
-
-		if (!model.Validate())
-		{
-			return;
-		}
-
-		model.StartProgress("Configuring Local Storage...");
-
-		Task.Create(this, 1).Run();
+//		ConfigureLocalStorageModel model = (ConfigureLocalStorageModel)getWindow();
+//
+//		if (model.getProgress() != null)
+//		{
+//			return;
+//		}
+//
+//		if (!model.Validate())
+//		{
+//			return;
+//		}
+//
+//		model.StartProgress("Configuring Local Storage...");
+//
+//		Task.Create(this, 1).Run();
 	}
 
 	@Override
@@ -1525,47 +1523,6 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
 			OnConfigureLocalStorage();
 		}
 	}
-
-	@Override
-    public void run(TaskContext context)
-	{
-		switch ((Integer)context.getState())
-		{
-			case 1:
-				try
-				{
-					//override default timeout (60 sec) with 10 minutes
-//C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by its Java equivalent:
-//					using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 10, 0)))
-					TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 10, 0));
-					try
-					{
-						new AddDataCenterRM(this);
-						scope.Complete();
-					}
-					finally
-					{
-						scope.dispose();
-					}
-				}
-				catch (TransactionAbortedException e)
-				{
-					//Do nothing.
-				}
-				finally
-				{
-					context.InvokeUIThread(this, 2);
-				}
-				break;
-
-			case 2:
-				StopProgress();
-
-				Cancel();
-				break;
-		}
-	}
-
 
 	private SystemTreeItemModel systemTreeSelectedItem;
 	@Override

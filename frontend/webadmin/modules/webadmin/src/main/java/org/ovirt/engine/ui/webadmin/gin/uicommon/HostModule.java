@@ -1,50 +1,33 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
-import java.util.ArrayList;
-import java.util.Map;
-
+import com.google.gwt.inject.client.AbstractGinModule;
+import com.google.inject.Provider;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
-import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.*;
 import org.ovirt.engine.ui.uicommonweb.ReportCommand;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHooksListModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.*;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.*;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Provider;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class HostModule extends AbstractGinModule {
 
@@ -57,7 +40,9 @@ public class HostModule extends AbstractGinModule {
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<ManualFencePopupPresenterWidget> manualFenceConfirmPopupProvider,
             final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider,
-            final Provider<ReportPresenterWidget> reportWindowProvider) {
+            final Provider<ReportPresenterWidget> reportWindowProvider,
+            final Provider<ConfigureLocalStoragePopupPresenterWidget> configureLocalStoragePopupProvider) {
+
         return new MainTabModelProvider<VDS, HostListModel>(ginjector, HostListModel.class) {
             @Override
             protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
@@ -68,6 +53,8 @@ public class HostModule extends AbstractGinModule {
                     return popupProvider.get();
                 } else if (lastExecutedCommand == getModel().getAssignTagsCommand()) {
                     return assignTagsPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getConfigureLocalStorageCommand()) {
+                    return configureLocalStoragePopupProvider.get();
                 }
                 return super.getModelPopup(lastExecutedCommand);
             }

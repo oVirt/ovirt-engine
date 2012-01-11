@@ -1,73 +1,35 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
-import org.ovirt.engine.core.common.action.AddVdsActionParameters;
-import org.ovirt.engine.core.common.action.ApproveVdsParameters;
-import org.ovirt.engine.core.common.action.AttachVdsToTagParameters;
-import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
-import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
-import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
-import org.ovirt.engine.core.common.action.MaintananceNumberOfVdssParameters;
-import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.*;
+import org.ovirt.engine.core.common.businessentities.*;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.core.compat.NotifyCollectionChangedEventArgs;
-import org.ovirt.engine.core.compat.ObservableCollection;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.TimeSpan;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.*;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.ITaskTarget;
-import org.ovirt.engine.ui.uicompat.Task;
-import org.ovirt.engine.ui.uicompat.TaskContext;
-import org.ovirt.engine.ui.uicompat.TransactionAbortedException;
-import org.ovirt.engine.ui.uicompat.TransactionScope;
+import org.ovirt.engine.ui.uicompat.*;
+
+import java.util.ArrayList;
 
 @SuppressWarnings("unused")
-public class HostListModel extends ListWithDetailsModel implements ITaskTarget, ISupportSystemTreeContext
+public class HostListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
-
     private UICommand privateNewCommand;
 
     public UICommand getNewCommand()
@@ -1251,12 +1213,11 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
                 }, model);
     }
 
-    private void ConfigureLocalStorage()
-    {
+    private void ConfigureLocalStorage() {
+
         VDS host = (VDS) getSelectedItem();
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -1265,77 +1226,118 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         model.setTitle("Configure Local Storage");
         model.setHashName("configure_local_storage");
 
-        if (host.getvds_type() == VDSType.oVirtNode)
-        {
-            String prefix = DataProvider.GetLocalFSPath();
-            if (!StringHelper.isNullOrEmpty(prefix))
-            {
-                EntityModel pathModel = model.getStorage().getPath();
-                pathModel.setEntity(prefix);
-                pathModel.setIsChangable(false);
-            }
+        if (host.getvds_type() == VDSType.oVirtNode) {
+            configureLocalStorage2(model);
+        } else {
+            configureLocalStorage3(model);
         }
+    }
+
+    private void configureLocalStorage2(ConfigureLocalStorageModel model) {
+
+        AsyncDataProvider.GetLocalFSPath(new AsyncQuery(model,
+            new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object target, Object returnValue) {
+
+                    String prefix = (String) returnValue;
+                    ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) target;
+
+                    if (!StringHelper.isNullOrEmpty(prefix)) {
+
+                        EntityModel pathModel = model.getStorage().getPath();
+                        pathModel.setEntity(prefix);
+                        pathModel.setIsChangable(false);
+                    }
+
+                    configureLocalStorage3(model);
+                }
+            })
+        );
+    }
+
+    private void configureLocalStorage3(ConfigureLocalStorageModel model) {
+
+        VDS host = (VDS) getSelectedItem();
 
         boolean hostSupportLocalStorage = false;
         Version version3_0 = new Version(3, 0);
-        if (host.getsupported_cluster_levels() != null)
-        {
+
+        if (host.getsupported_cluster_levels() != null) {
+
             String[] array = host.getsupported_cluster_levels().split("[,]", -1);
-            for (int i = 0; i < array.length; i++)
-            {
-                if (version3_0.compareTo(new Version(array[i])) <= 0)
-                {
+
+            for (int i = 0; i < array.length; i++) {
+                if (version3_0.compareTo(new Version(array[i])) <= 0) {
                     hostSupportLocalStorage = true;
                     break;
                 }
             }
         }
 
-        if (hostSupportLocalStorage)
-        {
-            String modelMessage = null;
-            RefObject<String> tempRef_modelMessage = new RefObject<String>(modelMessage);
-            model.SetDefaultNames(host, tempRef_modelMessage);
-            modelMessage = tempRef_modelMessage.argvalue;
-            model.setMessage(modelMessage);
 
-            UICommand tempVar = new UICommand("OnConfigureLocalStorage", this);
-            tempVar.setTitle("OK");
-            tempVar.setIsDefault(true);
-            model.getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("Cancel", this);
-            tempVar2.setTitle("Cancel");
-            tempVar2.setIsCancel(true);
-            model.getCommands().add(tempVar2);
-        }
-        else
-        {
+        UICommand command;
+
+        if (hostSupportLocalStorage) {
+
+            model.SetDefaultNames(host);
+
+            command = new UICommand("OnConfigureLocalStorage", this);
+            command.setTitle("OK");
+            command.setIsDefault(true);
+            model.getCommands().add(command);
+
+            command = new UICommand("Cancel", this);
+            command.setTitle("Cancel");
+            command.setIsCancel(true);
+            model.getCommands().add(command);
+        } else {
+
             model.setMessage("Host doesn't support Local Storage configuration");
-            UICommand tempVar3 = new UICommand("Cancel", this);
-            tempVar3.setTitle("Close");
-            tempVar3.setIsCancel(true);
-            tempVar3.setIsDefault(true);
-            model.getCommands().add(tempVar3);
+
+            command = new UICommand("Cancel", this);
+            command.setTitle("Close");
+            command.setIsCancel(true);
+            command.setIsDefault(true);
+            model.getCommands().add(command);
         }
     }
 
-    private void OnConfigureLocalStorage()
-    {
+    private void OnConfigureLocalStorage() {
+
         ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (!model.Validate())
-        {
+        if (!model.Validate()) {
             return;
         }
 
         model.StartProgress("Configuring Local Storage...");
 
-        Task.Create(this, 1).Run();
+
+        ReversibleFlow flow = new ReversibleFlow();
+        flow.getCompleteEvent().addListener(
+            new IEventListener() {
+                @Override
+                public void eventRaised(Event ev, Object sender, EventArgs args) {
+
+                    ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) ev.getContext();
+
+                    model.StopProgress();
+                    Cancel();
+                }
+            },
+            model);
+
+        flow.enlist(new AddDataCenterRM());
+        flow.enlist(new AddClusterRM());
+        flow.enlist(new ChangeHostClusterRM());
+        flow.enlist(new AddStorageDomainRM());
+
+        flow.run(new EnlistmentContext(this));
     }
 
     @Override
@@ -1491,14 +1493,6 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
 
         getAssignTagsCommand().setIsExecutionAllowed(items.size() > 0);
 
-        getConfigureLocalStorageCommand().setIsExecutionAllowed(items.size() == 1
-                && items.get(0).getstatus() == VDSStatus.Maintenance);
-        if (!DataProvider.HasAdminSystemPermission() && getConfigureLocalStorageCommand().getIsExecutionAllowed())
-        {
-            getConfigureLocalStorageCommand().setIsExecutionAllowed(false);
-            getConfigureLocalStorageCommand().getExecuteProhibitionReasons()
-                    .add("Configuring local Storage is permitted only to Administrators with System-level permissions");
-        }
 
         // System tree dependent actions.
         boolean isAvailable =
@@ -1506,6 +1500,66 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
 
         getNewCommand().setIsAvailable(isAvailable);
         getRemoveCommand().setIsAvailable(isAvailable);
+
+
+        UpdateConfigureLocalStorageCommandAvailability();
+    }
+
+    private Boolean hasAdminSystemPermission = null;
+
+    public void UpdateConfigureLocalStorageCommandAvailability() {
+
+        if (hasAdminSystemPermission == null) {
+
+            VdcUser vdcUser = Frontend.getLoggedInUser();
+
+            if (vdcUser == null) {
+                hasAdminSystemPermission = false;
+                UpdateConfigureLocalStorageCommandAvailability1();
+                return;
+            }
+
+            Frontend.RunQuery(VdcQueryType.GetPermissionsByAdElementId, new MultilevelAdministrationByAdElementIdParameters(vdcUser.getUserId()),
+                new IFrontendQueryAsyncCallback() {
+                    @Override
+                    public void OnSuccess(FrontendQueryAsyncResult result) {
+
+                        ArrayList<permissions> permissions = (ArrayList<permissions>) result.getReturnValue().getReturnValue();
+                        for (permissions permission : permissions) {
+
+                            if (permission.getObjectType() == VdcObjectType.System && permission.getRoleType() == RoleType.ADMIN) {
+                                hasAdminSystemPermission = true;
+                                break;
+                            }
+                        }
+
+                        UpdateConfigureLocalStorageCommandAvailability1();
+                    }
+
+                    @Override
+                    public void OnFailure(FrontendQueryAsyncResult result) {
+
+                        hasAdminSystemPermission = false;
+                        UpdateConfigureLocalStorageCommandAvailability1();
+                    }
+                });
+        } else {
+            UpdateConfigureLocalStorageCommandAvailability1();
+        }
+    }
+
+    private void UpdateConfigureLocalStorageCommandAvailability1() {
+
+        ArrayList<VDS> items = getSelectedItems() != null ? Linq.<VDS>Cast(getSelectedItems()) : new ArrayList<VDS>();
+
+        getConfigureLocalStorageCommand().setIsExecutionAllowed(items.size() == 1
+            && items.get(0).getstatus() == VDSStatus.Maintenance);
+
+        if (!hasAdminSystemPermission && getConfigureLocalStorageCommand().getIsExecutionAllowed()) {
+
+            getConfigureLocalStorageCommand().setIsExecutionAllowed(false);
+            getConfigureLocalStorageCommand().getExecuteProhibitionReasons().add("Configuring local Storage is permitted only to Administrators with System-level permissions");
+        }
     }
 
     @Override
@@ -1623,43 +1677,43 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         }
     }
 
-    @Override
-    public void run(TaskContext context)
-    {
-        switch ((Integer) context.getState())
-        {
-        case 1:
-            try
-            {
-                // override default timeout (60 sec) with 10 minutes
-                // C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by its Java equivalent:
-                // using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0,
-                // 10, 0)))
-                TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 10, 0));
-                try
-                {
-                    new AddDataCenterRM(this);
-                    scope.Complete();
-                } finally
-                {
-                    scope.dispose();
-                }
-            } catch (TransactionAbortedException e)
-            {
-                // Do nothing.
-            } finally
-            {
-                context.InvokeUIThread(this, 2);
-            }
-            break;
-
-        case 2:
-            StopProgress();
-
-            Cancel();
-            break;
-        }
-    }
+//    @Override
+//    public void run(TaskContext context)
+//    {
+//        switch ((Integer) context.getState())
+//        {
+//        case 1:
+//            try
+//            {
+//                // override default timeout (60 sec) with 10 minutes
+//                // C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by its Java equivalent:
+//                // using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0,
+//                // 10, 0)))
+//                TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 10, 0));
+//                try
+//                {
+//                    new AddDataCenterRM(this);
+//                    scope.Complete();
+//                } finally
+//                {
+//                    scope.dispose();
+//                }
+//            } catch (TransactionAbortedException e)
+//            {
+//                // Do nothing.
+//            } finally
+//            {
+//                context.InvokeUIThread(this, 2);
+//            }
+//            break;
+//
+//        case 2:
+//            StopProgress();
+//
+//            Cancel();
+//            break;
+//        }
+//    }
 
     private SystemTreeItemModel systemTreeSelectedItem;
 

@@ -259,6 +259,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Power Management")
     String hostPopupPowerManagementTabLabel();
 
+    @DefaultStringValue("Memory Optimization")
+    String hostPopupMemoryOptimizationTabLabel();
+
     @DefaultStringValue("Data Center")
     String hostPopupDataCenterLabel();
 
@@ -318,6 +321,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Override IP tables")
     String hostInstallOverrideIpTablesLabel();
+
+    @DefaultStringValue("Set the path to your local storage:")
+    String configureLocalStoragePopupPathLabel();
 
     @DefaultStringValue("Executing this operation on a Host that was not properly manually rebooted could lead to a condition where VMs start on multiple hosts and lead to VM corruption!")
     String manaulFencePopupNoneSpmWarningLabel();
@@ -708,4 +714,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Disk Activate/Deactivate while VM is running, is supported only for Clusters of version 3.1 and above")
     String diskHotPlugNotSupported();
+
+    @DefaultStringValue("Edit")
+    String editText();
+
+    @DefaultStringValue("Close")
+    String closeText();
 }

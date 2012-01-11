@@ -8,80 +8,70 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
 @SuppressWarnings("unused")
-public class LocalStorageModel extends Model implements IStorageModel
-{
+public class LocalStorageModel extends Model implements IStorageModel {
 
-    private UICommand privateUpdateCommand;
-
-    @Override
-    public UICommand getUpdateCommand()
-    {
-        return privateUpdateCommand;
-    }
-
-    private void setUpdateCommand(UICommand value)
-    {
-        privateUpdateCommand = value;
-    }
-
-    private StorageModel privateContainer;
+    private UICommand updateCommand;
 
     @Override
-    public StorageModel getContainer()
-    {
-        return privateContainer;
+    public UICommand getUpdateCommand() {
+        return updateCommand;
+    }
+
+    private void setUpdateCommand(UICommand value) {
+        updateCommand = value;
+    }
+
+    private StorageModel container;
+
+    @Override
+    public StorageModel getContainer() {
+        return container;
     }
 
     @Override
-    public void setContainer(StorageModel value)
-    {
-        privateContainer = value;
+    public void setContainer(StorageModel value) {
+        container = value;
     }
 
-    private StorageDomainType privateRole = StorageDomainType.values()[0];
+    private StorageDomainType role = StorageDomainType.values()[0];
 
     @Override
-    public StorageDomainType getRole()
-    {
-        return privateRole;
+    public StorageDomainType getRole() {
+        return role;
     }
 
     @Override
-    public void setRole(StorageDomainType value)
-    {
-        privateRole = value;
+    public void setRole(StorageDomainType value) {
+        role = value;
     }
 
-    private EntityModel privatePath;
+    private EntityModel path;
 
-    public EntityModel getPath()
-    {
-        return privatePath;
+    public EntityModel getPath() {
+        return path;
     }
 
-    public void setPath(EntityModel value)
-    {
-        privatePath = value;
+    public void setPath(EntityModel value) {
+        path = value;
     }
 
-    public LocalStorageModel()
-    {
+
+    public LocalStorageModel() {
+
         setUpdateCommand(new UICommand("Update", this));
-
         setPath(new EntityModel());
     }
 
     @Override
-    public boolean Validate()
-    {
-        getPath().ValidateEntity(new NotEmptyValidation[] { new NotEmptyValidation() });
+    public boolean Validate() {
+
+        getPath().ValidateEntity(new NotEmptyValidation[] {new NotEmptyValidation()});
 
         return getPath().getIsValid();
     }
 
     @Override
-    public StorageType getType()
-    {
+    public StorageType getType() {
         return StorageType.LOCALFS;
     }
 }

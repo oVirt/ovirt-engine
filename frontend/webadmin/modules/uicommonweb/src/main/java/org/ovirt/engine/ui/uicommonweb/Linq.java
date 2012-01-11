@@ -992,6 +992,20 @@ public final class Linq
         }
     }
 
+    public final static class StorageNamePredicate implements IPredicate<storage_domains> {
+
+        private String name;
+
+        public StorageNamePredicate(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public boolean Match(storage_domains source) {
+            return name.equals(source.getstorage_name());
+        }
+    }
+
     public final static class LunPredicate implements IPredicate<LunModel>
     {
         private final LunModel lun;
