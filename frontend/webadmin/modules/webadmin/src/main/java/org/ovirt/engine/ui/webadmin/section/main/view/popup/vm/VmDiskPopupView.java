@@ -20,6 +20,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class VmDiskPopupView extends AbstractModelBoundPopupView<DiskModel> implements VmDiskPopupPresenterWidget.ViewDef {
@@ -58,6 +59,9 @@ public class VmDiskPopupView extends AbstractModelBoundPopupView<DiskModel> impl
     @UiField(provided = true)
     @Path("isBootable.entity")
     EntityModelCheckBoxEditor isBootableEditor;
+
+    @UiField
+    Label message;
 
     @Inject
     public VmDiskPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {

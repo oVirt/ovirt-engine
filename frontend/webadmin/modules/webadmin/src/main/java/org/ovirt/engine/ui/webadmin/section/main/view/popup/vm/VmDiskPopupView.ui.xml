@@ -8,6 +8,13 @@
 			color: gray;
 			float: right;
 		}
+
+		.errorMessageLabel {
+			color: #CD2127;
+			margin-top: 30px;
+			width: 100%;
+			text-align: center;
+		}
 	</ui:style>
 
 	<d:SimpleDialogPanel width="400px" height="340px">
@@ -20,6 +27,7 @@
 				<e:ListModelListBoxEditor ui:field="volumeTypeEditor" />
 				<e:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor"/>
 				<e:EntityModelCheckBoxEditor ui:field="isBootableEditor"/>
+				<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

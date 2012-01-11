@@ -84,6 +84,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DefaultConfirma
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
@@ -159,9 +160,9 @@ import com.google.inject.Provider;
 /**
  * Contains methods for accessing managed components that participate in dependency injection.
  * <p>
- * There should be a method for each {@link com.gwtplatform.mvp.client.Presenter} (excluding {@link com.gwtplatform.mvp.clientcom.gwtplatform.mvp.client.PresenterWidget} classes, unless they are
- * referenced through {@link ClientGinjector} directly). This is necessary due to the current limitation of GWTP-GIN
- * integration.
+ * There should be a method for each {@link com.gwtplatform.mvp.client.Presenter} (excluding
+ * {@link com.gwtplatform.mvp.clientcom.gwtplatform.mvp.client.PresenterWidget} classes, unless they are referenced
+ * through {@link ClientGinjector} directly). This is necessary due to the current limitation of GWTP-GIN integration.
  */
 public interface ManagedComponents {
 
@@ -184,6 +185,8 @@ public interface ManagedComponents {
     Provider<TagPopupPresenterWidget> getTagPopupPresenterWidgetProvider();
 
     Provider<RemoveConfirmationPopupPresenterWidget> getRemoveConfirmPopupProvider();
+
+    Provider<GuidePopupPresenterWidget> getGuidePopupPresenterWidget();
 
     // Presenters: Login section
 

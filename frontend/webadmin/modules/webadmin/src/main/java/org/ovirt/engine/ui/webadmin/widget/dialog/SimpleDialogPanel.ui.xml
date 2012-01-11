@@ -38,6 +38,7 @@
 			font-weight: bold;
 			color: white;
 			margin-left: 5px;
+			padding-left: 3px;
 		}
 		
 		.content {

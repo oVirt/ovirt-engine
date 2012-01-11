@@ -21,11 +21,14 @@ import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -186,16 +189,26 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         setWindow(model);
         model.setTitle("New Data Center - Guide Me");
         model.setHashName("new_data_center_-_guide_me");
+        if (getGuideContext() == null) {
+            storage_pool dataCenter = (storage_pool) getSelectedItem();
+            setGuideContext(dataCenter.getId());
+        }
 
-        model.setEntity(getGuideContext() != null ? DataProvider.GetDataCenterById(getGuideContext() instanceof Guid ? (Guid) getGuideContext()
-                : (Guid) getGuideContext())
-                : null);
+        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        DataCenterListModel dataCenterListModel = (DataCenterListModel) target;
+                        DataCenterGuideModel model = (DataCenterGuideModel) dataCenterListModel.getWindow();
+                        model.setEntity((storage_pool) returnValue);
 
-        UICommand tempVar = new UICommand("Cancel", this);
-        tempVar.setTitle("Configure Later");
-        tempVar.setIsDefault(true);
-        tempVar.setIsCancel(true);
-        model.getCommands().add(tempVar);
+                        UICommand tempVar = new UICommand("Cancel", dataCenterListModel);
+                        tempVar.setTitle("Configure Later");
+                        tempVar.setIsDefault(true);
+                        tempVar.setIsCancel(true);
+                        model.getCommands().add(tempVar);
+                    }
+                }), (Guid) getGuideContext());
     }
 
     @Override

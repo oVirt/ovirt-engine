@@ -31,13 +31,11 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Extensions;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -88,6 +86,23 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     public final String NoUpHostReason = "There should be at least one active Host in the Data Center";
     public final String NoDataDomainAttachedReason = "Cannot create an ISO domain in a non-active Data Center";
 
+    private storage_domain_static storageDomain;
+    private TaskContext context;
+    private IStorageModel storageModel;
+    private NGuid storageId;
+    private storage_server_connections nfsConnection;
+    private storage_server_connections connection;
+    private Guid hostId = new Guid();
+    private String path;
+    private StorageDomainType domainType = StorageDomainType.values()[0];
+    private boolean removeConnection;
+    private java.util.ArrayList<VDSGroup> clusters;
+    private java.util.ArrayList<storage_domains> allStorageDomains;
+    private java.util.ArrayList<storage_domains> attachedStorageDomains;
+    private java.util.ArrayList<storage_domains> isoStorageDomains;
+    private java.util.ArrayList<VDS> allHosts;
+    private VDS localStorageHost;
+
     @Override
     public storage_pool getEntity()
     {
@@ -106,6 +121,384 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         UpdateOptions();
     }
 
+    private void UpdateOptionsNonLocalFSData() {
+        AsyncDataProvider.GetClusterList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+                        dataCenterGuideModel.clusters = clusters;
+                        dataCenterGuideModel.UpdateOptionsNonLocalFS();
+                    }
+                }), getEntity().getId());
+
+        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                        java.util.ArrayList<storage_domains> storageDomains =
+                                (java.util.ArrayList<storage_domains>) returnValue;
+                        dataCenterGuideModel.allStorageDomains = storageDomains;
+                        dataCenterGuideModel.UpdateOptionsNonLocalFS();
+                    }
+                }));
+
+        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                        java.util.ArrayList<storage_domains> storageDomains =
+                                (java.util.ArrayList<storage_domains>) returnValue;
+                        dataCenterGuideModel.attachedStorageDomains = storageDomains;
+                        dataCenterGuideModel.UpdateOptionsNonLocalFS();
+                    }
+                }), getEntity().getId());
+
+        AsyncDataProvider.GetISOStorageDomainList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                        java.util.ArrayList<storage_domains> storageDomains =
+                                (java.util.ArrayList<storage_domains>) returnValue;
+                        dataCenterGuideModel.isoStorageDomains = storageDomains;
+                        dataCenterGuideModel.UpdateOptionsNonLocalFS();
+                    }
+                }));
+
+        AsyncDataProvider.GetHostList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                        java.util.ArrayList<VDS> hosts = (java.util.ArrayList<VDS>) returnValue;
+                        dataCenterGuideModel.allHosts = hosts;
+                        dataCenterGuideModel.UpdateOptionsNonLocalFS();
+                    }
+                }));
+    }
+
+    private void UpdateOptionsLocalFSData() {
+        AsyncDataProvider.GetClusterList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+                        dataCenterGuideModel.clusters = clusters;
+                        dataCenterGuideModel.UpdateOptionsLocalFS();
+                    }
+                }), getEntity().getId());
+
+        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Hosts: datacenter!= " + getEntity().getname()
+                + " status=maintenance or status=pendingapproval ", SearchType.VDS), new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                        java.util.ArrayList<VDS> hosts =
+                                (java.util.ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        if (hosts == null) {
+                            hosts = new java.util.ArrayList<VDS>();
+                        }
+                        dataCenterGuideModel.allHosts = hosts;
+
+                        AsyncDataProvider.GetLocalStorageHost(new AsyncQuery(this,
+                                new INewAsyncCallback() {
+                                    @Override
+                                    public void OnSuccess(Object target, Object returnValue) {
+                                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                                        VDS localStorageHost = (VDS) returnValue;
+                                        ;
+                                        dataCenterGuideModel.localStorageHost = localStorageHost;
+                                        dataCenterGuideModel.UpdateOptionsLocalFS();
+                                    }
+                                }), dataCenterGuideModel.getEntity().getname());
+                    }
+                }));
+    }
+
+    private void UpdateOptionsNonLocalFS() {
+        if (clusters == null || allStorageDomains == null || attachedStorageDomains == null
+                || isoStorageDomains == null || allHosts == null) {
+            return;
+        }
+
+        // Add cluster action.
+        UICommand addClusterAction = new UICommand("AddCluster", this);
+        if (clusters.isEmpty())
+        {
+            addClusterAction.setTitle(DataCenterConfigureClustersAction);
+            getCompulsoryActions().add(addClusterAction);
+        }
+        else
+        {
+            addClusterAction.setTitle(DataCenterAddAnotherClusterAction);
+            getOptionalActions().add(addClusterAction);
+        }
+
+        // Add host action.
+        Version minimalClusterVersion = Linq.GetMinVersionByClusters(clusters);
+
+        if (minimalClusterVersion == null)
+        {
+            minimalClusterVersion = new Version();
+        }
+
+        java.util.ArrayList<VDS> hosts = new java.util.ArrayList<VDS>();
+        java.util.ArrayList<VDS> availableHosts = new java.util.ArrayList<VDS>();
+        java.util.ArrayList<VDS> upHosts = new java.util.ArrayList<VDS>();
+        for (VDS vds : allHosts)
+        {
+            if (Linq.IsClusterItemExistInList(clusters, vds.getvds_group_id())
+                    && (vds.getVersion() == null || vds.getVersion().getFullVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()
+                            .getFullVersion())
+                            .compareTo(minimalClusterVersion) >= 0))
+            {
+                hosts.add(vds);
+            }
+
+            if ((!Linq.IsHostBelongsToAnyOfClusters(clusters, vds))
+                    && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
+                    && (vds.getVersion().getFullVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()
+                            .getFullVersion()).compareTo(minimalClusterVersion) >= 0))
+            {
+                availableHosts.add(vds);
+            }
+
+            if (vds.getstatus() == VDSStatus.Up && Linq.IsClusterItemExistInList(clusters, vds.getvds_group_id()))
+            {
+                upHosts.add(vds);
+            }
+        }
+
+        UICommand tempVar = new UICommand("AddHost", this);
+        tempVar.setIsExecutionAllowed(clusters.size() > 0);
+        UICommand addHostAction = tempVar;
+
+        addHostAction.setTitle(DataCenterConfigureHostsAction);
+        getCompulsoryActions().add(addHostAction);
+
+        // Select host action.
+        UICommand selectHostAction = new UICommand("SelectHost", this);
+
+        if (availableHosts.size() > 0 && clusters.size() > 0)
+        {
+            if (hosts.isEmpty())
+            {
+                selectHostAction.setTitle(DataCenterSelectHostsAction);
+                getCompulsoryActions().add(selectHostAction);
+            }
+            else
+            {
+                selectHostAction.setTitle(DataCenterSelectHostsAction);
+                getOptionalActions().add(selectHostAction);
+            }
+        }
+
+        java.util.ArrayList<storage_domains> unattachedStorage = new java.util.ArrayList<storage_domains>();
+        boolean addToList;
+        Version version3_0 = new Version(3, 0);
+        for (storage_domains item : allStorageDomains)
+        {
+            addToList = false;
+            if (item.getstorage_domain_type() == StorageDomainType.Data
+                    && item.getstorage_type() == getEntity().getstorage_pool_type()
+                    && item.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)
+            {
+                if (getEntity().getStoragePoolFormatType() == null)
+                {
+                    // compat logic: in case its not v1 and the version is less than 3.0 break.
+                    if (item.getStorageStaticData().getStorageFormat() != StorageFormatType.V1
+                            && getEntity().getcompatibility_version().compareTo(version3_0) < 0)
+                    {
+                        continue;
+                    }
+                    addToList = true;
+                }
+                else if (getEntity().getStoragePoolFormatType() == item.getStorageStaticData().getStorageFormat())
+                {
+                    addToList = true;
+                }
+            }
+
+            if (addToList)
+            {
+                unattachedStorage.add(item);
+            }
+        }
+
+        java.util.ArrayList<storage_domains> attachedDataStorages = new java.util.ArrayList<storage_domains>();
+        for (storage_domains a : attachedStorageDomains)
+        {
+            if (a.getstorage_domain_type() == StorageDomainType.Data
+                    || a.getstorage_domain_type() == StorageDomainType.Master)
+            {
+                attachedDataStorages.add(a);
+            }
+        }
+
+        UICommand tempVar2 = new UICommand("AddDataStorage", this);
+        tempVar2.setIsExecutionAllowed(upHosts.size() > 0);
+        UICommand addDataStorageAction = tempVar2;
+        addDataStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
+
+        if (unattachedStorage.isEmpty() && attachedDataStorages.isEmpty())
+        {
+            addDataStorageAction.setTitle(DataCenterConfigureStorageAction);
+            getCompulsoryActions().add(addDataStorageAction);
+        }
+        else
+        {
+            addDataStorageAction.setTitle(DataCenterAddMoreStorageAction);
+            getOptionalActions().add(addDataStorageAction);
+        }
+
+        // Attach data storage action.
+        UICommand tempVar3 = new UICommand("AttachDataStorage", this);
+        tempVar3.setIsExecutionAllowed(unattachedStorage.size() > 0 && upHosts.size() > 0);
+        UICommand attachDataStorageAction = tempVar3;
+        if (upHosts.isEmpty())
+        {
+            attachDataStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
+        }
+        if (attachedDataStorages.isEmpty())
+        {
+            attachDataStorageAction.setTitle(DataCenterAttachStorageAction);
+            getCompulsoryActions().add(attachDataStorageAction);
+        }
+        else
+        {
+            attachDataStorageAction.setTitle(DataCenterAttachMoreStorageAction);
+            getOptionalActions().add(attachDataStorageAction);
+        }
+
+        UICommand tempVar4 = new UICommand("AddIsoStorage", this);
+        tempVar4.setIsExecutionAllowed(getEntity().getstatus() == StoragePoolStatus.Up);
+        UICommand addIsoStorageAction = tempVar4;
+        addIsoStorageAction.getExecuteProhibitionReasons().add(NoDataDomainAttachedReason);
+
+        if (isoStorageDomains.isEmpty())
+        {
+            addIsoStorageAction.setTitle(DataCenterConfigureISOLibraryAction);
+            getOptionalActions().add(addIsoStorageAction);
+        }
+
+        // Attach ISO storage action.
+        // Allow to attach ISO domain only when there are Data storages attached
+        // and there ISO storages to attach and ther are no ISO storages actually
+        // attached.
+        java.util.ArrayList<storage_domains> attachedIsoStorages = new java.util.ArrayList<storage_domains>();
+        for (storage_domains sd : attachedStorageDomains)
+        {
+            if (sd.getstorage_domain_type() == StorageDomainType.ISO)
+            {
+                attachedIsoStorages.add(sd);
+            }
+        }
+
+        boolean attachIsoAllowed =
+                (attachedDataStorages.size() > 0 && Linq.IsAnyStorageDomainIsMatserAndActive(attachedDataStorages)
+                        && isoStorageDomains.size() > 0 && attachedIsoStorages.isEmpty() && upHosts.size() > 0);
+
+        // The action is available if there are no storages attached to the
+        // Data Center. It will not always be allowed.
+        boolean attachIsoAvailable = attachedIsoStorages.isEmpty();
+
+        UICommand tempVar5 = new UICommand("AttachIsoStorage", this);
+        tempVar5.setIsExecutionAllowed(attachIsoAllowed);
+        tempVar5.setIsAvailable(attachIsoAvailable);
+        UICommand attachIsoStorageAction = tempVar5;
+        if (upHosts.isEmpty())
+        {
+            attachIsoStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
+        }
+
+        if (attachIsoAvailable)
+        {
+            attachIsoStorageAction.setTitle(DataCenterAttachISOLibraryAction);
+            getOptionalActions().add(attachIsoStorageAction);
+        }
+
+        StopProgress();
+    }
+
+    private void UpdateOptionsLocalFS() {
+        if (clusters == null || allHosts == null) {
+            return;
+        }
+
+        UICommand addClusterAction = new UICommand("AddCluster", this);
+        if (clusters.isEmpty())
+        {
+            addClusterAction.setTitle(DataCenterConfigureClustersAction);
+            getCompulsoryActions().add(addClusterAction);
+        }
+        else
+        {
+            UICommand tempVar6 = new UICommand("AddHost", this);
+            tempVar6.setTitle(DataCenterConfigureHostsAction);
+            UICommand addHostAction = tempVar6;
+            UICommand tempVar7 = new UICommand("SelectHost", this);
+            tempVar7.setTitle(DataCenterSelectHostsAction);
+            UICommand selectHost = tempVar7;
+            boolean hasMaintenance3_0Host = false;
+
+            Version version3_0 = new Version(3, 0);
+            for (VDS vds : allHosts)
+            {
+                String[] hostVersions = vds.getsupported_cluster_levels().split("[,]", -1);
+                for (String hostVersion : hostVersions)
+                {
+                    if (version3_0.compareTo(new Version(hostVersion)) <= 0)
+                    {
+                        hasMaintenance3_0Host = true;
+                        break;
+                    }
+                }
+                if (hasMaintenance3_0Host)
+                {
+                    break;
+                }
+            }
+
+            if (localStorageHost != null)
+            {
+                addHostAction.setIsExecutionAllowed(false);
+                selectHost.setIsExecutionAllowed(false);
+                String hasHostReason = "Local Data Center already contains a Host";
+                addHostAction.getExecuteProhibitionReasons().add(hasHostReason);
+                selectHost.getExecuteProhibitionReasons().add(hasHostReason);
+                if (localStorageHost.getstatus() == VDSStatus.Up)
+                {
+                    UICommand tempVar8 = new UICommand("AddLocalStorage", this);
+                    tempVar8.setTitle("Add Local Storage");
+                    UICommand addLocalStorageAction = tempVar8;
+                    getOptionalActions().add(addLocalStorageAction);
+                }
+            }
+            else if (getEntity().getstatus() != StoragePoolStatus.Uninitialized)
+            {
+                addHostAction.setIsExecutionAllowed(false);
+                selectHost.setIsExecutionAllowed(false);
+                String dataCenterInitializeReason = "Data Center was already initialized";
+                addHostAction.getExecuteProhibitionReasons().add(dataCenterInitializeReason);
+                selectHost.getExecuteProhibitionReasons().add(dataCenterInitializeReason);
+            }
+
+            if (hasMaintenance3_0Host)
+            {
+                getOptionalActions().add(selectHost);
+            }
+            getCompulsoryActions().add(addHostAction);
+        }
+
+        StopProgress();
+    }
+
     private void UpdateOptions()
     {
         getCompulsoryActions().clear();
@@ -113,316 +506,35 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         if (getEntity() != null)
         {
+            StartProgress(null);
+
             if (getEntity().getstorage_pool_type() != StorageType.LOCALFS)
             {
-                // Add cluster action.
-                java.util.ArrayList<VDSGroup> clusters = DataProvider.GetClusterList(getEntity().getId());
-
-                UICommand addClusterAction = new UICommand("AddCluster", this);
-                if (clusters.isEmpty())
-                {
-                    addClusterAction.setTitle(DataCenterConfigureClustersAction);
-                    getCompulsoryActions().add(addClusterAction);
-                }
-                else
-                {
-                    addClusterAction.setTitle(DataCenterAddAnotherClusterAction);
-                    getOptionalActions().add(addClusterAction);
-                }
-
-                // Add host action.
-                // Version minimalClusterVersion = clusters.Min(a => a.compatibility_version);
-                Version minimalClusterVersion = Linq.GetMinVersionByClusters(clusters);
-
-                if (minimalClusterVersion == null)
-                {
-                    minimalClusterVersion = new Version();
-                }
-
-                java.util.ArrayList<VDS> hosts = new java.util.ArrayList<VDS>();
-                java.util.ArrayList<VDS> availableHosts = new java.util.ArrayList<VDS>();
-                java.util.ArrayList<VDS> upHosts = new java.util.ArrayList<VDS>();
-                for (VDS vds : DataProvider.GetHostList())
-                {
-                    // var hosts = DataProvider.GetHostList()
-                    // .Where(a => clusters.Any(b => b.ID == a.vds_group_id)
-                    // && (a.Version.FullVersion == null || a.Version.FullVersion.GetFriendlyVersion() >=
-                    // minimalClusterVersion))
-                    // .ToList();
-                    if (Linq.IsClusterItemExistInList(clusters, vds.getvds_group_id())
-                            && (vds.getVersion() == null || vds.getVersion().getFullVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()
-                                    .getFullVersion())
-                                    .compareTo(minimalClusterVersion) >= 0))
-                    {
-                        hosts.add(vds);
-                    }
-
-                    // var availableHosts = DataProvider.GetHostList()
-                    // .Where(a => clusters.All(b => b.ID != a.vds_group_id)
-                    // && (a.status == VDSStatus.Maintenance || a.status == VDSStatus.PendingApproval)
-                    // && (a.Version.FullVersion == null || a.Version.FullVersion.GetFriendlyVersion() >=
-                    // minimalClusterVersion))
-                    // .ToList();
-                    if ((!Linq.IsHostBelongsToAnyOfClusters(clusters, vds))
-                            && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
-                            && (vds.getVersion().getFullVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()
-                                    .getFullVersion())
-                                    .compareTo(minimalClusterVersion) >= 0))
-                    {
-                        availableHosts.add(vds);
-                    }
-
-                    // var upHosts = DataProvider.GetHostList().Where(a => a.status == VDSStatus.Up).ToList();
-                    if (vds.getstatus() == VDSStatus.Up
-                            && Linq.IsClusterItemExistInList(clusters, vds.getvds_group_id()))
-                    {
-                        upHosts.add(vds);
-                    }
-                }
-
-                UICommand tempVar = new UICommand("AddHost", this);
-                tempVar.setIsExecutionAllowed(clusters.size() > 0);
-                UICommand addHostAction = tempVar;
-
-                addHostAction.setTitle(DataCenterConfigureHostsAction);
-                getCompulsoryActions().add(addHostAction);
-
-                // Select host action.
-                UICommand selectHostAction = new UICommand("SelectHost", this);
-
-                if (availableHosts.size() > 0 && clusters.size() > 0)
-                {
-                    if (hosts.isEmpty())
-                    {
-                        selectHostAction.setTitle(DataCenterSelectHostsAction);
-                        getCompulsoryActions().add(selectHostAction);
-                    }
-                    else
-                    {
-                        selectHostAction.setTitle(DataCenterSelectHostsAction);
-                        getOptionalActions().add(selectHostAction);
-                    }
-                }
-
-                java.util.ArrayList<storage_domains> allStorage = DataProvider.GetStorageDomainList();
-                java.util.ArrayList<storage_domains> unattachedStorage = new java.util.ArrayList<storage_domains>();
-                boolean addToList;
-                Version version3_0 = new Version(3, 0);
-                for (storage_domains item : allStorage)
-                {
-                    addToList = false;
-                    if (item.getstorage_domain_type() == StorageDomainType.Data
-                            && item.getstorage_type() == getEntity().getstorage_pool_type()
-                            && item.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)
-                    {
-                        if (getEntity().getStoragePoolFormatType() == null)
-                        {
-                            // compat logic: in case its not v1 and the version is less than 3.0 break.
-                            if (item.getStorageStaticData().getStorageFormat() != StorageFormatType.V1
-                                    && getEntity().getcompatibility_version().compareTo(version3_0) < 0)
-                            {
-                                continue;
-                            }
-                            addToList = true;
-                        }
-                        else if (getEntity().getStoragePoolFormatType() == item.getStorageStaticData()
-                                .getStorageFormat())
-                        {
-                            addToList = true;
-                        }
-                    }
-
-                    if (addToList)
-                    {
-                        unattachedStorage.add(item);
-                    }
-                }
-
-                java.util.ArrayList<storage_domains> attachedStorage =
-                        DataProvider.GetStorageDomainList(getEntity().getId());
-
-                java.util.ArrayList<storage_domains> attachedDataStorages = new java.util.ArrayList<storage_domains>();
-                for (storage_domains a : attachedStorage)
-                {
-                    if (a.getstorage_domain_type() == StorageDomainType.Data
-                            || a.getstorage_domain_type() == StorageDomainType.Master)
-                    {
-                        attachedDataStorages.add(a);
-                    }
-                }
-
-                UICommand tempVar2 = new UICommand("AddDataStorage", this);
-                tempVar2.setIsExecutionAllowed(upHosts.size() > 0);
-                UICommand addDataStorageAction = tempVar2;
-                addDataStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
-
-                if (unattachedStorage.isEmpty() && attachedDataStorages.isEmpty())
-                {
-                    addDataStorageAction.setTitle(DataCenterConfigureStorageAction);
-                    getCompulsoryActions().add(addDataStorageAction);
-                }
-                else
-                {
-                    addDataStorageAction.setTitle(DataCenterAddMoreStorageAction);
-                    getOptionalActions().add(addDataStorageAction);
-                }
-
-                // Attach data storage action.
-                UICommand tempVar3 = new UICommand("AttachDataStorage", this);
-                tempVar3.setIsExecutionAllowed(unattachedStorage.size() > 0 && upHosts.size() > 0);
-                UICommand attachDataStorageAction = tempVar3;
-                if (upHosts.isEmpty())
-                {
-                    attachDataStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
-                }
-                if (attachedDataStorages.isEmpty())
-                {
-                    attachDataStorageAction.setTitle(DataCenterAttachStorageAction);
-                    getCompulsoryActions().add(attachDataStorageAction);
-                }
-                else
-                {
-                    attachDataStorageAction.setTitle(DataCenterAttachMoreStorageAction);
-                    getOptionalActions().add(attachDataStorageAction);
-                }
-
-                java.util.ArrayList<storage_domains> isoStorages = DataProvider.GetISOStorageDomainList();
-
-                UICommand tempVar4 = new UICommand("AddIsoStorage", this);
-                tempVar4.setIsExecutionAllowed(getEntity().getstatus() == StoragePoolStatus.Up);
-                UICommand addIsoStorageAction = tempVar4;
-                addIsoStorageAction.getExecuteProhibitionReasons().add(NoDataDomainAttachedReason);
-
-                if (isoStorages.isEmpty())
-                {
-                    addIsoStorageAction.setTitle(DataCenterConfigureISOLibraryAction);
-                    getOptionalActions().add(addIsoStorageAction);
-                }
-
-                // Attach ISO storage action.
-                // Allow to attach ISO domain only when there are Data storages attached
-                // and there ISO storages to attach and ther are no ISO storages actually
-                // attached.
-                // var attachedIsoStorages = attachedStorage
-                // .Where(a => a.storage_domain_type == StorageDomainType.ISO)
-                // .ToList();
-                java.util.ArrayList<storage_domains> attachedIsoStorages = new java.util.ArrayList<storage_domains>();
-                for (storage_domains sd : attachedStorage)
-                {
-                    if (sd.getstorage_domain_type() == StorageDomainType.ISO)
-                    {
-                        attachedIsoStorages.add(sd);
-                    }
-                }
-
-                // bool attachIsoAllowed =
-                // (attachedDataStorages.Count > 0
-                // && attachedDataStorages.Any(a => a.storage_domain_type == StorageDomainType.Master &&
-                // a.status.HasValue && a.status.Value == StorageDomainStatus.Active)
-                // && isoStorages.Count() > 0
-                // && attachedIsoStorages.Count == 0);
-                boolean attachIsoAllowed =
-                        (attachedDataStorages.size() > 0
-                                && Linq.IsAnyStorageDomainIsMatserAndActive(attachedDataStorages)
-                                && isoStorages.size() > 0 && attachedIsoStorages.isEmpty() && upHosts.size() > 0);
-
-                // The action is available if there are no storages attached to the
-                // Data Center. It will not always be allowed.
-                boolean attachIsoAvailable = attachedIsoStorages.isEmpty();
-
-                UICommand tempVar5 = new UICommand("AttachIsoStorage", this);
-                tempVar5.setIsExecutionAllowed(attachIsoAllowed);
-                tempVar5.setIsAvailable(attachIsoAvailable);
-                UICommand attachIsoStorageAction = tempVar5;
-                if (upHosts.isEmpty())
-                {
-                    attachIsoStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
-                }
-
-                if (attachIsoAvailable)
-                {
-                    attachIsoStorageAction.setTitle(DataCenterAttachISOLibraryAction);
-                    getOptionalActions().add(attachIsoStorageAction);
-                }
+                UpdateOptionsNonLocalFSData();
             }
             else
             {
-                java.util.ArrayList<VDSGroup> clusters = DataProvider.GetClusterList(getEntity().getId());
-
-                UICommand addClusterAction = new UICommand("AddCluster", this);
-                if (clusters.isEmpty())
-                {
-                    addClusterAction.setTitle(DataCenterConfigureClustersAction);
-                    getCompulsoryActions().add(addClusterAction);
-                }
-                else
-                {
-                    UICommand tempVar6 = new UICommand("AddHost", this);
-                    tempVar6.setTitle(DataCenterConfigureHostsAction);
-                    UICommand addHostAction = tempVar6;
-                    UICommand tempVar7 = new UICommand("SelectHost", this);
-                    tempVar7.setTitle(DataCenterSelectHostsAction);
-                    UICommand selectHost = tempVar7;
-                    VdcQueryReturnValue retVal =
-                            Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Hosts: datacenter!= "
-                                    + getEntity().getname() + " status=maintenance or status=pendingapproval ",
-                                    SearchType.VDS));
-                    boolean hasMaintenance3_0Host = false;
-                    if (retVal != null && retVal.getSucceeded())
-                    {
-                        java.util.ArrayList<VDS> list = (java.util.ArrayList<VDS>) retVal.getReturnValue();
-                        Version version3_0 = new Version(3, 0);
-                        for (VDS vds : list)
-                        {
-                            String[] hostVersions = vds.getsupported_cluster_levels().split("[,]", -1);
-                            for (String hostVersion : hostVersions)
-                            {
-                                if (version3_0.compareTo(new Version(hostVersion)) <= 0)
-                                {
-                                    hasMaintenance3_0Host = true;
-                                    break;
-                                }
-                            }
-                            if (hasMaintenance3_0Host)
-                            {
-                                break;
-                            }
-                        }
-                    }
-
-                    VDS host = DataProvider.GetLocalStorageHost(getEntity().getname());
-                    if (host != null)
-                    {
-                        addHostAction.setIsExecutionAllowed(false);
-                        selectHost.setIsExecutionAllowed(false);
-                        String hasHostReason = "Local Data Center already contains a Host";
-                        addHostAction.getExecuteProhibitionReasons().add(hasHostReason);
-                        selectHost.getExecuteProhibitionReasons().add(hasHostReason);
-                        if (host.getstatus() == VDSStatus.Up)
-                        {
-                            UICommand tempVar8 = new UICommand("AddLocalStorage", this);
-                            tempVar8.setTitle("Add Local Storage");
-                            UICommand addLocalStorageAction = tempVar8;
-                            getOptionalActions().add(addLocalStorageAction);
-                        }
-                    }
-                    else if (getEntity().getstatus() != StoragePoolStatus.Uninitialized)
-                    {
-                        addHostAction.setIsExecutionAllowed(false);
-                        selectHost.setIsExecutionAllowed(false);
-                        String dataCenterInitializeReason = "Data Center was already initialized";
-                        addHostAction.getExecuteProhibitionReasons().add(dataCenterInitializeReason);
-                        selectHost.getExecuteProhibitionReasons().add(dataCenterInitializeReason);
-                    }
-
-                    if (hasMaintenance3_0Host)
-                    {
-                        getOptionalActions().add(selectHost);
-                    }
-                    getCompulsoryActions().add(addHostAction);
-                }
+                UpdateOptionsLocalFSData();
             }
         }
+    }
+
+    private void ResetData() {
+        storageDomain = null;
+        storageModel = null;
+        storageId = null;
+        nfsConnection = null;
+        connection = null;
+        removeConnection = false;
+        path = null;
+        hostId = new Guid();
+        domainType = StorageDomainType.values()[0];
+        clusters = null;
+        allStorageDomains = null;
+        attachedStorageDomains = null;
+        isoStorageDomains = null;
+        allHosts = null;
+        localStorageHost = null;
     }
 
     private void AddLocalStorage()
@@ -439,20 +551,32 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.setItems(list);
         model.setSelectedItem(list.get(0));
 
-        VDS localHost = DataProvider.GetLocalStorageHost(getEntity().getname());
-        model.getHost().setItems(new java.util.ArrayList<VDS>(java.util.Arrays.asList(new VDS[] { localHost })));
-        model.getHost().setSelectedItem(localHost);
-        model.getDataCenter()
-                .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { getEntity() })));
-        model.getDataCenter().setSelectedItem(getEntity());
-        UICommand tempVar = new UICommand("OnAddStorage", this);
-        tempVar.setTitle("OK");
-        tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
+        AsyncDataProvider.GetLocalStorageHost(new AsyncQuery(new Object[] { this, model },
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        Object[] array = (Object[]) target;
+                        DataCenterGuideModel listModel = (DataCenterGuideModel) array[0];
+                        StorageModel model = (StorageModel) array[1];
+                        VDS localHost = (VDS) returnValue;
+
+                        model.getHost()
+                                .setItems(new java.util.ArrayList<VDS>(java.util.Arrays.asList(new VDS[] { localHost })));
+                        model.getHost().setSelectedItem(localHost);
+                        model.getDataCenter()
+                                .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { getEntity() })));
+                        model.getDataCenter().setSelectedItem(getEntity());
+                        UICommand tempVar = new UICommand("OnAddStorage", listModel);
+                        tempVar.setTitle("OK");
+                        tempVar.setIsDefault(true);
+                        model.getCommands().add(tempVar);
+                        UICommand tempVar2 = new UICommand("Cancel", listModel);
+                        tempVar2.setTitle("Cancel");
+                        tempVar2.setIsCancel(true);
+                        model.getCommands().add(tempVar2);
+                    }
+                }),
+                getEntity().getname());
     }
 
     public void AddIsoStorage()
@@ -596,67 +720,140 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     private void SaveLocalStorage(TaskContext context)
     {
+        this.context = context;
+        StorageModel model = (StorageModel) getWindow();
+        VDS host = (VDS) model.getHost().getSelectedItem();
+        boolean isNew = model.getStorage() == null;
+        storageModel = model.getSelectedItem();
+        LocalStorageModel localModel = (LocalStorageModel) storageModel;
+        path = (String) localModel.getPath().getEntity();
+
+        storageDomain = new storage_domain_static();
+        storageDomain.setstorage_type(isNew ? storageModel.getType() : storageDomain.getstorage_type());
+        storageDomain.setstorage_domain_type(isNew ? storageModel.getRole() : storageDomain.getstorage_domain_type());
+        storageDomain.setstorage_name((String) model.getName().getEntity());
+
+        AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+
+                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                        java.util.ArrayList<storage_domains> storages =
+                                (java.util.ArrayList<storage_domains>) returnValue;
+                        if (storages != null && storages.size() > 0)
+                        {
+                            String storageName = storages.get(0).getstorage_name();
+                            OnFinish(dataCenterGuideModel.context,
+                                    false,
+                                    dataCenterGuideModel.storageModel,
+                                    "Create operation failed. Domain " + storageName + " already exists in the system.");
+                        }
+                        else
+                        {
+                            dataCenterGuideModel.SaveNewLocalStorage();
+                        }
+
+                    }
+                }),
+                host.getstorage_pool_id(),
+                path);
+    }
+
+    public void SaveNewLocalStorage()
+    {
         StorageModel model = (StorageModel) getWindow();
         LocalStorageModel localModel = (LocalStorageModel) model.getSelectedItem();
         VDS host = (VDS) model.getHost().getSelectedItem();
-
-        String path = (String) localModel.getPath().getEntity();
-        String storageName = null;
-        RefObject<String> tempRef_storageName = new RefObject<String>(storageName);
-        boolean tempVar = DataProvider.IsDomainAlreadyExist(host.getstorage_pool_id(), path, tempRef_storageName);
-        storageName = tempRef_storageName.argvalue;
-        if (tempVar)
-        {
-            context.InvokeUIThread(this,
-                    new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "Finish", false, localModel,
-                            "Create Operation failed. Domain " + storageName + " already exists in the system." })));
-
-            return;
-        }
+        hostId = host.getvds_id();
 
         // Create storage connection.
-        storage_server_connections tempVar2 = new storage_server_connections();
-        tempVar2.setconnection(path);
-        tempVar2.setstorage_type(localModel.getType());
-        storage_server_connections connection = tempVar2;
+        storage_server_connections tempVar = new storage_server_connections();
+        tempVar.setconnection(path);
+        tempVar.setstorage_type(localModel.getType());
+        connection = tempVar;
 
-        storage_domain_static tempVar3 = new storage_domain_static();
-        tempVar3.setstorage_name((String) model.getName().getEntity());
-        tempVar3.setstorage_type(localModel.getType());
-        tempVar3.setstorage_domain_type(localModel.getRole());
-        storage_domain_static storageDomain = tempVar3;
+        java.util.ArrayList<VdcActionType> actionTypes = new java.util.ArrayList<VdcActionType>();
+        java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
 
-        boolean removeConnection = false;
+        actionTypes.add(VdcActionType.AddStorageServerConnection);
+        actionTypes.add(VdcActionType.AddLocalStorageDomain);
 
-        VdcReturnValueBase returnValue =
-                Frontend.RunAction(VdcActionType.AddStorageServerConnection,
-                        new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+        parameters.add(new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+        StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
+        tempVar2.setVdsId(host.getvds_id());
+        parameters.add(tempVar2);
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
-            storageDomain.setstorage((String) returnValue.getActionReturnValue());
+        IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
 
-            // Add storage domain.
-            StorageDomainManagementParameter tempVar4 = new StorageDomainManagementParameter(storageDomain);
-            tempVar4.setVdsId(host.getvds_id());
-            returnValue = Frontend.RunAction(VdcActionType.AddLocalStorageDomain, tempVar4);
+                DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
+                dataCenterGuideModel.removeConnection = true;
 
-            if (returnValue == null || !returnValue.getSucceeded())
-            {
-                removeConnection = true;
+                VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
+                dataCenterGuideModel.storageDomain.setstorage((String) vdcReturnValueBase.getActionReturnValue());
+
             }
-        }
+        };
+        IFrontendActionAsyncCallback callback2 = new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
 
-        // Clean up connection in case of storage creation failure.
-        if (removeConnection)
-        {
-            Frontend.RunAction(VdcActionType.RemoveStorageServerConnection,
-                    new StorageServerConnectionParametersBase(connection, host.getvds_id()));
-        }
+                DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
+                dataCenterGuideModel.removeConnection = false;
 
+                dataCenterGuideModel.OnFinish(dataCenterGuideModel.context, true, dataCenterGuideModel.storageModel);
+
+            }
+        };
+        IFrontendActionAsyncCallback failureCallback = new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+
+                DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
+
+                if (dataCenterGuideModel.removeConnection)
+                {
+                    dataCenterGuideModel.CleanConnection(dataCenterGuideModel.connection, dataCenterGuideModel.hostId);
+                    dataCenterGuideModel.removeConnection = false;
+                }
+
+                dataCenterGuideModel.OnFinish(dataCenterGuideModel.context, false, dataCenterGuideModel.storageModel);
+
+            }
+        };
+        Frontend.RunMultipleActions(actionTypes,
+                parameters,
+                new java.util.ArrayList<IFrontendActionAsyncCallback>(java.util.Arrays.asList(new IFrontendActionAsyncCallback[] {
+                        callback1, callback2 })),
+                failureCallback,
+                this);
+    }
+
+    private void CleanConnection(storage_server_connections connection, Guid hostId)
+    {
+        Frontend.RunAction(VdcActionType.RemoveStorageServerConnection,
+                new StorageServerConnectionParametersBase(connection, hostId),
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendActionAsyncResult result) {
+
+                    }
+                },
+                this);
+    }
+
+    public void OnFinish(TaskContext context, boolean isSucceeded, IStorageModel model)
+    {
+        OnFinish(context, isSucceeded, model, null);
+    }
+
+    public void OnFinish(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
+    {
         context.InvokeUIThread(this,
-                new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "Finish",
-                        returnValue != null && returnValue.getSucceeded(), localModel, null })));
+                new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "Finish", isSucceeded, model,
+                        message })));
     }
 
     private void SaveNfsStorage()
@@ -673,73 +870,127 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     private void SaveNfsStorage(TaskContext context)
     {
+        this.context = context;
+        StorageModel model = (StorageModel) getWindow();
+        boolean isNew = model.getStorage() == null;
+        storageModel = model.getSelectedItem();
+        NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
+        path = (String) nfsModel.getPath().getEntity();
+
+        storageDomain = new storage_domain_static();
+        storageDomain.setstorage_type(isNew ? storageModel.getType() : storageDomain.getstorage_type());
+        storageDomain.setstorage_domain_type(isNew ? storageModel.getRole() : storageDomain.getstorage_domain_type());
+        storageDomain.setstorage_name((String) model.getName().getEntity());
+        storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
+
+        AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+
+                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                        java.util.ArrayList<storage_domains> storages =
+                                (java.util.ArrayList<storage_domains>) returnValue;
+                        if (storages != null && storages.size() > 0)
+                        {
+                            String storageName = storages.get(0).getstorage_name();
+                            OnFinish(dataCenterGuideModel.context,
+                                    false,
+                                    dataCenterGuideModel.storageModel,
+                                    "Create operation failed. Domain " + storageName + " already exists in the system.");
+                        }
+                        else
+                        {
+                            dataCenterGuideModel.SaveNewNfsStorage();
+                        }
+
+                    }
+                }),
+                null,
+                path);
+    }
+
+    public void SaveNewNfsStorage()
+    {
         StorageModel model = (StorageModel) getWindow();
         NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
         VDS host = (VDS) model.getHost().getSelectedItem();
-
-        String path = (String) nfsModel.getPath().getEntity();
-        String storageName = null;
-        RefObject<String> tempRef_storageName = new RefObject<String>(storageName);
-        boolean tempVar = DataProvider.IsDomainAlreadyExist(path, tempRef_storageName);
-        storageName = tempRef_storageName.argvalue;
-        if (tempVar)
-        {
-            context.InvokeUIThread(this,
-                    new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "Finish", false, nfsModel,
-                            "Create Operation failed. Domain " + storageName + " already exists in the system." })));
-
-            return;
-        }
+        hostId = host.getvds_id();
 
         // Create storage connection.
-        storage_server_connections tempVar2 = new storage_server_connections();
-        tempVar2.setconnection(path);
-        tempVar2.setstorage_type(nfsModel.getType());
-        storage_server_connections connection = tempVar2;
+        storage_server_connections tempVar = new storage_server_connections();
+        tempVar.setconnection(path);
+        tempVar.setstorage_type(nfsModel.getType());
+        connection = tempVar;
 
-        storage_domain_static tempVar3 = new storage_domain_static();
-        tempVar3.setstorage_type(nfsModel.getType());
-        tempVar3.setstorage_domain_type(nfsModel.getRole());
-        tempVar3.setstorage_name((String) model.getName().getEntity());
-        tempVar3.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
-        storage_domain_static storageDomain = tempVar3;
+        java.util.ArrayList<VdcActionType> actionTypes = new java.util.ArrayList<VdcActionType>();
+        java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
 
-        boolean attach = false;
+        actionTypes.add(VdcActionType.AddStorageServerConnection);
+        actionTypes.add(VdcActionType.AddNFSStorageDomain);
+        actionTypes.add(VdcActionType.RemoveStorageServerConnection);
 
-        VdcReturnValueBase returnValue =
-                Frontend.RunAction(VdcActionType.AddStorageServerConnection,
-                        new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+        parameters.add(new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+        StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
+        tempVar2.setVdsId(host.getvds_id());
+        parameters.add(tempVar2);
+        parameters.add(new StorageServerConnectionParametersBase(connection, host.getvds_id()));
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
-            storageDomain.setstorage((String) returnValue.getActionReturnValue());
+        IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
 
-            // Add storage domain.
-            StorageDomainManagementParameter tempVar4 = new StorageDomainManagementParameter(storageDomain);
-            tempVar4.setVdsId(host.getvds_id());
-            returnValue = Frontend.RunAction(VdcActionType.AddNFSStorageDomain, tempVar4);
+                DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
+                VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
+                dataCenterGuideModel.storageDomain.setstorage((String) vdcReturnValueBase.getActionReturnValue());
 
-            attach = returnValue != null && returnValue.getSucceeded();
-        }
-
-        // Clean up connection.
-        Frontend.RunAction(VdcActionType.RemoveStorageServerConnection,
-                new StorageServerConnectionParametersBase(connection, host.getvds_id()));
-
-        if (attach)
-        {
-            // Attach storage to data center as neccessary.
-            storage_pool dataCenter = (storage_pool) model.getDataCenter().getSelectedItem();
-            if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
-            {
-                NGuid storageId = (NGuid) returnValue.getActionReturnValue();
-                AttachStorageToDataCenter((Guid) storageId, dataCenter.getId());
             }
-        }
+        };
+        IFrontendActionAsyncCallback callback2 = new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
 
-        context.InvokeUIThread(this,
-                new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "Finish",
-                        returnValue != null && returnValue.getSucceeded(), nfsModel, null })));
+                DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
+                VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
+                dataCenterGuideModel.storageId = (NGuid) vdcReturnValueBase.getActionReturnValue();
+
+            }
+        };
+        IFrontendActionAsyncCallback callback3 = new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+
+                DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
+                StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
+
+                // Attach storage to data center as neccessary.
+                storage_pool dataCenter = (storage_pool) storageModel.getDataCenter().getSelectedItem();
+                if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
+                {
+                    dataCenterGuideModel.AttachStorageToDataCenter((Guid) dataCenterGuideModel.storageId,
+                            dataCenter.getId());
+                }
+
+                dataCenterGuideModel.OnFinish(dataCenterGuideModel.context, true, dataCenterGuideModel.storageModel);
+
+            }
+        };
+        IFrontendActionAsyncCallback failureCallback = new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+
+                DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
+                dataCenterGuideModel.CleanConnection(dataCenterGuideModel.connection, dataCenterGuideModel.hostId);
+                dataCenterGuideModel.OnFinish(dataCenterGuideModel.context, false, dataCenterGuideModel.storageModel);
+
+            }
+        };
+        Frontend.RunMultipleActions(actionTypes,
+                parameters,
+                new java.util.ArrayList<IFrontendActionAsyncCallback>(java.util.Arrays.asList(new IFrontendActionAsyncCallback[] {
+                        callback1, callback2, callback3 })),
+                failureCallback,
+                this);
     }
 
     private void SaveSanStorage()
@@ -756,6 +1007,46 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     private void SaveSanStorage(TaskContext context)
     {
+        this.context = context;
+        StorageModel model = (StorageModel) getWindow();
+        SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
+        VDS host = (VDS) model.getHost().getSelectedItem();
+
+        storageDomain = new storage_domain_static();
+        storageDomain.setstorage_type(sanModel.getType());
+        storageDomain.setstorage_domain_type(sanModel.getRole());
+        storageDomain.setStorageFormat((StorageFormatType) sanModel.getContainer().getFormat().getSelectedItem());
+        storageDomain.setstorage_name((String) model.getName().getEntity());
+
+        AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+
+                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                        java.util.ArrayList<storage_domains> storages =
+                                (java.util.ArrayList<storage_domains>) returnValue;
+                        if (storages != null && storages.size() > 0)
+                        {
+                            String storageName = storages.get(0).getstorage_name();
+                            OnFinish(dataCenterGuideModel.context,
+                                    false,
+                                    dataCenterGuideModel.storageModel,
+                                    "Create operation failed. Domain " + storageName + " already exists in the system.");
+                        }
+                        else
+                        {
+                            dataCenterGuideModel.SaveNewSanStorage();
+                        }
+
+                    }
+                }),
+                null,
+                path);
+    }
+
+    public void SaveNewSanStorage()
+    {
         StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
         VDS host = (VDS) model.getHost().getSelectedItem();
@@ -766,32 +1057,29 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             lunIds.add(lun.getLunId());
         }
 
-        storage_domain_static tempVar = new storage_domain_static();
-        tempVar.setstorage_name((String) model.getName().getEntity());
-        tempVar.setstorage_type(sanModel.getType());
-        tempVar.setstorage_domain_type(sanModel.getRole());
-        tempVar.setStorageFormat((StorageFormatType) sanModel.getContainer().getFormat().getSelectedItem());
-        storage_domain_static storageDomain = tempVar;
+        AddSANStorageDomainParameters tempVar = new AddSANStorageDomainParameters(storageDomain);
+        tempVar.setVdsId(host.getvds_id());
+        tempVar.setLunIds(lunIds);
+        Frontend.RunAction(VdcActionType.AddSANStorageDomain, tempVar,
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendActionAsyncResult result) {
 
-        AddSANStorageDomainParameters tempVar2 = new AddSANStorageDomainParameters(storageDomain);
-        tempVar2.setVdsId(host.getvds_id());
-        tempVar2.setLunIds(lunIds);
-        VdcReturnValueBase returnValue = Frontend.RunAction(VdcActionType.AddSANStorageDomain, tempVar2);
+                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
+                        StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
+                        storage_pool dataCenter = (storage_pool) storageModel.getDataCenter().getSelectedItem();
+                        if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
+                        {
+                            VdcReturnValueBase returnValue = result.getReturnValue();
+                            NGuid storageId = (NGuid) returnValue.getActionReturnValue();
+                            dataCenterGuideModel.AttachStorageToDataCenter((Guid) storageId, dataCenter.getId());
+                        }
+                        dataCenterGuideModel.OnFinish(dataCenterGuideModel.context,
+                                true,
+                                dataCenterGuideModel.storageModel);
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
-            // Attach storage to data center as neccessary.
-            storage_pool dataCenter = (storage_pool) model.getDataCenter().getSelectedItem();
-            if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
-            {
-                NGuid storageId = (NGuid) returnValue.getActionReturnValue();
-                AttachStorageToDataCenter((Guid) storageId, dataCenter.getId());
-            }
-        }
-
-        context.InvokeUIThread(this,
-                new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "Finish",
-                        returnValue != null && returnValue.getSucceeded(), sanModel, null })));
+                    }
+                }, this);
     }
 
     private void AttachStorageInternal(java.util.List<storage_domains> storages, String title)
@@ -799,7 +1087,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         ListModel model = new ListModel();
         model.setTitle(title);
         setWindow(model);
-        // var items = storages.Select(a => new EntityModel() { Entity = a }).ToList();
+
         java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
         for (storage_domains sd : storages)
         {
@@ -822,19 +1110,19 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     private void AttachStorageToDataCenter(Guid storageId, Guid dataCenterId)
     {
-        Frontend.RunActionAsyncroniousely(VdcActionType.AttachStorageDomainToPool,
-                new StorageDomainPoolParametersBase(storageId, dataCenterId));
+        Frontend.RunAction(VdcActionType.AttachStorageDomainToPool, new StorageDomainPoolParametersBase(storageId,
+                dataCenterId),
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendActionAsyncResult result) {
+                    }
+                }, this);
     }
 
     public void OnAttachStorage()
     {
         ListModel model = (ListModel) getWindow();
 
-        // var items = model.Items
-        // .Cast<EntityModel>()
-        // .Where(Selector.GetIsSelected)
-        // .Select(a => (storage_domains)a.Entity)
-        // .ToList();
         java.util.ArrayList<storage_domains> items = new java.util.ArrayList<storage_domains>();
         for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
         {
@@ -846,12 +1134,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         if (items.size() > 0)
         {
-            // items.Select(a => (VdcActionParametersBase)new StorageDomainPoolParametersBase(a.id, Entity.id))
-            // .Each(a => Frontend.RunAction(VdcActionType.AttachStorageDomainToPool, a));
             for (storage_domains sd : items)
             {
-                Frontend.RunAction(VdcActionType.AttachStorageDomainToPool,
-                        new StorageDomainPoolParametersBase(sd.getid(), getEntity().getId()));
+                AttachStorageToDataCenter(sd.getid(), getEntity().getId());
             }
         }
 
@@ -861,66 +1146,100 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     public void AttachIsoStorage()
     {
-        java.util.ArrayList<storage_domains> attachedStorage = DataProvider.GetStorageDomainList(getEntity().getId());
+        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                        java.util.ArrayList<storage_domains> attachedStorage =
+                                new java.util.ArrayList<storage_domains>();
 
-        // AttachStorageInternal(DataProvider.GetISOStorageDomainList(Entity.id)
-        // .Where(a => attachedStorage.All(b => b.id != a.id))
-        // .ToList(),
-        // "Attach ISO Library");
-        java.util.ArrayList<storage_domains> sdl = new java.util.ArrayList<storage_domains>();
-        for (storage_domains a : DataProvider.GetISOStorageDomainList())
-        {
-            boolean isContains = false;
-            for (storage_domains b : attachedStorage)
-            {
-                if (b.getid().equals(a.getid()))
-                {
-                    isContains = true;
-                    break;
-                }
-            }
-            if (!isContains)
-            {
-                sdl.add(a);
-            }
-        }
-        AttachStorageInternal(sdl, "Attach ISO Library");
+                        AsyncDataProvider.GetISOStorageDomainList(new AsyncQuery(new Object[] { dataCenterGuideModel, attachedStorage },
+                                new INewAsyncCallback() {
+                                    @Override
+                                    public void OnSuccess(Object target, Object returnValue) {
+                                        Object[] array = (Object[]) target;
+                                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) array[0];
+                                        java.util.ArrayList<storage_domains> attachedStorage =
+                                                (java.util.ArrayList<storage_domains>) array[1];
+                                        java.util.ArrayList<storage_domains> isoStorageDomains =
+                                                (java.util.ArrayList<storage_domains>) returnValue;
+                                        java.util.ArrayList<storage_domains> sdl =
+                                                new java.util.ArrayList<storage_domains>();
+
+                                        for (storage_domains a : isoStorageDomains)
+                                        {
+                                            boolean isContains = false;
+                                            for (storage_domains b : attachedStorage)
+                                            {
+                                                if (b.getid().equals(a.getid()))
+                                                {
+                                                    isContains = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (!isContains)
+                                            {
+                                                sdl.add(a);
+                                            }
+                                        }
+                                        dataCenterGuideModel.AttachStorageInternal(sdl, "Attach ISO Library");
+                                    }
+                                }));
+                    }
+                }),
+                getEntity().getId());
     }
 
     public void AttachDataStorage()
     {
-        java.util.ArrayList<storage_domains> unattachedStorage = new java.util.ArrayList<storage_domains>();
-        boolean addToList;
-        Version version3_0 = new Version(3, 0);
-        for (storage_domains item : DataProvider.GetStorageDomainList())
-        {
-            addToList = false;
-            if (item.getstorage_domain_type() == StorageDomainType.Data
-                    && item.getstorage_type() == getEntity().getstorage_pool_type()
-                    && item.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)
-            {
-                if (getEntity().getStoragePoolFormatType() == null)
-                {
-                    // compat logic: in case its not v1 and the version is less than 3.0 continue.
-                    if (item.getStorageStaticData().getStorageFormat() != StorageFormatType.V1
-                            && getEntity().getcompatibility_version().compareTo(version3_0) < 0)
-                    {
-                        continue;
-                    }
-                    addToList = true;
-                }
-                else if (getEntity().getStoragePoolFormatType() == item.getStorageStaticData().getStorageFormat())
-                {
-                    addToList = true;
-                }
-            }
+        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                        java.util.ArrayList<storage_domains> storageDomains =
+                                (java.util.ArrayList<storage_domains>) returnValue;
 
-            if (addToList)
-            {
-                unattachedStorage.add(item);
-            }
-        }
-        AttachStorageInternal(unattachedStorage, "Attach Storage");
+                        java.util.ArrayList<storage_domains> unattachedStorage =
+                                new java.util.ArrayList<storage_domains>();
+                        boolean addToList;
+                        Version version3_0 = new Version(3, 0);
+                        for (storage_domains item : storageDomains)
+                        {
+                            addToList = false;
+                            if (item.getstorage_domain_type() == StorageDomainType.Data
+                                    && item.getstorage_type() == dataCenterGuideModel.getEntity()
+                                            .getstorage_pool_type()
+                                    && item.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)
+                            {
+                                if (getEntity().getStoragePoolFormatType() == null)
+                                {
+                                    // compat logic: in case its not v1 and the version is less than 3.0 continue.
+                                    if (item.getStorageStaticData().getStorageFormat() != StorageFormatType.V1
+                                            && dataCenterGuideModel.getEntity()
+                                                    .getcompatibility_version()
+                                                    .compareTo(version3_0) < 0)
+                                    {
+                                        continue;
+                                    }
+                                    addToList = true;
+                                }
+                                else if (getEntity().getStoragePoolFormatType() == item.getStorageStaticData()
+                                        .getStorageFormat())
+                                {
+                                    addToList = true;
+                                }
+                            }
+
+                            if (addToList)
+                            {
+                                unattachedStorage.add(item);
+                            }
+                        }
+                        dataCenterGuideModel.AttachStorageInternal(unattachedStorage, "Attach Storage");
+                    }
+                }));
     }
 
     public void AddCluster()
@@ -1003,23 +1322,33 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     public void SelectHost()
     {
-        java.util.ArrayList<VDSGroup> clusters = DataProvider.GetClusterList(getEntity().getId());
-
         MoveHost model = new MoveHost();
         model.setTitle("Select Host");
         model.setHashName("select_host");
         setWindow(model);
-        model.getCluster().setItems(clusters);
-        model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
 
-        UICommand tempVar = new UICommand("OnSelectHost", this);
-        tempVar.setTitle("OK");
-        tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
+        AsyncDataProvider.GetClusterList(new AsyncQuery(new Object[] { this, model },
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        Object[] array = (Object[]) target;
+                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) array[0];
+                        MoveHost moveHostModel = (MoveHost) array[1];
+                        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+
+                        moveHostModel.getCluster().setItems(clusters);
+                        moveHostModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+
+                        UICommand tempVar = new UICommand("OnSelectHost", dataCenterGuideModel);
+                        tempVar.setTitle("OK");
+                        tempVar.setIsDefault(true);
+                        moveHostModel.getCommands().add(tempVar);
+                        UICommand tempVar2 = new UICommand("Cancel", dataCenterGuideModel);
+                        tempVar2.setTitle("Cancel");
+                        tempVar2.setIsCancel(true);
+                        moveHostModel.getCommands().add(tempVar2);
+                    }
+                }), getEntity().getId());
     }
 
     public void OnSelectHost()
@@ -1079,7 +1408,14 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                         && retVals.get(i).getSucceeded())
                                 {
                                     Frontend.RunAction(VdcActionType.ApproveVds,
-                                            new ApproveVdsParameters(selectedHost.getvds_id()));
+
+                                            new ApproveVdsParameters(selectedHost.getvds_id()),
+                                            new IFrontendActionAsyncCallback() {
+                                                @Override
+                                                public void Executed(FrontendActionAsyncResult result) {
+                                                }
+                                            },
+                                            this);
                                 }
                             }
                             i++;
@@ -1087,7 +1423,6 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         dataCenterGuideModel.getWindow().StopProgress();
                         dataCenterGuideModel.Cancel();
                         dataCenterGuideModel.PostAction();
-
                     }
                 },
                 this);
@@ -1171,8 +1506,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         host.setpm_user((Boolean) model.getIsPm().getEntity() ? (String) model.getPmUserName().getEntity() : null);
         host.setpm_password((Boolean) model.getIsPm().getEntity() ? (String) model.getPmPassword().getEntity() : null);
         host.setpm_type((Boolean) model.getIsPm().getEntity() ? (String) model.getPmType().getSelectedItem() : null);
-        host.setPmOptionsMap((Boolean) model.getIsPm().getEntity() ? new ValueObjectMap(model.getPmOptionsMap(), false)
-                : null);
+        host.setPmOptionsMap(new ValueObjectMap(model.getPmOptionsMap(), false));
 
         AddVdsActionParameters addVdsParams = new AddVdsActionParameters();
         addVdsParams.setVdsId(host.getvds_id());
@@ -1208,11 +1542,13 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     private void PostAction()
     {
+        ResetData();
         UpdateOptions();
     }
 
     public void Cancel()
     {
+        ResetData();
         setWindow(null);
     }
 

@@ -6,9 +6,11 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Extensions;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -45,7 +47,6 @@ public class MoveHost extends ListModel
     public MoveHost()
     {
         setCluster(new ListModel());
-        // Cluster.ValueChanged += new EventHandler(Cluster_ValueChanged);
         getCluster().getSelectedItemChangedEvent().addListener(this);
     }
 
@@ -53,55 +54,52 @@ public class MoveHost extends ListModel
     {
         if (getCluster().getSelectedItem() != null)
         {
-            VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
-            // IEnumerable<VDSGroup> clusters = Cluster.Options.Cast<VDSGroup>();
+            AsyncDataProvider.GetHostList(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
+                            MoveHost moveHost = (MoveHost) target;
+                            java.util.ArrayList<VDS> hosts = (java.util.ArrayList<VDS>) returnValue;
+                            moveHost.PostGetHostList(hosts);
+                        }
+                    }));
+        }
+    }
 
-            java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) getCluster().getItems();
-            // var hosts = DataProvider.GetHostList()
-            // .Where(a => clusters.All(b => b.ID != a.vds_group_id)
-            // && (a.status == VDSStatus.Maintenance || a.status == VDSStatus.PendingApproval)
-            // && (a.Version.FullVersion == null || a.Version.FullVersion.GetFriendlyVersion() >=
-            // cluster.compatibility_version))
-            // .ToList();
-            // var items = hosts.Select(a => new EntityModel() { Entity = a }).ToList();
+    private void PostGetHostList(java.util.ArrayList<VDS> hosts) {
+        VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
+        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) getCluster().getItems();
+        java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
 
-            java.util.ArrayList<VDS> hosts = DataProvider.GetHostList();
-            java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
-            for (VDS vds : hosts)
+        for (VDS vds : hosts)
+        {
+            if (Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(vds.getvds_group_id())) == null
+                    && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
+                    && (vds.getVersion().getFullVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()
+                            .getFullVersion()).compareTo(cluster.getcompatibility_version()) >= 0))
             {
-                if (Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(vds.getvds_group_id())) == null
-                        && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
-                        && (vds.getVersion().getFullVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()
-                                .getFullVersion()).compareTo(cluster.getcompatibility_version()) >= 0))
+                EntityModel entity = new EntityModel();
+                entity.setEntity(vds);
+                items.add(entity);
+            }
+        }
+
+        java.util.ArrayList<Guid> previouslySelectedHostIDs = new java.util.ArrayList<Guid>();
+        if (getItems() != null)
+        {
+            for (Object item : getItems())
+            {
+                EntityModel entity = (EntityModel) item;
+                if (entity.getIsSelected())
                 {
-                    EntityModel entity = new EntityModel();
-                    entity.setEntity(vds);
-                    items.add(entity);
+                    previouslySelectedHostIDs.add(((VDS) entity.getEntity()).getvds_id());
                 }
             }
-
-            // IEnumerable<int> previouslySelectedHostIDs = new List<int>();
-            java.util.ArrayList<Guid> previouslySelectedHostIDs = new java.util.ArrayList<Guid>();
-            if (getItems() != null)
-            {
-                // previouslySelectedHostIDs =
-                // Items.Cast<EntityModel>().Where(a => Selector.GetIsSelected(a)).Select(a => (a.Entity as
-                // VDS).vds_id);
-                for (Object item : getItems())
-                {
-                    EntityModel entity = (EntityModel) item;
-                    if (entity.getIsSelected())
-                    {
-                        previouslySelectedHostIDs.add(((VDS) entity.getEntity()).getvds_id());
-                    }
-                }
-            }
-            setItems(items);
-            // items.Each(a => Selector.SetIsSelected(a, previouslySelectedHostIDs.Contains((a.Entity as VDS).vds_id)));
-            for (EntityModel entity : items)
-            {
-                entity.setIsSelected(previouslySelectedHostIDs.contains(((VDS) entity.getEntity()).getvds_id()));
-            }
+        }
+        setItems(items);
+        for (EntityModel entity : items)
+        {
+            entity.setIsSelected(previouslySelectedHostIDs.contains(((VDS) entity.getEntity()).getvds_id()));
         }
     }
 

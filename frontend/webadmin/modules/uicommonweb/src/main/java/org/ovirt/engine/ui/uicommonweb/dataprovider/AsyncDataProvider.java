@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -501,7 +502,7 @@ public final class AsyncDataProvider
                     VmTemplate blankTemplate = new VmTemplate();
                     for (VmTemplate template : (java.util.ArrayList<VmTemplate>) source)
                     {
-                        if (template.getId().equals(NGuid.Empty))
+                        if (template.getId().equals(Guid.Empty))
                         {
                             blankTemplate = template;
                         }
@@ -1116,7 +1117,7 @@ public final class AsyncDataProvider
                     VmTemplate blankTemplate = new VmTemplate();
                     for (VmTemplate template : (java.util.ArrayList<VmTemplate>) source)
                     {
-                        if (template.getId().equals(NGuid.Empty))
+                        if (template.getId().equals(Guid.Empty))
                         {
                             blankTemplate = template;
                         }
@@ -1715,5 +1716,42 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
                 new GetConfigurationValueParameters(ConfigurationValues.MaxDiskSize),
                 aQuery);
+    }
+
+    public static void GetVmNicList(AsyncQuery aQuery, Guid id)
+    {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? new java.util.ArrayList<VmNetworkInterface>((java.util.ArrayList<VmNetworkInterface>) source)
+                        : new java.util.ArrayList<VmNetworkInterface>();
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(id), aQuery);
+    }
+
+    public static void GetVmDiskList(AsyncQuery aQuery, Guid id)
+    {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                java.util.ArrayList<DiskImage> list = new java.util.ArrayList<DiskImage>();
+                if (source != null)
+                {
+                    Iterable listEnumerable = (Iterable) source;
+                    java.util.Iterator listIterator = listEnumerable.iterator();
+                    while (listIterator.hasNext())
+                    {
+                        list.add((DiskImage) listIterator.next());
+                    }
+                }
+                return list;
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(id), aQuery);
     }
 }

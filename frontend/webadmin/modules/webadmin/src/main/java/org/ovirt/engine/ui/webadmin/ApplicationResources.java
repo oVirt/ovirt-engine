@@ -2,9 +2,8 @@ package org.ovirt.engine.ui.webadmin;
 
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.resources.client.CssResource.NotStrict;
+import com.google.gwt.resources.client.ImageResource;
 
 public interface ApplicationResources extends ClientBundle {
 
@@ -53,6 +52,9 @@ public interface ApplicationResources extends ClientBundle {
 
     @Source("images/dialog/warning.png")
     ImageResource dialogLogoWarningImage();
+
+    @Source("images/dialog/guide.png")
+    ImageResource dialogLogoGuideImage();
 
     @Source("images/dialog/progress.gif")
     ImageResource dialogProgressImage();
@@ -285,6 +287,9 @@ public interface ApplicationResources extends ClientBundle {
 
     @Source("images/wrench.png")
     ImageResource wrenchImage();
+
+    @Source("images/plusButton.png")
+    ImageResource plusButtonImage();
 
     @Source("images/enlarge_bottom_panel.png")
     ImageResource enlargeFooterPanelImage();

@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopup
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindSingleStoragePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
@@ -63,6 +64,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<FindSingleStoragePopupPresenterWidget> movePopupProvider,
             final Provider<VmDesktopNewPopupPresenterWidget> newDesktopVmPopupProvider,
             final Provider<VmServerNewPopupPresenterWidget> newServerVmPopupProvider,
+            final Provider<GuidePopupPresenterWidget> guidePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new MainTabModelProvider<VM, VmListModel>(ginjector, VmListModel.class) {
             @Override
@@ -94,6 +96,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                     } else {
                         return newServerVmPopupProvider.get();
                     }
+                } else if (lastExecutedCommand == getModel().getGuideCommand()) {
+                    return guidePopupProvider.get();
                 } else {
                     return super.getModelPopup(lastExecutedCommand);
                 }

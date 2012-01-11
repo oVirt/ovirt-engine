@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.Data
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindMultiStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindSingleStoragePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainTabModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider;
@@ -41,6 +42,7 @@ public class DataCenterModule extends AbstractGinModule {
     @Singleton
     public MainModelProvider<storage_pool, DataCenterListModel> getDataCenterListProvider(ClientGinjector ginjector,
             final Provider<DataCenterPopupPresenterWidget> popupProvider,
+            final Provider<GuidePopupPresenterWidget> guidePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new MainTabModelProvider<storage_pool, DataCenterListModel>(ginjector, DataCenterListModel.class) {
             @Override
@@ -48,7 +50,10 @@ public class DataCenterModule extends AbstractGinModule {
                 if (lastExecutedCommand == getModel().getNewCommand()
                         || lastExecutedCommand == getModel().getEditCommand()) {
                     return popupProvider.get();
-                } else {
+                } else if (lastExecutedCommand == getModel().getGuideCommand()) {
+                    return guidePopupProvider.get();
+                }
+                else {
                     return super.getModelPopup(lastExecutedCommand);
                 }
             }

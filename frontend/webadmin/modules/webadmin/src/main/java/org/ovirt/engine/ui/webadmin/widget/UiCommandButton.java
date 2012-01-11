@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogButton;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -30,8 +31,17 @@ public class UiCommandButton extends Composite implements HasUiCommandClickHandl
     }
 
     public UiCommandButton(String label) {
+        this(label, null);
+    }
+
+    public UiCommandButton(ImageResource image) {
+        this("", image);
+    }
+
+    public UiCommandButton(String label, ImageResource image) {
         this();
         setLabel(label);
+        setImage(image);
     }
 
     @Override
@@ -66,6 +76,14 @@ public class UiCommandButton extends Composite implements HasUiCommandClickHandl
     @Override
     public void setLabel(String label) {
         button.setText(label);
+    }
+
+    public void setImage(ImageResource image) {
+        button.setImage(image);
+    }
+
+    public void setCustomContentStyle(String customStyle) {
+        button.setCustomContentStyle(customStyle);
     }
 
     void updateButton() {

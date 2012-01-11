@@ -12,14 +12,15 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Extensions;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
@@ -56,6 +57,149 @@ public class ClusterGuideModel extends GuideModel
         UpdateOptions();
     }
 
+    private java.util.ArrayList<VDS> hosts;
+    private java.util.ArrayList<VDS> allHosts;
+    private java.util.ArrayList<VDSGroup> clusters;
+    private VDS localStorageHost;
+    private storage_pool dataCenter;
+
+    private void UpdateOptionsNonLocalFSData() {
+        AsyncDataProvider.GetHostListByCluster(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
+                        java.util.ArrayList<VDS> hosts = (java.util.ArrayList<VDS>) returnValue;
+                        ;
+                        clusterGuideModel.hosts = hosts;
+                        clusterGuideModel.UpdateOptionsNonLocalFS();
+                    }
+                }), getEntity().getname());
+
+        AsyncDataProvider.GetClusterList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
+                        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+                        ;
+                        clusterGuideModel.clusters = clusters;
+                        clusterGuideModel.UpdateOptionsNonLocalFS();
+                    }
+                }), getEntity().getstorage_pool_id().getValue());
+
+        AsyncDataProvider.GetHostList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
+                        java.util.ArrayList<VDS> hosts = (java.util.ArrayList<VDS>) returnValue;
+                        ;
+                        clusterGuideModel.allHosts = hosts;
+                        clusterGuideModel.UpdateOptionsNonLocalFS();
+                    }
+                }));
+    }
+
+    private void UpdateOptionsLocalFSData() {
+        AsyncDataProvider.GetLocalStorageHost(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
+                        VDS localStorageHost = (VDS) returnValue;
+                        ;
+                        clusterGuideModel.localStorageHost = localStorageHost;
+                        clusterGuideModel.UpdateOptionsLocalFS();
+                    }
+                }), dataCenter.getname());
+    }
+
+    private void UpdateOptionsNonLocalFS() {
+        if (clusters == null || hosts == null || allHosts == null) {
+            return;
+        }
+
+        // Add host action.
+        UICommand addHostAction = new UICommand("AddHost", this);
+
+        if (hosts.size() > 1)
+        {
+            hosts.remove(0);
+        }
+
+        if (hosts.isEmpty())
+        {
+            addHostAction.setTitle(ClusterConfigureHostsAction);
+            getCompulsoryActions().add(addHostAction);
+        }
+        else
+        {
+            addHostAction.setTitle(ClusterAddAnotherHostAction);
+            getOptionalActions().add(addHostAction);
+        }
+        if (getEntity().getstorage_pool_id() == null)
+        {
+            addHostAction.setIsExecutionAllowed(false);
+            addHostAction.getExecuteProhibitionReasons().add("The Cluster isn't attached to a Data Center");
+            return;
+        }
+
+        Version minimalClusterVersion = Linq.GetMinVersionByClusters(clusters);
+        java.util.ArrayList<VDS> availableHosts = new java.util.ArrayList<VDS>();
+        for (VDS vds : allHosts)
+        {
+            if ((!Linq.IsHostBelongsToAnyOfClusters(clusters, vds))
+                    && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
+                    && (vds.getVersion().getFullVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()
+                            .getFullVersion()).compareTo(minimalClusterVersion) >= 0))
+            {
+                availableHosts.add(vds);
+            }
+        }
+        // Select host action.
+        UICommand selectHostAction = new UICommand("SelectHost", this);
+
+        if (availableHosts.size() > 0 && clusters.size() > 0)
+        {
+            if (hosts.isEmpty())
+            {
+                selectHostAction.setTitle(SelectHostsAction);
+                getCompulsoryActions().add(selectHostAction);
+            }
+            else
+            {
+                selectHostAction.setTitle(SelectHostsAction);
+                getOptionalActions().add(selectHostAction);
+            }
+        }
+
+        StopProgress();
+    }
+
+    private void UpdateOptionsLocalFS() {
+        UICommand tempVar = new UICommand("AddHost", this);
+        tempVar.setTitle(ClusterAddAnotherHostAction);
+        UICommand addHostAction = tempVar;
+        UICommand tempVar2 = new UICommand("SelectHost", this);
+        tempVar2.setTitle(SelectHostsAction);
+        UICommand selectHost = tempVar2;
+
+        if (localStorageHost != null)
+        {
+            addHostAction.setIsExecutionAllowed(false);
+            selectHost.setIsExecutionAllowed(false);
+            String hasHostReason = "This Cluster belongs to a Local Data Center which already contain a Host";
+            addHostAction.getExecuteProhibitionReasons().add(hasHostReason);
+            selectHost.getExecuteProhibitionReasons().add(hasHostReason);
+        }
+
+        getCompulsoryActions().add(addHostAction);
+        getOptionalActions().add(selectHost);
+
+        StopProgress();
+    }
+
     private void UpdateOptions()
     {
         getCompulsoryActions().clear();
@@ -63,94 +207,35 @@ public class ClusterGuideModel extends GuideModel
 
         if (getEntity() != null)
         {
-            storage_pool dataCenter = null;
-            if (getEntity().getstorage_pool_id() != null)
-            {
-                dataCenter = DataProvider.GetDataCenterById(getEntity().getstorage_pool_id().getValue());
-            }
-            if (dataCenter == null || dataCenter.getstorage_pool_type() != StorageType.LOCALFS)
-            {
-                // Add host action.
-                UICommand addHostAction = new UICommand("AddHost", this);
+            StartProgress(null);
 
-                // var hosts = DataProvider.GetHostListByCluster(Entity.name)
-                // .Skip(1)
-                // .ToList();
-                java.util.ArrayList<VDS> hosts = DataProvider.GetHostListByCluster(getEntity().getname());
-                if (hosts.size() > 1)
-                {
-                    hosts.remove(0);
-                }
+            AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
+                            ClusterGuideModel model = (ClusterGuideModel) target;
+                            model.dataCenter = (storage_pool) returnValue;
 
-                if (hosts.isEmpty())
-                {
-                    addHostAction.setTitle(ClusterConfigureHostsAction);
-                    getCompulsoryActions().add(addHostAction);
-                }
-                else
-                {
-                    addHostAction.setTitle(ClusterAddAnotherHostAction);
-                    getOptionalActions().add(addHostAction);
-                }
-                if (getEntity().getstorage_pool_id() == null)
-                {
-                    addHostAction.setIsExecutionAllowed(false);
-                    addHostAction.getExecuteProhibitionReasons().add("The Cluster isn't attached to a Data Center");
-                    return;
-                }
-                java.util.ArrayList<VDSGroup> clusters =
-                        DataProvider.GetClusterList((Guid) getEntity().getstorage_pool_id());
-                Version minimalClusterVersion = Linq.GetMinVersionByClusters(clusters);
-                java.util.ArrayList<VDS> availableHosts = new java.util.ArrayList<VDS>();
-                for (VDS vds : DataProvider.GetHostList())
-                {
-                    if ((!Linq.IsHostBelongsToAnyOfClusters(clusters, vds))
-                            && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
-                            && (vds.getVersion().getFullVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()
-                                    .getFullVersion())
-                                    .compareTo(minimalClusterVersion) >= 0))
-                    {
-                        availableHosts.add(vds);
-                    }
-                }
-                // Select host action.
-                UICommand selectHostAction = new UICommand("SelectHost", this);
-
-                if (availableHosts.size() > 0 && clusters.size() > 0)
-                {
-                    if (hosts.isEmpty())
-                    {
-                        selectHostAction.setTitle(SelectHostsAction);
-                        getCompulsoryActions().add(selectHostAction);
-                    }
-                    else
-                    {
-                        selectHostAction.setTitle(SelectHostsAction);
-                        getOptionalActions().add(selectHostAction);
-                    }
-                }
-            }
-            else
-            {
-                UICommand tempVar = new UICommand("AddHost", this);
-                tempVar.setTitle(ClusterAddAnotherHostAction);
-                UICommand addHostAction = tempVar;
-                UICommand tempVar2 = new UICommand("SelectHost", this);
-                tempVar2.setTitle(SelectHostsAction);
-                UICommand selectHost = tempVar2;
-                VDS host = DataProvider.GetLocalStorageHost(dataCenter.getname());
-                if (host != null)
-                {
-                    addHostAction.setIsExecutionAllowed(false);
-                    selectHost.setIsExecutionAllowed(false);
-                    String hasHostReason = "This Cluster belongs to a Local Data Center which already contain a Host";
-                    addHostAction.getExecuteProhibitionReasons().add(hasHostReason);
-                    selectHost.getExecuteProhibitionReasons().add(hasHostReason);
-                }
-                getCompulsoryActions().add(addHostAction);
-                getOptionalActions().add(selectHost);
-            }
+                            if (model.dataCenter == null
+                                    || model.dataCenter.getstorage_pool_type() != StorageType.LOCALFS)
+                            {
+                                model.UpdateOptionsNonLocalFSData();
+                            }
+                            else
+                            {
+                                model.UpdateOptionsLocalFSData();
+                            }
+                        }
+                    }), getEntity().getstorage_pool_id().getValue());
         }
+    }
+
+    private void ResetData() {
+        hosts = null;
+        allHosts = null;
+        clusters = null;
+        localStorageHost = null;
+        dataCenter = null;
     }
 
     public void SelectHost()
@@ -257,23 +342,35 @@ public class ClusterGuideModel extends GuideModel
         model.getCluster().setSelectedItem(getEntity());
         model.getCluster().setIsChangable(false);
 
-        java.util.ArrayList<storage_pool> dataCenters = DataProvider.GetDataCenterList();
-        model.getDataCenter().setItems(dataCenters);
-        if (getEntity().getstorage_pool_id() != null)
-        {
-            model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters,
-                    new Linq.DataCenterPredicate((Guid) getEntity().getstorage_pool_id())));
-        }
-        model.getDataCenter().setIsChangable(false);
+        AsyncDataProvider.GetDataCenterList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
+                        HostModel model = (HostModel) clusterGuideModel.getWindow();
 
-        UICommand tempVar = new UICommand("OnConfirmPMHost", this);
-        tempVar.setTitle("OK");
-        tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
+                        java.util.ArrayList<storage_pool> dataCenters = (java.util.ArrayList<storage_pool>) returnValue;
+                        ;
+                        model.getDataCenter().setItems(dataCenters);
+                        if (getEntity().getstorage_pool_id() != null)
+                        {
+                            model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters,
+                                    new Linq.DataCenterPredicate(clusterGuideModel.getEntity()
+                                            .getstorage_pool_id()
+                                            .getValue())));
+                        }
+                        model.getDataCenter().setIsChangable(false);
+
+                        UICommand tempVar = new UICommand("OnConfirmPMHost", clusterGuideModel);
+                        tempVar.setTitle("OK");
+                        tempVar.setIsDefault(true);
+                        model.getCommands().add(tempVar);
+                        UICommand tempVar2 = new UICommand("Cancel", clusterGuideModel);
+                        tempVar2.setTitle("Cancel");
+                        tempVar2.setIsCancel(true);
+                        model.getCommands().add(tempVar2);
+                    }
+                }));
     }
 
     public void OnConfirmPMHost()
@@ -335,8 +432,7 @@ public class ClusterGuideModel extends GuideModel
         host.setpm_user((Boolean) model.getIsPm().getEntity() ? (String) model.getPmUserName().getEntity() : null);
         host.setpm_password((Boolean) model.getIsPm().getEntity() ? (String) model.getPmPassword().getEntity() : null);
         host.setpm_type((Boolean) model.getIsPm().getEntity() ? (String) model.getPmType().getSelectedItem() : null);
-        host.setPmOptionsMap((Boolean) model.getIsPm().getEntity() ? new ValueObjectMap(model.getPmOptionsMap(), false)
-                : null);
+        host.setPmOptionsMap(new ValueObjectMap(model.getPmOptionsMap(), false));
 
         AddVdsActionParameters vdsActionParams = new AddVdsActionParameters();
         vdsActionParams.setvds(host);
@@ -372,11 +468,13 @@ public class ClusterGuideModel extends GuideModel
 
     private void PostAction()
     {
+        ResetData();
         UpdateOptions();
     }
 
     public void Cancel()
     {
+        ResetData();
         setWindow(null);
     }
 

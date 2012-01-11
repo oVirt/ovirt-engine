@@ -20,7 +20,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -144,15 +143,26 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         model.setTitle("New Cluster - Guide Me");
         model.setHashName("new_cluster_-_guide_me");
 
-        model.setEntity(getGuideContext() != null ? DataProvider.GetClusterById(getGuideContext() instanceof Guid ? (Guid) getGuideContext()
-                : (Guid) getGuideContext())
-                : null);
+        if (getGuideContext() == null) {
+            VDSGroup cluster = (VDSGroup) getSelectedItem();
+            setGuideContext(cluster.getID());
+        }
 
-        UICommand tempVar = new UICommand("Cancel", this);
-        tempVar.setTitle("Configure Later");
-        tempVar.setIsDefault(true);
-        tempVar.setIsCancel(true);
-        model.getCommands().add(tempVar);
+        AsyncDataProvider.GetClusterById(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        ClusterListModel clusterListModel = (ClusterListModel) target;
+                        ClusterGuideModel model = (ClusterGuideModel) clusterListModel.getWindow();
+                        model.setEntity((VDSGroup) returnValue);
+
+                        UICommand tempVar = new UICommand("Cancel", clusterListModel);
+                        tempVar.setTitle("Configure Later");
+                        tempVar.setIsDefault(true);
+                        tempVar.setIsCancel(true);
+                        model.getCommands().add(tempVar);
+                    }
+                }), (Guid) getGuideContext());
     }
 
     @Override

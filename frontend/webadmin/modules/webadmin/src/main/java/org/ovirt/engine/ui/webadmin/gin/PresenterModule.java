@@ -27,6 +27,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.Data
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindMultiStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindSingleStoragePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.MoveHostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
@@ -139,6 +141,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCente
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindMultiStoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindSingleStoragePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.guide.GuidePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.guide.MoveHostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostBondPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInstallPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInterfacePopupView;
@@ -581,6 +585,14 @@ public class PresenterModule extends AbstractPresenterModule {
         bindPresenterWidget(TagPopupPresenterWidget.class,
                 TagPopupPresenterWidget.ViewDef.class,
                 TagPopupView.class);
+
+        // Guide
+        bindPresenterWidget(GuidePopupPresenterWidget.class,
+                GuidePopupPresenterWidget.ViewDef.class,
+                GuidePopupView.class);
+        bindPresenterWidget(MoveHostPopupPresenterWidget.class,
+                MoveHostPopupPresenterWidget.ViewDef.class,
+                MoveHostPopupView.class);
 
         // DataCenter
         bindPresenterWidget(DataCenterPopupPresenterWidget.class,

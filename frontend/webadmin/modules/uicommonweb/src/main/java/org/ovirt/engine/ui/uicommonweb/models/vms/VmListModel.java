@@ -412,7 +412,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         privatecurrentVm = value;
     }
 
-    private java.util.HashMap<Guid, java.util.ArrayList<ConsoleModel>> cachedConsoleModels;
+    private final java.util.HashMap<Guid, java.util.ArrayList<ConsoleModel>> cachedConsoleModels;
 
     private java.util.ArrayList<String> privateCustomPropertiesKeysList;
 
@@ -627,13 +627,26 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         model.setTitle("New Virtual Machine - Guide Me");
         model.setHashName("new_virtual_machine_-_guide_me");
 
-        model.setEntity(getGuideContext() != null ? DataProvider.GetVmById((Guid) getGuideContext()) : null);
+        if (getGuideContext() == null) {
+            VM vm = (VM) getSelectedItem();
+            setGuideContext(vm.getvm_guid());
+        }
 
-        UICommand tempVar = new UICommand("Cancel", this);
-        tempVar.setTitle("Configure Later");
-        tempVar.setIsDefault(true);
-        tempVar.setIsCancel(true);
-        model.getCommands().add(tempVar);
+        AsyncDataProvider.GetVmById(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        VmListModel vmListModel = (VmListModel) target;
+                        VmGuideModel model = (VmGuideModel) vmListModel.getWindow();
+                        model.setEntity((VM) returnValue);
+
+                        UICommand tempVar = new UICommand("Cancel", vmListModel);
+                        tempVar.setTitle("Configure Later");
+                        tempVar.setIsDefault(true);
+                        tempVar.setIsCancel(true);
+                        model.getCommands().add(tempVar);
+                    }
+                }), (Guid) getGuideContext());
     }
 
     @Override

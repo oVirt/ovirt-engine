@@ -34,8 +34,13 @@ public class SimpleDialogButton extends CustomButton {
     String upDisabledEnd = (resources.dialogButtonUpDisabledEnd().getURL());
 
     private String text;
+    private SafeHtml image;
+    private String customStyle;
 
     public SimpleDialogButton() {
+        this.text = "";
+        this.image = SafeHtmlUtils.EMPTY_SAFE_HTML;
+        this.customStyle = "";
     }
 
     @Override
@@ -44,18 +49,36 @@ public class SimpleDialogButton extends CustomButton {
         UpdateFaces();
     }
 
+    public void setImage(ImageResource image) {
+        this.image = ImagetoSafeHtml(image);
+        UpdateFaces();
+    }
+
+    public void setCustomContentStyle(String customStyle) {
+        this.customStyle = customStyle;
+        UpdateFaces();
+    }
+
     private void UpdateFaces() {
-        getUpFace().setHTML(templates.dialogButton(text, upStart, upStretch, upEnd, BUTTON_STYLE));
-        getUpHoveringFace().setHTML(templates.dialogButton(text, upOverStart, upOverStretch, upOverEnd, BUTTON_STYLE));
-        getDownFace().setHTML(templates.dialogButton(text, downStart, downStretch, downEnd, BUTTON_STYLE));
-        getUpDisabledFace().setHTML(templates.dialogButton(text,
-                upDisabledStart,
-                upDisabledStretch,
-                upDisabledEnd,
-                BUTTON_STYLE_DISABLED));
+        SafeHtml up = templates.dialogButton(
+                image, text, upStart, upStretch, upEnd, BUTTON_STYLE, customStyle);
+        SafeHtml upHovering = templates.dialogButton(
+                image, text, upOverStart, upOverStretch, upOverEnd, BUTTON_STYLE, customStyle);
+        SafeHtml upDisabled = templates.dialogButton(
+                image, text, upDisabledStart, upDisabledStretch, upDisabledEnd, BUTTON_STYLE_DISABLED, customStyle);
+        SafeHtml down = templates.dialogButton(
+                image, text, downStart, downStretch, downEnd, BUTTON_STYLE, customStyle);
+
+        getUpFace().setHTML(up);
+        getUpHoveringFace().setHTML(upHovering);
+        getUpDisabledFace().setHTML(upDisabled);
+        getDownFace().setHTML(down);
     }
 
     private SafeHtml ImagetoSafeHtml(ImageResource resource) {
+        if (resource == null) {
+            return image;
+        }
         return SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resource).getHTML());
     }
 
@@ -74,4 +97,5 @@ public class SimpleDialogButton extends CustomButton {
     protected void onClickStart() {
         setDown(true);
     }
+
 }

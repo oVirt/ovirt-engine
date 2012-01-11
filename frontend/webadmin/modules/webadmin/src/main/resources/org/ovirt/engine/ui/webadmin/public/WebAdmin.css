@@ -86,7 +86,12 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
 	padding-left: 5px;
     padding-right: 5px;
 	color: black;
-	white-space: nowrap;
+	white-space: nowrap;	
+}
+
+.dialog-button-text {
+	cursor: pointer;
+	cursor: hand;
 }
 
 .dialog-button-text-disabled {

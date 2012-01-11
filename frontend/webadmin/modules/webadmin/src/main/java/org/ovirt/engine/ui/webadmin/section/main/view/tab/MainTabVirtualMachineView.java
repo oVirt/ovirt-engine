@@ -248,5 +248,13 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return getMainModel().getAssignTagsCommand();
             }
         });
+
+        getTable().addActionButton(new ImageUiCommandButtonDefinition<VM>("Guide Me",
+                resources.guideSmallImage(), resources.guideSmallDisabledImage(), true) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getGuideCommand();
+            }
+        });
     }
 }

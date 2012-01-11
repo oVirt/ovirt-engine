@@ -5,10 +5,12 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.webadmin.widget.action.ImageUiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DcStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
@@ -24,14 +26,15 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
     }
 
     @Inject
-    public MainTabDataCenterView(MainModelProvider<storage_pool, DataCenterListModel> modelProvider) {
+    public MainTabDataCenterView(MainModelProvider<storage_pool, DataCenterListModel> modelProvider,
+            ApplicationResources resources) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(resources);
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(ApplicationResources resources) {
         getTable().addColumn(new DcStatusColumn(), "", "30px");
 
         TextColumnWithTooltip<storage_pool> nameColumn = new TextColumnWithTooltip<storage_pool>() {
@@ -97,6 +100,14 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getForceRemoveCommand();
+            }
+        });
+
+        getTable().addActionButton(new ImageUiCommandButtonDefinition<storage_pool>("Guide Me",
+                resources.guideSmallImage(), resources.guideSmallDisabledImage(), true) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getGuideCommand();
             }
         });
     }

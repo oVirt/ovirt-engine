@@ -685,4 +685,28 @@ public interface ApplicationConstants extends Constants {
 
     @DefaultStringValue("Select the Events for Notification:")
     String manageEventsPopupTitleLabel();
+
+    @DefaultStringValue("Required actions:")
+    String guidePopupRequiredActionsLabel();
+
+    @DefaultStringValue("Optional actions:")
+    String guidePopupOptionalActionsLabel();
+
+    @DefaultStringValue("There are still unconfigured entities:")
+    String guidePopupUnconfiguredLabel();
+
+    @DefaultStringValue("Configuration completed.")
+    String guidePopupConfigurationCompletedLabel();
+
+    @DefaultStringValue("Data Center created.")
+    String guidePopupDataCenterCreatedLabel();
+
+    @DefaultStringValue("Cluster created.")
+    String guidePopupClusterCreatedLabel();
+
+    @DefaultStringValue("Virtual Machine created.")
+    String guidePopupVMCreatedLabel();
+
+    @DefaultStringValue("Cluster:")
+    String moveHostPopupClusterLabel();
 }

@@ -3,10 +3,12 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.webadmin.widget.action.ImageUiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
@@ -20,14 +22,15 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
     }
 
     @Inject
-    public MainTabClusterView(MainModelProvider<VDSGroup, ClusterListModel> modelProvider) {
+    public MainTabClusterView(MainModelProvider<VDSGroup, ClusterListModel> modelProvider,
+            ApplicationResources resources) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(resources);
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(ApplicationResources resources) {
         TextColumnWithTooltip<VDSGroup> nameColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
@@ -68,6 +71,14 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
+            }
+        });
+
+        getTable().addActionButton(new ImageUiCommandButtonDefinition<VDSGroup>("Guide Me",
+                resources.guideSmallImage(), resources.guideSmallDisabledImage(), true) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getGuideCommand();
             }
         });
     }
