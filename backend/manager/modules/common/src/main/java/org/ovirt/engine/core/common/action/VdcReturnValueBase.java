@@ -1,37 +1,29 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlSeeAlso;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.compat.Guid;
 
-import org.ovirt.engine.core.common.errors.*;
-
-@XmlSeeAlso({ VMStatus.class, LoginResult.class, VdcLoginReturnValueBase.class })
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VdcReturnValueBase")
 public class VdcReturnValueBase implements Serializable {
     private static final long serialVersionUID = 6063371142273092365L;
 
     private boolean _canDoAction;
-
-    @XmlElement(name = "CanDoActionMessages")
-    private java.util.ArrayList<String> _canDoActionMessages = new java.util.ArrayList<String>();
+    private ArrayList<String> _canDoActionMessages = new ArrayList<String>();
     private boolean _succeeded;
     private boolean _isSyncronious;
     private Object _returnValue;
     private String _description = "";
-    private java.util.ArrayList<Guid> _taskIdList = new java.util.ArrayList<Guid>();
-    private final java.util.ArrayList<Guid> _internalIdList = new java.util.ArrayList<Guid>();
+    private ArrayList<Guid> _taskIdList = new ArrayList<Guid>();
+    private final ArrayList<Guid> _internalIdList = new ArrayList<Guid>();
     private boolean _endActionTryAgain = true;
+    private final ArrayList<String> _executeFailedMessages = new ArrayList<String>();
+    private VdcFault _fault;
 
-    @XmlElement(name = "ExecuteFailedMessages")
-    private final java.util.ArrayList<String> _executeFailedMessages = new java.util.ArrayList<String>();
+    public VdcReturnValueBase() {
+    }
 
     public VdcFault getFault() {
         if (_fault == null) {
@@ -46,10 +38,6 @@ public class VdcReturnValueBase implements Serializable {
         _fault = value;
     }
 
-    @XmlElement(name = "_fault")
-    private VdcFault _fault;
-
-    @XmlElement(name = "CanDoAction")
     public boolean getCanDoAction() {
         return _canDoAction;
     }
@@ -58,15 +46,14 @@ public class VdcReturnValueBase implements Serializable {
         _canDoAction = value;
     }
 
-    public java.util.ArrayList<String> getCanDoActionMessages() {
+    public ArrayList<String> getCanDoActionMessages() {
         return _canDoActionMessages;
     }
 
-    public void setCanDoActionMessages(java.util.ArrayList<String> value) {
+    public void setCanDoActionMessages(ArrayList<String> value) {
         _canDoActionMessages = value;
     }
 
-    @XmlElement(name = "Succeeded")
     public boolean getSucceeded() {
         return _succeeded;
     }
@@ -75,11 +62,10 @@ public class VdcReturnValueBase implements Serializable {
         _succeeded = value;
     }
 
-    public java.util.ArrayList<String> getExecuteFailedMessages() {
+    public ArrayList<String> getExecuteFailedMessages() {
         return _executeFailedMessages;
     }
 
-    @XmlElement(name = "ActionReturnValue")
     public Object getActionReturnValue() {
         return _returnValue;
     }
@@ -88,7 +74,6 @@ public class VdcReturnValueBase implements Serializable {
         _returnValue = value;
     }
 
-    @XmlElement(name = "Description")
     public String getDescription() {
         return _description;
     }
@@ -97,7 +82,6 @@ public class VdcReturnValueBase implements Serializable {
         _description = value;
     }
 
-    @XmlElement(name = "IsSynchronous")
     public boolean getIsSyncronious() {
         return _isSyncronious;
     }
@@ -106,16 +90,15 @@ public class VdcReturnValueBase implements Serializable {
         _isSyncronious = value;
     }
 
-    @XmlElement(name = "TaskIdListGuidArray")
-    public java.util.ArrayList<Guid> getTaskIdList() {
+    public ArrayList<Guid> getTaskIdList() {
         return _taskIdList;
     }
 
-    public void setTaskIdList(java.util.ArrayList<Guid> value) {
+    public void setTaskIdList(ArrayList<Guid> value) {
         _taskIdList = value;
     }
 
-    public java.util.ArrayList<Guid> getInternalTaskIdList() {
+    public ArrayList<Guid> getInternalTaskIdList() {
         return _internalIdList;
     }
 
@@ -129,8 +112,5 @@ public class VdcReturnValueBase implements Serializable {
 
     public void setEndActionTryAgain(boolean value) {
         _endActionTryAgain = value;
-    }
-
-    public VdcReturnValueBase() {
     }
 }
