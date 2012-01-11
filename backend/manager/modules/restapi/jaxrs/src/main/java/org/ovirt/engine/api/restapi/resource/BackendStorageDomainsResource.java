@@ -204,8 +204,10 @@ public class BackendStorageDomainsResource
 
         switch (entity.getstorage_type()) {
         case ISCSI:
+            mapVolumeGroupIscsi(model, entity);
+            break;
         case FCP:
-            mapVolumeGroup(model, entity);
+            mapVolumeGroupFcp(model, entity);
             break;
         case NFS:
         case LOCALFS:
@@ -227,7 +229,7 @@ public class BackendStorageDomainsResource
         }
     }
 
-    protected void mapVolumeGroup(StorageDomain model, storage_domains entity) {
+    protected void mapVolumeGroupIscsi(StorageDomain model, storage_domains entity) {
         VolumeGroup vg = model.getStorage().getVolumeGroup();
         for (LUNs lun : getLunsByVgId(vg.getId())) {
             List<storage_server_connections> lunConnections = lun.getLunConnections();
@@ -238,6 +240,14 @@ public class BackendStorageDomainsResource
                     vg.getLogicalUnits().add(unit);
                 }
             }
+        }
+    }
+
+    protected void mapVolumeGroupFcp(StorageDomain model, storage_domains entity) {
+        VolumeGroup vg = model.getStorage().getVolumeGroup();
+        for (LUNs lun : getLunsByVgId(vg.getId())) {
+            LogicalUnit unit = map(lun);
+            vg.getLogicalUnits().add(unit);
         }
     }
 
