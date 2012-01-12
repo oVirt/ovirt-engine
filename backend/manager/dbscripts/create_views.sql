@@ -1194,3 +1194,61 @@ FROM storage_domain_static
 	LEFT OUTER JOIN storage_pool ON storage_pool_iso_map.storage_pool_id = storage_pool.id
 	LEFT OUTER JOIN vds_groups ON storage_pool_iso_map.storage_pool_id = vds_groups.storage_pool_id
 	LEFT OUTER JOIN vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id;
+
+----------------------------------------------
+-- Quotas
+----------------------------------------------
+CREATE OR REPLACE VIEW quota_global_view
+AS
+SELECT q_limit.quota_id as quota_id,
+    q.storage_pool_id as storage_pool_id,
+    storage_pool.name as storage_pool_name,
+    q.quota_name as quota_name,
+    q.description as description,
+    q.threshold_vds_group_percentage as threshold_vds_group_percentage,
+    q.threshold_storage_percentage as threshold_storage_percentage,
+    q.grace_vds_group_percentage as grace_vds_group_percentage,
+    q.grace_storage_percentage as grace_storage_percentage,
+    virtual_cpu,
+    (CalculateVdsGroupUsage(quota_id,null)).virtual_cpu_usage,
+    mem_size_mb,
+    (CalculateVdsGroupUsage(quota_id,null)).mem_size_mb_usage,
+    storage_size_gb,
+    CalculateStorageUsage(quota_id,null) as storage_size_gb_usage
+FROM  quota_limitation q_limit, quota q, storage_pool
+WHERE q_limit.quota_id = q.id
+AND storage_pool.id = q.storage_pool_id
+AND q_limit.vds_group_id IS NULL
+AND q_limit.storage_id IS NULL;
+
+
+CREATE OR REPLACE VIEW quota_storage_view
+AS
+SELECT q_limit.id as quota_storage_id,
+    q_limit.quota_id as quota_id,
+    storage_id,
+    storage_domain_static.storage_name as storage_name,
+    storage_size_gb,
+    CalculateStorageUsage(quota_id,storage_id) as storage_size_gb_usage
+FROM   quota_limitation q_limit, quota q, storage_domain_static
+WHERE  q_limit.quota_id = q.id
+AND  q_limit.vds_group_id IS NULL
+AND  q_limit.storage_id IS NOT NULL
+AND  storage_domain_static.id = q_limit.storage_id;
+
+
+CREATE OR REPLACE VIEW quota_vds_group_view
+AS
+SELECT q_limit.id as quota_vds_group_id,
+    q_limit.quota_id as quota_id,
+    q_limit.vds_group_id,
+    vds_groups.name as vds_group_name,
+    virtual_cpu,
+    (CalculateVdsGroupUsage(quota_id,q_limit.vds_group_id)).virtual_cpu_usage as virtual_cpu_usage,
+    mem_size_mb,
+    (CalculateVdsGroupUsage(quota_id,q_limit.vds_group_id)).mem_size_mb_usage as mem_size_mb_usage
+FROM   quota_limitation q_limit, quota q, vds_groups
+WHERE  q_limit.quota_id = q.id
+AND  q_limit.vds_group_id IS NOT NULL
+AND  q_limit.storage_id IS NULL
+AND  vds_groups.vds_group_id = q_limit.vds_group_id;
