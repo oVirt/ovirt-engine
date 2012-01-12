@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ImportVmCommand;
@@ -94,10 +95,10 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
                             vm.setImages(diskImages);
 
                             // add disk map
-                            java.util.HashMap<String, java.util.ArrayList<DiskImage>> images = ImportVmCommand
+                            Map<String, List<DiskImage>> images = ImportVmCommand
                                     .GetImagesLeaf(diskImages);
                             for (String drive : images.keySet()) {
-                                java.util.ArrayList<DiskImage> list = images.get(drive);
+                                List<DiskImage> list = images.get(drive);
                                 vm.getDiskMap().put(drive, list.get(list.size() - 1));
                             }
                             vms.add(vm);

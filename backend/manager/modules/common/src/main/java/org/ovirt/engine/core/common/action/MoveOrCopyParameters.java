@@ -1,17 +1,24 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
-import javax.xml.bind.annotation.XmlElement;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.queries.ValueObjectMap;
+import org.ovirt.engine.core.compat.Guid;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "MoveOrCopyParameters")
 public class MoveOrCopyParameters extends StorageDomainParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = 1051590893103934441L;
+
+    private Map<Guid, Guid> imageToDestinationDomainMap = new HashMap<Guid, Guid>();
 
     public MoveOrCopyParameters(Guid containerId, Guid storageDomainId) {
         super(storageDomainId);
@@ -84,5 +91,13 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
     }
 
     public MoveOrCopyParameters() {
+    }
+
+    public void setImageToDestinationDomainMap(Map<Guid, Guid> map) {
+        imageToDestinationDomainMap = map;
+    }
+
+    public Map<Guid, Guid> getImageToDestinationDomainMap() {
+        return Collections.unmodifiableMap(imageToDestinationDomainMap);
     }
 }

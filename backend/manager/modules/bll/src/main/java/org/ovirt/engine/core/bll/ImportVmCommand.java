@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,14 +58,16 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTemplateCommand<T> {
+public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameters> {
     private static VmStatic vmStaticForDefaultValues;
+    private Map<Guid,Guid> imageToDestinationDomainMap = Collections.emptyMap();
+    private List<DiskImage> imageList;
 
     static {
         vmStaticForDefaultValues = new VmStatic();
     }
 
-    public ImportVmCommand(T parameters) {
+    public ImportVmCommand(ImportVmParameters parameters) {
         super(parameters);
         setVmId(parameters.getContainerId());
         parameters.setEntityId(getVmId());
@@ -72,6 +77,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         getParameters().setImages(new ArrayList<DiskImage>(getVm().getDiskMap().values()));
         setStoragePoolId(parameters.getStoragePoolId());
         setVdsGroupId(parameters.getVdsGroupId());
+        imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
+        imageList = getParameters().getImages();
     }
 
     protected ImportVmCommand(Guid commandId) {
@@ -83,7 +90,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         if (getVm() != null) {
             setDescription(getVmName());
         }
-        boolean retVal = false;
+        boolean retVal;
 
         // Load images from Import/Export domain
         GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(getParameters()
@@ -95,17 +102,15 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         retVal = qretVal.getSucceeded();
         if (retVal) {
             List<VM> vms = (List) qretVal.getReturnValue();
-            // VM vm = null; //LINQ vms.FirstOrDefault(v => v.getvm_guid() ==
-            // ImportVmParameters.Vm.vm_guid);
             VM vm = LinqUtils.firstOrNull(vms, new Predicate<VM>() {
                 @Override
                 public boolean eval(VM vm) {
                     return vm.getvm_guid().equals(getParameters().getVm().getvm_guid());
                 }
             });
+
             if (vm != null) {
-                storage_domain_static storageDomain =
-                        getStorageDomainStaticDAO().get(getParameters().getDestDomainId());
+                storage_domain_static destinationStorageDomainStatic = getStorageDomainStaticDAO().get(getParameters().getDestDomainId());
                 // At this point we should work with the VM that was read from
                 // the OVF
                 setVm(vm);
@@ -113,7 +118,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                     // copy the new disk volume format/type if provided,
                     // only if requested by the user
                     if (getParameters().getCopyCollapse()) {
-                        for (DiskImage p : getParameters().getImages()) {
+                        for (DiskImage p : imageList) {
                             if (p.getId().equals(image.getId())) {
                                 if (p.getvolume_format() != null) {
                                     image.setvolume_format(p.getvolume_format());
@@ -124,7 +129,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                             }
                         }
                     }
-                    retVal = ImagesHandler.CheckImageConfiguration(storageDomain, image,
+                    retVal = ImagesHandler.CheckImageConfiguration(destinationStorageDomainStatic, image,
                             getReturnValue().getCanDoActionMessages());
                     if (!retVal) {
                         break;
@@ -139,10 +144,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                     }
                 }
                 if (retVal) {
-                    java.util.HashMap<String, java.util.ArrayList<DiskImage>> images =
-                            GetImagesLeaf(getVm().getImages());
+                    Map<String, List<DiskImage>> images = GetImagesLeaf(getVm().getImages());
                     for (String drive : images.keySet()) {
-                        java.util.ArrayList<DiskImage> list = images.get(drive);
+                        List<DiskImage> list = images.get(drive);
                         getVm().addDriveToImageMap(drive, list.get(list.size() - 1));
                     }
                 }
@@ -158,6 +162,19 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         if (retVal) {
             retVal = ImportExportCommon.CheckStorageDomain(getParameters().getDestDomainId(), getReturnValue()
                     .getCanDoActionMessages());
+        }
+        //TODO: checking disk target domains
+        if (retVal) {
+            if (!imageToDestinationDomainMap.isEmpty()) {
+                for(Guid destGuid : imageToDestinationDomainMap.values()) {
+                    retVal = ImportExportCommon.CheckStorageDomain(destGuid, getReturnValue().getCanDoActionMessages());
+                    if (retVal && !domainIsValidDestination(getStorageDomain(destGuid))) {
+                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+                        retVal = false;
+                    }
+                    if(!retVal) break;
+                }
+            }
         }
         if (retVal) {
             retVal = ImportExportCommon.CheckStoragePool(getParameters().getStoragePoolId(), getReturnValue()
@@ -176,8 +193,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
         // check that the imported vm name is not in engine
         if (retVal) {
-            List<VmStatic> dupVmNmaes = getVmStaticDAO().getAllByName(getParameters().getVm().getvm_name());
-            if (dupVmNmaes.size() >= 1) {
+            List<VmStatic> dupVmNames = getVmStaticDAO().getAllByName(getParameters().getVm().getvm_name());
+            if (dupVmNames.size() >= 1) {
                 addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS);
                 getReturnValue().getCanDoActionMessages().add(String.format("$VmName %1$s", getVm().getvm_name()));
                 retVal = false;
@@ -199,7 +216,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         }
         if (retVal && getParameters().getCopyCollapse() && getParameters().getDiskInfoList() != null) {
             retVal = ImagesHandler.CheckImagesConfiguration(getParameters().getStorageDomainId(),
-                    new java.util.ArrayList<DiskImageBase>(getParameters().getDiskInfoList().values()),
+                    new ArrayList<DiskImageBase>(getParameters().getDiskInfoList().values()),
                     getReturnValue().getCanDoActionMessages());
         }
         // if collapse true we check that we have the template on source
@@ -213,8 +230,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             retVal = false;
         }
         if (retVal) {
-            if (getStorageDomain().getstorage_domain_type() == StorageDomainType.ISO
-                    || getStorageDomain().getstorage_domain_type() == StorageDomainType.ImportExport) {
+            if (!domainIsValidDestination(getStorageDomain())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                 retVal = false;
             }
@@ -246,9 +262,18 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             }
         }
         if (retVal) {
-            retVal = StorageDomainSpaceChecker.hasSpaceForRequest(getStorageDomain(), (int) getVm().getDiskSize());
-            if (!retVal)
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
+            Map<storage_domains, Integer> domainMap = getSpaceRequirementsForStorageDomains(imageList);
+            if (domainMap.isEmpty()) {
+                domainMap.put(getStorageDomain(), (int) getVm().getDiskSize());
+            }
+
+            for(Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
+                retVal = StorageDomainSpaceChecker.hasSpaceForRequest(entry.getKey(), entry.getValue());
+                if (!retVal) {
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
+                    break;
+                }
+            }
         }
 
         if (retVal && Config.<Boolean> GetValue(ConfigValues.LimitNumberOfNetworkInterfaces,
@@ -282,8 +307,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                     VdcQueryType.GetTemplatesFromExportDomain, tempVar);
 
             if (qretVal.getSucceeded()) {
-                // (java.util.HashMap<VmTemplate,
-                // java.util.ArrayList<DiskImage>>)qretVal.getReturnValue();
                 Map templates = (Map) qretVal.getReturnValue();
 
                 for (Object template : templates.keySet()) {
@@ -301,19 +324,14 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     protected boolean CheckTemplateInStorageDomain() {
-        // LINQ && CheckIfDisksExist(Vm.DiskMap.Values.ToList());
         boolean retValue = CheckStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active)
                 && CheckIfDisksExist(new ArrayList(getVm().getDiskMap().values()));
         if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getvmt_guid())
                 && !getParameters().getCopyCollapse()) {
-            // Query returns an ArrayList of storage domains
             List<storage_domains> domains = (List<storage_domains>) Backend
                     .getInstance()
                     .runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
                             new GetStorageDomainsByVmTemplateIdQueryParameters(getVm().getvmt_guid())).getReturnValue();
-
-            // LINQ !domains.Select(a =>
-            // a.id).Contains(MoveParameters.StorageDomainId))
             List<Guid> domainsId = LinqUtils.foreach(domains, new Function<storage_domains, Guid>() {
                 @Override
                 public Guid eval(storage_domains storageDomainStatic) {
@@ -377,7 +395,12 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
     @Override
     protected void executeCommand() {
-        // Add Vm to Db
+        addVmToDb();
+        processImages();
+        setSucceeded(true);
+    }
+
+    private void addVmToDb() {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
             @Override
@@ -390,18 +413,20 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 return null;
             }
         });
+    }
+
+    private void processImages() {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
-            @Override
-            public Void runInTransaction() {
-                AddVmImages();
-                MoveOrCopyAllImageGroups();
-                VmHandler.LockVm(getVm().getvm_guid());
-                return null;
+                    @Override
+                    public Void runInTransaction() {
+                        AddVmImages();
+                        MoveOrCopyAllImageGroups();
+                        VmHandler.LockVm(getVm().getvm_guid());
+                        return null;
 
-            }
-        });
-        setSucceeded(true);
+                    }
+                });
     }
 
     @Override
@@ -412,8 +437,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     @Override
     protected void MoveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         for (DiskImage disk : disks) {
+            Guid destinationDomain = (imageToDestinationDomainMap.get(disk.getId()) != null) ? imageToDestinationDomainMap.get(disk.getId())
+                    : getParameters().getStorageDomainId();
             MoveOrCopyImageGroupParameters tempVar = new MoveOrCopyImageGroupParameters(containerID, disk
-                    .getimage_group_id().getValue(), disk.getId(), getParameters().getStorageDomainId(),
+                    .getimage_group_id().getValue(), disk.getId(), destinationDomain,
                     getMoveOrCopyImageOperation());
             tempVar.setParentCommand(getActionType());
             tempVar.setEntityId(getParameters().getEntityId());
@@ -439,11 +466,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     private void AddVmImages() {
-        java.util.HashMap<String, java.util.ArrayList<DiskImage>> images = GetImagesLeaf(getVm().getImages());
+        Map<String, List<DiskImage>> images = GetImagesLeaf(getVm().getImages());
 
         if (getParameters().getCopyCollapse()) {
             for (String drive : images.keySet()) {
-                java.util.ArrayList<DiskImage> list = images.get(drive);
+                List<DiskImage> list = images.get(drive);
                 DiskImage disk = list.get(list.size() - 1);
 
                 disk.setParentId(VmTemplateHandler.BlankVmTemplateId);
@@ -480,7 +507,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             }
 
             for (String drive : images.keySet()) {
-                java.util.ArrayList<DiskImage> list = images.get(drive);
+                List<DiskImage> list = images.get(drive);
                 DiskImage disk = list.get(list.size() - 1);
                 DbFacade.getInstance().getImageVmMapDAO().save(
                         new image_vm_map(true, disk.getId(), getVm().getvm_guid()));
@@ -490,16 +517,12 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     // the last image in each list is the leaf
-    public static java.util.HashMap<String, java.util.ArrayList<DiskImage>> GetImagesLeaf(
-                                                                                          java.util.ArrayList<DiskImage> images) {
-        java.util.HashMap<String, java.util.ArrayList<DiskImage>> retVal =
-                new java.util.HashMap<String, java.util.ArrayList<DiskImage>>();
-
+    public static Map<String, List<DiskImage>> GetImagesLeaf(List<DiskImage> images) {
+        Map<String, List<DiskImage>> retVal = new HashMap<String, List<DiskImage>>();
         for (DiskImage image : images) {
-            // if (true) // !retVal.Keys.Contains(image.internal_drive_mapping))
             if (!retVal.keySet().contains(image.getinternal_drive_mapping())) {
                 retVal.put(image.getinternal_drive_mapping(),
-                        new java.util.ArrayList<DiskImage>(java.util.Arrays.asList(new DiskImage[] { image })));
+                        new ArrayList<DiskImage>(Arrays.asList(new DiskImage[]{image})));
             } else {
                 retVal.get(image.getinternal_drive_mapping()).add(image);
             }
@@ -510,8 +533,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         return retVal;
     }
 
-    private static void SortImageList(java.util.ArrayList<DiskImage> images) {
-        java.util.ArrayList<DiskImage> hold = new java.util.ArrayList<DiskImage>();
+    private static void SortImageList(List<DiskImage> images) {
+        List<DiskImage> hold = new ArrayList<DiskImage>();
         DiskImage curr = null;
 
         // find the first image
@@ -528,7 +551,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         while (images.size() > 0) {
             int pos = GetNextImage(images, curr);
             if (pos == -1) {
-                // TODO: ERROR !!!
                 log.error("Image list error in SortImageList");
                 break;
             }
@@ -542,8 +564,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         }
     }
 
-    // function retun the index of the image that has no parent
-    private static int GetFirstImage(java.util.ArrayList<DiskImage> images, DiskImage curr) {
+    // function return the index of the image that has no parent
+    private static int GetFirstImage(List<DiskImage> images, DiskImage curr) {
         for (int i = 0; i < images.size(); i++) {
             if (curr.getParentId().equals(images.get(i).getId())) {
                 return i;
@@ -553,7 +575,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     // function return the index of image that is it's chiled
-    private static int GetNextImage(java.util.ArrayList<DiskImage> images, DiskImage curr) {
+    private static int GetNextImage(List<DiskImage> images, DiskImage curr) {
         for (int i = 0; i < images.size(); i++) {
             if (images.get(i).getParentId().equals(curr.getId())) {
                 return i;
@@ -622,7 +644,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
     protected boolean macAdded = false;
     protected void AddVmNetwork() {
-        // Add interfaces from template
+        addInterfacesFromTemplate();
+    }
+
+    private void addInterfacesFromTemplate() {
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             if (MacPoolManager.getInstance().IsMacInUse(iface.getMacAddress())) {
                 AuditLogableBase logable = new AuditLogableBase();
@@ -674,7 +699,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         VM vmFromParams = getParameters().getVm();
         if (getVm() != null) {
             VmHandler.UnLockVm(getVm().getvm_guid());
-            for (DiskImage disk : getParameters().getImages()) {
+            for (DiskImage disk : imageList) {
                 DbFacade.getInstance().getDiskImageDynamicDAO().remove(disk.getId());
                 DbFacade.getInstance().getDiskImageDAO().remove(disk.getId());
 
@@ -729,7 +754,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
     protected boolean UpdateVmImSpm() {
         return VmCommand.UpdateVmInSpm(getVm().getstorage_pool_id(),
-                new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { getVm() })));
+                new ArrayList<VM>(Arrays.asList(new VM[] { getVm() })));
     }
 
     @Override

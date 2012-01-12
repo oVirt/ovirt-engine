@@ -1,28 +1,40 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
+import java.util.Collections;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import java.util.ArrayList;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.compat.Guid;
+
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "ImportVmParameters")
 public class ImportVmParameters extends MoveVmParameters implements java.io.Serializable {
-    private static final long serialVersionUID = -8952177290494146953L;
+    private static final long serialVersionUID = -6514416097090370831L;
+
     @XmlElement
     private VM _vm;
+
     @XmlElement
     private Guid _sourceDomainId = new Guid();
+
     @XmlElement
     private Guid _destDomainId = new Guid();
+
     @XmlElement
-    private java.util.ArrayList<DiskImage> _images;
+    private List<DiskImage> _images;
+
     @XmlElement
     private Guid _vdsGroupId;
+
+    public ImportVmParameters() {
+    }
 
     public ImportVmParameters(VM vm, Guid sourceStorageDomainId, Guid destStorageDomainId, Guid storagePoolId,
             Guid vdsGroupId) {
@@ -47,11 +59,11 @@ public class ImportVmParameters extends MoveVmParameters implements java.io.Seri
         return _destDomainId;
     }
 
-    public java.util.ArrayList<DiskImage> getImages() {
-        return _images == null ? new ArrayList<DiskImage>() : _images;
+    public List<DiskImage> getImages() {
+        return _images == null ? Collections.<DiskImage>emptyList() : _images;
     }
 
-    public void setImages(java.util.ArrayList<DiskImage> value) {
+    public void setImages(List<DiskImage> value) {
         _images = value;
     }
 
@@ -63,6 +75,4 @@ public class ImportVmParameters extends MoveVmParameters implements java.io.Seri
         _vdsGroupId = value;
     }
 
-    public ImportVmParameters() {
-    }
 }

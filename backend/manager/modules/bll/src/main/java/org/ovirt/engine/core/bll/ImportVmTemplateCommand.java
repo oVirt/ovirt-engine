@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -25,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.DiskImageList;
@@ -41,15 +44,17 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class ImportVmTemplateCommand<T extends ImprotVmTemplateParameters> extends MoveOrCopyTemplateCommand<T> {
-    final int BYTE_TO_GB_FACTOR = 1073741824;
+public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmTemplateParameters> {
 
-    public ImportVmTemplateCommand(T parameters) {
+    public Map<Guid,Guid> imageToDestinationDomainMap = Collections.emptyMap();
+
+    public ImportVmTemplateCommand(ImprotVmTemplateParameters parameters) {
         super(parameters);
         setVmTemplate(parameters.getVmTemplate());
         parameters.setEntityId(getVmTemplate().getId());
         setStoragePoolId(parameters.getStoragePoolId());
         setVdsGroupId(parameters.getVdsGroupId());
+        imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
     }
 
     protected ImportVmTemplateCommand(Guid commandId) {
@@ -58,49 +63,46 @@ public class ImportVmTemplateCommand<T extends ImprotVmTemplateParameters> exten
 
     @Override
     protected boolean canDoAction() {
-        boolean retVal = true;
-
-        // Set the template images from the Export domain and change each image
-        // id storage is to the import domain
+        // Set the template images from the Export domain and change each image id storage is to the import domain
+        GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(getParameters()
+                .getStoragePoolId(), getParameters().getSourceDomainId());
+        tempVar.setGetAll(true);
+        VdcQueryReturnValue qretVal = getBackend().runInternalQuery(
+                VdcQueryType.GetTemplatesFromExportDomain, tempVar);
+        boolean retVal = qretVal.getSucceeded();
+        Set<Guid> targetDomains = getTargetDomains();
         if (retVal) {
-            GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(getParameters()
-                    .getStoragePoolId(), getParameters().getSourceDomainId());
-            tempVar.setGetAll(true);
-            VdcQueryReturnValue qretVal = getBackend().runInternalQuery(
-                    VdcQueryType.GetTemplatesFromExportDomain, tempVar);
-
-            if (qretVal.getSucceeded()) {
-                Map<VmTemplate, DiskImageList> templates = (Map) qretVal.getReturnValue();
-                // java.util.ArrayList<DiskImage> images = null; //LINQ
-                // templates.FirstOrDefault(t => t.Key.vmt_guid ==
-                // ImprotVmTemplateParameters.VmTemplate.vmt_guid).Value;
-                DiskImageList images = templates.get(LinqUtils.firstOrNull(templates.keySet(),
-                        new Predicate<VmTemplate>() {
-                            @Override
-                            public boolean eval(VmTemplate t) {
-                                return t.getId().equals(getParameters().getVmTemplate().getId());
-                            }
-                        }));
-                List<DiskImage> list = Arrays.asList(images.getDiskImages());
-                getParameters().setImages(list);
-                storage_domain_static storageDomain =
-                        getStorageDomainStaticDAO().get(getParameters().getDestDomainId());
-                Map<String, DiskImage> imageMap = new HashMap<String, DiskImage>();
-                for (DiskImage image : list) {
-                    changeRawToCowIfSparseOnBlockDevice(storageDomain.getstorage_type(), image);
-                    retVal = ImagesHandler.CheckImageConfiguration(storageDomain, image,
-                             getReturnValue().getCanDoActionMessages());
-                    if (!retVal) {
-                        break;
-                    } else {
-                        image.setstorage_pool_id(getParameters().getStoragePoolId());
-                        image.setstorage_id(getParameters().getSourceDomainId());
-                        imageMap.put(image.getId().toString(), image);
-                    }
+            Map<VmTemplate, DiskImageList> templates = (Map) qretVal.getReturnValue();
+            DiskImageList images = templates.get(LinqUtils.firstOrNull(templates.keySet(),
+                    new Predicate<VmTemplate>() {
+                        @Override
+                        public boolean eval(VmTemplate t) {
+                            return t.getId().equals(getParameters().getVmTemplate().getId());
+                        }
+                    }));
+            List<DiskImage> list = Arrays.asList(images.getDiskImages());
+            getParameters().setImages(list);
+            storage_domain_static storageDomain =
+                    getStorageDomainStaticDAO().get(getParameters().getDestDomainId());
+            Map<String, DiskImage> imageMap = new HashMap<String, DiskImage>();
+            for (DiskImage image : list) {
+                storage_domain_static targetDomain = (imageToDestinationDomainMap.get(image.getId()) == null)
+                    ? storageDomain
+                    : getStorageDomain(imageToDestinationDomainMap.get(image.getId())).getStorageStaticData();
+                changeRawToCowIfSparseOnBlockDevice(targetDomain.getstorage_type(), image);
+                retVal = ImagesHandler.CheckImageConfiguration(storageDomain, image,
+                        getReturnValue().getCanDoActionMessages());
+                if (!retVal) {
+                    break;
+                } else {
+                    image.setstorage_pool_id(getParameters().getStoragePoolId());
+                    image.setstorage_id(getParameters().getSourceDomainId());
+                    imageMap.put(image.getId().toString(), image);
                 }
-                getVmTemplate().setDiskImageMap(imageMap);
             }
+            getVmTemplate().setDiskImageMap(imageMap);
         }
+
 
         if (getVmTemplate() == null) {
             retVal = false;
@@ -131,7 +133,15 @@ public class ImportVmTemplateCommand<T extends ImprotVmTemplateParameters> exten
         if (retVal) {
             retVal = ImportExportCommon.CheckStorageDomain(getParameters().getDestDomainId(), getReturnValue()
                     .getCanDoActionMessages());
+            for(Guid domainId : targetDomains) {
+                retVal = ImportExportCommon.CheckStorageDomain(domainId, getReturnValue().getCanDoActionMessages());
+                if (!retVal) break;
+            }
+
         }
+
+
+
         // check that the storage pool is valid
         if (retVal) {
             retVal = ImportExportCommon.CheckStoragePool(getParameters().getStoragePoolId(), getReturnValue()
@@ -152,12 +162,28 @@ public class ImportVmTemplateCommand<T extends ImprotVmTemplateParameters> exten
                     (IsDomainActive(getParameters().getSourceDomainId(), getParameters().getStoragePoolId()) && IsDomainActive(
                             getParameters().getDestDomainId(), getParameters().getStoragePoolId()));
         }
+
+        if (retVal) {
+            for(Guid domainId : targetDomains) {
+                retVal = IsDomainActive(domainId, getParameters().getStoragePoolId());
+                if (!retVal) break;
+            }
+        }
         // check that the destination domain is not ISO and not Export domain
         if (retVal) {
-            if (getStorageDomain().getstorage_domain_type() == StorageDomainType.ISO
-                    || getStorageDomain().getstorage_domain_type() == StorageDomainType.ImportExport) {
+            if (!domainIsValidDestination(getStorageDomain())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                 retVal = false;
+            }
+        }
+
+        if (retVal) {
+            for(Guid domainId : targetDomains) {
+                retVal = domainIsValidDestination(getStorageDomain(domainId));
+                if (!retVal) {
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+                    break;
+                }
             }
         }
         // set the source domain and check that it is ImportExport type
@@ -173,16 +199,22 @@ public class ImportVmTemplateCommand<T extends ImprotVmTemplateParameters> exten
             }
         }
         if (retVal) {
-            int sz = 0;
-            if (getVmTemplate().getDiskImageMap() != null) {
-                for (DiskImage image : getVmTemplate().getDiskImageMap().values()) {
-                    sz += image.getsize();
+            Map<storage_domains, Integer> domainMap = getSpaceRequirementsForStorageDomains(getVmTemplate().getDiskList());
+            if (domainMap.isEmpty()) {
+                int sz = 0;
+                if (getVmTemplate().getDiskImageMap() != null) {
+                    for (DiskImage image : getVmTemplate().getDiskImageMap().values()) {
+                        sz += image.getsize();
+                    }
                 }
+                domainMap.put(getStorageDomain(), sz);
             }
-            int sizeInGB = sz / BYTE_TO_GB_FACTOR;
-            retVal = StorageDomainSpaceChecker.hasSpaceForRequest(getStorageDomain(), sizeInGB);
-            if (!retVal) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
+            for(Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
+                retVal = StorageDomainSpaceChecker.hasSpaceForRequest(entry.getKey(), entry.getValue());
+                if (!retVal) {
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
+                    break;
+                }
             }
         }
         if (!retVal) {
@@ -239,8 +271,10 @@ public class ImportVmTemplateCommand<T extends ImprotVmTemplateParameters> exten
             @Override
             public Void runInTransaction() {
                 for (DiskImage disk : disks) {
+                    Guid targetId = (imageToDestinationDomainMap.get(disk.getId()) == null) ? getParameters().getStorageDomainId() :
+                            imageToDestinationDomainMap.get(disk.getId());
                     MoveOrCopyImageGroupParameters tempVar = new MoveOrCopyImageGroupParameters(containerID, disk
-                            .getimage_group_id().getValue(), disk.getId(), getParameters().getStorageDomainId(),
+                            .getimage_group_id().getValue(), disk.getId(), targetId,
                             getMoveOrCopyImageOperation());
                     tempVar.setParentCommand(getActionType());
                     tempVar.setEntityId(getParameters().getEntityId());
@@ -308,15 +342,9 @@ public class ImportVmTemplateCommand<T extends ImprotVmTemplateParameters> exten
             iDynamic.setId(Guid.NewGuid());
             iStat.setId(iDynamic.getId());
             iDynamic.setVmTemplateId(getVmTemplateId());
-            // TODO why does a VM interface get VDS details?
-            // iDynamic.setAddress(iface.getInterfaceDynamic().getAddress());
-            // iDynamic.setBondName(iface.getInterfaceDynamic().getBondName());
-            // iDynamic.setBondType(iface.getInterfaceDynamic().getBondType());
-            // iDynamic.setGateway(iface.getInterfaceDynamic().getGateway());
             iDynamic.setName(iface.getName());
             iDynamic.setNetworkName(iface.getNetworkName());
             iDynamic.setSpeed(iface.getSpeed());
-            // iDynamic.setSubnet(iface.getInterfaceDynamic().getSubnet());
             iDynamic.setType(iface.getType());
 
             DbFacade.getInstance().getVmNetworkInterfaceDAO().save(iDynamic);

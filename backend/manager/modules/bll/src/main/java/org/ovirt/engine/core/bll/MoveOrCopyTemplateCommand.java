@@ -1,8 +1,15 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
@@ -266,4 +273,31 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     }
 
     private static LogCompat log = LogFactoryCompat.getLog(MoveOrCopyTemplateCommand.class);
+
+    protected boolean domainIsValidDestination(storage_domains domain) {
+        StorageDomainValidator validator = new StorageDomainValidator(domain);
+        return validator.domainIsValidDestination();
+    }
+
+    protected storage_domains getStorageDomain(Guid domainId) {
+        return getStorageDomainDAO().getForStoragePool(domainId.getValue(), getStoragePool().getId());
+    }
+
+    protected Map<storage_domains, Integer> getSpaceRequirementsForStorageDomains(List<DiskImage> images) {
+        Map<DiskImage, storage_domains> spaceMap = new HashMap<DiskImage,storage_domains>();
+        Map<Guid, Guid> imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
+        for(DiskImage image : images) {
+            storage_domains domain = getStorageDomain(imageToDestinationDomainMap.get(image.getId()));
+            spaceMap.put(image, domain);
+        }
+        return StorageDomainValidator.getSpaceRequirementsForStorageDomains(spaceMap);
+    }
+
+    protected Set<Guid> getTargetDomains() {
+        Set<Guid> retVal = new HashSet<Guid>();
+        for(Guid guid : getParameters().getImageToDestinationDomainMap().values()) {
+            retVal.add(guid);
+        }
+        return retVal;
+    }
 }

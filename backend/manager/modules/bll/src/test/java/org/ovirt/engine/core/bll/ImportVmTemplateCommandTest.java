@@ -49,7 +49,7 @@ public class ImportVmTemplateCommandTest {
     public void insufficientDiskSpace() {
         final int lotsOfSpaceRequired = 1073741824;
         final int pctOfSpaceRequired = 0;
-        final ImportVmTemplateCommand<ImprotVmTemplateParameters> c =
+        final ImportVmTemplateCommand c =
                 setupDiskSpaceTest(lotsOfSpaceRequired, pctOfSpaceRequired);
         assertFalse(c.canDoAction());
         assertTrue(c.getReturnValue()
@@ -60,7 +60,7 @@ public class ImportVmTemplateCommandTest {
     @Test
     public void sufficientDiskSpace() {
         final int pctOfSpaceRequired = 0;
-        final ImportVmTemplateCommand<ImprotVmTemplateParameters> c =
+        final ImportVmTemplateCommand c =
                 setupDiskSpaceTest(0, pctOfSpaceRequired);
         assertTrue(c.canDoAction());
     }
@@ -128,7 +128,7 @@ public class ImportVmTemplateCommandTest {
      *            The target domain's storage type.
      * @return The command which can be called to test the given combination.
      */
-    private ImportVmTemplateCommand<ImprotVmTemplateParameters> setupVolumeFormatAndTypeTest(
+    private ImportVmTemplateCommand setupVolumeFormatAndTypeTest(
             VolumeFormat volumeFormat,
             VolumeType volumeType,
             StorageType storageType) {
@@ -138,8 +138,8 @@ public class ImportVmTemplateCommandTest {
         mockImportExportCommonAlwaysTrue();
         mockVmTemplateCommand();
 
-        ImportVmTemplateCommand<ImprotVmTemplateParameters> command =
-                spy(new ImportVmTemplateCommand<ImprotVmTemplateParameters>(createParameters()));
+        ImportVmTemplateCommand command =
+                spy(new ImportVmTemplateCommand(createParameters()));
 
         Backend backend = mock(Backend.class);
         when(command.getBackend()).thenReturn(backend);
@@ -153,7 +153,7 @@ public class ImportVmTemplateCommandTest {
         return command;
     }
 
-    private void mockStorageDomains(ImportVmTemplateCommand<ImprotVmTemplateParameters> command) {
+    private void mockStorageDomains(ImportVmTemplateCommand command) {
         final ImprotVmTemplateParameters parameters = command.getParameters();
         final StorageDomainDAO dao = mock(StorageDomainDAO.class);
 
@@ -172,7 +172,7 @@ public class ImportVmTemplateCommandTest {
         doReturn(dao).when(command).getStorageDomainDAO();
     }
 
-    private void mockStoragePool(ImportVmTemplateCommand<ImprotVmTemplateParameters> command) {
+    private void mockStoragePool(ImportVmTemplateCommand command) {
         final StoragePoolDAO dao = mock(StoragePoolDAO.class);
 
         final storage_pool pool = new storage_pool();
@@ -184,7 +184,7 @@ public class ImportVmTemplateCommandTest {
 
     private void mockGetTemplatesFromExportDomainQuery(VolumeFormat volumeFormat,
             VolumeType volumeType,
-            ImportVmTemplateCommand<ImprotVmTemplateParameters> command) {
+            ImportVmTemplateCommand command) {
         final VdcQueryReturnValue result = new VdcQueryReturnValue();
         Map<VmTemplate, DiskImageList> resultMap = new HashMap<VmTemplate, DiskImageList>();
 
@@ -202,7 +202,7 @@ public class ImportVmTemplateCommandTest {
     }
 
     private void mockStorageDomainStatic(
-            ImportVmTemplateCommand<ImprotVmTemplateParameters> command,
+            ImportVmTemplateCommand command,
             StorageType storageType) {
         final StorageDomainStaticDAO dao = mock(StorageDomainStaticDAO.class);
 
@@ -213,7 +213,7 @@ public class ImportVmTemplateCommandTest {
         doReturn(dao).when(command).getStorageDomainStaticDAO();
     }
 
-    private ImportVmTemplateCommand<ImprotVmTemplateParameters> setupDiskSpaceTest(final int extraDiskSpaceRequired,
+    private ImportVmTemplateCommand setupDiskSpaceTest(final int extraDiskSpaceRequired,
             final int pctOfSpaceRequired) {
         ConfigMocker cfg = new ConfigMocker();
         cfg.mockConfigLowDiskSpace(extraDiskSpaceRequired);

@@ -29,7 +29,7 @@ import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 
-public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand<ImprotVmTemplateParameters> {
+public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
     private static final long serialVersionUID = 1L;
 
     public TestHelperImportVmTemplateCommand(final ImprotVmTemplateParameters p) {

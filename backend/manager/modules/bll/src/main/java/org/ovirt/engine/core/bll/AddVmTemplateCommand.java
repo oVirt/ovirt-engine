@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -32,10 +36,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
+//TODO: revisit - need to be able to specify where the disks will go for the template.
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateCommand<T> {
     private final java.util.ArrayList<DiskImage> mImages = new java.util.ArrayList<DiskImage>();
@@ -276,7 +278,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         for (DiskImage diskImage : mImages) {
             CreateImageTemplateParameters createParams = new CreateImageTemplateParameters(diskImage.getId(),
                         getVmTemplateId(), getVmTemplateName(), getVmId());
-            if(!diskImage.getstorage_id().equals(Guid.Empty)) {
+            if (!diskImage.getstorage_id().equals(Guid.Empty)) {
                 createParams.setStorageDomainId(diskImage.getstorage_id().getValue());
             } else {
                 createParams.setStorageDomainId(srcStorageDomain);

@@ -1,18 +1,17 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Config.class, ImportExportCommon.class })
@@ -22,7 +21,7 @@ public class ImportVmCommandTest {
     public void insufficientDiskSpace() {
         final int lotsOfSpace = 1073741824;
         final int diskSpacePct = 0;
-        final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(lotsOfSpace, diskSpacePct);
+        final ImportVmCommand c = setupDiskSpaceTest(lotsOfSpace, diskSpacePct);
         assertFalse(c.canDoAction());
         assertTrue(c.getReturnValue()
                 .getCanDoActionMessages()
@@ -33,11 +32,11 @@ public class ImportVmCommandTest {
     public void sufficientDiskSpace() {
         final int extraDiskSpaceRequired = 0;
         final int diskSpacePct = 0;
-        final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(extraDiskSpaceRequired, diskSpacePct);
+        final ImportVmCommand c = setupDiskSpaceTest(extraDiskSpaceRequired, diskSpacePct);
         assertTrue(c.canDoAction());
     }
 
-    private ImportVmCommand<ImportVmParameters> setupDiskSpaceTest(final int diskSpaceRequired, final int diskSpacePct) {
+    private ImportVmCommand setupDiskSpaceTest(final int diskSpaceRequired, final int diskSpacePct) {
         ConfigMocker cfgMocker = new ConfigMocker();
         cfgMocker.mockConfigLowDiskSpace(diskSpaceRequired);
         cfgMocker.mockConfigLowDiskPct(diskSpacePct);
