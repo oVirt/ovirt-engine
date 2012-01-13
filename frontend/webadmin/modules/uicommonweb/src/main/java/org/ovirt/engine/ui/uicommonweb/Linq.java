@@ -76,6 +76,7 @@ public final class Linq
 
     /**
      * Checks if host belongs to any of clusters from list.
+     *
      * @param clusters
      * @param host
      * @return
@@ -198,6 +199,15 @@ public final class Linq
         public int compare(network x, network y)
         {
             return x.getname().compareTo(y.getname());
+        }
+    }
+
+    public static class SanTargetModelComparer implements java.util.Comparator<SanTargetModel>
+    {
+        @Override
+        public int compare(SanTargetModel x, SanTargetModel y)
+        {
+            return x.getName().compareTo(y.getName());
         }
     }
 

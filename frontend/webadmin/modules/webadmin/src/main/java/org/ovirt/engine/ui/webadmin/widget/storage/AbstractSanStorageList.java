@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -90,6 +91,11 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
             leafItem.getElement().getStyle().setBackgroundColor("#ffffff");
             leafItem.getElement().getStyle().setMarginLeft(0, Unit.PX);
             leafItem.getElement().getStyle().setPadding(0, Unit.PX);
+
+            Boolean isLeafEmpty = (Boolean) leafItem.getUserObject();
+            if (isLeafEmpty != null && isLeafEmpty.equals(Boolean.TRUE)) {
+                rootItem.getElement().getElementsByTagName("td").getItem(0).getStyle().setVisibility(Visibility.HIDDEN);
+            }
         }
 
         tree.addItem(rootItem);

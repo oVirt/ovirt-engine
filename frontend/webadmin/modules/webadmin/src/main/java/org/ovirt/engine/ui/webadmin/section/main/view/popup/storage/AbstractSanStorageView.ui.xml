@@ -6,7 +6,8 @@
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.AbstractSanStorageView.WidgetStyle">		
 		.contentPanel {
 			padding: 2px;
-			height: 340px;
+			margin: 4px;
+			height: 365px;
 		}
 		
 		.validContentPanel {
@@ -18,11 +19,11 @@
 		}
 		
 		.listPanel {
-			height: 340px;
+			height: 365px;
 		}
 		
 		.treePanel {
-			height: 308px;
+			height: 342px;
 			overflow: auto;
 		}
 		

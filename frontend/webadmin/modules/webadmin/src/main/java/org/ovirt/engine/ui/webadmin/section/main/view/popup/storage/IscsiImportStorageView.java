@@ -35,8 +35,8 @@ public class IscsiImportStorageView extends SanImportStorageView {
 
     @Override
     void addStyles() {
-        contentPanel.getElement().getStyle().setHeight(360, Unit.PX);
-        listPanel.getElement().getStyle().setHeight(95, Unit.PX);
+        contentPanel.getElement().getStyle().setHeight(395, Unit.PX);
+        listPanel.getElement().getStyle().setHeight(134, Unit.PX);
         addBorder(listPanel.getElement().getStyle());
         addBorder(extraContentPanel.getElement().getStyle());
     }

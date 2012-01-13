@@ -17,15 +17,20 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.LunTextColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ScrollableTextColumn;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 
 public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetModel, ListModel> {
+
+    protected int treeScrollPosition;
 
     public SanStorageTargetToLunList(SanStorageModelBase model) {
         super(model);
@@ -69,7 +74,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             public String getValue(SanTargetModel model) {
                 return "";
             }
-        }, "", "70px");
+        }, "", "75px");
 
         // Add blank item list
         table.setRowData(new ArrayList<EntityModel>());
@@ -114,12 +119,16 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         loginButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+                treeScrollPosition = treeContainer.getVerticalScrollPosition();
                 loginButton.getCommand().Execute();
             }
         });
-        panel.add(loginButton);
+        loginButton.setWidth("50px");
 
         TreeItem item = new TreeItem(panel);
+        panel.add(loginButton);
+        panel.setCellVerticalAlignment(loginButton, HasVerticalAlignment.ALIGN_MIDDLE);
+
         return item;
     }
 
@@ -208,18 +217,31 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         }, "Serial", "90px");
 
-        List<LunModel> items = (List<LunModel>) leafModel.getItems();
-        if (items.isEmpty()) {
-            return null;
-        }
-
-        table.setRowData(items == null ? new ArrayList<LunModel>() : items);
-        table.edit(leafModel);
-
         ScrollPanel panel = new ScrollPanel();
         panel.add(table);
         TreeItem item = new TreeItem(panel);
+
+        List<LunModel> items = (List<LunModel>) leafModel.getItems();
+        if (!items.isEmpty()) {
+            table.setRowData(items == null ? new ArrayList<LunModel>() : items);
+            table.edit(leafModel);
+        }
+        else {
+            item.setUserObject(Boolean.TRUE);
+        }
+
         return item;
     }
 
+    @Override
+    protected void updateItems() {
+        super.updateItems();
+
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                treeContainer.setVerticalScrollPosition(treeScrollPosition);
+            }
+        });
+    }
 }

@@ -15,7 +15,7 @@
 		.dialogTab {
 			position: absolute;
 			width: 100px;
-			margin-top: 70px;
+			margin-top: 75px;
 			left: -40px;
 			white-space: nowrap;
 			-webkit-transform: rotate(-90deg);
@@ -24,7 +24,7 @@
 		}
 		
 		.tab {
-			height: 161px;		
+			height: 175px;
 		}
 		
 		.tabPanel {
@@ -33,7 +33,8 @@
 		
 		.tabContentPanel {
 			padding: 2px;
-			height: 336px;
+			margin-right: 2px;
+			height: 368px;
 		}
 		
 		.validTabContentPanel {
@@ -49,7 +50,7 @@
 		}
 		
 		.expandedlunsListPanel {
-			height: 308px;
+			height: 344px;
 		}
 			
 		.expandedlunsListPanel {

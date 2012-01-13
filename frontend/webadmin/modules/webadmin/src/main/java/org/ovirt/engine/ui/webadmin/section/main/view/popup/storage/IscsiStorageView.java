@@ -141,7 +141,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     void initLists(IscsiStorageModel object) {
         // Create discover panel and storage lists
-        iscsiTargetToLunView = new IscsiTargetToLunView(171, 270);
+        iscsiTargetToLunView = new IscsiTargetToLunView(208, 306);
         iscsiLunToTargetView = new IscsiLunToTargetView();
 
         // Add view widgets to panel

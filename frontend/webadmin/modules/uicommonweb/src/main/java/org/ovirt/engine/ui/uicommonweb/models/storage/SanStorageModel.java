@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.Collections;
+
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -18,7 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 @SuppressWarnings("unused")
 public abstract class SanStorageModel extends SanStorageModelBase
 {
-
     private boolean isGrouppedByTarget;
 
     /**
@@ -55,8 +56,8 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
     }
 
-    private java.util.List<LunModel> includedLUNs;
-    private java.util.ArrayList<SanTargetModel> lastDiscoveredTargets;
+    private final java.util.List<LunModel> includedLUNs;
+    private final java.util.ArrayList<SanTargetModel> lastDiscoveredTargets;
     private boolean isTargetModelList;
 
     protected SanStorageModel()
@@ -294,6 +295,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 MergeLunsToTargets(newLuns, items);
             }
 
+            Collections.sort(items, new Linq.SanTargetModelComparer());
             setItems(items);
 
             UpdateLoginAllAvailability();
