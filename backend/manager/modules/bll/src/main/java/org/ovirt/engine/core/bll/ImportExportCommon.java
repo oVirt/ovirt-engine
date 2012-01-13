@@ -7,8 +7,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 public class ImportExportCommon {
     // check that storage domain (by id) exists
     public static boolean CheckStorageDomain(Guid storageDomainId, java.util.ArrayList<String> messages) {
-        boolean returnValue = false;
-        returnValue = DbFacade.getInstance().getStorageDomainStaticDAO().get(storageDomainId) != null;
+        boolean returnValue = DbFacade.getInstance().getStorageDomainStaticDAO().get(storageDomainId) != null;
         if (!returnValue) {
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST.toString());
         }
@@ -16,8 +15,7 @@ public class ImportExportCommon {
     }
 
     public static boolean CheckStoragePool(Guid storagePoolId, java.util.ArrayList<String> messages) {
-        boolean returnValue = false;
-        returnValue = DbFacade.getInstance().getStorageDomainStaticDAO().getAllForStoragePool(storagePoolId) != null;
+        boolean returnValue = DbFacade.getInstance().getStorageDomainStaticDAO().getAllForStoragePool(storagePoolId) != null;
         if (!returnValue) {
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST.toString());
         }
