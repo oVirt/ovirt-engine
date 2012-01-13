@@ -19,6 +19,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -67,6 +68,12 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
     Image searchButton;
 
     @UiField
+    HorizontalPanel searchPanelContainer;
+
+    @UiField
+    HorizontalPanel searchBoxPanelContainer;
+
+    @UiField
     Style style;
 
     private final int SEARCH_PANEL_WIDTH = 1000;
@@ -89,6 +96,8 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
 
         bookmarkButton.setResource(applicationResources.bookmarkImage());
         searchButton.setResource(applicationResources.searchButtonImage());
+
+        searchPanelContainer.setCellWidth(searchBoxPanel, "1000px");
 
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }

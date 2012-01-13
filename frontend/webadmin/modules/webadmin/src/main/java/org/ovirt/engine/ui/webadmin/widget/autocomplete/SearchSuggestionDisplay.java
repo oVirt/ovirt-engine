@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestBox.Suggest
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -17,6 +18,7 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
@@ -179,6 +181,12 @@ public final class SearchSuggestionDisplay extends DefaultSuggestionDisplay {
 
         // Show the popup under the TextBox.
         suggestionPopup.showRelativeTo(searchBoxPanel);
+
+        int searchBoxWidth = searchBoxPanel.getElement().getClientWidth();
+        Element table = (Element) suggestionPopup.getElement().getElementsByTagName("table").getItem(0);
+
+        suggestionPopup.getElement().getStyle().setWidth(searchBoxWidth, Unit.PX);
+        table.getStyle().setWidth(searchBoxWidth, Unit.PX);
     }
 
     @Override

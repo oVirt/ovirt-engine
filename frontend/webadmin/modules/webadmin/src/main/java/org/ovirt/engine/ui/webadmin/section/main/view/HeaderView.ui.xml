@@ -17,6 +17,7 @@
 		.upperPanel {
 			height: 35px;
 			color: white;
+			overflow: hidden;
 		}
 		
 		.lowerPanel {
@@ -55,6 +56,8 @@
 			position: absolute;
 			bottom: 0;
 			left: 250px;
+			height: 28px;
+			overflow: hidden;
 		}
 	</ui:style>
 
