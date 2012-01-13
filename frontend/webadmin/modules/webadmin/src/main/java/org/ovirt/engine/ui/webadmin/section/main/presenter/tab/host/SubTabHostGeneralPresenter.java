@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
+import org.ovirt.engine.ui.webadmin.uicommon.model.CommonModelChangeEvent;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.tab.ModelBoundTabData;
 
@@ -62,6 +63,7 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
 
     // We need this to get the text of the alert messages:
     private ApplicationMessages messages;
+    private ViewDef view;
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
@@ -79,12 +81,17 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
     {
         // Call the parent constructor:
         super(eventBus, view, proxy, placeManager, modelProvider);
+        this.view = view;
 
         // Inject a reference to the messages:
         messages = ClientGinjectorProvider.instance().getApplicationMessages();
+    }
+
+    public void onCommonModelChange(CommonModelChangeEvent event) {
+        super.onCommonModelChange(event);
 
         // Initialize the list of alerts:
-        final HostGeneralModel model = modelProvider.getModel();
+        final HostGeneralModel model = getModelProvider().getModel();
         updateAlerts(view, model);
 
         // Listen for changes in the properties of the model in order

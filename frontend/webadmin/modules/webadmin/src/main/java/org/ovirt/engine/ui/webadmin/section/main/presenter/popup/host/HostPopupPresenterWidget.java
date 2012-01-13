@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host;
 
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.HasUiCommandClickHandlers;
@@ -28,7 +32,7 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
     }
 
     @Override
-    public void init(HostModel model) {
+    public void init(final HostModel model) {
         super.init(model);
 
         registerHandler(getView().getTestButton().addClickHandler(new ClickHandler() {
@@ -39,11 +43,21 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
             }
         }));
 
-        // If this is not a new host and power management is not enabled then
-        // make sure that the power management tab is displayed:
-        if (!model.getIsNew() && !model.getIsPowerManagementSelected()) {
-            getView().showPowerManagement();
-        }
-    }
+        model.getHost().getPropertyChangedEvent().addListener(new IEventListener() {
 
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                if (!"Entity".equals(propName)) {
+                    return;
+                }
+                // If this is not a new host and power management is not enabled then
+                // make sure that the power management tab is displayed:
+                if (!model.getIsNew() && !model.getIsPowerManagementSelected()) {
+                    getView().showPowerManagement();
+                }
+            }
+        });
+
+    }
 }

@@ -206,4 +206,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             }
         });
     }
+    protected DetailModelProvider<M, D> getModelProvider() {
+        return modelProvider;
+    }
 }
