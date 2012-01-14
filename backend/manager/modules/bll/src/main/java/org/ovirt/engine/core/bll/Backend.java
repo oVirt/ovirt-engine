@@ -422,7 +422,8 @@ public class Backend implements BackendInternal, BackendRemote {
 
     public ArrayList<VdcReturnValueBase> runMultipleActionsImpl(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters,
-            boolean isInternal) {
+            boolean isInternal,
+            ExecutionContext executionContext) {
         String sessionId = ThreadLocalParamsContainer.getHttpSessionId();
         if (!StringHelper.isNullOrEmpty(sessionId)) {
             for (VdcActionParametersBase parameter : parameters) {
@@ -433,10 +434,24 @@ public class Backend implements BackendInternal, BackendRemote {
         }
         MultipleActionsRunner runner = MultipleActionsRunnersFactory.CreateMultipleActionsRunner(actionType,
                 parameters, isInternal);
+        runner.setExecutionContext(executionContext);
         return runner.Execute();
     }
 
     @Override
+    @ExcludeClassInterceptors
+    public ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+            ArrayList<VdcActionParametersBase> parameters,
+            ExecutionContext executionContext) {
+        return runMultipleActionsImpl(actionType, parameters, true, executionContext);
+    }
+
+    private ArrayList<VdcReturnValueBase> runMultipleActionsImpl(VdcActionType actionType,
+            ArrayList<VdcActionParametersBase> parameters,
+            boolean isInternal) {
+        return runMultipleActionsImpl(actionType, parameters, isInternal, null);
+    }
+
     @ExcludeClassInterceptors
     public ErrorTranslator getErrorsTranslator() {
         return errorsTranslator;

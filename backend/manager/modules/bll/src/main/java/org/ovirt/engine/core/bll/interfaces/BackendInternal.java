@@ -55,4 +55,27 @@ public interface BackendInternal extends BackendLocal {
             ArrayList<VdcActionParametersBase> parameters);
 
     public DateTime getStartedAt();
+
+    /**
+     * Invokes multiple actions of the same action type with different parameters under a given execution context which
+     * determines the visibility of the action.<br>
+     * The context determines the monitoring of the action:
+     * <ul>
+     * <li>If {@code executionContext} is null, default implementation will create {@code Job} instance to monitor a
+     * command for non-internal invocations.
+     * <li>If {@code executionContext} is configured for monitoring, a {@code Job} entity will be created for each
+     * command which ends the validation successfully.
+     * <ul>
+     *
+     * @param actionType
+     *            The type of the action
+     * @param parameters
+     *            A list containing the parameters for creating the command
+     * @param executionContext
+     *            Determines the visibility of the actions.
+     * @return A collection of the results of each action validation.
+     */
+    ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+            ArrayList<VdcActionParametersBase> parameters,
+            ExecutionContext executionContext);
 }

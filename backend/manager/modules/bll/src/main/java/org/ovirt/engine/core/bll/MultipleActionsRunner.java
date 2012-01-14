@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -19,6 +21,11 @@ public class MultipleActionsRunner {
     private List<VdcActionParametersBase> _parameters;
     private final java.util.ArrayList<CommandBase> _commands = new java.util.ArrayList<CommandBase>();
     protected boolean isInternal;
+
+    /**
+     * The context by which each command should be executed (monitored or non-monitored).
+     */
+    private ExecutionContext executionContext;
 
     public MultipleActionsRunner(VdcActionType actionType, List<VdcActionParametersBase> parameters, boolean isInternal) {
         _actionType = actionType;
@@ -46,7 +53,7 @@ public class MultipleActionsRunner {
 
             for (VdcActionParametersBase parameter : getParameters()) {
                 parameter.setMultipleAction(true);
-                CommandBase command = CommandsFactory.CreateCommand(_actionType, parameter);
+                CommandBase<?> command = CommandsFactory.CreateCommand(_actionType, parameter);
                 command.setInternalExecution(isInternal);
                 getCommands().add(command);
             }
@@ -135,12 +142,32 @@ public class MultipleActionsRunner {
     }
 
     protected void RunCommands() {
-        for (CommandBase command : getCommands()) {
-            if (command.getReturnValue().getCanDoAction()) {
-                command.ExecuteAction();
+        for (CommandBase<?> command : getCommands()) {
+            executeValidatedCommands(command);
+        }
+    }
+
+    /**
+     * Executes commands which passed validation and creates monitoring objects.
+     *
+     * @param command
+     *            The command to execute
+     */
+    final protected void executeValidatedCommands(CommandBase<?> command) {
+        if (command.getReturnValue().getCanDoAction()) {
+            if (executionContext == null || executionContext.isMonitored()) {
+                ExecutionHandler.prepareCommandForMonitoring(command,
+                        command.getActionType(),
+                        command.isInternalExecution());
             }
+            command.ExecuteAction();
         }
     }
 
     private static Log log = LogFactory.getLog(MultipleActionsRunner.class);
+
+    public void setExecutionContext(ExecutionContext executionContext) {
+        this.executionContext = executionContext;
+    }
+
 }

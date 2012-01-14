@@ -2,11 +2,18 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.Collections;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.bll.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.SortedMultipleActionsRunnerBase;
+import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
+import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActionsRunnerBase {
@@ -58,9 +65,7 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
 
                 @Override
                 public void run() {
-                    if (command.getReturnValue().getCanDoAction()) {
-                        command.ExecuteAction();
-                    }
+                    executeValidatedCommands(command);
                 }
             });
         }
