@@ -4,6 +4,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.regex.Pattern;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
+
 public class ValidationUtils {
 
     public static final String NO_SPECIAL_CHARACTERS = "[0-9a-zA-Z_-]+";
@@ -21,6 +24,8 @@ public class ValidationUtils {
     public static final String NULLABLE_MAC_ADDRESS = "^((\\d|([a-f]|[A-F])){2}:){5}(\\d|([a-f]|[A-F])){2}$|^$";
     // Invalid mac address (for now just checking 00:00:00:00:00:00
     public static final String INVALID_NULLABLE_MAC_ADDRESS = "^(00:){5}00$";
+
+    private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     public static boolean isVdsNameLegal(String vdsName) {
         return VDS_NAME_PATTERN.matcher(vdsName).matches();
@@ -50,5 +55,10 @@ public class ValidationUtils {
         } catch (URISyntaxException use) {
             return false;
         }
+    }
+
+    public static Validator getValidator() {
+        return validator;
+
     }
 }

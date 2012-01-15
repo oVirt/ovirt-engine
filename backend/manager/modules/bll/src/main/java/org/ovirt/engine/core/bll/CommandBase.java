@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.interfaces.IBackendCallBackServer;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -91,11 +92,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private CommandActionState _actionState = CommandActionState.forValue(0);
     private boolean isInternalExecution = false;
     private VdcActionType actionType;
-    /**
-     * According to hibernate validator documentation it is safe to assume it is
-     * thread-safe.So holding one is encouraged.
-     */
-    private final static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final static Validator validator = ValidationUtils.getValidator();
     private final List<Class<?>> validationGroups =
             new ArrayList<Class<?>>(Arrays.asList(new Class<?>[] { Default.class }));
     private CompensationContext compensationContext;

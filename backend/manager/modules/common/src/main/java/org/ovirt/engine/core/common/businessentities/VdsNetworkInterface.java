@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;
 import org.ovirt.engine.core.compat.NGuid;
 
 /**
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.compat.NGuid;
  */
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VdsNetworkInterface")
+@ValidNetworkConfiguration
 public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> {
     private static final long serialVersionUID = -6347816237220936283L;
 
@@ -94,7 +96,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      * @return the id
      */
     public NGuid getVdsId() {
-        return (NGuid) vdsId;
+        return vdsId;
     }
 
     /**
