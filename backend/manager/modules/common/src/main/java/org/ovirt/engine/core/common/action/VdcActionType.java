@@ -134,9 +134,9 @@ public enum VdcActionType {
     AttachUserToVmFromPoolAndRun(318, ActionGroup.VM_POOL_BASIC_OPERATIONS),
     // UserAndGroupsCommands
     SetUserRole(405),
-    LoginUser(406),
-    AutoLogin(407),
-    LogoutUser(408),
+    LoginUser(406, false),
+    AutoLogin(407, false),
+    LogoutUser(408, false),
     RemoveUser(409, ActionGroup.MANIPULATE_USERS),
     SetAdGroupRole(410),
     // TODO: old implementation of TimeLeasedPools
@@ -146,7 +146,7 @@ public enum VdcActionType {
     RemoveAdGroup(415, ActionGroup.MANIPULATE_USERS),
     ChangeUserPassword(416),
     CreateComputerAccount(417),
-    LoginAdminUser(418),
+    LoginAdminUser(418, false),
     AddUser(419, ActionGroup.MANIPULATE_USERS),
     // Tags
     AddTag(501),
@@ -242,6 +242,7 @@ public enum VdcActionType {
 
     private int intValue;
     private ActionGroup actionGroup;
+    private boolean isActionMonitored = true;
     private static java.util.HashMap<Integer, VdcActionType> mappings = new HashMap<Integer, VdcActionType>();
 
     static {
@@ -254,9 +255,20 @@ public enum VdcActionType {
         this(value, null);
     }
 
+    private VdcActionType(int value, boolean isActionMonitored) {
+        this(value, null);
+        this.isActionMonitored = isActionMonitored;
+    }
+
     private VdcActionType(int value, ActionGroup actionGroupValue) {
         intValue = value;
         actionGroup = actionGroupValue;
+    }
+
+    private VdcActionType(int value, ActionGroup actionGroupValue, boolean isActionMonitored) {
+        intValue = value;
+        actionGroup = actionGroupValue;
+        this.isActionMonitored = isActionMonitored;
     }
 
     public int getValue() {
@@ -265,6 +277,10 @@ public enum VdcActionType {
 
     public ActionGroup getActionGroup() {
         return actionGroup;
+    }
+
+    public boolean isActionMonitored() {
+        return isActionMonitored;
     }
 
     public static VdcActionType forValue(int value) {

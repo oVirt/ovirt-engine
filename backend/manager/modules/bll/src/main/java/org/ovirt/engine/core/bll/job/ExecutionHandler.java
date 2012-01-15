@@ -179,9 +179,9 @@ public class ExecutionHandler {
     }
 
     /**
-     * Determines if a specific action should be monitored by the precedence of the following criteria:
-     * <li> {@code VdcActionType.isMonitored} - defined for a specific action type</li>
-     * <li>{@code isInternal} - By default, only non-internal commands are monitored</li>
+     * Determines if a specific action should be monitored by the following criteria: <li>
+     * {@code VdcActionType.isMonitored} - defined for a specific action type</li> <li>{@code isInternal} - By default,
+     * only non-internal commands are monitored</li>
      *
      * @param actionType
      *            The action type
@@ -190,10 +190,8 @@ public class ExecutionHandler {
      * @return true if the command should be monitored, else false.
      */
     private static boolean shouldMonitorCommand(VdcActionType actionType, boolean isInternal) {
-        // TODO: get the default monitoring configuration of the action decide if to monitor (e.g. by
-        // VdcActionType.isMonitored)
 
-        return !isInternal;
+        return actionType.isActionMonitored() && !isInternal;
     }
 
     /**
