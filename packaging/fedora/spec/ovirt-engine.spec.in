@@ -206,6 +206,10 @@ fi
 %post
 #ln -s %{_datadir}/vdsm-bootstrap %{_engineeardir}/components.war/vds &> /dev/null || /bin/true
 # TODO: remove copy of vds dir after Jboss7.x will support symbolic links
+if [[ -L %{_engineeardir}/components.war/vds ]]; then
+    unlink %{_engineeardir}/components.war/vds &> /dev/null || /bin/true
+fi
+
 mkdir -p %{_engineeardir}/components.war/vds &> /dev/null || /bin/true
 cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /dev/null || /bin/true
 
