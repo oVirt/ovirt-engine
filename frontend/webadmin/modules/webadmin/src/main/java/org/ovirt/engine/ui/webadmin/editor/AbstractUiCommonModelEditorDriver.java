@@ -16,7 +16,7 @@ import com.google.gwt.editor.client.impl.BaseEditorDriver;
 /**
  * A base implementation class for generated SimpleBeanEditorDriver implementations based on EntityModel and ListModel
  * instances.
- * 
+ *
  * @param <T>
  *            the type being edited
  * @param <E>
@@ -63,21 +63,21 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
     /**
      * Returns a {@link UiCommonListenerMap} that contains a PropertyChanged Listener for each Property in the edited
      * Model
-     * 
+     *
      * @return
      */
     protected abstract UiCommonListenerMap getListenerMap();
 
     /**
      * Returns a {@link UiCommonEventMap} for the edited Model
-     * 
+     *
      * @return
      */
     protected abstract UiCommonEventMap getEventMap();
 
     /**
      * Returns a Map of the parent ListModel for all the ListModelBoxes being edited.
-     * 
+     *
      * @param absolutePath
      * @return
      */

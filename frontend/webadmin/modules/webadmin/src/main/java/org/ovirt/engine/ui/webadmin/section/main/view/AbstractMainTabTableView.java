@@ -12,7 +12,7 @@ import com.google.gwt.user.cellview.client.CellTable.Resources;
 
 /**
  * Base class for table-based main tab views.
- * 
+ *
  * @param <T>
  *            Table row data type.
  * @param <M>

@@ -19,14 +19,14 @@ import com.google.gwt.user.client.ui.HasEnabled;
 
 /**
  * Composite editor that exposes {@link AbstractValidatedWidgetWithLabel} functionality for the given sub-Editor.
- * 
+ *
  * @param <T>
  *            The type being edited.
  * @param <E>
  *            Editor type.
  * @param <W>
  *            Type that exposes validated widget functionality.
- * 
+ *
  * @see OptionalFieldEditor
  */
 public class WidgetWithLabelEditor<T, E extends LeafValueEditor<T>, W extends AbstractValidatedWidgetWithLabel<T, ?>>

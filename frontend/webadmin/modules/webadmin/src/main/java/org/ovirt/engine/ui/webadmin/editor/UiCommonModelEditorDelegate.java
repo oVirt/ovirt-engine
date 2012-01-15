@@ -5,7 +5,7 @@ import com.google.gwt.editor.client.impl.SimpleBeanEditorDelegate;
 
 /**
  * An Editor Delegate for UiCommon Models
- * 
+ *
  * @param <T>
  *            The Edited Type
  * @param <E>

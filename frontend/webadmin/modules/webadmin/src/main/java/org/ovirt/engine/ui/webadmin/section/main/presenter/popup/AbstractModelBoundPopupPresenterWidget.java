@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.PresenterWidget;
  * Base class for popup presenter widgets bound to a UiCommon Window model.
  * <p>
  * It is assumed that each popup presenter widget is bound as non-singleton.
- * 
+ *
  * @param <T>
  *            Window model type.
  * @param <V>

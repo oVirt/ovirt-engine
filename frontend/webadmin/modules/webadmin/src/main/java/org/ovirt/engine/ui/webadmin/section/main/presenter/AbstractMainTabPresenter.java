@@ -15,7 +15,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 
 /**
  * Base class for main tab presenters.
- * 
+ *
  * @param <T>
  *            Table row data type.
  * @param <M>

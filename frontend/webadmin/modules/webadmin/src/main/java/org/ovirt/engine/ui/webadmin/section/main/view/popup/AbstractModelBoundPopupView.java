@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Base class for popup views bound to a UiCommon Window model.
- * 
+ *
  * @param <T>
  *            Window model type.
  */

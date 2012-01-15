@@ -36,7 +36,7 @@ import com.google.gwt.user.client.ui.Widget;
  * <ul>
  * <li>{@link #actionPanel} widget into which action button widgets will be rendered
  * </ul>
- * 
+ *
  * @param <T>
  *            Action panel item type.
  */

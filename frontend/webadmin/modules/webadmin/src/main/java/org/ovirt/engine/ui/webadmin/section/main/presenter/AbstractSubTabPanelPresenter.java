@@ -10,7 +10,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 
 /**
  * Base class for sub tab panel presenters.
- * 
+ *
  * @param <V>
  *            View type.
  * @param <P>

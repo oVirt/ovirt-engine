@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.ValueListBox;
 
 /**
  * List box widget that adapts to UiCommon list model items.
- * 
+ *
  * @param <T>
  *            List box item type.
  */
@@ -21,7 +21,7 @@ public class ListModelListBox<T> extends ValueListBox<T> implements EditorWidget
 
     /**
      * Creates a list box that renders its items using the specified {@link Renderer}.
-     * 
+     *
      * @param renderer
      *            Renderer for list box items.
      */

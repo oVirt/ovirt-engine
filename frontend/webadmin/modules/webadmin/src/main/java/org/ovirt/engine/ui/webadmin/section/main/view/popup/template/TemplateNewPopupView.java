@@ -15,7 +15,7 @@ public class TemplateNewPopupView extends AbstractVmPopupView implements Templat
     public TemplateNewPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources, constants);
     }
-    
+
     @Override
     public void edit(UnitVmModel vm) {
         super.edit(vm);

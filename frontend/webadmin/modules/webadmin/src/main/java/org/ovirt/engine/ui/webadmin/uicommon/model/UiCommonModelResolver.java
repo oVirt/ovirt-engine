@@ -12,7 +12,7 @@ public abstract class UiCommonModelResolver {
 
     /**
      * Resolves a main model instance.
-     * 
+     *
      * @param <M>
      *            Main model type.
      */
@@ -32,7 +32,7 @@ public abstract class UiCommonModelResolver {
 
     /**
      * Resolves a detail model instance according to the given main model class.
-     * 
+     *
      * @param <M>
      *            Main model type.
      * @param <D>

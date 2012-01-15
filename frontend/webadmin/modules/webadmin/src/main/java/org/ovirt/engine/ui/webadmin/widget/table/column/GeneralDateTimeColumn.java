@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.webadmin.widget.renderer.GeneralDateTimeRenderer;
 
 /**
  * Column for displaying Date values using {@link GeneralDateTimeRenderer}.
- * 
+ *
  * @param <T>
  *            Table row data type.
  */

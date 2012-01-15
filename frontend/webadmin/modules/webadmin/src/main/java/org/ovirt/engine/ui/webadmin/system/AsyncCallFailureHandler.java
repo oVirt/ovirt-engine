@@ -13,7 +13,7 @@ import com.gwtplatform.mvp.client.proxy.AsyncCallFailHandler;
  * Handles cases when GWTP MVP fails to call the server asynchronously.
  * <p>
  * This typically happens when a presenter sitting behind a split point fails to load asynchronously.
- * 
+ *
  * @see AsyncCallFailEvent
  */
 public class AsyncCallFailureHandler implements AsyncCallFailHandler {

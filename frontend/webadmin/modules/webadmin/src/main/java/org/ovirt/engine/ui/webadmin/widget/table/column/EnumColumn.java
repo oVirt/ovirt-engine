@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.webadmin.widget.renderer.EnumRenderer;
 
 /**
  * Column for displaying Enum values.
- * 
+ *
  * @param <T>
  *            Table row data type.
  * @param <E>

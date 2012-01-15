@@ -194,7 +194,7 @@ public class RefreshPanel extends FocusPanel implements HasClickHandlers {
     /**
      * Create a Panel managed by the specified {@link RefreshManager}<BR>
      * used only by the Refresh Manager
-     * 
+     *
      */
     RefreshPanel(RefreshManager refreshManager) {
         this.refreshManager = refreshManager;

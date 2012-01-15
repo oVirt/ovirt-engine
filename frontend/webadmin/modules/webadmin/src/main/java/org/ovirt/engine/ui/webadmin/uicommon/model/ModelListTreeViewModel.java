@@ -250,7 +250,7 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
 
     /**
      * Set the Root list- required to sync the Model Tree correctly
-     * 
+     *
      * @param arrayList
      */
     public void setRoot(List<M> arrayList) {

@@ -20,7 +20,7 @@ import com.google.inject.Inject;
 
 /**
  * This is the dialog used to re-install a host.
- * 
+ *
  * Take into account that it can be used both for a normal host an also for an bare metal hypervisor. In the first case
  * it will ask for the root password and in the second it will as for the location of the ISO image of the hypervisor.
  */

@@ -6,7 +6,7 @@ import com.google.gwt.user.client.Window;
 public class WebUtils {
     /**
      * Open a link on another window
-     * 
+     *
      * @param name
      *            The name of the new window
      * @param url

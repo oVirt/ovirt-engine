@@ -216,7 +216,7 @@ public class RoleView extends Composite {
 
     private void initPermissionTable() {
         permissionTable = new SimpleActionTable<permissions>(permissionModelProvider,
-                        getTableHeaderlessResources(), getTableResources());
+                getTableHeaderlessResources(), getTableResources());
 
         TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
             @Override

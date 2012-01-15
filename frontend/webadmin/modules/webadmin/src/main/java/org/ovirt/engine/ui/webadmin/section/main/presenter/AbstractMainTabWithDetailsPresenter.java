@@ -19,7 +19,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 
 /**
  * Base class for main tab presenters that work with {@link ListWithDetailsModel}.
- * 
+ *
  * @param <T>
  *            Table row data type.
  * @param <M>

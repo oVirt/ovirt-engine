@@ -48,7 +48,7 @@ public class CommonModelManager {
                 loginModel.getUserName().setIsChangable(true);
                 loginModel.getDomain().setIsChangable(true);
                 loginModel.getLoginCommand().setIsExecutionAllowed(true);
-                
+
                 user.onUserLogout();
             }
         });

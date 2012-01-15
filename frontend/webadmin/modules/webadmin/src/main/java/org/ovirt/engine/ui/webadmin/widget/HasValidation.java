@@ -14,7 +14,7 @@ public interface HasValidation {
 
     /**
      * Marks this widget as invalid, providing an optional list of validation hints.
-     * 
+     *
      * @param validationHints
      *            Validation hints describing reasons why this widget is invalid (can be empty or {@code null}).
      */

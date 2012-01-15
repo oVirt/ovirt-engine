@@ -29,7 +29,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
  * A CellTable of a {@link ListModel} of {@link EntityModel}s
- * 
+ *
  * @param <M>
  */
 public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTable<EntityModel> implements HasEditorDriver<M> {
@@ -57,7 +57,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
     /**
      * Create a new {@link EntityModelCellTable} with Single Selection
-     * 
+     *
      * @param resources
      *            table's resources
      */
@@ -67,7 +67,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
     /**
      * Create a new {@link EntityModelCellTable}
-     * 
+     *
      * @param multiSelection
      *            Whether to allow multi/single selection
      */
@@ -81,10 +81,10 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
     /**
      * Create a new {@link EntityModelCellTable}
-     * 
+     *
      * @param multiSelection
      *            Whether to allow multi/single selection
-     * 
+     *
      * @param resources
      *            table's resources
      */
@@ -164,7 +164,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
     /**
      * Ad an EntityModelColumn to the Grid
-     * 
+     *
      * @param column
      * @param headerString
      */
@@ -200,12 +200,11 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         super.setColumnWidth(column, width);
     }
 
-
     public void setLoadingState(LoadingState state) {
         super.onLoadingStateChanged(state);
-	}
-    
-	@Override
+    }
+
+    @Override
     public void insertColumn(int beforeIndex, Column col, Header header, Header footer) {
         super.insertColumn(beforeIndex, col, header, footer);
         configureElementId(col);

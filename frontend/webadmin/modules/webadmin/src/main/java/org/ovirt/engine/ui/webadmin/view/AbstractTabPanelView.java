@@ -9,7 +9,7 @@ import com.gwtplatform.mvp.client.TabView;
 
 /**
  * Base class for views displaying a tab panel.
- * 
+ *
  * @see AbstractTabPanel
  */
 public abstract class AbstractTabPanelView extends AbstractSingleSlotView implements TabView {

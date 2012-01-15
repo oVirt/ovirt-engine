@@ -8,16 +8,15 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.cellview.client.AbstractHasData;
-import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel.AbstractSelectionModel;
 
 /**
  * Selection model that allows multiple items to be selected, while preserving selection order.
- * 
- * @see MultiSelectionModel
- * 
+ *
+ * @see com.google.gwt.view.client.MultiSelectionModel
+ *
  * @param <T>
  *            Table row data type.
  */

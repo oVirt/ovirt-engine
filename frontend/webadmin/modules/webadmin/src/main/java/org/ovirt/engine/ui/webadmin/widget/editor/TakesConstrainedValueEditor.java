@@ -2,14 +2,13 @@ package org.ovirt.engine.ui.webadmin.widget.editor;
 
 import java.util.Collection;
 
-
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.HasConstrainedValue;
 
 /**
  * Adapts {@link TakesValueWithChangeHandlersEditor} with {@link HasConstrainedValue} interface.
- * 
+ *
  * @param <T>
  *            The type being edited.
  */

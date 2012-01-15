@@ -4,10 +4,9 @@ import org.ovirt.engine.ui.webadmin.widget.Align;
 import org.ovirt.engine.ui.webadmin.widget.HasAccess;
 
 import com.gwtplatform.mvp.client.Tab;
-import com.gwtplatform.mvp.client.TabPanel;
 
 /**
- * Describes a tab rendered within a {@link TabPanel}.
+ * Describes a tab rendered within a {@link com.gwtplatform.mvp.client.TabPanel}.
  */
 public interface TabDefinition extends Tab, HasAccess {
 

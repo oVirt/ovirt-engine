@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 /**
  * Provider of UiCommon model instances.
- * 
+ *
  * @param <M>
  *            Model type.
  */

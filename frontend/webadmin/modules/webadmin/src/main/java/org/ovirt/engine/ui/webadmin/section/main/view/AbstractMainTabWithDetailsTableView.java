@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.OrderedMultiSelectionModel;
 
 /**
  * Base class for table-based main tab views that work with {@link ListWithDetailsModel}.
- * 
+ *
  * @param <T>
  *            Table row data type.
  * @param <M>

@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.webadmin.widget.renderer.UptimeRenderer;
 
 /**
  * Column for displaying uptime values.
- * 
+ *
  * @param <T>
  *            Table row data type.
  */

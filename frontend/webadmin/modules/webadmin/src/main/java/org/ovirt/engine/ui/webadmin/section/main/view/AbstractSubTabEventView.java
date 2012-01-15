@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 /**
  * Base class for sub tab views used to show events ({@link AuditLog} table).
- * 
+ *
  * @param <I>
  *            Main tab table row data type.
  * @param <M>

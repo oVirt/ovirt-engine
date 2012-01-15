@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 
 /**
  * Default {@link SearchableDetailModelProvider} implementation for use with tab controls.
- * 
+ *
  * @param <T>
  *            Detail model item type.
  * @param <M>

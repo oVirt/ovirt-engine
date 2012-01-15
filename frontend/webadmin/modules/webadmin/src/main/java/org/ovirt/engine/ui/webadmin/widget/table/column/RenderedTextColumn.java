@@ -5,7 +5,7 @@ import com.google.gwt.text.shared.Renderer;
 /**
  * Base class for text columns that use {@link Renderer} to render the given column type into its text-based
  * representation.
- * 
+ *
  * @param <T>
  *            Table row data type.
  * @param <C>

@@ -47,7 +47,7 @@ public class VmInterfacePopupView extends AbstractModelBoundPopupView<VmInterfac
     @UiField
     @Ignore
     CheckBox enableManualMacCheckbox;
-    
+
     @UiField
     @Ignore
     Label enableManualMacCheckboxLabel;

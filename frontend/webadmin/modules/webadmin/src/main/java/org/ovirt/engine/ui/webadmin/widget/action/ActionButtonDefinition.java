@@ -9,7 +9,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 
 /**
  * Describes a button rendered within an {@link AbstractActionPanel}.
- * 
+ *
  * @param <T>
  *            Action panel item type.
  */
@@ -17,7 +17,7 @@ public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandl
 
     /**
      * Action button click event callback.
-     * 
+     *
      * @param selectedItems
      *            Items currently selected in the {@link AbstractActionPanel}.
      */
@@ -25,7 +25,7 @@ public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandl
 
     /**
      * Checks whether or not this action button should be enabled for the given selection.
-     * 
+     *
      * @param selectedItems
      *            Items currently selected in the {@link AbstractActionPanel}.
      */
@@ -55,7 +55,7 @@ public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandl
      * Indicates whether the action is implemented or not, This is only relevant for the first tech-preview of webadmin
      * where not all buttons may be implemented TODO: This is temporary and should be cleaned up when WebAdmin will be
      * fully implemented!
-     * 
+     *
      * @param isImplemented
      *            whether this action is available or not
      * @return whether action is available or not
@@ -66,7 +66,7 @@ public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandl
      * If action is not available, then this property indicates whether the action is available in user portal or not
      * This is only affecting the message that will be displaying when the button is clicked. TODO: This is temporary
      * and should be cleaned up when WebAdmin will be fully implemented!
-     * 
+     *
      * @param isImplInUserPortal
      *            whether this action is implemented in user portal or not
      * @return true/false

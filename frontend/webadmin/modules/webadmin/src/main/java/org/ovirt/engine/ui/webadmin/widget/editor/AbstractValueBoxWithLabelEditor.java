@@ -7,7 +7,7 @@ import com.google.gwt.editor.ui.client.adapters.ValueBoxEditor;
 
 /**
  * Base class for composite Editors that use text input widget with a label.
- * 
+ *
  * @param <T>
  *            The type being edited.
  * @param <W>

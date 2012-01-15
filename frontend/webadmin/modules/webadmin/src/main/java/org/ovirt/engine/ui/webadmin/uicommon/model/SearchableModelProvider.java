@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 /**
  * Provider of {@link SearchableListModel} instances.
- * 
+ *
  * @param <T>
  *            List model item type.
  * @param <M>

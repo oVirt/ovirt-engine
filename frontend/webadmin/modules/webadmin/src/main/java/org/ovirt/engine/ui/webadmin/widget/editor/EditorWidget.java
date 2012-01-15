@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * A Widget that can be used in Editors
- * 
+ *
  * @param <T>
  *            The Object Type
  * @param <E>

@@ -1,16 +1,15 @@
 package org.ovirt.engine.ui.webadmin.widget.table;
 
-import com.google.gwt.view.client.AbstractDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ProvidesKey;
 
 /**
- * General contract for {@link AbstractActionTable} data providers.
- * 
+ * General contract for {@link com.google.gwt.view.client.AbstractActionTable} data providers.
+ *
  * @param <T>
  *            Table row data type.
- * 
- * @see AbstractDataProvider
+ *
+ * @see com.google.gwt.view.client.AbstractDataProvider
  */
 public interface ActionTableDataProvider<T> extends ProvidesKey<T>, HasPaging {
 

@@ -32,7 +32,7 @@ public class RefreshManager {
 
     /**
      * the acceptable Refresh Rates
-     * 
+     *
      */
     public static Set<Integer> getRefreshRates() {
         return Collections.unmodifiableSet(REFRESH_RATES);
@@ -43,7 +43,7 @@ public class RefreshManager {
 
     /**
      * Create a Manager for the specified {@link GridController}
-     * 
+     *
      */
     public RefreshManager(GridController controller) {
         this.controller = controller;

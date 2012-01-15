@@ -7,7 +7,7 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
 
     /**
      * Creates a progress bar template.
-     * 
+     *
      * @param progress
      *            Progress value in percent.
      * @param text
@@ -21,7 +21,7 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
 
     /**
      * Creates a tree-item HTML
-     * 
+     *
      * @param imageHtml
      *            the image HTML
      * @param text
@@ -33,7 +33,7 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
 
     /**
      * Creates a bookmark-item HTML
-     * 
+     *
      * @param text
      *            the bookmark title
      */
@@ -42,7 +42,7 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
 
     /**
      * Creates a tag-item HTML
-     * 
+     *
      * @param imageHtml
      *            the image HTML
      * @param text
@@ -56,7 +56,7 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
 
     /**
      * Creates a tag-button HTML
-     * 
+     *
      * @param imageHtml
      *            the image HTML
      * @return

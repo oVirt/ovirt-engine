@@ -28,7 +28,7 @@ public class ClusterNewNetworkPopupPresenterWidget extends AbstractModelBoundPop
          * @param flag <code>true</code> to enable, <code>false</code> to
          *   disable
          */
-        void setVLanTagEnabled (boolean flag);
+        void setVLanTagEnabled(boolean flag);
     }
 
     @Inject
@@ -49,28 +49,28 @@ public class ClusterNewNetworkPopupPresenterWidget extends AbstractModelBoundPop
         // Listen for changes in the VLAN enable/disable status in order
         // to enable/disable the VLAN tag field accordingly:
         model.getHasVLanTag().getEntityChangedEvent().addListener(
-            new IEventListener() {
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
-                    EntityModel hasVLanTagEntity = (EntityModel) sender;
-                    Boolean hasVLanTagValue = (Boolean) hasVLanTagEntity.getEntity();
-                    getView().setVLanTagEnabled(hasVLanTagValue);
+                new IEventListener() {
+                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+                        EntityModel hasVLanTagEntity = (EntityModel) sender;
+                        Boolean hasVLanTagValue = (Boolean) hasVLanTagEntity.getEntity();
+                        getView().setVLanTagEnabled(hasVLanTagValue);
+                    }
                 }
-            }
-        );
+                );
 
         // Listen for changes in the properties of the model in order
         // to update the view accordingly:
         model.getPropertyChangedEvent().addListener(
-            new IEventListener() {
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
-                    if (args instanceof PropertyChangedEventArgs) {
-                        PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                        if ("DataCenterName".equals(changedArgs.PropertyName)) {
-                            getView().setDataCenterName(model.getDataCenterName());
+                new IEventListener() {
+                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+                        if (args instanceof PropertyChangedEventArgs) {
+                            PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
+                            if ("DataCenterName".equals(changedArgs.PropertyName)) {
+                                getView().setDataCenterName(model.getDataCenterName());
+                            }
                         }
                     }
                 }
-            }
-        );
+                );
     }
 }

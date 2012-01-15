@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.gwt.cell.client.AbstractInputCell;
-import com.google.gwt.cell.client.SelectionCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -40,8 +39,8 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
     private String tooltip;
 
     /**
-     * Construct a new {@link SelectionCell} with the specified options.
-     * 
+     * Construct a new {@link com.google.gwt.cell.client.SelectionCell} with the specified options.
+     *
      * @param options
      *            the options in the cell
      */

@@ -4,7 +4,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 
 /**
  * Renderer for percent values.
- * 
+ *
  * @param <T>
  *            Number type.
  */

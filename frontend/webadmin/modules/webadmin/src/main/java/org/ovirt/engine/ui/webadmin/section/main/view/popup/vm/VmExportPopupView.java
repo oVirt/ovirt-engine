@@ -30,15 +30,15 @@ public class VmExportPopupView extends AbstractModelBoundPopupView<ExportVmModel
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VmExportPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
-    
+
     @UiField(provided = true)
     @Path(value = "forceOverride.entity")
     EntityModelCheckBoxEditor forceOverride;
-    
+
     @UiField(provided = true)
     @Path(value = "collapseSnapshots.entity")
     EntityModelCheckBoxEditor collapseSnapshots;
-    
+
     @UiField
     @Ignore
     Label messageLabel;
@@ -51,27 +51,27 @@ public class VmExportPopupView extends AbstractModelBoundPopupView<ExportVmModel
         localize(constants);
         Driver.driver.initialize(this);
     }
-    
+
     void initCheckBoxes() {
-    	forceOverride = new EntityModelCheckBoxEditor(Align.RIGHT);
-    	collapseSnapshots = new EntityModelCheckBoxEditor(Align.RIGHT);
+        forceOverride = new EntityModelCheckBoxEditor(Align.RIGHT);
+        collapseSnapshots = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void localize(ApplicationConstants constants) {
-    	forceOverride.setLabel(constants.vmExportPopupForceOverrideLabel());
-    	collapseSnapshots.setLabel(constants.vmExportPopupCollapseSnapshotsLabel());
+        forceOverride.setLabel(constants.vmExportPopupForceOverrideLabel());
+        collapseSnapshots.setLabel(constants.vmExportPopupCollapseSnapshotsLabel());
     }
-    
+
     @Override
     public void setMessage(String message) {
-    	super.setMessage(message);
-    	
-    	messageLabel.setText(message);
+        super.setMessage(message);
+
+        messageLabel.setText(message);
     }
 
     @Override
     public void edit(ExportVmModel object) {
-    	Driver.driver.edit(object);
+        Driver.driver.edit(object);
     }
 
     @Override

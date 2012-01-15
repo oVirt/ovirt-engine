@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 /**
  * Column for displaying percent-based progress bar.
- * 
+ *
  * @param <T>
  *            Table row data type.
  */

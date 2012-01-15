@@ -11,7 +11,7 @@ import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 
 /**
  * Base class for form-based sub tab views.
- * 
+ *
  * @param <T>
  *            Main tab table row data type.
  * @param <M>

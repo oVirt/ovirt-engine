@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.ListBox;
 
 /**
  * Composite Editor that uses {@link ListModelListBox}.
- * 
+ *
  * @param <T>
  *            List box item type.
  */

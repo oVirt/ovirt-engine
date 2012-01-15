@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
  * Provider of searchable detail model instances.
  * <p>
  * Contains main model type information to distinguish detail models of the same type for different main models.
- * 
+ *
  * @param <T>
  *            Detail model item type.
  * @param <M>

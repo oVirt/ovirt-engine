@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.webadmin.widget.renderer.RxTxRateRenderer;
 
 /**
  * Column for displaying Rx/Tx transfer rates.
- * 
+ *
  * @param <T>
  *            Table row data type.
  */

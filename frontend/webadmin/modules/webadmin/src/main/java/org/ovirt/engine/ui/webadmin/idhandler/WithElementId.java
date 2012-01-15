@@ -5,9 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.ui.UIObject;
-
 /**
  * Indicates that the given field will have its DOM element ID set by an {@link ElementIdHandler} implementation.
  * <p>
@@ -27,12 +24,12 @@ import com.google.gwt.user.client.ui.UIObject;
  * <td>call {@link HasElementId#setElementId setElementId} (used with custom UI object types)</td>
  * </tr>
  * <tr>
- * <td>{@link UIObject}</td>
- * <td>access element through {@linkplain UIObject#getElement getElement} and set its ID using {@link Element#setId
+ * <td>{@link com.google.gwt.user.client.ui.UIObject}</td>
+ * <td>access element through {@linkplain com.google.gwt.user.client.ui.UIObject#getElement getElement} and set its ID using {@link Element#setId
  * setId}</td>
  * </tr>
  * <tr>
- * <td>{@link Element}</td>
+ * <td>{@link com.google.gwt.dom.client.Element}</td>
  * <td>set element ID using {@link Element#setId setId}</td>
  * </tr>
  * </tbody>

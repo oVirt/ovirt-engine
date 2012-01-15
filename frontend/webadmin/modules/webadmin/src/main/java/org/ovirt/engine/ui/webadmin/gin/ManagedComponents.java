@@ -155,13 +155,11 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.SearchableDetailModelProvider
 
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.inject.Provider;
-import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.PresenterWidget;
 
 /**
  * Contains methods for accessing managed components that participate in dependency injection.
  * <p>
- * There should be a method for each {@link Presenter} (excluding {@link PresenterWidget} classes, unless they are
+ * There should be a method for each {@link com.gwtplatform.mvp.client.Presenter} (excluding {@link com.gwtplatform.mvp.clientcom.gwtplatform.mvp.client.PresenterWidget} classes, unless they are
  * referenced through {@link ClientGinjector} directly). This is necessary due to the current limitation of GWTP-GIN
  * integration.
  */
@@ -180,7 +178,7 @@ public interface ManagedComponents {
     Provider<DefaultConfirmationPopupPresenterWidget> getDefaultConfirmationPopupProvider();
 
     Provider<BookmarkPopupPresenterWidget> getBookmarkPopupPresenterWidgetProvider();
-    
+
     Provider<PermissionsPopupPresenterWidget> getPermissionsPopupPresenterWidgetProvider();
 
     Provider<TagPopupPresenterWidget> getTagPopupPresenterWidgetProvider();

@@ -38,7 +38,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 /**
  * An Editor that shows an enum as a Radio Group, with one Radio button for each enum value.<BR>
  * Each enum radio button may be disabled separately.
- * 
+ *
  * @param <E>
  *            The enum type
  */
@@ -60,7 +60,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
     /**
      * A {@link CellTable} that shows a radio button for each enum value.<BR>
      * Each enum radio button may be disabled separately.
-     * 
+     *
      * @param <E>
      *            The enum type
      */
@@ -206,7 +206,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
 
     /**
      * Create a new EnumRadioEditor, for the provided enum class
-     * 
+     *
      * @param enumClass
      *            the enum class
      */

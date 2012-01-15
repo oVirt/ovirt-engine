@@ -4,11 +4,10 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.Align;
 
-import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.TabDataBasic;
 
 /**
- * Implementation of {@link TabData} interface for use with UiCommon models bound to tab widgets.
+ * Implementation of {@link com.gwtplatform.mvp.client.TabData} interface for use with UiCommon models bound to tab widgets.
  */
 public class ModelBoundTabData extends TabDataBasic {
 

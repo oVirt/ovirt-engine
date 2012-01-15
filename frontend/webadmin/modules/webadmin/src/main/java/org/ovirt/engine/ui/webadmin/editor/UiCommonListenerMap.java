@@ -18,7 +18,7 @@ public class UiCommonListenerMap {
 
     /**
      * Add a Listener to the map
-     * 
+     *
      * @param name
      *            The property name (i.e. "DefinedMemory")
      * @param type
@@ -32,7 +32,7 @@ public class UiCommonListenerMap {
 
     /**
      * Invoke a registered Listener
-     * 
+     *
      * @param name
      *            The property name (i.e. "DefinedMemory")
      * @param type

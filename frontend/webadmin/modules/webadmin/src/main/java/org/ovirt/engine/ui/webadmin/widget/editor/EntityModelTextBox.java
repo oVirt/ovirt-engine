@@ -14,7 +14,7 @@ public class EntityModelTextBox extends ValueBox<Object> implements EditorWidget
         super(Document.get().createTextInputElement(), new EntityModelRenderer(), new EntityModelParser());
     }
 
-    public EntityModelTextBox (Renderer<Object> renderer, Parser<Object> parser) {
+    public EntityModelTextBox(Renderer<Object> renderer, Parser<Object> parser) {
         super(Document.get().createTextInputElement(), renderer, parser);
     }
 

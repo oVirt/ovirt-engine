@@ -4,7 +4,7 @@ import com.google.gwt.user.cellview.client.Column;
 
 /**
  * Column for displaying text using {@link TextCellWithTooltip}.
- * 
+ *
  * @param <T>
  *            Table row data type.
  */

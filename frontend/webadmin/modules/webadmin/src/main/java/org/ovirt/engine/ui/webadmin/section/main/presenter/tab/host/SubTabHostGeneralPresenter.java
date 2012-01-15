@@ -90,17 +90,17 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
         // Listen for changes in the properties of the model in order
         // to update the alerts panel:
         model.getPropertyChangedEvent().addListener(
-            new IEventListener() {
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
-                    if (args instanceof PropertyChangedEventArgs) {
-                        PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                        if (changedArgs.PropertyName.contains("Alert")) {
-                            updateAlerts(view, model);
+                new IEventListener() {
+                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+                        if (args instanceof PropertyChangedEventArgs) {
+                            PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
+                            if (changedArgs.PropertyName.contains("Alert")) {
+                                updateAlerts(view, model);
+                            }
                         }
                     }
                 }
-            }
-        );
+                );
     }
 
     /**
@@ -190,13 +190,13 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
         // Add a listener to the anchor so that the command is executed when
         // it is clicked:
         betweenAnchor.addClickHandler(
-            new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    command.Execute();
+                new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        command.Execute();
+                    }
                 }
-            }
-        );
+                );
 
         // Create the label for the text after the tag:
         final Label afterLabel = new Label(afterText);

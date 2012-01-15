@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.ValueLabel;
 
 /**
  * Label widget that uses {@link PercentRenderer}.
- * 
+ *
  * @param <T>
  *            Number type.
  */

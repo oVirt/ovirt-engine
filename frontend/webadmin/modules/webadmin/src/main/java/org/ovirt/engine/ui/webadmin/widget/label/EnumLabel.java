@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.ValueLabel;
 
 /**
  * Label widget that uses {@link EnumRenderer}.
- * 
+ *
  * @param <E>
  *            Enum type.
  */

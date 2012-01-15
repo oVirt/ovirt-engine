@@ -20,7 +20,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
  * Button definition that adapts to UiCommon {@link UICommand commands}.
- * 
+ *
  * @param <T>
  *            Action panel item type.
  */

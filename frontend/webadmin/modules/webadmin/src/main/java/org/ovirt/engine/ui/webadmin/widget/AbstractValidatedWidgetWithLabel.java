@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Base class for validated widgets that have a label associated with them.
- * 
+ *
  * @param <W>
  *            Content widget type.
  */

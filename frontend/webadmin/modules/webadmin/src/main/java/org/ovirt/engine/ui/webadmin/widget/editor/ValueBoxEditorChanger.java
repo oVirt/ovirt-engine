@@ -9,14 +9,14 @@ import com.google.gwt.user.client.ui.ValueBoxBase;
 
 /**
  * A {@link ValueBoxEditor} that listens to Value changes
- * 
+ *
  * @param <T>
  */
 public class ValueBoxEditorChanger<T> extends ValueBoxEditor<T> implements HasValueChangeHandlers<T> {
 
     /**
      * Create a {@link ValueBoxEditorChanger} for the specified ValueBox
-     * 
+     *
      * @param valueBox
      * @return
      */

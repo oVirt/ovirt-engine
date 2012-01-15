@@ -9,7 +9,7 @@ import com.google.gwt.user.client.TakesValue;
 
 /**
  * Adapts {@link TakesValueEditor} to {@link HasValueChangeHandlers} interface.
- * 
+ *
  * @param <T>
  *            The type being edited.
  */

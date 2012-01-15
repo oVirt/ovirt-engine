@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 
 /**
  * Default {@link DetailModelProvider} implementation for use with tab controls.
- * 
+ *
  * @param <M>
  *            Main model type.
  * @param <D>

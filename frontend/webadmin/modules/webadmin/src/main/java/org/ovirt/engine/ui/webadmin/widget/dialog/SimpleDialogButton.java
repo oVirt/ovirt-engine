@@ -16,7 +16,7 @@ public class SimpleDialogButton extends CustomButton {
 
     private static final String BUTTON_STYLE = "dialog-button-text";
     private static final String BUTTON_STYLE_DISABLED = "dialog-button-text-disabled";
-    
+
     String upStart = (resources.dialogButtonUpStart().getURL());
     String upStretch = resources.dialogButtonUpStretch().getURL();
     String upEnd = (resources.dialogButtonUpEnd().getURL());
@@ -48,7 +48,11 @@ public class SimpleDialogButton extends CustomButton {
         getUpFace().setHTML(templates.dialogButton(text, upStart, upStretch, upEnd, BUTTON_STYLE));
         getUpHoveringFace().setHTML(templates.dialogButton(text, upOverStart, upOverStretch, upOverEnd, BUTTON_STYLE));
         getDownFace().setHTML(templates.dialogButton(text, downStart, downStretch, downEnd, BUTTON_STYLE));
-        getUpDisabledFace().setHTML(templates.dialogButton(text, upDisabledStart, upDisabledStretch, upDisabledEnd, BUTTON_STYLE_DISABLED));
+        getUpDisabledFace().setHTML(templates.dialogButton(text,
+                upDisabledStart,
+                upDisabledStretch,
+                upDisabledEnd,
+                BUTTON_STYLE_DISABLED));
     }
 
     private SafeHtml ImagetoSafeHtml(ImageResource resource) {

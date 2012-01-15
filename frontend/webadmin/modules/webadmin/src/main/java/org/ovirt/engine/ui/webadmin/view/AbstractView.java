@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.view;
 
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
@@ -9,7 +8,7 @@ import com.gwtplatform.mvp.client.ViewImpl;
  * Base class for common application views (excluding popups).
  * <p>
  * Holds the reference to the actual UI widget. Concrete views should call {@link #initWidget(Widget)} within their
- * constructors. This is somewhat similar to using the {@link Composite} widget as the base class for your views.
+ * constructors. This is somewhat similar to using the {@link com.google.gwt.user.client.ui.Composite} widget as the base class for your views.
  */
 public abstract class AbstractView extends ViewImpl {
 

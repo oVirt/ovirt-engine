@@ -22,7 +22,7 @@ import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 /**
  * Basic {@link ModelProvider} implementation that uses {@link CommonModelManager} for accessing the CommonModel
  * instance.
- * 
+ *
  * @param <M>
  *            Model type.
  */

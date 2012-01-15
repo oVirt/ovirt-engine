@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import com.google.gwt.cell.client.AbstractSafeHtmlCell;
 import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -16,8 +15,8 @@ import com.google.gwt.user.client.DOM;
 
 /**
  * A {@link Cell} used to render text, providing a tooltip in case the text does not fit within the parent element.
- * 
- * @see TextCell
+ *
+ * @see com.google.gwt.cell.client.TextCell
  */
 public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
 

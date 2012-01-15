@@ -18,7 +18,7 @@ import com.gwtplatform.mvp.client.PresenterWidget;
 
 /**
  * About popup presenter.
- * 
+ *
  * @author Asaf Shakarchi
  */
 public class AboutPopupPresenterWidget extends PresenterWidget<AboutPopupPresenterWidget.ViewDef> {

@@ -25,7 +25,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 /**
  * Base class for sub tab presenters.
- * 
+ *
  * @param <T>
  *            Main tab table row data type.
  * @param <M>

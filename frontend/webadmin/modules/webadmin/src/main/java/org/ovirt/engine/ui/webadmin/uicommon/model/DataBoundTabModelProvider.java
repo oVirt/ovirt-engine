@@ -15,7 +15,7 @@ import com.google.gwt.view.client.ProvidesKey;
 
 /**
  * A {@link SearchableModelProvider} implementation that provides data to {@link HasData} widgets.
- * 
+ *
  * @param <T>
  *            List model item type.
  * @param <M>

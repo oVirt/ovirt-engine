@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 /**
  * A Text Column for EntityModel Values
- * 
+ *
  * @param <T>
  *            Entity Type
  */
@@ -18,7 +18,7 @@ public abstract class EntityModelTextColumn<T> extends TextColumnWithTooltip<Ent
 
     /**
      * Get the String Value from the Entity Value
-     * 
+     *
      * @param entity
      * @return
      */

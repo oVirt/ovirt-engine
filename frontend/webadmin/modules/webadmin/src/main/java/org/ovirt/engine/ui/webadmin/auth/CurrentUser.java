@@ -62,7 +62,7 @@ public class CurrentUser implements HasHandlers {
 
     /**
      * Initiates the sign out operation.
-     * 
+     *
      * @see #onUserLogout()
      */
     public void logout() {

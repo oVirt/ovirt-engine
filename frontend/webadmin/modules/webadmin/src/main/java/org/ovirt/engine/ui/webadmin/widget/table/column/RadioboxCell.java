@@ -40,7 +40,7 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> {
 
     /**
      * Construct a new {@link RadioboxCell} that optionally controls selection.
-     * 
+     *
      * @param isSelectBox
      *            true if the cell controls the selection state
      * @deprecated use {@link #RadioboxCell(boolean, boolean)} instead
@@ -52,7 +52,7 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> {
 
     /**
      * Construct a new {@link RadioboxCell} that optionally controls selection.
-     * 
+     *
      * @param dependsOnSelection
      *            true if the cell depends on the selection state
      * @param handlesSelection

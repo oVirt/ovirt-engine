@@ -9,7 +9,7 @@ import com.google.gwt.user.cellview.client.Column;
 
 /**
  * Column for displaying {@link SafeHtml} instances.
- * 
+ *
  * @param <T>
  *            Table row data type.
  */

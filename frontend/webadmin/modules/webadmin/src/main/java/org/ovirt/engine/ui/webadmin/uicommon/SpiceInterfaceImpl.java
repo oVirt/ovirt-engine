@@ -363,259 +363,259 @@ public class SpiceInterfaceImpl implements ISpice {
     }
 
     public native String loadActiveX(String id, String codebase, String classId) /*-{
-		var container = $wnd.document.createElement("div");
-		container.innerHTML = '<object id="' + id + '" codebase="' + codebase
-				+ '" classid="CLSID:' + classId
-				+ '" width="0" height="0"></object>';
-		container.style.width = "0px";
-		container.style.height = "0px";
-		container.style.position = "absolute";
-		container.style.top = "0px";
-		container.style.left = "0px";
-		var target_element = $wnd.document.getElementsByTagName("body")[0];
-		if (typeof (target_element) == "undefined" || target_element == null)
-			return false;
-		target_element.appendChild(container);
-    }-*/;
+                                                                                 var container = $wnd.document.createElement("div");
+                                                                                 container.innerHTML = '<object id="' + id + '" codebase="' + codebase
+                                                                                 + '" classid="CLSID:' + classId
+                                                                                 + '" width="0" height="0"></object>';
+                                                                                 container.style.width = "0px";
+                                                                                 container.style.height = "0px";
+                                                                                 container.style.position = "absolute";
+                                                                                 container.style.top = "0px";
+                                                                                 container.style.left = "0px";
+                                                                                 var target_element = $wnd.document.getElementsByTagName("body")[0];
+                                                                                 if (typeof (target_element) == "undefined" || target_element == null)
+                                                                                 return false;
+                                                                                 target_element.appendChild(container);
+                                                                                 }-*/;
 
     public native String loadXpi(String id) /*-{
-		var container = $wnd.document.createElement("div");
-		container.innerHTML = '<embed id="' + id
-				+ '" type="application/x-spice" width=0 height=0/>';
-		container.style.width = "0px";
-		container.style.height = "0px";
-		container.style.position = "absolute";
-		container.style.top = "0px";
-		container.style.left = "0px";
-		var target_element = $wnd.document.getElementsByTagName("body")[0];
-		if (typeof (target_element) == "undefined" || target_element == null)
-			return false;
-		target_element.appendChild(container);
-    }-*/;
+                                            var container = $wnd.document.createElement("div");
+                                            container.innerHTML = '<embed id="' + id
+                                            + '" type="application/x-spice" width=0 height=0/>';
+                                            container.style.width = "0px";
+                                            container.style.height = "0px";
+                                            container.style.position = "absolute";
+                                            container.style.top = "0px";
+                                            container.style.left = "0px";
+                                            var target_element = $wnd.document.getElementsByTagName("body")[0];
+                                            if (typeof (target_element) == "undefined" || target_element == null)
+                                            return false;
+                                            target_element.appendChild(container);
+                                            }-*/;
 
     public native void connectNativelyViaXPI() /*-{
-		var pluginFound = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::detectXpiPlugin()();
-		if (!pluginFound) {
-			alert("Spice XPI addon was not found, please install Spice XPI addon first.");
-			return;
-		}
+                                               var pluginFound = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::detectXpiPlugin()();
+                                               if (!pluginFound) {
+                                               alert("Spice XPI addon was not found, please install Spice XPI addon first.");
+                                               return;
+                                               }
 
-		var hostIp = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getHost()();
-		var port = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getPort()();
-		var fullScreen = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getFullScreen()();
-		var password = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getPassword()();
-		var numberOfMonitors = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getNumberOfMonitors()();
-		var usbListenPort = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbListenPort()();
-		var adminConsole = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getAdminConsole()();
-		var guestHostName = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getGuestHostName()();
-		var securePort = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSecurePort()();
-		var sslChanels = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSslChanels()();
-		var cipherSuite = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getCipherSuite()();
-		var hostSubject = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getHostSubject()();
-		var trustStore = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getTrustStore()();
-		var title = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getTitle()();
-		var hotKey = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getHotKey()();
-		var menu = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getMenu()();
-		var guestID = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getGuestID()();
-		var version = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getCurrentVersion()();
-		var spiceCabURL = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSpiceCabURL()();
-		var spiceCabOjectClassId = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSpiceObjectClassId()();
-		var id = "SpiceX_" + guestHostName;
-		var noTaskMgrExecution = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getNoTaskMgrExecution()();
-		var sendCtrlAltDelete = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSendCtrlAltDelete()();
-		var usbAutoShare = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbAutoShare()();
-		var usbFilter = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbFilter()();
-		var disconnectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getDisconnectedEvent()();
-		var connectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getConnectedEvent()();
-		var menuItemSelectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getMenuItemSelectedEvent()();
-		var model = this;
+                                               var hostIp = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getHost()();
+                                               var port = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getPort()();
+                                               var fullScreen = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getFullScreen()();
+                                               var password = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getPassword()();
+                                               var numberOfMonitors = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getNumberOfMonitors()();
+                                               var usbListenPort = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbListenPort()();
+                                               var adminConsole = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getAdminConsole()();
+                                               var guestHostName = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getGuestHostName()();
+                                               var securePort = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSecurePort()();
+                                               var sslChanels = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSslChanels()();
+                                               var cipherSuite = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getCipherSuite()();
+                                               var hostSubject = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getHostSubject()();
+                                               var trustStore = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getTrustStore()();
+                                               var title = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getTitle()();
+                                               var hotKey = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getHotKey()();
+                                               var menu = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getMenu()();
+                                               var guestID = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getGuestID()();
+                                               var version = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getCurrentVersion()();
+                                               var spiceCabURL = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSpiceCabURL()();
+                                               var spiceCabOjectClassId = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSpiceObjectClassId()();
+                                               var id = "SpiceX_" + guestHostName;
+                                               var noTaskMgrExecution = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getNoTaskMgrExecution()();
+                                               var sendCtrlAltDelete = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSendCtrlAltDelete()();
+                                               var usbAutoShare = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbAutoShare()();
+                                               var usbFilter = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbFilter()();
+                                               var disconnectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getDisconnectedEvent()();
+                                               var connectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getConnectedEvent()();
+                                               var menuItemSelectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getMenuItemSelectedEvent()();
+                                               var model = this;
 
-		//        alert("Host IP: " + hostIp + ", port: " + port + ", fullScreen: "
-		//              + fullScreen + ", password: " + password
-		//              + ", numberOfMonitors: " + numberOfMonitors
-		//              + ", Usb Listen Port: " + usbListenPort + ", Admin Console: "
-		//              + adminConsole + ", Guest HostName: " + guestHostName
-		//              + ", Secure Port: " + securePort + ", Ssl Chanels: "
-		//              + sslChanels + ", cipherSuite: " + cipherSuite
-		//              + ", Host Subject: " + hostSubject + ", Title: " + title
-		//              + ", Hot Key: " + hotKey + ", Menu: " + menu + ", GuestID: "
-		//              + guestID + ", version: " + version + ", Trust Store: "
-		//              + trustStore);
+                                               //        alert("Host IP: " + hostIp + ", port: " + port + ", fullScreen: "
+                                               //              + fullScreen + ", password: " + password
+                                               //              + ", numberOfMonitors: " + numberOfMonitors
+                                               //              + ", Usb Listen Port: " + usbListenPort + ", Admin Console: "
+                                               //              + adminConsole + ", Guest HostName: " + guestHostName
+                                               //              + ", Secure Port: " + securePort + ", Ssl Chanels: "
+                                               //              + sslChanels + ", cipherSuite: " + cipherSuite
+                                               //              + ", Host Subject: " + hostSubject + ", Title: " + title
+                                               //              + ", Hot Key: " + hotKey + ", Menu: " + menu + ", GuestID: "
+                                               //              + guestID + ", version: " + version + ", Trust Store: "
+                                               //              + trustStore);
 
-		this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::loadXpi(Ljava/lang/String;)(id);
-		var client = $wnd.document.getElementById(id);
-		client.hostIP = hostIp;
-		client.port = port;
-		client.Title = title;
-		client.dynamicMenu = "";
-		client.fullScreen = fullScreen;
-		client.Password = password;
-		client.NumberOfMonitors = numberOfMonitors;
-		client.UsbListenPort = usbListenPort;
-		client.AdminConsole = adminConsole;
-		client.SecurePort = securePort;
-		if (sslChanels != null && sslChanels.length > 0)
-			client.SSLChannels = sslChanels;
-		client.GuestHostName = guestHostName;
-		if (cipherSuite != null && cipherSuite.length > 0)
-			client.CipherSuite = cipherSuite;
-		if (hostSubject != null)
-			client.HostSubject = hostSubject;
-		if (trustStore != null)
-			client.TrustStore = trustStore;
-		client.HotKey = hotKey;
-		client.NoTaskMgrExecution = noTaskMgrExecution;
-		client.SendCtrlAltDelete = sendCtrlAltDelete;
-		client.UsbAutoShare = usbAutoShare;
-		client.connect();
+                                               this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::loadXpi(Ljava/lang/String;)(id);
+                                               var client = $wnd.document.getElementById(id);
+                                               client.hostIP = hostIp;
+                                               client.port = port;
+                                               client.Title = title;
+                                               client.dynamicMenu = "";
+                                               client.fullScreen = fullScreen;
+                                               client.Password = password;
+                                               client.NumberOfMonitors = numberOfMonitors;
+                                               client.UsbListenPort = usbListenPort;
+                                               client.AdminConsole = adminConsole;
+                                               client.SecurePort = securePort;
+                                               if (sslChanels != null && sslChanels.length > 0)
+                                               client.SSLChannels = sslChanels;
+                                               client.GuestHostName = guestHostName;
+                                               if (cipherSuite != null && cipherSuite.length > 0)
+                                               client.CipherSuite = cipherSuite;
+                                               if (hostSubject != null)
+                                               client.HostSubject = hostSubject;
+                                               if (trustStore != null)
+                                               client.TrustStore = trustStore;
+                                               client.HotKey = hotKey;
+                                               client.NoTaskMgrExecution = noTaskMgrExecution;
+                                               client.SendCtrlAltDelete = sendCtrlAltDelete;
+                                               client.UsbAutoShare = usbAutoShare;
+                                               client.connect();
 
-		connectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, null);
+                                               connectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, null);
 
-		//since the 'ondisconnected' event doesn't work well in linux, we use polling instead:
-		var checkConnectStatusIntervalID = setInterval(checkConnectStatus, 2000);
-		function checkConnectStatus() {
-			if (client.ConnectedStatus() >= 0) {
-				clearInterval(checkConnectStatusIntervalID);
-				var connectedStatus = client.ConnectedStatus();
-				var errorCodeEventArgs = @org.ovirt.engine.ui.uicommonweb.models.vms.ErrorCodeEventArgs::new(I)(connectedStatus);
-				disconnectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, errorCodeEventArgs);
-			}
-		}
-    }-*/;
+                                               //since the 'ondisconnected' event doesn't work well in linux, we use polling instead:
+                                               var checkConnectStatusIntervalID = setInterval(checkConnectStatus, 2000);
+                                               function checkConnectStatus() {
+                                               if (client.ConnectedStatus() >= 0) {
+                                               clearInterval(checkConnectStatusIntervalID);
+                                               var connectedStatus = client.ConnectedStatus();
+                                               var errorCodeEventArgs = @org.ovirt.engine.ui.uicommonweb.models.vms.ErrorCodeEventArgs::new(I)(connectedStatus);
+                                               disconnectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, errorCodeEventArgs);
+                                               }
+                                               }
+                                               }-*/;
 
     public native boolean detectXpiPlugin() /*-{
-		var pluginsFound = false;
-		if (navigator.plugins && navigator.plugins.length > 0) {
-			var daPlugins = ["Spice"];
-			var pluginsAmount = navigator.plugins.length;
-			for (counter = 0; counter < pluginsAmount; counter++) {
-				var numFound = 0;
-				for (namesCounter = 0; namesCounter < daPlugins.length; namesCounter++) {
-					if ((navigator.plugins[counter].name
-							.indexOf(daPlugins[namesCounter]) > 0)
-							|| (navigator.plugins[counter].description
-									.indexOf(daPlugins[namesCounter]) >= 0)) {
-						numFound++;
-					}
-				}
-				if (numFound == daPlugins.length) {
-					pluginsFound = true;
-					break;
-				}
-			}
+                                            var pluginsFound = false;
+                                            if (navigator.plugins && navigator.plugins.length > 0) {
+                                            var daPlugins = ["Spice"];
+                                            var pluginsAmount = navigator.plugins.length;
+                                            for (counter = 0; counter < pluginsAmount; counter++) {
+                                            var numFound = 0;
+                                            for (namesCounter = 0; namesCounter < daPlugins.length; namesCounter++) {
+                                            if ((navigator.plugins[counter].name
+                                            .indexOf(daPlugins[namesCounter]) > 0)
+                                            || (navigator.plugins[counter].description
+                                            .indexOf(daPlugins[namesCounter]) >= 0)) {
+                                            numFound++;
+                                            }
+                                            }
+                                            if (numFound == daPlugins.length) {
+                                            pluginsFound = true;
+                                            break;
+                                            }
+                                            }
 
-			return pluginsFound;
-		}
-    }-*/;
+                                            return pluginsFound;
+                                            }
+                                            }-*/;
 
     public native void connectNativelyViaActiveX() /*-{
-		var hostIp = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getHost()();
-		var port = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getPort()();
-		var fullScreen = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getFullScreen()();
-		var password = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getPassword()();
-		var numberOfMonitors = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getNumberOfMonitors()();
-		var usbListenPort = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbListenPort()();
-		var adminConsole = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getAdminConsole()();
-		var guestHostName = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getGuestHostName()();
-		var securePort = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSecurePort()();
-		var sslChanels = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSslChanels()();
-		var cipherSuite = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getCipherSuite()();
-		var hostSubject = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getHostSubject()();
-		var trustStore = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getTrustStore()();
-		var title = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getTitle()();
-		var hotKey = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getHotKey()();
-		var menu = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getMenu()();
-		var guestID = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getGuestID()();
-		var version = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getCurrentVersion()();
-		var spiceCabURL = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSpiceCabURL()();
-		var spiceCabOjectClassId = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSpiceObjectClassId()();
-		var noTaskMgrExecution = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getNoTaskMgrExecution()();
-		var sendCtrlAltDelete = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSendCtrlAltDelete()();
-		var usbAutoShare = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbAutoShare()();
-		var usbFilter = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbFilter()();
-		var menu = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getMenu()();
-		var disconnectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getDisconnectedEvent()();
-        var connectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getConnectedEvent()();
-		var menuItemSelectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getMenuItemSelectedEvent()();
-		var codebase = spiceCabURL + "#version=" + version;
-		var model = this;
-		var id = "SpiceX_" + guestHostName;
+                                                   var hostIp = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getHost()();
+                                                   var port = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getPort()();
+                                                   var fullScreen = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getFullScreen()();
+                                                   var password = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getPassword()();
+                                                   var numberOfMonitors = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getNumberOfMonitors()();
+                                                   var usbListenPort = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbListenPort()();
+                                                   var adminConsole = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getAdminConsole()();
+                                                   var guestHostName = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getGuestHostName()();
+                                                   var securePort = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSecurePort()();
+                                                   var sslChanels = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSslChanels()();
+                                                   var cipherSuite = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getCipherSuite()();
+                                                   var hostSubject = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getHostSubject()();
+                                                   var trustStore = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getTrustStore()();
+                                                   var title = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getTitle()();
+                                                   var hotKey = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getHotKey()();
+                                                   var menu = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getMenu()();
+                                                   var guestID = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getGuestID()();
+                                                   var version = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getCurrentVersion()();
+                                                   var spiceCabURL = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSpiceCabURL()();
+                                                   var spiceCabOjectClassId = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSpiceObjectClassId()();
+                                                   var noTaskMgrExecution = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getNoTaskMgrExecution()();
+                                                   var sendCtrlAltDelete = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getSendCtrlAltDelete()();
+                                                   var usbAutoShare = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbAutoShare()();
+                                                   var usbFilter = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getUsbFilter()();
+                                                   var menu = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getMenu()();
+                                                   var disconnectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getDisconnectedEvent()();
+                                                   var connectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getConnectedEvent()();
+                                                   var menuItemSelectedEvent = this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::getMenuItemSelectedEvent()();
+                                                   var codebase = spiceCabURL + "#version=" + version;
+                                                   var model = this;
+                                                   var id = "SpiceX_" + guestHostName;
 
-		//		alert("Host IP: " + hostIp + ", port: " + port + ", fullScreen: "
-		//				+ fullScreen + ", password: " + password
-		//				+ ", numberOfMonitors: " + numberOfMonitors
-		//				+ ", Usb Listen Port: " + usbListenPort + ", Admin Console: "
-		//				+ adminConsole + ", Guest HostName: " + guestHostName
-		//				+ ", Secure Port: " + securePort + ", Ssl Chanels: "
-		//				+ sslChanels + ", cipherSuite: " + cipherSuite
-		//				+ ", Host Subject: " + hostSubject + ", Title: " + title
-		//				+ ", Hot Key: " + hotKey + ", Menu: " + menu + ", GuestID: "
-		//				+ guestID + ", version: " + version + ", Trust Store: "
-		//				+ trustStore);
+                                                   //        alert("Host IP: " + hostIp + ", port: " + port + ", fullScreen: "
+                                                   //                + fullScreen + ", password: " + password
+                                                   //                + ", numberOfMonitors: " + numberOfMonitors
+                                                   //                + ", Usb Listen Port: " + usbListenPort + ", Admin Console: "
+                                                   //                + adminConsole + ", Guest HostName: " + guestHostName
+                                                   //                + ", Secure Port: " + securePort + ", Ssl Chanels: "
+                                                   //                + sslChanels + ", cipherSuite: " + cipherSuite
+                                                   //                + ", Host Subject: " + hostSubject + ", Title: " + title
+                                                   //                + ", Hot Key: " + hotKey + ", Menu: " + menu + ", GuestID: "
+                                                   //                + guestID + ", version: " + version + ", Trust Store: "
+                                                   //                + trustStore);
 
-		// Create ActiveX object
-		this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::loadActiveX(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(id,codebase,spiceCabOjectClassId);
+                                                   // Create ActiveX object
+                                                   this.@org.ovirt.engine.ui.webadmin.uicommon.SpiceInterfaceImpl::loadActiveX(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(id,codebase,spiceCabOjectClassId);
 
-		var client = $wnd.document.getElementById(id);
-		client.attachEvent('onreadystatechange', onReadyStateChange);
-		client.attachEvent('onmenuitemselected', onMenuItemSelected);
+                                                   var client = $wnd.document.getElementById(id);
+                                                   client.attachEvent('onreadystatechange', onReadyStateChange);
+                                                   client.attachEvent('onmenuitemselected', onMenuItemSelected);
 
-		tryToConnect();
+                                                   tryToConnect();
 
-		function tryToConnect() {
-			if (client.readyState == 4) {
-				try {
-					client.style.width = "0px";
-					client.style.height = "0px";
-					client.hostIP = hostIp;
-					client.port = port;
-					client.Title = title;
-					client.dynamicMenu = menu;
-					client.fullScreen = fullScreen;
-					client.Password = password;
-					client.NumberOfMonitors = numberOfMonitors;
-					client.UsbListenPort = usbListenPort;
-					client.AdminConsole = adminConsole;
-					client.SecurePort = securePort;
-					if (sslChanels != null && sslChanels.length > 0)
-						client.SSLChannels = sslChanels;
-					client.GuestHostName = guestHostName;
-					if (cipherSuite != null && cipherSuite.length > 0)
-						client.CipherSuite = cipherSuite;
-					if (hostSubject != null)
-						client.HostSubject = hostSubject;
-					if (trustStore != null)
-						client.TrustStore = trustStore;
-					client.HotKey = hotKey;
-					client.NoTaskMgrExecution = noTaskMgrExecution;
-					client.SendCtrlAltDelete = sendCtrlAltDelete;
-					client.UsbAutoShare = usbAutoShare;
-					client.attachEvent('ondisconnected', onDisconnected);
+                                                   function tryToConnect() {
+                                                   if (client.readyState == 4) {
+                                                   try {
+                                                   client.style.width = "0px";
+                                                   client.style.height = "0px";
+                                                   client.hostIP = hostIp;
+                                                   client.port = port;
+                                                   client.Title = title;
+                                                   client.dynamicMenu = menu;
+                                                   client.fullScreen = fullScreen;
+                                                   client.Password = password;
+                                                   client.NumberOfMonitors = numberOfMonitors;
+                                                   client.UsbListenPort = usbListenPort;
+                                                   client.AdminConsole = adminConsole;
+                                                   client.SecurePort = securePort;
+                                                   if (sslChanels != null && sslChanels.length > 0)
+                                                   client.SSLChannels = sslChanels;
+                                                   client.GuestHostName = guestHostName;
+                                                   if (cipherSuite != null && cipherSuite.length > 0)
+                                                   client.CipherSuite = cipherSuite;
+                                                   if (hostSubject != null)
+                                                   client.HostSubject = hostSubject;
+                                                   if (trustStore != null)
+                                                   client.TrustStore = trustStore;
+                                                   client.HotKey = hotKey;
+                                                   client.NoTaskMgrExecution = noTaskMgrExecution;
+                                                   client.SendCtrlAltDelete = sendCtrlAltDelete;
+                                                   client.UsbAutoShare = usbAutoShare;
+                                                   client.attachEvent('ondisconnected', onDisconnected);
 
-					client.connect();
+                                                   client.connect();
 
-					connectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, null);
+                                                   connectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, null);
 
-				} catch (ex) {
-					onDisconnected();
-				}
-			}
-		}
+                                                   } catch (ex) {
+                                                   onDisconnected();
+                                                   }
+                                                   }
+                                                   }
 
-		function onReadyStateChange() {
-			tryToConnect();
-		}
+                                                   function onReadyStateChange() {
+                                                   tryToConnect();
+                                                   }
 
-		function onDisconnected(errorCode) {
-			var errorCodeEventArgs = @org.ovirt.engine.ui.uicommonweb.models.vms.ErrorCodeEventArgs::new(I)(errorCode);
-			disconnectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, errorCodeEventArgs);
-		}
+                                                   function onDisconnected(errorCode) {
+                                                   var errorCodeEventArgs = @org.ovirt.engine.ui.uicommonweb.models.vms.ErrorCodeEventArgs::new(I)(errorCode);
+                                                   disconnectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, errorCodeEventArgs);
+                                                   }
 
-		function onMenuItemSelected(itemId) {
-			var spiceMenuItemEventArgs = @org.ovirt.engine.ui.uicommonweb.models.vms.SpiceMenuItemEventArgs::new(I)(itemId);
-			menuItemSelectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, spiceMenuItemEventArgs);
-		}
-    }-*/;
+                                                   function onMenuItemSelected(itemId) {
+                                                   var spiceMenuItemEventArgs = @org.ovirt.engine.ui.uicommonweb.models.vms.SpiceMenuItemEventArgs::new(I)(itemId);
+                                                   menuItemSelectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, spiceMenuItemEventArgs);
+                                                   }
+                                                   }-*/;
 
     @Override
     public void Install() {

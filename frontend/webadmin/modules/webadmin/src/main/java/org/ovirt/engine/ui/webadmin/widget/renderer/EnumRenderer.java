@@ -10,7 +10,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 
 /**
  * Renderer for Enum values.
- * 
+ *
  * @param <E>
  *            Enum type.
  */

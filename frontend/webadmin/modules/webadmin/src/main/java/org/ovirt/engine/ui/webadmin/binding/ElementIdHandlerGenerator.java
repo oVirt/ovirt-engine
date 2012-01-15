@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.binding;
 import java.io.PrintWriter;
 
 import org.ovirt.engine.ui.webadmin.idhandler.BaseElementIdHandler;
-import org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler;
 
 import com.google.gwt.core.ext.Generator;
 import com.google.gwt.core.ext.GeneratorContext;
@@ -15,9 +14,9 @@ import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
 import com.google.gwt.user.rebind.SourceWriter;
 
 /**
- * GWT deferred binding generator that provides {@link ElementIdHandler} implementations.
+ * GWT deferred binding generator that provides {@link org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler} implementations.
  *
- * @see ElementIdHandler
+ * @see org.ovirt.engine.ui.webadmin.idhandler.ElementIdHandler
  */
 public class ElementIdHandlerGenerator extends Generator {
 

@@ -46,7 +46,7 @@ import com.google.gwt.view.client.SelectionModel;
  * <li>{@link #refreshPageButton} widget representing the "refresh current page" button
  * <li>{@link #tableContainer} widget for displaying the actual table
  * </ul>
- * 
+ *
  * @param <T>
  *            Table row data type.
  */
@@ -302,7 +302,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
      * <p>
      * {@code headerHtml} must honor the {@link SafeHtml} contract as specified in
      * {@link SafeHtmlUtils#fromSafeConstant(String) fromSafeConstant}.
-     * 
+     *
      * @see SafeHtmlUtils#fromSafeConstant(String)
      */
     public void addColumnWithHtmlHeader(Column<T, ?> column, String headerHtml, String width) {

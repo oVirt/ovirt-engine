@@ -4,7 +4,7 @@ import com.google.gwt.editor.client.Editor;
 
 /**
  * Widgets that implement this interface are Editors that expose the Editor Driver functionality.
- * 
+ *
  * @param <T>
  *            The type being edited.
  */

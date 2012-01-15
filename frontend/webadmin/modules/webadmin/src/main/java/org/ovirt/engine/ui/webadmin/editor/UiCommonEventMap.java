@@ -18,7 +18,7 @@ public class UiCommonEventMap {
 
     /**
      * Add an Event to the Map
-     * 
+     *
      * @param path
      *            The property path (i.e. "userName.entity")
      * @param type
@@ -32,7 +32,7 @@ public class UiCommonEventMap {
 
     /**
      * Register a Listener to an Event from the Map
-     * 
+     *
      * @param path
      *            The property path (i.e. "userName.entity")
      * @param type
