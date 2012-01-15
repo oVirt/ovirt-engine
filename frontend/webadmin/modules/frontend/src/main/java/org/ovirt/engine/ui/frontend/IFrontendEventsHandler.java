@@ -9,10 +9,15 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public interface IFrontendEventsHandler {
-	Boolean isRaiseErrorModalPanel(VdcActionType action);
-	Boolean isRaiseErrorModalPanel(VdcQueryType queryType);
+    Boolean isRaiseErrorModalPanel(VdcActionType action);
+
+    Boolean isRaiseErrorModalPanel(VdcQueryType queryType);
+
     void runActionFailed(List<VdcReturnValueBase> returnValues);
+
     void runActionExecutionFailed(VdcActionType action, VdcFault fault);
+
     void runQueryFailed(List<VdcQueryReturnValue> returnValue);
-	void publicConnectionClosed(Exception ex);
+
+    void publicConnectionClosed(Exception ex);
 }

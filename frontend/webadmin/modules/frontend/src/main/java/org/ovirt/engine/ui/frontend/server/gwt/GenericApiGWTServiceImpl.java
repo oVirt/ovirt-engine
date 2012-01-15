@@ -27,169 +27,173 @@ import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
 import org.ovirt.engine.ui.genericapi.GenericApiService;
 
 public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements
-		GenericApiGWTService {
-	static Random r = new Random();
-	boolean noBackend = false;
+        GenericApiGWTService {
+    static Random r = new Random();
+    boolean noBackend = false;
 
-	private static LogCompat log = LogFactoryCompat
-			.getLog(GenericApiGWTServiceImpl.class);
+    private static LogCompat log = LogFactoryCompat
+            .getLog(GenericApiGWTServiceImpl.class);
 
-	private BackendLocal backend;
+    private BackendLocal backend;
 
-	// @EJB(name = "engine/GenericApi/local")
-	private static GenericApiService genericApiService;
+    // @EJB(name = "engine/GenericApi/local")
+    private static GenericApiService genericApiService;
 
-	public void init() throws ServletException {
-		log.debug("Initializing servlet!");
-	}
+    @Override
+    public void init() throws ServletException {
+        log.debug("Initializing servlet!");
+    }
 
-	@Override
-	public VdcQueryReturnValue RunQuery(VdcQueryType search,
-			VdcQueryParametersBase searchParameters) {
-		log.debug("Server: RunQuery invoked!");
-		searchParameters.setSessionId(getSessionId());
-		return getBackend().RunQuery(search, searchParameters);
-	}
+    @Override
+    public VdcQueryReturnValue RunQuery(VdcQueryType search,
+            VdcQueryParametersBase searchParameters) {
+        log.debug("Server: RunQuery invoked!");
+        searchParameters.setSessionId(getSessionId());
+        return getBackend().RunQuery(search, searchParameters);
+    }
 
-	@Override
-	public VdcQueryReturnValue RunPublicQuery(VdcQueryType queryType,
-			VdcQueryParametersBase params) {
-		log.debug("Server: RunPublicQuery invoked!");
-		return getBackend().RunPublicQuery(queryType, params);
-	}
+    @Override
+    public VdcQueryReturnValue RunPublicQuery(VdcQueryType queryType,
+            VdcQueryParametersBase params) {
+        log.debug("Server: RunPublicQuery invoked!");
+        return getBackend().RunPublicQuery(queryType, params);
+    }
 
-	@Override
-	public ArrayList<VdcQueryReturnValue> RunMultipleQueries(
-			ArrayList<VdcQueryType> queryTypeList,
-			ArrayList<VdcQueryParametersBase> queryParamsList) {
-	    log.debug("Server: RunMultipleQuery invoked! [amount of queries: " + queryTypeList.size() + "]");
+    @Override
+    public ArrayList<VdcQueryReturnValue> RunMultipleQueries(
+            ArrayList<VdcQueryType> queryTypeList,
+            ArrayList<VdcQueryParametersBase> queryParamsList) {
+        log.debug("Server: RunMultipleQuery invoked! [amount of queries: " + queryTypeList.size() + "]");
 
-		ArrayList<VdcQueryReturnValue> ret = new ArrayList<VdcQueryReturnValue>();
+        ArrayList<VdcQueryReturnValue> ret = new ArrayList<VdcQueryReturnValue>();
 
-		if (queryTypeList == null || queryParamsList == null) {
-			// TODO: LOG: "queryTypeList and/or queryParamsList is null."
-		}
+        if (queryTypeList == null || queryParamsList == null) {
+            // TODO: LOG: "queryTypeList and/or queryParamsList is null."
+        }
 
-		else if (queryTypeList.size() != queryParamsList.size()) {
-			// TODO: LOG:
-			// "queryTypeList and queryParamsList don't have the same amount of items."
-		}
+        else if (queryTypeList.size() != queryParamsList.size()) {
+            // TODO: LOG:
+            // "queryTypeList and queryParamsList don't have the same amount of items."
+        }
 
-		else {
-			for (int i = 0; i < queryTypeList.size(); i++) {
-				ret.add(RunQuery(queryTypeList.get(i), queryParamsList.get(i)));
-			}
-		}
+        else {
+            for (int i = 0; i < queryTypeList.size(); i++) {
+                ret.add(RunQuery(queryTypeList.get(i), queryParamsList.get(i)));
+            }
+        }
 
-		for (VdcQueryReturnValue vqrv : ret) {
-			log.debug("VdcQueryReturnValue: " + vqrv);
-		}
+        for (VdcQueryReturnValue vqrv : ret) {
+            log.debug("VdcQueryReturnValue: " + vqrv);
+        }
 
-		log.debug("Server: RunMultipleQuery result [amount of queries: " + ret.size() + "]");
+        log.debug("Server: RunMultipleQuery result [amount of queries: " + ret.size() + "]");
 
-		return ret;
-	}
+        return ret;
+    }
 
-	public ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType, ArrayList<VdcActionParametersBase> multipleParams) {
-	    log.debug("Server: RunMultipleAction invoked! [amount of actions: " + multipleParams.size() + "]");
-		
-		for (VdcActionParametersBase params : multipleParams) {
-			params.setSessionId(getSessionId());
-		}
-		
-		ArrayList<VdcReturnValueBase> returnValues = getBackend().RunMultipleActions(actionType,multipleParams);
+    @Override
+    public ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
+            ArrayList<VdcActionParametersBase> multipleParams) {
+        log.debug("Server: RunMultipleAction invoked! [amount of actions: " + multipleParams.size() + "]");
 
-		return returnValues;
-	}
+        for (VdcActionParametersBase params : multipleParams) {
+            params.setSessionId(getSessionId());
+        }
 
-	@Override
-	public VdcReturnValueBase RunAction(VdcActionType actionType,
-			VdcActionParametersBase params) {
-		log.debug("Server: RunAction invoked!");
+        ArrayList<VdcReturnValueBase> returnValues = getBackend().RunMultipleActions(actionType, multipleParams);
 
-		params.setSessionId(getSessionId());
+        return returnValues;
+    }
 
-		if (noBackend) {
-			VdcReturnValueBase rValue = new VdcReturnValueBase();
-			rValue.setSucceeded(true);
-			return rValue;
-		}
+    @Override
+    public VdcReturnValueBase RunAction(VdcActionType actionType,
+            VdcActionParametersBase params) {
+        log.debug("Server: RunAction invoked!");
 
-		return getBackend().RunAction(actionType, params);
-	}
+        params.setSessionId(getSessionId());
 
-	@Override
-	public VdcUser getLoggedInUser() {
-		VdcQueryParametersBase queryParams = new VdcQueryParametersBase();
-		queryParams.setSessionId(getSessionId());
-		queryParams.setHttpSessionId(getSessionId());
+        if (noBackend) {
+            VdcReturnValueBase rValue = new VdcReturnValueBase();
+            rValue.setSucceeded(true);
+            return rValue;
+        }
 
-		VdcQueryReturnValue vqrv = RunQuery(VdcQueryType.GetUserBySessionId,
-				queryParams);
+        return getBackend().RunAction(actionType, params);
+    }
 
-		if (!vqrv.getSucceeded()) {
-			return null;
-		} else if (vqrv.getSucceeded()) {
-			if (vqrv.getReturnValue() == null)
-				return null;
-			return (VdcUser) vqrv.getReturnValue();
-		} else {
-			// For unknown reason the result was failed be returned.
-			return null;
-		}
-	}
+    @Override
+    public VdcUser getLoggedInUser() {
+        VdcQueryParametersBase queryParams = new VdcQueryParametersBase();
+        queryParams.setSessionId(getSessionId());
+        queryParams.setHttpSessionId(getSessionId());
 
-	@Override
-	public VdcReturnValueBase logOff(VdcUser userToLogoff) {
-		LogoutUserParameters params = new LogoutUserParameters(userToLogoff.getUserId());
-		params.setSessionId(getSessionId());
-		VdcReturnValueBase returnValue = getBackend().Logoff(params);
-		return returnValue;
-	}
-	
-	@Override
-	public VdcReturnValueBase Login(String userName, String password, String domain){
-		LoginUserParameters params = new LoginUserParameters(userName, password, domain, null, null, null);
-		params.setSessionId(getSessionId());
-		params.setActionType(VdcActionType.LoginAdminUser);
-		VdcReturnValueBase returnValue = getBackend().Login(params);
-		return returnValue;
-	}
+        VdcQueryReturnValue vqrv = RunQuery(VdcQueryType.GetUserBySessionId,
+                queryParams);
 
-	private static VMStatus getRandomStatus() {
-		VMStatus[] status_values = VMStatus.values();
-		VMStatus status = status_values[r.nextInt(status_values.length)];
-		return status;
-	}
+        if (!vqrv.getSucceeded()) {
+            return null;
+        } else if (vqrv.getSucceeded()) {
+            if (vqrv.getReturnValue() == null)
+                return null;
+            return (VdcUser) vqrv.getReturnValue();
+        } else {
+            // For unknown reason the result was failed be returned.
+            return null;
+        }
+    }
 
-	private static VmOsType getRandomOSType() {
-		VmOsType[] os_types = VmOsType.values();
-		VmOsType os = os_types[r.nextInt(os_types.length)];
-		return os;
-	}
+    @Override
+    public VdcReturnValueBase logOff(VdcUser userToLogoff) {
+        LogoutUserParameters params = new LogoutUserParameters(userToLogoff.getUserId());
+        params.setSessionId(getSessionId());
+        VdcReturnValueBase returnValue = getBackend().Logoff(params);
+        return returnValue;
+    }
 
-	private static VmPoolType getRandomVmPoolType() {
-		VmPoolType[] pool_types = VmPoolType.values();
-		VmPoolType type = pool_types[r.nextInt(pool_types.length)];
+    @Override
+    public VdcReturnValueBase Login(String userName, String password, String domain) {
+        LoginUserParameters params = new LoginUserParameters(userName, password, domain, null, null, null);
+        params.setSessionId(getSessionId());
+        params.setActionType(VdcActionType.LoginAdminUser);
+        VdcReturnValueBase returnValue = getBackend().Login(params);
+        return returnValue;
+    }
 
-		return type;
-	}
+    private static VMStatus getRandomStatus() {
+        VMStatus[] status_values = VMStatus.values();
+        VMStatus status = status_values[r.nextInt(status_values.length)];
+        return status;
+    }
 
-	public BackendLocal getBackend() {
-		return backend;
-	}
+    private static VmOsType getRandomOSType() {
+        VmOsType[] os_types = VmOsType.values();
+        VmOsType os = os_types[r.nextInt(os_types.length)];
+        return os;
+    }
 
-	@EJB(beanInterface = BackendLocal.class, mappedName = "java:global/engine/engine-bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal")
-	public void setBackend(BackendLocal backend) {
-		this.backend = backend;
-	}
+    private static VmPoolType getRandomVmPoolType() {
+        VmPoolType[] pool_types = VmPoolType.values();
+        VmPoolType type = pool_types[r.nextInt(pool_types.length)];
 
-	private String getSessionId() {
-		HttpServletRequest request = this.getThreadLocalRequest();
-		HttpSession session = request.getSession();
+        return type;
+    }
 
-		log.debug("IP [" + request.getRemoteAddr() + "], Session ID [" + session.getId() + "]");
+    public BackendLocal getBackend() {
+        return backend;
+    }
 
-		return session.getId();
-	}
+    @EJB(beanInterface = BackendLocal.class,
+            mappedName = "java:global/engine/engine-bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal")
+    public void setBackend(BackendLocal backend) {
+        this.backend = backend;
+    }
+
+    private String getSessionId() {
+        HttpServletRequest request = this.getThreadLocalRequest();
+        HttpSession session = request.getSession();
+
+        log.debug("IP [" + request.getRemoteAddr() + "], Session ID [" + session.getId() + "]");
+
+        return session.getId();
+    }
 }

@@ -6,23 +6,23 @@ import org.ovirt.engine.core.compat.EventArgs;
 
 public class FrontendFailureEventArgs extends EventArgs {
 
-	private Message message;
-	private List<Message> messages;
-	
-	public FrontendFailureEventArgs(Message errorMessage) {
-		this.message = errorMessage;
-	}
-	
-	public FrontendFailureEventArgs(List<Message> errorMessages) {
-		this.messages = errorMessages;
-	}
-	
-	public Message getMessage() {
-		return message;
-	}
+    private Message message;
+    private List<Message> messages;
 
-	public List<Message> getMessages() {
-		return messages;
-	}
+    public FrontendFailureEventArgs(Message errorMessage) {
+        this.message = errorMessage;
+    }
+
+    public FrontendFailureEventArgs(List<Message> errorMessages) {
+        this.messages = errorMessages;
+    }
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
 
 }

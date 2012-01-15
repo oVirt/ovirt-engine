@@ -5,18 +5,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
 
-import com.google.gwt.core.client.GWT;
+import org.ovirt.engine.core.compat.StringHelper;
+
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class ErrorTranslator {
     private ConstantsWithLookup errors;
 
     public ErrorTranslator() {
     }
-    
+
     public ErrorTranslator(ConstantsWithLookup errors) {
         this.errors = errors;
     }
@@ -25,7 +25,7 @@ public class ErrorTranslator {
      * Translate errors from error types, error messages contains errors and variables. Variable used in messages,
      * Variable definition must be in format: $variableName variableValue. Variable usage must be in format
      * #variableName
-     * 
+     *
      * @param errorMsg
      *            messages to be translated
      * @param changeIfNotFound
@@ -44,7 +44,7 @@ public class ErrorTranslator {
      * Translates and resolves errors from error types. error messages contains errors and variables. Variable used in
      * messages. Variable definition must be in format: $variableName variableValue. Variable usage must be in format
      * #variableName Note: Unfound message keys will be beautified!
-     * 
+     *
      * @param errorMsg
      *            messages to be translated
      * @return
@@ -67,7 +67,7 @@ public class ErrorTranslator {
 
     /**
      * Translates a single error message.
-     * 
+     *
      * @param errorMsg
      *            The message to be translated
      * @param changeIfNotFound
@@ -79,32 +79,31 @@ public class ErrorTranslator {
             Boolean changeIfNotFound) {
         String ret = "";
         try {
-        	if ((errorMsg != null) && (errorMsg.length() > 0)) {
+            if ((errorMsg != null) && (errorMsg.length() > 0)) {
                 errorMsg = errorMsg.replace('.', '_');
-        		if (errors.getString(errorMsg) != null) {
-        			// if (mMessages.containsKey(errorMsg)) {
-        			ret = errors.getString(errorMsg).replace("\n", "<br/>");
-        		} else {
-        			if ((isDynamicVariable(errorMsg)) || (!changeIfNotFound)) {
-        				ret = errorMsg;
-        			} else {
-        				// just a message that doesn't have a value in the resource:
-        				String[] splitted = errorMsg.toLowerCase().split("_");
-        				ret = StringHelper.join(" ", splitted);
-        			}
-        		}
-        	}
+                if (errors.getString(errorMsg) != null) {
+                    // if (mMessages.containsKey(errorMsg)) {
+                    ret = errors.getString(errorMsg).replace("\n", "<br/>");
+                } else {
+                    if ((isDynamicVariable(errorMsg)) || (!changeIfNotFound)) {
+                        ret = errorMsg;
+                    } else {
+                        // just a message that doesn't have a value in the resource:
+                        String[] splitted = errorMsg.toLowerCase().split("_");
+                        ret = StringHelper.join(" ", splitted);
+                    }
+                }
+            }
+        } catch (MissingResourceException e) {
+            ret = errorMsg;
         }
-        catch(MissingResourceException e) {
-        	ret = errorMsg;
-        }
-        
+
         return ret;
     }
 
     /**
      * Translates a single error message. Note: if message key not found, a beautified message will return!
-     * 
+     *
      * @param errorMsg
      *            the message to translate
      * @return the translated message or a beautifed message key
@@ -116,7 +115,7 @@ public class ErrorTranslator {
     /**
      * Replacing variables ('#...') within translatedMessages with their values ('$...') that are also within
      * translatedMessages.
-     * 
+     *
      * @param translatedMessages
      * @return
      */
@@ -182,7 +181,7 @@ public class ErrorTranslator {
 
     /**
      * Returns true if the specified strMessage is in the format: "$variable-name variable-value", false otherwise.
-     * 
+     *
      * @param strMessage
      *            the string that may be a dynamic variable
      * @return true if input is dynamic variable, false otherwise.

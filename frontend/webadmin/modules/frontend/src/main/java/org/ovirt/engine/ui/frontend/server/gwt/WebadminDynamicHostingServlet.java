@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.users.VdcUser;
  * note: this page resides in frontend servlet package as it's already embedded as a jar under WEB-INF/lib of the
  * webadmin WAR
  * </p>
- * 
+ *
  * @author Asaf Shakarchi
  */
 public class WebadminDynamicHostingServlet extends HttpServlet {
@@ -65,11 +65,10 @@ public class WebadminDynamicHostingServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-        throws ServletException, IOException {
-      doGet(req, resp);
+            throws ServletException, IOException {
+        doGet(req, resp);
     }
 
-    
     public VdcUser getLoggedInUser(String sessionId) {
         VdcQueryParametersBase queryParams = new VdcQueryParametersBase();
         queryParams.setSessionId(sessionId);
@@ -89,7 +88,8 @@ public class WebadminDynamicHostingServlet extends HttpServlet {
         }
     }
 
-    @EJB(beanInterface = BackendLocal.class, mappedName = "java:global/engine/engine-bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal")
+    @EJB(beanInterface = BackendLocal.class,
+            mappedName = "java:global/engine/engine-bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal")
     public void setBackend(BackendLocal backend) {
         this.backend = backend;
     }
