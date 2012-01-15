@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.utils.ReflectionUtils;
@@ -21,9 +22,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>AsyncTaskDAODbFacadeImpl</code> provides an implementation of {@link AsyncTaskDAO} using code refactored from
- * {@link DbFacade}.
- *
- *
+ * {@code DbFacade}.
  */
 public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTaskDAO {
     private static Log log = LogFactory
@@ -43,6 +42,8 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             entity.settask_id(Guid.createGuidFromString(rs
                             .getString("task_id")));
             entity.setaction_parameters(deserializeParameters(rs.getString("action_parameters"),rs.getString("action_params_class")));
+            entity.setStepId(NGuid.createGuidFromString(rs
+                    .getString("step_id")));
             return entity;
         }
 
@@ -66,6 +67,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             addValue("task_id", task.gettask_id());
             addValue("action_parameters", serializeParameters(task.getaction_parameters()));
             addValue("action_params_class",task.getaction_parameters().getClass().getName());
+            addValue("step_id", task.getStepId());
         }
 
         private String serializeParameters(VdcActionParametersBase params) {

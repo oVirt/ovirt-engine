@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 
 @Entity
 @Table(name = "async_tasks")
@@ -27,12 +28,13 @@ public class async_tasks implements Serializable {
     }
 
     public async_tasks(VdcActionType action_type, AsyncTaskResultEnum result, AsyncTaskStatusEnum status, Guid task_id,
-            VdcActionParametersBase action_parameters) {
+            VdcActionParametersBase action_parameters, NGuid stepId) {
         this.actionType = action_type;
         this.result = result;
         this.status = status;
         this.taskId = task_id;
         this.setaction_parameters(action_parameters);
+        this.stepId = stepId;
     }
 
     @Column(name = "action_type", nullable = false)
@@ -97,6 +99,17 @@ public class async_tasks implements Serializable {
         this.actionParameters = value;
     }
 
+    @Column(name = "step_id")
+    private NGuid stepId;
+
+    public NGuid getStepId() {
+        return this.stepId;
+    }
+
+    public void setStepId(NGuid stepId) {
+        this.stepId = stepId;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -106,6 +119,7 @@ public class async_tasks implements Serializable {
         results = prime * results + ((result == null) ? 0 : result.hashCode());
         results = prime * results + ((status == null) ? 0 : status.hashCode());
         results = prime * results + ((taskId == null) ? 0 : taskId.hashCode());
+        results = prime * results + ((stepId == null) ? 0 : stepId.hashCode());
         return results;
     }
 
@@ -134,6 +148,14 @@ public class async_tasks implements Serializable {
                 return false;
         } else if (!taskId.equals(other.taskId))
             return false;
+        if (stepId == null) {
+            if (other.stepId != null) {
+                return false;
+            }
+        } else if (!stepId.equals(other.stepId)) {
+            return false;
+        }
+
         return true;
     }
 }

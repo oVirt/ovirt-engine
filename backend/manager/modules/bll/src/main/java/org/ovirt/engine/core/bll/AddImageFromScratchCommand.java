@@ -94,7 +94,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         VdcActionParametersBase parametersForTask = getParametersForTask(parentCommand, getParameters());
         AsyncTaskParameters p = new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
-                parametersForTask));
+                parametersForTask, null));
         p.setEntityId(getParameters().getEntityId());
         Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.createVolume, p, false);
 

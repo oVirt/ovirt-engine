@@ -124,7 +124,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         VdcActionParametersBase paramsForTask = getParametersForTask(parentCommand,getParameters());
         AsyncTaskParameters p = new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
-                paramsForTask));
+                paramsForTask, null));
         p.setEntityId(getParameters().getEntityId());
         Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.copyImage, p, false);
 
