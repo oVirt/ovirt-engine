@@ -16,7 +16,8 @@ execute_command () {
 # $2 - the database to use
 execute_file () {
     local filename=${1}
-    local dbname=${2-}
+    local dbname=${2}
+    local ret_instead_exit=${3}
     # tuples_only - supress header (column names) and footer  (rows affected) from output.
     # ON_ERROR_STOP - stop on error.
     local cmdline="psql --pset=tuples_only=on --set ON_ERROR_STOP=1"
@@ -42,11 +43,11 @@ execute_file () {
     # save last command return value
     retval=$?
     # exit script if command fails.
-    if [ $retval -ne 0 ]
-    then
-        return $retval;
+    if [ $retval -ne 0 -a -z "${ret_instead_exit}" ]; then
+        exit $retval
     fi
 
+    return $retval
 }
 
 #drops views before upgrade or refresh operations
@@ -185,12 +186,12 @@ run_upgrade_files() {
 	    ver="${file:8:2}${file:11:2}${file:14:4}"
 	    if [ "$ver" -gt "$current" ] ; then
                 echo "Running upgrade script $file "
-                execute_file $file ${DATABASE} > /dev/null
-                if [ $? -eq 0 ]; then
+                execute_file $file ${DATABASE} 1 > /dev/null
+                code=$?
+                if [ $code -eq 0 ]; then
                     state="INSTALLED"
                     after=$(get_db_time)
                 else
-                    code=$?
                     set_last_version
                     exit $code
                 fi
