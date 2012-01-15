@@ -1,416 +1,442 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicommonweb.models.vms.*;
-import org.ovirt.engine.core.common.interfaces.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
+import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.NetworkStatus;
+import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Cloner;
+import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceModel;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class TemplateInterfaceListModel extends SearchableListModel
 {
 
-	private UICommand privateNewCommand;
-	public UICommand getNewCommand()
-	{
-		return privateNewCommand;
-	}
-	private void setNewCommand(UICommand value)
-	{
-		privateNewCommand = value;
-	}
-	private UICommand privateEditCommand;
-	public UICommand getEditCommand()
-	{
-		return privateEditCommand;
-	}
-	private void setEditCommand(UICommand value)
-	{
-		privateEditCommand = value;
-	}
-	private UICommand privateRemoveCommand;
-	public UICommand getRemoveCommand()
-	{
-		return privateRemoveCommand;
-	}
-	private void setRemoveCommand(UICommand value)
-	{
-		privateRemoveCommand = value;
-	}
+    private UICommand privateNewCommand;
 
+    public UICommand getNewCommand()
+    {
+        return privateNewCommand;
+    }
 
+    private void setNewCommand(UICommand value)
+    {
+        privateNewCommand = value;
+    }
 
-	//TODO: Check if we really need the following property.
-	private VmTemplate getEntityStronglyTyped()
-	{
-		Object tempVar = getEntity();
-		return (VmTemplate)((tempVar instanceof VmTemplate) ? tempVar : null);
-	}
+    private UICommand privateEditCommand;
 
+    public UICommand getEditCommand()
+    {
+        return privateEditCommand;
+    }
 
-	public TemplateInterfaceListModel()
-	{
-		setTitle("Network Interfaces");
+    private void setEditCommand(UICommand value)
+    {
+        privateEditCommand = value;
+    }
 
-		setNewCommand(new UICommand("New", this));
-		setEditCommand(new UICommand("Edit", this));
-		setRemoveCommand(new UICommand("Remove", this));
+    private UICommand privateRemoveCommand;
 
-		UpdateActionAvailability();
-	}
+    public UICommand getRemoveCommand()
+    {
+        return privateRemoveCommand;
+    }
 
-	@Override
-	protected void OnEntityChanged()
-	{
-		super.OnEntityChanged();
+    private void setRemoveCommand(UICommand value)
+    {
+        privateRemoveCommand = value;
+    }
 
-		getSearchCommand().Execute();
-		UpdateActionAvailability();
-	}
+    // TODO: Check if we really need the following property.
+    private VmTemplate getEntityStronglyTyped()
+    {
+        Object tempVar = getEntity();
+        return (VmTemplate) ((tempVar instanceof VmTemplate) ? tempVar : null);
+    }
 
-	@Override
-	public void Search()
-	{
-		if (getEntityStronglyTyped() != null)
-		{
-			super.Search();
-		}
-	}
+    public TemplateInterfaceListModel()
+    {
+        setTitle("Network Interfaces");
 
-	@Override
-	protected void SyncSearch()
-	{
-		if (getEntity() == null)
-		{
-			return;
-		}
+        setNewCommand(new UICommand("New", this));
+        setEditCommand(new UICommand("Edit", this));
+        setRemoveCommand(new UICommand("Remove", this));
 
-		super.SyncSearch(VdcQueryType.GetTemplateInterfacesByTemplateId, new GetVmTemplateParameters(getEntityStronglyTyped().getId()));
-	}
+        UpdateActionAvailability();
+    }
 
-	@Override
-	protected void AsyncSearch()
-	{
-		super.AsyncSearch();
+    @Override
+    protected void OnEntityChanged()
+    {
+        super.OnEntityChanged();
 
-		setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetTemplateInterfacesByTemplateId, new GetVmTemplateParameters(getEntityStronglyTyped().getId())));
-		setItems(getAsyncResult().getData());
-	}
+        getSearchCommand().Execute();
+        UpdateActionAvailability();
+    }
 
-	private void New()
-	{
-		if (getWindow() != null)
-		{
-			return;
-		}
+    @Override
+    public void Search()
+    {
+        if (getEntityStronglyTyped() != null)
+        {
+            super.Search();
+        }
+    }
 
-		VmInterfaceModel model = new VmInterfaceModel();
-		setWindow(model);
-		model.setTitle("New Network Interface");
-		model.setIsNew(true);
+    @Override
+    protected void SyncSearch()
+    {
+        if (getEntity() == null)
+        {
+            return;
+        }
 
-		AsyncDataProvider.GetClusterNetworkList(new AsyncQuery(this,
-		new INewAsyncCallback() {
-			@Override
-			public void OnSuccess(Object target, Object returnValue) {
+        super.SyncSearch(VdcQueryType.GetTemplateInterfacesByTemplateId,
+                new GetVmTemplateParameters(getEntityStronglyTyped().getId()));
+    }
 
-			TemplateInterfaceListModel vmInterfaceListModel = (TemplateInterfaceListModel)target;
-			java.util.ArrayList<network> network_list = returnValue != null ? (java.util.ArrayList<network>)returnValue : new java.util.ArrayList<network>();
-			vmInterfaceListModel.PostGetClusterNetworkList_New(network_list);
+    @Override
+    protected void AsyncSearch()
+    {
+        super.AsyncSearch();
 
-			}
-		}),getEntityStronglyTyped().getvds_group_id());
-	}
+        setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetTemplateInterfacesByTemplateId,
+                new GetVmTemplateParameters(getEntityStronglyTyped().getId())));
+        setItems(getAsyncResult().getData());
+    }
 
-	public void PostGetClusterNetworkList_New(java.util.ArrayList<network> network_list)
-	{
-		java.util.ArrayList<network> networks = new java.util.ArrayList<network>();
-		for (network a : network_list)
-		{
-			if (a.getStatus() == NetworkStatus.Operational)
-			{
-				networks.add(a);
-			}
-		}
+    private void New()
+    {
+        if (getWindow() != null)
+        {
+            return;
+        }
 
-		java.util.ArrayList<VmNetworkInterface> nics = Linq.<VmNetworkInterface>Cast(getItems());
-		int nicCount = nics.size();
-		String newNicName = DataProvider.GetNewNicName(nics);
+        VmInterfaceModel model = new VmInterfaceModel();
+        setWindow(model);
+        model.setTitle("New Network Interface");
+        model.setIsNew(true);
 
-		VmInterfaceModel model = (VmInterfaceModel)getWindow();
-		model.getNetwork().setItems(networks);
-		model.getNetwork().setSelectedItem(networks.size() > 0 ? networks.get(0) : null);
-		model.getNicType().setItems(DataProvider.GetNicTypeList(getEntityStronglyTyped().getos(), false));
-		model.getNicType().setSelectedItem(DataProvider.GetDefaultNicType(getEntityStronglyTyped().getos()));
-		model.getName().setEntity(newNicName);
-		model.getMAC().setIsAvailable(false);
+        AsyncDataProvider.GetClusterNetworkList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
 
-		UICommand tempVar = new UICommand("OnSave", this);
-		tempVar.setTitle("OK");
-		tempVar.setIsDefault(true);
-		model.getCommands().add(tempVar);
-		UICommand tempVar2 = new UICommand("Cancel", this);
-		tempVar2.setTitle("Cancel");
-		tempVar2.setIsCancel(true);
-		model.getCommands().add(tempVar2);
-	}
+                        TemplateInterfaceListModel vmInterfaceListModel = (TemplateInterfaceListModel) target;
+                        java.util.ArrayList<network> network_list =
+                                returnValue != null ? (java.util.ArrayList<network>) returnValue
+                                        : new java.util.ArrayList<network>();
+                        vmInterfaceListModel.PostGetClusterNetworkList_New(network_list);
 
-	private void Edit()
-	{
-		if (getWindow() != null)
-		{
-			return;
-		}
+                    }
+                }), getEntityStronglyTyped().getvds_group_id());
+    }
 
-		VmInterfaceModel model = new VmInterfaceModel();
-		setWindow(model);
-		model.setTitle("Edit Network Interface");
+    public void PostGetClusterNetworkList_New(java.util.ArrayList<network> network_list)
+    {
+        java.util.ArrayList<network> networks = new java.util.ArrayList<network>();
+        for (network a : network_list)
+        {
+            if (a.getStatus() == NetworkStatus.Operational)
+            {
+                networks.add(a);
+            }
+        }
 
-		AsyncDataProvider.GetClusterNetworkList(new AsyncQuery(this,
-		new INewAsyncCallback() {
-			@Override
-			public void OnSuccess(Object target, Object returnValue) {
+        java.util.ArrayList<VmNetworkInterface> nics = Linq.<VmNetworkInterface> Cast(getItems());
+        int nicCount = nics.size();
+        String newNicName = DataProvider.GetNewNicName(nics);
 
-			TemplateInterfaceListModel vmInterfaceListModel = (TemplateInterfaceListModel)target;
-			java.util.ArrayList<network> network_list = returnValue != null ? (java.util.ArrayList<network>)returnValue : new java.util.ArrayList<network>();
-			vmInterfaceListModel.PostGetClusterNetworkList_Edit(network_list);
+        VmInterfaceModel model = (VmInterfaceModel) getWindow();
+        model.getNetwork().setItems(networks);
+        model.getNetwork().setSelectedItem(networks.size() > 0 ? networks.get(0) : null);
+        model.getNicType().setItems(DataProvider.GetNicTypeList(getEntityStronglyTyped().getos(), false));
+        model.getNicType().setSelectedItem(DataProvider.GetDefaultNicType(getEntityStronglyTyped().getos()));
+        model.getName().setEntity(newNicName);
+        model.getMAC().setIsAvailable(false);
 
-			}
-		}),getEntityStronglyTyped().getvds_group_id());
-	}
+        UICommand tempVar = new UICommand("OnSave", this);
+        tempVar.setTitle("OK");
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this);
+        tempVar2.setTitle("Cancel");
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
+    }
 
-	public void PostGetClusterNetworkList_Edit(java.util.ArrayList<network> network_list)
-	{
-		VmNetworkInterface nic = (VmNetworkInterface)getSelectedItem();
-		int nicCount = Linq.<VmNetworkInterface>Cast(getItems()).size();
-		java.util.ArrayList<network> networks = new java.util.ArrayList<network>();
-		for (network a : network_list)
-		{
-			if (a.getStatus() == NetworkStatus.Operational)
-			{
-				networks.add(a);
-			}
-		}
+    private void Edit()
+    {
+        if (getWindow() != null)
+        {
+            return;
+        }
 
-		VmInterfaceModel model = (VmInterfaceModel)getWindow();
-		model.getNetwork().setItems(networks);
-		network network = null;
-		for (network a : networks)
-		{
-			if (StringHelper.stringsEqual(a.getname(), nic.getNetworkName()))
-			{
-				network = a;
-				break;
-			}
-		}
-		model.getNetwork().setSelectedItem(network);
+        VmInterfaceModel model = new VmInterfaceModel();
+        setWindow(model);
+        model.setTitle("Edit Network Interface");
 
-		Integer selectedNicType = nic.getType();
-		java.util.ArrayList<VmInterfaceType> nicTypes = DataProvider.GetNicTypeList(getEntityStronglyTyped().getos(), VmInterfaceType.forValue(selectedNicType) == VmInterfaceType.rtl8139_pv);
-		model.getNicType().setItems(nicTypes);
+        AsyncDataProvider.GetClusterNetworkList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
 
-		if (selectedNicType == null || !nicTypes.contains(VmInterfaceType.forValue(selectedNicType)))
-		{
-			selectedNicType = DataProvider.GetDefaultNicType(getEntityStronglyTyped().getos()).getValue();
-		}
+                        TemplateInterfaceListModel vmInterfaceListModel = (TemplateInterfaceListModel) target;
+                        java.util.ArrayList<network> network_list =
+                                returnValue != null ? (java.util.ArrayList<network>) returnValue
+                                        : new java.util.ArrayList<network>();
+                        vmInterfaceListModel.PostGetClusterNetworkList_Edit(network_list);
 
-		model.getNicType().setSelectedItem(VmInterfaceType.forValue(selectedNicType));
+                    }
+                }), getEntityStronglyTyped().getvds_group_id());
+    }
 
-		model.getName().setEntity(nic.getName());
-		model.getMAC().setIsAvailable(false);
+    public void PostGetClusterNetworkList_Edit(java.util.ArrayList<network> network_list)
+    {
+        VmNetworkInterface nic = (VmNetworkInterface) getSelectedItem();
+        int nicCount = Linq.<VmNetworkInterface> Cast(getItems()).size();
+        java.util.ArrayList<network> networks = new java.util.ArrayList<network>();
+        for (network a : network_list)
+        {
+            if (a.getStatus() == NetworkStatus.Operational)
+            {
+                networks.add(a);
+            }
+        }
 
+        VmInterfaceModel model = (VmInterfaceModel) getWindow();
+        model.getNetwork().setItems(networks);
+        network network = null;
+        for (network a : networks)
+        {
+            if (StringHelper.stringsEqual(a.getname(), nic.getNetworkName()))
+            {
+                network = a;
+                break;
+            }
+        }
+        model.getNetwork().setSelectedItem(network);
 
-		UICommand tempVar = new UICommand("OnSave", this);
-		tempVar.setTitle("OK");
-		tempVar.setIsDefault(true);
-		model.getCommands().add(tempVar);
-		UICommand tempVar2 = new UICommand("Cancel", this);
-		tempVar2.setTitle("Cancel");
-		tempVar2.setIsCancel(true);
-		model.getCommands().add(tempVar2);
-	}
+        Integer selectedNicType = nic.getType();
+        java.util.ArrayList<VmInterfaceType> nicTypes =
+                DataProvider.GetNicTypeList(getEntityStronglyTyped().getos(),
+                        VmInterfaceType.forValue(selectedNicType) == VmInterfaceType.rtl8139_pv);
+        model.getNicType().setItems(nicTypes);
 
-	private void OnSave()
-	{
-		VmInterfaceModel model = (VmInterfaceModel)getWindow();
-		VmNetworkInterface nic = model.getIsNew() ? new VmNetworkInterface() : (VmNetworkInterface)Cloner.clone((VmNetworkInterface)getSelectedItem());
+        if (selectedNicType == null || !nicTypes.contains(VmInterfaceType.forValue(selectedNicType)))
+        {
+            selectedNicType = DataProvider.GetDefaultNicType(getEntityStronglyTyped().getos()).getValue();
+        }
 
-		if (!model.Validate())
-		{
-			return;
-		}
+        model.getNicType().setSelectedItem(VmInterfaceType.forValue(selectedNicType));
 
-		//Save changes.
-		nic.setName((String)model.getName().getEntity());
-		nic.setNetworkName(((network)model.getNetwork().getSelectedItem()).getname());
-		if (model.getNicType().getSelectedItem() == null)
-		{
-			nic.setType(null);
-		}
-		else
-		{
-			nic.setType(((VmInterfaceType)model.getNicType().getSelectedItem()).getValue());
-		}
-		nic.setMacAddress(model.getMAC().getIsChangable() ? (model.getMAC().getEntity() == null ? null : ((String)(model.getMAC().getEntity())).toLowerCase()) : model.getIsNew() ? "" : nic.getMacAddress());
+        model.getName().setEntity(nic.getName());
+        model.getMAC().setIsAvailable(false);
 
+        UICommand tempVar = new UICommand("OnSave", this);
+        tempVar.setTitle("OK");
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this);
+        tempVar2.setTitle("Cancel");
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
+    }
 
-		if (model.getIsNew())
-		{
-			Frontend.RunMultipleAction(VdcActionType.AddVmTemplateInterface, new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new AddVmTemplateInterfaceParameters(getEntityStronglyTyped().getId(), nic) })),
-		new IFrontendMultipleActionAsyncCallback() {
-			@Override
-			public void Executed(FrontendMultipleActionAsyncResult  result) {
+    private void OnSave()
+    {
+        VmInterfaceModel model = (VmInterfaceModel) getWindow();
+        VmNetworkInterface nic =
+                model.getIsNew() ? new VmNetworkInterface() : (VmNetworkInterface) Cloner.clone(getSelectedItem());
 
-				Cancel();
+        if (!model.Validate())
+        {
+            return;
+        }
 
-			}
-		}, null);
-		}
-		else
-		{
-			Frontend.RunMultipleAction(VdcActionType.UpdateVmTemplateInterface, new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new AddVmTemplateInterfaceParameters(getEntityStronglyTyped().getId(), nic) })),
-		new IFrontendMultipleActionAsyncCallback() {
-			@Override
-			public void Executed(FrontendMultipleActionAsyncResult  result) {
+        // Save changes.
+        nic.setName((String) model.getName().getEntity());
+        nic.setNetworkName(((network) model.getNetwork().getSelectedItem()).getname());
+        if (model.getNicType().getSelectedItem() == null)
+        {
+            nic.setType(null);
+        }
+        else
+        {
+            nic.setType(((VmInterfaceType) model.getNicType().getSelectedItem()).getValue());
+        }
+        nic.setMacAddress(model.getMAC().getIsChangable() ? (model.getMAC().getEntity() == null ? null
+                : ((String) (model.getMAC().getEntity())).toLowerCase()) : model.getIsNew() ? "" : nic.getMacAddress());
 
-				Cancel();
+        if (model.getIsNew())
+        {
+            Frontend.RunMultipleAction(VdcActionType.AddVmTemplateInterface,
+                    new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new AddVmTemplateInterfaceParameters(getEntityStronglyTyped().getId(),
+                            nic) })),
+                    new IFrontendMultipleActionAsyncCallback() {
+                        @Override
+                        public void Executed(FrontendMultipleActionAsyncResult result) {
 
-			}
-		}, null);
-		}
-	}
+                            Cancel();
 
-	private void remove()
-	{
-		if (getWindow() != null)
-		{
-			return;
-		}
+                        }
+                    },
+                    null);
+        }
+        else
+        {
+            Frontend.RunMultipleAction(VdcActionType.UpdateVmTemplateInterface,
+                    new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new AddVmTemplateInterfaceParameters(getEntityStronglyTyped().getId(),
+                            nic) })),
+                    new IFrontendMultipleActionAsyncCallback() {
+                        @Override
+                        public void Executed(FrontendMultipleActionAsyncResult result) {
 
-		ConfirmationModel model = new ConfirmationModel();
-		setWindow(model);
-		model.setTitle("Remove Network Interface(s)");
-		model.setMessage("Network Interface(s)");
+                            Cancel();
 
-		java.util.ArrayList<String> items = new java.util.ArrayList<String>();
-		for (Object item : getSelectedItems())
-		{
-			VmNetworkInterface a = (VmNetworkInterface)item;
-			items.add(a.getName());
-		}
-		model.setItems(items);
+                        }
+                    },
+                    null);
+        }
+    }
 
-		UICommand tempVar = new UICommand("OnRemove", this);
-		tempVar.setTitle("OK");
-		tempVar.setIsDefault(true);
-		model.getCommands().add(tempVar);
-		UICommand tempVar2 = new UICommand("Cancel", this);
-		tempVar2.setTitle("Cancel");
-		tempVar2.setIsCancel(true);
-		model.getCommands().add(tempVar2);
-	}
+    private void remove()
+    {
+        if (getWindow() != null)
+        {
+            return;
+        }
 
-	private void OnRemove()
-	{
-		ConfirmationModel model = (ConfirmationModel)getWindow();
+        ConfirmationModel model = new ConfirmationModel();
+        setWindow(model);
+        model.setTitle("Remove Network Interface(s)");
+        model.setMessage("Network Interface(s)");
 
-		if (model.getProgress() != null)
-		{
-			return;
-		}
+        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        for (Object item : getSelectedItems())
+        {
+            VmNetworkInterface a = (VmNetworkInterface) item;
+            items.add(a.getName());
+        }
+        model.setItems(items);
 
-		java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
-		for (Object item : getSelectedItems())
-		{
-			VmNetworkInterface a = (VmNetworkInterface)item;
-			list.add(new RemoveVmTemplateInterfaceParameters(getEntityStronglyTyped().getId(), a.getId()));
-		}
+        UICommand tempVar = new UICommand("OnRemove", this);
+        tempVar.setTitle("OK");
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this);
+        tempVar2.setTitle("Cancel");
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
+    }
 
-		model.StartProgress(null);
+    private void OnRemove()
+    {
+        ConfirmationModel model = (ConfirmationModel) getWindow();
 
-		Frontend.RunMultipleAction(VdcActionType.RemoveVmTemplateInterface, list,
-		new IFrontendMultipleActionAsyncCallback() {
-			@Override
-			public void Executed(FrontendMultipleActionAsyncResult  result) {
+        if (model.getProgress() != null)
+        {
+            return;
+        }
 
-			ConfirmationModel localModel = (ConfirmationModel)result.getState();
-			localModel.StopProgress();
-			Cancel();
+        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        for (Object item : getSelectedItems())
+        {
+            VmNetworkInterface a = (VmNetworkInterface) item;
+            list.add(new RemoveVmTemplateInterfaceParameters(getEntityStronglyTyped().getId(), a.getId()));
+        }
 
-			}
-		}, model);
-	}
+        model.StartProgress(null);
 
-	private void Cancel()
-	{
-		setWindow(null);
-	}
+        Frontend.RunMultipleAction(VdcActionType.RemoveVmTemplateInterface, list,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
 
-	@Override
-	protected void SelectedItemsChanged()
-	{
-		super.SelectedItemsChanged();
-		UpdateActionAvailability();
-	}
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.StopProgress();
+                        Cancel();
 
-	@Override
-	protected void OnSelectedItemChanged()
-	{
-		super.OnSelectedItemChanged();
-		UpdateActionAvailability();
-	}
+                    }
+                }, model);
+    }
 
-	private void UpdateActionAvailability()
-	{
-		getEditCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1 && getSelectedItem() != null);
-		getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
-	}
+    private void Cancel()
+    {
+        setWindow(null);
+    }
 
-	@Override
-	public void ExecuteCommand(UICommand command)
-	{
-		super.ExecuteCommand(command);
+    @Override
+    protected void SelectedItemsChanged()
+    {
+        super.SelectedItemsChanged();
+        UpdateActionAvailability();
+    }
 
-		if (command == getNewCommand())
-		{
-			New();
-		}
-		else if (command == getEditCommand())
-		{
-			Edit();
-		}
-		else if (command == getRemoveCommand())
-		{
-			remove();
-		}
-		else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
-		{
-			OnSave();
-		}
-		else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
-		{
-			Cancel();
-		}
-		else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
-		{
-			OnRemove();
-		}
-	}
+    @Override
+    protected void OnSelectedItemChanged()
+    {
+        super.OnSelectedItemChanged();
+        UpdateActionAvailability();
+    }
+
+    private void UpdateActionAvailability()
+    {
+        getEditCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1
+                && getSelectedItem() != null);
+        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
+    }
+
+    @Override
+    public void ExecuteCommand(UICommand command)
+    {
+        super.ExecuteCommand(command);
+
+        if (command == getNewCommand())
+        {
+            New();
+        }
+        else if (command == getEditCommand())
+        {
+            Edit();
+        }
+        else if (command == getRemoveCommand())
+        {
+            remove();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        {
+            OnSave();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        {
+            Cancel();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        {
+            OnRemove();
+        }
+    }
+
     @Override
     protected String getListName() {
         return "TemplateInterfaceListModel";

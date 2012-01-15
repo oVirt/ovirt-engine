@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 public class HostEventListModel extends EventListModel
 {
 
+    @Override
     public VDS getEntity()
     {
         return (VDS) super.getEntity();

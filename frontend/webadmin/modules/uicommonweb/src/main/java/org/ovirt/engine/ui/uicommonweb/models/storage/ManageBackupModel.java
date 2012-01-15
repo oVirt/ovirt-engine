@@ -1,183 +1,183 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.core.common.interfaces.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 @SuppressWarnings("unused")
 public abstract class ManageBackupModel extends SearchableListModel
 {
 
-	private UICommand privateRestoreCommand;
-	public UICommand getRestoreCommand()
-	{
-		return privateRestoreCommand;
-	}
-	private void setRestoreCommand(UICommand value)
-	{
-		privateRestoreCommand = value;
-	}
-	private UICommand privateRemoveCommand;
-	public UICommand getRemoveCommand()
-	{
-		return privateRemoveCommand;
-	}
-	private void setRemoveCommand(UICommand value)
-	{
-		privateRemoveCommand = value;
-	}
+    private UICommand privateRestoreCommand;
 
+    public UICommand getRestoreCommand()
+    {
+        return privateRestoreCommand;
+    }
 
+    private void setRestoreCommand(UICommand value)
+    {
+        privateRestoreCommand = value;
+    }
 
-	public storage_domains getEntity()
-	{
-		return (storage_domains)super.getEntity();
-	}
-	public void setEntity(storage_domains value)
-	{
-		super.setEntity(value);
-	}
+    private UICommand privateRemoveCommand;
 
-	private boolean isRefreshing;
-	public boolean getIsRefreshing()
-	{
-		return isRefreshing;
-	}
-	public void setIsRefreshing(boolean value)
-	{
-		if (isRefreshing != value)
-		{
-			isRefreshing = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("IsRefreshing"));
-		}
-	}
+    public UICommand getRemoveCommand()
+    {
+        return privateRemoveCommand;
+    }
 
+    private void setRemoveCommand(UICommand value)
+    {
+        privateRemoveCommand = value;
+    }
 
-	protected ManageBackupModel()
-	{
-		setRestoreCommand(new UICommand("Restore", this));
-		setRemoveCommand(new UICommand("Remove", this));
-	}
+    @Override
+    public storage_domains getEntity()
+    {
+        return (storage_domains) super.getEntity();
+    }
 
-	protected void remove()
-	{
-	}
+    public void setEntity(storage_domains value)
+    {
+        super.setEntity(value);
+    }
 
-	protected void Restore()
-	{
-	}
+    private boolean isRefreshing;
 
-	protected void Cancel()
-	{
-		CancelConfirm();
-		setWindow(null);
-	}
+    public boolean getIsRefreshing()
+    {
+        return isRefreshing;
+    }
 
-	protected void CancelConfirm()
-	{
-		setConfirmWindow(null);
-	}
+    public void setIsRefreshing(boolean value)
+    {
+        if (isRefreshing != value)
+        {
+            isRefreshing = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsRefreshing"));
+        }
+    }
 
-	@Override
-	protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-	{
-		super.EntityPropertyChanged(sender, e);
+    protected ManageBackupModel()
+    {
+        setRestoreCommand(new UICommand("Restore", this));
+        setRemoveCommand(new UICommand("Remove", this));
+    }
 
-		if (e.PropertyName.equals("storage_domain_shared_status"))
-		{
-			CheckStorageStatus();
-		}
-	}
+    protected void remove()
+    {
+    }
 
-	@Override
-	protected void OnEntityChanged()
-	{
-		super.OnEntityChanged();
+    protected void Restore()
+    {
+    }
 
-		CheckStorageStatus();
-		UpdateActionAvailability();
+    protected void Cancel()
+    {
+        CancelConfirm();
+        setWindow(null);
+    }
 
-		getSearchCommand().Execute();
-	}
+    protected void CancelConfirm()
+    {
+        setConfirmWindow(null);
+    }
 
-	private void CheckStorageStatus()
-	{
-		if (getEntity() != null)
-		{
-			if (getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.InActive || getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Mixed)
-			{
-				setMessage("The Export Domain is inactive. Data can be retrieved only when the Domain is activated");
-			}
-			else if (getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)
-			{
-				setMessage("Export Domain is not attached to any Data Center. Data can be retrieved only when the Domain is attached to a Data Center and is active");
-			}
-			else
-			{
-				setMessage(null);
-			}
-		}
-	}
+    @Override
+    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    {
+        super.EntityPropertyChanged(sender, e);
 
-	@Override
-	protected void OnSelectedItemChanged()
-	{
-		super.OnSelectedItemChanged();
-		UpdateActionAvailability();
-	}
+        if (e.PropertyName.equals("storage_domain_shared_status"))
+        {
+            CheckStorageStatus();
+        }
+    }
 
-	@Override
-	protected void SelectedItemsChanged()
-	{
-		super.SelectedItemsChanged();
-		UpdateActionAvailability();
-	}
+    @Override
+    protected void OnEntityChanged()
+    {
+        super.OnEntityChanged();
 
-	protected void UpdateItems()
-	{
-	}
+        CheckStorageStatus();
+        UpdateActionAvailability();
 
-	private void UpdateActionAvailability()
-	{
-		getRestoreCommand().setIsExecutionAllowed(getEntity() != null && getSelectedItems() != null && getSelectedItems().size() > 0 && getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Active);
+        getSearchCommand().Execute();
+    }
 
-		getRemoveCommand().setIsExecutionAllowed(getEntity() != null && getSelectedItems() != null && getSelectedItems().size() > 0 && getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Active);
-	}
+    private void CheckStorageStatus()
+    {
+        if (getEntity() != null)
+        {
+            if (getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.InActive
+                    || getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Mixed)
+            {
+                setMessage("The Export Domain is inactive. Data can be retrieved only when the Domain is activated");
+            }
+            else if (getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)
+            {
+                setMessage("Export Domain is not attached to any Data Center. Data can be retrieved only when the Domain is attached to a Data Center and is active");
+            }
+            else
+            {
+                setMessage(null);
+            }
+        }
+    }
 
-	@Override
-	public void ExecuteCommand(UICommand command)
-	{
-		super.ExecuteCommand(command);
+    @Override
+    protected void OnSelectedItemChanged()
+    {
+        super.OnSelectedItemChanged();
+        UpdateActionAvailability();
+    }
 
-		if (command == getRestoreCommand())
-		{
-			Restore();
-		}
-		else if (command == getRemoveCommand())
-		{
-			remove();
-		}
-		else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
-		{
-			Cancel();
-		}
-		else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm"))
-		{
-			CancelConfirm();
-		}
-	}
+    @Override
+    protected void SelectedItemsChanged()
+    {
+        super.SelectedItemsChanged();
+        UpdateActionAvailability();
+    }
+
+    protected void UpdateItems()
+    {
+    }
+
+    private void UpdateActionAvailability()
+    {
+        getRestoreCommand().setIsExecutionAllowed(getEntity() != null && getSelectedItems() != null
+                && getSelectedItems().size() > 0
+                && getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Active);
+
+        getRemoveCommand().setIsExecutionAllowed(getEntity() != null && getSelectedItems() != null
+                && getSelectedItems().size() > 0
+                && getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Active);
+    }
+
+    @Override
+    public void ExecuteCommand(UICommand command)
+    {
+        super.ExecuteCommand(command);
+
+        if (command == getRestoreCommand())
+        {
+            Restore();
+        }
+        else if (command == getRemoveCommand())
+        {
+            remove();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        {
+            Cancel();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm"))
+        {
+            CancelConfirm();
+        }
+    }
 }

@@ -1,208 +1,215 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
-import org.ovirt.engine.ui.uicommonweb.models.configure.*;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class RolePermissionListModel extends SearchableListModel
 {
 
-	private UICommand privateRemoveCommand;
-	public UICommand getRemoveCommand()
-	{
-		return privateRemoveCommand;
-	}
-	private void setRemoveCommand(UICommand value)
-	{
-		privateRemoveCommand = value;
-	}
+    private UICommand privateRemoveCommand;
 
+    public UICommand getRemoveCommand()
+    {
+        return privateRemoveCommand;
+    }
 
+    private void setRemoveCommand(UICommand value)
+    {
+        privateRemoveCommand = value;
+    }
 
-	public roles getEntity()
-	{
-		return (roles)super.getEntity();
-	}
-	public void setEntity(roles value)
-	{
-		super.setEntity(value);
-	}
+    @Override
+    public roles getEntity()
+    {
+        return (roles) super.getEntity();
+    }
 
+    public void setEntity(roles value)
+    {
+        super.setEntity(value);
+    }
 
-	public RolePermissionListModel()
-	{
-		setTitle("Role's Permissions");
+    public RolePermissionListModel()
+    {
+        setTitle("Role's Permissions");
 
-		setRemoveCommand(new UICommand("Remove", this));
+        setRemoveCommand(new UICommand("Remove", this));
 
-		setSearchPageSize(1000);
-		
-		UpdateActionAvailability();
-	}
+        setSearchPageSize(1000);
 
-	@Override
-	protected void SyncSearch()
-	{
-		super.SyncSearch();
+        UpdateActionAvailability();
+    }
 
-		AsyncQuery _asyncQuery = new AsyncQuery();
-		_asyncQuery.setModel(this);
-		_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object ReturnValue)
-		{
-			RolePermissionListModel permissionListModel = (RolePermissionListModel)model;
-			permissionListModel.setItems((Iterable)((VdcQueryReturnValue)ReturnValue).getReturnValue());
-		}};
+    @Override
+    protected void SyncSearch()
+    {
+        super.SyncSearch();
 
-		MultilevelAdministrationByRoleIdParameters tempVar = new MultilevelAdministrationByRoleIdParameters(getEntity().getId());
-		tempVar.setRefresh(getIsQueryFirstTime());
-		Frontend.RunQuery(VdcQueryType.GetPermissionByRoleId, tempVar, _asyncQuery);
-	}
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object ReturnValue)
+            {
+                RolePermissionListModel permissionListModel = (RolePermissionListModel) model;
+                permissionListModel.setItems((Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+            }
+        };
 
-	@Override
-	protected void OnEntityChanged()
-	{
-		super.OnEntityChanged();
-		Search();
-	}
+        MultilevelAdministrationByRoleIdParameters tempVar =
+                new MultilevelAdministrationByRoleIdParameters(getEntity().getId());
+        tempVar.setRefresh(getIsQueryFirstTime());
+        Frontend.RunQuery(VdcQueryType.GetPermissionByRoleId, tempVar, _asyncQuery);
+    }
 
-	@Override
-	protected void AsyncSearch()
-	{
-		super.AsyncSearch();
+    @Override
+    protected void OnEntityChanged()
+    {
+        super.OnEntityChanged();
+        Search();
+    }
 
-		if (getEntity() == null)
-		{
-			return;
-		}
+    @Override
+    protected void AsyncSearch()
+    {
+        super.AsyncSearch();
 
-		setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetPermissionByRoleId, new MultilevelAdministrationByRoleIdParameters(getEntity().getId())));
-		setItems(getAsyncResult().getData());
-	}
+        if (getEntity() == null)
+        {
+            return;
+        }
 
-	private void UpdateActionAvailability()
-	{
-		getRemoveCommand().setIsExecutionAllowed(getSelectedItem() != null || (getSelectedItems() != null && getSelectedItems().size() > 0));
+        setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetPermissionByRoleId,
+                new MultilevelAdministrationByRoleIdParameters(getEntity().getId())));
+        setItems(getAsyncResult().getData());
+    }
 
-	}
+    private void UpdateActionAvailability()
+    {
+        getRemoveCommand().setIsExecutionAllowed(getSelectedItem() != null
+                || (getSelectedItems() != null && getSelectedItems().size() > 0));
 
-	@Override
-	protected void OnSelectedItemChanged()
-	{
-		super.OnSelectedItemChanged();
-		UpdateActionAvailability();
-	}
+    }
 
-	@Override
-	protected void SelectedItemsChanged()
-	{
-		super.SelectedItemsChanged();
-		UpdateActionAvailability();
-	}
+    @Override
+    protected void OnSelectedItemChanged()
+    {
+        super.OnSelectedItemChanged();
+        UpdateActionAvailability();
+    }
 
-	public void Cancel()
-	{
-		setWindow(null);
-	}
+    @Override
+    protected void SelectedItemsChanged()
+    {
+        super.SelectedItemsChanged();
+        UpdateActionAvailability();
+    }
 
-	private void remove()
-	{
-		if (getWindow() != null)
-		{
-			return;
-		}
+    public void Cancel()
+    {
+        setWindow(null);
+    }
 
-		ConfirmationModel model = new ConfirmationModel();
-		setWindow(model);
-		model.setTitle("Remove Permission");
-		model.setHashName("remove_permission");
-		model.setMessage("Permission");
+    private void remove()
+    {
+        if (getWindow() != null)
+        {
+            return;
+        }
 
-		java.util.ArrayList<String> items = new java.util.ArrayList<String>();
-		for (Object a : getSelectedItems())
-		{
-			items.add("Role " + ((permissions)a).getRoleName() + " on User " + ((permissions)a).getOwnerName());
-		}
-		model.setItems(items);
+        ConfirmationModel model = new ConfirmationModel();
+        setWindow(model);
+        model.setTitle("Remove Permission");
+        model.setHashName("remove_permission");
+        model.setMessage("Permission");
 
-		UICommand tempVar = new UICommand("OnRemove", this);
-		tempVar.setTitle("OK");
-		tempVar.setIsDefault(true);
-		model.getCommands().add(tempVar);
-		UICommand tempVar2 = new UICommand("Cancel", this);
-		tempVar2.setTitle("Cancel");
-		tempVar2.setIsCancel(true);
-		model.getCommands().add(tempVar2);
-	}
+        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        for (Object a : getSelectedItems())
+        {
+            items.add("Role " + ((permissions) a).getRoleName() + " on User " + ((permissions) a).getOwnerName());
+        }
+        model.setItems(items);
 
-	private void OnRemove()
-	{
-		if (getSelectedItems() != null && getSelectedItems().size() > 0)
-		{
-			ConfirmationModel model = (ConfirmationModel)getWindow();
+        UICommand tempVar = new UICommand("OnRemove", this);
+        tempVar.setTitle("OK");
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this);
+        tempVar2.setTitle("Cancel");
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
+    }
 
-			if (model.getProgress() != null)
-			{
-				return;
-			}
+    private void OnRemove()
+    {
+        if (getSelectedItems() != null && getSelectedItems().size() > 0)
+        {
+            ConfirmationModel model = (ConfirmationModel) getWindow();
 
-			java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
-			for (Object perm : getSelectedItems())
-			{
-				PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes();
-				tempVar.setPermission((permissions)perm);
-				list.add(tempVar);
-			}
+            if (model.getProgress() != null)
+            {
+                return;
+            }
 
+            java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+            for (Object perm : getSelectedItems())
+            {
+                PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes();
+                tempVar.setPermission((permissions) perm);
+                list.add(tempVar);
+            }
 
-			model.StartProgress(null);
+            model.StartProgress(null);
 
-			Frontend.RunMultipleAction(VdcActionType.RemovePermission, list,
-		new IFrontendMultipleActionAsyncCallback() {
-			@Override
-			public void Executed(FrontendMultipleActionAsyncResult  result) {
+            Frontend.RunMultipleAction(VdcActionType.RemovePermission, list,
+                    new IFrontendMultipleActionAsyncCallback() {
+                        @Override
+                        public void Executed(FrontendMultipleActionAsyncResult result) {
 
-				ConfirmationModel localModel = (ConfirmationModel)result.getState();
-				localModel.StopProgress();
-				Cancel();
+                            ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                            localModel.StopProgress();
+                            Cancel();
 
-			}
-		}, model);
-		}
-	}
+                        }
+                    }, model);
+        }
+    }
 
-	@Override
-	public void ExecuteCommand(UICommand command)
-	{
-		super.ExecuteCommand(command);
+    @Override
+    public void ExecuteCommand(UICommand command)
+    {
+        super.ExecuteCommand(command);
 
-		if (command == getRemoveCommand())
-		{
-			remove();
-		}
-		else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
-		{
-			OnRemove();
-		}
-		else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
-		{
-			Cancel();
-		}
-	}
+        if (command == getRemoveCommand())
+        {
+            remove();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        {
+            OnRemove();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        {
+            Cancel();
+        }
+    }
+
     @Override
     protected String getListName() {
         return "RolePermissionListModel";

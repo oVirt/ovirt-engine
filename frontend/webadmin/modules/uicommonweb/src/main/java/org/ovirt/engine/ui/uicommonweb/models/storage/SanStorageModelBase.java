@@ -1,424 +1,472 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicommonweb.validation.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.ObservableCollection;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public abstract class SanStorageModelBase extends SearchableListModel implements IStorageModel
 {
 
-	private UICommand privateUpdateCommand;
-	public UICommand getUpdateCommand()
-	{
-		return privateUpdateCommand;
-	}
-	private void setUpdateCommand(UICommand value)
-	{
-		privateUpdateCommand = value;
-	}
-	private UICommand privateLoginAllCommand;
-	public UICommand getLoginAllCommand()
-	{
-		return privateLoginAllCommand;
-	}
-	private void setLoginAllCommand(UICommand value)
-	{
-		privateLoginAllCommand = value;
-	}
-	private UICommand privateDiscoverTargetsCommand;
-	public UICommand getDiscoverTargetsCommand()
-	{
-		return privateDiscoverTargetsCommand;
-	}
-	private void setDiscoverTargetsCommand(UICommand value)
-	{
-		privateDiscoverTargetsCommand = value;
-	}
+    private UICommand privateUpdateCommand;
 
+    @Override
+    public UICommand getUpdateCommand()
+    {
+        return privateUpdateCommand;
+    }
 
+    private void setUpdateCommand(UICommand value)
+    {
+        privateUpdateCommand = value;
+    }
 
-	private StorageModel privateContainer;
-	public StorageModel getContainer()
-	{
-		return privateContainer;
-	}
-	public void setContainer(StorageModel value)
-	{
-		privateContainer = value;
-	}
-	private StorageDomainType privateRole = StorageDomainType.values()[0];
-	public StorageDomainType getRole()
-	{
-		return privateRole;
-	}
-	public void setRole(StorageDomainType value)
-	{
-		privateRole = value;
-	}
-	public abstract StorageType getType();
+    private UICommand privateLoginAllCommand;
 
-	private EntityModel privateAddress;
-	public EntityModel getAddress()
-	{
-		return privateAddress;
-	}
-	private void setAddress(EntityModel value)
-	{
-		privateAddress = value;
-	}
-	private EntityModel privatePort;
-	public EntityModel getPort()
-	{
-		return privatePort;
-	}
-	private void setPort(EntityModel value)
-	{
-		privatePort = value;
-	}
-	private EntityModel privateUserName;
-	public EntityModel getUserName()
-	{
-		return privateUserName;
-	}
-	private void setUserName(EntityModel value)
-	{
-		privateUserName = value;
-	}
-	private EntityModel privatePassword;
-	public EntityModel getPassword()
-	{
-		return privatePassword;
-	}
-	private void setPassword(EntityModel value)
-	{
-		privatePassword = value;
-	}
-	private EntityModel privateUseUserAuth;
-	public EntityModel getUseUserAuth()
-	{
-		return privateUseUserAuth;
-	}
-	private void setUseUserAuth(EntityModel value)
-	{
-		privateUseUserAuth = value;
-	}
+    public UICommand getLoginAllCommand()
+    {
+        return privateLoginAllCommand;
+    }
 
-	private boolean proposeDiscoverTargets;
-	public boolean getProposeDiscoverTargets()
-	{
-		return proposeDiscoverTargets;
-	}
-	public void setProposeDiscoverTargets(boolean value)
-	{
-		if (proposeDiscoverTargets != value)
-		{
-			proposeDiscoverTargets = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("ProposeDiscoverTargets"));
-		}
-	}
+    private void setLoginAllCommand(UICommand value)
+    {
+        privateLoginAllCommand = value;
+    }
 
-	private boolean isAllLunsSelected;
-	public boolean getIsAllLunsSelected()
-	{
-		return isAllLunsSelected;
-	}
-	public void setIsAllLunsSelected(boolean value)
-	{
-		if (isAllLunsSelected != value)
-		{
-			isAllLunsSelected = value;
-			IsAllLunsSelectedChanged();
-			OnPropertyChanged(new PropertyChangedEventArgs("IsAllLunsSelected"));
-		}
-	}
+    private UICommand privateDiscoverTargetsCommand;
 
+    public UICommand getDiscoverTargetsCommand()
+    {
+        return privateDiscoverTargetsCommand;
+    }
 
-	public boolean loginAllInProgress;
-	public SanTargetModel sanTargetModel;
+    private void setDiscoverTargetsCommand(UICommand value)
+    {
+        privateDiscoverTargetsCommand = value;
+    }
 
-	protected SanStorageModelBase()
-	{
-		setUpdateCommand(new UICommand("Update", this));
-		UICommand tempVar = new UICommand("LoginAll", this);
-		tempVar.setIsExecutionAllowed(false);
-		setLoginAllCommand(tempVar);
-		setDiscoverTargetsCommand(new UICommand("DiscoverTargets", this));
+    private StorageModel privateContainer;
 
-		setAddress(new EntityModel());
-		EntityModel tempVar2 = new EntityModel();
-		tempVar2.setEntity("3260");
-		setPort(tempVar2);
-		setUserName(new EntityModel());
-		setPassword(new EntityModel());
-		EntityModel tempVar3 = new EntityModel();
-		tempVar3.setEntity(false);
-		setUseUserAuth(tempVar3);
-		getUseUserAuth().getEntityChangedEvent().addListener(this);
+    @Override
+    public StorageModel getContainer()
+    {
+        return privateContainer;
+    }
 
-		UpdateUserAuthFields();
-	}
+    @Override
+    public void setContainer(StorageModel value)
+    {
+        privateContainer = value;
+    }
 
-	@Override
-	public void eventRaised(Event ev, Object sender, EventArgs args)
-	{
-		super.eventRaised(ev, sender, args);
+    private StorageDomainType privateRole = StorageDomainType.values()[0];
 
-		if (ev.equals(SanTargetModel.LoggedInEventDefinition))
-		{
-			SanTargetModel_LoggedIn(sender, args);
-		}
-		else if (ev.equals(EntityChangedEventDefinition))
-		{
-			UseUserAuth_EntityChanged(sender, args);
-		}
-	}
+    @Override
+    public StorageDomainType getRole()
+    {
+        return privateRole;
+    }
 
-	private void SanTargetModel_LoggedIn(Object sender, EventArgs args)
-	{
-		VDS host = (VDS)getContainer().getHost().getSelectedItem();
-		if (host == null)
-		{
-			return;
-		}
+    @Override
+    public void setRole(StorageDomainType value)
+    {
+        privateRole = value;
+    }
 
-		SanTargetModel model = (SanTargetModel)sender;
-		sanTargetModel = model;
+    @Override
+    public abstract StorageType getType();
 
-		storage_server_connections tempVar = new storage_server_connections();
-		tempVar.setportal("0");
-		tempVar.setstorage_type(StorageType.ISCSI);
-		tempVar.setuser_name((Boolean)getUseUserAuth().getEntity() ? (String)getUserName().getEntity() : "");
-		tempVar.setpassword((Boolean)getUseUserAuth().getEntity() ? (String)getPassword().getEntity() : "");
-		tempVar.setiqn(model.getName());
-		tempVar.setconnection(model.getAddress());
-		tempVar.setport(String.valueOf(model.getPort()));
-		storage_server_connections connection = tempVar;
+    private EntityModel privateAddress;
 
-		getContainer().StartProgress(null);
+    public EntityModel getAddress()
+    {
+        return privateAddress;
+    }
 
-		Frontend.RunAction(VdcActionType.ConnectStorageToVds, new StorageServerConnectionParametersBase(connection, host.getvds_id()),
-		new IFrontendActionAsyncCallback() {
-			@Override
-			public void Executed(FrontendActionAsyncResult  result) {
+    private void setAddress(EntityModel value)
+    {
+        privateAddress = value;
+    }
 
-			VdcReturnValueBase returnValue = result.getReturnValue();
-			boolean success = returnValue != null && returnValue.getSucceeded();
-			SanStorageModelBase sanStorageModel = (SanStorageModelBase)result.getState();
-			if (success)
-			{
-				sanStorageModel.sanTargetModel.setIsLoggedIn(true);
-				sanStorageModel.sanTargetModel.getLoginCommand().setIsExecutionAllowed(false);
-				sanStorageModel.getContainer().StopProgress();
-				if (!sanStorageModel.loginAllInProgress)
-				{
-					sanStorageModel.UpdateInternal();
-				}
-			}
+    private EntityModel privatePort;
 
-			}
-		}, this);
-	}
+    public EntityModel getPort()
+    {
+        return privatePort;
+    }
 
-	private void LoginAll()
-	{
-		//Cast to list of SanTargetModel because we get call
-		//to this method only from target/LUNs mode.
+    private void setPort(EntityModel value)
+    {
+        privatePort = value;
+    }
 
-		loginAllInProgress = true;
-		boolean updateRequired = false;
-		java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>)getItems();
+    private EntityModel privateUserName;
 
-		for (SanTargetModel item : items)
-		{
-			if (!item.getIsLoggedIn())
-			{
-				item.getLoginCommand().Execute();
-				updateRequired = true;
-			}
-		}
+    public EntityModel getUserName()
+    {
+        return privateUserName;
+    }
 
-		if (updateRequired)
-		{
-			UpdateInternal();
-		}
+    private void setUserName(EntityModel value)
+    {
+        privateUserName = value;
+    }
 
-		loginAllInProgress = false;
-	}
+    private EntityModel privatePassword;
 
-	private void DiscoverTargets()
-	{
-		if (getContainer().getProgress() != null)
-		{
-			return;
-		}
+    public EntityModel getPassword()
+    {
+        return privatePassword;
+    }
 
-		if (!ValidateDiscoverTargetFields())
-		{
-			return;
-		}
+    private void setPassword(EntityModel value)
+    {
+        privatePassword = value;
+    }
 
-		VDS host = (VDS)getContainer().getHost().getSelectedItem();
+    private EntityModel privateUseUserAuth;
 
-		storage_server_connections tempVar = new storage_server_connections();
-		tempVar.setconnection(((String)getAddress().getEntity()).trim());
-		tempVar.setport(((String)getPort().getEntity()).trim());
-		tempVar.setportal("0");
-		tempVar.setstorage_type(StorageType.ISCSI);
-		tempVar.setuser_name((Boolean)getUseUserAuth().getEntity() ? (String)getUserName().getEntity() : "");
-		tempVar.setpassword((Boolean)getUseUserAuth().getEntity() ? (String)getPassword().getEntity() : "");
-		DiscoverSendTargetsQueryParameters parameters = new DiscoverSendTargetsQueryParameters(host.getvds_id(), tempVar);
+    public EntityModel getUseUserAuth()
+    {
+        return privateUseUserAuth;
+    }
 
-		setMessage(null);
-		getContainer().StartProgress(null);
+    private void setUseUserAuth(EntityModel value)
+    {
+        privateUseUserAuth = value;
+    }
 
-		Frontend.RunQuery(VdcQueryType.DiscoverSendTargets, parameters, new AsyncQuery(this,
-		new INewAsyncCallback() {
-			@Override
-			public void OnSuccess(Object target, Object returnValue) {
+    private boolean proposeDiscoverTargets;
 
-			SanStorageModelBase model = (SanStorageModelBase)target;
-			Object result = ((VdcQueryReturnValue)returnValue).getReturnValue();
-			model.PostDiscoverTargetsInternal(result != null ? (java.util.ArrayList<storage_server_connections>)result : new java.util.ArrayList<storage_server_connections>());
+    public boolean getProposeDiscoverTargets()
+    {
+        return proposeDiscoverTargets;
+    }
 
-			}
-		}, true));
-	}
+    public void setProposeDiscoverTargets(boolean value)
+    {
+        if (proposeDiscoverTargets != value)
+        {
+            proposeDiscoverTargets = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("ProposeDiscoverTargets"));
+        }
+    }
 
-	private void PostDiscoverTargetsInternal(java.util.ArrayList<storage_server_connections> items)
-	{
-		java.util.ArrayList<SanTargetModel> newItems = new java.util.ArrayList<SanTargetModel>();
+    private boolean isAllLunsSelected;
 
-		for (storage_server_connections a : items)
-		{
-			SanTargetModel tempVar = new SanTargetModel();
-			tempVar.setAddress(a.getconnection());
-			tempVar.setPort(a.getport());
-			tempVar.setName(a.getiqn());
-			tempVar.setLuns(new ObservableCollection<LunModel>());
-			SanTargetModel model = tempVar;
-			model.getLoggedInEvent().addListener(this);
+    public boolean getIsAllLunsSelected()
+    {
+        return isAllLunsSelected;
+    }
 
-			newItems.add(model);
-		}
+    public void setIsAllLunsSelected(boolean value)
+    {
+        if (isAllLunsSelected != value)
+        {
+            isAllLunsSelected = value;
+            IsAllLunsSelectedChanged();
+            OnPropertyChanged(new PropertyChangedEventArgs("IsAllLunsSelected"));
+        }
+    }
 
-		getContainer().StopProgress();
+    public boolean loginAllInProgress;
+    public SanTargetModel sanTargetModel;
 
-		if (items.isEmpty())
-		{
-			setMessage("No new devices were found. This may be due to either: incorrect multipath configuration on the Host or wrong address of the iscsi target or a failure to authenticate on the target device. Please consult your Storage Administrator.");
-		}
+    protected SanStorageModelBase()
+    {
+        setUpdateCommand(new UICommand("Update", this));
+        UICommand tempVar = new UICommand("LoginAll", this);
+        tempVar.setIsExecutionAllowed(false);
+        setLoginAllCommand(tempVar);
+        setDiscoverTargetsCommand(new UICommand("DiscoverTargets", this));
 
-		PostDiscoverTargets(newItems);
-	}
+        setAddress(new EntityModel());
+        EntityModel tempVar2 = new EntityModel();
+        tempVar2.setEntity("3260");
+        setPort(tempVar2);
+        setUserName(new EntityModel());
+        setPassword(new EntityModel());
+        EntityModel tempVar3 = new EntityModel();
+        tempVar3.setEntity(false);
+        setUseUserAuth(tempVar3);
+        getUseUserAuth().getEntityChangedEvent().addListener(this);
 
-	protected void PostDiscoverTargets(java.util.ArrayList<SanTargetModel> newItems)
-	{
-	}
+        UpdateUserAuthFields();
+    }
 
-	private boolean ValidateDiscoverTargetFields()
-	{
-		getContainer().getHost().ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
+    @Override
+    public void eventRaised(Event ev, Object sender, EventArgs args)
+    {
+        super.eventRaised(ev, sender, args);
 
-		getAddress().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+        if (ev.equals(SanTargetModel.LoggedInEventDefinition))
+        {
+            SanTargetModel_LoggedIn(sender, args);
+        }
+        else if (ev.equals(EntityChangedEventDefinition))
+        {
+            UseUserAuth_EntityChanged(sender, args);
+        }
+    }
 
-		IntegerValidation tempVar = new IntegerValidation();
-		tempVar.setMinimum(0);
-		tempVar.setMaximum(65535);
-		getPort().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+    private void SanTargetModel_LoggedIn(Object sender, EventArgs args)
+    {
+        VDS host = (VDS) getContainer().getHost().getSelectedItem();
+        if (host == null)
+        {
+            return;
+        }
 
-		if ((Boolean)getUseUserAuth().getEntity())
-		{
-			getUserName().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
-			getPassword().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
-		}
+        SanTargetModel model = (SanTargetModel) sender;
+        sanTargetModel = model;
 
-		return getContainer().getHost().getIsValid() && getAddress().getIsValid() && getPort().getIsValid() && getUserName().getIsValid() && getPassword().getIsValid();
-	}
+        storage_server_connections tempVar = new storage_server_connections();
+        tempVar.setportal("0");
+        tempVar.setstorage_type(StorageType.ISCSI);
+        tempVar.setuser_name((Boolean) getUseUserAuth().getEntity() ? (String) getUserName().getEntity() : "");
+        tempVar.setpassword((Boolean) getUseUserAuth().getEntity() ? (String) getPassword().getEntity() : "");
+        tempVar.setiqn(model.getName());
+        tempVar.setconnection(model.getAddress());
+        tempVar.setport(String.valueOf(model.getPort()));
+        storage_server_connections connection = tempVar;
 
-	public boolean Validate()
-	{
-		return true;
-	}
+        getContainer().StartProgress(null);
 
-	private void UseUserAuth_EntityChanged(Object sender, EventArgs args)
-	{
-		UpdateUserAuthFields();
-	}
+        Frontend.RunAction(VdcActionType.ConnectStorageToVds, new StorageServerConnectionParametersBase(connection,
+                host.getvds_id()),
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendActionAsyncResult result) {
 
-	private void UpdateUserAuthFields()
-	{
-		getUserName().setIsValid(true);
-		getUserName().setIsChangable((Boolean)getUseUserAuth().getEntity());
+                        VdcReturnValueBase returnValue = result.getReturnValue();
+                        boolean success = returnValue != null && returnValue.getSucceeded();
+                        SanStorageModelBase sanStorageModel = (SanStorageModelBase) result.getState();
+                        if (success)
+                        {
+                            sanStorageModel.sanTargetModel.setIsLoggedIn(true);
+                            sanStorageModel.sanTargetModel.getLoginCommand().setIsExecutionAllowed(false);
+                            sanStorageModel.getContainer().StopProgress();
+                            if (!sanStorageModel.loginAllInProgress)
+                            {
+                                sanStorageModel.UpdateInternal();
+                            }
+                        }
 
-		getPassword().setIsValid(true);
-		getPassword().setIsChangable((Boolean)getUseUserAuth().getEntity());
-	}
+                    }
+                }, this);
+    }
 
-	@Override
-	public void ExecuteCommand(UICommand command)
-	{
-		super.ExecuteCommand(command);
+    private void LoginAll()
+    {
+        // Cast to list of SanTargetModel because we get call
+        // to this method only from target/LUNs mode.
 
-		if (command == getUpdateCommand())
-		{
-			Update();
-		}
-		else if (command == getLoginAllCommand())
-		{
-			LoginAll();
-		}
-		else if (command == getDiscoverTargetsCommand())
-		{
-			DiscoverTargets();
-		}
-	}
+        loginAllInProgress = true;
+        boolean updateRequired = false;
+        java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>) getItems();
 
-	protected void Update()
-	{
-		UpdateInternal();
-		setIsValid(true);
-	}
+        for (SanTargetModel item : items)
+        {
+            if (!item.getIsLoggedIn())
+            {
+                item.getLoginCommand().Execute();
+                updateRequired = true;
+            }
+        }
 
-	protected void UpdateInternal()
-	{
-	}
+        if (updateRequired)
+        {
+            UpdateInternal();
+        }
 
-	protected void UpdateLoginAllAvailability()
-	{
-		java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>)getItems();
+        loginAllInProgress = false;
+    }
 
-		//Allow login all command when there at least one target that may be logged in.
-		boolean allow = false;
+    private void DiscoverTargets()
+    {
+        if (getContainer().getProgress() != null)
+        {
+            return;
+        }
 
-		for (SanTargetModel item : items)
-		{
-			if (!item.getIsLoggedIn())
-			{
-				allow = true;
-				break;
-			}
-		}
+        if (!ValidateDiscoverTargetFields())
+        {
+            return;
+        }
 
-		getLoginAllCommand().setIsExecutionAllowed(allow);
-	}
+        VDS host = (VDS) getContainer().getHost().getSelectedItem();
 
-	protected void IsAllLunsSelectedChanged()
-	{
-	}
+        storage_server_connections tempVar = new storage_server_connections();
+        tempVar.setconnection(((String) getAddress().getEntity()).trim());
+        tempVar.setport(((String) getPort().getEntity()).trim());
+        tempVar.setportal("0");
+        tempVar.setstorage_type(StorageType.ISCSI);
+        tempVar.setuser_name((Boolean) getUseUserAuth().getEntity() ? (String) getUserName().getEntity() : "");
+        tempVar.setpassword((Boolean) getUseUserAuth().getEntity() ? (String) getPassword().getEntity() : "");
+        DiscoverSendTargetsQueryParameters parameters =
+                new DiscoverSendTargetsQueryParameters(host.getvds_id(), tempVar);
+
+        setMessage(null);
+        getContainer().StartProgress(null);
+
+        Frontend.RunQuery(VdcQueryType.DiscoverSendTargets, parameters, new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+
+                        SanStorageModelBase model = (SanStorageModelBase) target;
+                        Object result = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        model.PostDiscoverTargetsInternal(result != null ? (java.util.ArrayList<storage_server_connections>) result
+                                : new java.util.ArrayList<storage_server_connections>());
+
+                    }
+                },
+                true));
+    }
+
+    private void PostDiscoverTargetsInternal(java.util.ArrayList<storage_server_connections> items)
+    {
+        java.util.ArrayList<SanTargetModel> newItems = new java.util.ArrayList<SanTargetModel>();
+
+        for (storage_server_connections a : items)
+        {
+            SanTargetModel tempVar = new SanTargetModel();
+            tempVar.setAddress(a.getconnection());
+            tempVar.setPort(a.getport());
+            tempVar.setName(a.getiqn());
+            tempVar.setLuns(new ObservableCollection<LunModel>());
+            SanTargetModel model = tempVar;
+            model.getLoggedInEvent().addListener(this);
+
+            newItems.add(model);
+        }
+
+        getContainer().StopProgress();
+
+        if (items.isEmpty())
+        {
+            setMessage("No new devices were found. This may be due to either: incorrect multipath configuration on the Host or wrong address of the iscsi target or a failure to authenticate on the target device. Please consult your Storage Administrator.");
+        }
+
+        PostDiscoverTargets(newItems);
+    }
+
+    protected void PostDiscoverTargets(java.util.ArrayList<SanTargetModel> newItems)
+    {
+    }
+
+    private boolean ValidateDiscoverTargetFields()
+    {
+        getContainer().getHost().ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
+
+        getAddress().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+
+        IntegerValidation tempVar = new IntegerValidation();
+        tempVar.setMinimum(0);
+        tempVar.setMaximum(65535);
+        getPort().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+
+        if ((Boolean) getUseUserAuth().getEntity())
+        {
+            getUserName().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+            getPassword().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+        }
+
+        return getContainer().getHost().getIsValid() && getAddress().getIsValid() && getPort().getIsValid()
+                && getUserName().getIsValid() && getPassword().getIsValid();
+    }
+
+    @Override
+    public boolean Validate()
+    {
+        return true;
+    }
+
+    private void UseUserAuth_EntityChanged(Object sender, EventArgs args)
+    {
+        UpdateUserAuthFields();
+    }
+
+    private void UpdateUserAuthFields()
+    {
+        getUserName().setIsValid(true);
+        getUserName().setIsChangable((Boolean) getUseUserAuth().getEntity());
+
+        getPassword().setIsValid(true);
+        getPassword().setIsChangable((Boolean) getUseUserAuth().getEntity());
+    }
+
+    @Override
+    public void ExecuteCommand(UICommand command)
+    {
+        super.ExecuteCommand(command);
+
+        if (command == getUpdateCommand())
+        {
+            Update();
+        }
+        else if (command == getLoginAllCommand())
+        {
+            LoginAll();
+        }
+        else if (command == getDiscoverTargetsCommand())
+        {
+            DiscoverTargets();
+        }
+    }
+
+    protected void Update()
+    {
+        UpdateInternal();
+        setIsValid(true);
+    }
+
+    protected void UpdateInternal()
+    {
+    }
+
+    protected void UpdateLoginAllAvailability()
+    {
+        java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>) getItems();
+
+        // Allow login all command when there at least one target that may be logged in.
+        boolean allow = false;
+
+        for (SanTargetModel item : items)
+        {
+            if (!item.getIsLoggedIn())
+            {
+                allow = true;
+                break;
+            }
+        }
+
+        getLoginAllCommand().setIsExecutionAllowed(allow);
+    }
+
+    protected void IsAllLunsSelectedChanged()
+    {
+    }
 }

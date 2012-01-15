@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 public class DataCenterEventListModel extends EventListModel
 {
 
+    @Override
     public storage_pool getEntity()
     {
         return (storage_pool) ((super.getEntity() instanceof storage_pool) ? super.getEntity() : null);

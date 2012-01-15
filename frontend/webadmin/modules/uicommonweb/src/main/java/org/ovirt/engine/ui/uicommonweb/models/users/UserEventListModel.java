@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 public class UserEventListModel extends EventListModel
 {
 
+    @Override
     public DbUser getEntity()
     {
         return (DbUser) ((super.getEntity() instanceof DbUser) ? super.getEntity() : null);

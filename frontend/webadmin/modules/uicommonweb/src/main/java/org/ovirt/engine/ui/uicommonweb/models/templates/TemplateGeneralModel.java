@@ -1,424 +1,468 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.uicompat.Translator;
 
 @SuppressWarnings("unused")
 public class TemplateGeneralModel extends EntityModel
 {
 
+    @Override
+    public VmTemplate getEntity()
+    {
+        if (super.getEntity() == null)
+        {
+            return null;
+        }
+        if (super.getEntity() instanceof VmTemplate)
+        {
+            return (VmTemplate) super.getEntity();
+        }
+        else
+        {
+            java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> pair =
+                    (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>) super.getEntity();
+            return pair.getKey();
+        }
+    }
 
-	public VmTemplate getEntity()
-	{
-		if(super.getEntity() == null)
-		{
-			return null;
-		}
-		if (super.getEntity() instanceof VmTemplate)
-		{
-			return (VmTemplate)super.getEntity();
-		}
-		else
-		{
-			java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> pair = (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>)super.getEntity();
-			return pair.getKey();
-		}
-	}
-	public void setEntity(VmTemplate value)
-	{
-		super.setEntity(value);
-	}
+    public void setEntity(VmTemplate value)
+    {
+        super.setEntity(value);
+    }
 
-	private String name;
-	public String getName()
-	{
-		return name;
-	}
-	public void setName(String value)
-	{
-		if (!StringHelper.stringsEqual(name, value))
-		{
-			name = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("Name"));
-		}
-	}
+    private String name;
 
-	private String description;
-	public String getDescription()
-	{
-		return description;
-	}
-	public void setDescription(String value)
-	{
-		if (!StringHelper.stringsEqual(description, value))
-		{
-			description = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("Description"));
-		}
-	}
+    public String getName()
+    {
+        return name;
+    }
 
-	private String hostCluster;
-	public String getHostCluster()
-	{
-		return hostCluster;
-	}
-	public void setHostCluster(String value)
-	{
-		if (!StringHelper.stringsEqual(hostCluster, value))
-		{
-			hostCluster = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("HostCluster"));
-		}
-	}
+    public void setName(String value)
+    {
+        if (!StringHelper.stringsEqual(name, value))
+        {
+            name = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+        }
+    }
 
-	private String definedMemory;
-	public String getDefinedMemory()
-	{
-		return definedMemory;
-	}
-	public void setDefinedMemory(String value)
-	{
-		if (!StringHelper.stringsEqual(definedMemory, value))
-		{
-			definedMemory = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("DefinedMemory"));
-		}
-	}
+    private String description;
 
-	private String cpuInfo;
-	public String getCpuInfo()
-	{
-		return cpuInfo;
-	}
-	public void setCpuInfo(String value)
-	{
-		if (!StringHelper.stringsEqual(cpuInfo, value))
-		{
-			cpuInfo = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("CpuInfo"));
-		}
-	}
+    public String getDescription()
+    {
+        return description;
+    }
 
-	private String os;
-	public String getOS()
-	{
-		return os;
-	}
-	public void setOS(String value)
-	{
-		if (!StringHelper.stringsEqual(os, value))
-		{
-			os = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("OS"));
-		}
-	}
+    public void setDescription(String value)
+    {
+        if (!StringHelper.stringsEqual(description, value))
+        {
+            description = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Description"));
+        }
+    }
 
-	private String defaultDisplayType;
-	public String getDefaultDisplayType()
-	{
-		return defaultDisplayType;
-	}
-	public void setDefaultDisplayType(String value)
-	{
-		if (!StringHelper.stringsEqual(defaultDisplayType, value))
-		{
-			defaultDisplayType = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType"));
-		}
-	}
+    private String hostCluster;
 
-	private String origin;
-	public String getOrigin()
-	{
-		return origin;
-	}
-	public void setOrigin(String value)
-	{
-		if (!StringHelper.stringsEqual(origin, value))
-		{
-			origin = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("Origin"));
-		}
-	}
+    public String getHostCluster()
+    {
+        return hostCluster;
+    }
 
-	private boolean hasHighlyAvailable;
-	public boolean getHasHighlyAvailable()
-	{
-		return hasHighlyAvailable;
-	}
-	public void setHasHighlyAvailable(boolean value)
-	{
-		if (hasHighlyAvailable != value)
-		{
-			hasHighlyAvailable = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("HasHighlyAvailable"));
-		}
-	}
+    public void setHostCluster(String value)
+    {
+        if (!StringHelper.stringsEqual(hostCluster, value))
+        {
+            hostCluster = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("HostCluster"));
+        }
+    }
 
-	private boolean isHighlyAvailable;
-	public boolean getIsHighlyAvailable()
-	{
-		return isHighlyAvailable;
-	}
-	public void setIsHighlyAvailable(boolean value)
-	{
-		if (isHighlyAvailable != value)
-		{
-			isHighlyAvailable = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("IsHighlyAvailable"));
-		}
-	}
+    private String definedMemory;
 
-	private boolean hasPriority;
-	public boolean getHasPriority()
-	{
-		return hasPriority;
-	}
-	public void setHasPriority(boolean value)
-	{
-		if (hasPriority != value)
-		{
-			hasPriority = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("HasPriority"));
-		}
-	}
+    public String getDefinedMemory()
+    {
+        return definedMemory;
+    }
 
-	private String priority;
-	public String getPriority()
-	{
-		return priority;
-	}
-	public void setPriority(String value)
-	{
-		if (!StringHelper.stringsEqual(priority, value))
-		{
-			priority = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("Priority"));
-		}
-	}
+    public void setDefinedMemory(String value)
+    {
+        if (!StringHelper.stringsEqual(definedMemory, value))
+        {
+            definedMemory = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("DefinedMemory"));
+        }
+    }
 
-	private boolean hasMonitorCount;
-	public boolean getHasMonitorCount()
-	{
-		return hasMonitorCount;
-	}
-	public void setHasMonitorCount(boolean value)
-	{
-		if (hasMonitorCount != value)
-		{
-			hasMonitorCount = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("HasMonitorCount"));
-		}
-	}
+    private String cpuInfo;
 
-	private int monitorCount;
-	public int getMonitorCount()
-	{
-		return monitorCount;
-	}
-	public void setMonitorCount(int value)
-	{
-		if (monitorCount != value)
-		{
-			monitorCount = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("MonitorCount"));
-		}
-	}
+    public String getCpuInfo()
+    {
+        return cpuInfo;
+    }
 
-	private boolean hasDomain;
-	public boolean getHasDomain()
-	{
-		return hasDomain;
-	}
-	public void setHasDomain(boolean value)
-	{
-		if (hasDomain != value)
-		{
-			hasDomain = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("HasDomain"));
-		}
-	}
+    public void setCpuInfo(String value)
+    {
+        if (!StringHelper.stringsEqual(cpuInfo, value))
+        {
+            cpuInfo = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("CpuInfo"));
+        }
+    }
 
-	private boolean hasTimeZone;
-	public boolean getHasTimeZone()
-	{
-		return hasTimeZone;
-	}
-	public void setHasTimeZone(boolean value)
-	{
-		if (hasTimeZone != value)
-		{
-			hasTimeZone = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("HasTimeZone"));
-		}
-	}
+    private String os;
 
-	private String domain;
-	public String getDomain()
-	{
-		return domain;
-	}
-	public void setDomain(String value)
-	{
-		if (!StringHelper.stringsEqual(domain, value))
-		{
-			domain = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("Domain"));
-		}
-	}
+    public String getOS()
+    {
+        return os;
+    }
 
-	private String timeZone;
-	public String getTimeZone()
-	{
-		return timeZone;
-	}
-	public void setTimeZone(String value)
-	{
-		if (!StringHelper.stringsEqual(timeZone, value))
-		{
-			timeZone = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("TimeZone"));
-		}
-	}
+    public void setOS(String value)
+    {
+        if (!StringHelper.stringsEqual(os, value))
+        {
+            os = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("OS"));
+        }
+    }
 
-	private boolean hasUsbPolicy;
-	public boolean getHasUsbPolicy()
-	{
-		return hasUsbPolicy;
-	}
-	public void setHasUsbPolicy(boolean value)
-	{
-		if (hasUsbPolicy != value)
-		{
-			hasUsbPolicy = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("HasUsbPolicy"));
-		}
-	}
+    private String defaultDisplayType;
 
-	private String usbPolicy;
-	public String getUsbPolicy()
-	{
-		return usbPolicy;
-	}
-	public void setUsbPolicy(String value)
-	{
-		if (!StringHelper.stringsEqual(usbPolicy, value))
-		{
-			usbPolicy = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("UsbPolicy"));
-		}
-	}
+    public String getDefaultDisplayType()
+    {
+        return defaultDisplayType;
+    }
 
-	private boolean isStateless;
-	public boolean getIsStateless()
-	{
-		return isStateless;
-	}
-	public void setIsStateless(boolean value)
-	{
-		if (isStateless != value)
-		{
-			isStateless = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("IsStateless"));
-		}
-	}
+    public void setDefaultDisplayType(String value)
+    {
+        if (!StringHelper.stringsEqual(defaultDisplayType, value))
+        {
+            defaultDisplayType = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType"));
+        }
+    }
 
+    private String origin;
 
-	public TemplateGeneralModel()
-	{
-		setTitle("General");
-	}
+    public String getOrigin()
+    {
+        return origin;
+    }
 
-	@Override
-	protected void OnEntityChanged()
-	{
-		super.OnEntityChanged();
+    public void setOrigin(String value)
+    {
+        if (!StringHelper.stringsEqual(origin, value))
+        {
+            origin = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Origin"));
+        }
+    }
 
-		if (super.getEntity() != null)
-		{
-			UpdateProperties();
-		}
-	}
+    private boolean hasHighlyAvailable;
 
-	@Override
-	protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-	{
-		super.EntityPropertyChanged(sender, e);
+    public boolean getHasHighlyAvailable()
+    {
+        return hasHighlyAvailable;
+    }
 
-		UpdateProperties();
-	}
+    public void setHasHighlyAvailable(boolean value)
+    {
+        if (hasHighlyAvailable != value)
+        {
+            hasHighlyAvailable = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("HasHighlyAvailable"));
+        }
+    }
 
-	private void UpdateProperties()
-	{
-		VmTemplate template = getEntity();
+    private boolean isHighlyAvailable;
 
-		setName(template.getname());
-		setDescription(template.getdescription());
-		setHostCluster(template.getvds_group_name());
-		setDefinedMemory(template.getmem_size_mb() + " MB");
-		setIsHighlyAvailable(template.getauto_startup());
-		setPriority(PriorityToString(template.getpriority()));
-		setMonitorCount(template.getnum_of_monitors());
-		setCpuInfo(StringFormat.format("%1$s (%2$s Socket(s), %3$s Core(s) per Socket)", template.getnum_of_cpus(), template.getnum_of_sockets(), template.getcpu_per_socket()));
+    public boolean getIsHighlyAvailable()
+    {
+        return isHighlyAvailable;
+    }
 
-		Translator translator = EnumTranslator.Create(VmOsType.class);
-		setOS(translator.get(template.getos()));
+    public void setIsHighlyAvailable(boolean value)
+    {
+        if (isHighlyAvailable != value)
+        {
+            isHighlyAvailable = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsHighlyAvailable"));
+        }
+    }
 
-		translator = EnumTranslator.Create(DisplayType.class);
-		setDefaultDisplayType(translator.get(template.getdefault_display_type()));
+    private boolean hasPriority;
 
-		translator = EnumTranslator.Create(OriginType.class);
-		setOrigin(translator.get(template.getorigin()));
+    public boolean getHasPriority()
+    {
+        return hasPriority;
+    }
 
-		setHasDomain(DataProvider.IsWindowsOsType(template.getos()));
-		setDomain(template.getdomain());
+    public void setHasPriority(boolean value)
+    {
+        if (hasPriority != value)
+        {
+            hasPriority = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("HasPriority"));
+        }
+    }
 
-		setHasTimeZone(DataProvider.IsWindowsOsType(template.getos()));
-		setTimeZone(template.gettime_zone());
+    private String priority;
 
-		setHasUsbPolicy(true);
-		translator = EnumTranslator.Create(UsbPolicy.class);
-		setUsbPolicy(translator.get(template.getusb_policy()));
+    public String getPriority()
+    {
+        return priority;
+    }
 
-		setIsStateless(template.getis_stateless());
-	}
+    public void setPriority(String value)
+    {
+        if (!StringHelper.stringsEqual(priority, value))
+        {
+            priority = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Priority"));
+        }
+    }
 
-	public String PriorityToString(int value)
-	{
-		String priorityStr;
-		int highPriority = DataProvider.GetMaxVmPriority();
-		int roundedPriority = DataProvider.RoundPriority(value);
+    private boolean hasMonitorCount;
 
-		if (roundedPriority == 1)
-		{
-			priorityStr = "Low";
-		}
-		else if (roundedPriority == highPriority / 2)
-		{
-			priorityStr = "Medium";
-		}
-		else if (roundedPriority == highPriority)
-		{
-			priorityStr = "High";
-		}
-		else
-		{
-			priorityStr = "Unknown";
-		}
+    public boolean getHasMonitorCount()
+    {
+        return hasMonitorCount;
+    }
 
-		return priorityStr;
-	}
+    public void setHasMonitorCount(boolean value)
+    {
+        if (hasMonitorCount != value)
+        {
+            hasMonitorCount = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("HasMonitorCount"));
+        }
+    }
+
+    private int monitorCount;
+
+    public int getMonitorCount()
+    {
+        return monitorCount;
+    }
+
+    public void setMonitorCount(int value)
+    {
+        if (monitorCount != value)
+        {
+            monitorCount = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("MonitorCount"));
+        }
+    }
+
+    private boolean hasDomain;
+
+    public boolean getHasDomain()
+    {
+        return hasDomain;
+    }
+
+    public void setHasDomain(boolean value)
+    {
+        if (hasDomain != value)
+        {
+            hasDomain = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("HasDomain"));
+        }
+    }
+
+    private boolean hasTimeZone;
+
+    public boolean getHasTimeZone()
+    {
+        return hasTimeZone;
+    }
+
+    public void setHasTimeZone(boolean value)
+    {
+        if (hasTimeZone != value)
+        {
+            hasTimeZone = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("HasTimeZone"));
+        }
+    }
+
+    private String domain;
+
+    public String getDomain()
+    {
+        return domain;
+    }
+
+    public void setDomain(String value)
+    {
+        if (!StringHelper.stringsEqual(domain, value))
+        {
+            domain = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Domain"));
+        }
+    }
+
+    private String timeZone;
+
+    public String getTimeZone()
+    {
+        return timeZone;
+    }
+
+    public void setTimeZone(String value)
+    {
+        if (!StringHelper.stringsEqual(timeZone, value))
+        {
+            timeZone = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("TimeZone"));
+        }
+    }
+
+    private boolean hasUsbPolicy;
+
+    public boolean getHasUsbPolicy()
+    {
+        return hasUsbPolicy;
+    }
+
+    public void setHasUsbPolicy(boolean value)
+    {
+        if (hasUsbPolicy != value)
+        {
+            hasUsbPolicy = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("HasUsbPolicy"));
+        }
+    }
+
+    private String usbPolicy;
+
+    public String getUsbPolicy()
+    {
+        return usbPolicy;
+    }
+
+    public void setUsbPolicy(String value)
+    {
+        if (!StringHelper.stringsEqual(usbPolicy, value))
+        {
+            usbPolicy = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("UsbPolicy"));
+        }
+    }
+
+    private boolean isStateless;
+
+    public boolean getIsStateless()
+    {
+        return isStateless;
+    }
+
+    public void setIsStateless(boolean value)
+    {
+        if (isStateless != value)
+        {
+            isStateless = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsStateless"));
+        }
+    }
+
+    public TemplateGeneralModel()
+    {
+        setTitle("General");
+    }
+
+    @Override
+    protected void OnEntityChanged()
+    {
+        super.OnEntityChanged();
+
+        if (super.getEntity() != null)
+        {
+            UpdateProperties();
+        }
+    }
+
+    @Override
+    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    {
+        super.EntityPropertyChanged(sender, e);
+
+        UpdateProperties();
+    }
+
+    private void UpdateProperties()
+    {
+        VmTemplate template = getEntity();
+
+        setName(template.getname());
+        setDescription(template.getdescription());
+        setHostCluster(template.getvds_group_name());
+        setDefinedMemory(template.getmem_size_mb() + " MB");
+        setIsHighlyAvailable(template.getauto_startup());
+        setPriority(PriorityToString(template.getpriority()));
+        setMonitorCount(template.getnum_of_monitors());
+        setCpuInfo(StringFormat.format("%1$s (%2$s Socket(s), %3$s Core(s) per Socket)",
+                template.getnum_of_cpus(),
+                template.getnum_of_sockets(),
+                template.getcpu_per_socket()));
+
+        Translator translator = EnumTranslator.Create(VmOsType.class);
+        setOS(translator.get(template.getos()));
+
+        translator = EnumTranslator.Create(DisplayType.class);
+        setDefaultDisplayType(translator.get(template.getdefault_display_type()));
+
+        translator = EnumTranslator.Create(OriginType.class);
+        setOrigin(translator.get(template.getorigin()));
+
+        setHasDomain(DataProvider.IsWindowsOsType(template.getos()));
+        setDomain(template.getdomain());
+
+        setHasTimeZone(DataProvider.IsWindowsOsType(template.getos()));
+        setTimeZone(template.gettime_zone());
+
+        setHasUsbPolicy(true);
+        translator = EnumTranslator.Create(UsbPolicy.class);
+        setUsbPolicy(translator.get(template.getusb_policy()));
+
+        setIsStateless(template.getis_stateless());
+    }
+
+    public String PriorityToString(int value)
+    {
+        String priorityStr;
+        int highPriority = DataProvider.GetMaxVmPriority();
+        int roundedPriority = DataProvider.RoundPriority(value);
+
+        if (roundedPriority == 1)
+        {
+            priorityStr = "Low";
+        }
+        else if (roundedPriority == highPriority / 2)
+        {
+            priorityStr = "Medium";
+        }
+        else if (roundedPriority == highPriority)
+        {
+            priorityStr = "High";
+        }
+        else
+        {
+            priorityStr = "Unknown";
+        }
+
+        return priorityStr;
+    }
 }

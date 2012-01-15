@@ -1,423 +1,449 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
+import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.DiskType;
+import org.ovirt.engine.core.common.businessentities.NetworkStatus;
+import org.ovirt.engine.core.common.businessentities.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class VmGuideModel extends GuideModel
 {
-	public final String VmConfigureNetworkInterfacesAction = "Configure Network Interfaces";
-	public final String VmAddAnotherNetworkInterfaceAction = "Add another Network Interface";
-	public final String VmConfigureVirtualDisksAction = "Configure Virtual Disks";
-	public final String VmAddAnotherVirtualDiskAction = "Add another Virtual Disk";
+    public final String VmConfigureNetworkInterfacesAction = "Configure Network Interfaces";
+    public final String VmAddAnotherNetworkInterfaceAction = "Add another Network Interface";
+    public final String VmConfigureVirtualDisksAction = "Configure Virtual Disks";
+    public final String VmAddAnotherVirtualDiskAction = "Add another Virtual Disk";
 
+    @Override
+    public VM getEntity()
+    {
+        return (VM) super.getEntity();
+    }
 
-	public VM getEntity()
-	{
-		return (VM)super.getEntity();
-	}
-	public void setEntity(VM value)
-	{
-		super.setEntity(value);
-	}
+    public void setEntity(VM value)
+    {
+        super.setEntity(value);
+    }
 
+    @Override
+    protected void OnEntityChanged()
+    {
+        super.OnEntityChanged();
+        UpdateOptions();
+    }
 
-	@Override
-	protected void OnEntityChanged()
-	{
-		super.OnEntityChanged();
-		UpdateOptions();
-	}
+    private void UpdateOptions()
+    {
+        getCompulsoryActions().clear();
+        getOptionalActions().clear();
 
-	private void UpdateOptions()
-	{
-		getCompulsoryActions().clear();
-		getOptionalActions().clear();
+        if (getEntity() != null)
+        {
+            // Add NIC action.
+            UICommand addNicAction = new UICommand("AddNetwork", this);
 
-		if (getEntity() != null)
-		{
-			//Add NIC action.
-			UICommand addNicAction = new UICommand("AddNetwork", this);
+            java.util.ArrayList<VmNetworkInterface> nics = DataProvider.GetVmNicList(getEntity().getvm_guid());
+            if (nics.isEmpty())
+            {
+                addNicAction.setTitle(VmConfigureNetworkInterfacesAction);
+                getCompulsoryActions().add(addNicAction);
+            }
+            else
+            {
+                addNicAction.setTitle(VmAddAnotherNetworkInterfaceAction);
+                getOptionalActions().add(addNicAction);
+            }
 
-			java.util.ArrayList<VmNetworkInterface> nics = DataProvider.GetVmNicList(getEntity().getvm_guid());
-			if (nics.isEmpty())
-			{
-				addNicAction.setTitle(VmConfigureNetworkInterfacesAction);
-				getCompulsoryActions().add(addNicAction);
-			}
-			else
-			{
-				addNicAction.setTitle(VmAddAnotherNetworkInterfaceAction);
-				getOptionalActions().add(addNicAction);
-			}
+            // Add disk action.
+            UICommand addDiskAction = new UICommand("AddDisk", this);
 
+            java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(getEntity().getvm_guid());
+            if (disks.isEmpty())
+            {
+                addDiskAction.setTitle(VmConfigureVirtualDisksAction);
+                getCompulsoryActions().add(addDiskAction);
+            }
+            else
+            {
+                // if (!(Entity.vm_os == VmOsType.WindowsXP && disks.Count(a => a.disk_interface == DiskInterface.IDE) >
+                // 2))
+                int ideDiskCount = 0;
+                for (DiskImage a : disks)
+                {
+                    if (a.getdisk_interface() == DiskInterface.IDE)
+                    {
+                        ideDiskCount++;
+                    }
 
-			//Add disk action.
-			UICommand addDiskAction = new UICommand("AddDisk", this);
+                }
+                if (!(getEntity().getvm_os() == VmOsType.WindowsXP && ideDiskCount > 2))
+                {
+                    addDiskAction.setTitle(VmAddAnotherVirtualDiskAction);
+                    getOptionalActions().add(addDiskAction);
+                }
+            }
+        }
+    }
 
-			java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(getEntity().getvm_guid());
-			if (disks.isEmpty())
-			{
-				addDiskAction.setTitle(VmConfigureVirtualDisksAction);
-				getCompulsoryActions().add(addDiskAction);
-			}
-			else
-			{
-				//                    if (!(Entity.vm_os == VmOsType.WindowsXP && disks.Count(a => a.disk_interface == DiskInterface.IDE) > 2))
-				int ideDiskCount = 0;
-				for (DiskImage a : disks)
-				{
-					if (a.getdisk_interface() == DiskInterface.IDE)
-					{
-						ideDiskCount++;
-					}
+    public void AddNetwork()
+    {
+        if (getEntity() != null)
+        {
+            java.util.ArrayList<VmNetworkInterface> nics = DataProvider.GetVmNicList(getEntity().getvm_guid());
+            int nicCount = nics.size();
+            String newNicName = DataProvider.GetNewNicName(nics);
 
-				}
-				if (!(getEntity().getvm_os() == VmOsType.WindowsXP && ideDiskCount > 2))
-				{
-					addDiskAction.setTitle(VmAddAnotherVirtualDiskAction);
-					getOptionalActions().add(addDiskAction);
-				}
-			}
-		}
-	}
+            // var networks = DataProvider.GetNetworkList(Entity.vds_group_id)
+            // .Where(a => a.Status == NetworkStatus.Operational)
+            // .ToList();
+            java.util.ArrayList<network> networks = new java.util.ArrayList<network>();
+            for (network a : DataProvider.GetClusterNetworkList(getEntity().getvds_group_id()))
+            {
+                if (a.getStatus() == NetworkStatus.Operational)
+                {
+                    networks.add(a);
+                }
+            }
 
-	public void AddNetwork()
-	{
-		if (getEntity() != null)
-		{
-			java.util.ArrayList<VmNetworkInterface> nics = DataProvider.GetVmNicList(getEntity().getvm_guid());
-			int nicCount = nics.size();
-			String newNicName = DataProvider.GetNewNicName(nics);
+            VmInterfaceModel model = new VmInterfaceModel();
+            setWindow(model);
+            model.setTitle("New Network Interface");
+            model.setHashName("new_network_interface_vms_guide");
+            model.setIsNew(true);
+            model.getNetwork().setItems(networks);
+            model.getNetwork().setSelectedItem(networks.size() > 0 ? networks.get(0) : null);
+            model.getNicType().setItems(DataProvider.GetNicTypeList(getEntity().getvm_os(), false));
+            model.getNicType().setSelectedItem(DataProvider.GetDefaultNicType(getEntity().getvm_os()));
+            model.getName().setEntity(newNicName);
+            model.getMAC().setIsChangable(false);
 
-			//var networks = DataProvider.GetNetworkList(Entity.vds_group_id)
-			//    .Where(a => a.Status == NetworkStatus.Operational)
-			//    .ToList();
-			java.util.ArrayList<network> networks = new java.util.ArrayList<network>();
-			for (network a : DataProvider.GetClusterNetworkList(getEntity().getvds_group_id()))
-			{
-				if (a.getStatus() == NetworkStatus.Operational)
-				{
-					networks.add(a);
-				}
-			}
+            UICommand tempVar = new UICommand("OnAddNetwork", this);
+            tempVar.setTitle("OK");
+            tempVar.setIsDefault(true);
+            model.getCommands().add(tempVar);
+            UICommand tempVar2 = new UICommand("Cancel", this);
+            tempVar2.setTitle("Cancel");
+            tempVar2.setIsCancel(true);
+            model.getCommands().add(tempVar2);
+        }
+    }
 
-			VmInterfaceModel model = new VmInterfaceModel();
-			setWindow(model);
-			model.setTitle("New Network Interface");
-			model.setHashName("new_network_interface_vms_guide");
-			model.setIsNew(true);
-			model.getNetwork().setItems(networks);
-			model.getNetwork().setSelectedItem(networks.size() > 0 ? networks.get(0) : null);
-			model.getNicType().setItems(DataProvider.GetNicTypeList(getEntity().getvm_os(), false));
-			model.getNicType().setSelectedItem(DataProvider.GetDefaultNicType(getEntity().getvm_os()));
-			model.getName().setEntity(newNicName);
-			model.getMAC().setIsChangable(false);
+    private void OnAddNetwork()
+    {
+        if (getEntity() != null)
+        {
+            VmInterfaceModel model = (VmInterfaceModel) getWindow();
 
+            if (model.getProgress() != null)
+            {
+                return;
+            }
 
-			UICommand tempVar = new UICommand("OnAddNetwork", this);
-			tempVar.setTitle("OK");
-			tempVar.setIsDefault(true);
-			model.getCommands().add(tempVar);
-			UICommand tempVar2 = new UICommand("Cancel", this);
-			tempVar2.setTitle("Cancel");
-			tempVar2.setIsCancel(true);
-			model.getCommands().add(tempVar2);
-		}
-	}
+            if (!model.Validate())
+            {
+                return;
+            }
 
-	private void OnAddNetwork()
-	{
-		if (getEntity() != null)
-		{
-			VmInterfaceModel model = (VmInterfaceModel)getWindow();
+            // Save changes.
+            Integer _type;
+            if (model.getNicType().getSelectedItem() == null)
+            {
+                _type = null;
+            }
+            else
+            {
+                _type = ((VmInterfaceType) model.getNicType().getSelectedItem()).getValue();
+            }
 
-			if (model.getProgress() != null)
-			{
-				return;
-			}
+            VmNetworkInterface vmNetworkInterface = new VmNetworkInterface();
+            vmNetworkInterface.setName((String) model.getName().getEntity());
+            vmNetworkInterface.setNetworkName(((network) model.getNetwork().getSelectedItem()).getname());
+            vmNetworkInterface.setType(_type);
+            vmNetworkInterface.setMacAddress(model.getMAC().getIsChangable() ? (model.getMAC().getEntity() == null ? null
+                    : ((String) (model.getMAC().getEntity())).toLowerCase())
+                    : "");
 
-			if (!model.Validate())
-			{
-				return;
-			}
+            AddVmInterfaceParameters parameters =
+                    new AddVmInterfaceParameters(getEntity().getvm_guid(), vmNetworkInterface);
 
-			//Save changes.
-			Integer _type;
-			if(model.getNicType().getSelectedItem() == null)
-			{
-				_type = null;
-			}
-			else
-			{
-				_type = ((VmInterfaceType) model.getNicType().getSelectedItem()).getValue();
-			}
+            model.StartProgress(null);
 
-			VmNetworkInterface vmNetworkInterface = new VmNetworkInterface();
-			vmNetworkInterface.setName((String)model.getName().getEntity());
-			vmNetworkInterface.setNetworkName(((network)model.getNetwork().getSelectedItem()).getname());
-			vmNetworkInterface.setType(_type);
-			vmNetworkInterface.setMacAddress(model.getMAC().getIsChangable() ? (model.getMAC().getEntity() == null ? null : ((String)(model.getMAC().getEntity())).toLowerCase()) : "");
+            Frontend.RunAction(VdcActionType.AddVmInterface, parameters,
+                    new IFrontendActionAsyncCallback() {
+                        @Override
+                        public void Executed(FrontendActionAsyncResult result) {
 
-			AddVmInterfaceParameters parameters = new AddVmInterfaceParameters(getEntity().getvm_guid(), vmNetworkInterface);
+                            VmGuideModel vmGuideModel = (VmGuideModel) result.getState();
+                            vmGuideModel.getWindow().StopProgress();
+                            VdcReturnValueBase returnValueBase = result.getReturnValue();
+                            if (returnValueBase != null && returnValueBase.getSucceeded())
+                            {
+                                vmGuideModel.Cancel();
+                                vmGuideModel.PostAction();
+                            }
 
-			model.StartProgress(null);
+                        }
+                    }, this);
+        }
+        else
+        {
+            Cancel();
+        }
+    }
 
-			Frontend.RunAction(VdcActionType.AddVmInterface, parameters,
-		new IFrontendActionAsyncCallback() {
-			@Override
-			public void Executed(FrontendActionAsyncResult  result) {
+    public void AddDisk()
+    {
+        if (getEntity() != null)
+        {
+            java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(getEntity().getvm_guid());
+            boolean hasDisks = disks.size() > 0;
 
-				VmGuideModel vmGuideModel = (VmGuideModel)result.getState();
-				vmGuideModel.getWindow().StopProgress();
-				VdcReturnValueBase returnValueBase = result.getReturnValue();
-				if (returnValueBase != null && returnValueBase.getSucceeded())
-				{
-					vmGuideModel.Cancel();
-					vmGuideModel.PostAction();
-				}
+            DiskModel model = new DiskModel();
+            setWindow(model);
+            model.setTitle("New Virtual Disk");
+            model.setHashName("new_virtual_disk");
+            model.setIsNew(true);
 
-			}
-		}, this);
-		}
-		else
-		{
-			Cancel();
-		}
-	}
+            // var storageDomains = DataProvider.GetStorageDomainList(Entity.storage_pool_id)
+            // .Where(a => a.storage_domain_type != StorageDomainType.ISO && a.storage_domain_type !=
+            // StorageDomainType.ImportExport
+            // && a.status == StorageDomainStatus.Active);
 
-	public void AddDisk()
-	{
-		if (getEntity() != null)
-		{
-			java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(getEntity().getvm_guid());
-			boolean hasDisks = disks.size() > 0;
+            java.util.ArrayList<storage_domains> storageDomains = new java.util.ArrayList<storage_domains>();
+            for (storage_domains a : DataProvider.GetStorageDomainList(getEntity().getstorage_pool_id()))
+            {
+                if (a.getstorage_domain_type() != StorageDomainType.ISO
+                        && a.getstorage_domain_type() != StorageDomainType.ImportExport
+                        && a.getstatus() == StorageDomainStatus.Active)
+                {
+                    storageDomains.add(a);
+                }
+            }
+            model.getStorageDomain().setItems(storageDomains);
 
-			DiskModel model = new DiskModel();
-			setWindow(model);
-			model.setTitle("New Virtual Disk");
-			model.setHashName("new_virtual_disk");
-			model.setIsNew(true);
+            storage_domains storage = null;
+            boolean storage_available = false;
 
-			//var storageDomains = DataProvider.GetStorageDomainList(Entity.storage_pool_id)
-			//    .Where(a => a.storage_domain_type != StorageDomainType.ISO && a.storage_domain_type != StorageDomainType.ImportExport
-			//    && a.status == StorageDomainStatus.Active);
+            if (hasDisks)
+            {
+                // the StorageDomain value should be the one that all other Disks are on
+                // (although this field is not-available, we use its value in the 'OnSave' method):
+                storage = DataProvider.GetStorageDomainByDiskList(disks);
+                if (storage != null && Linq.IsSDItemExistInList(storageDomains, storage.getid()))
+                {
+                    storage_available = true;
+                }
+            }
+            else // first disk -> just choose the first from the list of available storage-domains:
+            {
+                storage = Linq.<storage_domains> FirstOrDefault(storageDomains);
+                storage_available = true;
+            }
 
-			java.util.ArrayList<storage_domains> storageDomains = new java.util.ArrayList<storage_domains>();
-			for (storage_domains a : DataProvider.GetStorageDomainList(getEntity().getstorage_pool_id()))
-			{
-				if (a.getstorage_domain_type() != StorageDomainType.ISO && a.getstorage_domain_type() != StorageDomainType.ImportExport && a.getstatus() == StorageDomainStatus.Active)
-				{
-					storageDomains.add(a);
-				}
-			}
-			model.getStorageDomain().setItems(storageDomains);
+            model.getStorageDomain().setSelectedItem(storage);
+            model.getStorageDomain().setIsAvailable(!hasDisks);
 
-			storage_domains storage = null;
-			boolean storage_available = false;
+            if (model.getStorageDomain() != null && model.getStorageDomain().getSelectedItem() != null)
+            {
+                DataProvider.GetWipeAfterDeleteDefaultsByStorageType(((storage_domains) model.getStorageDomain()
+                        .getSelectedItem()).getstorage_type(), model.getWipeAfterDelete(), true);
+            }
 
-			if (hasDisks)
-			{
-				// the StorageDomain value should be the one that all other Disks are on
-				// (although this field is not-available, we use its value in the 'OnSave' method):
-				storage = DataProvider.GetStorageDomainByDiskList(disks);
-				if (storage != null && Linq.IsSDItemExistInList(storageDomains, storage.getid()))
-				{
-					storage_available = true;
-				}
-			}
-			else // first disk -> just choose the first from the list of available storage-domains:
-			{
-				storage = Linq.<storage_domains>FirstOrDefault(storageDomains);
-				storage_available = true;
-			}
+            java.util.ArrayList<DiskImageBase> presets =
+                    DataProvider.GetDiskPresetList(getEntity().getvm_type(),
+                            model.getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
+                                    : storage.getstorage_type());
 
-			model.getStorageDomain().setSelectedItem(storage);
-			model.getStorageDomain().setIsAvailable(!hasDisks);
+            model.getPreset().setItems(presets);
+            // model.Preset.SelectedItem = hasDisks
+            // ? presets.FirstOrDefault(a => a.disk_type == DiskType.Data)
+            // : presets.FirstOrDefault(a => a.disk_type == DiskType.System);
 
-			if (model.getStorageDomain() != null && model.getStorageDomain().getSelectedItem() != null)
-			{
-				DataProvider.GetWipeAfterDeleteDefaultsByStorageType(((storage_domains)model.getStorageDomain().getSelectedItem()).getstorage_type(), model.getWipeAfterDelete(), true);
-			}
+            model.getPreset().setSelectedItem(null);
+            for (DiskImageBase a : presets)
+            {
+                if ((hasDisks && a.getdisk_type() == DiskType.Data)
+                        || (!hasDisks && a.getdisk_type() == DiskType.System))
+                {
+                    model.getPreset().setSelectedItem(a);
+                    break;
+                }
+            }
 
-			java.util.ArrayList<DiskImageBase> presets = DataProvider.GetDiskPresetList(getEntity().getvm_type(), model.getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN : storage.getstorage_type());
+            model.getInterface().setItems(DataProvider.GetDiskInterfaceList(getEntity().getvm_os(),
+                    DataProvider.GetClusterById(getEntity().getvds_group_id()).getcompatibility_version()));
+            model.getInterface().setSelectedItem(DataProvider.GetDefaultDiskInterface(getEntity().getvm_os(), disks));
 
-			model.getPreset().setItems(presets);
-			//model.Preset.SelectedItem = hasDisks
-			//    ? presets.FirstOrDefault(a => a.disk_type == DiskType.Data)
-			//    : presets.FirstOrDefault(a => a.disk_type == DiskType.System);
+            // bool hasBootableDisk = disks.Any(a => a.boot);
+            boolean hasBootableDisk = false;
+            for (DiskImage a : disks)
+            {
+                if (a.getboot())
+                {
+                    hasBootableDisk = true;
+                    break;
+                }
+            }
+            model.getIsBootable().setEntity(!hasBootableDisk);
+            if (hasBootableDisk)
+            {
+                model.getIsBootable().setIsChangable(false);
+                model.getIsBootable().getChangeProhibitionReasons().add("There can be only one bootable disk defined.");
+            }
 
-			model.getPreset().setSelectedItem(null);
-			for (DiskImageBase a : presets)
-			{
-				if ((hasDisks && a.getdisk_type() == DiskType.Data) || (!hasDisks && a.getdisk_type() == DiskType.System))
-				{
-					model.getPreset().setSelectedItem(a);
-					break;
-				}
-			}
+            if (storage == null || storage_available == false)
+            {
+                String cantCreateMessage =
+                        "There is no active Storage Domain to create the Disk in. Please activate a Storage Domain.";
+                if (hasDisks)
+                {
+                    cantCreateMessage = "Error in retrieving the relevant Storage Domain.";
+                    if (storage != null && storage.getstorage_name() != null)
+                    {
+                        cantCreateMessage =
+                                StringFormat.format("'%1$s' Storage Domain is not active. Please activate it.",
+                                        storage.getstorage_name());
+                    }
+                }
 
-			model.getInterface().setItems(DataProvider.GetDiskInterfaceList(getEntity().getvm_os(), DataProvider.GetClusterById(getEntity().getvds_group_id()).getcompatibility_version()));
-			model.getInterface().setSelectedItem(DataProvider.GetDefaultDiskInterface(getEntity().getvm_os(), disks));
+                model.setMessage(cantCreateMessage);
 
-			//			bool hasBootableDisk = disks.Any(a => a.boot);
-			boolean hasBootableDisk = false;
-			for (DiskImage a : disks)
-			{
-				if (a.getboot())
-				{
-					hasBootableDisk = true;
-					break;
-				}
-			}
-			model.getIsBootable().setEntity(!hasBootableDisk);
-			if (hasBootableDisk)
-			{
-				model.getIsBootable().setIsChangable(false);
-				model.getIsBootable().getChangeProhibitionReasons().add("There can be only one bootable disk defined.");
-			}
+                UICommand tempVar = new UICommand("Cancel", this);
+                tempVar.setTitle("Close");
+                tempVar.setIsDefault(true);
+                tempVar.setIsCancel(true);
+                model.getCommands().add(tempVar);
+            }
+            else
+            {
+                UICommand tempVar2 = new UICommand("OnAddDisk", this);
+                tempVar2.setTitle("OK");
+                tempVar2.setIsDefault(true);
+                model.getCommands().add(tempVar2);
 
+                UICommand tempVar3 = new UICommand("Cancel", this);
+                tempVar3.setTitle("Cancel");
+                tempVar3.setIsCancel(true);
+                model.getCommands().add(tempVar3);
+            }
+        }
+    }
 
-			if (storage == null || storage_available == false)
-			{
-				String cantCreateMessage = "There is no active Storage Domain to create the Disk in. Please activate a Storage Domain.";
-				if (hasDisks)
-				{
-					cantCreateMessage = "Error in retrieving the relevant Storage Domain.";
-					if (storage != null && storage.getstorage_name() != null)
-					{
-						cantCreateMessage = StringFormat.format("'%1$s' Storage Domain is not active. Please activate it.", storage.getstorage_name());
-					}
-				}
+    public void OnAddDisk()
+    {
+        if (getEntity() != null)
+        {
+            DiskModel model = (DiskModel) getWindow();
 
-				model.setMessage(cantCreateMessage);
+            if (model.getProgress() != null)
+            {
+                return;
+            }
 
-				UICommand tempVar = new UICommand("Cancel", this);
-				tempVar.setTitle("Close");
-				tempVar.setIsDefault(true);
-				tempVar.setIsCancel(true);
-				model.getCommands().add(tempVar);
-			}
-			else
-			{
-				UICommand tempVar2 = new UICommand("OnAddDisk", this);
-				tempVar2.setTitle("OK");
-				tempVar2.setIsDefault(true);
-				model.getCommands().add(tempVar2);
+            if (!model.Validate())
+            {
+                return;
+            }
 
-				UICommand tempVar3 = new UICommand("Cancel", this);
-				tempVar3.setTitle("Cancel");
-				tempVar3.setIsCancel(true);
-				model.getCommands().add(tempVar3);
-			}
-		}
-	}
+            // Save changes.
+            storage_domains storageDomain = (storage_domains) model.getStorageDomain().getSelectedItem();
 
-	public void OnAddDisk()
-	{
-		if (getEntity() != null)
-		{
-			DiskModel model = (DiskModel)getWindow();
+            DiskImage tempVar = new DiskImage();
+            tempVar.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
+            tempVar.setdisk_type(((DiskImageBase) model.getPreset().getSelectedItem()).getdisk_type());
+            tempVar.setdisk_interface((DiskInterface) model.getInterface().getSelectedItem());
+            tempVar.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
+            tempVar.setvolume_format(model.getVolumeFormat());
+            tempVar.setwipe_after_delete((Boolean) model.getWipeAfterDelete().getEntity());
+            tempVar.setboot((Boolean) model.getIsBootable().getEntity());
+            tempVar.setpropagate_errors(PropagateErrors.Off);
+            DiskImage disk = tempVar;
 
-			if (model.getProgress() != null)
-			{
-				return;
-			}
+            model.StartProgress(null);
 
-			if (!model.Validate())
-			{
-				return;
-			}
+            AddDiskToVmParameters tempVar2 = new AddDiskToVmParameters(getEntity().getvm_guid(), disk);
+            tempVar2.setStorageDomainId(storageDomain.getid());
+            Frontend.RunAction(VdcActionType.AddDiskToVm, tempVar2,
+                    new IFrontendActionAsyncCallback() {
+                        @Override
+                        public void Executed(FrontendActionAsyncResult result) {
 
-			//Save changes.
-			storage_domains storageDomain = (storage_domains)model.getStorageDomain().getSelectedItem();
+                            VmGuideModel vmGuideModel = (VmGuideModel) result.getState();
+                            vmGuideModel.getWindow().StopProgress();
+                            VdcReturnValueBase returnValueBase = result.getReturnValue();
+                            if (returnValueBase != null && returnValueBase.getSucceeded())
+                            {
+                                vmGuideModel.Cancel();
+                                vmGuideModel.PostAction();
+                            }
 
-			DiskImage tempVar = new DiskImage();
-			tempVar.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-			tempVar.setdisk_type(((DiskImageBase)model.getPreset().getSelectedItem()).getdisk_type());
-			tempVar.setdisk_interface((DiskInterface)model.getInterface().getSelectedItem());
-			tempVar.setvolume_type((VolumeType)model.getVolumeType().getSelectedItem());
-			tempVar.setvolume_format(model.getVolumeFormat());
-			tempVar.setwipe_after_delete((Boolean)model.getWipeAfterDelete().getEntity());
-			tempVar.setboot((Boolean)model.getIsBootable().getEntity());
-			tempVar.setpropagate_errors(PropagateErrors.Off);
-			DiskImage disk = tempVar;
+                        }
+                    }, this);
+        }
+        else
+        {
+            Cancel();
+        }
+    }
 
-			model.StartProgress(null);
+    public void PostAction()
+    {
+        UpdateOptions();
+    }
 
-			AddDiskToVmParameters tempVar2 = new AddDiskToVmParameters(getEntity().getvm_guid(), disk);
-			tempVar2.setStorageDomainId(storageDomain.getid());
-			Frontend.RunAction(VdcActionType.AddDiskToVm, tempVar2,
-		new IFrontendActionAsyncCallback() {
-			@Override
-			public void Executed(FrontendActionAsyncResult  result) {
+    public void Cancel()
+    {
+        setWindow(null);
+    }
 
-				VmGuideModel vmGuideModel = (VmGuideModel)result.getState();
-				vmGuideModel.getWindow().StopProgress();
-				VdcReturnValueBase returnValueBase = result.getReturnValue();
-				if (returnValueBase != null && returnValueBase.getSucceeded())
-				{
-					vmGuideModel.Cancel();
-					vmGuideModel.PostAction();
-				}
+    @Override
+    public void ExecuteCommand(UICommand command)
+    {
+        super.ExecuteCommand(command);
 
-			}
-		}, this);
-		}
-		else
-		{
-			Cancel();
-		}
-	}
-
-	public void PostAction()
-	{
-		UpdateOptions();
-	}
-
-	public void Cancel()
-	{
-		setWindow(null);
-	}
-
-	@Override
-	public void ExecuteCommand(UICommand command)
-	{
-		super.ExecuteCommand(command);
-
-		if (StringHelper.stringsEqual(command.getName(), "AddNetwork"))
-		{
-			AddNetwork();
-		}
-		if (StringHelper.stringsEqual(command.getName(), "AddDisk"))
-		{
-			AddDisk();
-		}
-		if (StringHelper.stringsEqual(command.getName(), "OnAddNetwork"))
-		{
-			OnAddNetwork();
-		}
-		if (StringHelper.stringsEqual(command.getName(), "OnAddDisk"))
-		{
-			OnAddDisk();
-		}
-		if (StringHelper.stringsEqual(command.getName(), "Cancel"))
-		{
-			Cancel();
-		}
-	}
+        if (StringHelper.stringsEqual(command.getName(), "AddNetwork"))
+        {
+            AddNetwork();
+        }
+        if (StringHelper.stringsEqual(command.getName(), "AddDisk"))
+        {
+            AddDisk();
+        }
+        if (StringHelper.stringsEqual(command.getName(), "OnAddNetwork"))
+        {
+            OnAddNetwork();
+        }
+        if (StringHelper.stringsEqual(command.getName(), "OnAddDisk"))
+        {
+            OnAddDisk();
+        }
+        if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        {
+            Cancel();
+        }
+    }
 }

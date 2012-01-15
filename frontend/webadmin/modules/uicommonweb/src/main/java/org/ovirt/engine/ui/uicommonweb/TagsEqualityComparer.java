@@ -1,28 +1,19 @@
 package org.ovirt.engine.ui.uicommonweb;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 
 @SuppressWarnings("unused")
 public class TagsEqualityComparer implements IEqualityComparer<tags>
 {
-	public boolean equals(tags x, tags y)
-	{
-		return x.gettag_id().equals(y.gettag_id());
-	}
+    @Override
+    public boolean equals(tags x, tags y)
+    {
+        return x.gettag_id().equals(y.gettag_id());
+    }
 
-	public int hashCode(tags tag)
-	{
-		return tag.gettag_id().hashCode();
-	}
+    public int hashCode(tags tag)
+    {
+        return tag.gettag_id().hashCode();
+    }
 }

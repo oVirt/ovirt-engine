@@ -1,298 +1,312 @@
 package org.ovirt.engine.ui.uicommonweb.models.common;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicommonweb.dataprovider.*;
-import org.ovirt.engine.core.common.queries.*;
-
-import org.ovirt.engine.core.common.interfaces.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Extensions;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicompat.Clipboard;
 
 @SuppressWarnings("unused")
 public class AboutModel extends Model
 {
 
-	private java.util.List<HostInfo> hosts;
-	public java.util.List<HostInfo> getHosts()
-	{
-		return hosts;
-	}
-	public void setHosts(java.util.List<HostInfo> value)
-	{
-		if (hosts != value)
-		{
-			hosts = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("Hosts"));
-		}
-	}
+    private java.util.List<HostInfo> hosts;
 
-	private boolean showOnlyVersion;
-	public boolean getShowOnlyVersion()
-	{
-		return showOnlyVersion;
-	}
-	public void setShowOnlyVersion(boolean value)
-	{
-		if (showOnlyVersion != value)
-		{
-			showOnlyVersion = value;
-			ShowOnlyVersionChanged();
-			OnPropertyChanged(new PropertyChangedEventArgs("ShowOnlyVersion"));
-		}
-	}
+    public java.util.List<HostInfo> getHosts()
+    {
+        return hosts;
+    }
 
-	private String productVersion;
-	public String getProductVersion()
-	{
-		return productVersion;
-	}
-	public void setProductVersion(String value)
-	{
-		if (!StringHelper.stringsEqual(productVersion, value))
-		{
-			productVersion = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("ProductVersion"));
-		}
-	}
+    public void setHosts(java.util.List<HostInfo> value)
+    {
+        if (hosts != value)
+        {
+            hosts = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Hosts"));
+        }
+    }
 
+    private boolean showOnlyVersion;
 
-	//public string Enterprise { get; private set; }
+    public boolean getShowOnlyVersion()
+    {
+        return showOnlyVersion;
+    }
 
-	//public string Description { get; private set; }
+    public void setShowOnlyVersion(boolean value)
+    {
+        if (showOnlyVersion != value)
+        {
+            showOnlyVersion = value;
+            ShowOnlyVersionChanged();
+            OnPropertyChanged(new PropertyChangedEventArgs("ShowOnlyVersion"));
+        }
+    }
 
-	//public string CustomerId { get; private set; }
+    private String productVersion;
 
+    public String getProductVersion()
+    {
+        return productVersion;
+    }
 
-	//public string Limitations { get; private set; }
+    public void setProductVersion(String value)
+    {
+        if (!StringHelper.stringsEqual(productVersion, value))
+        {
+            productVersion = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("ProductVersion"));
+        }
+    }
 
-	//public string TimeLimit { get; private set; }
+    // public string Enterprise { get; private set; }
 
-	//public string CPUSockets { get; private set; }
+    // public string Description { get; private set; }
 
+    // public string CustomerId { get; private set; }
 
-	private UICommand privateCopyToClipboardCommand;
-	public UICommand getCopyToClipboardCommand()
-	{
-		return privateCopyToClipboardCommand;
-	}
-	public void setCopyToClipboardCommand(UICommand value)
-	{
-		privateCopyToClipboardCommand = value;
-	}
+    // public string Limitations { get; private set; }
 
+    // public string TimeLimit { get; private set; }
 
-	public AboutModel()
-	{
+    // public string CPUSockets { get; private set; }
 
-		//var licenseProperties = DataProvider.GetLicenseProperties();
-		//Enterprise = licenseProperties.ContainsKey("EnterpriseProperty") ? licenseProperties["EnterpriseProperty"] : string.Empty;
-		//Description = licenseProperties.ContainsKey("DescriptionProperty") ? licenseProperties["DescriptionProperty"] : string.Empty;
-		//CustomerId = licenseProperties.ContainsKey("CustomerIdProperty") ? licenseProperties["CustomerIdProperty"] : string.Empty;
+    private UICommand privateCopyToClipboardCommand;
 
-		////Build limitations text.
-		//int allowedConcurrentDesktops =
-		//    licenseProperties.ContainsKey("MaxConcurrentlyRunningDesktopsProperty") &&
-		//    !string.IsNullOrEmpty(licenseProperties["MaxConcurrentlyRunningDesktopsProperty"]) ?
-		//            Convert.ToInt32(licenseProperties["MaxConcurrentlyRunningDesktopsProperty"]) :
-		//            0;
+    public UICommand getCopyToClipboardCommand()
+    {
+        return privateCopyToClipboardCommand;
+    }
 
+    public void setCopyToClipboardCommand(UICommand value)
+    {
+        privateCopyToClipboardCommand = value;
+    }
 
-		//var returnValue = Frontend.RunQuery(VdcQueryType.GetResourceUsage,
-		//    new GetResourceUsageParameters("MaxConcurrentlyRunningDesktops"));
+    public AboutModel()
+    {
 
-		//int currentConcurrentDesktops = (returnValue != null && returnValue.Succeeded)
-		//    ? (Integer)returnValue.ReturnValue
-		//    : 0;
+        // var licenseProperties = DataProvider.GetLicenseProperties();
+        // Enterprise = licenseProperties.ContainsKey("EnterpriseProperty") ? licenseProperties["EnterpriseProperty"] :
+        // string.Empty;
+        // Description = licenseProperties.ContainsKey("DescriptionProperty") ? licenseProperties["DescriptionProperty"]
+        // : string.Empty;
+        // CustomerId = licenseProperties.ContainsKey("CustomerIdProperty") ? licenseProperties["CustomerIdProperty"] :
+        // string.Empty;
 
-		//if (allowedConcurrentDesktops > 0)
-		//{
-		//    Limitations = StringFormat.format("There are currently {0} running Virtual Machines out of possible {1}.",
-		//                                currentConcurrentDesktops,
-		//                                allowedConcurrentDesktops
-		//        );
-		//}
+        // //Build limitations text.
+        // int allowedConcurrentDesktops =
+        // licenseProperties.ContainsKey("MaxConcurrentlyRunningDesktopsProperty") &&
+        // !string.IsNullOrEmpty(licenseProperties["MaxConcurrentlyRunningDesktopsProperty"]) ?
+        // Convert.ToInt32(licenseProperties["MaxConcurrentlyRunningDesktopsProperty"]) :
+        // 0;
 
+        // var returnValue = Frontend.RunQuery(VdcQueryType.GetResourceUsage,
+        // new GetResourceUsageParameters("MaxConcurrentlyRunningDesktops"));
 
-		////Build time limit text.
-		//bool isProduct = licenseProperties.ContainsKey("IsProductProperty") && !string.IsNullOrEmpty(licenseProperties["IsProductProperty"])
-		//                    ? Convert.ToBoolean(licenseProperties["IsProductProperty"])
-		//                    : false;
+        // int currentConcurrentDesktops = (returnValue != null && returnValue.Succeeded)
+        // ? (Integer)returnValue.ReturnValue
+        // : 0;
 
-		//if (licenseProperties.ContainsKey("TimeLimitProperty") && !string.IsNullOrEmpty(licenseProperties["TimeLimitProperty"]))
-		//{
+        // if (allowedConcurrentDesktops > 0)
+        // {
+        // Limitations = StringFormat.format("There are currently {0} running Virtual Machines out of possible {1}.",
+        // currentConcurrentDesktops,
+        // allowedConcurrentDesktops
+        // );
+        // }
 
-		//    DateTime timeLimit = DateTime.Now;
-		//    if (licenseProperties["TimeLimitProperty"].Equals("0"))
-		//    {
-		//        TimeLimit = "Product Support period is unlimited.";
-		//    }
-		//    else
-		//    {
-		//        try
-		//        {
-		//            timeLimit = Convert.ToDateTime(licenseProperties["TimeLimitProperty"]);
-		//        }
-		//        catch { QLogger.getInstance().ErrorFormat("AboutModel(AboutView view): cannot convert {0} cause bugous license expire date recieved", licenseProperties["TimeLimitProperty"]); }
-		//        if (isProduct)
-		//        {
-		//            bool isSupported = licenseProperties.ContainsKey("IsSupportedProperty")
-		//                        ? Convert.ToBoolean(licenseProperties["IsSupportedProperty"])
-		//                        : false;
+        // //Build time limit text.
+        // bool isProduct = licenseProperties.ContainsKey("IsProductProperty") &&
+        // !string.IsNullOrEmpty(licenseProperties["IsProductProperty"])
+        // ? Convert.ToBoolean(licenseProperties["IsProductProperty"])
+        // : false;
 
-		//            TimeLimit = isSupported
-		//                ? StringFormat.format("Product Support period will expire at {0}.", timeLimit)
-		//                : StringFormat.format("Product Support period has expired at {0}.", timeLimit);
-		//        }
-		//        else
-		//        {
-		//            TimeLimit = StringFormat.format("This evaluation version will expire at {0}.", timeLimit);
-		//        }
-		//    }
-		//}
+        // if (licenseProperties.ContainsKey("TimeLimitProperty") &&
+        // !string.IsNullOrEmpty(licenseProperties["TimeLimitProperty"]))
+        // {
 
-		//if (licenseProperties.ContainsKey("MaxHostSocketsProperty") && !string.IsNullOrEmpty(licenseProperties["MaxHostSocketsProperty"]))
-		//{
-		//    VdcQueryReturnValue ret = Frontend.RunQuery(VdcQueryType.GetResourceUsage, new GetResourceUsageParameters("MaxHostSockets"));
-		//    if (ret != null && ret.Succeeded)
-		//    {
-		//        if (string.IsNullOrEmpty(licenseProperties["MaxHostSocketsProperty"]) || int.Parse(licenseProperties["MaxHostSocketsProperty"]) == 0)
-		//        {
-		//            CPUSockets = StringFormat.format("{0}(unlimited)", (int)ret.ReturnValue);
-		//        }
-		//        else
-		//        {
-		//            CPUSockets = StringFormat.format("{0}(out of {1} supported by license)", (int)ret.ReturnValue, licenseProperties["MaxHostSocketsProperty"]);
-		//        }
-		//    }
-		//}
+        // DateTime timeLimit = DateTime.Now;
+        // if (licenseProperties["TimeLimitProperty"].Equals("0"))
+        // {
+        // TimeLimit = "Product Support period is unlimited.";
+        // }
+        // else
+        // {
+        // try
+        // {
+        // timeLimit = Convert.ToDateTime(licenseProperties["TimeLimitProperty"]);
+        // }
+        // catch {
+        // QLogger.getInstance().ErrorFormat("AboutModel(AboutView view): cannot convert {0} cause bugous license expire date recieved",
+        // licenseProperties["TimeLimitProperty"]); }
+        // if (isProduct)
+        // {
+        // bool isSupported = licenseProperties.ContainsKey("IsSupportedProperty")
+        // ? Convert.ToBoolean(licenseProperties["IsSupportedProperty"])
+        // : false;
 
+        // TimeLimit = isSupported
+        // ? StringFormat.format("Product Support period will expire at {0}.", timeLimit)
+        // : StringFormat.format("Product Support period has expired at {0}.", timeLimit);
+        // }
+        // else
+        // {
+        // TimeLimit = StringFormat.format("This evaluation version will expire at {0}.", timeLimit);
+        // }
+        // }
+        // }
 
-		UICommand tempVar = new UICommand("CopyToClipboard", this);
-		tempVar.setTitle("Copy to Clipboard");
-		tempVar.setIsAvailable(true);
-		setCopyToClipboardCommand(tempVar);
-		this.getCommands().add(getCopyToClipboardCommand());
+        // if (licenseProperties.ContainsKey("MaxHostSocketsProperty") &&
+        // !string.IsNullOrEmpty(licenseProperties["MaxHostSocketsProperty"]))
+        // {
+        // VdcQueryReturnValue ret = Frontend.RunQuery(VdcQueryType.GetResourceUsage, new
+        // GetResourceUsageParameters("MaxHostSockets"));
+        // if (ret != null && ret.Succeeded)
+        // {
+        // if (string.IsNullOrEmpty(licenseProperties["MaxHostSocketsProperty"]) ||
+        // int.Parse(licenseProperties["MaxHostSocketsProperty"]) == 0)
+        // {
+        // CPUSockets = StringFormat.format("{0}(unlimited)", (int)ret.ReturnValue);
+        // }
+        // else
+        // {
+        // CPUSockets = StringFormat.format("{0}(out of {1} supported by license)", (int)ret.ReturnValue,
+        // licenseProperties["MaxHostSocketsProperty"]);
+        // }
+        // }
+        // }
 
-		setShowOnlyVersion(true);
-		AsyncQuery _asyncQuery = new AsyncQuery();
-		_asyncQuery.setModel(this);
-		_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object result)
-										{
-											AboutModel aboutModel = (AboutModel) model;
-											aboutModel.setProductVersion((String)result);
-		}};
-		AsyncDataProvider.GetRpmVersionViaPublic(_asyncQuery);
-	}
+        UICommand tempVar = new UICommand("CopyToClipboard", this);
+        tempVar.setTitle("Copy to Clipboard");
+        tempVar.setIsAvailable(true);
+        setCopyToClipboardCommand(tempVar);
+        this.getCommands().add(getCopyToClipboardCommand());
 
-	private void ShowOnlyVersionChanged()
-	{
-		if (!getShowOnlyVersion())
-		{
-			AsyncQuery _asyncQuery = new AsyncQuery();
-			_asyncQuery.setModel(this);
-			_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object result)
-											{
-												AboutModel aboutModel = (AboutModel)model;
-												java.util.ArrayList<HostInfo> list = new java.util.ArrayList<HostInfo>();
-												for (VDS a : (java.util.List<VDS>)result)
-												{
-													HostInfo tempVar = new HostInfo();
-													tempVar.setHostName(a.getvds_name() + ":");
-													HostInfo hi = tempVar;
-													if (!StringHelper.isNullOrEmpty(a.gethost_os()))
-													{
-														hi.setOSVersion("OS Version - " + a.gethost_os());
-													}
+        setShowOnlyVersion(true);
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object result)
+            {
+                AboutModel aboutModel = (AboutModel) model;
+                aboutModel.setProductVersion((String) result);
+            }
+        };
+        AsyncDataProvider.GetRpmVersionViaPublic(_asyncQuery);
+    }
 
-													if (a.getVersion().getFullVersion() != null)
-													{
-														hi.setVDSMVersion("VDSM Version - " + Extensions.GetFriendlyVersion(a.getVersion().getFullVersion()) + " " + a.getVersion().getBuildName());
-													}
+    private void ShowOnlyVersionChanged()
+    {
+        if (!getShowOnlyVersion())
+        {
+            AsyncQuery _asyncQuery = new AsyncQuery();
+            _asyncQuery.setModel(this);
+            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object model, Object result)
+                {
+                    AboutModel aboutModel = (AboutModel) model;
+                    java.util.ArrayList<HostInfo> list = new java.util.ArrayList<HostInfo>();
+                    for (VDS a : (java.util.List<VDS>) result)
+                    {
+                        HostInfo tempVar = new HostInfo();
+                        tempVar.setHostName(a.getvds_name() + ":");
+                        HostInfo hi = tempVar;
+                        if (!StringHelper.isNullOrEmpty(a.gethost_os()))
+                        {
+                            hi.setOSVersion("OS Version - " + a.gethost_os());
+                        }
 
-													list.add(hi);
-												}
-												aboutModel.setHosts(list);
-											}};
-			AsyncDataProvider.GetHostList(_asyncQuery);
-		}
-	}
+                        if (a.getVersion().getFullVersion() != null)
+                        {
+                            hi.setVDSMVersion("VDSM Version - "
+                                    + Extensions.GetFriendlyVersion(a.getVersion().getFullVersion()) + " "
+                                    + a.getVersion().getBuildName());
+                        }
 
-	public void CopyToClipboard()
-	{
-		String data = BuildClipboardData();
-		CopyToClipboard(data);
-	}
+                        list.add(hi);
+                    }
+                    aboutModel.setHosts(list);
+                }
+            };
+            AsyncDataProvider.GetHostList(_asyncQuery);
+        }
+    }
 
-	private String BuildClipboardData()
-	{
-		StringBuilder sb = new StringBuilder();
-		sb.append(getRpmVersion());
-		if (getShowOnlyVersion() == false)
-		{
-			sb.append("\n");
-			sb.append("oVirt Enterprise Virtualization Engine Hypervisor Hosts:");
+    public void CopyToClipboard()
+    {
+        String data = BuildClipboardData();
+        CopyToClipboard(data);
+    }
 
-			if (getHosts() != null && getHosts().size() > 0)
-			{
-				for (HostInfo item : getHosts())
-				{
-					sb.append(StringFormat.format("\t%1$s\t%2$s\t%3$s", item.getHostName(), item.getOSVersion(), item.getVDSMVersion()));
-					sb.append("\n");
-				}
-			}
-			else
-			{
-				sb.append("[No Hosts]");
-			}
+    private String BuildClipboardData()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getRpmVersion());
+        if (getShowOnlyVersion() == false)
+        {
+            sb.append("\n");
+            sb.append("oVirt Enterprise Virtualization Engine Hypervisor Hosts:");
 
+            if (getHosts() != null && getHosts().size() > 0)
+            {
+                for (HostInfo item : getHosts())
+                {
+                    sb.append(StringFormat.format("\t%1$s\t%2$s\t%3$s",
+                            item.getHostName(),
+                            item.getOSVersion(),
+                            item.getVDSMVersion()));
+                    sb.append("\n");
+                }
+            }
+            else
+            {
+                sb.append("[No Hosts]");
+            }
 
-			//sb.append();
-			//sb.append("License Information:");
-			//sb.Append("\tEnterprise:\t").append(Enterprise);
-			//sb.Append("\tDescription:\t").append(Description);
-			//sb.Append("\tLicense ID:\t").append(CustomerId);
-			//sb.Append("\tUsed CPU Sockets:\t").append(CPUSockets);
-			//if (Limitations != null)
-			//{
-			//    sb.Append("\tLimitations:\t").append(Limitations);
-			//}
-			//sb.append();
-			//sb.append(TimeLimit);
+            // sb.append();
+            // sb.append("License Information:");
+            // sb.Append("\tEnterprise:\t").append(Enterprise);
+            // sb.Append("\tDescription:\t").append(Description);
+            // sb.Append("\tLicense ID:\t").append(CustomerId);
+            // sb.Append("\tUsed CPU Sockets:\t").append(CPUSockets);
+            // if (Limitations != null)
+            // {
+            // sb.Append("\tLimitations:\t").append(Limitations);
+            // }
+            // sb.append();
+            // sb.append(TimeLimit);
 
-		}
-		return sb.toString();
-	}
+        }
+        return sb.toString();
+    }
 
-	protected void CopyToClipboard(String data)
-	{
-		Clipboard.SetDataObject(data);
-	}
+    protected void CopyToClipboard(String data)
+    {
+        Clipboard.SetDataObject(data);
+    }
 
-	@Override
-	public void ExecuteCommand(UICommand command)
-	{
-		super.ExecuteCommand(command);
+    @Override
+    public void ExecuteCommand(UICommand command)
+    {
+        super.ExecuteCommand(command);
 
-		if (command == getCopyToClipboardCommand())
-		{
-			CopyToClipboard();
-		}
-	}
+        if (command == getCopyToClipboardCommand())
+        {
+            CopyToClipboard();
+        }
+    }
 
-	private String getRpmVersion()
-	{
-		return "oVirt Engine for Servers and Desktops: " + getProductVersion();
-	}
+    private String getRpmVersion()
+    {
+        return "oVirt Engine for Servers and Desktops: " + getProductVersion();
+    }
 }

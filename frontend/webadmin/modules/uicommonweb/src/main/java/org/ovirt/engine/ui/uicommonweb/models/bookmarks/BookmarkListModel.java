@@ -1,329 +1,351 @@
 package org.ovirt.engine.ui.uicommonweb.models.bookmarks;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
+import org.ovirt.engine.core.common.action.BookmarksParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventDefinition;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class BookmarkListModel extends SearchableListModel
 {
 
-	public static EventDefinition NavigatedEventDefinition;
-	private Event privateNavigatedEvent;
-	public Event getNavigatedEvent()
-	{
-		return privateNavigatedEvent;
-	}
-	private void setNavigatedEvent(Event value)
-	{
-		privateNavigatedEvent = value;
-	}
+    public static EventDefinition NavigatedEventDefinition;
+    private Event privateNavigatedEvent;
 
+    public Event getNavigatedEvent()
+    {
+        return privateNavigatedEvent;
+    }
 
+    private void setNavigatedEvent(Event value)
+    {
+        privateNavigatedEvent = value;
+    }
 
-	private UICommand privateNewCommand;
-	public UICommand getNewCommand()
-	{
-		return privateNewCommand;
-	}
-	private void setNewCommand(UICommand value)
-	{
-		privateNewCommand = value;
-	}
-	private UICommand privateEditCommand;
-	public UICommand getEditCommand()
-	{
-		return privateEditCommand;
-	}
-	private void setEditCommand(UICommand value)
-	{
-		privateEditCommand = value;
-	}
-	private UICommand privateRemoveCommand;
-	public UICommand getRemoveCommand()
-	{
-		return privateRemoveCommand;
-	}
-	private void setRemoveCommand(UICommand value)
-	{
-		privateRemoveCommand = value;
-	}
+    private UICommand privateNewCommand;
 
+    public UICommand getNewCommand()
+    {
+        return privateNewCommand;
+    }
 
+    private void setNewCommand(UICommand value)
+    {
+        privateNewCommand = value;
+    }
 
+    private UICommand privateEditCommand;
 
-	static
-	{
-		NavigatedEventDefinition = new EventDefinition("Navigated", BookmarkListModel.class);
-	}
+    public UICommand getEditCommand()
+    {
+        return privateEditCommand;
+    }
 
-	public BookmarkListModel()
-	{
-		setNavigatedEvent(new Event(NavigatedEventDefinition));
+    private void setEditCommand(UICommand value)
+    {
+        privateEditCommand = value;
+    }
 
-		setNewCommand(new UICommand("New", this));
-		setEditCommand(new UICommand("Edit", this));
-		setRemoveCommand(new UICommand("Remove", this));
+    private UICommand privateRemoveCommand;
 
-		getSearchCommand().Execute();
+    public UICommand getRemoveCommand()
+    {
+        return privateRemoveCommand;
+    }
 
-		setIsTimerDisabled(true);
+    private void setRemoveCommand(UICommand value)
+    {
+        privateRemoveCommand = value;
+    }
 
-		UpdateActionAvailability();
-	}
+    static
+    {
+        NavigatedEventDefinition = new EventDefinition("Navigated", BookmarkListModel.class);
+    }
 
-	@Override
-	protected void SyncSearch()
-	{
-		super.SyncSearch();
+    public BookmarkListModel()
+    {
+        setNavigatedEvent(new Event(NavigatedEventDefinition));
 
-		AsyncQuery _asyncQuery = new AsyncQuery();
-		_asyncQuery.setModel(this);
-		_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object ReturnValue)
-			{
-				SearchableListModel bookmarkListModel = (BookmarkListModel)model;
-				bookmarkListModel.setItems((Iterable)((VdcQueryReturnValue)ReturnValue).getReturnValue());
-			}};
+        setNewCommand(new UICommand("New", this));
+        setEditCommand(new UICommand("Edit", this));
+        setRemoveCommand(new UICommand("Remove", this));
 
-		Frontend.RunQuery(VdcQueryType.GetAllBookmarks, new VdcQueryParametersBase(), _asyncQuery);
-	}
+        getSearchCommand().Execute();
 
-	@Override
-	protected void AsyncSearch()
-	{
-		super.AsyncSearch();
-		SyncSearch();
-	}
+        setIsTimerDisabled(true);
 
-	public void remove()
-	{
-		if (getWindow() != null)
-		{
-			return;
-		}
+        UpdateActionAvailability();
+    }
 
-		ConfirmationModel model = new ConfirmationModel();
-		setWindow(model);
-		model.setTitle("Remove Bookmark(s)");
-		model.setHashName("remove_bookmark");
-		model.setMessage("Bookmark(s):");
+    @Override
+    protected void SyncSearch()
+    {
+        super.SyncSearch();
 
-		java.util.ArrayList<String> list = new java.util.ArrayList<String>();
-		for (Object item : getSelectedItems())
-		{
-			org.ovirt.engine.core.common.businessentities.bookmarks i = (org.ovirt.engine.core.common.businessentities.bookmarks)item;
-			list.add(i.getbookmark_name());
-		}
-		model.setItems(list);
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object ReturnValue)
+            {
+                SearchableListModel bookmarkListModel = (BookmarkListModel) model;
+                bookmarkListModel.setItems((Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+            }
+        };
 
-		UICommand tempVar = new UICommand("OnRemove", this);
-		tempVar.setTitle("OK");
-		tempVar.setIsDefault(true);
-		model.getCommands().add(tempVar);
-		UICommand tempVar2 = new UICommand("Cancel", this);
-		tempVar2.setTitle("Cancel");
-		tempVar2.setIsCancel(true);
-		model.getCommands().add(tempVar2);
-	}
+        Frontend.RunQuery(VdcQueryType.GetAllBookmarks, new VdcQueryParametersBase(), _asyncQuery);
+    }
 
-	public void OnRemove()
-	{
-		// 			Frontend.RunMultipleActions(VdcActionType.RemoveBookmark,
-		// 				SelectedItems.Cast<bookmarks>()
-		// 				.Select(a => (VdcActionParametersBase)new BookmarksParametersBase(a.bookmark_id))
-		// 				.ToList()
-		// 			);
-		//List<VdcActionParametersBase> prms = new List<VdcActionParametersBase>();
-		//foreach (object item in SelectedItems)
-		//{
-		//    org.ovirt.engine.core.common.businessentities.bookmarks i = (org.ovirt.engine.core.common.businessentities.bookmarks)item;
-		//    prms.Add(new BookmarksParametersBase(i.bookmark_id));
-		//}
-		//Frontend.RunMultipleActions(VdcActionType.RemoveBookmark, prms);
+    @Override
+    protected void AsyncSearch()
+    {
+        super.AsyncSearch();
+        SyncSearch();
+    }
 
-		VdcReturnValueBase returnValue = Frontend.RunAction(VdcActionType.RemoveBookmark, new BookmarksParametersBase(((org.ovirt.engine.core.common.businessentities.bookmarks)getSelectedItem()).getbookmark_id()));
-		if (returnValue != null && returnValue.getSucceeded())
-		{
-			getSearchCommand().Execute();
-		}
+    public void remove()
+    {
+        if (getWindow() != null)
+        {
+            return;
+        }
 
-		Cancel();
-	}
+        ConfirmationModel model = new ConfirmationModel();
+        setWindow(model);
+        model.setTitle("Remove Bookmark(s)");
+        model.setHashName("remove_bookmark");
+        model.setMessage("Bookmark(s):");
 
-	public void Edit()
-	{
-		org.ovirt.engine.core.common.businessentities.bookmarks bookmark = (org.ovirt.engine.core.common.businessentities.bookmarks)getSelectedItem();
+        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        for (Object item : getSelectedItems())
+        {
+            org.ovirt.engine.core.common.businessentities.bookmarks i =
+                    (org.ovirt.engine.core.common.businessentities.bookmarks) item;
+            list.add(i.getbookmark_name());
+        }
+        model.setItems(list);
 
-		if (getWindow() != null)
-		{
-			return;
-		}
+        UICommand tempVar = new UICommand("OnRemove", this);
+        tempVar.setTitle("OK");
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this);
+        tempVar2.setTitle("Cancel");
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
+    }
 
-		BookmarkModel model = new BookmarkModel();
-		setWindow(model);
-		model.setTitle("Edit Bookmark");
-		model.setHashName("edit_bookmark");
-		model.setIsNew(false);
-		model.getName().setEntity(bookmark.getbookmark_name());
-		model.getSearchString().setEntity(bookmark.getbookmark_value());
+    public void OnRemove()
+    {
+        // Frontend.RunMultipleActions(VdcActionType.RemoveBookmark,
+        // SelectedItems.Cast<bookmarks>()
+        // .Select(a => (VdcActionParametersBase)new BookmarksParametersBase(a.bookmark_id))
+        // .ToList()
+        // );
+        // List<VdcActionParametersBase> prms = new List<VdcActionParametersBase>();
+        // foreach (object item in SelectedItems)
+        // {
+        // org.ovirt.engine.core.common.businessentities.bookmarks i =
+        // (org.ovirt.engine.core.common.businessentities.bookmarks)item;
+        // prms.Add(new BookmarksParametersBase(i.bookmark_id));
+        // }
+        // Frontend.RunMultipleActions(VdcActionType.RemoveBookmark, prms);
 
-		UICommand tempVar = new UICommand("OnSave", this);
-		tempVar.setTitle("OK");
-		tempVar.setIsDefault(true);
-		model.getCommands().add(tempVar);
-		UICommand tempVar2 = new UICommand("Cancel", this);
-		tempVar2.setTitle("Cancel");
-		tempVar2.setIsCancel(true);
-		model.getCommands().add(tempVar2);
-	}
+        VdcReturnValueBase returnValue =
+                Frontend.RunAction(VdcActionType.RemoveBookmark,
+                        new BookmarksParametersBase(((org.ovirt.engine.core.common.businessentities.bookmarks) getSelectedItem()).getbookmark_id()));
+        if (returnValue != null && returnValue.getSucceeded())
+        {
+            getSearchCommand().Execute();
+        }
 
-	public void New()
-	{
-		if (getWindow() != null)
-		{
-			return;
-		}
+        Cancel();
+    }
 
-		BookmarkModel model = new BookmarkModel();
-		setWindow(model);
-		model.setTitle("New Bookmark");
-		model.setHashName("new_bookmark");
-		model.setIsNew(true);
-		model.getSearchString().setEntity(getSearchString());
+    public void Edit()
+    {
+        org.ovirt.engine.core.common.businessentities.bookmarks bookmark =
+                (org.ovirt.engine.core.common.businessentities.bookmarks) getSelectedItem();
 
-		UICommand tempVar = new UICommand("OnSave", this);
-		tempVar.setTitle("OK");
-		tempVar.setIsDefault(true);
-		model.getCommands().add(tempVar);
-		UICommand tempVar2 = new UICommand("Cancel", this);
-		tempVar2.setTitle("Cancel");
-		tempVar2.setIsCancel(true);
-		model.getCommands().add(tempVar2);
-	}
+        if (getWindow() != null)
+        {
+            return;
+        }
 
-	public void OnSave()
-	{
-		BookmarkModel model = (BookmarkModel)getWindow();
+        BookmarkModel model = new BookmarkModel();
+        setWindow(model);
+        model.setTitle("Edit Bookmark");
+        model.setHashName("edit_bookmark");
+        model.setIsNew(false);
+        model.getName().setEntity(bookmark.getbookmark_name());
+        model.getSearchString().setEntity(bookmark.getbookmark_value());
 
-		if (model.getProgress() != null)
-		{
-			return;
-		}
+        UICommand tempVar = new UICommand("OnSave", this);
+        tempVar.setTitle("OK");
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this);
+        tempVar2.setTitle("Cancel");
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
+    }
 
-		if (!model.Validate())
-		{
-			return;
-		}
+    public void New()
+    {
+        if (getWindow() != null)
+        {
+            return;
+        }
 
-		org.ovirt.engine.core.common.businessentities.bookmarks tempVar = new org.ovirt.engine.core.common.businessentities.bookmarks();
-		tempVar.setbookmark_id(model.getIsNew() ? (Guid)Guid.Empty : ((org.ovirt.engine.core.common.businessentities.bookmarks)getSelectedItem()).getbookmark_id());
-		tempVar.setbookmark_name((String)model.getName().getEntity());
-		tempVar.setbookmark_value((String)model.getSearchString().getEntity());
-		org.ovirt.engine.core.common.businessentities.bookmarks bookmark = tempVar;
+        BookmarkModel model = new BookmarkModel();
+        setWindow(model);
+        model.setTitle("New Bookmark");
+        model.setHashName("new_bookmark");
+        model.setIsNew(true);
+        model.getSearchString().setEntity(getSearchString());
 
+        UICommand tempVar = new UICommand("OnSave", this);
+        tempVar.setTitle("OK");
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this);
+        tempVar2.setTitle("Cancel");
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
+    }
 
-		model.StartProgress(null);
+    public void OnSave()
+    {
+        BookmarkModel model = (BookmarkModel) getWindow();
 
-		Frontend.RunAction(model.getIsNew() ? VdcActionType.AddBookmark : VdcActionType.UpdateBookmark, new BookmarksOperationParameters(bookmark),
-		new IFrontendActionAsyncCallback() {
-			@Override
-			public void Executed(FrontendActionAsyncResult  result) {
+        if (model.getProgress() != null)
+        {
+            return;
+        }
 
-			BookmarkListModel localModel = (BookmarkListModel)result.getState();
-			localModel.PostOnSave(result.getReturnValue());
+        if (!model.Validate())
+        {
+            return;
+        }
 
-			}
-		}, this);
-	}
+        org.ovirt.engine.core.common.businessentities.bookmarks tempVar =
+                new org.ovirt.engine.core.common.businessentities.bookmarks();
+        tempVar.setbookmark_id(model.getIsNew() ? (Guid) NGuid.Empty
+                : ((org.ovirt.engine.core.common.businessentities.bookmarks) getSelectedItem()).getbookmark_id());
+        tempVar.setbookmark_name((String) model.getName().getEntity());
+        tempVar.setbookmark_value((String) model.getSearchString().getEntity());
+        org.ovirt.engine.core.common.businessentities.bookmarks bookmark = tempVar;
 
-	public void PostOnSave(VdcReturnValueBase returnValue)
-	{
-		BookmarkModel model = (BookmarkModel)getWindow();
+        model.StartProgress(null);
 
-		model.StopProgress();
+        Frontend.RunAction(model.getIsNew() ? VdcActionType.AddBookmark : VdcActionType.UpdateBookmark,
+                new BookmarksOperationParameters(bookmark),
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendActionAsyncResult result) {
 
-		if (returnValue != null && returnValue.getSucceeded())
-		{
-			Cancel();
-			getSearchCommand().Execute();
-		}
-	}
+                        BookmarkListModel localModel = (BookmarkListModel) result.getState();
+                        localModel.PostOnSave(result.getReturnValue());
 
-	public void Cancel()
-	{
-		setWindow(null);
-	}
+                    }
+                },
+                this);
+    }
 
-	@Override
-	protected void OnSelectedItemChanged()
-	{
-		super.OnSelectedItemChanged();
-		UpdateActionAvailability();
+    public void PostOnSave(VdcReturnValueBase returnValue)
+    {
+        BookmarkModel model = (BookmarkModel) getWindow();
 
-		if (getSelectedItem() != null)
-		{
-			getNavigatedEvent().raise(this, new BookmarkEventArgs((org.ovirt.engine.core.common.businessentities.bookmarks)getSelectedItem()));
-		}
-	}
+        model.StopProgress();
 
-	@Override
-	protected void SelectedItemsChanged()
-	{
-		super.SelectedItemsChanged();
-		UpdateActionAvailability();
-	}
+        if (returnValue != null && returnValue.getSucceeded())
+        {
+            Cancel();
+            getSearchCommand().Execute();
+        }
+    }
 
-	private void UpdateActionAvailability()
-	{
-		getEditCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
-		getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
-	}
+    public void Cancel()
+    {
+        setWindow(null);
+    }
 
-	@Override
-	public void ExecuteCommand(UICommand command)
-	{
-		super.ExecuteCommand(command);
+    @Override
+    protected void OnSelectedItemChanged()
+    {
+        super.OnSelectedItemChanged();
+        UpdateActionAvailability();
 
-		if (command == getNewCommand())
-		{
-			New();
-		}
-		else if (command == getEditCommand())
-		{
-			Edit();
-		}
-		else if (command == getRemoveCommand())
-		{
-			remove();
-		}
+        if (getSelectedItem() != null)
+        {
+            getNavigatedEvent().raise(this,
+                    new BookmarkEventArgs((org.ovirt.engine.core.common.businessentities.bookmarks) getSelectedItem()));
+        }
+    }
 
-		else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
-		{
-			OnRemove();
-		}
+    @Override
+    protected void SelectedItemsChanged()
+    {
+        super.SelectedItemsChanged();
+        UpdateActionAvailability();
+    }
 
-		else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
-		{
-			OnSave();
-		}
-		else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
-		{
-			Cancel();
-		}
-	}
+    private void UpdateActionAvailability()
+    {
+        getEditCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
+        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
+    }
+
+    @Override
+    public void ExecuteCommand(UICommand command)
+    {
+        super.ExecuteCommand(command);
+
+        if (command == getNewCommand())
+        {
+            New();
+        }
+        else if (command == getEditCommand())
+        {
+            Edit();
+        }
+        else if (command == getRemoveCommand())
+        {
+            remove();
+        }
+
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        {
+            OnRemove();
+        }
+
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        {
+            OnSave();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        {
+            Cancel();
+        }
+    }
+
     @Override
     protected String getListName() {
         return "BookmarkListModel";

@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 public class TemplateEventListModel extends EventListModel
 {
 
+    @Override
     public VmTemplate getEntity()
     {
         return (VmTemplate) ((super.getEntity() instanceof VmTemplate) ? super.getEntity() : null);

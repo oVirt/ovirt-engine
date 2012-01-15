@@ -1,490 +1,492 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicommonweb.validation.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.ObservableCollection;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 
 @SuppressWarnings("unused")
 public abstract class SanStorageModel extends SanStorageModelBase
 {
 
-	private boolean isGrouppedByTarget;
-	/**
-	 Gets or sets the value determining whether the
-	 items containing target/LUNs or LUN/targets.
-	*/
-	public boolean getIsGrouppedByTarget()
-	{
-		return isGrouppedByTarget;
-	}
-	public void setIsGrouppedByTarget(boolean value)
-	{
-		if (isGrouppedByTarget != value)
-		{
-			isGrouppedByTarget = value;
-			IsGrouppedByTargetChanged();
-			OnPropertyChanged(new PropertyChangedEventArgs("IsGrouppedByTarget"));
-		}
-	}
+    private boolean isGrouppedByTarget;
 
-	private String getLUNsFailure;
-	public String getGetLUNsFailure()
-	{
-		return getLUNsFailure;
-	}
-	public void setGetLUNsFailure(String value)
-	{
-		if (!StringHelper.stringsEqual(getLUNsFailure, value))
-		{
-			getLUNsFailure = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("GetLUNsFailure"));
-		}
-	}
+    /**
+     * Gets or sets the value determining whether the items containing target/LUNs or LUN/targets.
+     */
+    public boolean getIsGrouppedByTarget()
+    {
+        return isGrouppedByTarget;
+    }
 
+    public void setIsGrouppedByTarget(boolean value)
+    {
+        if (isGrouppedByTarget != value)
+        {
+            isGrouppedByTarget = value;
+            IsGrouppedByTargetChanged();
+            OnPropertyChanged(new PropertyChangedEventArgs("IsGrouppedByTarget"));
+        }
+    }
 
-	private java.util.List<LunModel> includedLUNs;
-	private java.util.ArrayList<SanTargetModel> lastDiscoveredTargets;
-	private boolean isTargetModelList;
+    private String getLUNsFailure;
 
-	protected SanStorageModel()
-	{
-		includedLUNs = new java.util.ArrayList<LunModel>();
-		lastDiscoveredTargets = new java.util.ArrayList<SanTargetModel>();
+    public String getGetLUNsFailure()
+    {
+        return getLUNsFailure;
+    }
 
-		InitializeItems(null, null);
-	}
+    public void setGetLUNsFailure(String value)
+    {
+        if (!StringHelper.stringsEqual(getLUNsFailure, value))
+        {
+            getLUNsFailure = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("GetLUNsFailure"));
+        }
+    }
 
-	@Override
-	protected void PostDiscoverTargets(java.util.ArrayList<SanTargetModel> newItems)
-	{
-		super.PostDiscoverTargets(newItems);
+    private java.util.List<LunModel> includedLUNs;
+    private java.util.ArrayList<SanTargetModel> lastDiscoveredTargets;
+    private boolean isTargetModelList;
 
-		InitializeItems(null, newItems);
+    protected SanStorageModel()
+    {
+        includedLUNs = new java.util.ArrayList<LunModel>();
+        lastDiscoveredTargets = new java.util.ArrayList<SanTargetModel>();
 
-		//Remember all discovered targets.
-		lastDiscoveredTargets.clear();
-		lastDiscoveredTargets.addAll(newItems);
-	}
+        InitializeItems(null, null);
+    }
 
-	@Override
-	protected void Update()
-	{
-		lastDiscoveredTargets.clear();
+    @Override
+    protected void PostDiscoverTargets(java.util.ArrayList<SanTargetModel> newItems)
+    {
+        super.PostDiscoverTargets(newItems);
 
-		super.Update();
-	}
+        InitializeItems(null, newItems);
 
-	@Override
-	protected void UpdateInternal()
-	{
-		super.UpdateInternal();
+        // Remember all discovered targets.
+        lastDiscoveredTargets.clear();
+        lastDiscoveredTargets.addAll(newItems);
+    }
 
-		if (getContainer().getProgress() != null)
-		{
-			return;
-		}
+    @Override
+    protected void Update()
+    {
+        lastDiscoveredTargets.clear();
 
-		VDS host = (VDS)getContainer().getHost().getSelectedItem();
-		if (host == null)
-		{
-			ProposeDiscover();
-			return;
-		}
+        super.Update();
+    }
 
+    @Override
+    protected void UpdateInternal()
+    {
+        super.UpdateInternal();
 
-		ClearItems();
-		InitializeItems(null, null);
+        if (getContainer().getProgress() != null)
+        {
+            return;
+        }
 
-		getContainer().StartProgress(null);
+        VDS host = (VDS) getContainer().getHost().getSelectedItem();
+        if (host == null)
+        {
+            ProposeDiscover();
+            return;
+        }
 
-		Frontend.RunQuery(VdcQueryType.GetDeviceList, new GetDeviceListQueryParameters(host.getvds_id(), getType()), new AsyncQuery(this,
-		new INewAsyncCallback() {
-			@Override
-			public void OnSuccess(Object target, Object returnValue) {
+        ClearItems();
+        InitializeItems(null, null);
 
-			SanStorageModel model = (SanStorageModel)target;
-			VdcQueryReturnValue response = (VdcQueryReturnValue)returnValue;
-			if (response.getSucceeded())
-			{
-				model.ApplyData((java.util.ArrayList<LUNs>)response.getReturnValue(), false);
-				model.setGetLUNsFailure("");
-			}
-			else
-			{
-				model.setGetLUNsFailure("Could not retrieve LUNs, please check your storage.");
-			}
-			model.getContainer().StopProgress();
+        getContainer().StartProgress(null);
 
-			}
-		}, true));
-	}
+        Frontend.RunQuery(VdcQueryType.GetDeviceList,
+                new GetDeviceListQueryParameters(host.getvds_id(), getType()),
+                new AsyncQuery(this,
+                        new INewAsyncCallback() {
+                            @Override
+                            public void OnSuccess(Object target, Object returnValue) {
 
-	private void ClearItems()
-	{
-		if (getItems() == null)
-		{
-			return;
-		}
+                                SanStorageModel model = (SanStorageModel) target;
+                                VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
+                                if (response.getSucceeded())
+                                {
+                                    model.ApplyData((java.util.ArrayList<LUNs>) response.getReturnValue(), false);
+                                    model.setGetLUNsFailure("");
+                                }
+                                else
+                                {
+                                    model.setGetLUNsFailure("Could not retrieve LUNs, please check your storage.");
+                                }
+                                model.getContainer().StopProgress();
 
-		if (getIsGrouppedByTarget())
-		{
-			java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>)getItems();
+                            }
+                        }, true));
+    }
 
-			for (SanTargetModel target : Linq.ToList(items))
-			{
-				boolean found = false;
+    private void ClearItems()
+    {
+        if (getItems() == null)
+        {
+            return;
+        }
 
-				//Ensure remove targets that are not in last dicovered targets list.
-				if (Linq.FirstOrDefault(lastDiscoveredTargets, new Linq.TargetPredicate(target)) != null)
-				{
-					found = true;
-				}
-				else
-				{
-					//Ensure remove targets that are not contain already included LUNs.
-					for (LunModel lun : target.getLuns())
-					{
-						LunModel foundItem = Linq.FirstOrDefault(includedLUNs, new Linq.LunPredicate(lun));
-						if (foundItem == null)
-						{
-							found = true;
-							break;
-						}
-					}
-				}
+        if (getIsGrouppedByTarget())
+        {
+            java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>) getItems();
 
-				if (!found)
-				{
-					items.remove(target);
-				}
-			}
-		}
-		else
-		{
-			java.util.List<LunModel> items = (java.util.List<LunModel>)getItems();
+            for (SanTargetModel target : Linq.ToList(items))
+            {
+                boolean found = false;
 
-			//Ensure remove targets that are not contain already included LUNs.
-			for (LunModel lun : Linq.ToList(items))
-			{
-				LunModel foundItem = Linq.FirstOrDefault(includedLUNs, new Linq.LunPredicate(lun));
-				if (foundItem == null)
-				{
-					items.remove(lun);
-				}
-			}
-		}
-	}
+                // Ensure remove targets that are not in last dicovered targets list.
+                if (Linq.FirstOrDefault(lastDiscoveredTargets, new Linq.TargetPredicate(target)) != null)
+                {
+                    found = true;
+                }
+                else
+                {
+                    // Ensure remove targets that are not contain already included LUNs.
+                    for (LunModel lun : target.getLuns())
+                    {
+                        LunModel foundItem = Linq.FirstOrDefault(includedLUNs, new Linq.LunPredicate(lun));
+                        if (foundItem == null)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
 
-	/**
-	 Creates model items from the provided list of business entities.
-	*/
-	public void ApplyData(java.util.List<LUNs> source, boolean isIncluded)
-	{
-		java.util.ArrayList<LunModel> newItems = new java.util.ArrayList<LunModel>();
+                if (!found)
+                {
+                    items.remove(target);
+                }
+            }
+        }
+        else
+        {
+            java.util.List<LunModel> items = (java.util.List<LunModel>) getItems();
 
-		for (LUNs a : source)
-		{
-			if (a.getLunType() == getType() || a.getLunType() == StorageType.UNKNOWN)
-			{
-				java.util.ArrayList<SanTargetModel> targets = new java.util.ArrayList<SanTargetModel>();
+            // Ensure remove targets that are not contain already included LUNs.
+            for (LunModel lun : Linq.ToList(items))
+            {
+                LunModel foundItem = Linq.FirstOrDefault(includedLUNs, new Linq.LunPredicate(lun));
+                if (foundItem == null)
+                {
+                    items.remove(lun);
+                }
+            }
+        }
+    }
 
-				if (a.getLunConnections() != null)
-				{
-					for (storage_server_connections b : a.getLunConnections())
-					{
-						SanTargetModel tempVar = new SanTargetModel();
-						tempVar.setAddress(b.getconnection());
-						tempVar.setPort(b.getport());
-						tempVar.setName(b.getiqn());
-						tempVar.setIsSelected(true);
-						tempVar.setIsLoggedIn(true);
-						tempVar.setLuns(new ObservableCollection<LunModel>());
-						SanTargetModel model = tempVar;
-						model.getLoginCommand().setIsExecutionAllowed(false);
+    /**
+     * Creates model items from the provided list of business entities.
+     */
+    public void ApplyData(java.util.List<LUNs> source, boolean isIncluded)
+    {
+        java.util.ArrayList<LunModel> newItems = new java.util.ArrayList<LunModel>();
 
-						targets.add(model);
-					}
-				}
+        for (LUNs a : source)
+        {
+            if (a.getLunType() == getType() || a.getLunType() == StorageType.UNKNOWN)
+            {
+                java.util.ArrayList<SanTargetModel> targets = new java.util.ArrayList<SanTargetModel>();
 
-				LunModel tempVar2 = new LunModel();
-				tempVar2.setLunId(a.getLUN_id());
-				tempVar2.setVendorId(a.getVendorId());
-				tempVar2.setProductId(a.getProductId());
-				tempVar2.setSerial(a.getSerial());
-				tempVar2.setMultipathing(a.getPathCount());
-				tempVar2.setTargets(targets);
-				tempVar2.setSize(a.getDeviceSize());
-				tempVar2.setIsAccessible(a.getAccessible());
-				tempVar2.setIsIncluded(isIncluded);
-				tempVar2.setIsSelected(isIncluded);
-				LunModel lun = tempVar2;
-				newItems.add(lun);
+                if (a.getLunConnections() != null)
+                {
+                    for (storage_server_connections b : a.getLunConnections())
+                    {
+                        SanTargetModel tempVar = new SanTargetModel();
+                        tempVar.setAddress(b.getconnection());
+                        tempVar.setPort(b.getport());
+                        tempVar.setName(b.getiqn());
+                        tempVar.setIsSelected(true);
+                        tempVar.setIsLoggedIn(true);
+                        tempVar.setLuns(new ObservableCollection<LunModel>());
+                        SanTargetModel model = tempVar;
+                        model.getLoginCommand().setIsExecutionAllowed(false);
 
-				//Remember included LUNs to prevent their removal while updating items.
-				if (isIncluded)
-				{
-					includedLUNs.add(lun);
-				}
-			}
-		}
+                        targets.add(model);
+                    }
+                }
 
-		InitializeItems(newItems, null);
-		ProposeDiscover();
-	}
+                LunModel tempVar2 = new LunModel();
+                tempVar2.setLunId(a.getLUN_id());
+                tempVar2.setVendorId(a.getVendorId());
+                tempVar2.setProductId(a.getProductId());
+                tempVar2.setSerial(a.getSerial());
+                tempVar2.setMultipathing(a.getPathCount());
+                tempVar2.setTargets(targets);
+                tempVar2.setSize(a.getDeviceSize());
+                tempVar2.setIsAccessible(a.getAccessible());
+                tempVar2.setIsIncluded(isIncluded);
+                tempVar2.setIsSelected(isIncluded);
+                LunModel lun = tempVar2;
+                newItems.add(lun);
 
-	private void IsGrouppedByTargetChanged()
-	{
-		InitializeItems(null, null);
-	}
+                // Remember included LUNs to prevent their removal while updating items.
+                if (isIncluded)
+                {
+                    includedLUNs.add(lun);
+                }
+            }
+        }
 
-	/**
-	 Organizes items according to the current groupping flag.
-	 When new items provided takes them in account and add to the Items collection.
-	*/
-	private void InitializeItems(java.util.List<LunModel> newLuns, java.util.List<SanTargetModel> newTargets)
-	{
-		if (getIsGrouppedByTarget())
-		{
-			if (getItems() == null)
-			{
-				setItems(new ObservableCollection<SanTargetModel>());
-				isTargetModelList = true;
-			}
-			else
-			{
-				//Convert to list of another type as neccessary.
-				if (!isTargetModelList)
-				{
-					setItems(ToTargetModelList((java.util.List<LunModel>)getItems()));
-				}
-			}
+        InitializeItems(newItems, null);
+        ProposeDiscover();
+    }
 
-			java.util.ArrayList<SanTargetModel> items = new java.util.ArrayList<SanTargetModel>();
-			items.addAll((java.util.List<SanTargetModel>)getItems());
+    private void IsGrouppedByTargetChanged()
+    {
+        InitializeItems(null, null);
+    }
 
-			//Add new targets.
-			if (newTargets != null)
-			{
-				for (SanTargetModel newItem : newTargets)
-				{
-					if (Linq.FirstOrDefault(items, new Linq.TargetPredicate(newItem)) == null)
-					{
-						items.add(newItem);
-					}
-				}
-			}
+    /**
+     * Organizes items according to the current groupping flag. When new items provided takes them in account and add to
+     * the Items collection.
+     */
+    private void InitializeItems(java.util.List<LunModel> newLuns, java.util.List<SanTargetModel> newTargets)
+    {
+        if (getIsGrouppedByTarget())
+        {
+            if (getItems() == null)
+            {
+                setItems(new ObservableCollection<SanTargetModel>());
+                isTargetModelList = true;
+            }
+            else
+            {
+                // Convert to list of another type as neccessary.
+                if (!isTargetModelList)
+                {
+                    setItems(ToTargetModelList((java.util.List<LunModel>) getItems()));
+                }
+            }
 
-			//Merge luns into targets.
-			if (newLuns != null)
-			{
-				MergeLunsToTargets(newLuns, items);
-			}
+            java.util.ArrayList<SanTargetModel> items = new java.util.ArrayList<SanTargetModel>();
+            items.addAll((java.util.List<SanTargetModel>) getItems());
 
-			setItems(items);
+            // Add new targets.
+            if (newTargets != null)
+            {
+                for (SanTargetModel newItem : newTargets)
+                {
+                    if (Linq.FirstOrDefault(items, new Linq.TargetPredicate(newItem)) == null)
+                    {
+                        items.add(newItem);
+                    }
+                }
+            }
 
-			UpdateLoginAllAvailability();
-		}
-		else
-		{
-			if (getItems() == null)
-			{
-				setItems(new ObservableCollection<LunModel>());
-				isTargetModelList = false;
-			}
-			else
-			{
-				//Convert to list of another type as neccessary.
-				if (isTargetModelList)
-				{
-					setItems(ToLunModelList((java.util.List<SanTargetModel>)getItems()));
-				}
-			}
+            // Merge luns into targets.
+            if (newLuns != null)
+            {
+                MergeLunsToTargets(newLuns, items);
+            }
 
-			java.util.ArrayList<LunModel> items = new java.util.ArrayList<LunModel>();
-			items.addAll((java.util.List<LunModel>)getItems());
+            setItems(items);
 
-			//Add new LUNs.
-			if (newLuns != null)
-			{
-				for (LunModel newItem : newLuns)
-				{
-					if (Linq.FirstOrDefault(items, new Linq.LunPredicate(newItem)) == null)
-					{
-						items.add(newItem);
-					}
-				}
-			}
+            UpdateLoginAllAvailability();
+        }
+        else
+        {
+            if (getItems() == null)
+            {
+                setItems(new ObservableCollection<LunModel>());
+                isTargetModelList = false;
+            }
+            else
+            {
+                // Convert to list of another type as neccessary.
+                if (isTargetModelList)
+                {
+                    setItems(ToLunModelList((java.util.List<SanTargetModel>) getItems()));
+                }
+            }
 
-			setItems(items);
-		}
-	}
+            java.util.ArrayList<LunModel> items = new java.util.ArrayList<LunModel>();
+            items.addAll((java.util.List<LunModel>) getItems());
 
-	private void MergeLunsToTargets(java.util.List<LunModel> newLuns, java.util.List<SanTargetModel> targets)
-	{
-		for (LunModel lun : newLuns)
-		{
-			for (SanTargetModel target : lun.getTargets())
-			{
-				SanTargetModel item = Linq.FirstOrDefault(targets, new Linq.TargetPredicate(target));
-				if (item == null)
-				{
-					item = target;
-					targets.add(item);
-				}
+            // Add new LUNs.
+            if (newLuns != null)
+            {
+                for (LunModel newItem : newLuns)
+                {
+                    if (Linq.FirstOrDefault(items, new Linq.LunPredicate(newItem)) == null)
+                    {
+                        items.add(newItem);
+                    }
+                }
+            }
 
-				if (Linq.FirstOrDefault(item.getLuns(), new Linq.LunPredicate(lun)) == null)
-				{
-					item.getLuns().add(lun);
-				}
-			}
-		}
-	}
+            setItems(items);
+        }
+    }
 
-	private java.util.List<SanTargetModel> ToTargetModelList(java.util.List<LunModel> source)
-	{
-		ObservableCollection<SanTargetModel> list = new ObservableCollection<SanTargetModel>();
+    private void MergeLunsToTargets(java.util.List<LunModel> newLuns, java.util.List<SanTargetModel> targets)
+    {
+        for (LunModel lun : newLuns)
+        {
+            for (SanTargetModel target : lun.getTargets())
+            {
+                SanTargetModel item = Linq.FirstOrDefault(targets, new Linq.TargetPredicate(target));
+                if (item == null)
+                {
+                    item = target;
+                    targets.add(item);
+                }
 
-		for (LunModel lun : source)
-		{
-			for (SanTargetModel target : lun.getTargets())
-			{
-				SanTargetModel item = Linq.FirstOrDefault(list, new Linq.TargetPredicate(target));
-				if (item == null)
-				{
-					item = target;
-					list.add(item);
-				}
+                if (Linq.FirstOrDefault(item.getLuns(), new Linq.LunPredicate(lun)) == null)
+                {
+                    item.getLuns().add(lun);
+                }
+            }
+        }
+    }
 
-				if (Linq.FirstOrDefault(item.getLuns(), new Linq.LunPredicate(lun)) == null)
-				{
-					item.getLuns().add(lun);
-				}
-			}
-		}
+    private java.util.List<SanTargetModel> ToTargetModelList(java.util.List<LunModel> source)
+    {
+        ObservableCollection<SanTargetModel> list = new ObservableCollection<SanTargetModel>();
 
-		//Merge with last discovered targets list.
-		for (SanTargetModel target : lastDiscoveredTargets)
-		{
-			if (Linq.FirstOrDefault(list, new Linq.TargetPredicate(target)) == null)
-			{
-				list.add(target);
-			}
-		}
+        for (LunModel lun : source)
+        {
+            for (SanTargetModel target : lun.getTargets())
+            {
+                SanTargetModel item = Linq.FirstOrDefault(list, new Linq.TargetPredicate(target));
+                if (item == null)
+                {
+                    item = target;
+                    list.add(item);
+                }
 
-		isTargetModelList = true;
+                if (Linq.FirstOrDefault(item.getLuns(), new Linq.LunPredicate(lun)) == null)
+                {
+                    item.getLuns().add(lun);
+                }
+            }
+        }
 
-		return list;
-	}
+        // Merge with last discovered targets list.
+        for (SanTargetModel target : lastDiscoveredTargets)
+        {
+            if (Linq.FirstOrDefault(list, new Linq.TargetPredicate(target)) == null)
+            {
+                list.add(target);
+            }
+        }
 
-	private java.util.List<LunModel> ToLunModelList(java.util.List<SanTargetModel> source)
-	{
-		ObservableCollection<LunModel> list = new ObservableCollection<LunModel>();
+        isTargetModelList = true;
 
-		for (SanTargetModel target : source)
-		{
-			for (LunModel lun : target.getLuns())
-			{
-				LunModel item = Linq.FirstOrDefault(list, new Linq.LunPredicate(lun));
-				if (item == null)
-				{
-					item = lun;
-					list.add(item);
-				}
+        return list;
+    }
 
-				if (Linq.FirstOrDefault(item.getTargets(), new Linq.TargetPredicate(target)) == null)
-				{
-					item.getTargets().add(target);
-				}
-			}
-		}
+    private java.util.List<LunModel> ToLunModelList(java.util.List<SanTargetModel> source)
+    {
+        ObservableCollection<LunModel> list = new ObservableCollection<LunModel>();
 
-		isTargetModelList = false;
+        for (SanTargetModel target : source)
+        {
+            for (LunModel lun : target.getLuns())
+            {
+                LunModel item = Linq.FirstOrDefault(list, new Linq.LunPredicate(lun));
+                if (item == null)
+                {
+                    item = lun;
+                    list.add(item);
+                }
 
-		return list;
-	}
+                if (Linq.FirstOrDefault(item.getTargets(), new Linq.TargetPredicate(target)) == null)
+                {
+                    item.getTargets().add(target);
+                }
+            }
+        }
 
-	private void ProposeDiscover()
-	{
-		if (!getProposeDiscoverTargets() && (getItems() == null || Linq.Count(getItems()) == 0))
-		{
-			setProposeDiscoverTargets(true);
-		}
-	}
+        isTargetModelList = false;
 
-	protected void IsAllLunsSelectedChanged()
-	{
-		if (!getIsGrouppedByTarget())
-		{
-			java.util.List<LunModel> items = (java.util.List<LunModel>)getItems();
-			for (LunModel lun : items)
-			{
-				if (!lun.getIsIncluded() && lun.getIsAccessible())
-				{
-					lun.setIsSelected(getIsAllLunsSelected());
-				}
-			}
-		}
-	}
+        return list;
+    }
 
-	public java.util.ArrayList<LunModel> getAddedLuns()
-	{
-		java.util.ArrayList<LunModel> luns = new java.util.ArrayList<LunModel>();
-		if (getIsGrouppedByTarget())
-		{
-			java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>)getItems();
-			for (SanTargetModel item : items)
-			{
-				for (LunModel lun : item.getLuns())
-				{
-					if (lun.getIsSelected() && !lun.getIsIncluded() && Linq.FirstOrDefault(luns, new Linq.LunPredicate(lun)) == null)
-					{
-						luns.add(lun);
-					}
-				}
-			}
-		}
-		else
-		{
-			java.util.List<LunModel> items = (java.util.List<LunModel>)getItems();
-			for (LunModel lun : items)
-			{
-				if (lun.getIsSelected() && !lun.getIsIncluded() && Linq.FirstOrDefault(luns, new Linq.LunPredicate(lun)) == null)
-				{
-					luns.add(lun);
-				}
-			}
-		}
+    private void ProposeDiscover()
+    {
+        if (!getProposeDiscoverTargets() && (getItems() == null || Linq.Count(getItems()) == 0))
+        {
+            setProposeDiscoverTargets(true);
+        }
+    }
 
-		return luns;
-	}
+    @Override
+    protected void IsAllLunsSelectedChanged()
+    {
+        if (!getIsGrouppedByTarget())
+        {
+            java.util.List<LunModel> items = (java.util.List<LunModel>) getItems();
+            for (LunModel lun : items)
+            {
+                if (!lun.getIsIncluded() && lun.getIsAccessible())
+                {
+                    lun.setIsSelected(getIsAllLunsSelected());
+                }
+            }
+        }
+    }
 
-	@Override
-	public boolean Validate()
-	{
-		boolean isValid = getAddedLuns().size() > 0 || includedLUNs.size() > 0;
+    public java.util.ArrayList<LunModel> getAddedLuns()
+    {
+        java.util.ArrayList<LunModel> luns = new java.util.ArrayList<LunModel>();
+        if (getIsGrouppedByTarget())
+        {
+            java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>) getItems();
+            for (SanTargetModel item : items)
+            {
+                for (LunModel lun : item.getLuns())
+                {
+                    if (lun.getIsSelected() && !lun.getIsIncluded()
+                            && Linq.FirstOrDefault(luns, new Linq.LunPredicate(lun)) == null)
+                    {
+                        luns.add(lun);
+                    }
+                }
+            }
+        }
+        else
+        {
+            java.util.List<LunModel> items = (java.util.List<LunModel>) getItems();
+            for (LunModel lun : items)
+            {
+                if (lun.getIsSelected() && !lun.getIsIncluded()
+                        && Linq.FirstOrDefault(luns, new Linq.LunPredicate(lun)) == null)
+                {
+                    luns.add(lun);
+                }
+            }
+        }
 
-		if (!isValid)
-		{
-			getInvalidityReasons().add("No LUNs selected. Please select LUNs.");
-		}
+        return luns;
+    }
 
-		setIsValid(isValid);
+    @Override
+    public boolean Validate()
+    {
+        boolean isValid = getAddedLuns().size() > 0 || includedLUNs.size() > 0;
 
-		return super.Validate() && getIsValid();
-	}
+        if (!isValid)
+        {
+            getInvalidityReasons().add("No LUNs selected. Please select LUNs.");
+        }
+
+        setIsValid(isValid);
+
+        return super.Validate() && getIsValid();
+    }
 }

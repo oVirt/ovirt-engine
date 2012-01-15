@@ -1,514 +1,585 @@
 package org.ovirt.engine.ui.uicommonweb.models.pools;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.*;
-
-import org.ovirt.engine.core.common.interfaces.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.EventDefinition;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.uicompat.Translator;
 
 @SuppressWarnings("unused")
 public class PoolGeneralModel extends EntityModel
 {
 
-	public static EventDefinition UpdateCompleteEventDefinition;
-	private Event privateUpdateCompleteEvent;
-	public Event getUpdateCompleteEvent()
-	{
-		return privateUpdateCompleteEvent;
-	}
-	private void setUpdateCompleteEvent(Event value)
-	{
-		privateUpdateCompleteEvent = value;
-	}
+    public static EventDefinition UpdateCompleteEventDefinition;
+    private Event privateUpdateCompleteEvent;
 
+    public Event getUpdateCompleteEvent()
+    {
+        return privateUpdateCompleteEvent;
+    }
 
+    private void setUpdateCompleteEvent(Event value)
+    {
+        privateUpdateCompleteEvent = value;
+    }
 
-	private VM privatevm;
-	public VM getvm()
-	{
-		return privatevm;
-	}
-	public void setvm(VM value)
-	{
-		privatevm = value;
-	}
+    private VM privatevm;
 
-	private String name;
-	public String getName()
-	{
-		return name;
-	}
-	public void setName(String value)
-	{
-		if (!StringHelper.stringsEqual(name, value))
-		{
-			name = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("Name"));
-		}
-	}
+    public VM getvm()
+    {
+        return privatevm;
+    }
 
-	private String description;
-	public String getDescription()
-	{
-		return description;
-	}
-	public void setDescription(String value)
-	{
-		if (!StringHelper.stringsEqual(description, value))
-		{
-			description = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("Description"));
-		}
-	}
+    public void setvm(VM value)
+    {
+        privatevm = value;
+    }
 
-	private String os;
-	public String getOS()
-	{
-		return os;
-	}
-	public void setOS(String value)
-	{
-		if (!StringHelper.stringsEqual(os, value))
-		{
-			os = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("OS"));
-		}
-	}
+    private String name;
 
-	private String defaultDisplayType;
-	public String getDefaultDisplayType()
-	{
-		return defaultDisplayType;
-	}
-	public void setDefaultDisplayType(String value)
-	{
-		if (!StringHelper.stringsEqual(defaultDisplayType, value))
-		{
-			defaultDisplayType = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType"));
-		}
-	}
+    public String getName()
+    {
+        return name;
+    }
 
-	private String origin;
-	public String getOrigin()
-	{
-		return origin;
-	}
-	public void setOrigin(String value)
-	{
-		if (!StringHelper.stringsEqual(origin, value))
-		{
-			origin = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("Origin"));
-		}
-	}
+    public void setName(String value)
+    {
+        if (!StringHelper.stringsEqual(name, value))
+        {
+            name = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+        }
+    }
 
-	private String template;
-	public String getTemplate()
-	{
-		return template;
-	}
-	public void setTemplate(String value)
-	{
-		if (!StringHelper.stringsEqual(template, value))
-		{
-			template = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("Template"));
-		}
-	}
+    private String description;
 
-	private int cpuCount;
-	public int getCpuCount()
-	{
-		return cpuCount;
-	}
-	public void setCpuCount(int value)
-	{
-		if (cpuCount != value)
-		{
-			cpuCount = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("CpuCount"));
-		}
-	}
+    public String getDescription()
+    {
+        return description;
+    }
 
-	private int monitorCount;
-	public int getMonitorCount()
-	{
-		return monitorCount;
-	}
-	public void setMonitorCount(int value)
-	{
-		if (monitorCount != value)
-		{
-			monitorCount = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("MonitorCount"));
-		}
-	}
+    public void setDescription(String value)
+    {
+        if (!StringHelper.stringsEqual(description, value))
+        {
+            description = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Description"));
+        }
+    }
 
-	private String definedMemory;
-	public String getDefinedMemory()
-	{
-		return definedMemory;
-	}
-	public void setDefinedMemory(String value)
-	{
-		if (!StringHelper.stringsEqual(definedMemory, value))
-		{
-			definedMemory = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("DefinedMemory"));
-		}
-	}
+    private String os;
 
-	private String minAllocatedMemory;
-	public String getMinAllocatedMemory()
-	{
-		return minAllocatedMemory;
-	}
-	public void setMinAllocatedMemory(String value)
-	{
-		if (!StringHelper.stringsEqual(minAllocatedMemory, value))
-		{
-			minAllocatedMemory = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("MinAllocatedMemory"));
-		}
-	}
+    public String getOS()
+    {
+        return os;
+    }
 
-	private boolean hasDomain;
-	public boolean getHasDomain()
-	{
-		return hasDomain;
-	}
-	public void setHasDomain(boolean value)
-	{
-		if (hasDomain != value)
-		{
-			hasDomain = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("HasDomain"));
-		}
-	}
+    public void setOS(String value)
+    {
+        if (!StringHelper.stringsEqual(os, value))
+        {
+            os = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("OS"));
+        }
+    }
 
-	private boolean hasStorageDomain;
-	public boolean getHasStorageDomain()
-	{
-		return hasStorageDomain;
-	}
-	public void setHasStorageDomain(boolean value)
-	{
-		if (hasStorageDomain != value)
-		{
-			hasStorageDomain = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("HasStorageDomain"));
-		}
-	}
+    private String defaultDisplayType;
 
-	private boolean hasTimeZone;
-	public boolean getHasTimeZone()
-	{
-		return hasTimeZone;
-	}
-	public void setHasTimeZone(boolean value)
-	{
-		if (hasTimeZone != value)
-		{
-			hasTimeZone = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("HasTimeZone"));
-		}
-	}
+    public String getDefaultDisplayType()
+    {
+        return defaultDisplayType;
+    }
 
-	private String usbPolicy;
-	public String getUsbPolicy()
-	{
-		return usbPolicy;
-	}
-	public void setUsbPolicy(String value)
-	{
-		if (!StringHelper.stringsEqual(usbPolicy, value))
-		{
-			usbPolicy = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("UsbPolicy"));
-		}
-	}
+    public void setDefaultDisplayType(String value)
+    {
+        if (!StringHelper.stringsEqual(defaultDisplayType, value))
+        {
+            defaultDisplayType = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType"));
+        }
+    }
 
-	private String domain;
-	public String getDomain()
-	{
-		return domain;
-	}
-	public void setDomain(String value)
-	{
-		if (!StringHelper.stringsEqual(domain, value))
-		{
-			domain = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("Domain"));
-		}
-	}
+    private String origin;
 
-	private String storageDomain;
-	public String getStorageDomain()
-	{
-		return storageDomain;
-	}
-	public void setStorageDomain(String value)
-	{
-		if (!StringHelper.stringsEqual(storageDomain, value))
-		{
-			storageDomain = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("StorageDomain"));
-		}
-	}
+    public String getOrigin()
+    {
+        return origin;
+    }
 
-	private String timeZone;
-	public String getTimeZone()
-	{
-		return timeZone;
-	}
-	public void setTimeZone(String value)
-	{
-		if (!StringHelper.stringsEqual(timeZone, value))
-		{
-			timeZone = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("TimeZone"));
-		}
-	}
+    public void setOrigin(String value)
+    {
+        if (!StringHelper.stringsEqual(origin, value))
+        {
+            origin = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Origin"));
+        }
+    }
 
-	private String cpuInfo;
-	public String getCpuInfo()
-	{
-		return cpuInfo;
-	}
-	public void setCpuInfo(String value)
-	{
-		if (!StringHelper.stringsEqual(cpuInfo, value))
-		{
-			cpuInfo = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("CpuInfo"));
-		}
-	}
+    private String template;
 
-	private boolean hasDefaultHost;
-	public boolean getHasDefaultHost()
-	{
-		return hasDefaultHost;
-	}
-	public void setHasDefaultHost(boolean value)
-	{
-		if (hasDefaultHost != value)
-		{
-			hasDefaultHost = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("HasDefaultHost"));
-		}
-	}
+    public String getTemplate()
+    {
+        return template;
+    }
 
-	private String defaultHost;
-	public String getDefaultHost()
-	{
-		return defaultHost;
-	}
-	public void setDefaultHost(String value)
-	{
-		if (!StringHelper.stringsEqual(defaultHost, value))
-		{
-			defaultHost = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("DefaultHost"));
-		}
-	}
+    public void setTemplate(String value)
+    {
+        if (!StringHelper.stringsEqual(template, value))
+        {
+            template = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Template"));
+        }
+    }
 
-	private boolean isStateless;
-	public boolean getIsStateless()
-	{
-		return isStateless;
-	}
-	public void setIsStateless(boolean value)
-	{
-		if (isStateless != value)
-		{
-			isStateless = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("IsStateless"));
-		}
-	}
+    private int cpuCount;
 
+    public int getCpuCount()
+    {
+        return cpuCount;
+    }
 
-	static
-	{
-		UpdateCompleteEventDefinition = new EventDefinition("UpdateComplete", PoolGeneralModel.class);
-	}
+    public void setCpuCount(int value)
+    {
+        if (cpuCount != value)
+        {
+            cpuCount = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("CpuCount"));
+        }
+    }
 
-	public PoolGeneralModel()
-	{
-		setUpdateCompleteEvent(new Event(UpdateCompleteEventDefinition));
+    private int monitorCount;
 
-		setTitle("General");
-	}
+    public int getMonitorCount()
+    {
+        return monitorCount;
+    }
 
-	@Override
-	protected void OnEntityChanged()
-	{
-		super.OnEntityChanged();
+    public void setMonitorCount(int value)
+    {
+        if (monitorCount != value)
+        {
+            monitorCount = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("MonitorCount"));
+        }
+    }
 
-		if (getEntity() != null)
-		{
-			UpdateProperties();
-		}
-	}
+    private String definedMemory;
 
-	@Override
-	protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-	{
-		super.EntityPropertyChanged(sender, e);
-		UpdateProperties();
-	}
+    public String getDefinedMemory()
+    {
+        return definedMemory;
+    }
 
-	private void UpdateProperties()
-	{
-		vm_pools pool = (vm_pools)getEntity();
+    public void setDefinedMemory(String value)
+    {
+        if (!StringHelper.stringsEqual(definedMemory, value))
+        {
+            definedMemory = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("DefinedMemory"));
+        }
+    }
 
-		setName(pool.getvm_pool_name());
-		setDescription(pool.getvm_pool_description());
+    private String minAllocatedMemory;
 
-		AsyncQuery _asyncQuery = new AsyncQuery();
-		_asyncQuery.setModel(this);
-		_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object result)
-		{
-			// currently, only query that is being invoked asynchrounously in
-			// this context is GetAnyVmQuery. If more async queries will be needed,
-			// refactor to "switch ... case...".
-			setvm((VM)result);
-			PoolGeneralModel poolGeneralModel = (PoolGeneralModel) model;
-			if (getvm() != null)
-			{
-				poolGeneralModel.setTemplate(getvm().getvmt_name());
-				poolGeneralModel.setCpuInfo(getvm().getnum_of_cpus() + " " + "(" + getvm().getnum_of_sockets() + " Socket(s), " + getvm().getcpu_per_socket() + " Core(s) per Socket)");
-				poolGeneralModel.setMonitorCount(getvm().getnum_of_monitors());
+    public String getMinAllocatedMemory()
+    {
+        return minAllocatedMemory;
+    }
 
-				Translator translator = EnumTranslator.Create(VmOsType.class);
-				poolGeneralModel.setOS(translator.get(getvm().getvm_os()));
+    public void setMinAllocatedMemory(String value)
+    {
+        if (!StringHelper.stringsEqual(minAllocatedMemory, value))
+        {
+            minAllocatedMemory = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("MinAllocatedMemory"));
+        }
+    }
 
-				poolGeneralModel.setDefinedMemory(getvm().getvm_mem_size_mb() + " MB");
-				poolGeneralModel.setMinAllocatedMemory(getvm().getMinAllocatedMem() + " MB");
+    private boolean hasDomain;
 
-				translator = EnumTranslator.Create(DisplayType.class);
-				poolGeneralModel.setDefaultDisplayType(translator.get(getvm().getdefault_display_type()));
+    public boolean getHasDomain()
+    {
+        return hasDomain;
+    }
 
-				translator = EnumTranslator.Create(OriginType.class);
-				poolGeneralModel.setOrigin(translator.get(getvm().getorigin()));
+    public void setHasDomain(boolean value)
+    {
+        if (hasDomain != value)
+        {
+            hasDomain = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("HasDomain"));
+        }
+    }
 
-				translator = EnumTranslator.Create(UsbPolicy.class);
-				poolGeneralModel.setUsbPolicy(translator.get(getvm().getusb_policy()));
+    private boolean hasStorageDomain;
 
-				setHasDomain(DataProvider.IsWindowsOsType(getvm().getvm_os()));
-				poolGeneralModel.setDomain(getvm().getvm_domain());
+    public boolean getHasStorageDomain()
+    {
+        return hasStorageDomain;
+    }
 
-				setHasTimeZone(DataProvider.IsWindowsOsType(getvm().getvm_os()));
-				poolGeneralModel.setTimeZone(getvm().gettime_zone());
+    public void setHasStorageDomain(boolean value)
+    {
+        if (hasStorageDomain != value)
+        {
+            hasStorageDomain = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("HasStorageDomain"));
+        }
+    }
 
-				poolGeneralModel.setIsStateless(getvm().getis_stateless());
+    private boolean hasTimeZone;
 
-				poolGeneralModel.setHasDefaultHost(getvm().getdedicated_vm_for_vds() != null);
-				if (poolGeneralModel.getHasDefaultHost())
-				{
-					AsyncQuery _asyncQuery1 = new AsyncQuery();
-					_asyncQuery1.setModel(poolGeneralModel);
-					_asyncQuery1.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model1, Object ReturnValue1)
-					{
-						PoolGeneralModel poolGeneralModel1 = (PoolGeneralModel)model1;
-						java.util.ArrayList<VDS> hosts = (java.util.ArrayList<VDS>)((VdcQueryReturnValue)ReturnValue1).getReturnValue();
-						for (VDS host : hosts)
-						{
-							if (host.getvds_id().equals(poolGeneralModel1.getvm().getdedicated_vm_for_vds()))
-							{
-								poolGeneralModel1.setDefaultHost(host.getvds_name());
-								break;
-							}
-						}
+    public boolean getHasTimeZone()
+    {
+        return hasTimeZone;
+    }
 
-						poolGeneralModel1.UpdateStorageDomain();
-					}};
+    public void setHasTimeZone(boolean value)
+    {
+        if (hasTimeZone != value)
+        {
+            hasTimeZone = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("HasTimeZone"));
+        }
+    }
 
-					Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + getvm().getvds_group_name() + " sortby name", SearchType.VDS), _asyncQuery1);
-				}
-				else
-				{
-					poolGeneralModel.setDefaultHost("Any Host in Cluster");
+    private String usbPolicy;
 
-					poolGeneralModel.UpdateStorageDomain();
-				}
-			}
-			else
-			{
-				poolGeneralModel.setTemplate(null);
-				poolGeneralModel.setCpuCount(0);
-				poolGeneralModel.setMonitorCount(0);
-				poolGeneralModel.setOS(null);
-				poolGeneralModel.setDefinedMemory(null);
-				poolGeneralModel.setMinAllocatedMemory(null);
-				poolGeneralModel.setDefaultDisplayType(null);
-				poolGeneralModel.setStorageDomain(null);
-				poolGeneralModel.setHasStorageDomain(false);
-				poolGeneralModel.setHasDomain(false);
-				poolGeneralModel.setDomain(null);
-				poolGeneralModel.setHasTimeZone(false);
-				poolGeneralModel.setTimeZone(null);
-				poolGeneralModel.setUsbPolicy(null);
-				poolGeneralModel.setDefaultHost(null);
-				poolGeneralModel.setIsStateless(false);
+    public String getUsbPolicy()
+    {
+        return usbPolicy;
+    }
 
-				poolGeneralModel.getUpdateCompleteEvent().raise(this, EventArgs.Empty);
-			}
-		}};
-		AsyncDataProvider.GetAnyVm(_asyncQuery, pool.getvm_pool_name());
-	}
+    public void setUsbPolicy(String value)
+    {
+        if (!StringHelper.stringsEqual(usbPolicy, value))
+        {
+            usbPolicy = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("UsbPolicy"));
+        }
+    }
 
+    private String domain;
 
+    public String getDomain()
+    {
+        return domain;
+    }
 
-	private void UpdateStorageDomain()
-	{
-		AsyncQuery _asyncQuery = new AsyncQuery();
-		_asyncQuery.setModel(this);
-		_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object ReturnValue)
-		{
-			PoolGeneralModel poolGeneralModel = (PoolGeneralModel)model;
-			Iterable disks = (Iterable)((VdcQueryReturnValue)ReturnValue).getReturnValue();
-			java.util.Iterator disksIterator = disks.iterator();
-			if (disksIterator.hasNext())
-			{
-				poolGeneralModel.setHasStorageDomain(true);
+    public void setDomain(String value)
+    {
+        if (!StringHelper.stringsEqual(domain, value))
+        {
+            domain = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Domain"));
+        }
+    }
 
-				AsyncQuery _asyncQuery1 = new AsyncQuery();
-				_asyncQuery1.setModel(poolGeneralModel);
-				_asyncQuery1.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model1, Object ReturnValue1)
-				{
-					PoolGeneralModel poolGeneralModel1 = (PoolGeneralModel)model1;
-					storage_domains storage = (storage_domains)((VdcQueryReturnValue)ReturnValue1).getReturnValue();
-					poolGeneralModel1.setStorageDomain(storage.getstorage_name());
+    private String storageDomain;
 
-					poolGeneralModel1.getUpdateCompleteEvent().raise(this, EventArgs.Empty);
-				}};
+    public String getStorageDomain()
+    {
+        return storageDomain;
+    }
 
-				DiskImage firstDisk = (DiskImage)disksIterator.next();
-				Frontend.RunQuery(VdcQueryType.GetStorageDomainById, new StorageDomainQueryParametersBase(firstDisk.getstorage_id().getValue()), _asyncQuery1);
-			}
-			else
-			{
-				poolGeneralModel.setHasStorageDomain(false);
+    public void setStorageDomain(String value)
+    {
+        if (!StringHelper.stringsEqual(storageDomain, value))
+        {
+            storageDomain = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("StorageDomain"));
+        }
+    }
 
-				poolGeneralModel.getUpdateCompleteEvent().raise(this, EventArgs.Empty);
-			}
-		}};
+    private String timeZone;
 
-		Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(getvm().getvm_guid()), _asyncQuery);
-	}
+    public String getTimeZone()
+    {
+        return timeZone;
+    }
+
+    public void setTimeZone(String value)
+    {
+        if (!StringHelper.stringsEqual(timeZone, value))
+        {
+            timeZone = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("TimeZone"));
+        }
+    }
+
+    private String cpuInfo;
+
+    public String getCpuInfo()
+    {
+        return cpuInfo;
+    }
+
+    public void setCpuInfo(String value)
+    {
+        if (!StringHelper.stringsEqual(cpuInfo, value))
+        {
+            cpuInfo = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("CpuInfo"));
+        }
+    }
+
+    private boolean hasDefaultHost;
+
+    public boolean getHasDefaultHost()
+    {
+        return hasDefaultHost;
+    }
+
+    public void setHasDefaultHost(boolean value)
+    {
+        if (hasDefaultHost != value)
+        {
+            hasDefaultHost = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("HasDefaultHost"));
+        }
+    }
+
+    private String defaultHost;
+
+    public String getDefaultHost()
+    {
+        return defaultHost;
+    }
+
+    public void setDefaultHost(String value)
+    {
+        if (!StringHelper.stringsEqual(defaultHost, value))
+        {
+            defaultHost = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("DefaultHost"));
+        }
+    }
+
+    private boolean isStateless;
+
+    public boolean getIsStateless()
+    {
+        return isStateless;
+    }
+
+    public void setIsStateless(boolean value)
+    {
+        if (isStateless != value)
+        {
+            isStateless = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsStateless"));
+        }
+    }
+
+    static
+    {
+        UpdateCompleteEventDefinition = new EventDefinition("UpdateComplete", PoolGeneralModel.class);
+    }
+
+    public PoolGeneralModel()
+    {
+        setUpdateCompleteEvent(new Event(UpdateCompleteEventDefinition));
+
+        setTitle("General");
+    }
+
+    @Override
+    protected void OnEntityChanged()
+    {
+        super.OnEntityChanged();
+
+        if (getEntity() != null)
+        {
+            UpdateProperties();
+        }
+    }
+
+    @Override
+    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    {
+        super.EntityPropertyChanged(sender, e);
+        UpdateProperties();
+    }
+
+    private void UpdateProperties()
+    {
+        vm_pools pool = (vm_pools) getEntity();
+
+        setName(pool.getvm_pool_name());
+        setDescription(pool.getvm_pool_description());
+
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object result)
+            {
+                // currently, only query that is being invoked asynchrounously in
+                // this context is GetAnyVmQuery. If more async queries will be needed,
+                // refactor to "switch ... case...".
+                setvm((VM) result);
+                PoolGeneralModel poolGeneralModel = (PoolGeneralModel) model;
+                if (getvm() != null)
+                {
+                    poolGeneralModel.setTemplate(getvm().getvmt_name());
+                    poolGeneralModel.setCpuInfo(getvm().getnum_of_cpus() + " " + "(" + getvm().getnum_of_sockets()
+                            + " Socket(s), " + getvm().getcpu_per_socket() + " Core(s) per Socket)");
+                    poolGeneralModel.setMonitorCount(getvm().getnum_of_monitors());
+
+                    Translator translator = EnumTranslator.Create(VmOsType.class);
+                    poolGeneralModel.setOS(translator.get(getvm().getvm_os()));
+
+                    poolGeneralModel.setDefinedMemory(getvm().getvm_mem_size_mb() + " MB");
+                    poolGeneralModel.setMinAllocatedMemory(getvm().getMinAllocatedMem() + " MB");
+
+                    translator = EnumTranslator.Create(DisplayType.class);
+                    poolGeneralModel.setDefaultDisplayType(translator.get(getvm().getdefault_display_type()));
+
+                    translator = EnumTranslator.Create(OriginType.class);
+                    poolGeneralModel.setOrigin(translator.get(getvm().getorigin()));
+
+                    translator = EnumTranslator.Create(UsbPolicy.class);
+                    poolGeneralModel.setUsbPolicy(translator.get(getvm().getusb_policy()));
+
+                    setHasDomain(DataProvider.IsWindowsOsType(getvm().getvm_os()));
+                    poolGeneralModel.setDomain(getvm().getvm_domain());
+
+                    setHasTimeZone(DataProvider.IsWindowsOsType(getvm().getvm_os()));
+                    poolGeneralModel.setTimeZone(getvm().gettime_zone());
+
+                    poolGeneralModel.setIsStateless(getvm().getis_stateless());
+
+                    poolGeneralModel.setHasDefaultHost(getvm().getdedicated_vm_for_vds() != null);
+                    if (poolGeneralModel.getHasDefaultHost())
+                    {
+                        AsyncQuery _asyncQuery1 = new AsyncQuery();
+                        _asyncQuery1.setModel(poolGeneralModel);
+                        _asyncQuery1.asyncCallback = new INewAsyncCallback() {
+                            @Override
+                            public void OnSuccess(Object model1, Object ReturnValue1)
+                            {
+                                PoolGeneralModel poolGeneralModel1 = (PoolGeneralModel) model1;
+                                java.util.ArrayList<VDS> hosts =
+                                        (java.util.ArrayList<VDS>) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
+                                for (VDS host : hosts)
+                                {
+                                    if (host.getvds_id().equals(poolGeneralModel1.getvm().getdedicated_vm_for_vds()))
+                                    {
+                                        poolGeneralModel1.setDefaultHost(host.getvds_name());
+                                        break;
+                                    }
+                                }
+
+                                poolGeneralModel1.UpdateStorageDomain();
+                            }
+                        };
+
+                        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = "
+                                + getvm().getvds_group_name() + " sortby name", SearchType.VDS), _asyncQuery1);
+                    }
+                    else
+                    {
+                        poolGeneralModel.setDefaultHost("Any Host in Cluster");
+
+                        poolGeneralModel.UpdateStorageDomain();
+                    }
+                }
+                else
+                {
+                    poolGeneralModel.setTemplate(null);
+                    poolGeneralModel.setCpuCount(0);
+                    poolGeneralModel.setMonitorCount(0);
+                    poolGeneralModel.setOS(null);
+                    poolGeneralModel.setDefinedMemory(null);
+                    poolGeneralModel.setMinAllocatedMemory(null);
+                    poolGeneralModel.setDefaultDisplayType(null);
+                    poolGeneralModel.setStorageDomain(null);
+                    poolGeneralModel.setHasStorageDomain(false);
+                    poolGeneralModel.setHasDomain(false);
+                    poolGeneralModel.setDomain(null);
+                    poolGeneralModel.setHasTimeZone(false);
+                    poolGeneralModel.setTimeZone(null);
+                    poolGeneralModel.setUsbPolicy(null);
+                    poolGeneralModel.setDefaultHost(null);
+                    poolGeneralModel.setIsStateless(false);
+
+                    poolGeneralModel.getUpdateCompleteEvent().raise(this, EventArgs.Empty);
+                }
+            }
+        };
+        AsyncDataProvider.GetAnyVm(_asyncQuery, pool.getvm_pool_name());
+    }
+
+    private void UpdateStorageDomain()
+    {
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object ReturnValue)
+            {
+                PoolGeneralModel poolGeneralModel = (PoolGeneralModel) model;
+                Iterable disks = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                java.util.Iterator disksIterator = disks.iterator();
+                if (disksIterator.hasNext())
+                {
+                    poolGeneralModel.setHasStorageDomain(true);
+
+                    AsyncQuery _asyncQuery1 = new AsyncQuery();
+                    _asyncQuery1.setModel(poolGeneralModel);
+                    _asyncQuery1.asyncCallback = new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object model1, Object ReturnValue1)
+                        {
+                            PoolGeneralModel poolGeneralModel1 = (PoolGeneralModel) model1;
+                            storage_domains storage =
+                                    (storage_domains) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
+                            poolGeneralModel1.setStorageDomain(storage.getstorage_name());
+
+                            poolGeneralModel1.getUpdateCompleteEvent().raise(this, EventArgs.Empty);
+                        }
+                    };
+
+                    DiskImage firstDisk = (DiskImage) disksIterator.next();
+                    Frontend.RunQuery(VdcQueryType.GetStorageDomainById,
+                            new StorageDomainQueryParametersBase(firstDisk.getstorage_id().getValue()),
+                            _asyncQuery1);
+                }
+                else
+                {
+                    poolGeneralModel.setHasStorageDomain(false);
+
+                    poolGeneralModel.getUpdateCompleteEvent().raise(this, EventArgs.Empty);
+                }
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId,
+                new GetAllDisksByVmIdParameters(getvm().getvm_guid()),
+                _asyncQuery);
+    }
 
 }

@@ -1,44 +1,35 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicommonweb.models.vms.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 @SuppressWarnings("unused")
 public abstract class ItemBehavior
 {
-	private UserPortalItemModel privateItem;
-	protected UserPortalItemModel getItem()
-	{
-		return privateItem;
-	}
-	private void setItem(UserPortalItemModel value)
-	{
-		privateItem = value;
-	}
+    private UserPortalItemModel privateItem;
 
-	protected ItemBehavior(UserPortalItemModel item)
-	{
-		setItem(item);
-	}
+    protected UserPortalItemModel getItem()
+    {
+        return privateItem;
+    }
 
-	public abstract void OnEntityChanged();
+    private void setItem(UserPortalItemModel value)
+    {
+        privateItem = value;
+    }
 
-	public abstract void EntityPropertyChanged(PropertyChangedEventArgs e);
+    protected ItemBehavior(UserPortalItemModel item)
+    {
+        setItem(item);
+    }
 
-	public abstract void ExecuteCommand(UICommand command);
+    public abstract void OnEntityChanged();
 
-	public abstract void eventRaised(Event ev, Object sender, EventArgs args);
+    public abstract void EntityPropertyChanged(PropertyChangedEventArgs e);
+
+    public abstract void ExecuteCommand(UICommand command);
+
+    public abstract void eventRaised(Event ev, Object sender, EventArgs args);
 }

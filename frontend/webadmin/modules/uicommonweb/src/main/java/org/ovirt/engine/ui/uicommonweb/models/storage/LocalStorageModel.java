@@ -1,83 +1,87 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicommonweb.validation.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
 @SuppressWarnings("unused")
 public class LocalStorageModel extends Model implements IStorageModel
 {
 
-	private UICommand privateUpdateCommand;
-	public UICommand getUpdateCommand()
-	{
-		return privateUpdateCommand;
-	}
-	private void setUpdateCommand(UICommand value)
-	{
-		privateUpdateCommand = value;
-	}
+    private UICommand privateUpdateCommand;
 
+    @Override
+    public UICommand getUpdateCommand()
+    {
+        return privateUpdateCommand;
+    }
 
+    private void setUpdateCommand(UICommand value)
+    {
+        privateUpdateCommand = value;
+    }
 
-	private StorageModel privateContainer;
-	public StorageModel getContainer()
-	{
-		return privateContainer;
-	}
-	public void setContainer(StorageModel value)
-	{
-		privateContainer = value;
-	}
-	private StorageDomainType privateRole = StorageDomainType.values()[0];
-	public StorageDomainType getRole()
-	{
-		return privateRole;
-	}
-	public void setRole(StorageDomainType value)
-	{
-		privateRole = value;
-	}
+    private StorageModel privateContainer;
 
-	private EntityModel privatePath;
-	public EntityModel getPath()
-	{
-		return privatePath;
-	}
-	public void setPath(EntityModel value)
-	{
-		privatePath = value;
-	}
+    @Override
+    public StorageModel getContainer()
+    {
+        return privateContainer;
+    }
 
+    @Override
+    public void setContainer(StorageModel value)
+    {
+        privateContainer = value;
+    }
 
-	public LocalStorageModel()
-	{
-		setUpdateCommand(new UICommand("Update", this));
+    private StorageDomainType privateRole = StorageDomainType.values()[0];
 
-		setPath(new EntityModel());
-	}
+    @Override
+    public StorageDomainType getRole()
+    {
+        return privateRole;
+    }
 
-	public boolean Validate()
-	{
-		getPath().ValidateEntity(new NotEmptyValidation[] { new NotEmptyValidation() });
+    @Override
+    public void setRole(StorageDomainType value)
+    {
+        privateRole = value;
+    }
 
-		return getPath().getIsValid();
-	}
+    private EntityModel privatePath;
 
-	public StorageType getType()
-	{
-		return StorageType.LOCALFS;
-	}
+    public EntityModel getPath()
+    {
+        return privatePath;
+    }
+
+    public void setPath(EntityModel value)
+    {
+        privatePath = value;
+    }
+
+    public LocalStorageModel()
+    {
+        setUpdateCommand(new UICommand("Update", this));
+
+        setPath(new EntityModel());
+    }
+
+    @Override
+    public boolean Validate()
+    {
+        getPath().ValidateEntity(new NotEmptyValidation[] { new NotEmptyValidation() });
+
+        return getPath().getIsValid();
+    }
+
+    @Override
+    public StorageType getType()
+    {
+        return StorageType.LOCALFS;
+    }
 }

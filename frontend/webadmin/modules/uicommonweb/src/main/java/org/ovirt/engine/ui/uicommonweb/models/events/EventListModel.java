@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.ObservableCollection;
@@ -16,10 +15,7 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.ITimer;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.ProvideTickEvent;
-import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -27,7 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 @SuppressWarnings("unused")
 public class EventListModel extends SearchableListModel
 {
-    private GridTimer timer;
+    private final GridTimer timer;
 
     private UICommand privateRefreshCommand;
 
@@ -126,6 +122,7 @@ public class EventListModel extends SearchableListModel
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 EventListModel eventListModel = (EventListModel) model;

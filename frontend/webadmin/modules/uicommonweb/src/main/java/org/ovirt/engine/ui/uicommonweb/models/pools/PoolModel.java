@@ -1,247 +1,262 @@
 package org.ovirt.engine.ui.uicommonweb.models.pools;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.ui.uicommonweb.models.vms.*;
-import org.ovirt.engine.ui.uicommonweb.validation.*;
-
-import org.ovirt.engine.core.common.interfaces.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmModel;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 
 @SuppressWarnings("unused")
 public class PoolModel extends VmModel
 {
 
-	private ListModel privatePoolType;
-	public ListModel getPoolType()
-	{
-		return privatePoolType;
-	}
-	private void setPoolType(ListModel value)
-	{
-		privatePoolType = value;
-	}
-	private EntityModel privateNumOfDesktops;
-	public EntityModel getNumOfDesktops()
-	{
-		return privateNumOfDesktops;
-	}
-	private void setNumOfDesktops(EntityModel value)
-	{
-		privateNumOfDesktops = value;
-	}
-	public boolean getCanDefineVM()
-	{
-		return getIsNew() || (Integer)getNumOfDesktops().getEntity() == 0;
-	}
+    private ListModel privatePoolType;
 
-	@Override
-	public boolean getIsNew()
-	{
-		return super.getIsNew();
-	}
-	@Override
-	public void setIsNew(boolean value)
-	{
-		setIsAddVMMode(value);
-		super.setIsNew(value);
-	}
+    public ListModel getPoolType()
+    {
+        return privatePoolType;
+    }
 
-	//public int OriginalNumberOfDesktops { get; set; }
+    private void setPoolType(ListModel value)
+    {
+        privatePoolType = value;
+    }
 
-	private int assignedVms;
-	public int getAssignedVms()
-	{
-		return assignedVms;
-	}
-	public void setAssignedVms(int value)
-	{
-		if (assignedVms != value)
-		{
-			assignedVms = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("AssignedVms"));
-		}
-	}
+    private EntityModel privateNumOfDesktops;
 
-	private boolean isPoolTabValid;
-	public boolean getIsPoolTabValid()
-	{
-		return isPoolTabValid;
-	}
-	public void setIsPoolTabValid(boolean value)
-	{
-		if (isPoolTabValid != value)
-		{
-			isPoolTabValid = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("IsPoolTabValid"));
-		}
-	}
+    public EntityModel getNumOfDesktops()
+    {
+        return privateNumOfDesktops;
+    }
 
-	private boolean isAddVMMode;
-	public boolean getIsAddVMMode()
-	{
-		return isAddVMMode;
-	}
-	public void setIsAddVMMode(boolean value)
-	{
-		if (isAddVMMode != value)
-		{
-			isAddVMMode = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("IsAddVMMode"));
-		}
-	}
+    private void setNumOfDesktops(EntityModel value)
+    {
+        privateNumOfDesktops = value;
+    }
 
+    public boolean getCanDefineVM()
+    {
+        return getIsNew() || (Integer) getNumOfDesktops().getEntity() == 0;
+    }
 
-	public PoolModel()
-	{
-		java.util.ArrayList<EntityModel> poolTypeItems = new java.util.ArrayList<EntityModel>();
-		EntityModel tempVar = new EntityModel();
-		tempVar.setTitle("Automatic");
-		tempVar.setEntity(VmPoolType.Automatic);
-		EntityModel automaticOption = tempVar;
-		poolTypeItems.add(automaticOption);
-		EntityModel tempVar2 = new EntityModel();
-		tempVar2.setTitle("Manual");
-		tempVar2.setEntity(VmPoolType.Manual);
-		poolTypeItems.add(tempVar2);
+    @Override
+    public boolean getIsNew()
+    {
+        return super.getIsNew();
+    }
 
-		setPoolType(new ListModel());
-		getPoolType().setItems(poolTypeItems);
+    @Override
+    public void setIsNew(boolean value)
+    {
+        setIsAddVMMode(value);
+        super.setIsNew(value);
+    }
 
-		EntityModel tempVar3 = new EntityModel();
-		tempVar3.setEntity(1);
-		setNumOfDesktops(tempVar3);
+    // public int OriginalNumberOfDesktops { get; set; }
 
-		setIsPoolTabValid(true);
+    private int assignedVms;
 
-		getPoolType().setSelectedItem(automaticOption);
-		getOSType().setSelectedItem(VmOsType.Unassigned);
-	}
+    public int getAssignedVms()
+    {
+        return assignedVms;
+    }
 
-	@Override
-	protected void FillTemplateList(Guid DataCenterId)
-	{
-		//			var templates = DataProvider.GetTemplateListByDataCenter(DataCenterId).Where(a => (Guid)a.vmt_guid != Guid.Empty);
-		java.util.ArrayList<VmTemplate> templates = new java.util.ArrayList<VmTemplate>();
-		for (VmTemplate template : DataProvider.GetTemplateList(DataCenterId))
-		{
-			if (!template.getId().equals(Guid.Empty))
-			{
-				templates.add(template);
-			}
-		}
-		getTemplate().setItems(templates);
-		//			Template.Value = templates.FirstOrDefault();
-		getTemplate().setSelectedItem(Linq.FirstOrDefault(templates));
-	}
+    public void setAssignedVms(int value)
+    {
+        if (assignedVms != value)
+        {
+            assignedVms = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("AssignedVms"));
+        }
+    }
 
-	//private void DataCenterChanged()
-	//{
-	//    Clusters = DataProvider.GetClusterList(DataCenter.id);
-	//    if (CanDefineVM)
-	//    {
-	//        Cluster = Clusters.FirstOrDefault();
-	//    }
+    private boolean isPoolTabValid;
 
-	//    StorageDomains = DataProvider.GetStorageDomainList(DataCenter.id);
+    public boolean getIsPoolTabValid()
+    {
+        return isPoolTabValid;
+    }
 
-	//    Templates = DataProvider.GetTemplateListByDataCenter(DataCenter.id)
-	//        .Where(a => a.vmt_guid != Guid.Empty);
-	//    if (CanDefineVM)
-	//    {
-	//        Template = Templates.FirstOrDefault();
-	//    }
-	//}
+    public void setIsPoolTabValid(boolean value)
+    {
+        if (isPoolTabValid != value)
+        {
+            isPoolTabValid = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsPoolTabValid"));
+        }
+    }
 
-	//public void TemplateChanged()
-	//{
-	//    if (Template == null && !CanDefineVM)
-	//    {
-	//        return;
-	//    }
+    private boolean isAddVMMode;
 
-	//    OSType = Template.os;
-	//    NumOfMonitors = Template.num_of_monitors;
-	//    Domain = Template.domain;
-	//    MemSize = Template.mem_size_mb;
-	//    UsbPolicy = Template.usb_policy;
-	//    IsAutoSuspend = Template.is_auto_suspend;
-	//    if (TimeZones != null)
-	//    {
-	//        TimeZone = TimeZones.FirstOrDefault(a => a.getKey() == (String.IsNullOrEmpty(Template.time_zone)
-	//            ? DataProvider.GetDefaultTimeZone()
-	//            : Template.time_zone)
-	//        );
-	//    }
-	//    var storageDomains = DataProvider.GetStorageDomainListByTemplate(Template.vmt_guid);
-	//    StorageDomains = storageDomains;
-	//    StorageDomain = storageDomains.FirstOrDefault();
-	//}
+    public boolean getIsAddVMMode()
+    {
+        return isAddVMMode;
+    }
 
-	//private void OsTypeChanged()
-	//{
-	//    HasDomain = IsWindowsOsType(OSType);
-	//    HasTimeZone = IsWindowsOsType(OSType);
-	//}
+    public void setIsAddVMMode(boolean value)
+    {
+        if (isAddVMMode != value)
+        {
+            isAddVMMode = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsAddVMMode"));
+        }
+    }
 
-	@Override
-	public boolean Validate()
-	{
-		boolean baseValidation = super.Validate();
+    public PoolModel()
+    {
+        java.util.ArrayList<EntityModel> poolTypeItems = new java.util.ArrayList<EntityModel>();
+        EntityModel tempVar = new EntityModel();
+        tempVar.setTitle("Automatic");
+        tempVar.setEntity(VmPoolType.Automatic);
+        EntityModel automaticOption = tempVar;
+        poolTypeItems.add(automaticOption);
+        EntityModel tempVar2 = new EntityModel();
+        tempVar2.setTitle("Manual");
+        tempVar2.setEntity(VmPoolType.Manual);
+        poolTypeItems.add(tempVar2);
 
-		setIsPoolTabValid(true);
-		//Revalidate name field.
-		//TODO: Make maximum characters value depend on number of desktops in pool.
-		VmOsType os = (VmOsType)getOSType().getSelectedItem();
+        setPoolType(new ListModel());
+        getPoolType().setItems(poolTypeItems);
 
-		int maxAlowedVms = DataProvider.GetMaxVmsInPool();
-		int maxNumOfCharsVmSerialNumber = String.valueOf(maxAlowedVms).length() + 1;
-		int maxAllowedChars_windows = WINDOWS_VM_NAME_MAX_LIMIT - maxNumOfCharsVmSerialNumber;
-		int maxAllowedChars_nonWindows = NON_WINDOWS_VM_NAME_MAX_LIMIT - maxNumOfCharsVmSerialNumber;
+        EntityModel tempVar3 = new EntityModel();
+        tempVar3.setEntity(1);
+        setNumOfDesktops(tempVar3);
 
-		String nameExpr = StringFormat.format("^[0-9a-zA-Z-_]{1,%1$s}$", maxAllowedChars_windows);
-		String nameMsg = StringFormat.format("Name must contain only alphanumeric characters. Maximum length: %1$s.", maxAllowedChars_windows);
+        setIsPoolTabValid(true);
 
-		if (!DataProvider.IsWindowsOsType(os))
-		{
-			nameExpr = StringFormat.format("^[-\\w]{1,%1$s}$", maxAllowedChars_nonWindows);
-			nameMsg = StringFormat.format("Name cannot contain special characters. Maximum length: %1$s.", maxAllowedChars_nonWindows);
-		}
+        getPoolType().setSelectedItem(automaticOption);
+        getOSType().setSelectedItem(VmOsType.Unassigned);
+    }
 
-		LengthValidation tempVar = new LengthValidation();
-		tempVar.setMaxLength(64);
-		RegexValidation tempVar2 = new RegexValidation();
-		tempVar2.setExpression(nameExpr);
-		tempVar2.setMessage(nameMsg);
-		getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
+    @Override
+    protected void FillTemplateList(Guid DataCenterId)
+    {
+        // var templates = DataProvider.GetTemplateListByDataCenter(DataCenterId).Where(a => (Guid)a.vmt_guid !=
+        // Guid.Empty);
+        java.util.ArrayList<VmTemplate> templates = new java.util.ArrayList<VmTemplate>();
+        for (VmTemplate template : DataProvider.GetTemplateList(DataCenterId))
+        {
+            if (!template.getId().equals(NGuid.Empty))
+            {
+                templates.add(template);
+            }
+        }
+        getTemplate().setItems(templates);
+        // Template.Value = templates.FirstOrDefault();
+        getTemplate().setSelectedItem(Linq.FirstOrDefault(templates));
+    }
 
-		LengthValidation tempVar3 = new LengthValidation();
-		tempVar3.setMaxLength(255);
-		getDescription().ValidateEntity(new IValidation[] { tempVar3 });
+    // private void DataCenterChanged()
+    // {
+    // Clusters = DataProvider.GetClusterList(DataCenter.id);
+    // if (CanDefineVM)
+    // {
+    // Cluster = Clusters.FirstOrDefault();
+    // }
 
-		LengthValidation tempVar4 = new LengthValidation();
-		tempVar4.setMaxLength(4);
-		IntegerValidation tempVar5 = new IntegerValidation();
-		tempVar5.setMinimum(1);
-		tempVar5.setMaximum(getIsNew() ? maxAlowedVms : maxAlowedVms - getAssignedVms());
-		getNumOfDesktops().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar4, tempVar5 });
+    // StorageDomains = DataProvider.GetStorageDomainList(DataCenter.id);
 
-		setIsGeneralTabValid(getIsGeneralTabValid() && getName().getIsValid() && getNumOfDesktops().getIsValid());
+    // Templates = DataProvider.GetTemplateListByDataCenter(DataCenter.id)
+    // .Where(a => a.vmt_guid != Guid.Empty);
+    // if (CanDefineVM)
+    // {
+    // Template = Templates.FirstOrDefault();
+    // }
+    // }
 
-		setIsPoolTabValid(true);
+    // public void TemplateChanged()
+    // {
+    // if (Template == null && !CanDefineVM)
+    // {
+    // return;
+    // }
 
-		return baseValidation && getName().getIsValid() && getNumOfDesktops().getIsValid();
-	}
+    // OSType = Template.os;
+    // NumOfMonitors = Template.num_of_monitors;
+    // Domain = Template.domain;
+    // MemSize = Template.mem_size_mb;
+    // UsbPolicy = Template.usb_policy;
+    // IsAutoSuspend = Template.is_auto_suspend;
+    // if (TimeZones != null)
+    // {
+    // TimeZone = TimeZones.FirstOrDefault(a => a.getKey() == (String.IsNullOrEmpty(Template.time_zone)
+    // ? DataProvider.GetDefaultTimeZone()
+    // : Template.time_zone)
+    // );
+    // }
+    // var storageDomains = DataProvider.GetStorageDomainListByTemplate(Template.vmt_guid);
+    // StorageDomains = storageDomains;
+    // StorageDomain = storageDomains.FirstOrDefault();
+    // }
+
+    // private void OsTypeChanged()
+    // {
+    // HasDomain = IsWindowsOsType(OSType);
+    // HasTimeZone = IsWindowsOsType(OSType);
+    // }
+
+    @Override
+    public boolean Validate()
+    {
+        boolean baseValidation = super.Validate();
+
+        setIsPoolTabValid(true);
+        // Revalidate name field.
+        // TODO: Make maximum characters value depend on number of desktops in pool.
+        VmOsType os = (VmOsType) getOSType().getSelectedItem();
+
+        int maxAlowedVms = DataProvider.GetMaxVmsInPool();
+        int maxNumOfCharsVmSerialNumber = String.valueOf(maxAlowedVms).length() + 1;
+        int maxAllowedChars_windows = WINDOWS_VM_NAME_MAX_LIMIT - maxNumOfCharsVmSerialNumber;
+        int maxAllowedChars_nonWindows = NON_WINDOWS_VM_NAME_MAX_LIMIT - maxNumOfCharsVmSerialNumber;
+
+        String nameExpr = StringFormat.format("^[0-9a-zA-Z-_]{1,%1$s}$", maxAllowedChars_windows);
+        String nameMsg =
+                StringFormat.format("Name must contain only alphanumeric characters. Maximum length: %1$s.",
+                        maxAllowedChars_windows);
+
+        if (!DataProvider.IsWindowsOsType(os))
+        {
+            nameExpr = StringFormat.format("^[-\\w]{1,%1$s}$", maxAllowedChars_nonWindows);
+            nameMsg =
+                    StringFormat.format("Name cannot contain special characters. Maximum length: %1$s.",
+                            maxAllowedChars_nonWindows);
+        }
+
+        LengthValidation tempVar = new LengthValidation();
+        tempVar.setMaxLength(64);
+        RegexValidation tempVar2 = new RegexValidation();
+        tempVar2.setExpression(nameExpr);
+        tempVar2.setMessage(nameMsg);
+        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
+
+        LengthValidation tempVar3 = new LengthValidation();
+        tempVar3.setMaxLength(255);
+        getDescription().ValidateEntity(new IValidation[] { tempVar3 });
+
+        LengthValidation tempVar4 = new LengthValidation();
+        tempVar4.setMaxLength(4);
+        IntegerValidation tempVar5 = new IntegerValidation();
+        tempVar5.setMinimum(1);
+        tempVar5.setMaximum(getIsNew() ? maxAlowedVms : maxAlowedVms - getAssignedVms());
+        getNumOfDesktops().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar4, tempVar5 });
+
+        setIsGeneralTabValid(getIsGeneralTabValid() && getName().getIsValid() && getNumOfDesktops().getIsValid());
+
+        setIsPoolTabValid(true);
+
+        return baseValidation && getName().getIsValid() && getNumOfDesktops().getIsValid();
+    }
 }

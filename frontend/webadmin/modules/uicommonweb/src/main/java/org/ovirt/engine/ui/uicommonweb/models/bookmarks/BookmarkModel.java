@@ -1,73 +1,67 @@
 package org.ovirt.engine.ui.uicommonweb.models.bookmarks;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicommonweb.validation.*;
-
-import org.ovirt.engine.core.common.interfaces.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
 @SuppressWarnings("unused")
 public class BookmarkModel extends Model
 {
 
-	private boolean privateIsNew;
-	public boolean getIsNew()
-	{
-		return privateIsNew;
-	}
-	public void setIsNew(boolean value)
-	{
-		privateIsNew = value;
-	}
+    private boolean privateIsNew;
 
-	private EntityModel privateName;
-	public EntityModel getName()
-	{
-		return privateName;
-	}
-	public void setName(EntityModel value)
-	{
-		privateName = value;
-	}
-	private EntityModel privateSearchString;
-	public EntityModel getSearchString()
-	{
-		return privateSearchString;
-	}
-	public void setSearchString(EntityModel value)
-	{
-		privateSearchString = value;
-	}
+    public boolean getIsNew()
+    {
+        return privateIsNew;
+    }
 
+    public void setIsNew(boolean value)
+    {
+        privateIsNew = value;
+    }
 
-	public BookmarkModel()
-	{
-		setName(new EntityModel());
-		setSearchString(new EntityModel());
-	}
+    private EntityModel privateName;
 
-	public boolean Validate()
-	{
-		LengthValidation tempVar = new LengthValidation();
-		tempVar.setMaxLength(40);
-		getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+    public EntityModel getName()
+    {
+        return privateName;
+    }
 
-		LengthValidation tempVar2 = new LengthValidation();
-		tempVar2.setMaxLength(300);
-		getSearchString().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar2 });
+    public void setName(EntityModel value)
+    {
+        privateName = value;
+    }
 
-		return getName().getIsValid() && getSearchString().getIsValid();
-	}
+    private EntityModel privateSearchString;
+
+    public EntityModel getSearchString()
+    {
+        return privateSearchString;
+    }
+
+    public void setSearchString(EntityModel value)
+    {
+        privateSearchString = value;
+    }
+
+    public BookmarkModel()
+    {
+        setName(new EntityModel());
+        setSearchString(new EntityModel());
+    }
+
+    public boolean Validate()
+    {
+        LengthValidation tempVar = new LengthValidation();
+        tempVar.setMaxLength(40);
+        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+
+        LengthValidation tempVar2 = new LengthValidation();
+        tempVar2.setMaxLength(300);
+        getSearchString().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar2 });
+
+        return getName().getIsValid() && getSearchString().getIsValid();
+    }
 }

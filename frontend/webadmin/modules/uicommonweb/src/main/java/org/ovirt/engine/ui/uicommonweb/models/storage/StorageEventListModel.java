@@ -10,6 +10,7 @@ public class StorageEventListModel extends EventListModel
 {
 
     // get { return base.Entity as storage_domains; }
+    @Override
     public storage_domains getEntity()
     {
         return (storage_domains) super.getEntity();

@@ -94,7 +94,7 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
 
     private int currentRate = 0;
 
-    private SimpleEventBus eventBus;
+    private final SimpleEventBus eventBus;
 
     private final String name;
 
@@ -104,7 +104,7 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
 
     private int normalInterval = DEFAULT_NORMAL_RATE;
 
-    private RATE[] rateCycle = { RATE.NORMAL, RATE.FAST, RATE.MEDIUM, RATE.SLOW };
+    private final RATE[] rateCycle = { RATE.NORMAL, RATE.FAST, RATE.MEDIUM, RATE.SLOW };
 
     private int repetitions;
 
@@ -168,7 +168,7 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
 
     /**
      * Set the refresh rate. Stops a fast-forward
-     * 
+     *
      * @param interval
      *            in seconds
      */

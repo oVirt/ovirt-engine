@@ -1,131 +1,136 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 @SuppressWarnings("unused")
 public class HostInterfaceLineModel extends Model
 {
 
-	private VdsNetworkInterface privateInterface;
-	public VdsNetworkInterface getInterface()
-	{
-		return privateInterface;
-	}
-	public void setInterface(VdsNetworkInterface value)
-	{
-		privateInterface = value;
-	}
+    private VdsNetworkInterface privateInterface;
 
+    public VdsNetworkInterface getInterface()
+    {
+        return privateInterface;
+    }
 
-	private boolean isBonded;
-	public boolean getIsBonded()
-	{
-		return isBonded;
-	}
-	public void setIsBonded(boolean value)
-	{
-		if (isBonded != value)
-		{
-			isBonded = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("IsBonded"));
-		}
-	}
+    public void setInterface(VdsNetworkInterface value)
+    {
+        privateInterface = value;
+    }
 
-	private String bondName;
-	public String getBondName()
-	{
-		return bondName;
-	}
-	public void setBondName(String value)
-	{
-		if (!StringHelper.stringsEqual(bondName, value))
-		{
-			bondName = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("BondName"));
-		}
-	}
+    private boolean isBonded;
 
-	private String address;
-	public String getAddress()
-	{
-		return address;
-	}
-	public void setAddress(String value)
-	{
-		if (!StringHelper.stringsEqual(address, value))
-		{
-			address = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("Address"));
-		}
-	}
+    public boolean getIsBonded()
+    {
+        return isBonded;
+    }
 
-	private java.util.ArrayList<HostInterface> interfaces;
-	public java.util.ArrayList<HostInterface> getInterfaces()
-	{
-		return interfaces;
-	}
-	public void setInterfaces(java.util.ArrayList<HostInterface> value)
-	{
-		if (interfaces != value)
-		{
-			interfaces = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("Interfaces"));
-		}
-	}
+    public void setIsBonded(boolean value)
+    {
+        if (isBonded != value)
+        {
+            isBonded = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsBonded"));
+        }
+    }
 
-	private java.util.ArrayList<HostVLan> vLans;
-	public java.util.ArrayList<HostVLan> getVLans()
-	{
-		return vLans;
-	}
-	public void setVLans(java.util.ArrayList<HostVLan> value)
-	{
-		if (vLans != value)
-		{
-			vLans = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("VLans"));
-		}
-	}
+    private String bondName;
 
-	private String networkName;
-	public String getNetworkName()
-	{
-		return networkName;
-	}
-	public void setNetworkName(String value)
-	{
-		if (!StringHelper.stringsEqual(networkName, value))
-		{
-			networkName = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("NetworkName"));
-		}
-	}
+    public String getBondName()
+    {
+        return bondName;
+    }
 
-	private boolean isManagement;
-	public boolean getIsManagement()
-	{
-		return isManagement;
-	}
-	public void setIsManagement(boolean value)
-	{
-		if (isManagement != value)
-		{
-			isManagement = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("IsManagement"));
-		}
-	}
+    public void setBondName(String value)
+    {
+        if (!StringHelper.stringsEqual(bondName, value))
+        {
+            bondName = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("BondName"));
+        }
+    }
+
+    private String address;
+
+    public String getAddress()
+    {
+        return address;
+    }
+
+    public void setAddress(String value)
+    {
+        if (!StringHelper.stringsEqual(address, value))
+        {
+            address = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Address"));
+        }
+    }
+
+    private java.util.ArrayList<HostInterface> interfaces;
+
+    public java.util.ArrayList<HostInterface> getInterfaces()
+    {
+        return interfaces;
+    }
+
+    public void setInterfaces(java.util.ArrayList<HostInterface> value)
+    {
+        if (interfaces != value)
+        {
+            interfaces = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Interfaces"));
+        }
+    }
+
+    private java.util.ArrayList<HostVLan> vLans;
+
+    public java.util.ArrayList<HostVLan> getVLans()
+    {
+        return vLans;
+    }
+
+    public void setVLans(java.util.ArrayList<HostVLan> value)
+    {
+        if (vLans != value)
+        {
+            vLans = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("VLans"));
+        }
+    }
+
+    private String networkName;
+
+    public String getNetworkName()
+    {
+        return networkName;
+    }
+
+    public void setNetworkName(String value)
+    {
+        if (!StringHelper.stringsEqual(networkName, value))
+        {
+            networkName = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("NetworkName"));
+        }
+    }
+
+    private boolean isManagement;
+
+    public boolean getIsManagement()
+    {
+        return isManagement;
+    }
+
+    public void setIsManagement(boolean value)
+    {
+        if (isManagement != value)
+        {
+            isManagement = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsManagement"));
+        }
+    }
 
 }

@@ -1,356 +1,378 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicommonweb.validation.*;
-import org.ovirt.engine.core.common.interfaces.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.ui.uicommonweb.dataprovider.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Cloner;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
 @SuppressWarnings("unused")
 public class ClusterPolicyModel extends EntityModel
 {
-	public static Integer lowLimitPowerSaving = null;
-	public static Integer highLimitPowerSaving = null;
-	public static Integer highLimitEvenlyDistributed = null;
+    public static Integer lowLimitPowerSaving = null;
+    public static Integer highLimitPowerSaving = null;
+    public static Integer highLimitEvenlyDistributed = null;
 
+    private UICommand privateEditCommand;
 
-	private UICommand privateEditCommand;
-	public UICommand getEditCommand()
-	{
-		return privateEditCommand;
-	}
-	private void setEditCommand(UICommand value)
-	{
-		privateEditCommand = value;
-	}
+    public UICommand getEditCommand()
+    {
+        return privateEditCommand;
+    }
 
+    private void setEditCommand(UICommand value)
+    {
+        privateEditCommand = value;
+    }
 
+    @Override
+    public VDSGroup getEntity()
+    {
+        return (VDSGroup) ((super.getEntity() instanceof VDSGroup) ? super.getEntity() : null);
+    }
 
-	public VDSGroup getEntity()
-	{
-		return (VDSGroup)((super.getEntity() instanceof VDSGroup) ? super.getEntity() : null);
-	}
-	public void setEntity(VDSGroup value)
-	{
-		super.setEntity(value);
-	}
+    public void setEntity(VDSGroup value)
+    {
+        super.setEntity(value);
+    }
 
-	private EntityModel privateOverCommitTime;
-	public EntityModel getOverCommitTime()
-	{
-		return privateOverCommitTime;
-	}
-	public void setOverCommitTime(EntityModel value)
-	{
-		privateOverCommitTime = value;
-	}
+    private EntityModel privateOverCommitTime;
 
-	private boolean hasOverCommitLowLevel;
-	public boolean getHasOverCommitLowLevel()
-	{
-		return hasOverCommitLowLevel;
-	}
-	public void setHasOverCommitLowLevel(boolean value)
-	{
-		if (hasOverCommitLowLevel != value)
-		{
-			hasOverCommitLowLevel = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("HasOverCommitLowLevel"));
-		}
-	}
+    public EntityModel getOverCommitTime()
+    {
+        return privateOverCommitTime;
+    }
 
-	public boolean hasOverCommitHighLevel;
-	public boolean getHasOverCommitHighLevel()
-	{
-		return hasOverCommitHighLevel;
-	}
-	public void setHasOverCommitHighLevel(boolean value)
-	{
-		if (hasOverCommitHighLevel != value)
-		{
-			hasOverCommitHighLevel = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("HasOverCommitHighLevel"));
-		}
-	}
-	//Editing features
-	private VdsSelectionAlgorithm selectionAlgorithm = VdsSelectionAlgorithm.values()[0];
-	public VdsSelectionAlgorithm getSelectionAlgorithm()
-	{
-		return selectionAlgorithm;
-	}
-	public void setSelectionAlgorithm(VdsSelectionAlgorithm value)
-	{
-		if (selectionAlgorithm != value)
-		{
-			selectionAlgorithm = value;
-			SelectionAlgorithmChanged();
-			OnPropertyChanged(new PropertyChangedEventArgs("SelectionAlgorithm"));
-		}
-	}
+    public void setOverCommitTime(EntityModel value)
+    {
+        privateOverCommitTime = value;
+    }
 
-	private int overCommitLowLevel;
-	public int getOverCommitLowLevel()
-	{
-		return overCommitLowLevel;
-	}
-	public void setOverCommitLowLevel(int value)
-	{
-		if (overCommitLowLevel != value)
-		{
-			overCommitLowLevel = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("OverCommitLowLevel"));
-		}
-	}
+    private boolean hasOverCommitLowLevel;
 
-	private int overCommitHighLevel;
-	public int getOverCommitHighLevel()
-	{
-		return overCommitHighLevel;
-	}
-	public void setOverCommitHighLevel(int value)
-	{
-		if (overCommitHighLevel != value)
-		{
-			overCommitHighLevel = value;
-			OnPropertyChanged(new PropertyChangedEventArgs("OverCommitHighLevel"));
-		}
-	}
+    public boolean getHasOverCommitLowLevel()
+    {
+        return hasOverCommitLowLevel;
+    }
 
-	public void SaveDefaultValues()
-	{
-		if (getSelectionAlgorithm() == VdsSelectionAlgorithm.EvenlyDistribute)
-		{
-			highLimitEvenlyDistributed = getOverCommitHighLevel();
-		}
-		else if (getSelectionAlgorithm() == VdsSelectionAlgorithm.PowerSave)
-		{
-			lowLimitPowerSaving = getOverCommitLowLevel();
-			highLimitPowerSaving = getOverCommitHighLevel();
-		}
-	}
+    public void setHasOverCommitLowLevel(boolean value)
+    {
+        if (hasOverCommitLowLevel != value)
+        {
+            hasOverCommitLowLevel = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("HasOverCommitLowLevel"));
+        }
+    }
 
+    public boolean hasOverCommitHighLevel;
 
+    public boolean getHasOverCommitHighLevel()
+    {
+        return hasOverCommitHighLevel;
+    }
 
-	public ClusterPolicyModel()
-	{
-		setTitle("General");
+    public void setHasOverCommitHighLevel(boolean value)
+    {
+        if (hasOverCommitHighLevel != value)
+        {
+            hasOverCommitHighLevel = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("HasOverCommitHighLevel"));
+        }
+    }
 
-		setEditCommand(new UICommand("Edit", this));
-		setOverCommitTime(new EntityModel());
+    // Editing features
+    private VdsSelectionAlgorithm selectionAlgorithm = VdsSelectionAlgorithm.values()[0];
 
-		// Set all properties according to default selected algorithm:
-		SelectionAlgorithmChanged();
+    public VdsSelectionAlgorithm getSelectionAlgorithm()
+    {
+        return selectionAlgorithm;
+    }
 
-		AsyncQuery _asyncQuery = new AsyncQuery();
-		_asyncQuery.setModel(this);
-		_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object result)
-		{
-			ClusterPolicyModel.highLimitEvenlyDistributed = (Integer)result;
-		}};
-		if (ClusterPolicyModel.highLimitEvenlyDistributed == null)
-		{
-			AsyncDataProvider.GetHighUtilizationForEvenDistribution(_asyncQuery);
-		}
-		_asyncQuery = new AsyncQuery();
-		_asyncQuery.setModel(this);
-		_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object result)
-		{
-			ClusterPolicyModel.lowLimitPowerSaving = (Integer)result;
-		}};
-		if (ClusterPolicyModel.lowLimitPowerSaving == null)
-		{
-			AsyncDataProvider.GetLowUtilizationForPowerSave(_asyncQuery);
-		}
+    public void setSelectionAlgorithm(VdsSelectionAlgorithm value)
+    {
+        if (selectionAlgorithm != value)
+        {
+            selectionAlgorithm = value;
+            SelectionAlgorithmChanged();
+            OnPropertyChanged(new PropertyChangedEventArgs("SelectionAlgorithm"));
+        }
+    }
 
-		_asyncQuery = new AsyncQuery();
-		_asyncQuery.setModel(this);
-		_asyncQuery.asyncCallback = new INewAsyncCallback() { public void OnSuccess(Object model, Object result)
-		{
-			ClusterPolicyModel.highLimitPowerSaving = (Integer)result;
-		}};
-		if (highLimitPowerSaving == null)
-		{
-			AsyncDataProvider.GetHighUtilizationForPowerSave(_asyncQuery);
-		}
-	}
+    private int overCommitLowLevel;
 
+    public int getOverCommitLowLevel()
+    {
+        return overCommitLowLevel;
+    }
 
-	public void Edit()
-	{
-		if (getWindow() != null)
-		{
-			return;
-		}
+    public void setOverCommitLowLevel(int value)
+    {
+        if (overCommitLowLevel != value)
+        {
+            overCommitLowLevel = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("OverCommitLowLevel"));
+        }
+    }
 
-		ClusterPolicyModel model = new ClusterPolicyModel();
+    private int overCommitHighLevel;
 
-		model.setTitle("Edit Policy");
-		model.setHashName("edit_policy");
+    public int getOverCommitHighLevel()
+    {
+        return overCommitHighLevel;
+    }
 
-		model.setSelectionAlgorithm(getEntity().getselection_algorithm());
-		model.getOverCommitTime().setEntity(getEntity().getcpu_over_commit_duration_minutes());
-		model.setOverCommitLowLevel(getEntity().getlow_utilization());
-		model.setOverCommitHighLevel(getEntity().gethigh_utilization());
+    public void setOverCommitHighLevel(int value)
+    {
+        if (overCommitHighLevel != value)
+        {
+            overCommitHighLevel = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("OverCommitHighLevel"));
+        }
+    }
 
-		model.SaveDefaultValues();
+    public void SaveDefaultValues()
+    {
+        if (getSelectionAlgorithm() == VdsSelectionAlgorithm.EvenlyDistribute)
+        {
+            highLimitEvenlyDistributed = getOverCommitHighLevel();
+        }
+        else if (getSelectionAlgorithm() == VdsSelectionAlgorithm.PowerSave)
+        {
+            lowLimitPowerSaving = getOverCommitLowLevel();
+            highLimitPowerSaving = getOverCommitHighLevel();
+        }
+    }
 
-		setWindow(model);
+    public ClusterPolicyModel()
+    {
+        setTitle("General");
 
-		UICommand tempVar = new UICommand("OnSave", this);
-		tempVar.setTitle("OK");
-		tempVar.setIsDefault(true);
-		model.getCommands().add(tempVar);
-		UICommand tempVar2 = new UICommand("Cancel", this);
-		tempVar2.setTitle("Cancel");
-		tempVar2.setIsCancel(true);
-		model.getCommands().add(tempVar2);
-	}
+        setEditCommand(new UICommand("Edit", this));
+        setOverCommitTime(new EntityModel());
 
-	public void OnSave()
-	{
-		ClusterPolicyModel model = (ClusterPolicyModel)getWindow();
+        // Set all properties according to default selected algorithm:
+        SelectionAlgorithmChanged();
 
-		if (getEntity() == null)
-		{
-			Cancel();
-			return;
-		}
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object result)
+            {
+                ClusterPolicyModel.highLimitEvenlyDistributed = (Integer) result;
+            }
+        };
+        if (ClusterPolicyModel.highLimitEvenlyDistributed == null)
+        {
+            AsyncDataProvider.GetHighUtilizationForEvenDistribution(_asyncQuery);
+        }
+        _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object result)
+            {
+                ClusterPolicyModel.lowLimitPowerSaving = (Integer) result;
+            }
+        };
+        if (ClusterPolicyModel.lowLimitPowerSaving == null)
+        {
+            AsyncDataProvider.GetLowUtilizationForPowerSave(_asyncQuery);
+        }
 
-		if (!model.Validate())
-		{
-			return;
-		}
+        _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object result)
+            {
+                ClusterPolicyModel.highLimitPowerSaving = (Integer) result;
+            }
+        };
+        if (highLimitPowerSaving == null)
+        {
+            AsyncDataProvider.GetHighUtilizationForPowerSave(_asyncQuery);
+        }
+    }
 
-		VDSGroup cluster = (VDSGroup)Cloner.clone(getEntity());
-		cluster.setselection_algorithm(model.getSelectionAlgorithm());
-		if (model.getOverCommitTime().getIsAvailable())
-		{
-			cluster.setcpu_over_commit_duration_minutes(Integer.parseInt(model.getOverCommitTime().getEntity().toString()));
-		}
-		cluster.setlow_utilization(model.getOverCommitLowLevel());
-		cluster.sethigh_utilization(model.getOverCommitHighLevel());
+    public void Edit()
+    {
+        if (getWindow() != null)
+        {
+            return;
+        }
 
-		Frontend.RunAction(VdcActionType.UpdateVdsGroup, new VdsGroupOperationParameters(cluster));
+        ClusterPolicyModel model = new ClusterPolicyModel();
 
-		Cancel();
-	}
+        model.setTitle("Edit Policy");
+        model.setHashName("edit_policy");
 
-	public boolean Validate()
-	{
-		IntegerValidation tempVar = new IntegerValidation();
-		tempVar.setMinimum(1);
-		tempVar.setMaximum(100);
-		getOverCommitTime().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+        model.setSelectionAlgorithm(getEntity().getselection_algorithm());
+        model.getOverCommitTime().setEntity(getEntity().getcpu_over_commit_duration_minutes());
+        model.setOverCommitLowLevel(getEntity().getlow_utilization());
+        model.setOverCommitHighLevel(getEntity().gethigh_utilization());
 
-		return getOverCommitTime().getIsValid();
-	}
+        model.SaveDefaultValues();
 
-	public void Cancel()
-	{
-		setWindow(null);
-	}
+        setWindow(model);
 
-	@Override
-	protected void OnEntityChanged()
-	{
-		super.OnEntityChanged();
+        UICommand tempVar = new UICommand("OnSave", this);
+        tempVar.setTitle("OK");
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this);
+        tempVar2.setTitle("Cancel");
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
+    }
 
-		if (getEntity() != null)
-		{
-			UpdateProperties();
-		}
+    public void OnSave()
+    {
+        ClusterPolicyModel model = (ClusterPolicyModel) getWindow();
 
-		UpdateActionAvailability();
-	}
+        if (getEntity() == null)
+        {
+            Cancel();
+            return;
+        }
 
-	@Override
-	protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-	{
-		super.EntityPropertyChanged(sender, e);
+        if (!model.Validate())
+        {
+            return;
+        }
 
-		if (e.PropertyName.equals("selection_algorithm"))
-		{
-			UpdateProperties();
-		}
-	}
+        VDSGroup cluster = (VDSGroup) Cloner.clone(getEntity());
+        cluster.setselection_algorithm(model.getSelectionAlgorithm());
+        if (model.getOverCommitTime().getIsAvailable())
+        {
+            cluster.setcpu_over_commit_duration_minutes(Integer.parseInt(model.getOverCommitTime()
+                    .getEntity()
+                    .toString()));
+        }
+        cluster.setlow_utilization(model.getOverCommitLowLevel());
+        cluster.sethigh_utilization(model.getOverCommitHighLevel());
 
-	private void UpdateActionAvailability()
-	{
-		getEditCommand().setIsExecutionAllowed(getEntity() != null);
-	}
+        Frontend.RunAction(VdcActionType.UpdateVdsGroup, new VdsGroupOperationParameters(cluster));
 
-	private void UpdateProperties()
-	{
-		getOverCommitTime().setIsAvailable(getEntity().getselection_algorithm() != VdsSelectionAlgorithm.None);
-		getOverCommitTime().setIsChangable(getOverCommitTime().getIsAvailable());
-		setHasOverCommitLowLevel(getEntity().getselection_algorithm() == VdsSelectionAlgorithm.PowerSave);
-		setHasOverCommitHighLevel(getEntity().getselection_algorithm() != VdsSelectionAlgorithm.None);
-	}
+        Cancel();
+    }
 
-	private void SelectionAlgorithmChanged()
-	{
-		setHasOverCommitLowLevel(getSelectionAlgorithm() != VdsSelectionAlgorithm.EvenlyDistribute);
+    public boolean Validate()
+    {
+        IntegerValidation tempVar = new IntegerValidation();
+        tempVar.setMinimum(1);
+        tempVar.setMaximum(100);
+        getOverCommitTime().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
 
-		switch (getSelectionAlgorithm())
-		{
-			case None:
-				getOverCommitTime().setIsAvailable(false);
-				setHasOverCommitLowLevel(false);
-				setHasOverCommitHighLevel(false);
-				setOverCommitLowLevel(0);
-				setOverCommitHighLevel(0);
-				break;
+        return getOverCommitTime().getIsValid();
+    }
 
-			case EvenlyDistribute:
-				getOverCommitTime().setIsAvailable(true);
-				getOverCommitTime().setIsChangable(true);
-				setHasOverCommitLowLevel(false);
-				setHasOverCommitHighLevel(true);
-				setOverCommitLowLevel(0);
-				setOverCommitHighLevel((highLimitEvenlyDistributed == null ? 0 : highLimitEvenlyDistributed));
-				break;
+    public void Cancel()
+    {
+        setWindow(null);
+    }
 
-			case PowerSave:
-				getOverCommitTime().setIsAvailable(true);
-				getOverCommitTime().setIsChangable(true);
-				setHasOverCommitLowLevel(true);
-				setHasOverCommitHighLevel(true);
-				setOverCommitLowLevel((ClusterPolicyModel.lowLimitPowerSaving == null ? 0 : ClusterPolicyModel.lowLimitPowerSaving));
+    @Override
+    protected void OnEntityChanged()
+    {
+        super.OnEntityChanged();
 
-				setOverCommitHighLevel((ClusterPolicyModel.highLimitPowerSaving == null ? 0 : ClusterPolicyModel.highLimitPowerSaving));
-				break;
-		}
-	}
+        if (getEntity() != null)
+        {
+            UpdateProperties();
+        }
 
-	@Override
-	public void ExecuteCommand(UICommand command)
-	{
-		super.ExecuteCommand(command);
+        UpdateActionAvailability();
+    }
 
-		if (command == getEditCommand())
-		{
-			Edit();
-		}
-		else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
-		{
-			OnSave();
-		}
-		else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
-		{
-			Cancel();
-		}
-	}
+    @Override
+    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    {
+        super.EntityPropertyChanged(sender, e);
+
+        if (e.PropertyName.equals("selection_algorithm"))
+        {
+            UpdateProperties();
+        }
+    }
+
+    private void UpdateActionAvailability()
+    {
+        getEditCommand().setIsExecutionAllowed(getEntity() != null);
+    }
+
+    private void UpdateProperties()
+    {
+        getOverCommitTime().setIsAvailable(getEntity().getselection_algorithm() != VdsSelectionAlgorithm.None);
+        getOverCommitTime().setIsChangable(getOverCommitTime().getIsAvailable());
+        setHasOverCommitLowLevel(getEntity().getselection_algorithm() == VdsSelectionAlgorithm.PowerSave);
+        setHasOverCommitHighLevel(getEntity().getselection_algorithm() != VdsSelectionAlgorithm.None);
+    }
+
+    private void SelectionAlgorithmChanged()
+    {
+        setHasOverCommitLowLevel(getSelectionAlgorithm() != VdsSelectionAlgorithm.EvenlyDistribute);
+
+        switch (getSelectionAlgorithm())
+        {
+        case None:
+            getOverCommitTime().setIsAvailable(false);
+            setHasOverCommitLowLevel(false);
+            setHasOverCommitHighLevel(false);
+            setOverCommitLowLevel(0);
+            setOverCommitHighLevel(0);
+            break;
+
+        case EvenlyDistribute:
+            getOverCommitTime().setIsAvailable(true);
+            getOverCommitTime().setIsChangable(true);
+            setHasOverCommitLowLevel(false);
+            setHasOverCommitHighLevel(true);
+            setOverCommitLowLevel(0);
+            setOverCommitHighLevel((highLimitEvenlyDistributed == null ? 0 : highLimitEvenlyDistributed));
+            break;
+
+        case PowerSave:
+            getOverCommitTime().setIsAvailable(true);
+            getOverCommitTime().setIsChangable(true);
+            setHasOverCommitLowLevel(true);
+            setHasOverCommitHighLevel(true);
+            setOverCommitLowLevel((ClusterPolicyModel.lowLimitPowerSaving == null ? 0
+                    : ClusterPolicyModel.lowLimitPowerSaving));
+
+            setOverCommitHighLevel((ClusterPolicyModel.highLimitPowerSaving == null ? 0
+                    : ClusterPolicyModel.highLimitPowerSaving));
+            break;
+        }
+    }
+
+    @Override
+    public void ExecuteCommand(UICommand command)
+    {
+        super.ExecuteCommand(command);
+
+        if (command == getEditCommand())
+        {
+            Edit();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        {
+            OnSave();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        {
+            Cancel();
+        }
+    }
 }

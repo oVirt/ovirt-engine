@@ -1,99 +1,94 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicommonweb.*;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.core.compat.StringFormat;
 
 @SuppressWarnings("unused")
 public class SpiceMenu
 {
-	private java.util.List<SpiceMenuItem> items;
-	public java.util.List<SpiceMenuItem> getItems()
-	{
-		if (items == null)
-		{
-			items = new java.util.ArrayList<SpiceMenuItem>();
-		}
+    private java.util.List<SpiceMenuItem> items;
 
-		return items;
-	}
+    public java.util.List<SpiceMenuItem> getItems()
+    {
+        if (items == null)
+        {
+            items = new java.util.ArrayList<SpiceMenuItem>();
+        }
 
-	public java.util.List<SpiceMenuItem> Descendants()
-	{
-		java.util.ArrayList<SpiceMenuItem> list = new java.util.ArrayList<SpiceMenuItem>();
-		for (SpiceMenuItem item : items)
-		{
-			DescendantsInternal(list, item);
-		}
+        return items;
+    }
 
-		return list;
-	}
+    public java.util.List<SpiceMenuItem> Descendants()
+    {
+        java.util.ArrayList<SpiceMenuItem> list = new java.util.ArrayList<SpiceMenuItem>();
+        for (SpiceMenuItem item : items)
+        {
+            DescendantsInternal(list, item);
+        }
 
-	private void DescendantsInternal(java.util.List<SpiceMenuItem> list, SpiceMenuItem root)
-	{
-		list.add(root);
-		if (root instanceof SpiceMenuContainerItem)
-		{
-			for (SpiceMenuItem item : ((SpiceMenuContainerItem)root).getItems())
-			{
-				DescendantsInternal(list, item);
-			}
-		}
-	}
+        return list;
+    }
 
-	@Override
-	public String toString()
-	{
-		StringBuilder builder = new StringBuilder();
-		for (SpiceMenuItem item : getItems())
-		{
-			builder.append(ItemToString(item, null));
-		}
+    private void DescendantsInternal(java.util.List<SpiceMenuItem> list, SpiceMenuItem root)
+    {
+        list.add(root);
+        if (root instanceof SpiceMenuContainerItem)
+        {
+            for (SpiceMenuItem item : ((SpiceMenuContainerItem) root).getItems())
+            {
+                DescendantsInternal(list, item);
+            }
+        }
+    }
 
-		return builder.toString();
-	}
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+        for (SpiceMenuItem item : getItems())
+        {
+            builder.append(ItemToString(item, null));
+        }
 
-	private String ItemToString(SpiceMenuItem item, SpiceMenuItem parent)
-	{
-		StringBuilder builder = new StringBuilder();
-		int parentID = parent != null ? parent.getId() : 0;
+        return builder.toString();
+    }
 
-		if (item instanceof SpiceMenuCommandItem)
-		{
-			SpiceMenuCommandItem commandItem = (SpiceMenuCommandItem)item;
-			builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r%4$s\n", parentID, commandItem.getId(), commandItem.getText(), (commandItem.getIsEnabled()) ? 0 : 2));
-		}
+    private String ItemToString(SpiceMenuItem item, SpiceMenuItem parent)
+    {
+        StringBuilder builder = new StringBuilder();
+        int parentID = parent != null ? parent.getId() : 0;
 
-		if (item instanceof SpiceMenuContainerItem)
-		{
-			SpiceMenuContainerItem containerItem = (SpiceMenuContainerItem)item;
-			builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r4\n", parentID, containerItem.getId(), containerItem.getText()));
+        if (item instanceof SpiceMenuCommandItem)
+        {
+            SpiceMenuCommandItem commandItem = (SpiceMenuCommandItem) item;
+            builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r%4$s\n",
+                    parentID,
+                    commandItem.getId(),
+                    commandItem.getText(),
+                    (commandItem.getIsEnabled()) ? 0 : 2));
+        }
 
-			if (containerItem.getItems().size() > 0)
-			{
-				for (SpiceMenuItem localItem : containerItem.getItems())
-				{
-					builder.append(ItemToString(localItem, containerItem));
-				}
-			}
-		}
+        if (item instanceof SpiceMenuContainerItem)
+        {
+            SpiceMenuContainerItem containerItem = (SpiceMenuContainerItem) item;
+            builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r4\n",
+                    parentID,
+                    containerItem.getId(),
+                    containerItem.getText()));
 
-		if (item instanceof SpiceMenuSeparatorItem)
-		{
-			builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r1\n", parentID, item.getId(), "-"));
-		}
+            if (containerItem.getItems().size() > 0)
+            {
+                for (SpiceMenuItem localItem : containerItem.getItems())
+                {
+                    builder.append(ItemToString(localItem, containerItem));
+                }
+            }
+        }
 
+        if (item instanceof SpiceMenuSeparatorItem)
+        {
+            builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r1\n", parentID, item.getId(), "-"));
+        }
 
-		return builder.toString();
-	}
+        return builder.toString();
+    }
 }
