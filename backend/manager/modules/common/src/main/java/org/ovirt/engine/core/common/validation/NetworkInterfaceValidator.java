@@ -32,7 +32,7 @@ public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetwo
 
         if (bootProtocol != null && bootProtocol == StaticIp) {
             if (isNullOrEmpty(address)) {
-                context.buildConstraintViolationWithTemplate("NETWORK_NETWORK_ADDR_MANDATORY_IN_STATIC_IP")
+                context.buildConstraintViolationWithTemplate("NETWROK_ADDR_MANDATORY_IN_STATIC_IP")
                         .addNode("address").addConstraintViolation();
                 return false;
             }

@@ -505,7 +505,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE();
 
-    String NETWORK_NETWORK_NAME_ALREADY_EXISTS();
+    String NETWROK_NAME_ALREADY_EXISTS();
 
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION();
 
@@ -561,9 +561,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String NETWORK_INTERFACE_ALREADY_HAVE_NETWORK();
 
-    String NETWORK_NETWORK_ALREAY_ATTACH_TO_INTERFACE();
+    String NETWROK_ALREAY_ATTACH_TO_INTERFACE();
 
-    String NETWORK_NETWORK_NOT_EXISTS();
+    String NETWROK_NOT_EXISTS();
 
     String ERROR_CANNOT_RECOVERY_STORAGE_POOL_THERE_IS_ACTIVE_DATA_DOMAINS();
 
@@ -575,7 +575,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN_HOST_NOT_ACTIVE();
 
-    String NETWORK_NETWORK_VLAN_OUT_OF_RANGE();
+    String NETWROK_VLAN_OUT_OF_RANGE();
 
     String ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN();
 
@@ -583,7 +583,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL();
 
-    String NETWORK_NETWORK_IN_USE();
+    String NETWROK_IN_USE();
 
     String ERROR_CANNOT_CREATE_STORAGE_DOMAIN_WITHOUT_VG_LV();
 
@@ -647,7 +647,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String NETWORK_CANNOT_CHANGE_STATUS_WHEN_NOT_DOWN();
 
-    String NETWORK_NETWORK_VLAN_IN_USE();
+    String NETWROK_VLAN_IN_USE();
 
     String NETWORK_CLUSTER_HAVE_NOT_EXISTING_DATA_CENTER_NETWORK();
 
@@ -665,7 +665,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK();
 
-    String NETWORK_NETWORK_OLD_NETWORK_NOT_SPECIFIED();
+    String NETWROK_OLD_NETWORK_NOT_SPECIFIED();
 
     String NETWORK_INTERFACE_EXITED_MAX_INTERFACES();
 
@@ -675,7 +675,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String TAGS_SPECIFY_TAG_IS_IN_USE();
 
-    String NETWORK_NETWORK_NET_EXISTS_IN_CLUSTER();
+    String NETWROK_NET_EXISTS_IN_CLUSTER();
 
     String ACTION_LIST_CANNOT_BE_EMPTY();
 
@@ -703,7 +703,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String NETWORK_INTERFACE_IN_USE_BY_VLAN();
 
-    String NETWORK_NETWORK_ALREADY_ATTACH_TO_CLUSTER();
+    String NETWROK_ALREADY_ATTACHED_TO_CLUSTER();
 
     String ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST();
 
@@ -715,7 +715,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_GIVEN_VERSION_NOT_SUPPORTED();
 
-    String NETWORK_NETWORK_ADDR_MANDATORY_IN_STATIC_IP();
+    String NETWROK_ADDR_MANDATORY_IN_STATIC_IP();
 
     String ACTION_TYPE_FAILED_OBJECT_LOCKED();
 
@@ -727,7 +727,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED();
 
-    String NETWORK_NETWORK_HOST_IS_BUSY();
+    String NETWROK_HOST_IS_BUSY();
 
     String VMT_CANNOT_CHANGE_IMAGES_TEMPLATE();
 
@@ -777,11 +777,11 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN();
 
-    String NETWORK_NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT();
+    String NETWROK_ADDR_IN_STATIC_IP_BAD_FORMAT();
 
-    String NETWORK_NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT();
+    String NETWROK_ADDR_IN_GATEWAY_BAD_FORMAT();
 
-    String NETWORK_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT();
+    String NETWROK_ADDR_IN_SUBNET_BAD_FORMAT();
 
     String NETWORK_CANNOT_CONTAIN_BOND_NAME();
 
@@ -1019,7 +1019,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ERROR_CANNOT_CHANGE_STORAGE_POOL_VDSS_UP();
 
-    String NETWORK_NETWORK_STORAGE_POOL_MUST_BE_SPECIFY();
+    String NETWROK_STORAGE_POOL_MUST_BE_SPECIFY();
 
     String EN_UNKNOWN_TAG_NAME();
 

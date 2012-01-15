@@ -334,7 +334,7 @@ public class VmHandler {
         });
 
         if (iface != null) {
-            messages.add(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREAY_IN_USE.name());
+            messages.add(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE.name());
             return false;
         }
         return true;

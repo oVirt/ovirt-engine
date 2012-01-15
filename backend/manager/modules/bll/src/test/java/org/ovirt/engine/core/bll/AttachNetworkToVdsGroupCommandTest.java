@@ -55,7 +55,7 @@ public class AttachNetworkToVdsGroupCommandTest {
     public void networkExists() {
         simulateNetworkAlreadyExists();
         simulateVdsGroupExists();
-        assertCanDoActionFailure(VdcBllMessages.NETWORK_NETWORK_ALREADY_ATTACH_TO_CLUSTER.toString());
+        assertCanDoActionFailure(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_CLUSTER.toString());
     }
 
     @Test

@@ -3,10 +3,10 @@ package org.ovirt.engine.core.bll;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID;
-import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_INTERFACE_NAME_ALREAY_IN_USE;
+import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE;
 import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS;
-import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_NETWORK_ALREAY_ATTACH_TO_INTERFACE;
-import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_NETWORK_NOT_EXISTS;
+import static org.ovirt.engine.core.dal.VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE;
+import static org.ovirt.engine.core.dal.VdcBllMessages.NETWROK_NOT_EXISTS;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,7 +121,7 @@ public class SetupNetworksHelper {
         Map<String, VdsNetworkInterface> map = new HashMap<String, VdsNetworkInterface>();
         for (VdsNetworkInterface iface : interfaces) {
             if (map.containsKey(iface.getName())) {
-                violations.add(NETWORK_INTERFACE_NAME_ALREAY_IN_USE);
+                violations.add(NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
             } else {
                 map.put(iface.getName(), iface);
             }
@@ -164,7 +164,7 @@ public class SetupNetworksHelper {
         if (clusterNetworksMap.containsKey(networkName)) {
             // prevent attaching 2 interfaces to 1 network
             if (networks.containsKey(networkName) && networksOverBond.contains(networkName) && isBond(iface)) {
-                violations.add(NETWORK_NETWORK_ALREAY_ATTACH_TO_INTERFACE);
+                violations.add(NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
             } else {
                 networks.put(networkName, clusterNetworksMap.get(networkName));
                 if (isBond(iface)) {
@@ -200,7 +200,7 @@ public class SetupNetworksHelper {
 
     public void extractBond(Map<String, VdsNetworkInterface> bonds, VdsNetworkInterface iface, String name) {
         if (isBlank(iface.getNetworkName())) {
-            violations.add(NETWORK_NETWORK_NOT_EXISTS);
+            violations.add(NETWROK_NOT_EXISTS);
         } else {
             if (bonds.containsKey(name)) {
                 violations.add(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);

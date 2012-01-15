@@ -159,7 +159,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
         // check that the old netowrk name is not null
         if (StringHelper.isNullOrEmpty(getParameters().getOldNetworkName())) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NETWORK_OLD_NETWORK_NOT_SPECIFIED);
+            addCanDoActionMessage(VdcBllMessages.NETWROK_OLD_NETWORK_NOT_SPECIFIED);
             return false;
         }
 
@@ -178,7 +178,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                 }
             });
             if (iface != null) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_NETWORK_HOST_IS_BUSY);
+                addCanDoActionMessage(VdcBllMessages.NETWROK_HOST_IS_BUSY);
                 return false;
             }
         }
@@ -196,7 +196,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             }
         });
         if (ifacenet == null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NETWORK_NOT_EXISTS);
+            addCanDoActionMessage(VdcBllMessages.NETWROK_NOT_EXISTS);
             return false;
         }
 
@@ -233,21 +233,21 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             Pattern IP_PATTERN = Pattern
                     .compile("^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
             if (StringHelper.isNullOrEmpty(getParameters().getAddress())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_NETWORK_ADDR_MANDATORY_IN_STATIC_IP);
+                addCanDoActionMessage(VdcBllMessages.NETWROK_ADDR_MANDATORY_IN_STATIC_IP);
                 return false;
             }
             if (!IP_PATTERN.matcher(getParameters().getAddress()).matches()) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT);
+                addCanDoActionMessage(VdcBllMessages.NETWROK_ADDR_IN_STATIC_IP_BAD_FORMAT);
                 return false;
             }
             if (!StringHelper.isNullOrEmpty(getParameters().getGateway())
                     && !IP_PATTERN.matcher(getParameters().getGateway()).matches()) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT);
+                addCanDoActionMessage(VdcBllMessages.NETWROK_ADDR_IN_GATEWAY_BAD_FORMAT);
                 return false;
             }
             if (!StringHelper.isNullOrEmpty(getParameters().getSubnet())
                     && !IP_PATTERN.matcher(getParameters().getSubnet()).matches()) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT);
+                addCanDoActionMessage(VdcBllMessages.NETWROK_ADDR_IN_SUBNET_BAD_FORMAT);
                 return false;
             }
         }

@@ -71,7 +71,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         }
 
         if (getParameters().getNetwork() == null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NETWORK_NOT_EXISTS);
+            addCanDoActionMessage(VdcBllMessages.NETWROK_NOT_EXISTS);
             return false;
         }
 
@@ -108,10 +108,10 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
                 addCanDoActionMessage(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
                 return false;
             } else if (!StringHelper.isNullOrEmpty(iface.getBondName())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREAY_IN_USE);
+                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
                 return false;
             } else if (!StringHelper.isNullOrEmpty(iface.getNetworkName())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREAY_IN_USE);
+                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
                 return false;
             } else if (NetworkUtils.interfaceHasVlan(iface, interfaces)) {
                 // check that one of the nics is not connected to vlan
@@ -135,7 +135,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         });
 
         if (I != null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NETWORK_ALREAY_ATTACH_TO_INTERFACE);
+            addCanDoActionMessage(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
             return false;
         }
 
@@ -150,7 +150,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
                 return network.getname().equals(getParameters().getNetwork().getname());
             }
         })) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NETWORK_NET_EXISTS_IN_CLUSTER);
+            addCanDoActionMessage(VdcBllMessages.NETWROK_NOT_EXISTS_IN_CLUSTER);
             return false;
         }
 

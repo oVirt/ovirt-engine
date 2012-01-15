@@ -7,7 +7,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID;
-import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_INTERFACE_NAME_ALREAY_IN_USE;
+import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE;
+import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
@@ -80,7 +81,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper validator = createHelper(mock(SetupNetworksParameters.class));
 
         assertFalse(validator.validateBonds(bondsMap, slavesMap));
-        assertTrue(validator.getViolations().contains(VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID));
+        assertTrue(validator.getViolations().contains(NETWORK_BOND_PARAMETERS_INVALID));
     }
 
 
@@ -112,7 +113,7 @@ public class SetupNetworksHelperTest {
         params.setInterfaces(nics);
 
         SetupNetworksHelper validator = createHelper(params);
-        assertTrue(validator.validate().contains(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER));
+        assertTrue(validator.validate().contains(NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER));
     }
 
     @Test
@@ -160,7 +161,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(params);
         List<VdcBllMessages> validate = helper.validate();
-        assertTrue(validate.contains(NETWORK_INTERFACE_NAME_ALREAY_IN_USE));
+        assertTrue(validate.contains(NETWORK_INTERFACE_NAME_ALREADY_IN_USE));
     }
 
     @Test

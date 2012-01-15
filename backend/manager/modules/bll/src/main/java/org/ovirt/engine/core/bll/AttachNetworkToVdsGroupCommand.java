@@ -113,7 +113,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     private boolean noConflictingNetwork() {
         if (networkExists()) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NETWORK_ALREADY_ATTACH_TO_CLUSTER);
+            addCanDoActionMessage(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_CLUSTER);
             return false;
         }
         return true;

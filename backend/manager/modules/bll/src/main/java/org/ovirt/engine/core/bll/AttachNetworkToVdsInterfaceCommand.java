@@ -123,7 +123,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
             }
         });
         if (iface != null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NETWORK_ALREAY_ATTACH_TO_INTERFACE);
+            addCanDoActionMessage(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
             return false;
         }
 
@@ -138,14 +138,14 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
                 return StringHelper.EqOp(network.getname(), getParameters().getNetwork().getname());
             }
         })) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NETWORK_NET_EXISTS_IN_CLUSTER);
+            addCanDoActionMessage(VdcBllMessages.NETWROK_NOT_EXISTS_IN_CLUSTER);
             return false;
         }
 
         // check address exists in static ip
         if (getParameters().getBootProtocol() == NetworkBootProtocol.StaticIp) {
             if (StringHelper.isNullOrEmpty(getParameters().getAddress())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_NETWORK_ADDR_MANDATORY_IN_STATIC_IP);
+                addCanDoActionMessage(VdcBllMessages.NETWROK_ADDR_MANDATORY_IN_STATIC_IP);
                 return false;
             }
         }
