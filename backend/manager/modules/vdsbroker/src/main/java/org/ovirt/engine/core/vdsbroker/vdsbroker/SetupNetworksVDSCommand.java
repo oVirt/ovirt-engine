@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters> extends FutureVDSCommand<T> {
@@ -31,7 +32,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                     getParameters().getBonds());
             String type = (i.getBonded() != null && i.getBonded()) ? "bonding" : "nic";
 
-            opts.put(type, i.getName());
+            opts.put(type, NetworkUtils.StripVlan(i.getName()));
             if (net.getvlan_id() != null) {
                 opts.put("vlan", net.getvlan_id().toString());
             }
