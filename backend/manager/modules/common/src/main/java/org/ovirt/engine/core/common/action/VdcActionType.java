@@ -100,7 +100,7 @@ public enum VdcActionType {
     CreateSnapshot(207),
     CreateSnapshotFromTemplate(208),
     CreateImageTemplate(209),
-    MergeSnapshot(210, ActionGroup.MANIPULATE_VM_SNAPSHOTS),
+    RemoveSnapshot(210, ActionGroup.MANIPULATE_VM_SNAPSHOTS),
     RemoveImage(211),
     RemoveAllVmImages(212),
     AddImageFromScratch(213),
@@ -113,7 +113,7 @@ public enum VdcActionType {
     TryBackToAllSnapshotsOfVm(223, ActionGroup.MANIPULATE_VM_SNAPSHOTS),
     RestoreAllSnapshots(224, ActionGroup.MANIPULATE_VM_SNAPSHOTS),
     MoveOrCopyImageGroup(225),
-    MergeSnapshotSingleDisk(227),
+    RemoveSnapshotSingleDisk(227),
     MoveMultipleImageGroups(228),
     CreateCloneOfTemplate(229),
     // VmPoolCommands

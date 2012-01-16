@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
-import org.ovirt.engine.core.common.action.MergeSnapshotParamenters;
+import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -17,12 +17,12 @@ import org.ovirt.engine.core.utils.linq.All;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
-public class MergeSnapshotCommand<T extends MergeSnapshotParamenters> extends VmCommand<T> {
+public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends VmCommand<T> {
 
     private static final long serialVersionUID = 3162100352844371734L;
     private List<DiskImage> _sourceImages = null;
 
-    public MergeSnapshotCommand(T parameters) {
+    public RemoveSnapshotCommand(T parameters) {
         super(parameters);
     }
 
@@ -53,7 +53,7 @@ public class MergeSnapshotCommand<T extends MergeSnapshotParamenters> extends Vm
     @Override
     protected void executeCommand() {
         if (getVm().getstatus() != VMStatus.Down) {
-            log.error("Cannot merge VM snapshot. Vm is not Down");
+            log.error("Cannot remove VM snapshot. Vm is not Down");
             throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
         }
         VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
@@ -95,7 +95,7 @@ public class MergeSnapshotCommand<T extends MergeSnapshotParamenters> extends Vm
             tempVar.setEntityId(getParameters().getEntityId());
             ImagesContainterParametersBase p = tempVar;
             VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
-                    VdcActionType.MergeSnapshotSingleDisk, p);
+                    VdcActionType.RemoveSnapshotSingleDisk, p);
             getParameters().getImagesParameters().add(p);
 
             if (vdcReturnValue != null && vdcReturnValue.getInternalTaskIdList() != null) {
@@ -153,6 +153,6 @@ public class MergeSnapshotCommand<T extends MergeSnapshotParamenters> extends Vm
 
     @Override
     protected VdcActionType getChildActionType() {
-        return VdcActionType.MergeSnapshotSingleDisk;
+        return VdcActionType.RemoveSnapshotSingleDisk;
     }
 }

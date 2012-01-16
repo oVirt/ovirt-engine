@@ -1,14 +1,16 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "MergeSnapshotParamenters")
-public class MergeSnapshotParamenters extends VmOperationParameterBase implements java.io.Serializable {
+public class RemoveSnapshotParameters extends VmOperationParameterBase implements java.io.Serializable {
     private static final long serialVersionUID = -2684524270498397962L;
 
     @XmlElement
@@ -17,7 +19,7 @@ public class MergeSnapshotParamenters extends VmOperationParameterBase implement
     @XmlElement
     private NGuid _destVmSnapshotId;
 
-    public MergeSnapshotParamenters(Guid sourceVmSnapshotId, NGuid destVmSnapshotId, Guid vmGuid) {
+    public RemoveSnapshotParameters(Guid sourceVmSnapshotId, NGuid destVmSnapshotId, Guid vmGuid) {
         super(vmGuid);
         _sourceVmSnapshotId = sourceVmSnapshotId;
         _destVmSnapshotId = destVmSnapshotId;
@@ -39,6 +41,6 @@ public class MergeSnapshotParamenters extends VmOperationParameterBase implement
         _destVmSnapshotId = value;
     }
 
-    public MergeSnapshotParamenters() {
+    public RemoveSnapshotParameters() {
     }
 }

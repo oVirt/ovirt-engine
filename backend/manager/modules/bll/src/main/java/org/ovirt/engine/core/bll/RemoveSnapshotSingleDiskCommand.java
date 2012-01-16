@@ -16,8 +16,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @InternalCommandAttribute
-public class MergeSnapshotSingleDiskCommand<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
-    public MergeSnapshotSingleDiskCommand(T parameters) {
+public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
+    public RemoveSnapshotSingleDiskCommand(T parameters) {
         super(parameters);
     }
 
@@ -42,7 +42,7 @@ public class MergeSnapshotSingleDiskCommand<T extends ImagesContainterParameters
 
         if (vdsReturnValue != null && vdsReturnValue.getCreationInfo() != null) {
             getReturnValue().getInternalTaskIdList().add(
-                    CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.MergeSnapshot));
+                    CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.RemoveSnapshot));
             setSucceeded(vdsReturnValue.getSucceeded());
         } else {
             setSucceeded(false);
