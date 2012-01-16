@@ -193,8 +193,8 @@
 					<row><entry>337</entry><entry>USER_UPDATE_USER_TO_TIME_LEASED_POOL_FAILED</entry></row>
 					<row><entry>338</entry><entry>USER_UPDATE_AD_GROUP_TO_TIME_LEASED_POOL</entry></row>
 					<row><entry>339</entry><entry>USER_UPDATE_AD_GROUP_TO_TIME_LEASED_POOL_FAILED</entry></row>
-					<row><entry>342</entry><entry>USER_MERGE_SNAPSHOT</entry></row>
-					<row><entry>343</entry><entry>USER_FAILED_MERGE_SNAPSHOT</entry></row>
+					<row><entry>342</entry><entry>USER_REMOVE_SNAPSHOT</entry></row>
+					<row><entry>343</entry><entry>USER_FAILED_REMOVE_SNAPSHOT</entry></row>
 					<row><entry>344</entry><entry>USER_UPDATE_VM_POOL_WITH_VMS</entry></row>
 					<row><entry>345</entry><entry>USER_UPDATE_VM_POOL_WITH_VMS_FAILED</entry></row>
 					<row><entry>346</entry><entry>USER_PASSWORD_CHANGED</entry></row>
@@ -207,8 +207,8 @@
 					<row><entry>353</entry><entry>USER_UPDATE_BOOKMARK_FAILED</entry></row>
 					<row><entry>354</entry><entry>USER_REMOVE_BOOKMARK</entry></row>
 					<row><entry>355</entry><entry>USER_REMOVE_BOOKMARK_FAILED</entry></row>
-					<row><entry>356</entry><entry>USER_MERGE_SNAPSHOT_FINISHED_SUCCESS</entry></row>
-					<row><entry>357</entry><entry>USER_MERGE_SNAPSHOT_FINISHED_FAILURE</entry></row>
+					<row><entry>356</entry><entry>USER_REMOVE_SNAPSHOT_FINISHED_SUCCESS</entry></row>
+					<row><entry>357</entry><entry>USER_REMOVE_SNAPSHOT_FINISHED_FAILURE</entry></row>
 					<row><entry>360</entry><entry>USER_DETACH_USER_FROM_VM</entry></row>
 					<row><entry>361</entry><entry>USER_FAILED_DETACH_USER_FROM_VM</entry></row>
 					<row><entry>400</entry><entry>USER_ATTACH_VM_TO_AD_GROUP</entry></row>

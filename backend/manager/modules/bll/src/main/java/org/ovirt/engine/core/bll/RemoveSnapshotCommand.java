@@ -130,7 +130,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
         if (!getReturnValue().getCanDoAction()) {
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MERGE);
+            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
         }
 
         return getReturnValue().getCanDoAction();
@@ -140,14 +140,14 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            return getSucceeded() ? AuditLogType.USER_MERGE_SNAPSHOT : AuditLogType.USER_FAILED_MERGE_SNAPSHOT;
+            return getSucceeded() ? AuditLogType.USER_REMOVE_SNAPSHOT : AuditLogType.USER_FAILED_REMOVE_SNAPSHOT;
 
         case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_MERGE_SNAPSHOT_FINISHED_SUCCESS
-                    : AuditLogType.USER_MERGE_SNAPSHOT_FINISHED_FAILURE;
+            return getSucceeded() ? AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_SUCCESS
+                    : AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE;
 
         default:
-            return AuditLogType.USER_MERGE_SNAPSHOT_FINISHED_FAILURE;
+            return AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE;
         }
     }
 

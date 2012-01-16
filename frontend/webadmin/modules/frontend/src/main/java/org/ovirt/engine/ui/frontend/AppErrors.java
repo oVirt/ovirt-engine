@@ -397,8 +397,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__ACTION__SET();
 
-    String VAR__ACTION__MERGE();
-
     String VAR__ACTION__UPDATE();
 
     String VAR__ACTION__ATTACH();

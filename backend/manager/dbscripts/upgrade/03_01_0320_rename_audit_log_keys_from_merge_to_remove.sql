@@ -1,0 +1,16 @@
+UPDATE audit_log
+SET    log_type_name = 'USER_REMOVE_SNAPSHOT'
+WHERE  log_type_name = 'USER_MERGE_SNAPSHOT';
+
+UPDATE audit_log
+SET    log_type_name = 'USER_FAILED_REMOVE_SNAPSHOT'
+WHERE  log_type_name = 'USER_FAILED_MERGE_SNAPSHOT';
+
+UPDATE audit_log
+SET    log_type_name = 'USER_REMOVE_SNAPSHOT_FINISHED_SUCCESS'
+WHERE  log_type_name = 'USER_MERGE_SNAPSHOT_FINISHED_SUCCESS';
+
+UPDATE audit_log
+SET    log_type_name = 'USER_REMOVE_SNAPSHOT_FINISHED_FAILURE'
+WHERE  log_type_name = 'USER_MERGE_SNAPSHOT_FINISHED_FAILURE';
+

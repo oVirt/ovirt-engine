@@ -399,10 +399,10 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_CREATE_SNAPSHOT_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_CREATE_SNAPSHOT_FINISHED_FAILURE, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_FAILED_CREATE_SNAPSHOT, AuditLogSeverity.ERROR);
-        mSeverities.put(AuditLogType.USER_MERGE_SNAPSHOT, AuditLogSeverity.NORMAL);
-        mSeverities.put(AuditLogType.USER_MERGE_SNAPSHOT_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
-        mSeverities.put(AuditLogType.USER_MERGE_SNAPSHOT_FINISHED_FAILURE, AuditLogSeverity.ERROR);
-        mSeverities.put(AuditLogType.USER_FAILED_MERGE_SNAPSHOT, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_REMOVE_SNAPSHOT, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_FAILED_REMOVE_SNAPSHOT, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_TRY_BACK_TO_SNAPSHOT, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_TRY_BACK_TO_SNAPSHOT_FINISH_SUCCESS, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_TRY_BACK_TO_SNAPSHOT_FINISH_FAILURE, AuditLogSeverity.ERROR);
