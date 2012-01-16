@@ -231,7 +231,7 @@ public class VmSnapshotListModel extends ListModel
 				Guid srcSnapshotId = (srcSnapshot.getvm_snapshot_id() != null) ? srcSnapshot.getvm_snapshot_id().getValue() : Guid.Empty;
 				Guid dstSnapshotId = (dstSnapshot.getvm_snapshot_id() != null) ? dstSnapshot.getvm_snapshot_id().getValue() : Guid.Empty;
 
-				Frontend.RunAction(VdcActionType.MergeSnapshot, new MergeSnapshotParamenters(srcSnapshotId, dstSnapshotId, vm.getvm_guid()),
+				Frontend.RunAction(VdcActionType.RemoveSnapshot, new RemoveSnapshotParameters(srcSnapshotId, vm.getvm_guid()),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {
