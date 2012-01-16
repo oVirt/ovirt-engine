@@ -38,6 +38,8 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     public static final Guid UnassignedDataCenterId = Guid.Empty;
     private StorageModelBehavior behavior;
 
+    private String localFSPath;
+
     @Override
     public IStorageModel getSelectedItem()
     {
@@ -166,6 +168,16 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         getHost().getSelectedItemChangedEvent().addListener(this);
         setFormat(new ListModel());
         setAvailableStorageItems(new ListModel());
+
+        AsyncDataProvider.GetLocalFSPath(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        StorageModel storageModel = (StorageModel) target;
+                        storageModel.localFSPath = (String) returnValue;
+                    }
+                },
+                getHash()));
     }
 
     @Override
@@ -307,32 +319,20 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             {
                 getSelectedItem().getUpdateCommand().Execute();
 
-                AsyncDataProvider.GetLocalFSPath(new AsyncQuery(this,
-                        new INewAsyncCallback() {
-                            @Override
-                            public void OnSuccess(Object target, Object returnValue) {
-
-                                StorageModel storageModel = (StorageModel) target;
-                                String localFSPath = (String) returnValue;
-                                String prefix =
-                                        ((VDS) storageModel.getHost().getSelectedItem()).getvds_type() == VDSType.oVirtNode ? localFSPath
-                                                : "";
-                                if (!StringHelper.isNullOrEmpty(prefix))
-                                {
-                                    for (Object item : storageModel.getItems())
-                                    {
-                                        if (item instanceof LocalStorageModel)
-                                        {
-                                            LocalStorageModel model = (LocalStorageModel) item;
-                                            model.getPath().setEntity(prefix);
-                                            model.getPath().setIsChangable(false);
-                                        }
-                                    }
-                                }
-
-                            }
-                        },
-                        getHash()));
+                VDSType vdsType = ((VDS) this.getHost().getSelectedItem()).getvds_type();
+                String prefix = vdsType.equals(VDSType.oVirtNode) ? localFSPath : "";
+                if (!StringHelper.isNullOrEmpty(prefix))
+                {
+                    for (Object item : getItems())
+                    {
+                        if (item instanceof LocalStorageModel)
+                        {
+                            LocalStorageModel model = (LocalStorageModel) item;
+                            model.getPath().setEntity(prefix);
+                            model.getPath().setIsChangable(false);
+                        }
+                    }
+                }
             }
         }
     }
