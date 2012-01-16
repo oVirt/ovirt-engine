@@ -13,9 +13,6 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.linq.All;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends VmCommand<T> {
 
@@ -32,7 +29,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                         .getInstance()
                         .getDiskImageDAO()
                         .getAllSnapshotsForVmSnapshot(
-                                getParameters().getSourceVmSnapshotId());
+                                getParameters().getSnapshotId());
         if (images.size() > 0) {
             name = images.get(0).getdescription();
         }
@@ -45,7 +42,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                     .getInstance()
                     .getDiskImageDAO()
                     .getAllSnapshotsForVmSnapshot(
-                            getParameters().getSourceVmSnapshotId());
+                            getParameters().getSnapshotId());
         }
         return _sourceImages;
     }
@@ -58,36 +55,14 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         }
         VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
         getParameters().setEntityId(getVmId());
-        List<DiskImage> destImages = null;
-        if (getParameters().getDestVmSnapshotId() != null) {
-            destImages = DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForVmSnapshot(
-                    getParameters().getDestVmSnapshotId().getValue());
-        }
 
         for (final DiskImage source : getSourceImages()) {
-            DiskImage dest;
 
-            // if the MergeSnapshotParameters.DestImage is null
-            // we assume that the source->parent is the dest
-            if (getParameters().getDestVmSnapshotId() == null) {
-                // The following line is ok because we have tested in the
-                // candoaction that the vm
-                // is not a template and the vm is not in preview mode and that
-                // this is not the active snapshot.
-                dest = DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForParent(source.getId()).get(0);
-            } else {
-                // LINQ 29456
-                // dest = destImages.Where(a => a.internal_drive_mapping ==
-                // source.internal_drive_mapping).FirstOrDefault();
-                List<DiskImage> images = LinqUtils.filter(destImages, new Predicate<DiskImage>() {
-                    @Override
-                    public boolean eval(DiskImage a) {
-                        return a.getinternal_drive_mapping().equals(source.getinternal_drive_mapping());
-                    }
-                });
-                dest = LinqUtils.firstOrNull(images, new All<DiskImage>());
-                // LINQ 29456
-            }
+            // The following line is ok because we have tested in the
+            // candoaction that the vm
+            // is not a template and the vm is not in preview mode and that
+            // this is not the active snapshot.
+            DiskImage dest = DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForParent(source.getId()).get(0);
 
             ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(source.getId(),
                     source.getinternal_drive_mapping(), getVmId());
