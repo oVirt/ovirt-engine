@@ -340,30 +340,35 @@ public class VmBackupModel extends ManageBackupModel {
                         if (retVals != null
                                 && vmBackupModel.getSelectedItems().size() == retVals
                                         .size()) {
-                            ConfirmationModel confirmModel = new ConfirmationModel();
-                            vmBackupModel.setConfirmWindow(confirmModel);
-                            confirmModel.setTitle("Import Virtual Machine(s)");
-                            confirmModel.setHashName("import_virtual_machine");
                             String importedVms = "";
                             int counter = 0;
+                            boolean toShowConfirmWindow = false;
                             for (Object item : vmBackupModel.getSelectedItems()) {
                                 VM vm = (VM) item;
                                 if (retVals.get(counter) != null
-                                        && retVals.get(counter).getSucceeded()) {
+                                        && retVals.get(counter).getCanDoAction()) {
                                     importedVms += vm.getvm_name() + ", ";
+                                    toShowConfirmWindow = true;
                                 }
                                 counter++;
                             }
-                            StringHelper.trimEnd(importedVms.trim(), ',');
-                            confirmModel.setMessage(StringFormat
-                                    .format("Import process has begun for VM(s): %1$s.\nYou can check import status in the 'Events' tab of the specific destination storage domain, or in the main 'Events' tab",
-                                            importedVms));
-                            UICommand tempVar2 = new UICommand("CancelConfirm",
-                                    vmBackupModel);
-                            tempVar2.setTitle("Close");
-                            tempVar2.setIsDefault(true);
-                            tempVar2.setIsCancel(true);
-                            confirmModel.getCommands().add(tempVar2);
+                            // show the confirm window only if the import has been successfully started for at least one VM
+                            if (toShowConfirmWindow) {
+                                ConfirmationModel confirmModel = new ConfirmationModel();
+                                vmBackupModel.setConfirmWindow(confirmModel);
+                                confirmModel.setTitle("Import Virtual Machine(s)");
+                                confirmModel.setHashName("import_virtual_machine");
+                                importedVms = StringHelper.trimEnd(importedVms.trim(), ',');
+                                confirmModel.setMessage(StringFormat
+                                        .format("Import process has begun for VM(s): %1$s.\nYou can check import status in the 'Events' tab of the specific destination storage domain, or in the main 'Events' tab",
+                                                importedVms));
+                                UICommand tempVar2 = new UICommand("CancelConfirm",
+                                        vmBackupModel);
+                                tempVar2.setTitle("Close");
+                                tempVar2.setIsDefault(true);
+                                tempVar2.setIsCancel(true);
+                                confirmModel.getCommands().add(tempVar2);
+                            }
                         }
 
                     }
