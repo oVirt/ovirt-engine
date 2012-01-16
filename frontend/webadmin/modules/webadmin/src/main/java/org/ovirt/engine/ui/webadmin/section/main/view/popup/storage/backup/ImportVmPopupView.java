@@ -443,6 +443,8 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                     customSelectionCell.setEnabledWithToolTip(false,
                             ALLOCATION_MODIFIED_SINGLE_VM);
                     numOfVmsGreaterThan1 = true;
+                    diskTable.flush();
+                    diskTable.edit((VmImportDiskListModel) object.getDetailModels().get(2));
                 }
                 if (!numOfVmsGreaterThan1) {
                     if ((Boolean) object.getCollapseSnapshots().getEntity()) {
