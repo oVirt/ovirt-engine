@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
-import org.ovirt.engine.core.common.action.MergeSnapshotParamenters;
+import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -301,8 +301,7 @@ public class VmSnapshotListModel extends SearchableListModel
                         (dstSnapshot.getvm_snapshot_id() != null) ? dstSnapshot.getvm_snapshot_id().getValue()
                                 : NGuid.Empty;
 
-                Frontend.RunAction(VdcActionType.MergeSnapshot, new MergeSnapshotParamenters(srcSnapshotId,
-                        dstSnapshotId,
+                Frontend.RunAction(VdcActionType.RemoveSnapshot, new RemoveSnapshotParameters(srcSnapshotId,
                         vm.getvm_guid()),
                         new IFrontendActionAsyncCallback() {
                             @Override
