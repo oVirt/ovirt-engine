@@ -173,7 +173,6 @@ public class RoleListModel extends ListWithDetailsModel
         setSearchUserRolesCommand(new UICommand("SearchUserRoles", this));
 
         setSearchPageSize(1000);
-        getSearchCommand().Execute();
 
         UpdateActionAvailability();
     }

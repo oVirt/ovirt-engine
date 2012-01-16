@@ -59,7 +59,6 @@ public class SystemPermissionListModel extends SearchableListModel
         setRemoveCommand(new UICommand("Remove", this));
 
         setSearchPageSize(1000);
-        getSearchCommand().Execute();
 
         UpdateActionAvailability();
     }
