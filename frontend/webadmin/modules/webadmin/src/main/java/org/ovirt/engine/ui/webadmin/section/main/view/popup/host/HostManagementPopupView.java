@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EnumRadioEditor;
 
@@ -34,7 +34,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
-public class HostManagementPopupView extends AbstractModelBoundPopupView<HostManagementNetworkModel> implements HostManagementPopupPresenterWidget.ViewDef {
+public class HostManagementPopupView extends WebAdminModelBoundPopupView<HostManagementNetworkModel> implements HostManagementPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<HostManagementNetworkModel, HostManagementPopupView> {
         Driver driver = GWT.create(Driver.class);

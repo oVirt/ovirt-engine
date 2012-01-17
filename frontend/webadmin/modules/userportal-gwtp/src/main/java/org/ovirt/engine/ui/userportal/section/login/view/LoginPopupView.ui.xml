@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:d="urn:import:org.ovirt.engine.ui.userportal.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+	<ui:with field='resources' type='org.ovirt.engine.ui.userportal.ApplicationResources' />
+
+	<ui:style>
+		.loginForm {
+			padding-top: 20px;
+			background-color: #FFFFFF;
+			height: 100%;
+			text-align: center;
+		}
+		
+		.loginFormTable {
+			width: 86%;
+			margin: auto;
+		}
+		
+		.formTextBox {
+			color: #333333;
+			font-size: 11px;
+		}
+		
+		.formRow {
+			height: 40px;
+			color: #333333;
+		}
+		
+		.errorMessagePanel {
+			position: absolute;
+			height: 50px;
+			width: 90%;
+		}
+		
+		.errorMessage {
+			color: red;
+			font-style: italic;
+			text-align: center;
+			vertical-align: middle;
+		}
+		
+		.buttonBar {
+			padding-top: 10px;
+		}
+		
+		.button {
+			float: right;
+			font-size: 12px;
+		}
+	</ui:style>
+
+	<ui:style field='loginPopupStyle'>
+		.loginPopupHeader {
+			position: absolute;
+			top: 5px;
+			right: 5px;
+		}
+		
+		.loginPopupHeaderCenter {
+			background: url(images/login_header_background_repetitive.png) repeat-x;
+			width: 190px;
+			height: 44px;
+			text-align: left;
+			padding-left: 5px;
+			padding-top: 14px;
+		}
+	</ui:style>
+
+	<d:SimplePopupPanel ui:field="popup" width="420px" height="280px">
+		<d:header>
+			<g:HorizontalPanel styleName="{loginPopupStyle.loginPopupHeader}">
+				<g:Image resource='{resources.loginPopupHeaderLogoImage}' />
+				<g:HTMLPanel styleName="{loginPopupStyle.loginPopupHeaderCenter}">
+					<g:Image resource='{resources.loginPopupHeaderTitleImage}' />
+				</g:HTMLPanel>
+				<g:Image resource='{resources.loginPopupHeaderImage}' />
+			</g:HorizontalPanel>
+		</d:header>
+
+		<d:content>
+			<g:HTMLPanel addStyleNames="{style.loginForm}">
+				<table class="{style.loginFormTable}">
+					<tr class="formRow">
+						<td class="{style.formTextBox}">
+							<e:EntityModelTextBoxEditor ui:field="userNameEditor" />
+						</td>
+					</tr>
+					<tr class="formRow">
+						<td class="{style.formTextBox}">
+							<e:EntityModelPasswordBoxEditor ui:field="passwordEditor" />
+						</td>
+					</tr>
+					<tr class="formRow">
+						<td class="{style.formTextBox}">
+							<e:ListModelListBoxEditor ui:field="domainEditor" />
+						</td>
+					</tr>
+					<tr class="formRow">
+						<td height="20">
+							<g:HTMLPanel addStyleNames="{style.buttonBar}">
+								<d:SimpleDialogButton ui:field="loginButton" addStyleNames="{style.button}" />
+								<div style="clear: both;" />
+							</g:HTMLPanel>
+						</td>
+					</tr>
+				</table>
+				<g:VerticalPanel verticalAlignment="middle" addStyleNames="{style.errorMessagePanel}">
+					<g:Label ui:field="errorMessage" addStyleNames="{style.errorMessage}" />
+				</g:VerticalPanel>
+			</g:HTMLPanel>
+		</d:content>
+	</d:SimplePopupPanel>
+
+</ui:UiBinder>

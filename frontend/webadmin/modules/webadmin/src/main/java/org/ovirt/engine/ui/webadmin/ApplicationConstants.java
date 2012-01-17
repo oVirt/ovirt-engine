@@ -33,6 +33,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String loginButtonLabel();
 
     // Main section
+
     @DefaultStringValue("Configure")
     String configureLinkLabel();
 

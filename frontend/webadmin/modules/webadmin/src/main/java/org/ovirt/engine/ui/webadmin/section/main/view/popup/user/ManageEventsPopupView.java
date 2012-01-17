@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.EventNotificationModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
@@ -35,7 +35,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.inject.Inject;
 
-public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNotificationModel>
+public class ManageEventsPopupView extends WebAdminModelBoundPopupView<EventNotificationModel>
         implements ManageEventsPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<EventNotificationModel, ManageEventsPopupView> {

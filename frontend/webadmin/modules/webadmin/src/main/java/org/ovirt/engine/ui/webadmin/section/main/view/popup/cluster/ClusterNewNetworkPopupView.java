@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterNewNetworkPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 
 import com.google.gwt.core.client.GWT;
@@ -17,7 +17,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
 
-public class ClusterNewNetworkPopupView extends AbstractModelBoundPopupView<ClusterNetworkModel> implements ClusterNewNetworkPopupPresenterWidget.ViewDef {
+public class ClusterNewNetworkPopupView extends WebAdminModelBoundPopupView<ClusterNetworkModel> implements ClusterNewNetworkPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ClusterNetworkModel, ClusterNewNetworkPopupView> {
         Driver driver = GWT.create(Driver.class);

@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.ComboBox;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 
@@ -37,7 +37,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
-public class VmRunOncePopupView extends AbstractModelBoundPopupView<RunOnceModel>
+public class VmRunOncePopupView extends WebAdminModelBoundPopupView<RunOnceModel>
         implements VmRunOncePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<RunOnceModel, VmRunOncePopupView> {

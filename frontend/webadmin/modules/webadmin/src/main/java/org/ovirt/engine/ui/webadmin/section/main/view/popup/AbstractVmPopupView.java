@@ -52,7 +52,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.inject.Inject;
 
-public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel> {
+public class AbstractVmPopupView extends WebAdminModelBoundPopupView<UnitVmModel> {
     interface Driver extends SimpleBeanEditorDriver<UnitVmModel, AbstractVmPopupView> {
         Driver driver = GWT.create(Driver.class);
     }

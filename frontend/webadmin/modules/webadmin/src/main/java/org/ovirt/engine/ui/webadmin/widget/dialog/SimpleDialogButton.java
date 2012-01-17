@@ -5,10 +5,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class SimpleDialogButton extends AbstractDialogButton {
 
@@ -34,28 +31,8 @@ public class SimpleDialogButton extends AbstractDialogButton {
     private static final String upDisabledStretch = resources.dialogButtonUpDisabledStretch().getURL();
     private static final String upDisabledEnd = resources.dialogButtonUpDisabledEnd().getURL();
 
-    private SafeHtml image = SafeHtmlUtils.EMPTY_SAFE_HTML;
-    private String customStyle = "";
-
     public SimpleDialogButton() {
         super("");
-    }
-
-    public void setImage(ImageResource image) {
-        this.image = imagetoSafeHtml(image);
-        updateFaces();
-    }
-
-    public void setCustomContentStyle(String customStyle) {
-        this.customStyle = customStyle;
-        updateFaces();
-    }
-
-    private SafeHtml imagetoSafeHtml(ImageResource resource) {
-        if (resource == null) {
-            return image;
-        }
-        return SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resource).getHTML());
     }
 
     @Override

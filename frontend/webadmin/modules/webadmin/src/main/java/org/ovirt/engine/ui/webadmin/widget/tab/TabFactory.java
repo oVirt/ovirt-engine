@@ -12,11 +12,12 @@ import com.gwtplatform.mvp.client.TabData;
 public abstract class TabFactory {
 
     public static TabDefinition createTab(TabData tabData, AbstractTabPanel tabPanel) {
-        if (tabData instanceof ModelBoundTabData)
+        if (tabData instanceof ModelBoundTabData) {
             return new ModelBoundTab((ModelBoundTabData) tabData, tabPanel);
-        else
+        } else {
             // Fall back to default tab widget implementation
             return new SimpleTab(tabData, tabPanel);
+        }
     }
 
 }

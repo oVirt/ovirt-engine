@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 
 import com.google.gwt.core.client.GWT;
@@ -24,7 +24,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
-public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel>
+public class VmMigratePopupView extends WebAdminModelBoundPopupView<MigrateModel>
         implements VmMigratePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<MigrateModel, VmMigratePopupView> {

@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.RolePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
@@ -35,7 +35,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.inject.Inject;
 
-public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implements RolePopupPresenterWidget.ViewDef {
+public class RolePopupView extends WebAdminModelBoundPopupView<RoleModel> implements RolePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<RoleModel, RolePopupView> {
         Driver driver = GWT.create(Driver.class);

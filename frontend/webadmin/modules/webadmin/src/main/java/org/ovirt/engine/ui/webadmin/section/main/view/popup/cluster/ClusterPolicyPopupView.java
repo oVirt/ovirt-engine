@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterPolicyModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPolicyPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.widget.form.Slider;
 import org.ovirt.engine.ui.webadmin.widget.form.Slider.SliderValueChange;
@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 
-public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<ClusterPolicyModel> implements ClusterPolicyPopupPresenterWidget.ViewDef, SliderValueChange {
+public class ClusterPolicyPopupView extends WebAdminModelBoundPopupView<ClusterPolicyModel> implements ClusterPolicyPopupPresenterWidget.ViewDef, SliderValueChange {
 
     private static final String RIGHT = "right";
 

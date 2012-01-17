@@ -1,16 +1,16 @@
-package org.ovirt.engine.ui.webadmin.section.main.view.popup;
+package org.ovirt.engine.ui.common.view.popup;
 
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
+import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
+import org.ovirt.engine.ui.common.widget.IsProgressContentWidget;
+import org.ovirt.engine.ui.common.widget.dialog.AbstractDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.widget.UiCommandButton;
-import org.ovirt.engine.ui.webadmin.widget.dialog.ProgressPopupContent;
-import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.DOM;
@@ -23,13 +23,13 @@ import com.google.gwt.user.client.ui.Widget;
  * @param <T>
  *            Window model type.
  */
-public abstract class AbstractModelBoundPopupView<T extends Model> extends AbstractPopupView<SimpleDialogPanel>
+public abstract class AbstractModelBoundPopupView<T extends Model> extends AbstractPopupView<AbstractDialogPanel>
         implements AbstractModelBoundPopupPresenterWidget.ViewDef<T>, HasElementId {
 
     /**
      * Popup progress indicator widget
      */
-    private final ProgressPopupContent progressContent = new ProgressPopupContent();
+    private final IsProgressContentWidget progressContent;
 
     /**
      * Actual popup content
@@ -43,15 +43,20 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
 
     private String elementId = DOM.createUniqueId();
 
-    public AbstractModelBoundPopupView(EventBus eventBus, ApplicationResources resources) {
+    public AbstractModelBoundPopupView(EventBus eventBus, CommonApplicationResources resources) {
         super(eventBus, resources);
+        this.progressContent = createProgressContentWidget();
     }
 
     @Override
-    protected void initWidget(SimpleDialogPanel widget) {
+    protected void initWidget(AbstractDialogPanel widget) {
         super.initWidget(widget);
         this.popupContent = widget.getContent();
     }
+
+    protected abstract AbstractUiCommandButton createCommandButton(String label);
+
+    protected abstract IsProgressContentWidget createProgressContentWidget();
 
     @Override
     public void setTitle(String title) {
@@ -75,7 +80,7 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
 
     @Override
     public HasUiCommandClickHandlers addFooterButton(String label, String uniqueId) {
-        UiCommandButton button = new UiCommandButton(label);
+        AbstractUiCommandButton button = createCommandButton(label);
         asWidget().addFooterButton(button);
 
         // Set button element ID for better accessibility
@@ -94,7 +99,7 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
     public void startProgress(String progressMessage) {
         // Set dialog content to the progress indicator widget
         progressContent.setProgressMessage(progressMessage);
-        asWidget().setContent(progressContent);
+        asWidget().setContent(progressContent.asWidget());
 
         // Hide dialog buttons when starting progress
         asWidget().setFooterPanelVisible(false);

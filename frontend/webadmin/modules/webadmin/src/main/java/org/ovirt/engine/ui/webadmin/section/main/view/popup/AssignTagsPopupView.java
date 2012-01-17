@@ -28,7 +28,7 @@ import com.google.gwt.user.cellview.client.TreeNode;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.inject.Inject;
 
-public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListModel>
+public class AssignTagsPopupView extends WebAdminModelBoundPopupView<TagListModel>
         implements AssignTagsPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<TagListModel, AssignTagsPopupView> {

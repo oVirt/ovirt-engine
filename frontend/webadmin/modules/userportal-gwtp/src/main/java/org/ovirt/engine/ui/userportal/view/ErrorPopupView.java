@@ -1,0 +1,108 @@
+package org.ovirt.engine.ui.userportal.view;
+
+import java.util.Map;
+import java.util.Set;
+
+import org.ovirt.engine.ui.common.presenter.ErrorPopupPresenterWidget;
+import org.ovirt.engine.ui.common.view.AbstractPopupView;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.ApplicationMessages;
+import org.ovirt.engine.ui.userportal.ApplicationResources;
+import org.ovirt.engine.ui.userportal.ApplicationTemplates;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
+import com.google.inject.Inject;
+
+public class ErrorPopupView extends AbstractPopupView<DialogBox> implements ErrorPopupPresenterWidget.ViewDef {
+
+    interface ViewUiBinder extends UiBinder<DialogBox, ErrorPopupView> {
+        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
+
+    @UiField
+    Label titleLabel;
+
+    @UiField
+    HTML messageLabel;
+
+    @UiField
+    PushButton closeButton;
+
+    ApplicationMessages messages;
+    ApplicationTemplates templates;
+
+    @Inject
+    public ErrorPopupView(EventBus eventBus, ApplicationResources resources,
+            ApplicationConstants constants, ApplicationMessages messages,
+            ApplicationTemplates templates) {
+        super(eventBus, resources);
+        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        localize(constants);
+        this.messages = messages;
+        this.templates = templates;
+    }
+
+    void localize(ApplicationConstants constants) {
+        titleLabel.setText(constants.errorPopupCaption());
+        closeButton.setText(constants.closeButtonLabel());
+    }
+
+    @Override
+    public void setErrorMessage(Map<String, Set<String>> desc2msgs) {
+        // Only one error- without description
+        if ((desc2msgs.size() == 1)) {
+            String desc = desc2msgs.keySet().iterator().next();
+            if ((desc2msgs.get(desc).size() == 1) && ((desc == null) || (desc.equals("")))) {
+                messageLabel.setText(messages.uiCommonFrontendFailure(desc2msgs.get(desc).iterator().next()));
+                return;
+            }
+        }
+
+        SafeHtmlBuilder allSb = new SafeHtmlBuilder();
+
+        allSb.append(SafeHtmlUtils.fromTrustedString("</br></br>"));
+
+        // More then one error or one error with description
+        for (Map.Entry<String, Set<String>> entry : desc2msgs.entrySet()) {
+            SafeHtmlBuilder listSb = new SafeHtmlBuilder();
+            String desc = entry.getKey();
+
+            for (String msg : entry.getValue()) {
+                listSb.append(templates.listItem(SafeHtmlUtils.fromSafeConstant(msg)));
+            }
+
+            SafeHtml sh = templates.unsignedList(listSb.toSafeHtml());
+
+            if (!desc.equals("")) {
+                allSb.append(SafeHtmlUtils.fromString(desc + ":"));
+            }
+
+            allSb.append(sh);
+        }
+
+        SafeHtml sh = SafeHtmlUtils.fromSafeConstant(messages.uiCommonFrontendFailure(allSb.toSafeHtml().asString()));
+        messageLabel.setHTML(sh);
+    }
+
+    @Override
+    public void setErrorMessage(String errorMessage) {
+        messageLabel.setText(errorMessage);
+    }
+
+    @Override
+    public HasClickHandlers getCloseButton() {
+        return closeButton;
+    }
+
+}

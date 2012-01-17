@@ -6,23 +6,22 @@ import com.google.gwt.user.client.rpc.SerializationStreamWriter;
 import java.util.ArrayList;
 
 public class ValueObjectMap_CustomFieldSerializer {
+
 	public static void deserialize(SerializationStreamReader streamReader,
 			ValueObjectMap instance) throws SerializationException {
-		// Handled in instantiate
+		instance.setValuePairs((ArrayList<ValueObjectPair>)streamReader.readObject());
 	}
 
 	public static ValueObjectMap instantiate(
 			SerializationStreamReader streamReader)
 			throws SerializationException {
-		// occur first
-		ValueObjectMap r = new ValueObjectMap();
-		r.setValuePairs((ArrayList<ValueObjectPair>)streamReader.readObject());
-
-		return r;
+		ValueObjectMap instance = new ValueObjectMap();
+		return instance;
 	}
 
 	public static void serialize(SerializationStreamWriter streamWriter,
 			ValueObjectMap instance) throws SerializationException {
 		streamWriter.writeObject(instance.getValuePairs());
 	}
+
 }

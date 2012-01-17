@@ -100,6 +100,13 @@
       <type>war</type>
     </dependency>
 
+    <dependency>
+      <groupId>org.ovirt.engine.ui</groupId>
+      <artifactId>userportal-gwtp</artifactId>
+      <version>${engine.version}</version>
+      <type>war</type>
+    </dependency>
+
     <!-- ** EJB-JARs -->
     <dependency>
       <groupId>org.ovirt.engine.ui</groupId>
@@ -241,6 +248,13 @@
               <artifactId>webadmin</artifactId>
               <bundleFileName>webadmin.war</bundleFileName>
               <contextRoot>/webadmin</contextRoot>
+            </webModule>
+
+            <webModule>
+              <groupId>org.ovirt.engine.ui</groupId>
+              <artifactId>userportal-gwtp</artifactId>
+              <bundleFileName>userportal-gwtp.war</bundleFileName>
+              <contextRoot>/userportal-gwtp</contextRoot>
             </webModule>
 
             <!-- ** EJB-JARs -->

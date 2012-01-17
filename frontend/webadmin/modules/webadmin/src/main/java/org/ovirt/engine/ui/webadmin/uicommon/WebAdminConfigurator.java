@@ -26,10 +26,10 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     // Temporarily save the locations of webadmin and userportal.
     // TODO: create a new SPICE RPM for webadmin
     private static final String WEBADMIN_ROOT_FOLDER = "/webadmin/webadmin/";
-    private static final String USERPORTAL_ROOT_FOLDER = "/userportal/userportal/";
+    private static final String USERPORTAL_ROOT_FOLDER = "/userportal-gwtp/userportal/";
 
     public EventDefinition spiceVersionFileFetchedEvent_Definition =
-            new EventDefinition("spiceVersionFileFetched", WebAdminConfigurator.class);
+        new EventDefinition("spiceVersionFileFetched", WebAdminConfigurator.class);
 
     public Event spiceVersionFileFetchedEvent = new Event(spiceVersionFileFetchedEvent_Definition);
 
@@ -143,7 +143,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         case qxl:
             ClientAgentType cat = new ClientAgentType();
             return (cat.os.equalsIgnoreCase("Windows") && cat.browser.equalsIgnoreCase("Explorer")) ||
-                    (cat.os.equalsIgnoreCase("Linux") && cat.browser.equalsIgnoreCase("Firefox"));
+            (cat.os.equalsIgnoreCase("Linux") && cat.browser.equalsIgnoreCase("Firefox"));
         }
 
         return false;

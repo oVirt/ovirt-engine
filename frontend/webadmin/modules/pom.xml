@@ -26,6 +26,7 @@
 		<module>gwt-common</module>
 		<module>webadmin</module>
 		<module>userportal</module>
+		<module>userportal-gwtp</module>
 	</modules>
 
 	<properties>

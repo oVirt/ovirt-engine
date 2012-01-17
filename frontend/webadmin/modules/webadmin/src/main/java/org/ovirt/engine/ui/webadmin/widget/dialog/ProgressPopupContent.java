@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.dialog;
 
+import org.ovirt.engine.ui.common.widget.IsProgressContentWidget;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -9,7 +11,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ProgressPopupContent extends Composite {
+public class ProgressPopupContent extends Composite implements IsProgressContentWidget {
 
     interface WidgetUiBinder extends UiBinder<Widget, ProgressPopupContent> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);

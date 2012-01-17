@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
-import org.ovirt.engine.ui.webadmin.widget.tab.HeadlessTabPanel.TabWidgetHandler;
+import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetHandler;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;

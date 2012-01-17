@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style>
+		.wrapper {
+			height: 74px;
+			margin: 0 0 16px 16px;
+		}
+		
+		.logo {
+			float: left;
+			background-image: url(images/user_portal_logo.gif);
+			background-repeat: no-repeat;
+			background-position: left bottom;
+			width: 131px;
+			height: 74px;
+		}
+		
+		.barOuter {
+			background-image: url(images/bg_head.gif);
+			background-repeat: repeat-x;
+			height: 74px;
+			width: 100%;
+		}
+		
+		.barInner {
+			height: 60px;
+			padding-top: 14px;
+			color: white;
+			font-size: 13px;
+		}
+		
+		.menu {
+			position: relative;
+			left: 16px;
+			top: 20px;
+		}
+		
+		.userName {
+			font-weight: bold;
+		}
+		
+		a.menuLink {
+			color: white;
+		}
+		
+		.mainTabs {
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			margin-right: 16px;
+			margin-bottom: 16px;
+			border-bottom: 1px solid black;
+		}
+	</ui:style>
+
+	<g:HTMLPanel addStyleNames="{style.wrapper}">
+		<g:HTML addStyleNames="{style.logo}" />
+
+		<g:SimplePanel addStyleNames="{style.barOuter}">
+			<g:FlowPanel addStyleNames="{style.barInner}">
+				<g:HTMLPanel addStyleNames="{style.menu}">
+					Logged in user:
+					<g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.userName}" />
+					|
+					<g:Anchor ui:field="logoutLink" addStyleNames="{style.menuLink}" />
+					|
+					<g:Anchor ui:field="guideLink" addStyleNames="{style.menuLink}" />
+					|
+					<g:Anchor ui:field="aboutLink" addStyleNames="{style.menuLink}" />
+				</g:HTMLPanel>
+
+				<g:HTMLPanel ui:field="mainTabBarPanel" addStyleNames="{style.mainTabs}">
+					<g:FlowPanel ui:field="mainTabContainer" />
+					<div style="clear: both;" />
+				</g:HTMLPanel>
+			</g:FlowPanel>
+		</g:SimplePanel>
+
+		<div style="clear: both;" />
+	</g:HTMLPanel>
+
+</ui:UiBinder>

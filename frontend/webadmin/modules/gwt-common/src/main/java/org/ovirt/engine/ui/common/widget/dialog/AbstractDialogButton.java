@@ -1,10 +1,16 @@
 package org.ovirt.engine.ui.common.widget.dialog;
 
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.CustomButton;
 
 public abstract class AbstractDialogButton extends CustomButton {
 
     protected String text;
+    protected SafeHtml image = SafeHtmlUtils.EMPTY_SAFE_HTML;
+    protected String customStyle = "";
 
     protected AbstractDialogButton(String text) {
         super();
@@ -17,7 +23,22 @@ public abstract class AbstractDialogButton extends CustomButton {
         updateFaces();
     }
 
-    protected abstract void updateFaces();
+    public void setImage(ImageResource image) {
+        this.image = imagetoSafeHtml(image);
+        updateFaces();
+    }
+
+    public void setCustomContentStyle(String customStyle) {
+        this.customStyle = customStyle;
+        updateFaces();
+    }
+
+    private SafeHtml imagetoSafeHtml(ImageResource resource) {
+        if (resource == null) {
+            return image;
+        }
+        return SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resource).getHTML());
+    }
 
     @Override
     protected void onClick() {
@@ -34,5 +55,7 @@ public abstract class AbstractDialogButton extends CustomButton {
     protected void onClickStart() {
         setDown(true);
     }
+
+    protected abstract void updateFaces();
 
 }

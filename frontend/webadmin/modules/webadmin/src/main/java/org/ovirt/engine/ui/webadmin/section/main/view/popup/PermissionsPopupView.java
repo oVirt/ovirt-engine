@@ -38,7 +38,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 
-public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementListModel> implements PermissionsPopupPresenterWidget.ViewDef {
+public class PermissionsPopupView extends WebAdminModelBoundPopupView<AdElementListModel> implements PermissionsPopupPresenterWidget.ViewDef {
     interface Driver extends SimpleBeanEditorDriver<AdElementListModel, PermissionsPopupView> {
         Driver driver = GWT.create(Driver.class);
     }

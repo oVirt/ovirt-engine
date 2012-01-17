@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.InstallModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 
 import com.google.gwt.core.client.GWT;
@@ -24,7 +24,7 @@ import com.google.inject.Inject;
  * Take into account that it can be used both for a normal host an also for an bare metal hypervisor. In the first case
  * it will ask for the root password and in the second it will as for the location of the ISO image of the hypervisor.
  */
-public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallModel> implements HostInstallPopupPresenterWidget.ViewDef {
+public class HostInstallPopupView extends WebAdminModelBoundPopupView<InstallModel> implements HostInstallPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<InstallModel, HostInstallPopupView> {
         Driver driver = GWT.create(Driver.class);

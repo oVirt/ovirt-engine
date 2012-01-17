@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.utils.WebUtils;
+import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.widget.tab.HeadlessTabPanel.TabWidgetHandler;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -22,7 +22,7 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
 
     public interface ViewDef extends View, TabWidgetHandler, MainTabBarOffsetUiHandlers {
 
-        void setUserNameLabel(String userName);
+        void setUserName(String userName);
 
         HasClickHandlers getConfigureLink();
 
@@ -100,10 +100,10 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
             @Override
             public void onClick(ClickEvent event) {
                 String url = com.google.gwt.user.client.Window.Location
-                        .getProtocol()
-                        + "//"
-                        + com.google.gwt.user.client.Window.Location.getHost()
-                        + "/rhev-docs/en-US/html/Administration_Guide/index.html";
+                .getProtocol()
+                + "//"
+                + com.google.gwt.user.client.Window.Location.getHost()
+                + "/rhev-docs/en-US/html/Administration_Guide/index.html";
 
                 WebUtils.openUrlInNewWindow("ENGINE Web Admin Documentation", url);
             }
@@ -121,7 +121,7 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
     protected void onReset() {
         super.onReset();
 
-        getView().setUserNameLabel(user.getUserName());
+        getView().setUserName(user.getUserName());
     }
 
 }

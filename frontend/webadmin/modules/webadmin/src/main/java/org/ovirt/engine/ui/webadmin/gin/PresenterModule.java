@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin;
 
 import org.ovirt.engine.ui.common.gin.BasePresenterModule;
-import org.ovirt.engine.ui.common.presenter.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.login.view.LoginPopupView;
@@ -247,7 +246,7 @@ public class PresenterModule extends BasePresenterModule {
     @Override
     protected void configure() {
         // Common stuff
-        bindCommonPresenters(ErrorPopupView.class);
+        bindCommonPresenters(ErrorPopupView.class, DefaultConfirmationPopupView.class);
 
         // Login section
         bindPresenter(LoginSectionPresenter.class,
@@ -567,9 +566,6 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabUserGroupPresenter.ProxyDef.class);
 
         // MAIN SECTION: -POPUPS-
-        bindPresenterWidget(DefaultConfirmationPopupPresenterWidget.class,
-                DefaultConfirmationPopupPresenterWidget.ViewDef.class,
-                DefaultConfirmationPopupView.class);
         bindPresenterWidget(RemoveConfirmationPopupPresenterWidget.class,
                 RemoveConfirmationPopupPresenterWidget.ViewDef.class,
                 RemoveConfirmationPopupView.class);

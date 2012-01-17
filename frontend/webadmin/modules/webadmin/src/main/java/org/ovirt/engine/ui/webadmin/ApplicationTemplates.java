@@ -83,7 +83,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<ul style='margin-top:0'>{0}</ul>")
     SafeHtml unsignedList(SafeHtml list);
 
-    @Template("<li>{0}")
+    @Template("<li>{0}</li>")
     SafeHtml listItem(SafeHtml item);
 
 }

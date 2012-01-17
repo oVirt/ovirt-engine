@@ -64,12 +64,11 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
         this.aboutLink = new Anchor(constants.aboutLinkLabel());
         this.guideLink = new Anchor(constants.guideLinkLabel());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         mainTabBarPanel.getElement().getStyle().setZIndex(1);
 
         // Ensure proper main tab bar position
         setMainTabBarOffset(mainTabBarInitialOffset);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override
@@ -99,7 +98,7 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
     }
 
     @Override
-    public void setUserNameLabel(String userName) {
+    public void setUserName(String userName) {
         userNameLabel.setText(userName);
     }
 

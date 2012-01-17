@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuideModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.GuideModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.UiCommandButton;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
-public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> implements GuidePopupPresenterWidget.ViewDef {
+public class GuidePopupView extends WebAdminModelBoundPopupView<GuideModel> implements GuidePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<GuideModel, GuidePopupView> {
         Driver driver = GWT.create(Driver.class);

@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EntityModelTextColumn;
@@ -17,9 +17,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
-public class ClusterManageNetworkPopupView extends
-        AbstractModelBoundPopupView<ListModel> implements
-        ClusterManageNetworkPopupPresenterWidget.ViewDef {
+public class ClusterManageNetworkPopupView extends WebAdminModelBoundPopupView<ListModel> implements ClusterManageNetworkPopupPresenterWidget.ViewDef {
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ClusterManageNetworkPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);

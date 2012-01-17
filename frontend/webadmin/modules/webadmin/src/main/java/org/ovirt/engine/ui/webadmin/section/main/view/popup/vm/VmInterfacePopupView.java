@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 
 import com.google.gwt.core.client.GWT;
@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
-public class VmInterfacePopupView extends AbstractModelBoundPopupView<VmInterfaceModel> implements VmInterfacePopupPresenterWidget.ViewDef {
+public class VmInterfacePopupView extends WebAdminModelBoundPopupView<VmInterfaceModel> implements VmInterfacePopupPresenterWidget.ViewDef {
     interface Driver extends SimpleBeanEditorDriver<VmInterfaceModel, VmInterfacePopupView> {
         Driver driver = GWT.create(Driver.class);
     }
