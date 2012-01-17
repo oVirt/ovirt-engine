@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -27,6 +28,11 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.VMCustomProper
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
 
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T> {
+    /**
+     *
+     */
+    private static final long serialVersionUID = -2444359305003244168L;
+
     private VmStatic mOldVmStatic;
 
     public UpdateVmCommand(T parameters) {
@@ -53,6 +59,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             if (mOldVmStatic != null) {
                 UpdateVmNetworks();
                 UpdateVmData();
+                VmDeviceUtils.updateVmDevices(mOldVmStatic);
                 if (((Boolean) Backend
                         .getInstance()
                         .getResourceManager()
@@ -70,6 +77,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
     }
+
 
     private void UpdateVmNetworks() {
         VmStatic dbVm = DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmStaticData().getId());
