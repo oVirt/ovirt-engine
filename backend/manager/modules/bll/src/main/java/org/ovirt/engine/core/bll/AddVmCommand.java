@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
@@ -376,6 +377,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     AddVmDynamic();
                     AddVmNetwork();
                     AddVmStatistics();
+                    VmDeviceUtils.updateVmDevices(getVmId());
                     getCompensationContext().stateChanged();
                     return null;
                 }
