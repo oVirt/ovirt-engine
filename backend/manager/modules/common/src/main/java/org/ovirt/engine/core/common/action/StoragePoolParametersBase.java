@@ -1,54 +1,45 @@
 package org.ovirt.engine.core.common.action;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "StoragePoolParametersBase")
-public class StoragePoolParametersBase extends VdcActionParametersBase implements java.io.Serializable {
-    private static final long serialVersionUID = -5018623647865122548L;
-    @XmlElement(name = "VdsId")
-    private Guid privateVdsId;
+public class StoragePoolParametersBase extends VdcActionParametersBase {
+    private static final long serialVersionUID = 8118928386101354539L;
 
-    public Guid getVdsId() {
-        return privateVdsId;
-    }
+    private Guid vdsId;
+    private Guid storagePoolId = new Guid();
+    private boolean suppressCheck;
+    private boolean forceDelete;
 
-    public void setVdsId(Guid value) {
-        privateVdsId = value;
+    public StoragePoolParametersBase() {
     }
 
     public StoragePoolParametersBase(Guid storagePoolId) {
         setStoragePoolId(storagePoolId);
     }
 
-    @XmlElement(name = "StoragePoolId")
-    private Guid privateStoragePoolId = new Guid();
+    public Guid getVdsId() {
+        return vdsId;
+    }
+
+    public void setVdsId(Guid value) {
+        vdsId = value;
+    }
 
     public Guid getStoragePoolId() {
-        return privateStoragePoolId;
+        return storagePoolId;
     }
 
     public void setStoragePoolId(Guid value) {
-        privateStoragePoolId = value;
+        storagePoolId = value;
     }
 
-    private boolean privateSuppressCheck;
-
     public boolean getSuppressCheck() {
-        return privateSuppressCheck;
+        return suppressCheck;
     }
 
     public void setSuppressCheck(boolean value) {
-        privateSuppressCheck = value;
+        suppressCheck = value;
     }
-
-    @XmlElement(name="ForceDelete")
-    private boolean forceDelete;
 
     public boolean getForceDelete() {
         return forceDelete;
@@ -56,8 +47,5 @@ public class StoragePoolParametersBase extends VdcActionParametersBase implement
 
     public void setForceDelete(boolean forceDelete) {
         this.forceDelete = forceDelete;
-    }
-
-    public StoragePoolParametersBase() {
     }
 }

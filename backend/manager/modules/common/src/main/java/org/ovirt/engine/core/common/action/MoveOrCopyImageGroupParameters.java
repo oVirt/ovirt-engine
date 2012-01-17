@@ -1,19 +1,29 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
+import org.ovirt.engine.core.common.businessentities.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "MoveOrCopyImageGroupParameters")
-public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBase implements java.io.Serializable {
-    private static final long serialVersionUID = -2113154541748941225L;
+public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBase {
+    private static final long serialVersionUID = -5874446297123213719L;
+    private ImageOperation operation = ImageOperation.Unassigned;
+    private boolean useCopyCollapse;
+    private VolumeFormat volumeFormat = VolumeFormat.UNUSED0;
+    private VolumeType volumeType = VolumeType.Unassigned;
+    private CopyVolumeType copyVolumeType = CopyVolumeType.SharedVol;
+    private boolean addImageDomainMapping;
+    private boolean postZero;
+    private boolean forceOverride;
+    private NGuid sourceDomainId;
+
+    public MoveOrCopyImageGroupParameters() {
+    }
 
     public MoveOrCopyImageGroupParameters(Guid containerId, Guid imageGroupId, Guid leafSnapshotID,
-            Guid storageDomainId, ImageOperation operation) {
+                                          Guid storageDomainId, ImageOperation operation) {
         super(leafSnapshotID, "", containerId);
         setStorageDomainId(storageDomainId);
         setImageGroupID(imageGroupId);
@@ -25,104 +35,75 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
         setForceOverride(false);
     }
 
-    @XmlElement(name = "Operation")
-    private ImageOperation privateOperation = ImageOperation.forValue(0);
-
     public ImageOperation getOperation() {
-        return privateOperation;
+        return operation;
     }
 
     private void setOperation(ImageOperation value) {
-        privateOperation = value;
+        operation = value;
     }
 
-    @XmlElement(name = "UseCopyCollapse")
-    private boolean privateUseCopyCollapse;
-
     public boolean getUseCopyCollapse() {
-        return privateUseCopyCollapse;
+        return useCopyCollapse;
     }
 
     public void setUseCopyCollapse(boolean value) {
-        privateUseCopyCollapse = value;
+        useCopyCollapse = value;
     }
 
-    @XmlElement(name = "VolumeFormat")
-    private VolumeFormat privateVolumeFormat = VolumeFormat.forValue(0);
-
     public VolumeFormat getVolumeFormat() {
-        return privateVolumeFormat;
+        return volumeFormat;
     }
 
     public void setVolumeFormat(VolumeFormat value) {
-        privateVolumeFormat = value;
+        volumeFormat = value;
     }
 
-    @XmlElement(name = "VolumeType")
-    private VolumeType privateVolumeType = VolumeType.forValue(0);
-
     public VolumeType getVolumeType() {
-        return privateVolumeType;
+        return volumeType;
     }
 
     public void setVolumeType(VolumeType value) {
-        privateVolumeType = value;
+        volumeType = value;
     }
 
-    @XmlElement(name = "CopyVolumeType")
-    private CopyVolumeType privateCopyVolumeType = CopyVolumeType.forValue(0);
-
     public CopyVolumeType getCopyVolumeType() {
-        return privateCopyVolumeType;
+        return copyVolumeType;
     }
 
     public void setCopyVolumeType(CopyVolumeType value) {
-        privateCopyVolumeType = value;
+        copyVolumeType = value;
     }
 
-    @XmlElement(name = "AddImageDomainMapping")
-    private boolean privateAddImageDomainMapping;
-
     public boolean getAddImageDomainMapping() {
-        return privateAddImageDomainMapping;
+        return addImageDomainMapping;
     }
 
     public void setAddImageDomainMapping(boolean value) {
-        privateAddImageDomainMapping = value;
+        addImageDomainMapping = value;
     }
 
-    @XmlElement(name = "PostZero")
-    private boolean privatePostZero;
-
     public boolean getPostZero() {
-        return privatePostZero;
+        return postZero;
     }
 
     public void setPostZero(boolean value) {
-        privatePostZero = value;
+        postZero = value;
     }
 
-    @XmlElement(name = "ForceOverride")
-    private boolean privateForceOverride;
-
     public boolean getForceOverride() {
-        return privateForceOverride;
+        return forceOverride;
     }
 
     public void setForceOverride(boolean value) {
-        privateForceOverride = value;
+        forceOverride = value;
     }
 
-    private NGuid privateSourceDomainId;
-
     public NGuid getSourceDomainId() {
-        return privateSourceDomainId;
+        return sourceDomainId;
     }
 
     public void setSourceDomainId(NGuid value) {
-        privateSourceDomainId = value;
-    }
-
-    public MoveOrCopyImageGroupParameters() {
+        sourceDomainId = value;
     }
 }

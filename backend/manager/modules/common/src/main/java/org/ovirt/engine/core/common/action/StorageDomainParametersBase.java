@@ -1,35 +1,14 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "StorageDomainParametersBase")
-public class StorageDomainParametersBase extends StoragePoolParametersBase implements java.io.Serializable {
-    private static final long serialVersionUID = 544938640760365469L;
-    @XmlElement(name = "StorageDomainId")
-    private Guid privateStorageDomainId = new Guid();
+public class StorageDomainParametersBase extends StoragePoolParametersBase {
+    private static final long serialVersionUID = -3426166529161499883L;
 
-    public Guid getStorageDomainId() {
-        return privateStorageDomainId;
-    }
+    private Guid storageDomainId = new Guid();
+    private boolean isInternal;
 
-    public void setStorageDomainId(Guid value) {
-        privateStorageDomainId = value;
-    }
-
-    @XmlElement(name = "IsInternal")
-    private boolean privateIsInternal;
-
-    public boolean getIsInternal() {
-        return privateIsInternal;
-    }
-
-    public void setIsInternal(boolean value) {
-        privateIsInternal = value;
+    public StorageDomainParametersBase() {
     }
 
     public StorageDomainParametersBase(Guid storageDomainId) {
@@ -37,6 +16,19 @@ public class StorageDomainParametersBase extends StoragePoolParametersBase imple
         setStorageDomainId(storageDomainId);
     }
 
-    public StorageDomainParametersBase() {
+    public Guid getStorageDomainId() {
+        return storageDomainId;
+    }
+
+    public void setStorageDomainId(Guid value) {
+        storageDomainId = value;
+    }
+
+    public boolean getIsInternal() {
+        return isInternal;
+    }
+
+    public void setIsInternal(boolean value) {
+        isInternal = value;
     }
 }

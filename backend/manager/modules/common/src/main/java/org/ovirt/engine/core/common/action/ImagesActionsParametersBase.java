@@ -2,51 +2,46 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "ImagesActionsParametersBase")
-public class ImagesActionsParametersBase extends StorageDomainParametersBase implements java.io.Serializable {
-    private static final long serialVersionUID = -8414109153288146048L;
-    @XmlElement(name = "ImageId")
-    private Guid _imageId = new Guid();
+
+public class ImagesActionsParametersBase extends StorageDomainParametersBase {
+    private static final long serialVersionUID = -5791892465249711608L;
+
+    private Guid imageId = new Guid();
+    private Guid destinationImageId = new Guid();
+    private String description;
+    private String oldDescription;
+    private Date oldLastModifiedValue;
+    private Guid vmSnapshotId = new Guid();
+    private Guid imageGroupID = new Guid();
+
+    public ImagesActionsParametersBase() {
+    }
 
     public ImagesActionsParametersBase(Guid imageId) {
         super(Guid.Empty);
-        _imageId = imageId;
+        this.imageId = imageId;
     }
 
     public Guid getImageId() {
-        return _imageId;
+        return imageId;
     }
 
-    @XmlElement(name = "DestinationImageId")
-    private Guid privateDestinationImageId = new Guid();
-
     public Guid getDestinationImageId() {
-        return privateDestinationImageId;
+        return destinationImageId;
     }
 
     public void setDestinationImageId(Guid value) {
-        privateDestinationImageId = value;
+        destinationImageId = value;
     }
 
-    @XmlElement(name = "Description")
-    private String privateDescription;
-    private String oldDescription;
-    private Date oldLastModifiedValue;
-
     public String getDescription() {
-        return privateDescription;
+        return description;
     }
 
     public void setDescription(String value) {
-        privateDescription = value;
+        description = value;
     }
 
     public String getOldDescription() {
@@ -65,28 +60,19 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase imp
         return oldLastModifiedValue;
     }
 
-    @XmlElement(name = "VmSnapshotId")
-    private Guid privateVmSnapshotId = new Guid();
-
     public Guid getVmSnapshotId() {
-        return privateVmSnapshotId;
+        return vmSnapshotId;
     }
 
     public void setVmSnapshotId(Guid value) {
-        privateVmSnapshotId = value;
+        vmSnapshotId = value;
     }
 
-    @XmlElement(name = "ImageGroupID")
-    private Guid privateImageGroupID = new Guid();
-
     public Guid getImageGroupID() {
-        return privateImageGroupID;
+        return imageGroupID;
     }
 
     public void setImageGroupID(Guid value) {
-        privateImageGroupID = value;
-    }
-
-    public ImagesActionsParametersBase() {
+        imageGroupID = value;
     }
 }
