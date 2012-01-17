@@ -292,8 +292,6 @@ public class DiskImageTemplate implements IImage,BusinessEntity<Guid> {
         throw new RuntimeException("The method or operation is not implemented.");
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public long getSizeInGigabyte() {
         return getsize() / (1024 * 1024 * 1024);

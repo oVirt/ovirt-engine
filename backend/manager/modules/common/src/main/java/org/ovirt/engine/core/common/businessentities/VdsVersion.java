@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VdsVersion")
 public class VdsVersion implements Serializable {
@@ -19,8 +18,6 @@ public class VdsVersion implements Serializable {
     private String versionName;
     private Version mFullVersion;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "SoftwareVersion")
     public String getSoftwareVersion() {
         return softwareVersion;
@@ -30,8 +27,6 @@ public class VdsVersion implements Serializable {
         softwareVersion = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "SoftwareRevision")
     public String getSoftwareRevision() {
         return softwareRevision;
@@ -41,8 +36,6 @@ public class VdsVersion implements Serializable {
         softwareRevision = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "BuildName")
     public String getBuildName() {
         return buildName;
@@ -52,8 +45,6 @@ public class VdsVersion implements Serializable {
         buildName = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VersionName")
     public String getVersionName() {
         return versionName;

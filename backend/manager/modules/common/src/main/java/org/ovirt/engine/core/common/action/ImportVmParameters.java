@@ -9,29 +9,18 @@ import javax.xml.bind.annotation.XmlType;
 
 import java.util.ArrayList;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "ImportVmParameters")
 public class ImportVmParameters extends MoveVmParameters implements java.io.Serializable {
     private static final long serialVersionUID = -8952177290494146953L;
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     private VM _vm;
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     private Guid _sourceDomainId = new Guid();
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     private Guid _destDomainId = new Guid();
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     private java.util.ArrayList<DiskImage> _images;
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     private Guid _vdsGroupId;
 

@@ -7,12 +7,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "ChangeDiskVDSCommandParameters")
 public class ChangeDiskVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private String _diskPath;
 

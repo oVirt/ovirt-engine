@@ -9,13 +9,10 @@ import javax.xml.bind.annotation.XmlType;
 
 import java.util.ArrayList;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "RemoveImageParameters")
 public class RemoveImageParameters extends ImagesContainterParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = -7905125604587768041L;
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "ImagesToRemoveListGuidArray")
     private java.util.ArrayList<Guid> privateImagesToRemoveList;
 
@@ -27,8 +24,6 @@ public class RemoveImageParameters extends ImagesContainterParametersBase implem
         privateImagesToRemoveList = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "DiskImage")
     private DiskImage privateDiskImage;
 
@@ -40,8 +35,6 @@ public class RemoveImageParameters extends ImagesContainterParametersBase implem
         privateDiskImage = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     private boolean privateForceDelete;
 

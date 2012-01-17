@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "HSMGetIsoListParameters")
 public class HSMGetIsoListParameters extends VdsIdVDSCommandParametersBase {
@@ -16,8 +15,6 @@ public class HSMGetIsoListParameters extends VdsIdVDSCommandParametersBase {
         setStoragePoolId(storagePoolId);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private Guid privateStoragePoolId = new Guid();
 

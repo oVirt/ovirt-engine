@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.VDSNiceType;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.compat.StringHelper;
 
 public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public VdsConditionFieldAutoCompleter() {
@@ -76,10 +77,6 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         IAutoCompleter retval = null;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "MEMORY":
         if (StringHelper.EqOp(fieldName, "MEMORY") || StringHelper.EqOp(fieldName, "CPUS")
                 || StringHelper.EqOp(fieldName, "CPU_USAGE") || StringHelper.EqOp(fieldName, "MEM_USAGE")
                 || StringHelper.EqOp(fieldName, "LOAD") || StringHelper.EqOp(fieldName, "CPU_SPEED")
@@ -87,7 +84,6 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
                 || StringHelper.EqOp(fieldName, "COMMITTED_MEM")) {
             retval = new NumericConditionRelationAutoCompleter();
         }
-        // ORIGINAL LINE: case "TAG":
         else if (StringHelper.EqOp(fieldName, "TAG")) {
             retval = new StringOnlyEqualConditionRelationAutoCompleter();
         } else {
@@ -99,14 +95,9 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "STATUS":
         if (StringHelper.EqOp(fieldName, "STATUS")) {
             retval = new EnumValueAutoCompleter(VDSStatus.class);
         }
-        // ORIGINAL LINE: case "TYPE":
         else if (StringHelper.EqOp(fieldName, "TYPE")) {
             retval = new EnumValueAutoCompleter(VDSNiceType.class);
         } else {

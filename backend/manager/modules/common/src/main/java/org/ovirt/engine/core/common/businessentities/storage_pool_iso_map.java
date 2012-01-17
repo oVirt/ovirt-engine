@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "storage_pool_iso_map")
 @Entity
@@ -64,8 +63,6 @@ public class storage_pool_iso_map implements BusinessEntity<StoragePoolIsoMapId>
         this.id = id;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "storage_id")
     public Guid getstorage_id() {
         return id.getStorageId();
@@ -75,8 +72,6 @@ public class storage_pool_iso_map implements BusinessEntity<StoragePoolIsoMapId>
         id.setStorageId(value);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "storage_pool_id", nillable = true)
     public NGuid getstorage_pool_id() {
         return this.id.getStoragePoolId();
@@ -86,8 +81,6 @@ public class storage_pool_iso_map implements BusinessEntity<StoragePoolIsoMapId>
         this.id.setStoragePoolId(value);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @Column(name = "status", nullable = true)
     private Integer persistentStorageDomainStatus = null;
 
@@ -107,8 +100,6 @@ public class storage_pool_iso_map implements BusinessEntity<StoragePoolIsoMapId>
         }
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @Column(name = "owner", nullable = true)
     private Integer persistentOwner = StorageDomainOwnerType.Unknown.getValue();
 

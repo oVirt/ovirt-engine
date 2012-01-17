@@ -10,12 +10,9 @@ import org.ovirt.engine.core.common.queries.*;
 
 import java.util.Map;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "ImportCandidateVDSCommandParameters")
 public class ImportCandidateVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "CandidateID")
     private String privateCandidateID;
 
@@ -27,8 +24,6 @@ public class ImportCandidateVDSCommandParameters extends StoragePoolDomainAndGro
         privateCandidateID = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "BaseID")
     private Guid privateBaseID = new Guid();
 
@@ -40,8 +35,6 @@ public class ImportCandidateVDSCommandParameters extends StoragePoolDomainAndGro
         privateBaseID = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     private java.util.HashMap<String, Guid> privateBaseImageIDs;
 
@@ -53,8 +46,6 @@ public class ImportCandidateVDSCommandParameters extends StoragePoolDomainAndGro
         privateBaseImageIDs = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "CandidateSource")
     private ImportCandidateSourceEnum privateCandidateSource = ImportCandidateSourceEnum.forValue(0);
 
@@ -66,8 +57,6 @@ public class ImportCandidateVDSCommandParameters extends StoragePoolDomainAndGro
         privateCandidateSource = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "ImportPath")
     private String privateImportPath;
 
@@ -79,8 +68,6 @@ public class ImportCandidateVDSCommandParameters extends StoragePoolDomainAndGro
         privateImportPath = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "Force")
     private boolean privateForce;
 

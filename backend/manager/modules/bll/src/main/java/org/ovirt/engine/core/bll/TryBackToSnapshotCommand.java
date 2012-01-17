@@ -15,8 +15,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  * Parameters: Guid snapshotId - id of source snapshot Guid containerId - id of
  * container VM string drive - mapping of new snapshot in Vm
  */
-// C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET
-// attributes:
 @InternalCommandAttribute
 public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> extends CreateSnapshotCommand<T> {
     public TryBackToSnapshotCommand(T parameters) {

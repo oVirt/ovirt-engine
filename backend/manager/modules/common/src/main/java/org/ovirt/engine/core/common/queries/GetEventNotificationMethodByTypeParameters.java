@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetEventNotificationMethodByTypeParameters")
 public class GetEventNotificationMethodByTypeParameters extends VdcQueryParametersBase {
@@ -16,8 +15,6 @@ public class GetEventNotificationMethodByTypeParameters extends VdcQueryParamete
         setMethodType(mathodType);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "MethodType")
     private EventNotificationMethods privateMethodType = EventNotificationMethods.forValue(0);
 

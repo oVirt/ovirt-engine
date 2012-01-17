@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "ConnectStoragePoolVDSCommandParameters")
 public class ConnectStoragePoolVDSCommandParameters extends GetStorageConnectionsListVDSCommandParameters {
@@ -18,8 +17,6 @@ public class ConnectStoragePoolVDSCommandParameters extends GetStorageConnection
         setMasterVersion(masterVersion);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "vds_spm_id")
     private int privatevds_spm_id;
 
@@ -31,8 +28,6 @@ public class ConnectStoragePoolVDSCommandParameters extends GetStorageConnection
         privatevds_spm_id = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private Guid privateMasterDomainId = new Guid();
 
@@ -44,8 +39,6 @@ public class ConnectStoragePoolVDSCommandParameters extends GetStorageConnection
         privateMasterDomainId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private int privateMasterVersion;
 

@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "FenceSpmStorageVDSCommandParameters")
 public class FenceSpmStorageVDSCommandParameters extends GetStorageConnectionsListVDSCommandParameters {
@@ -17,8 +16,6 @@ public class FenceSpmStorageVDSCommandParameters extends GetStorageConnectionsLi
         setPrevLVER((prevLVER != null) ? prevLVER : "-1");
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "PrevId")
     private int privatePrevId;
 
@@ -30,8 +27,6 @@ public class FenceSpmStorageVDSCommandParameters extends GetStorageConnectionsLi
         privatePrevId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "PrevLVER")
     private String privatePrevLVER;
 

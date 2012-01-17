@@ -8,14 +8,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "RegisterVdsParameters")
 public class RegisterVdsParameters extends VdcQueryParametersBase implements Serializable {
     private static final long serialVersionUID = 4661626618754048420L;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private Guid privateVdsId;
 
@@ -27,8 +24,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private String privateVdsHostName;
 
@@ -40,8 +35,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsHostName = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private String privateVdsName;
 
@@ -53,8 +46,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsName = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private String privateVdsUniqueId;
 
@@ -66,8 +57,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsUniqueId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @Deprecated
     @XmlElement
     private String privateNetMask;
@@ -81,8 +70,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateNetMask = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private int privatePort;
 
@@ -94,8 +81,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privatePort = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private Guid privateVdsGroupId;
 
@@ -107,8 +92,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsGroupId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private VDSType privateVdsType = VDSType.forValue(0);
 

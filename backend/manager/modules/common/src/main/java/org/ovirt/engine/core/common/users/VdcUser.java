@@ -9,43 +9,25 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.interfaces.*;
 
-//using VdcDAL.AdBroker;
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VdcUser", namespace = "http://service.engine.ovirt.org")
 public class VdcUser implements IVdcUser, Serializable {
     private static final long serialVersionUID = -5689096270467866486L;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "UserId")
     private Guid mUserId = new Guid();
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "UserName")
     private String mUserName;
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Password")
     private String mPassword;
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "DomainControler")
     private String mDomainControler;
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Browser")
     private String mBrowser;
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // @XmlElement(name="GroupNames")
     private String mGroupNames;
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "FirstName")
     private String mFirstName;
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "SurName")
     private String mSurName;
 

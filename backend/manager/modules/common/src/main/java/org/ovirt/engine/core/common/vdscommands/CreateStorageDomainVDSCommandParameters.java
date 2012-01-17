@@ -8,12 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "CreateStorageDomainVDSCommandParameters")
 public class CreateStorageDomainVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "StorageDomain")
     private storage_domain_static privateStorageDomain;
 
@@ -25,8 +22,6 @@ public class CreateStorageDomainVDSCommandParameters extends VdsIdVDSCommandPara
         privateStorageDomain = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Args")
     private String privateArgs;
 

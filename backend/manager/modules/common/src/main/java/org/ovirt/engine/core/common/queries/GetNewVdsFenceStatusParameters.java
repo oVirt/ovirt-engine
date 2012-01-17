@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetNewVdsFenceStatusParameters")
 public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
@@ -28,8 +27,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _password = password;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VdsId", nillable = true)
     private Guid _vds_id;
 
@@ -41,8 +38,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _vds_id = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "StoragePoolId")
     private Guid _storagePoolId = new Guid();
 
@@ -54,8 +49,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _storagePoolId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "ManagementIp")
     private String _managementIp;
 
@@ -67,8 +60,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _managementIp = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "FencingOptions", nillable = true)
     private ValueObjectMap _fencingOptions;
 
@@ -80,8 +71,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _fencingOptions = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "PmType")
     private String _pmType;
 
@@ -93,8 +82,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _pmType = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "User")
     private String _user;
 
@@ -106,8 +93,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _user = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Password")
     private String _password;
 
@@ -119,8 +104,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _password = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "IsNewHost")
     private boolean _isNewHost;
 

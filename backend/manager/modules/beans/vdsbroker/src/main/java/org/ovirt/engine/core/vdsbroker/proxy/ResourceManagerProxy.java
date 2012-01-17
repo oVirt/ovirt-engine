@@ -11,8 +11,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
-//[ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple)]
 @Stateless(name = "VdsBroker")
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Local(IResourceManager.class)

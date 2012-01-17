@@ -10,7 +10,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @InternalCommandAttribute
 public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
@@ -38,10 +37,6 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
     protected void executeCommand() {
         // according to shaharf the first id is 1
         int selectedId = 1;
-        // LINQ 31899
-        // Iterable<Integer> map = null; //
-        // DbFacade.Instance.Getvds_spm_id_mapByStoragePoolId(Vds.storage_pool_id).OrderBy(a
-        // => a.vds_spm_id).Select(a => a.vds_spm_id);
         List<vds_spm_id_map> list = DbFacade.getInstance().getVdsSpmIdMapDAO().getAll(
                 getVds().getstorage_pool_id());
         List<Integer> map = LinqUtils.foreach(list, new Function<vds_spm_id_map, Integer>() {

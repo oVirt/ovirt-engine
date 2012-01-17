@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "CreateVGVDSCommandParameters")
 public class CreateVGVDSCommandParameters extends ValidateStorageDomainVDSCommandParameters {
@@ -16,8 +15,6 @@ public class CreateVGVDSCommandParameters extends ValidateStorageDomainVDSComman
         setDeviceList(deviceList);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "DeviceList")
     private java.util.ArrayList<String> privateDeviceList;
 

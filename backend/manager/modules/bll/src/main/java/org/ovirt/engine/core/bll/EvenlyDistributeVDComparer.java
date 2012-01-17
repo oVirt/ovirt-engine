@@ -12,20 +12,9 @@ public class EvenlyDistributeVDComparer extends VdsComparer {
         if (x.getvms_cores_count() == null || y.getvms_cores_count() == null) {
             return false;
         }
-        // bool isXoverCommited = isVdsGoingToBeOverCommited(x, vm);
-        // bool isYoverCommited = isVdsGoingToBeOverCommited(y, vm);
         boolean returnValue;
-        // if (isYoverCommited^isXoverCommited)
-        // {
-        // returnValue = isXoverCommited;
-        // }
-        // else
-        // {
-        // VB & C# TO JAVA CONVERTER TODO TASK: Arithmetic operations involving
-        // nullable type instances are not converted to null-value logic:
         returnValue = ((double) x.getvms_cores_count() / x.getcpu_cores()) > ((double) y.getvms_cores_count() / y
                 .getcpu_cores());
-        // }
         return returnValue;
     }
 
@@ -44,8 +33,6 @@ public class EvenlyDistributeVDComparer extends VdsComparer {
 
     @Override
     public void BestVdsProcedure(VDS x) {
-        // VB & C# TO JAVA CONVERTER TODO TASK: Arithmetic operations involving
-        // nullable type instances are not converted to null-value logic:
         x.setvm_count(x.getvm_count() + 1);
     }
 }

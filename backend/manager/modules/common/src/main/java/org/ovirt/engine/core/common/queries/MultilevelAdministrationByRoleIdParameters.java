@@ -8,14 +8,11 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "MultilevelAdministrationByRoleIdParameters")
 public class MultilevelAdministrationByRoleIdParameters extends MultilevelAdministrationsQueriesParameters {
     private static final long serialVersionUID = -6638689960055937254L;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @NotNull(message = "VALIDATION.ROLES.ID.NOT_NULL")
     @XmlElement(name = "RoleId")
     private Guid privateRoleId = new Guid();

@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import java.util.List;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "RestoreAllSnapshotsParameters")
 public class RestoreAllSnapshotsParameters extends TryBackToAllSnapshotsOfVmParameters implements java.io.Serializable {
@@ -19,8 +18,6 @@ public class RestoreAllSnapshotsParameters extends TryBackToAllSnapshotsOfVmPara
         super(vmId, dstSnapshotId);
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "ImagesList")
     private List<DiskImage> privateImagesList;
 

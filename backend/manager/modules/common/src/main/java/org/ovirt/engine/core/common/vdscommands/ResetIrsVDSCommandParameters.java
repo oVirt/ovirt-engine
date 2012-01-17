@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "ResetIrsVDSCommandParameters")
 public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
@@ -16,13 +15,9 @@ public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
         _hostName = hostName;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private String _hostName;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private Guid privateVdsId;
 
@@ -38,8 +33,6 @@ public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
         return _hostName;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "IgnoreStopFailed")
     private boolean privateIgnoreStopFailed;
 

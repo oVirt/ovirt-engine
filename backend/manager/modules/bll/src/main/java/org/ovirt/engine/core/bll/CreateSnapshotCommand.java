@@ -31,18 +31,11 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  * legal only for images, appeared in Db
  */
 
-// C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET
-// attributes:
 @InternalCommandAttribute
 public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extends BaseImagesCommand<T> {
     protected DiskImage mNewCreatedDiskImage;
     private String mDescription = "";
 
-    // internal CreateSnapshotCommand(ImagesContainterParametersBase parameters)
-    // : base(parameters)
-    // {
-    // mDescription = parameters.Description;
-    // }
     public CreateSnapshotCommand(T parameters) {
         super(parameters);
         mDescription = parameters.getDescription();

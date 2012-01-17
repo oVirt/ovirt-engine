@@ -23,8 +23,6 @@ import org.ovirt.engine.core.compat.LogFactoryCompat;
  * This command responsible to creating a copy of template image. Usually it
  * will be called during Create Vm From Template.
  */
-// C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET
-// attributes:
 @InternalCommandAttribute
 public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParameters> extends
         CreateSnapshotFromTemplateCommand<T> {

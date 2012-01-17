@@ -17,10 +17,6 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-//VB & C# TO JAVA CONVERTER NOTE: There is no Java equivalent to C# namespace aliases:
-//using Timer=System.Timers.Timer;
-
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VDS")
 public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
@@ -28,12 +24,8 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
     private VdsStatic mVdsStatic;
     private VdsDynamic mVdsDynamic;
     private VdsStatistics mVdsStatistics;
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "InterfaceList")
     private ArrayList<VdsNetworkInterface> mInterfaceList;
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "NetworkList")
     private java.util.ArrayList<network> mNetworkList;
 
@@ -855,8 +847,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private int high_utilizationField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public int gethigh_utilization() {
         return this.high_utilizationField;
@@ -868,8 +858,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private int low_utilizationField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public int getlow_utilization() {
         return this.low_utilizationField;
@@ -881,8 +869,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private int cpu_over_commit_duration_minutesField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public int getcpu_over_commit_duration_minutes() {
         return this.cpu_over_commit_duration_minutesField;
@@ -894,8 +880,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private Guid storage_pool_idField = new Guid();
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public Guid getstorage_pool_id() {
         return this.storage_pool_idField;
@@ -907,8 +891,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private String storage_pool_nameField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public String getstorage_pool_name() {
         return this.storage_pool_nameField;
@@ -920,8 +902,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private VdsSelectionAlgorithm selection_algorithmField = VdsSelectionAlgorithm.forValue(0);
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public VdsSelectionAlgorithm getselection_algorithm() {
         return this.selection_algorithmField;
@@ -931,8 +911,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.selection_algorithmField = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "max_vds_memory_over_commit")
     private int max_vds_memory_over_commitField;
 
@@ -1130,7 +1108,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         return (StringHelper.isNullOrEmpty(getpm_type())) ? null : new VdsFencingOptions(getpm_type(), getpm_options());
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Events are not available in Java:
     // public event PropertyChangedEventHandler PropertyChanged;
 
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {

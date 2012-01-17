@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "NetworkNonOperationalQueryParamenters")
 public class NetworkNonOperationalQueryParamenters extends VdcQueryParametersBase {
@@ -18,8 +17,6 @@ public class NetworkNonOperationalQueryParamenters extends VdcQueryParametersBas
         _network = net;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Vdsgroupid")
     private Guid _vdsgroupid;
 
@@ -27,8 +24,6 @@ public class NetworkNonOperationalQueryParamenters extends VdcQueryParametersBas
         return _vdsgroupid;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Network")
     private network _network;
 

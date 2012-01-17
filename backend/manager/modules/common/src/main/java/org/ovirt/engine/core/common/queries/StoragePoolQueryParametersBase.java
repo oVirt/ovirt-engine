@@ -6,14 +6,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "StoragePoolQueryParametersBase")
 public class StoragePoolQueryParametersBase extends VdcQueryParametersBase {
     private static final long serialVersionUID = 7256579055993119209L;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "StoragePoolId")
     private Guid privateStoragePoolId = new Guid();
 

@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "IsVdsWithSameIpExistsParameters")
 public class IsVdsWithSameIpExistsParameters extends VdcQueryParametersBase {
@@ -15,8 +14,6 @@ public class IsVdsWithSameIpExistsParameters extends VdcQueryParametersBase {
         _ipAddress = ipAddress;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "IpAddress")
     private String _ipAddress;
 

@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "event_audit_log_subscriber")
 public class event_audit_log_subscriber implements Serializable {
@@ -46,8 +45,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private int event_typeField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public int getevent_type() {
         return this.event_typeField;
@@ -59,8 +56,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private Guid subscriber_idField = new Guid();
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public Guid getsubscriber_id() {
         return this.subscriber_idField;
@@ -72,8 +67,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String event_up_nameField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getevent_up_name() {
         return this.event_up_nameField;
@@ -85,8 +78,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private int method_idField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public int getmethod_id() {
         return this.method_idField;
@@ -98,8 +89,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String method_addressField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getmethod_address() {
         return this.method_addressField;
@@ -111,8 +100,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String tag_nameField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String gettag_name() {
         return this.tag_nameField;
@@ -124,8 +111,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private long audit_log_idField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public long getaudit_log_id() {
         return this.audit_log_idField;
@@ -137,8 +122,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private NGuid user_idField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public NGuid getuser_id() {
         return this.user_idField;
@@ -150,8 +133,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String user_nameField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getuser_name() {
         return this.user_nameField;
@@ -163,8 +144,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private NGuid vm_idField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public NGuid getvm_id() {
         return this.vm_idField;
@@ -176,8 +155,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String vm_nameField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getvm_name() {
         return this.vm_nameField;
@@ -189,8 +166,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private NGuid vm_template_idField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public NGuid getvm_template_id() {
         return this.vm_template_idField;
@@ -202,8 +177,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String vm_template_nameField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getvm_template_name() {
         return this.vm_template_nameField;
@@ -215,8 +188,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private NGuid vds_idField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public NGuid getvds_id() {
         return this.vds_idField;
@@ -228,8 +199,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String vds_nameField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getvds_name() {
         return this.vds_nameField;
@@ -241,8 +210,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private Guid storage_pool_idField = new Guid();
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public Guid getstorage_pool_id() {
         return this.storage_pool_idField;
@@ -254,8 +221,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String storage_pool_nameField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getstorage_pool_name() {
         return this.storage_pool_nameField;
@@ -267,8 +232,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private Guid storage_domain_idField = new Guid();
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public Guid getstorage_domain_id() {
         return this.storage_domain_idField;
@@ -280,8 +243,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String storage_domain_nameField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getstorage_domain_name() {
         return this.storage_domain_nameField;
@@ -293,8 +254,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private java.util.Date log_timeField = new java.util.Date(0);
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public java.util.Date getlog_time() {
         return this.log_timeField;
@@ -306,8 +265,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private int severityField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public int getseverity() {
         return this.severityField;
@@ -319,8 +276,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String messageField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getmessage() {
         return this.messageField;

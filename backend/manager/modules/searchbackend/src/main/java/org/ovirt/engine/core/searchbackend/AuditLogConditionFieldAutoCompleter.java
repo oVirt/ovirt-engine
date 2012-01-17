@@ -50,18 +50,12 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         IAutoCompleter retval = null;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "SEVERITY":
         if (StringHelper.EqOp(fieldName, "SEVERITY")) {
             retval = new NumericConditionRelationAutoCompleter();
         }
-        // ORIGINAL LINE: case "TIME":
         else if (StringHelper.EqOp(fieldName, "TIME")) {
             retval = new TimeConditionRelationAutoCompleter();
         }
-        // ORIGINAL LINE: case "TYPE":
         else if (StringHelper.EqOp(fieldName, "TYPE") || StringHelper.EqOp(fieldName, "MESSAGE")
                 || StringHelper.EqOp(fieldName, "USRNAME") || StringHelper.EqOp(fieldName, "EVENT_HOST")
                 || StringHelper.EqOp(fieldName, "EVENT_VM") || StringHelper.EqOp(fieldName, "EVENT_TEMPLATE")
@@ -75,18 +69,12 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "TYPE":
         if (StringHelper.EqOp(fieldName, "TYPE")) {
             // retval = new EnumValueAutoCompleter(typeof(AuditLogType));
         }
-        // ORIGINAL LINE: case "SEVERITY":
         else if (StringHelper.EqOp(fieldName, "SEVERITY")) {
             retval = new EnumValueAutoCompleter(AuditLogSeverity.class);
         }
-        // ORIGINAL LINE: case "TIME":
         else if (StringHelper.EqOp(fieldName, "TIME")) {
             retval = new DateEnumValueAutoCompleter(DateEnumForSearch.class);
         } else {

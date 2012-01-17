@@ -10,8 +10,6 @@ import javax.xml.bind.annotation.XmlType;
  * The purpose of this enumaration is to contain all the errors exposed by the VdcBLL. The error codes are not
  * sequential in order to be able to add error codes as development evolves.
  */
-// C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET
-// attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VdcBllErrors")
 public enum VdcBllErrors {

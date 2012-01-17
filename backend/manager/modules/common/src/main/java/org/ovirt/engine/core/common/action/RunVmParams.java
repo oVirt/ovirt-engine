@@ -226,9 +226,6 @@ public class RunVmParams extends VmOperationParameterBase implements INotifyProp
         privateRunAsStateless = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Events are not available in Java:
-    // public event PropertyChangedEventHandler PropertyChanged;
-
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {
         // if (PropertyChanged != null)
         // {

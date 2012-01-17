@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlType;
 import java.util.List;
 import java.util.HashMap;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "UpdateVMVDSCommandParameters")
 public class UpdateVMVDSCommandParameters extends StorageDomainIdParametersBase {
@@ -21,8 +20,6 @@ public class UpdateVMVDSCommandParameters extends StorageDomainIdParametersBase 
                 : new java.util.HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>());
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     private HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> privateInfoDictionary;
 

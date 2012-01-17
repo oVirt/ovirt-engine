@@ -10,7 +10,6 @@ import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.TransactiveAttribute;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @TransactiveAttribute
 public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> extends VdsBrokerCommand<P> {
     public AddNetworkVDSCommand(P parameters) {

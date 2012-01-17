@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "MultilevelAdministrationByAdElementIdParameters")
 public class MultilevelAdministrationByAdElementIdParameters extends MultilevelAdministrationsQueriesParameters {
@@ -16,8 +15,6 @@ public class MultilevelAdministrationByAdElementIdParameters extends MultilevelA
         setAdElementId(adElementId);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "AdElementId")
     private Guid privateAdElementId = new Guid();
 

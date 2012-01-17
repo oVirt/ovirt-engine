@@ -181,8 +181,6 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         }
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // @XmlElement - don't serizlize parameters since it has logic in it
     public String getparameters() {
         switch (getvm_pool_type()) {

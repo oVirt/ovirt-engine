@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetBookmarkByNameParameters")
 public class GetBookmarkByNameParameters extends VdcQueryParametersBase {
@@ -16,8 +15,6 @@ public class GetBookmarkByNameParameters extends VdcQueryParametersBase {
         _bookmarkName = bookmarkName;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @NotNull(message = "VALIDATION.BOOKMARKS.NAME.NOT_NULL")
     @XmlElement(name = "BookmarkName")
     private String _bookmarkName;

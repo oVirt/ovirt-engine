@@ -28,7 +28,6 @@ import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @CustomLogFields({ @CustomLogField("InterfaceName") })
 public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 

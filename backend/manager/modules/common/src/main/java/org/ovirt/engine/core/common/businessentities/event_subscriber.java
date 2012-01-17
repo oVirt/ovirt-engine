@@ -22,7 +22,6 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "event_subscriber")
 @Entity
@@ -115,8 +114,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
         this.id.tagName = tagName;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getevent_up_name() {
         return this.id.eventUpName;
@@ -127,8 +124,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
         OnPropertyChanged(new PropertyChangedEventArgs("event_up_name"));
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public int getmethod_id() {
         return this.id.methodId;
@@ -143,8 +138,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
     @Email(message = "VALIDATION.EVENTS.EMAIL_FORMAT")
     private String methodAddress;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getmethod_address() {
         return this.methodAddress;
@@ -155,8 +148,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
         OnPropertyChanged(new PropertyChangedEventArgs("method_address"));
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public Guid getsubscriber_id() {
         return this.id.subscriberId;
@@ -167,8 +158,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
         OnPropertyChanged(new PropertyChangedEventArgs("subscriber_id"));
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String gettag_name() {
         return this.id.tagName;
@@ -195,9 +184,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
     public java.util.ArrayList<String> getChangeablePropertiesList() {
         return _event_subscriberProperties;
     }
-
-    // C# TO JAVA CONVERTER TODO TASK: Events are not available in Java:
-    // public event PropertyChangedEventHandler PropertyChanged;
 
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {
         /* if (PropertyChanged != null) */

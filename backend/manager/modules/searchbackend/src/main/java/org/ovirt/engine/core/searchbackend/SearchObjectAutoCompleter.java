@@ -122,46 +122,36 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         if (obj == null) {
             return null;
         }
-        // VB & C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (obj)
-        // ORIGINAL LINE: case SearchObjects.AUDIT_OBJ_NAME:
         if (StringHelper.EqOp(obj, SearchObjects.AUDIT_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.AUDIT_PLU_OBJ_NAME)) {
             return new AuditCrossRefAutoCompleter();
 
         }
-        // ORIGINAL LINE: case SearchObjects.TEMPLATE_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
             return new TemplateCrossRefAutoCompleter();
 
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_USER_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
             return new UserCrossRefAutoCompleter();
 
         }
-        // ORIGINAL LINE: case SearchObjects.VDS_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDS_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDS_PLU_OBJ_NAME)) {
             return new VdsCrossRefAutoCompleter();
 
         }
-        // ORIGINAL LINE: case SearchObjects.VM_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
             return new VmCrossRefAutoCompleter();
 
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_CLUSTER_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
             return new ClusterCrossRefAutoCompleter();
 
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_STORAGE_POOL_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
             return new StoragePoolCrossRefAutoCompleter();
         }
@@ -201,49 +191,37 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         if (obj == null) {
             return null;
         }
-        // VB & C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (obj)
-        // ORIGINAL LINE: case SearchObjects.VDS_OBJ_NAME:
         if (StringHelper.EqOp(obj, SearchObjects.VDS_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDS_PLU_OBJ_NAME)) {
             retval = new VdsConditionFieldAutoCompleter();
         }
-        // ORIGINAL LINE: case SearchObjects.VM_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
             retval = new VmConditionFieldAutoCompleter();
         }
-        // ORIGINAL LINE: case SearchObjects.TEMPLATE_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
             retval = new VmTemplateConditionFieldAutoCompleter();
         }
-        // ORIGINAL LINE: case SearchObjects.AUDIT_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.AUDIT_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.AUDIT_PLU_OBJ_NAME)) {
             retval = new AuditLogConditionFieldAutoCompleter();
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_USER_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
             retval = new VdcUserConditionFieldAutoCompleter();
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_POOL_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_POOL_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_POOL_PLU_OBJ_NAME)) {
             retval = new PoolConditionFieldAutoCompleter();
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_CLUSTER_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
             retval = new ClusterConditionFieldAutoCompleter();
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_STORAGE_POOL_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
             retval = new StoragePoolFieldAutoCompleter();
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             retval = new StorageDomainFieldAutoCompleter();
 
@@ -257,16 +235,11 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         if (obj == null) {
             return null;
         }
-        // VB & C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (obj)
-        // ORIGINAL LINE: case SearchObjects.VDC_USER_OBJ_NAME:
         if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
             retval = "vdc_users";
 
         }
-        // ORIGINAL LINE: case SearchObjects.VM_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
             retval = "vms";
@@ -276,7 +249,6 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                 || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
             retval = "vm_templates_view";
         }
-        // ORIGINAL LINE: case SearchObjects.VDS_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDS_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDS_PLU_OBJ_NAME)) {
             retval = "vds";
@@ -289,7 +261,6 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
             retval = "storage_pool";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             retval = "storage_domains_without_storage_pools";
 
@@ -304,49 +275,37 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         if (obj == null) {
             return retval;
         }
-        // VB & C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (obj)
-        // ORIGINAL LINE: case SearchObjects.VDS_OBJ_NAME:
         if (StringHelper.EqOp(obj, SearchObjects.VDS_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDS_PLU_OBJ_NAME)) {
             retval = "vds_with_tags";
         }
-        // ORIGINAL LINE: case SearchObjects.VM_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
             retval = "vms_with_tags";
         }
-        // ORIGINAL LINE: case SearchObjects.TEMPLATE_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
             retval = "vm_templates_storage_domain";
         }
-        // ORIGINAL LINE: case SearchObjects.AUDIT_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.AUDIT_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.AUDIT_PLU_OBJ_NAME)) {
             retval = "audit_log";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_USER_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
             retval = "vdc_users_with_tags";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_POOL_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_POOL_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_POOL_PLU_OBJ_NAME)) {
             retval = "vm_pools_full_view";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_CLUSTER_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
             retval = "vds_groups_storage_domain";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_STORAGE_POOL_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
             retval = "storage_pool_with_storage_domain";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             retval = "storage_domains_with_hosts_view";
 
@@ -357,49 +316,37 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
 
     public String getPrimeryKeyName(String obj) {
         String retval = null;
-        // VB & C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (obj)
-        // ORIGINAL LINE: case SearchObjects.VDS_OBJ_NAME:
         if (StringHelper.EqOp(obj, SearchObjects.VDS_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDS_PLU_OBJ_NAME)) {
             retval = "vds_id";
         }
-        // ORIGINAL LINE: case SearchObjects.VM_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
             retval = "vm_guid";
         }
-        // ORIGINAL LINE: case SearchObjects.TEMPLATE_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
             retval = "vmt_guid";
         }
-        // ORIGINAL LINE: case SearchObjects.AUDIT_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.AUDIT_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.AUDIT_PLU_OBJ_NAME)) {
             retval = "audit_log_id";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_USER_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
             retval = "user_id";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_POOL_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_POOL_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_POOL_PLU_OBJ_NAME)) {
             retval = "vm_pool_id";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_CLUSTER_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
             retval = "vds_group_id";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_STORAGE_POOL_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
             retval = "id";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             retval = "id";
 
@@ -437,48 +384,36 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         if (obj == null) {
             return retval;
         }
-        // VB & C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (obj)
-        // ORIGINAL LINE: case SearchObjects.VDS_OBJ_NAME:
         if (StringHelper.EqOp(obj, SearchObjects.VDS_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDS_PLU_OBJ_NAME)) {
             retval = "vds_name ASC ";
         }
-        // ORIGINAL LINE: case SearchObjects.VM_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
             retval = "vm_name ASC ";
         }
-        // ORIGINAL LINE: case SearchObjects.AUDIT_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.AUDIT_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.AUDIT_PLU_OBJ_NAME)) {
             retval = "audit_log_id DESC ";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_USER_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
             retval = "name ASC ";
         }
-        // ORIGINAL LINE: case SearchObjects.TEMPLATE_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
             retval = "name ASC ";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_POOL_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_POOL_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_POOL_PLU_OBJ_NAME)) {
             retval = "vm_pool_name ASC ";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_STORAGE_POOL_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
             retval = "name ASC ";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             retval = "storage_name ASC ";
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_CLUSTER_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
             retval = "name ASC ";

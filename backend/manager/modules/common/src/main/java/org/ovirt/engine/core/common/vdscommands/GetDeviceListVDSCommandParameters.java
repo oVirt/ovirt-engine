@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetDeviceListVDSCommandParameters")
 public class GetDeviceListVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -17,8 +16,6 @@ public class GetDeviceListVDSCommandParameters extends VdsIdVDSCommandParameters
         setStorageType(storageType);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "StorageType")
     private StorageType privateStorageType = StorageType.forValue(0);
 

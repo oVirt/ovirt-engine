@@ -100,8 +100,6 @@ public class SyntaxChecker implements ISyntaxChecker {
         }
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: final is a keyword in Java. Change
-    // the name:
     private ValueParseResult handleValuePhrase(boolean final2, String searchText, int idx, RefObject<Integer> startPos,
             SyntaxContainer container) {
         boolean addObjFlag = false;
@@ -183,8 +181,6 @@ public class SyntaxChecker implements ISyntaxChecker {
         }
 
     }
-    // VB & C# TO JAVA CONVERTER TODO TASK: final is a keyword in Java. Change
-    // the name:
     public SyntaxContainer analyzeSyntaxState(String searchText, boolean final2) {
         SyntaxContainer retval = new SyntaxContainer(searchText);
         IConditionFieldAutoCompleter curConditionFieldAC = null;
@@ -683,10 +679,6 @@ public class SyntaxChecker implements ISyntaxChecker {
         java.util.ArrayList<String> refObjList = syntax.getCrossRefObjList();
         String searchObjStr = syntax.getSearchObjectStr();
         if (refObjList.size() > 0) {
-            // VB & C# TO JAVA CONVERTER NOTE: The following 'switch' operated
-            // on a string member and was converted to Java 'if-else' logic:
-            // switch (searchObjStr)
-            // ORIGINAL LINE: case SearchObjects.TEMPLATE_OBJ_NAME:
             if (StringHelper.EqOp(searchObjStr, SearchObjects.TEMPLATE_OBJ_NAME)) {
                 innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.TEMPLATE_OBJ_NAME,
                         SearchObjects.VM_OBJ_NAME));
@@ -709,7 +701,6 @@ public class SyntaxChecker implements ISyntaxChecker {
                     refObjList.remove(SearchObjects.AUDIT_OBJ_NAME);
                 }
             }
-            // ORIGINAL LINE: case SearchObjects.VDS_OBJ_NAME:
             else if (StringHelper.EqOp(searchObjStr, SearchObjects.VDS_OBJ_NAME)) {
                 if ((refObjList.contains(SearchObjects.VDC_USER_OBJ_NAME))
                         || (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME))) {
@@ -730,7 +721,6 @@ public class SyntaxChecker implements ISyntaxChecker {
                     refObjList.remove(SearchObjects.TEMPLATE_OBJ_NAME);
                 }
             }
-            // ORIGINAL LINE: case SearchObjects.VDC_USER_OBJ_NAME:
             else if (StringHelper.EqOp(searchObjStr, SearchObjects.VDC_USER_OBJ_NAME)) {
                 if ((refObjList.contains(SearchObjects.VDS_OBJ_NAME))
                         || (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME))) {
@@ -751,7 +741,6 @@ public class SyntaxChecker implements ISyntaxChecker {
                     refObjList.remove(SearchObjects.TEMPLATE_OBJ_NAME);
                 }
             }
-            // ORIGINAL LINE: case SearchObjects.AUDIT_OBJ_NAME:
             else if (StringHelper.EqOp(searchObjStr, SearchObjects.AUDIT_OBJ_NAME)) {
                 if (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME)) {
                     innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.AUDIT_OBJ_NAME,

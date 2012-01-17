@@ -9,12 +9,9 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "SetVdsStatusVDSCommandParameters")
 public class SetVdsStatusVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private VDSStatus _status = VDSStatus.forValue(0);
     private NonOperationalReason nonOperationalReason = NonOperationalReason.NONE;

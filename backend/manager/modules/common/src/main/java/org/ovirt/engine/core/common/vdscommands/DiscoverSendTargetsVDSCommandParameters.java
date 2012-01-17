@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "DiscoverSendTargetsVDSCommandParameters")
 public class DiscoverSendTargetsVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -17,8 +16,6 @@ public class DiscoverSendTargetsVDSCommandParameters extends VdsIdVDSCommandPara
         setConnection(connection);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Connection")
     private storage_server_connections privateConnection;
 

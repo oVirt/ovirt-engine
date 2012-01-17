@@ -20,7 +20,6 @@ import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "time_lease_vm_pool_map")
 @Entity
@@ -49,8 +48,6 @@ public class time_lease_vm_pool_map implements Serializable {
     @Column(name = "end_time", nullable = false)
     private Date endTime = new Date();
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public Date getend_time() {
         return this.endTime;
@@ -60,8 +57,6 @@ public class time_lease_vm_pool_map implements Serializable {
         this.endTime = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public Guid getid() {
         return this.id.id;
@@ -74,8 +69,6 @@ public class time_lease_vm_pool_map implements Serializable {
     @Column(name = "start_time", nullable = false)
     private Date startTime = new Date();
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public Date getstart_time() {
         return this.startTime;
@@ -88,8 +81,6 @@ public class time_lease_vm_pool_map implements Serializable {
     @Column(name = "type", nullable = false)
     private Integer type = 0;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public int gettype() {
         return this.type;
@@ -99,8 +90,6 @@ public class time_lease_vm_pool_map implements Serializable {
         this.type = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public Guid getvm_pool_id() {
         return this.id.vmPoolId;

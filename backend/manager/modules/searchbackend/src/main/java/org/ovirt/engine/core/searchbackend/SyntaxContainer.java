@@ -162,50 +162,38 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         if (obj == null) {
             return null;
         }
-        // VB & C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (obj)
-        // ORIGINAL LINE: case SearchObjects.AD_USER_OBJ_NAME:
         if (StringHelper.EqOp(obj, SearchObjects.AD_USER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.AD_USER_PLU_OBJ_NAME)) {
             retval = SearchObjects.AD_USER_OBJ_NAME;
         }
-        // ORIGINAL LINE: case SearchObjects.AUDIT_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.AUDIT_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.AUDIT_PLU_OBJ_NAME)) {
             retval = SearchObjects.AUDIT_OBJ_NAME;
         }
-        // ORIGINAL LINE: case SearchObjects.TEMPLATE_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
             retval = SearchObjects.TEMPLATE_OBJ_NAME;
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_USER_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
             retval = SearchObjects.VDC_USER_OBJ_NAME;
         }
-        // ORIGINAL LINE: case SearchObjects.VDS_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDS_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDS_PLU_OBJ_NAME)) {
             retval = SearchObjects.VDS_OBJ_NAME;
         }
-        // ORIGINAL LINE: case SearchObjects.VM_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
             retval = SearchObjects.VM_OBJ_NAME;
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_POOL_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_POOL_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_POOL_PLU_OBJ_NAME)) {
             retval = SearchObjects.VDC_POOL_OBJ_NAME;
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_CLUSTER_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
             retval = SearchObjects.VDC_CLUSTER_OBJ_NAME;
         }
-        // ORIGINAL LINE: case SearchObjects.VDC_STORAGE_POOL_OBJ_NAME:
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             retval = obj;

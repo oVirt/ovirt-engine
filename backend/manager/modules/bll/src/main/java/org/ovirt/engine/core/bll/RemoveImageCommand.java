@@ -20,8 +20,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 /**
  * This command responcible to removing image, contains all created snapshots.
  */
-// C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET
-// attributes:
 @InternalCommandAttribute
 public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseImagesCommand<T> {
     public RemoveImageCommand(T parameters) {

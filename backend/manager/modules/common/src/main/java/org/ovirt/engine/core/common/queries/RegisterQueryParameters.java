@@ -6,14 +6,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "RegisterQueryParameters", namespace = "http://service.engine.ovirt.org")
 public class RegisterQueryParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -1794521524205136814L;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "QueryID", required = true)
     private Guid privateQueryID = new Guid();
 
@@ -25,8 +22,6 @@ public class RegisterQueryParameters extends VdcQueryParametersBase {
         privateQueryID = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "QueryType", required = true)
     private VdcQueryType privateQueryType = VdcQueryType.forValue(0);
 
@@ -38,8 +33,6 @@ public class RegisterQueryParameters extends VdcQueryParametersBase {
         privateQueryType = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "QueryParams", required = true)
     private VdcQueryParametersBase privateQueryParams;
 

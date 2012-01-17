@@ -8,12 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.queries.*;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetCandidateInfoVDSCommandParameters")
 public class GetCandidateInfoVDSCommandParameters extends GetImportCandidatesVDSCommandParameters {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "CandidateID")
     private String privateCandidateID;
 

@@ -50,10 +50,6 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         IAutoCompleter retval;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "TAG":
         if (StringHelper.EqOp(fieldName, "TAG")) {
             retval = new StringOnlyEqualConditionRelationAutoCompleter();
         } else {
@@ -66,10 +62,6 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "STATUS":
         if (StringHelper.EqOp(fieldName, "STATUS")) {
             retval = new EnumValueAutoCompleter(AdRefStatus.class);
         }
@@ -78,10 +70,6 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
 
     @Override
     public void formatValue(String fieldName, RefObject<String> relations, RefObject<String> value, boolean caseSensitive) {
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "STATUS":
         if (StringHelper.EqOp(fieldName, "STATUS")) {
             String tmp = StringHelper.trim(value.argvalue, '\'');
             if ((StringHelper.EqOp(relations.argvalue, "=")) && (StringHelper.EqOp(tmp, "1"))) {

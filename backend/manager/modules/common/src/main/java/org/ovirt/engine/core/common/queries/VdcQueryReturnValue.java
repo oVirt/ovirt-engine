@@ -54,8 +54,6 @@ import org.ovirt.engine.core.compat.Version;
 /**
  * Query return value class, If inheriting from this class add logic to QueriesCommandBase class.
  */
-// VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-// .NET attributes:
 @XmlSeeAlso({
         // java.util.HashMap<String, int>.class,
         tags.class,
@@ -177,8 +175,6 @@ public class VdcQueryReturnValue implements Serializable {
         returnValue = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "ExceptionString")
     public String getExceptionString() {
         return _exceptionString;
@@ -188,8 +184,6 @@ public class VdcQueryReturnValue implements Serializable {
         _exceptionString = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "Succeeded")
     public boolean getSucceeded() {
         return _succeeded;

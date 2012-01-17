@@ -19,8 +19,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
  * considering that connection failed only if data domains failed to connect. If
  * Iso/Export domains failed to connect - only log it.
  */
-// C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET
-// attributes:
 @InternalCommandAttribute
 public class ConnectHostToStoragePoolServersCommand<T extends StoragePoolParametersBase> extends
         ConnectHostToStoragePooServerCommandBase<T> {

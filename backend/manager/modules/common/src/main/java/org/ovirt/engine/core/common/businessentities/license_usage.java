@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "license_usage")
 public class license_usage implements Serializable {
@@ -27,8 +26,6 @@ public class license_usage implements Serializable {
 
     private java.util.Date date = new java.util.Date(0);
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public java.util.Date getDate() {
         return this.date;
@@ -40,8 +37,6 @@ public class license_usage implements Serializable {
 
     private int license_desktops;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public int getLicenseDesktops() {
         return this.license_desktops;
@@ -53,8 +48,6 @@ public class license_usage implements Serializable {
 
     private int used_desktops;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public int getUsedDesktops() {
         return this.used_desktops;
@@ -64,8 +57,6 @@ public class license_usage implements Serializable {
         this.used_desktops = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private int license_sockets;
 
@@ -77,8 +68,6 @@ public class license_usage implements Serializable {
         this.license_sockets = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private int used_sockets;
 

@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VmStatistics")
 public class VmStatistics implements BusinessEntity<Guid> {
@@ -138,8 +137,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
         return true;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(nillable = true)
     public Double getcpu_sys() {
         return this.cpu_sysField;
@@ -151,8 +148,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
 
     private Double cpu_userField = 0.0;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(nillable = true)
     public Double getcpu_user() {
         return this.cpu_userField;
@@ -164,8 +159,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
 
     private Double elapsed_timeField = 0.0;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(nillable = true)
     public Double getelapsed_time() {
         return this.elapsed_timeField;
@@ -178,8 +171,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
 
     private Double roundedElapsedTimeField = 0.0;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "RoundedElapsedTime", nillable = true)
     public Double getRoundedElapsedTime() {
         return this.roundedElapsedTimeField;
@@ -209,8 +200,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
 
     private Integer usage_cpu_percentField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(nillable = true)
     public Integer getusage_cpu_percent() {
         return this.usage_cpu_percentField;
@@ -222,8 +211,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
 
     private Integer usage_mem_percentField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(nillable = true)
     public Integer getusage_mem_percent() {
         return this.usage_mem_percentField;
@@ -248,8 +235,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
 
     private Integer usage_network_percentField ;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(nillable = true)
     public Integer getusage_network_percent() {
         return this.usage_network_percentField;
@@ -261,8 +246,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
 
     private Guid vm_guidField = new Guid();
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "interfaceStatistics")
     private ArrayList<VmNetworkInterface> interfaceStatisticsField;
 

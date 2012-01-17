@@ -17,7 +17,6 @@ import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "stateless_vm_image_map")
 @Entity
@@ -35,8 +34,6 @@ public class stateless_vm_image_map implements Serializable {
         this.vmId = vm_guid;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "image_guid")
     @Id
     @Column(name = "image_guid")
@@ -51,8 +48,6 @@ public class stateless_vm_image_map implements Serializable {
         this.imageId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "internal_drive_mapping")
     @Column(name = "internal_drive_mapping", length = 50)
     private String internalDriveMapping;
@@ -65,8 +60,6 @@ public class stateless_vm_image_map implements Serializable {
         this.internalDriveMapping = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "vm_guid")
     @Column(name = "vm_guid", nullable = false)
     @Type(type = "guid")

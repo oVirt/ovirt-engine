@@ -43,8 +43,6 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
  * For example if vm_8 exists - vm_9 will be created instead of it.
  */
 
-// C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET
-// attributes:
 @CustomLogFields({ @CustomLogField("VmsCount") })
 public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends AddVmPoolCommand<T> {
 

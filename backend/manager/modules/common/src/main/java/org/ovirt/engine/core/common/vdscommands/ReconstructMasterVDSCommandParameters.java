@@ -9,12 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import java.util.List;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "ReconstructMasterVDSCommandParameters")
 public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "StoragePoolId")
     private Guid privateStoragePoolId = new Guid();
 
@@ -26,8 +23,6 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
         privateStoragePoolId = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "StoragePoolName")
     private String privateStoragePoolName;
 
@@ -39,8 +34,6 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
         privateStoragePoolName = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "MasterDomainId")
     private Guid privateMasterDomainId = new Guid();
 
@@ -52,8 +45,6 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
         privateMasterDomainId = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "DomainsList")
     private List<storage_pool_iso_map> privateDomainsList;
 
@@ -65,8 +56,6 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
         privateDomainsList = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "MasterVersion")
     private int privateMasterVersion;
 

@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VDSError")
 public class VDSError {
@@ -15,8 +14,6 @@ public class VDSError {
         this.privateMessage = message;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "Message")
     private String privateMessage;
 
@@ -28,8 +25,6 @@ public class VDSError {
         privateMessage = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "Code")
     private VdcBllErrors privateCode = VdcBllErrors.forValue(0);
 
@@ -41,8 +36,6 @@ public class VDSError {
         privateCode = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "Args")
     private java.util.ArrayList<Object> privateArgs;
 

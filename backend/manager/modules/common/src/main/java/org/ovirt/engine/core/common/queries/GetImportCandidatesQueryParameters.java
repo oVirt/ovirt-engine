@@ -5,13 +5,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetImportCandidatesQueryParameters")
 public class GetImportCandidatesQueryParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 6808376571843897755L;
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Path")
     private String privatePath;
 
@@ -23,8 +20,6 @@ public class GetImportCandidatesQueryParameters extends VdcQueryParametersBase {
         privatePath = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "CandidateSource")
     private ImportCandidateSourceEnum privateCandidateSource = ImportCandidateSourceEnum.forValue(0);
 
@@ -36,8 +31,6 @@ public class GetImportCandidatesQueryParameters extends VdcQueryParametersBase {
         privateCandidateSource = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "CandidateType")
     private ImportCandidateTypeEnum privateCandidateType = ImportCandidateTypeEnum.forValue(0);
 

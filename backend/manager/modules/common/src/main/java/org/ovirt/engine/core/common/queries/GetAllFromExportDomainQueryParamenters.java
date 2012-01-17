@@ -6,13 +6,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetAllFromExportDomainQueryParamenters")
 public class GetAllFromExportDomainQueryParamenters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 5436719744430725750L;
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "StoragePoolId")
     private Guid privateStoragePoolId = new Guid();
 
@@ -24,8 +21,6 @@ public class GetAllFromExportDomainQueryParamenters extends VdcQueryParametersBa
         privateStoragePoolId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "StorageDomainId")
     private Guid privateStorageDomainId = new Guid();
 
@@ -37,8 +32,6 @@ public class GetAllFromExportDomainQueryParamenters extends VdcQueryParametersBa
         privateStorageDomainId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "IdsGuidArray")
     private java.util.ArrayList<Guid> privateIds;
 
@@ -50,8 +43,6 @@ public class GetAllFromExportDomainQueryParamenters extends VdcQueryParametersBa
         privateIds = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "GetAll")
     private boolean privateGetAll;
 

@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetConfigurationValueParameters", namespace = "http://service.engine.ovirt.org")
 public class GetConfigurationValueParameters extends VdcQueryParametersBase {
@@ -15,8 +14,6 @@ public class GetConfigurationValueParameters extends VdcQueryParametersBase {
         _configValue = cVal;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "ConfigValue", required = true)
     private ConfigurationValues _configValue = ConfigurationValues.forValue(0);
 
@@ -24,8 +21,6 @@ public class GetConfigurationValueParameters extends VdcQueryParametersBase {
         return _configValue;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Version")
     private String privateVersion;
 

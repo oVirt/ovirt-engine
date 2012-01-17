@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "UpdateVdsActionParameters")
 public class UpdateVdsActionParameters extends VdsOperationActionParameters {
@@ -18,8 +17,6 @@ public class UpdateVdsActionParameters extends VdsOperationActionParameters {
         _installVds = installVds;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "InstallVds")
     private boolean _installVds;
 
@@ -31,8 +28,6 @@ public class UpdateVdsActionParameters extends VdsOperationActionParameters {
         _installVds = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "IsReinstallOrUpgrade")
     private boolean privateIsReinstallOrUpgrade;
 
@@ -44,8 +39,6 @@ public class UpdateVdsActionParameters extends VdsOperationActionParameters {
         privateIsReinstallOrUpgrade = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "oVirtIsoFile")
     private String privateoVirtIsoFile;
 

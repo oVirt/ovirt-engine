@@ -17,8 +17,6 @@ import org.ovirt.engine.core.common.queries.*;
 public class AddVmFromTemplateParameters extends VmManagementParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = -3400982291165788716L;
 
-    // This property was added for Serialization purposes (input/output
-    // parameter from the c#)
     @XmlElement(name = "DiskInfoList")
     public ValueObjectMap getSerializedDiskInfoList() {
         return new ValueObjectMap(diskInfoList, false);

@@ -12,8 +12,6 @@ public class StoragePoolDomainAndGroupIdBaseVDSCommandParameters extends Storage
         setImageGroupId(imageGroupId);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "ImageGroupId")
     private Guid privateImageGroupId = new Guid();
 

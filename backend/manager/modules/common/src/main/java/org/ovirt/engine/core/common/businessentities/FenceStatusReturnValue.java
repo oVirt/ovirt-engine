@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.StringHelper;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "FenceStatusReturnValue")
 public class FenceStatusReturnValue implements Serializable {
@@ -21,8 +20,6 @@ public class FenceStatusReturnValue implements Serializable {
         _message = message;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Status")
     private String _status;
 
@@ -30,8 +27,6 @@ public class FenceStatusReturnValue implements Serializable {
         return _status;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Message")
     private String _message;
 

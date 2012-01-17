@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "HSMGetStorageDomainsListVDSCommandParameters")
 public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -22,8 +21,6 @@ public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSComman
         setPath(path);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private Guid privateStoragePoolId = new Guid();
 
@@ -35,8 +32,6 @@ public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSComman
         privateStoragePoolId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private StorageType privateStorageType = StorageType.forValue(0);
 
@@ -48,8 +43,6 @@ public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSComman
         privateStorageType = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private StorageDomainType privateStorageDomainType = StorageDomainType.forValue(0);
 
@@ -61,8 +54,6 @@ public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSComman
         privateStorageDomainType = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private String privatePath;
 

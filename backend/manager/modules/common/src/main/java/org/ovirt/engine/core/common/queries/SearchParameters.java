@@ -9,24 +9,15 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.interfaces.SearchType;
 
-//using VdcDAL.AdBroker;
-
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "SearchParameters", namespace = "http://service.engine.ovirt.org")
 public class SearchParameters extends VdcQueryParametersBase implements Serializable {
     private static final long serialVersionUID = 2275481072329075722L;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "SearchPattern", required = true)
     private String _searchPattern;
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "SearchTypeValue", required = true)
     private SearchType _searchType = SearchType.forValue(0);
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "MaxCount", defaultValue = "-1", required = true)
     private int _maxCount = -1;
     @XmlElement(name = "SearchFrom", defaultValue = "0", required = true)

@@ -218,15 +218,10 @@ public class VdsFencingOptions implements Serializable {
      */
     private static String TranslateBoolValue(String value) {
         String result;
-        // VB & C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (value.Trim().ToLower())
-        // ORIGINAL LINE: case (TRUE):
         if (value.equalsIgnoreCase(TRUE_STRING) || value.equalsIgnoreCase(FALSE_STRING)) {
             if (Boolean.parseBoolean(value)) {
                 result = YES;
             }
-            // ORIGINAL LINE: case FALSE:
             else {
                 result = NO;
             }
@@ -528,15 +523,9 @@ public class VdsFencingOptions implements Serializable {
                     && fencingAgentInstanceOptions.containsKey(key)) {
                 if (!StringHelper.isNullOrEmpty(type)) {
                     // Convert to the suitable type according to metadata.
-                    // VB & C# TO JAVA CONVERTER NOTE: The following 'switch'
-                    // operated on a string member and was converted to Java
-                    // 'if-else' logic:
-                    // switch (type.Trim().ToLower())
-                    // ORIGINAL LINE: case BOOL:
                     if (type.equalsIgnoreCase(BOOL)) {
                         result = Boolean.parseBoolean(fencingAgentInstanceOptions.get(key));
                     }
-                    // ORIGINAL LINE: case INT:
                     else if (type.equalsIgnoreCase(INT)) {
                         int intVal = 0;
                         RefObject<Integer> tempRefObject = new RefObject<Integer>(intVal);
@@ -547,7 +536,6 @@ public class VdsFencingOptions implements Serializable {
                             result = intVal;
                         }
                     }
-                    // ORIGINAL LINE: case LONG:
                     else if (type.equalsIgnoreCase(LONG)) {
                         long longVal = 0;
                         RefObject<Long> tempRefObject2 = new RefObject<Long>(longVal);
@@ -558,7 +546,6 @@ public class VdsFencingOptions implements Serializable {
                             result = longVal;
                         }
                     }
-                    // ORIGINAL LINE: case DOUBLE:
                     else if (type.equalsIgnoreCase(DOUBLE)) {
                         double doubleVal = 0;
                         RefObject<Double> tempRefObject3 = new RefObject<Double>(doubleVal);

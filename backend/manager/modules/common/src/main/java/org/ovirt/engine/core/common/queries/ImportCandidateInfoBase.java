@@ -8,12 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 import java.util.List;
 import java.util.Map;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "ImportCandidateInfoBase")
 public abstract class ImportCandidateInfoBase {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "CandidateSource")
     private ImportCandidateSourceEnum privateCandidateSource = ImportCandidateSourceEnum.forValue(0);
 
@@ -25,8 +22,6 @@ public abstract class ImportCandidateInfoBase {
         privateCandidateSource = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // @XmlElement
     private java.util.HashMap<String, List<DiskImage>> privateImagesData;
 

@@ -272,8 +272,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
         privateEntityId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "TaskStartTime")
     private long _taskStartTime;
 

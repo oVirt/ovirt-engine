@@ -10,12 +10,9 @@ import javax.xml.bind.annotation.XmlType;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "NetworkVdsmVDSCommandParameters")
 public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "NetworkName")
     private String privateNetworkName;
 
@@ -27,8 +24,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateNetworkName = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "OldNetworkName")
     private String privateOldNetworkName;
 
@@ -40,8 +35,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateOldNetworkName = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "HostAddr")
     private String privateHostAddr;
 
@@ -53,8 +46,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateHostAddr = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "CheckConnectivity")
     private boolean privateCheckConnectivity;
 
@@ -66,8 +57,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateCheckConnectivity = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "ConnectionTimeout")
     private int privateConnectionTimeout;
 
@@ -79,8 +68,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateConnectionTimeout = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VlanId")
     private Integer privateVlanId;
 
@@ -92,8 +79,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateVlanId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "BondName")
     private String privateBondName;
 
@@ -105,8 +90,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateBondName = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Nics")
     private String[] privateNics;
 
@@ -118,8 +101,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateNics = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "InetAddr")
     private String privateInetAddr;
 
@@ -131,8 +112,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateInetAddr = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "NetworkMask")
     private String privateNetworkMask;
 
@@ -144,8 +123,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateNetworkMask = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Gateway")
     private String privateGateway;
 
@@ -157,8 +134,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateGateway = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Stp")
     private boolean privateStp;
 
@@ -170,8 +145,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateStp = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "BondingOptions")
     private String privateBondingOptions;
 
@@ -183,8 +156,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateBondingOptions = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "BootProtocol")
     private NetworkBootProtocol privateBootProtocol = NetworkBootProtocol.forValue(0);
 

@@ -2,12 +2,9 @@ package org.ovirt.engine.core.common.asynctasks;
 
 import org.ovirt.engine.core.compat.*;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 //    @XmlAccessorType(XmlAccessType.NONE)
 //    @XmlType(name="AsyncTaskCreationInfo")
 public class AsyncTaskCreationInfo {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // @XmlElement(name="TaskID")
     private Guid privateTaskID = new Guid();
 
@@ -19,8 +16,6 @@ public class AsyncTaskCreationInfo {
         privateTaskID = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // @XmlElement(name="TaskType")
     private AsyncTaskType privateTaskType = AsyncTaskType.forValue(0);
 
@@ -32,8 +27,6 @@ public class AsyncTaskCreationInfo {
         privateTaskType = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // @XmlElement(name="StoragePoolID")
     private Guid privateStoragePoolID = new Guid();
 

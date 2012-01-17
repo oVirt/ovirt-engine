@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "ServerCpu")
 public class ServerCpu implements Serializable {
@@ -19,8 +18,6 @@ public class ServerCpu implements Serializable {
         setVdsVerbData(verbData);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "CpuName")
     private String privateCpuName;
 
@@ -32,8 +29,6 @@ public class ServerCpu implements Serializable {
         privateCpuName = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Level")
     private int privateLevel;
 
@@ -45,8 +40,6 @@ public class ServerCpu implements Serializable {
         privateLevel = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Flags")
     private java.util.HashSet<String> privateFlags;
 
@@ -58,8 +51,6 @@ public class ServerCpu implements Serializable {
         privateFlags = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VdsVerbData")
     private String privateVdsVerbData;
 

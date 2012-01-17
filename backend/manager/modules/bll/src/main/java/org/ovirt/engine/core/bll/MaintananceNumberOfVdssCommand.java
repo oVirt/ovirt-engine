@@ -33,7 +33,6 @@ import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssParameters> extends CommandBase<T> {

@@ -17,7 +17,6 @@ import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "event_notification_hist")
 @Entity
@@ -43,8 +42,6 @@ public class event_notification_hist implements Serializable {
     @Column(name = "audit_log_id", nullable = false)
     private long auditLogId;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public long getaudit_log_id() {
         return this.auditLogId;
@@ -57,8 +54,6 @@ public class event_notification_hist implements Serializable {
     @Column(name = "event_name", length = 100, nullable = false)
     private String eventName;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getevent_name() {
         return this.eventName;
@@ -71,8 +66,6 @@ public class event_notification_hist implements Serializable {
     @Column(name = "method_type", nullable = false)
     private String methodType;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getmethod_type() {
         return this.methodType;
@@ -85,8 +78,6 @@ public class event_notification_hist implements Serializable {
     @Column(name = "reason", length = 255, nullable = false)
     private String reason;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getreason() {
         return this.reason;
@@ -99,8 +90,6 @@ public class event_notification_hist implements Serializable {
     @Column(name = "sent_at", nullable = false)
     private java.util.Date sentAt = new java.util.Date(0);
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public java.util.Date getsent_at() {
         return this.sentAt;
@@ -113,8 +102,6 @@ public class event_notification_hist implements Serializable {
     @Column(name = "status", nullable = false)
     private boolean status;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public boolean getstatus() {
         return this.status;
@@ -129,8 +116,6 @@ public class event_notification_hist implements Serializable {
     @Type(type = "guid")
     private Guid subscriberId = new Guid();
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public Guid getsubscriber_id() {
         return this.subscriberId;

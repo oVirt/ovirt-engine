@@ -13,8 +13,6 @@ import org.ovirt.engine.core.common.queries.*;
 @XmlType(name = "AddImageFromImportParameters")
 public class AddImageFromImportParameters extends AddImageFromScratchParameters {
     private static final long serialVersionUID = 4373704503946067322L;
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "CandidateID")
     private String privateCandidateID;
 

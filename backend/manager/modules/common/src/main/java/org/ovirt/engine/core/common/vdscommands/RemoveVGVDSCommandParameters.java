@@ -16,8 +16,6 @@ public class RemoveVGVDSCommandParameters extends VdsIdVDSCommandParametersBase 
         setVGID(vgId);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VGID")
     private String privateVGID;
 

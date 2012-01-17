@@ -18,8 +18,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  * Guid containerId - id of VmTemplate, contains ImageTemplate
  */
 
-// C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET
-// attributes:
 @InternalCommandAttribute
 public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTemplateParameters> extends
         CreateSnapshotCommand<T> {

@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "vds_spm_id_map")
 public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
@@ -24,8 +23,6 @@ public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
         this.vds_spm_idField = vds_spm_id;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "storage_pool_id")
     private Guid storage_pool_idField = new Guid();
 
@@ -37,8 +34,6 @@ public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
         this.storage_pool_idField = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "vds_id")
     private Guid vds_idField;
 
@@ -52,8 +47,6 @@ public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
         this.vds_idField = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "vds_spm_id")
     private int vds_spm_idField;
 

@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "AddVmFromScratchParameters")
 public class AddVmFromScratchParameters extends VmManagementParametersBase implements java.io.Serializable {
@@ -34,8 +33,6 @@ public class AddVmFromScratchParameters extends VmManagementParametersBase imple
         this(vm.getStaticData(), diskInfoList, storageDomainId);
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "DiskInfoList")
     private java.util.ArrayList<DiskImageBase> privateDiskInfoList;
 
@@ -47,8 +44,6 @@ public class AddVmFromScratchParameters extends VmManagementParametersBase imple
         privateDiskInfoList = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     private java.util.ArrayList<VmNetworkInterface> _interfaces;
 

@@ -6,12 +6,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "ExportCandidateVDSCommandParameters")
 public class ExportCandidateVDSCommandParameters extends StorageDomainIdParametersBase {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VmGUID")
     private Guid privateVmGUID = new Guid();
 
@@ -23,8 +20,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateVmGUID = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private java.util.HashMap<String, java.util.ArrayList<Guid>> privateListOfImages;
 
@@ -36,8 +31,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateListOfImages = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VmMeta")
     private String privateVmMeta;
 
@@ -49,8 +42,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateVmMeta = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VmTemplateGUID")
     private Guid privateVmTemplateGUID = new Guid();
 
@@ -62,8 +53,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateVmTemplateGUID = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private java.util.HashMap<String, Guid> privateVmTemplateImageGUIDs;
 
@@ -75,8 +64,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateVmTemplateImageGUIDs = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VmTemplateMeta")
     private String privateVmTemplateMeta;
 
@@ -88,8 +75,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateVmTemplateMeta = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Path")
     private String privatePath;
 
@@ -101,8 +86,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privatePath = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Collapse")
     private boolean privateCollapse;
 
@@ -114,8 +97,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateCollapse = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Force")
     private boolean privateForce;
 

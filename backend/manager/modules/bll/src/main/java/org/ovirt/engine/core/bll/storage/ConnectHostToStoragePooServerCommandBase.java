@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @InternalCommandAttribute
 public abstract class ConnectHostToStoragePooServerCommandBase<T extends StoragePoolParametersBase> extends
         StorageHandlingCommandBase<T> {

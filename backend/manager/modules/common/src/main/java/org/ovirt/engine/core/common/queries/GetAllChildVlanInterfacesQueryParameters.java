@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.ovirt.engine.core.common.businessentities.NetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetAllChildVlanInterfacesQueryParameters")
 public class GetAllChildVlanInterfacesQueryParameters extends VdcQueryParametersBase {
@@ -19,8 +18,6 @@ public class GetAllChildVlanInterfacesQueryParameters extends VdcQueryParameters
         _interface = iface;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VdsId")
     private Guid _vdsId;
 
@@ -28,8 +25,6 @@ public class GetAllChildVlanInterfacesQueryParameters extends VdcQueryParameters
         return _vdsId;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Interface")
     private NetworkInterface<?> _interface;
 

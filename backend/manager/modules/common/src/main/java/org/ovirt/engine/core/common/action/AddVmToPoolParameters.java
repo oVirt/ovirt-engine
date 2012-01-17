@@ -10,8 +10,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "AddVmToPoolParameters")
 public class AddVmToPoolParameters extends VmPoolParametersBase {
     private static final long serialVersionUID = 1019066360476623259L;
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VmId")
     private Guid _vmId = new Guid();
 

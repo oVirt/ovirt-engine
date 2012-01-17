@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.businessentities.roles;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "RolesOperationsParameters")
 public class RolesOperationsParameters extends RolesParameterBase {

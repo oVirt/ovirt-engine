@@ -12,7 +12,6 @@ import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @InternalCommandAttribute
 public class AddTemplateImagesFromImportCommand<T extends AddImagesFromImportParameters> extends
         AddImagesFromImportCommand<T> {

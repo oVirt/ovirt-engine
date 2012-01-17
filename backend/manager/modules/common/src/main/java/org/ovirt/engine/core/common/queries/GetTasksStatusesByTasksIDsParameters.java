@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetTasksStatusesByTasksIDsParameters")
 public class GetTasksStatusesByTasksIDsParameters extends VdcQueryParametersBase {
@@ -17,8 +16,6 @@ public class GetTasksStatusesByTasksIDsParameters extends VdcQueryParametersBase
         _tasksIDs = tasksIDs;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "TaskIDsGuidArray")
     private java.util.ArrayList<Guid> _tasksIDs;
 

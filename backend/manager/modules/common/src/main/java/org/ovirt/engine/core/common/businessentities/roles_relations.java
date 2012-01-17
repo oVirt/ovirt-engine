@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "roles_relations")
 public class roles_relations implements Serializable {
@@ -22,8 +21,6 @@ public class roles_relations implements Serializable {
         this.role_idField = role_id;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "role_container_id")
     private Guid role_container_idField = new Guid();
 
@@ -35,8 +32,6 @@ public class roles_relations implements Serializable {
         this.role_container_idField = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "role_id")
     private Guid role_idField = new Guid();
 

@@ -17,10 +17,6 @@ public class OvfManager {
 
     public void ExportVm(RefObject<String> ovfstring, VM vm, java.util.ArrayList<DiskImage> images) {
         XmlDocument document = null;
-        // C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by
-        // its Java equivalent:
-        // using (OvfWriter ovf = new OvfVmWriter(out document, vm, images))
-
         RefObject<XmlDocument> tempRefObject = new RefObject<XmlDocument>(document);
         OvfWriter ovf = new OvfVmWriter(tempRefObject, vm, images);
         document = tempRefObject.argvalue;
@@ -36,11 +32,6 @@ public class OvfManager {
 
     public void ExportTemplate(RefObject<String> ovfstring, VmTemplate vmTemplate, List<DiskImage> images) {
         XmlDocument document = new XmlDocument();
-        // C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by
-        // its Java equivalent:
-        // using (OvfWriter ovf = new OvfTemplateWriter(out document,
-        // vmTemplate, images))
-
         RefObject<XmlDocument> tempRefObject = new RefObject<XmlDocument>(document);
         OvfWriter ovf = new OvfTemplateWriter(tempRefObject, vmTemplate, images);
         document = tempRefObject.argvalue;

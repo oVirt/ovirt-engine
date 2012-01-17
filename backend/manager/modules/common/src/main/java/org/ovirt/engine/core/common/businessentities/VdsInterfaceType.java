@@ -2,8 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
-//[DataContract, Flags]
 public enum VdsInterfaceType {
     // we use this enum with bit manipulation
     None(0), // 00000

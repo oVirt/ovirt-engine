@@ -41,10 +41,6 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         IAutoCompleter retval;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "SIZE":
         if (StringHelper.EqOp(fieldName, "SIZE") || StringHelper.EqOp(fieldName, "USED")
                 || StringHelper.EqOp(fieldName, "COMMITTED")) {
             retval = new NumericConditionRelationAutoCompleter();
@@ -58,14 +54,9 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "TYPE":
         if (StringHelper.EqOp(fieldName, "TYPE")) {
             retval = new EnumValueAutoCompleter(StorageType.class);
         }
-        // ORIGINAL LINE: case "STATUS":
         else if (StringHelper.EqOp(fieldName, "STATUS")) {
             retval = new EnumValueAutoCompleter(StorageDomainSharedStatus.class);
         } else {

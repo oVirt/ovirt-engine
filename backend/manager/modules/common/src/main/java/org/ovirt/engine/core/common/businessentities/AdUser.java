@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "AdUser")
 public class AdUser extends IVdcQueryable implements Serializable {
@@ -35,8 +34,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
     private boolean _passwordExpired;
     private List<String> memberof;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     private Map<String, ad_groups> mGroups;
 
     public AdUser() {
@@ -62,8 +59,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mGroups = new java.util.HashMap<String, ad_groups>();
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "UserName")
     public String getUserName() {
         return mUserName;
@@ -73,8 +68,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mUserName = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "Password")
     public String getPassword() {
         return mPassword;
@@ -84,8 +77,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mPassword = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "UserId")
     public Guid getUserId() {
         return mUserId;
@@ -95,8 +86,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mUserId = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "DomainControler")
     public String getDomainControler() {
         return mDomainControler;
@@ -106,8 +95,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mDomainControler = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "Name")
     public String getName() {
         return mName;
@@ -117,8 +104,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mName = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "SurName")
     public String getSurName() {
         return mSurName;
@@ -128,8 +113,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mSurName = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "Department")
     public String getDepartment() {
         return mDepartment;
@@ -139,8 +122,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mDepartment = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "Title")
     public String getTitle() {
         return mTitle;
@@ -150,8 +131,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mTitle = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "Email")
     public String getEmail() {
         return mEmail;
@@ -161,8 +140,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mEmail = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "PasswordExpired")
     public boolean getPasswordExpired() {
         return _passwordExpired;

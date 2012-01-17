@@ -10,13 +10,10 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetExistingStorageDomainListParameters")
 public class GetExistingStorageDomainListParameters extends VdsIdParametersBase {
     private static final long serialVersionUID = 7478078947370484916L;
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "StorageType")
     private StorageType privateStorageType = StorageType.forValue(0);
 
@@ -28,8 +25,6 @@ public class GetExistingStorageDomainListParameters extends VdsIdParametersBase 
         privateStorageType = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "StorageDomainType")
     private StorageDomainType privateStorageDomainType = StorageDomainType.forValue(0);
 
@@ -41,8 +36,6 @@ public class GetExistingStorageDomainListParameters extends VdsIdParametersBase 
         privateStorageDomainType = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Path")
     private String privatePath;
 

@@ -43,10 +43,6 @@ public class OvfParser {
         for (XmlNode section : list) {
             String value = section.Attributes.get("xsi:type").getValue();
 
-            // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-            // string member and was converted to Java 'if-else' logic:
-            // switch (value)
-            // ORIGINAL LINE: case "ovf:OperatingSystemSection_Type":
             if (StringHelper.EqOp(value, "ovf:OperatingSystemSection_Type")) {
                 id2 = section.Attributes.get("ovf:id").getValue();
             }

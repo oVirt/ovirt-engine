@@ -42,11 +42,6 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
         try {
             storage_domains domain = new storage_domains();
             if (xmlRpcStruct.contains("status")) {
-                // VB & C# TO JAVA CONVERTER NOTE: The following 'switch'
-                // operated on a string member and was converted to Java
-                // 'if-else' logic:
-                // switch (xmlRpcStruct["status"].toString())
-                // ORIGINAL LINE: case "Attached":
                 if (StringHelper.EqOp(xmlRpcStruct.getItem("status").toString(), "Attached")) {
                     domain.setstatus(StorageDomainStatus.InActive);
                 } else {

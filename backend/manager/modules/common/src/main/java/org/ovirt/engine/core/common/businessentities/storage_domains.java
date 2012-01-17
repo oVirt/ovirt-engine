@@ -16,7 +16,6 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "storage_domains")
 public class storage_domains extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
@@ -62,8 +61,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         this.alerts = alerts;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "StoragePoolIsoMapData")
     private storage_pool_iso_map privateStoragePoolIsoMapData;
 
@@ -75,8 +72,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         privateStoragePoolIsoMapData = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "StorageStaticData")
     private storage_domain_static _staticData;
 
@@ -88,8 +83,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         _staticData = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "StorageDynamicData")
     private storage_domain_dynamic _dynamicData;
 
@@ -168,8 +161,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
 
     private int _committedDiskSize;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public int getcommitted_disk_size() {
         return _committedDiskSize;
@@ -237,8 +228,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         getStoragePoolIsoMapData().setowner(value);
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "storage_pool_name")
     private String storage_pool_nameField;
 
@@ -251,8 +240,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         OnPropertyChanged(new PropertyChangedEventArgs("storage_name"));
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public StorageType getstorage_type() {
         return getStorageStaticData().getstorage_type();
@@ -264,8 +251,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
 
     private StorageDomainSharedStatus _storageDomainSharedStatus = StorageDomainSharedStatus.forValue(0);
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public StorageDomainSharedStatus getstorage_domain_shared_status() {
         return _storageDomainSharedStatus;
@@ -295,9 +280,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         getStorageStaticData().setStorageFormat(value);
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Events are not available in Java:
-    // public event PropertyChangedEventHandler PropertyChanged;
-    @Override
     public Object getQueryableId() {
         return StringFormat.format("%1$s_%2$s", getid().toString(), getstorage_pool_id() != null ? getstorage_pool_id()
                 .getValue().toString() : Guid.Empty.toString());

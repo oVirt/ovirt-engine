@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "ExtendStorageDomainVDSCommandParameters")
 public class ExtendStorageDomainVDSCommandParameters extends ActivateStorageDomainVDSCommandParameters {
@@ -16,8 +15,6 @@ public class ExtendStorageDomainVDSCommandParameters extends ActivateStorageDoma
         setDeviceList(deviceList);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "DeviceList")
     private java.util.ArrayList<String> privateDeviceList;
 

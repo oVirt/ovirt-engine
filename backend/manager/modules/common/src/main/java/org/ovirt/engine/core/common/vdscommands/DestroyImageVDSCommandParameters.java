@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "DestroyImageVDSCommandParameters")
 public class DestroyImageVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
@@ -19,8 +18,6 @@ public class DestroyImageVDSCommandParameters extends AllStorageAndImageIdVDSCom
         setCompatibilityVersion(compatibilityVersion);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "ImageList")
     private java.util.ArrayList<Guid> privateImageList;
 
@@ -32,8 +29,6 @@ public class DestroyImageVDSCommandParameters extends AllStorageAndImageIdVDSCom
         privateImageList = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "PostZero")
     private boolean privatePostZero;
 

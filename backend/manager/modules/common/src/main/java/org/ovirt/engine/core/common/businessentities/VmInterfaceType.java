@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlType(name = "VmInterfaceType")
 public enum VmInterfaceType {
     rtl8139_pv(0,"Dual mode rtl8139, Red Hat VirtIO"),

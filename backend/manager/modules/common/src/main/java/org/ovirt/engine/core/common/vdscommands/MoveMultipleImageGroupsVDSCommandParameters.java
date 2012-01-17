@@ -7,12 +7,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "MoveMultipleImageGroupsVDSCommandParameters")
 public class MoveMultipleImageGroupsVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private Guid privateDstDomainId = new Guid();
 
@@ -24,8 +21,6 @@ public class MoveMultipleImageGroupsVDSCommandParameters extends StoragePoolDoma
         privateDstDomainId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private Guid privateContainerId = new Guid();
 
@@ -37,8 +32,6 @@ public class MoveMultipleImageGroupsVDSCommandParameters extends StoragePoolDoma
         privateContainerId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private java.util.ArrayList<DiskImage> privateImagesList;
 

@@ -6,12 +6,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "MergeSnapshotsVDSCommandParameters")
 public class MergeSnapshotsVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private Guid _imageId2 = new Guid();
 
@@ -28,8 +25,6 @@ public class MergeSnapshotsVDSCommandParameters extends AllStorageAndImageIdVDSC
         return _imageId2;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VmId")
     private Guid privateVmId = new Guid();
 
@@ -41,8 +36,6 @@ public class MergeSnapshotsVDSCommandParameters extends AllStorageAndImageIdVDSC
         privateVmId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private boolean privatePostZero;
 

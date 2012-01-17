@@ -8,12 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.queries.*;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetImportCandidatesVDSCommandParameters")
 public class GetImportCandidatesVDSCommandParameters extends IrsBaseVDSCommandParameters {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Path")
     private String privatePath;
 
@@ -25,8 +22,6 @@ public class GetImportCandidatesVDSCommandParameters extends IrsBaseVDSCommandPa
         privatePath = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "CandidateSource")
     private ImportCandidateSourceEnum privateCandidateSource = ImportCandidateSourceEnum.forValue(0);
 
@@ -38,8 +33,6 @@ public class GetImportCandidatesVDSCommandParameters extends IrsBaseVDSCommandPa
         privateCandidateSource = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "CandidateType")
     private ImportCandidateTypeEnum privateCandidateType = ImportCandidateTypeEnum.forValue(0);
 

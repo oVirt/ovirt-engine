@@ -17,8 +17,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  * This command removes all Vm images and all created snapshots both from Irs
  * and Db.
  */
-// C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET
-// attributes:
 @InternalCommandAttribute
 public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> extends VmCommand<T> {
     public RemoveAllVmImagesCommand(T parameters) {

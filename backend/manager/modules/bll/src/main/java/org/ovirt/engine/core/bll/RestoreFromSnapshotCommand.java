@@ -28,8 +28,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  * active snapshot. All children snapshots and other snapshot mapped to same
  * drive will be removed.
  */
-// VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-// .NET attributes:
 @InternalCommandAttribute
 public class RestoreFromSnapshotCommand<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
     /**

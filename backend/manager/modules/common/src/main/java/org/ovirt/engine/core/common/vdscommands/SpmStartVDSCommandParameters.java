@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.RecoveryMode;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "SpmStartVDSCommandParameters")
 public class SpmStartVDSCommandParameters extends FenceSpmStorageVDSCommandParameters {
@@ -31,8 +30,6 @@ public class SpmStartVDSCommandParameters extends FenceSpmStorageVDSCommandParam
         this.storagePoolFormatType = storagePoolFormatType;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "RecoveryMode")
     private RecoveryMode privateRecoveryMode = RecoveryMode.forValue(0);
 
@@ -44,8 +41,6 @@ public class SpmStartVDSCommandParameters extends FenceSpmStorageVDSCommandParam
         privateRecoveryMode = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "SCSIFencing")
     private boolean privateSCSIFencing;
 

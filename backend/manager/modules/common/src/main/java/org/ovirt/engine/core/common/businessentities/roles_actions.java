@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.action.*;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "roles_actions")
 public class roles_actions implements Serializable {
@@ -24,8 +23,6 @@ public class roles_actions implements Serializable {
         this.role_idField = role_id;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "action_id")
     private VdcActionType action_idField = VdcActionType.forValue(0);
 
@@ -37,8 +34,6 @@ public class roles_actions implements Serializable {
         this.action_idField = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "role_id")
     private Guid role_idField = new Guid();
 

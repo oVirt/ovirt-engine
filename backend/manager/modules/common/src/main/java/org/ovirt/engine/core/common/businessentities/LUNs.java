@@ -15,7 +15,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "LUNs")
 @Entity
@@ -120,8 +119,6 @@ public class LUNs implements Serializable {
         return true;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "LUN_id")
     @Id
     @Size(min = 1, max = BusinessEntitiesDefinitions.LUN_ID)
@@ -136,8 +133,6 @@ public class LUNs implements Serializable {
         this.id = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "phisical_volume_id")
     // TODO rename the column
     @Size(max = BusinessEntitiesDefinitions.LUN_PHISICAL_VOLUME_ID)
@@ -152,8 +147,6 @@ public class LUNs implements Serializable {
         this.physicalVolumeId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "volume_group_id")
     @Size(max = BusinessEntitiesDefinitions.LUN_VOLUME_GROUP_ID)
     @Column(name = "volume_group_id", length = BusinessEntitiesDefinitions.LUN_VOLUME_GROUP_ID)
@@ -218,8 +211,6 @@ public class LUNs implements Serializable {
         this.productId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "LunConnections")
     @Transient
     private java.util.ArrayList<storage_server_connections> _lunConnections;
@@ -232,8 +223,6 @@ public class LUNs implements Serializable {
         _lunConnections = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "DeviceSize")
     @Column(name = "device_size")
     private int deviceSize;
@@ -246,8 +235,6 @@ public class LUNs implements Serializable {
         deviceSize = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VendorName")
     @Transient
     private String vendorName;
@@ -275,8 +262,6 @@ public class LUNs implements Serializable {
         return (getPathsDictionary() == null ? 0 : getPathsDictionary().size());
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // @XmlElement(name="PathsDictionary")
     @Transient
     private java.util.HashMap<String, Boolean> pathsDictionary;
@@ -289,8 +274,6 @@ public class LUNs implements Serializable {
         pathsDictionary = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "LunType")
     @Transient
     private StorageType lunType = StorageType.forValue(0);

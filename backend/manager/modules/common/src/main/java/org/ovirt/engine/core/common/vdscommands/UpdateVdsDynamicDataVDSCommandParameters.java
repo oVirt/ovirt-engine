@@ -7,12 +7,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "UpdateVdsDynamicDataVDSCommandParameters")
 public class UpdateVdsDynamicDataVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VdsDynamic")
     private VdsDynamic privateVdsDynamic;
 

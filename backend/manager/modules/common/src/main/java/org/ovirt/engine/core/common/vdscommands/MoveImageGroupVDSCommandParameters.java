@@ -7,12 +7,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "MoveImageGroupVDSCommandParameters")
 public class MoveImageGroupVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "DstDomainId")
     private Guid privateDstDomainId = new Guid();
 
@@ -24,8 +21,6 @@ public class MoveImageGroupVDSCommandParameters extends StoragePoolDomainAndGrou
         privateDstDomainId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VmId")
     private Guid privateVmId = new Guid();
 
@@ -37,8 +32,6 @@ public class MoveImageGroupVDSCommandParameters extends StoragePoolDomainAndGrou
         privateVmId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Op")
     private ImageOperation privateOp = ImageOperation.forValue(0);
 
@@ -62,8 +55,6 @@ public class MoveImageGroupVDSCommandParameters extends StoragePoolDomainAndGrou
         setCompatibilityVersion(compatibilityVersion);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private boolean privatePostZero;
 
@@ -75,8 +66,6 @@ public class MoveImageGroupVDSCommandParameters extends StoragePoolDomainAndGrou
         privatePostZero = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private boolean privateForce;
 

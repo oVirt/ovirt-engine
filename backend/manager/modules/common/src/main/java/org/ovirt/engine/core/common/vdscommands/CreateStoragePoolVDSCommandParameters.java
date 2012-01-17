@@ -8,12 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "CreateStoragePoolVDSCommandParameters")
 public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "StoragePoolId")
     private Guid privateStoragePoolId = new Guid();
 
@@ -25,8 +22,6 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
         privateStoragePoolId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "StorageType")
     private StorageType privateStorageType = StorageType.forValue(0);
 
@@ -38,8 +33,6 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
         privateStorageType = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "StoragePoolName")
     private String privateStoragePoolName;
 
@@ -51,8 +44,6 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
         privateStoragePoolName = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "MasterDomainId")
     private Guid privateMasterDomainId = new Guid();
 
@@ -64,8 +55,6 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
         privateMasterDomainId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "DomainsIdList")
     private java.util.ArrayList<Guid> privateDomainsIdList;
 
@@ -77,8 +66,6 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
         privateDomainsIdList = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "MasterVersion")
     private int privateMasterVersion;
 

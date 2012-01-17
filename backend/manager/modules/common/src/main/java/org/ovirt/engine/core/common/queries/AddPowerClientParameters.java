@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.action.*;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "AddPowerClientParameters")
 public class AddPowerClientParameters extends VdcQueryParametersBase {
@@ -17,8 +16,6 @@ public class AddPowerClientParameters extends VdcQueryParametersBase {
         _AddVdsParams = AddVdsParams;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "AddVdsParams")
     private AddVdsActionParameters _AddVdsParams;
 

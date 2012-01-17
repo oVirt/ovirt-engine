@@ -8,13 +8,10 @@ import javax.xml.bind.annotation.XmlType;
 
 import java.util.ArrayList;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "AttachVdsToTagParameters")
 public class AttachVdsToTagParameters extends TagsActionParametersBase {
     private static final long serialVersionUID = -6599471346607548452L;
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     private java.util.ArrayList<Guid> _entitiesId;
 

@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetBookmarkByIdParameters")
 public class GetBookmarkByIdParameters extends VdcQueryParametersBase {
@@ -18,8 +17,6 @@ public class GetBookmarkByIdParameters extends VdcQueryParametersBase {
         _bookmarkId = bookmarkId;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @NotNull(message = "VALIDATION.BOOKMARKS.ID.NOT_NULL")
     @XmlElement(name = "BookmarkId")
     private Guid _bookmarkId;

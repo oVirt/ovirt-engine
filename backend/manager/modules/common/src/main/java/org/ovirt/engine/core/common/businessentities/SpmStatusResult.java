@@ -7,13 +7,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "SpmStatusResult")
 public class SpmStatusResult implements Serializable {
     private static final long serialVersionUID = -2043744550859733845L;
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "SpmStatus")
     private SpmStatus privateSpmStatus = SpmStatus.forValue(0);
 
@@ -25,8 +22,6 @@ public class SpmStatusResult implements Serializable {
         privateSpmStatus = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "SpmLVER")
     private String privateSpmLVER;
 
@@ -38,8 +33,6 @@ public class SpmStatusResult implements Serializable {
         privateSpmLVER = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "SpmId")
     private int privateSpmId;
 

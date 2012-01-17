@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "CreateSnapshotVDSCommandParameters")
 public class CreateSnapshotVDSCommandParameters extends CreateImageVDSCommandParameters {
@@ -20,8 +19,6 @@ public class CreateSnapshotVDSCommandParameters extends CreateImageVDSCommandPar
         setSourceImageGroupId(sourceImageGroupId);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private Guid _imageId = new Guid();
 
@@ -29,8 +26,6 @@ public class CreateSnapshotVDSCommandParameters extends CreateImageVDSCommandPar
         return _imageId;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "SourceImageGroupId")
     private Guid privateSourceImageGroupId = new Guid();
 

@@ -23,9 +23,6 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
-//VB & C# TO JAVA CONVERTER NOTE: There is no Java equivalent to C# namespace aliases:
-//using Timer=System.Timers.Timer;
-
 /**
  * Class, responcible to backend callbacks treatment. Contains proxies to
  * frontends, registerd to backend events

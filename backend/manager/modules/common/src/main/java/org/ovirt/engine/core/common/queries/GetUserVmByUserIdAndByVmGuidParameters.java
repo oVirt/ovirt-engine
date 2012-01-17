@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetUserVmByUserIdAndByVmGuidParameters")
 public class GetUserVmByUserIdAndByVmGuidParameters extends VdcQueryParametersBase {
@@ -17,12 +16,8 @@ public class GetUserVmByUserIdAndByVmGuidParameters extends VdcQueryParametersBa
         _vmId = vmId;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "UserId")
     private Guid _userId = new Guid();
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VmId")
     private Guid _vmId = new Guid();
 

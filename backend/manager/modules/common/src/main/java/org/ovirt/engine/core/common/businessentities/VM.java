@@ -18,7 +18,6 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VM")
 public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterable<DiskImage>, Serializable {
@@ -822,8 +821,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     private String vmt_nameField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "vmt_name")
     public String getvmt_name() {
         return this.vmt_nameField;
@@ -836,8 +833,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     private int vmt_mem_size_mbField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
 
     public int getvmt_mem_size_mb() {
         return this.vmt_mem_size_mbField;
@@ -849,8 +844,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     private VmOsType vmt_osField = VmOsType.forValue(0);
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
 
     public VmOsType getvmt_os() {
         return this.vmt_osField;
@@ -862,8 +855,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     private java.util.Date vmt_creation_dateField = new java.util.Date(0);
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
 
     public java.util.Date getvmt_creation_date() {
         return this.vmt_creation_dateField;
@@ -875,8 +866,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     private int vmt_child_countField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
 
     public int getvmt_child_count() {
         return this.vmt_child_countField;
@@ -888,8 +877,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     private int vmt_num_of_cpusField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
 
     public int getvmt_num_of_cpus() {
         return this.vmt_num_of_cpusField;
@@ -901,8 +888,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     private int vmt_num_of_socketsField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
 
     public int getvmt_num_of_sockets() {
         return this.vmt_num_of_socketsField;
@@ -914,8 +899,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     private int vmt_cpu_per_socketField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
 
     public int getvmt_cpu_per_socket() {
         return this.vmt_cpu_per_socketField;
@@ -927,8 +910,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     private String vmt_descriptionField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
 
     public String getvmt_description() {
         return this.vmt_descriptionField;
@@ -965,8 +946,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
     @XmlElement(name = "vds_group_name")
     private String vds_group_nameField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
 
     public String getvds_group_name() {
         return this.vds_group_nameField;
@@ -979,8 +958,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     private String vds_group_descriptionField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
 
     public String getvds_group_description() {
         return this.vds_group_descriptionField;
@@ -992,8 +969,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     private String vds_group_cpu_nameField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
 
     public String getvds_group_cpu_name() {
         return this.vds_group_cpu_nameField;
@@ -1074,8 +1049,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     private Guid storage_pool_idField = new Guid();
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "storage_pool_id")
     public Guid getstorage_pool_id() {
         return storage_pool_idField;
@@ -1087,8 +1060,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     private String storage_pool_nameField;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "storage_pool_name")
     public String getstorage_pool_name() {
         return storage_pool_nameField;
@@ -1100,8 +1071,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
 
     private VdsSelectionAlgorithm selection_algorithmField = VdsSelectionAlgorithm.forValue(0);
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
 
     public VdsSelectionAlgorithm getselection_algorithm() {
         return selection_algorithmField;
@@ -1111,8 +1080,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
         selection_algorithmField = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "Interfaces")
     public List<VmNetworkInterface> getInterfaces() {
         return mInterfaces;
@@ -1130,7 +1097,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
         mImages = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Events are not available in Java:
     // public event PropertyChangedEventHandler PropertyChanged;
 
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {
@@ -1140,12 +1106,8 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
         }
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     private java.util.Map<String, DiskImage> mDiskMap = new java.util.HashMap<String, DiskImage>();
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "DiskList")
     private java.util.ArrayList<DiskImage> _diskList = new java.util.ArrayList<DiskImage>();
     private String mCdPath = "";
@@ -1441,10 +1403,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
         setcpu_sys(vmStatistics.getcpu_sys());
         setcpu_user(vmStatistics.getcpu_user());
         if ((getcpu_sys() != null) && (getcpu_user() != null)) {
-            // VB & C# TO JAVA CONVERTER TODO TASK: Arithmetic operations
-            // involving nullable type instances are not converted to null-value
-            // logic:
-            // if statement will overcome Arithmetic operations problem
             Double percent = (getcpu_sys() + getcpu_user()) / new Double(vm.getnum_of_cpus());
             setusage_cpu_percent(percent.intValue());
             if (getusage_cpu_percent() != null && getusage_cpu_percent() > 100) {
@@ -1489,8 +1447,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
         return mDiskMap.values().iterator();
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "VmPoolName")
     public String getVmPoolName() {
         return mVmPoolName;
@@ -1512,8 +1468,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
         mVmPoolName = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "VmPoolId", nillable = true)
     public NGuid getVmPoolId() {
         return mVmPoolId;
@@ -1541,8 +1495,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
      * assumption: Qumranet Agent version stored in app_list by "Qumranet Agent" name. Qumranet Agent version, recieved
      * from vds in format : a.b.d there is no major revision recieved from vds - always 0
      */
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "GuestAgentVersion")
     private Version privateGuestAgentVersion;
 
@@ -1563,8 +1515,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
         return getGuestAgentVersion() != null;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "SpiceDriverVersion")
     private Version privateSpiceDriverVersion;
 
@@ -1580,8 +1530,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
         return getSpiceDriverVersion() != null;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     // @XmlElement(name = "vds_group_cpu_flags_data")
     private String privatevds_group_cpu_flags_data;
 

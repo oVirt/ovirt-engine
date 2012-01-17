@@ -32,27 +32,16 @@ public class StoragePoolFieldAutoCompleter extends BaseConditionFieldAutoComplet
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         IAutoCompleter retval;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        {
-            retval = new StringConditionRelationAutoCompleter();
-        }
-
+        retval = new StringConditionRelationAutoCompleter();
         return retval;
     }
 
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "STATUS":
         if (StringHelper.EqOp(fieldName, "STATUS")) {
             retval = new EnumValueAutoCompleter(StoragePoolStatus.class);
         }
-        // ORIGINAL LINE: case "TYPE":
         else if (StringHelper.EqOp(fieldName, "TYPE")) {
             retval = new EnumValueAutoCompleter(StorageType.class);
         } else {

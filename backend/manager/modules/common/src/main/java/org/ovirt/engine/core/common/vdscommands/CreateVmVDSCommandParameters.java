@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.action.SysPrepParams;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "CreateVmVDSCommandParameters")
 public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
@@ -18,8 +17,6 @@ public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         _vm = vm;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private VM _vm;
 

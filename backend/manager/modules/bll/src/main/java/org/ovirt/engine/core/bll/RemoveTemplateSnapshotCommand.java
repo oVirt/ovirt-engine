@@ -16,8 +16,6 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * This command is reponsible for removing a template image.
  */
-// C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET
-// attributes:
 @InternalCommandAttribute
 public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
     public RemoveTemplateSnapshotCommand(T parameters) {

@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "IsVmPoolWithSameNameExistsParameters")
 public class IsVmPoolWithSameNameExistsParameters extends VdcQueryParametersBase {
@@ -15,8 +14,6 @@ public class IsVmPoolWithSameNameExistsParameters extends VdcQueryParametersBase
         _vmPoolName = vmPoolName;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VmPoolName")
     private String _vmPoolName;
 

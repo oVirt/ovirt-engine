@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "IrsBaseVDSCommandParameters")
 public class IrsBaseVDSCommandParameters extends VDSParametersBase {
@@ -14,8 +13,6 @@ public class IrsBaseVDSCommandParameters extends VDSParametersBase {
         setStoragePoolId(storagePoolId);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "StoragePoolId")
     private Guid privateStoragePoolId = new Guid();
 
@@ -27,8 +24,6 @@ public class IrsBaseVDSCommandParameters extends VDSParametersBase {
         privateStoragePoolId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "IgnoreFailoverLimit")
     private boolean privateIgnoreFailoverLimit;
 
@@ -40,8 +35,6 @@ public class IrsBaseVDSCommandParameters extends VDSParametersBase {
         privateIgnoreFailoverLimit = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private String privateCompatibilityVersion;
 

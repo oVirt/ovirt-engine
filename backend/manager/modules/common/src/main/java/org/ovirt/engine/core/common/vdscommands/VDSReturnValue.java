@@ -3,7 +3,6 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.common.asynctasks.*;
 import org.ovirt.engine.core.common.errors.*;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 //@XmlSeeAlso({
 //    DiskImage.class,
 //    VMStatus.class,
@@ -28,8 +27,6 @@ public class VDSReturnValue {
     private Object _returnValue;
     private RuntimeException _exceptionObject;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // @XmlElement
     public Object getReturnValue() {
         return _returnValue;
@@ -39,8 +36,6 @@ public class VDSReturnValue {
         _returnValue = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // @XmlElement
     public String getExceptionString() {
         return _exceptionString;
@@ -50,8 +45,6 @@ public class VDSReturnValue {
         _exceptionString = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // @XmlElement
     public boolean getSucceeded() {
         return _succeeded;
@@ -69,8 +62,6 @@ public class VDSReturnValue {
         _exceptionObject = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // @XmlElement(name="CreationInfo")
     private AsyncTaskCreationInfo privateCreationInfo;
 
@@ -82,8 +73,6 @@ public class VDSReturnValue {
         privateCreationInfo = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // @XmlElement(name="VdsError")
     private VDSError privateVdsError;
 

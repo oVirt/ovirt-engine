@@ -83,19 +83,13 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         IAutoCompleter retval;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch(fieldName)
-        // ORIGINAL LINE: case "UPTIME":
         if (StringHelper.EqOp(fieldName, "UPTIME") || StringHelper.EqOp(fieldName, "CREATIONDATE")) {
             retval = new BiggerOrSmallerRelationAutoCompleter();
         }
-        // ORIGINAL LINE: case "CPU_USAGE":
         else if (StringHelper.EqOp(fieldName, "CPU_USAGE") || StringHelper.EqOp(fieldName, "MEM_USAGE")
                 || StringHelper.EqOp(fieldName, "MEMORY") || StringHelper.EqOp(fieldName, "NETWORK_USAGE")) {
             retval = new NumericConditionRelationAutoCompleter();
         }
-        // ORIGINAL LINE: case "TAG":
         else if (StringHelper.EqOp(fieldName, "TAG")) {
             retval = new StringOnlyEqualConditionRelationAutoCompleter();
         } else {
@@ -107,18 +101,12 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "OS":
         if (StringHelper.EqOp(fieldName, "OS")) {
             retval = new EnumValueAutoCompleter(VmOsType.class);
         }
-        // ORIGINAL LINE: case "STATUS":
         else if (StringHelper.EqOp(fieldName, "STATUS")) {
             retval = new EnumValueAutoCompleter(VMStatus.class);
         }
-        // ORIGINAL LINE: case "TYPE":
         else if (StringHelper.EqOp(fieldName, "TYPE")) {
             retval = new EnumValueAutoCompleter(VmType.class);
         } else {
@@ -128,10 +116,6 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
 
     @Override
     public void formatValue(String fieldName, RefObject<String> relations, RefObject<String> value, boolean caseSensitive) {
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "APPS":
         if (StringHelper.EqOp(fieldName, "APPS")) {
             value.argvalue =
                     StringFormat.format(BaseConditionFieldAutoCompleter.getI18NPrefix() + "'%%%1$s%%'",
@@ -143,13 +127,11 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
                 relations.argvalue = "NOT " + BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
             }
         }
-        // ORIGINAL LINE: case "UPTIME":
         else if (StringHelper.EqOp(fieldName, "UPTIME")) {
             value.argvalue = StringHelper.trim(value.argvalue, '\'');
             TimeSpan ts = TimeSpan.Parse(value.argvalue);
             value.argvalue = StringFormat.format("'%1$s'", ts.TotalSeconds);
         }
-        // ORIGINAL LINE: case "CREATIONDATE":
         else if (StringHelper.EqOp(fieldName, "CREATIONDATE")) {
             java.util.Date tmp = new java.util.Date(java.util.Date.parse(StringHelper.trim(value.argvalue, '\'')));
             value.argvalue = StringFormat.format("'%1$s'", tmp);

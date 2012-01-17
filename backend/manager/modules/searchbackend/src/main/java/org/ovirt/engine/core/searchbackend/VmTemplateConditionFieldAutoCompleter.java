@@ -48,14 +48,9 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         IAutoCompleter retval;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "CREATIONDATE":
         if (StringHelper.EqOp(fieldName, "CREATIONDATE")) {
             retval = new TimeConditionRelationAutoCompleter();
         }
-        // ORIGINAL LINE: case "CHILDCOUNT":
         else if (StringHelper.EqOp(fieldName, "CHILDCOUNT") || StringHelper.EqOp(fieldName, "MEM")) {
             retval = new NumericConditionRelationAutoCompleter();
         } else {
@@ -67,18 +62,12 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "OS":
         if (StringHelper.EqOp(fieldName, "OS")) {
             retval = new EnumValueAutoCompleter(VmOsType.class);
         }
-        // ORIGINAL LINE: case "CREATIONDATE":
         else if (StringHelper.EqOp(fieldName, "CREATIONDATE")) {
             retval = new DateEnumValueAutoCompleter(DateEnumForSearch.class);
         }
-        // ORIGINAL LINE: case "STATUS":
         else if (StringHelper.EqOp(fieldName, "STATUS")) {
             retval = new EnumValueAutoCompleter(VmTemplateStatus.class);
 

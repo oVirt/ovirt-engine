@@ -209,15 +209,10 @@ public class OvfTemplateReader extends OvfReader {
         for (XmlNode section : list) {
             String value = section.Attributes.get("xsi:type").getValue();
 
-            // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-            // string member and was converted to Java 'if-else' logic:
-            // switch (value)
-            // ORIGINAL LINE: case "ovf:OperatingSystemSection_Type":
             if (StringHelper.EqOp(value, "ovf:OperatingSystemSection_Type")) {
                 ReadOsSection(section);
 
             }
-            // ORIGINAL LINE: case "ovf:VirtualHardwareSection_Type":
             else if (StringHelper.EqOp(value, "ovf:VirtualHardwareSection_Type")) {
                 ReadHardwareSection(section);
             }

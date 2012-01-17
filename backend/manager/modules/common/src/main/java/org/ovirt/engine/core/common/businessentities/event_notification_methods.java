@@ -14,7 +14,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "event_notification_methods")
 @Entity
@@ -34,8 +33,6 @@ public class event_notification_methods implements Serializable {
     @Column(name = "method_id")
     private int methodId;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public int getmethod_id() {
         return this.methodId;
@@ -48,8 +45,6 @@ public class event_notification_methods implements Serializable {
     @Column(name = "method_type", length = 10, nullable = false)
     private String methodType;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public EventNotificationMethods getmethod_type() {
         return EnumUtils.valueOf(EventNotificationMethods.class, methodType, true);

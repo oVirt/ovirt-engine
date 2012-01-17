@@ -23,9 +23,7 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 
-//using VdcDAL.DbBroker.AuditLogHandling;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "AuditLog")
 @Entity
@@ -62,8 +60,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "audit_log_id")
     private long auditLogId;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public long getaudit_log_id() {
         return this.auditLogId;
@@ -76,8 +72,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "log_time", nullable = false)
     private java.util.Date logTime = new java.util.Date(0);
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public java.util.Date getlog_time() {
         return this.logTime;
@@ -90,8 +84,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "message", nullable = false)
     private String message;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getmessage() {
         return this.message;
@@ -113,8 +105,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Type(type = "guid")
     private NGuid userId;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public NGuid getuser_id() {
         return this.userId;
@@ -127,8 +117,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "user_name", length = 255)
     private String userName;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getuser_name() {
         return this.userName;
@@ -142,8 +130,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Type(type = "guid")
     private NGuid vdsId;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(nillable = true)
     public NGuid getvds_id() {
         return this.vdsId;
@@ -156,8 +142,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "vds_name", length = 255)
     private String vdsName;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getvds_name() {
         return this.vdsName;
@@ -171,8 +155,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Type(type = "guid")
     private NGuid vmTemplateId;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public NGuid getvm_template_id() {
         return this.vmTemplateId;
@@ -185,8 +167,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "vm_template_name", length = 40)
     private String vmTemplateName;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getvm_template_name() {
         return this.vmTemplateName;
@@ -200,8 +180,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Type(type = "guid")
     private NGuid vmId;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public NGuid getvm_id() {
         return this.vmId;
@@ -214,8 +192,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "vm_name", length = 255)
     private String vmName;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getvm_name() {
         return this.vmName;
@@ -225,8 +201,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         this.vmName = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "storage_pool_id")
     @Column(name = "storage_pool_id")
     @Type(type = "guid")
@@ -240,8 +214,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         storagePoolId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "storage_pool_name")
     @Column(name = "storage_pool_name", length = 40)
     private String storagePoolName;
@@ -254,8 +226,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         storagePoolName = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "storage_domain_id")
     @Column(name = "storage_domain_id")
     @Type(type = "guid")
@@ -269,8 +239,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         storageDomainId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "storage_domain_name")
     @Column(name = "storage_domain_name", length = 250)
     private String storageDomainName;
@@ -283,8 +251,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         storageDomainName = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "vds_group_id")
     @Column(name = "vds_group_id")
     @Type(type = "guid")
@@ -298,8 +264,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         vdsGroupId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "vds_group_name")
     @Column(name = "vds_group_name", length = 255)
     private String vdsGroupName;
@@ -311,9 +275,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     public void setvds_group_name(String value) {
         vdsGroupName = value;
     }
-
-    // C# TO JAVA CONVERTER TODO TASK: Events are not available in Java:
-    // public event PropertyChangedEventHandler PropertyChanged;
 
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {
         /* if (PropertyChanged != null) */
@@ -346,8 +307,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Enumerated
     private int logType = AuditLogType.UNASSIGNED.getValue();
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public AuditLogType getlog_type() {
         return AuditLogType.forValue(logType);
@@ -377,8 +336,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "severity", nullable = false)
     private int severity = AuditLogSeverity.NORMAL.getValue();
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public AuditLogSeverity getseverity() {
         return AuditLogSeverity.forValue(severity);

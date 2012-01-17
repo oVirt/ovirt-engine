@@ -15,7 +15,6 @@ import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "storage_domain_dynamic")
 @Entity
@@ -33,8 +32,6 @@ public class storage_domain_dynamic implements BusinessEntity<Guid> {
         this.usedDiskSize = used_disk_size;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "available_disk_size", nillable = true)
     @Column(name = "available_disk_size")
     private Integer availableDiskSize = 0;
@@ -63,8 +60,6 @@ public class storage_domain_dynamic implements BusinessEntity<Guid> {
         this.id = id;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
 
     @XmlElement(name = "used_disk_size", nillable = true)
     @Column(name = "used_disk_size")
@@ -95,12 +90,6 @@ public class storage_domain_dynamic implements BusinessEntity<Guid> {
     }
 
     public static storage_domain_dynamic copyOf(storage_domain_dynamic domain) {
-        // TODO: not using the relevant constructor, since it copies a GUID
-        // obejct, which
-        // does not seem right for clone shallow copy behavior in original c#
-        // code.
-        // if this is true, need to change all constructor to use primitives,
-        // or use New when dealing with C# primitives
         storage_domain_dynamic sdd = new storage_domain_dynamic();
         sdd.availableDiskSize = domain.availableDiskSize;
         sdd.id = new Guid(domain.id.getUuid());

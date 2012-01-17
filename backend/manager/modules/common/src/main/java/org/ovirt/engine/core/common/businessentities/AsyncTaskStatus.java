@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "AsyncTaskStatus")
 public class AsyncTaskStatus implements Serializable {
@@ -20,8 +19,6 @@ public class AsyncTaskStatus implements Serializable {
         setStatus(status);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Status")
     private AsyncTaskStatusEnum privateStatus = AsyncTaskStatusEnum.forValue(0);
 
@@ -33,8 +30,6 @@ public class AsyncTaskStatus implements Serializable {
         privateStatus = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Result")
     private AsyncTaskResultEnum privateResult = AsyncTaskResultEnum.forValue(0);
 
@@ -46,8 +41,6 @@ public class AsyncTaskStatus implements Serializable {
         privateResult = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // @XmlElement
     private RuntimeException privateException;
 
@@ -59,8 +52,6 @@ public class AsyncTaskStatus implements Serializable {
         privateException = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Message")
     private String _message = "";
 

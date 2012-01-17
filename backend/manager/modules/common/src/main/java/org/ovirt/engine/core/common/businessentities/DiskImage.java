@@ -27,7 +27,6 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "DiskImage")
 @Entity
@@ -210,8 +209,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         return true;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(nillable = true)
     @Transient
     public Boolean getactive() {
@@ -225,8 +222,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     private java.util.Date creation_dateField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @Override
     @XmlElement
     @Column(name = "creation_date", nullable = false)
@@ -243,8 +238,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     // TODO why do we have two fields like this?
     private java.util.Date last_modified_dateField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     @Transient
     public java.util.Date getlast_modified_date() {
@@ -259,8 +252,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     // TODO comes from DiskImageDynamic
     private long actualSizeFromDiskImageDynamic;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     @Column(table = "disk_image_dynamic", name = "actual_size", nullable = false)
     public long getactual_size() {
@@ -276,8 +267,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     // TODO comes from DiskImageDynamic
     private int readRateFromDiskImageDynamic;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     @Column(table = "disk_image_dynamic", name = "read_rate")
     public int getread_rate() {
@@ -292,8 +281,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     // TODO comes from DiskImageDynamic
     private int writeRateFromDiskImageDynamic;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     @Column(table = "disk_image_dynamic", name = "write_rate")
     public int getwrite_rate() {
@@ -307,8 +294,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     private String description;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @Override
     @XmlElement
     @Column(name = "description", length = 4000)
@@ -326,8 +311,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     private String appList;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     @Column(name = "app_list", length = 4000)
     public String getappList() {
@@ -341,8 +324,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     private Guid it_guid = new Guid();
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @Override
     @XmlElement
     @Column(name = "it_guid", nullable = false)
@@ -360,8 +341,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     // TODO comes from image_vm_map
     private Guid vm_guidField = new Guid();
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     @Transient
     @Type(type = "guid")
@@ -376,8 +355,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     private Guid parentId = new Guid();
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "ParentId")
     @Column(name = "parentid")
     @Type(type = "guid")
@@ -392,8 +369,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     private ImageStatus status = ImageStatus.Unassigned;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     @Column(name = "imagestatus")
     public ImageStatus getimageStatus() {
@@ -407,8 +382,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     private java.util.Date lastModified = new java.util.Date(0);
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     @Column(name = "lastmodified")
     public java.util.Date getlastModified() {
@@ -422,8 +395,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     private NGuid storageId;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     @Column(name = "storage_id")
     @Type(type = "guid")
@@ -438,8 +409,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     private NGuid vmSnapshotId;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "vm_snapshot_id")
     @Column(name = "vm_snapshot_id")
     @Type(type = "guid")
@@ -455,8 +424,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     // TODO from storage_domain_static
     private String mstorage_path;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     @Transient
     public String getstorage_path() {
@@ -470,8 +437,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     private Guid imageGroupId = null;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     @Column(name = "image_group_id")
     @Type(type = "guid")
@@ -487,8 +452,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     // TODO from storage_domain_static
     private NGuid storage_pool_idField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     @Transient
     public NGuid getstorage_pool_id() {
@@ -502,8 +465,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     private double actualSize;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "ActualSize")
     @Transient
     public double getActualSize() {
@@ -514,9 +475,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         actualSize = value;
         OnPropertyChanged(new PropertyChangedEventArgs("ActualSize"));
     }
-
-    // C# TO JAVA CONVERTER TODO TASK: Events are not available in Java:
-    // public event PropertyChangedEventHandler PropertyChanged;
 
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {
         /* if (PropertyChanged != null) */
@@ -530,8 +488,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     private int mReadRateKbPerSec;
 
     private int mWriteRateKbPerSec;
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "Snapshots")
     @Transient
     private java.util.ArrayList<DiskImage> _snapshots = new java.util.ArrayList<DiskImage>();
@@ -558,8 +514,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         this.childrenIdField = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     private double _actualDiskWithSnapthotsSize;
 
     @Transient
@@ -584,8 +538,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @Override
     @XmlElement
     @Transient
@@ -598,8 +550,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         setvm_guid(value);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @Override
     @XmlElement
     @Transient
@@ -612,8 +562,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         mReadRateKbPerSec = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @Override
     @XmlElement
     @Transient
@@ -654,11 +602,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         // set DiskImageBase properties
         DiskImage di = new DiskImage(diskImage);
 
-        // set all private fields (imitate clone)
-        // pay attention the original java clone is not compatible with c# clone
-        // by default,
-        // since Date and Guid are shallow copied in C#, and in java we need to
-        // deep copy them.
+        // set all private fields (imitate clone - deep copy)
         di.activeField = diskImage.activeField;
         di.creation_dateField = new java.util.Date(diskImage.creation_dateField.getTime());
         di.last_modified_dateField = new java.util.Date(diskImage.last_modified_dateField.getTime());
@@ -689,12 +633,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
         // TODO: is it ok to use shallow copy here?!
         di._snapshots = new java.util.ArrayList<DiskImage>(diskImage._snapshots);
-
         di._actualDiskWithSnapthotsSize = diskImage._actualDiskWithSnapthotsSize;
-
-        // reset values which make were set in C# original DiskImage.clone()
-        // method
-
         di.setcreation_date(new java.util.Date());
         di.setlastModified(new java.util.Date());
         di.setactive(true);

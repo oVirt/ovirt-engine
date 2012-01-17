@@ -27,21 +27,12 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
      * @return
      */
     protected VdcQueryReturnValue CreateReturnValue() {
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (GetType().Name)
-        // case "CanDoActionWithParametersQuery":
-        // case "CanDoActionQuery":
-        // {
-        // ORIGINAL LINE: case "GetAllVmSnapshotsByDriveQuery":
         if (getClass().getName().endsWith("GetAllVmSnapshotsByDriveQuery")) {
             return new GetAllVmSnapshotsByDriveQueryReturnValue();
         }
-        // ORIGINAL LINE: case "SearchQuery":
         else if (getClass().getName().endsWith("SearchQuery")) {
             return new SearchReturnValue();
         }
-        // ORIGINAL LINE: case "IsLicenseValidQuery":
         else if (getClass().getName().endsWith("IsLicenseValidQuery")) {
             return new LicenseReturnValue();
         } else {

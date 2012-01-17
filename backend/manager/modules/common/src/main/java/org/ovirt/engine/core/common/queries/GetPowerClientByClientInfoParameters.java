@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetPowerClientByClientInfoParameters")
 public class GetPowerClientByClientInfoParameters extends VdcQueryParametersBase {
@@ -15,8 +14,6 @@ public class GetPowerClientByClientInfoParameters extends VdcQueryParametersBase
         _clientIp = clientIp;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "ClientIp")
     private String _clientIp;
 

@@ -24,9 +24,6 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.compat.Version;
 
-//using VdcDAL.AdBroker;
-
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlSeeAlso({
         VdcQueryParametersBase.class,
         IsVmWithSameNameExistParameters.class,

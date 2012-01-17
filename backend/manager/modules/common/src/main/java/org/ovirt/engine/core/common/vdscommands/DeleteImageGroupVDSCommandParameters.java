@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "DeleteImageGroupVDSCommandParameters")
 public class DeleteImageGroupVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
@@ -18,8 +17,6 @@ public class DeleteImageGroupVDSCommandParameters extends StoragePoolDomainAndGr
         setCompatibilityVersion(competabilityVersion);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "PostZeros")
     private boolean privatePostZeros;
 
@@ -31,8 +28,6 @@ public class DeleteImageGroupVDSCommandParameters extends StoragePoolDomainAndGr
         privatePostZeros = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private boolean privateForceDelete;
 

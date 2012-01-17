@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "event_map")
 @Entity
@@ -51,8 +50,6 @@ public class event_map implements Serializable {
     @Transient
     private int eventDownId;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public int getevent_down_id() {
         return this.eventDownId;
@@ -65,8 +62,6 @@ public class event_map implements Serializable {
     @Transient
     private int eventUpId;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public int getevent_up_id() {
         return this.eventUpId;
@@ -76,8 +71,6 @@ public class event_map implements Serializable {
         this.eventUpId = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public String getevent_up_name() {
         return this.id.eventUpName;
@@ -87,8 +80,6 @@ public class event_map implements Serializable {
         this.id.eventUpName = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     public String getevent_down_name() {
         return this.id.eventDownName;

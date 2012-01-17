@@ -91,20 +91,10 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
     }
 
     private void HandleVdsInformation() {
-        // VB & C# TO JAVA CONVERTER TODO TASK: Arithmetic operations involving
-        // nullable type instances are not converted to null-value logic:
         getVds().setmem_commited(getVds().getmem_commited() + getParameters().getVm().getvm_mem_size_mb());
-        // VB & C# TO JAVA CONVERTER TODO TASK: Arithmetic operations involving
-        // nullable type instances are not converted to null-value logic:
         getVds().setmem_commited(getVds().getmem_commited() + getVds().getguest_overhead());
-        // VB & C# TO JAVA CONVERTER TODO TASK: Arithmetic operations involving
-        // nullable type instances are not converted to null-value logic:
         getVds().setvm_count(getVds().getvm_count() + 1);
-        // VB & C# TO JAVA CONVERTER TODO TASK: Arithmetic operations involving
-        // nullable type instances are not converted to null-value logic:
         getVds().setvms_cores_count(getVds().getvms_cores_count() + getParameters().getVm().getnum_of_cpus());
-        // VB & C# TO JAVA CONVERTER TODO TASK: Arithmetic operations involving
-        // nullable type instances are not converted to null-value logic:
         getVds().setpending_vcpus_count(
                 getVds().getpending_vcpus_count() + getParameters().getVm().getnum_of_cpus());
         getVds().setpending_vmem_size(

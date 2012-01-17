@@ -838,18 +838,12 @@ public class VdsBrokerObjectsBuilder {
 
     private static VMStatus convertToVmStatus(String statusName) {
         VMStatus status = VMStatus.Unassigned;
-        // VB & C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (statusName)
-        // ORIGINAL LINE: case "Running":
         if (StringHelper.EqOp(statusName, "Running") || StringHelper.EqOp(statusName, "Unknown")) {
             status = VMStatus.Up;
         }
-        // ORIGINAL LINE: case "Migration Source":
         else if (StringHelper.EqOp(statusName, "Migration Source")) {
             status = VMStatus.MigratingFrom;
         }
-        // ORIGINAL LINE: case "Migration Destination":
         else if (StringHelper.EqOp(statusName, "Migration Destination")) {
             status = VMStatus.MigratingTo;
         } else {
@@ -1070,10 +1064,6 @@ public class VdsBrokerObjectsBuilder {
 
                                 // set the management ip
                                 if (StringHelper.EqOp(iface.getNetworkName(), NetworkUtils.EngineNetwork)) {
-                                    // VB & C# TO JAVA CONVERTER TODO TASK:
-                                    // Bitwise operations involving nullable
-                                    // type instances are not converted to
-                                    // null-value logic:
                                     iface.setType(iface.getType() | VdsInterfaceType.Management.getValue());
                                 }
                                 iface.setSubnet(net.getsubnet());

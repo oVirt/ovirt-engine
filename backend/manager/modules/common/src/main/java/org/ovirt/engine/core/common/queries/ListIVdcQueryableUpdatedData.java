@@ -15,8 +15,6 @@ import java.util.Collection;
 public class ListIVdcQueryableUpdatedData extends IRegisterQueryUpdatedData {
     private static final long serialVersionUID = -2939208206199375205L;
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     // @XmlElement(name="Added")
     private java.util.Map<Object, IVdcQueryable> privateAdded;
 
@@ -28,8 +26,6 @@ public class ListIVdcQueryableUpdatedData extends IRegisterQueryUpdatedData {
         privateAdded = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     // @XmlElement(name="Removed")
     private Collection<Object> privateRemoved;
 
@@ -41,8 +37,6 @@ public class ListIVdcQueryableUpdatedData extends IRegisterQueryUpdatedData {
         privateRemoved = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     // @XmlElement(name="Updated")
     private java.util.Map<Object, IVdcQueryable> privateUpdated;
 

@@ -13,13 +13,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.LinkedList;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VmTemplateImportExportParameters")
 public class VmTemplateImportExportParameters extends VmTemplateParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = -3811237640112907464L;
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "StorageDomainId")
     private Guid privateStorageDomainId = new Guid();
 
@@ -31,8 +28,6 @@ public class VmTemplateImportExportParameters extends VmTemplateParametersBase i
         privateStorageDomainId = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "StoragePoolId")
     private Guid privateStoragePoolId = new Guid();
 
@@ -44,8 +39,6 @@ public class VmTemplateImportExportParameters extends VmTemplateParametersBase i
         privateStoragePoolId = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "Images")
     private List<DiskImage> privateImages;
 

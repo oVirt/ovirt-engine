@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetTagByTagNameParametersBase")
 public class GetTagByTagNameParametersBase extends VdcQueryParametersBase {
@@ -15,8 +14,6 @@ public class GetTagByTagNameParametersBase extends VdcQueryParametersBase {
         _tagName = tagName;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "TagName")
     private String _tagName;
 

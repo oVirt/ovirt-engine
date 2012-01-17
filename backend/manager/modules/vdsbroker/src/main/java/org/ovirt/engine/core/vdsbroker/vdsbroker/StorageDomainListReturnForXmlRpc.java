@@ -9,8 +9,6 @@ public final class StorageDomainListReturnForXmlRpc extends StatusReturnForXmlRp
 
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("domlist")]
     public String[] mStorageDomainList;
 

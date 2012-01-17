@@ -1016,17 +1016,10 @@ public class VdsUpdateRunTimeInfo {
                             // paused
                             AuditLogType logType = AuditLogType.UNASSIGNED;
                             AuditLogableBase logable = new AuditLogableBase(_vds.getvds_id(), vmToUpdate.getvm_guid());
-                            // VB & C# TO JAVA CONVERTER NOTE: The following
-                            // 'switch' operated on a string member and was
-                            // converted to Java 'if-else' logic:
-                            // switch (runningVm.ExitMessage)
-                            // ORIGINAL LINE: case "NOERR":
-
                             VmPauseStatus pauseStatus = runningVm.getPauseStatus();
                             if (pauseStatus.equals(VmPauseStatus.NOERR) || pauseStatus.equals(VmPauseStatus.NONE)) {
                                 // user requested pause, no log needed
                             } else
-                            // ORIGINAL LINE: case "ENOSPC":
                             if (pauseStatus == VmPauseStatus.ENOSPC) {
                                 logType = AuditLogType.VM_PAUSED_ENOSPC;
                             } else if (pauseStatus == VmPauseStatus.EIO) {

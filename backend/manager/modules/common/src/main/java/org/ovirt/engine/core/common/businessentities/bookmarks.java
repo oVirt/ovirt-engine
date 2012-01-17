@@ -133,7 +133,6 @@ public class bookmarks extends IVdcQueryable implements INotifyPropertyChanged, 
         return _bookmarkProperties;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Events are not available in Java:
     // public event PropertyChangedEventHandler PropertyChanged;
 
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {

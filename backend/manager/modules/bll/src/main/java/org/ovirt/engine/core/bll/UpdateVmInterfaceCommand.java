@@ -24,7 +24,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @CustomLogFields({ @CustomLogField("NetworkName"), @CustomLogField("InterfaceName") })
 public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 

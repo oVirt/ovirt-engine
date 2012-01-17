@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-//C# TO JAVA CONVERTER TODO TASK: The interface type was changed to the closest equivalent Java type, but the methods implemented will need adjustment:
 public class VmTemplateComparerByDiskSize implements
         java.util.Comparator<VmTemplate>, Serializable {
     private static final long serialVersionUID = -1620249078971769528L;

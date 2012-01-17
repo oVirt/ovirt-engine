@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "MoveOrCopyParameters")
 public class MoveOrCopyParameters extends StorageDomainParametersBase implements java.io.Serializable {
@@ -21,8 +20,6 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
         setForceOverride(false);
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "ContainerId")
     private Guid privateContainerId = new Guid();
 
@@ -34,8 +31,6 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
         privateContainerId = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "CopyCollapse")
     private boolean privateCopyCollapse;
 
@@ -66,8 +61,6 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
         privateDiskInfoList = (value != null) ? new java.util.HashMap<String, DiskImageBase>(value.asMap()) : null;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "TemplateMustExists")
     private boolean privateTemplateMustExists;
 
@@ -79,8 +72,6 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
         privateTemplateMustExists = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "ForceOverride")
     private boolean privateForceOverride;
 

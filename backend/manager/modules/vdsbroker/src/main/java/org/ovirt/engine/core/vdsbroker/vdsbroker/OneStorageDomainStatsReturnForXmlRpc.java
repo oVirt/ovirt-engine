@@ -10,8 +10,6 @@ public final class OneStorageDomainStatsReturnForXmlRpc extends StatusReturnForX
     private static final String STATS = "stats";
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("stats")]
     public XmlRpcStruct mStorageStats;
 

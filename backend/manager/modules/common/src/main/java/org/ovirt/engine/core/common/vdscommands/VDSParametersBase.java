@@ -47,8 +47,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
         ExtendStorageDomainVDSCommandParameters.class })
 @XmlAccessorType(XmlAccessType.NONE)
 public class VDSParametersBase {
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     private boolean _runAsync = true;
 

@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "CanUpdateFieldGenericParameters")
 public class CanUpdateFieldGenericParameters extends VdcQueryParametersBase {
@@ -17,8 +16,6 @@ public class CanUpdateFieldGenericParameters extends VdcQueryParametersBase {
         _status = status;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private Object _fieldContainer;
 
@@ -26,8 +23,6 @@ public class CanUpdateFieldGenericParameters extends VdcQueryParametersBase {
         return _fieldContainer;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private Enum<?> _status;
 
@@ -35,8 +30,6 @@ public class CanUpdateFieldGenericParameters extends VdcQueryParametersBase {
         return _status;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private String _fieldName;
 

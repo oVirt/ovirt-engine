@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "CopyImageVDSCommandParameters")
 public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
@@ -29,8 +28,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         setCompatibilityVersion(compatibilityVersion);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "dstImageGroupId")
     private Guid privatedstImageGroupId = new Guid();
 
@@ -42,8 +39,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privatedstImageGroupId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "VmId")
     private Guid privateVmId = new Guid();
 
@@ -55,8 +50,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateVmId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "DstImageId")
     private Guid privateDstImageId = new Guid();
 
@@ -68,8 +61,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateDstImageId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "ImageDescription")
     private String privateImageDescription;
 
@@ -81,8 +72,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateImageDescription = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private Guid privateDstStorageDomainId = new Guid();
 
@@ -94,8 +83,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateDstStorageDomainId = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private CopyVolumeType privateCopyVolumeType = CopyVolumeType.forValue(0);
 
@@ -107,8 +94,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateCopyVolumeType = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private VolumeFormat privateVolumeFormat = VolumeFormat.forValue(0);
 
@@ -120,8 +105,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateVolumeFormat = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private VolumeType privatePreallocate = VolumeType.forValue(0);
 
@@ -133,8 +116,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privatePreallocate = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private boolean privatePostZero;
 
@@ -146,8 +127,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privatePostZero = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     private boolean privateForce;
 

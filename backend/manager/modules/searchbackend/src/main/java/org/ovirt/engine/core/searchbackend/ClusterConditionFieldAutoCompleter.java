@@ -28,23 +28,13 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         IAutoCompleter retval;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        {
-            retval = new StringConditionRelationAutoCompleter();
-        }
-
+        retval = new StringConditionRelationAutoCompleter();
         return retval;
     }
 
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a
-        // string member and was converted to Java 'if-else' logic:
-        // switch (fieldName)
-        // ORIGINAL LINE: case "INITIALIZED":
         if (StringHelper.EqOp(fieldName, "INITIALIZED")) {
             retval = new BitValueAutoCompleter();
         } else {

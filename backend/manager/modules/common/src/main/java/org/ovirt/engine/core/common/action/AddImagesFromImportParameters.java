@@ -13,13 +13,10 @@ import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "AddImagesFromImportParameters")
 public class AddImagesFromImportParameters extends AddImageFromImportParameters {
     private static final long serialVersionUID = -5062837812098816810L;
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "BaseID")
     private Guid privateBaseID = new Guid();
 
@@ -31,8 +28,6 @@ public class AddImagesFromImportParameters extends AddImageFromImportParameters 
         privateBaseID = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement
     private java.util.HashMap<String, Guid> privateBaseImageIDs;
 

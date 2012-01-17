@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "event_subscriber_notification_methods")
 public class event_subscriber_notification_methods implements Serializable {
@@ -25,8 +24,6 @@ public class event_subscriber_notification_methods implements Serializable {
 
     private Guid subscriber_idField = new Guid();
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public Guid getsubscriber_id() {
         return this.subscriber_idField;
@@ -38,8 +35,6 @@ public class event_subscriber_notification_methods implements Serializable {
 
     private String event_up_nameField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getevent_up_name() {
         return this.event_up_nameField;
@@ -51,8 +46,6 @@ public class event_subscriber_notification_methods implements Serializable {
 
     private String method_typeField;
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement
     public String getmethod_type() {
         return this.method_typeField;

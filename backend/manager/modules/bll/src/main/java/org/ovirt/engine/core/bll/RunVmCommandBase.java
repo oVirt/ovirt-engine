@@ -106,9 +106,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     public static boolean hasMemoryToRunVM(VDS curVds, VM vm) {
         boolean retVal = false;
         if (curVds.getmem_commited() != null && curVds.getphysical_mem_mb() != null && curVds.getreserved_mem() != null) {
-            // VB & C# TO JAVA CONVERTER TODO TASK: Arithmetic operations
-            // involving nullable type instances are not converted to null-value
-            // logic:
             double vdsCurrentMem =
                     curVds.getmem_commited() + curVds.getpending_vmem_size() + curVds.getguest_overhead() + curVds
                             .getreserved_mem() + vm.getMinAllocatedMem();
@@ -145,9 +142,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 pending_vm_count = _vds_pending_vm_count.get(curVds.getvds_id());
             }
 
-            // VB & C# TO JAVA CONVERTER TODO TASK: Arithmetic operations
-            // involving nullable type instances are not converted to null-value
-            // logic:
             if ((curVds.getvm_count() + pending_vm_count + 1) > Config
                     .<Integer> GetValue(ConfigValues.PowerClientMaxNumberOfConcurrentVMs)) {
                 log.infoFormat(

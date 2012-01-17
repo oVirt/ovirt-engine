@@ -8,13 +8,10 @@ import javax.xml.bind.annotation.XmlType;
 
 import java.util.ArrayList;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "AddSANStorageDomainParameters")
 public class AddSANStorageDomainParameters extends StorageDomainManagementParameter {
     private static final long serialVersionUID = 6386931158747982426L;
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "LunIdsJport")
     private java.util.ArrayList<String> privateLunIds;
 

@@ -10,12 +10,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import java.util.List;
 
-//VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "ConnectStorageServerVDSCommandParameters")
 public class ConnectStorageServerVDSCommandParameters extends GetStorageConnectionsListVDSCommandParameters {
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "StorageType")
     private StorageType privateStorageType = StorageType.forValue(0);
 
@@ -27,8 +24,6 @@ public class ConnectStorageServerVDSCommandParameters extends GetStorageConnecti
         privateStorageType = value;
     }
 
-    // VB & C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond
-    // to .NET attributes:
     @XmlElement(name = "ConnectionList")
     private List<storage_server_connections> privateConnectionList;
 

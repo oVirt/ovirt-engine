@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "SPMTaskGuidBaseVDSCommandParameters")
 public class SPMTaskGuidBaseVDSCommandParameters extends IrsBaseVDSCommandParameters {
@@ -15,8 +14,6 @@ public class SPMTaskGuidBaseVDSCommandParameters extends IrsBaseVDSCommandParame
         setTaskId(taskId);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "TaskId")
     private Guid privateTaskId = new Guid();
 

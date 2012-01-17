@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "GetImageDomainsListVDSCommandParameters")
 public class GetImageDomainsListVDSCommandParameters extends IrsBaseVDSCommandParameters {
@@ -15,8 +14,6 @@ public class GetImageDomainsListVDSCommandParameters extends IrsBaseVDSCommandPa
         setImageGroupId(imageGroupId);
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "ImageGroupId")
     private Guid privateImageGroupId = new Guid();
 

@@ -95,11 +95,6 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
                     VDS vds = null;
                     try {
                         vds = DbFacade.getInstance().getVdsDAO().get(vdsManager.getVdsId());
-                        // VB & C# TO JAVA CONVERTER TODO TASK:
-                        // Arithmetic operations involving nullable type
-                        // instances are not converted to null-value
-                        // logic:
-
                         vds.setvm_count(vds.getvm_count() + 1);
                         vds.setpending_vcpus_count(vds.getpending_vcpus_count() + vm.getnum_of_cpus());
                         vds.setpending_vmem_size(vds.getpending_vmem_size() + vm.getMinAllocatedMem());

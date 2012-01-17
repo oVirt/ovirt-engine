@@ -14,7 +14,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.StringHelper;
 
-//C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "storage_server_connections")
 @Entity
@@ -43,8 +42,6 @@ public class storage_server_connections implements Serializable {
         this.portal = portal;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "connection")
     @Column(name = "connection", length = 250, nullable = false)
     private String connection;
@@ -57,8 +54,6 @@ public class storage_server_connections implements Serializable {
         this.connection = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "id")
     @Id
     @Column(name = "id", length = 50)
@@ -72,8 +67,6 @@ public class storage_server_connections implements Serializable {
         this.id = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     // TODO this field needs to be made unique in the database
     @XmlElement(name = "iqn")
     @Column(name = "iqn", length = 128)
@@ -87,8 +80,6 @@ public class storage_server_connections implements Serializable {
         this.iqn = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "port")
     @Column(name = "port", length = 50)
     private String port;
@@ -101,8 +92,6 @@ public class storage_server_connections implements Serializable {
         this.port = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "portal")
     @Column(name = "portal", length = 50)
     private String portal;
@@ -115,8 +104,6 @@ public class storage_server_connections implements Serializable {
         this.portal = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "password")
     @Column(name = "password", length = 50)
     private String password;
@@ -129,8 +116,6 @@ public class storage_server_connections implements Serializable {
         this.password = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "storage_type")
     @Column(name = "storage_type", nullable = false)
     @Enumerated
@@ -144,8 +129,6 @@ public class storage_server_connections implements Serializable {
         this.storageType = value;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to
-    // .NET attributes:
     @XmlElement(name = "user_name")
     @Column(name = "user_name", length = 50)
     private String username;
