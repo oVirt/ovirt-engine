@@ -1016,6 +1016,28 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
+     * Use for call chaining of validation commands, so that their result will be validated and kept in the messages if
+     * the validation had failed.<br>
+     * <br>
+     * <b>Example:</b>
+     *
+     * <pre>
+     * boolean isValid = validate(SomeValidator.validateSomething(param1, param2, ...));
+     * </pre>
+     *
+     * @param validationResult
+     *            The validation result from the inline call to validate.
+     * @return <code>true</code> if the validation was successful, and <code>false</code> if it wasn't.
+     */
+    protected boolean validate(ValidationResult validationResult) {
+        if (!validationResult.isValid()) {
+            addCanDoActionMessage(validationResult.getMessage());
+        }
+
+        return validationResult.isValid();
+    }
+
+    /**
      * Add a message to the {@link CommandBase#canDoAction()}'s return value.
      * This return value will be sent to the client for the detailed information
      * of why the action can't be performed.
