@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -57,9 +58,11 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
         }
 
         // remove from db
-        DbFacade.getInstance().getVmNetworkInterfaceDAO().remove(getParameters().getInterfaceId());
-        DbFacade.getInstance().getVmNetworkStatisticsDAO().remove(getParameters().getInterfaceId());
-
+        DbFacade dbFacade = DbFacade.getInstance();
+        dbFacade.getVmNetworkInterfaceDAO().remove(getParameters().getInterfaceId());
+        dbFacade.getVmNetworkStatisticsDAO().remove(getParameters().getInterfaceId());
+        dbFacade.getVmDeviceDAO()
+                .remove(new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmId()));
         setSucceeded(true);
     }
 
