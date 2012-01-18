@@ -7,6 +7,8 @@ import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
@@ -59,13 +62,25 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
 
         getParameters().getInterface().setId(Guid.NewGuid());
         getParameters().getInterface().setVmId(getParameters().getVmId());
-        DbFacade.getInstance()
+        DbFacade dbFacade = DbFacade.getInstance();
+        dbFacade
                 .getVmNetworkInterfaceDAO()
                 .save(getParameters().getInterface());
-        DbFacade.getInstance()
+        dbFacade
                 .getVmNetworkStatisticsDAO()
                 .save(getParameters().getInterface().getStatistics());
-
+        VmDevice iface =
+                new VmDevice(new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmId()),
+                        VmDeviceType.getName(VmDeviceType.INTERFACE),
+                        VmDeviceType.getName(VmDeviceType.BRIDGE),
+                        "",
+                        0,
+                        "",
+                        true,
+                        false,
+                        false,
+                        false);
+        dbFacade.getVmDeviceDAO().save(iface);
         setSucceeded(true);
     }
 
