@@ -13,7 +13,7 @@ import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
-import org.ovirt.engine.core.common.action.MergeSnapshotParamenters;
+import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -60,11 +60,11 @@ public class BackendSnapshotsResourceTest
     @Test
     public void testRemove() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(2);
-        setUpActionExpectations(VdcActionType.MergeSnapshot,
-                                MergeSnapshotParamenters.class,
-                                new String[] { "SourceVmSnapshotId", "DestVmSnapshotId", "VmId" },
-                                new Object[] { SNAPSHOT_IDS[1], SNAPSHOT_IDS[2], VM_ID },
+        setUpGetEntityExpectations(1);
+        setUpActionExpectations(VdcActionType.RemoveSnapshot,
+                                RemoveSnapshotParameters.class,
+                                new String[] { "SnapshotId", "VmId" },
+                                new Object[] { SNAPSHOT_IDS[1], VM_ID },
                                 true,
                                 true);
         verifyRemove(collection.remove(SNAPSHOT_IDS[1].toString()));
@@ -81,11 +81,11 @@ public class BackendSnapshotsResourceTest
     }
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations(2);
-        setUriInfo(setUpActionExpectations(VdcActionType.MergeSnapshot,
-                                           MergeSnapshotParamenters.class,
-                                           new String[] { "SourceVmSnapshotId", "DestVmSnapshotId", "VmId" },
-                                           new Object[] { SNAPSHOT_IDS[1], SNAPSHOT_IDS[2], VM_ID },
+        setUpGetEntityExpectations(1);
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveSnapshot,
+                                           RemoveSnapshotParameters.class,
+                                           new String[] { "SnapshotId", "VmId"},
+                                           new Object[] { SNAPSHOT_IDS[1], VM_ID },
                                            canDo,
                                            success));
         try {

@@ -18,7 +18,7 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.SnapshotResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
-import org.ovirt.engine.core.common.action.MergeSnapshotParamenters;
+import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
@@ -56,34 +56,9 @@ public class BackendSnapshotsResource
 
     @Override
     public Response performRemove(String id) {
-        for (DiskImage diskImage : getDisks()) {
-            Map<NGuid, NGuid> parents = getParentage(diskImage);
-            for (DiskImage snapshotImage : diskImage.getSnapshots()) {
-                Guid sourceVmSnapshotId = new Guid(snapshotImage.getvm_snapshot_id().getUuid());
-                if (id.equals(sourceVmSnapshotId.toString())) {
-                    NGuid dest = findSnapshotParent(sourceVmSnapshotId, parents);
-                    if (dest != null) {
-                        return performAction(VdcActionType.MergeSnapshot,
-                                             new MergeSnapshotParamenters(sourceVmSnapshotId,
-                                                                          dest,
-                                                                          parentId));
-                    }
-                    break;
-                }
-            }
-        }
-        notFound();
-        return null;
+        return performAction(VdcActionType.RemoveSnapshot,
+                new RemoveSnapshotParameters(asGuid(id), parentId));
     }
-
-    private NGuid findSnapshotParent(Guid snapshotId, Map<NGuid, NGuid> parents) {
-        for (NGuid parentId : parents.keySet()) {
-            if (parents.get(parentId).equals(snapshotId)) {
-                return parentId;
-            }
-        }
-        return null;
-     }
 
     @Override
     @SingleEntityResource
