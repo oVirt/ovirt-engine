@@ -1,14 +1,28 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.DiskType;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -23,10 +37,6 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 @CustomLogFields({ @CustomLogField("DiskName") })
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -255,10 +265,23 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
         parameters.setParentParemeters(getParameters());
         VdcReturnValueBase tmpRetValue = Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch,
                 parameters);
-
         getReturnValue().getTaskIdList().addAll(tmpRetValue.getInternalTaskIdList());
         getReturnValue().setActionReturnValue(tmpRetValue.getActionReturnValue());
         getReturnValue().setFault(tmpRetValue.getFault());
+        if (tmpRetValue.getSucceeded()) {
+            VmDevice disk =
+                    new VmDevice(new VmDeviceId(getParameters().getVmSnapshotId(), getVmId()),
+                            VmDeviceType.getName(VmDeviceType.DISK),
+                            VmDeviceType.getName(VmDeviceType.DISK),
+                            "",
+                            0,
+                            "",
+                            true,
+                            false,
+                            false,
+                            false);
+            DbFacade.getInstance().getVmDeviceDAO().save(disk);
+        }
 
         setSucceeded(tmpRetValue.getSucceeded());
     }
