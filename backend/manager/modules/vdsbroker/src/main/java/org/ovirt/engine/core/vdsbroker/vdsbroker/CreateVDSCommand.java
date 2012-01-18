@@ -14,12 +14,14 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
@@ -271,8 +273,17 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     }
 
     private void buildVmBootSequence() {
-        mCreateInfo.add(VdsProperties.Boot, mVm.getboot_sequence().toString()
-                .toLowerCase());
+        // get device list for the VM
+        List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmId(mVm.getvm_guid());
+        String bootSeqInDB = VmDeviceCommonUtils.getBootSequence(devices).toString().toLowerCase();
+        String bootSeqInBE = mVm.getboot_sequence().toString().toLowerCase();
+        // TODO : find another way to distinguish run vs. run-once
+        if (bootSeqInBE.equals(bootSeqInDB))
+            mCreateInfo.add(VdsProperties.Boot, bootSeqInDB);
+        else
+            // run once
+            mCreateInfo.add(VdsProperties.Boot, bootSeqInBE);
+
     }
 
     private void setVmBootOptions() {
