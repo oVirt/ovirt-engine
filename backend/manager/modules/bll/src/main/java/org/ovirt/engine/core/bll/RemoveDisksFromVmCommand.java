@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -80,6 +81,9 @@ public class RemoveDisksFromVmCommand<T extends RemoveDisksFromVmParameters> ext
                     if (!vdcReturnValue.getSucceeded()) {
                         setSucceeded(false);
                         break;
+                    }
+                    if (vdcReturnValue.getSucceeded()) {
+                        DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(imageId, getVmId()));
                     }
                     setSucceeded(vdcReturnValue.getSucceeded());
                 }
