@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
@@ -441,6 +442,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                     (getVm().getstatus() == VMStatus.ImageLocked ? "a locked image" : "an illegal image"));
             setActionReturnValue(getVm().getstatus());
             return false;
+        } else if (!getSnapshotsValidator().vmNotDuringSnapshot(getVmId()).isValid()) {
+            log.warnFormat("ResourceManager::{0}::VM {1} is during snapshot",
+                    getClass().getName(),
+                    getVmId().toString());
+            return false;
         } else {
             HandleMemoryAdjustments();
             VmHandler.updateDisksFromDb(getVm());
@@ -598,11 +604,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     }
 
     public boolean CanRunVm() {
-        return CanRunVm(getVm(), getReturnValue().getCanDoActionMessages(), getParameters(), getVdsSelector());
+        return CanRunVm(getVm(),
+                getReturnValue().getCanDoActionMessages(),
+                getParameters(),
+                getVdsSelector(),
+                getSnapshotsValidator());
     }
 
     public static boolean CanRunVm(VM vm, java.util.ArrayList<String> message, RunVmParams runParams,
-                                   VdsSelector vdsSelector) {
+                                   VdsSelector vdsSelector, SnapshotsValidator snapshotsValidator) {
         boolean retValue = true;
 
         List<VmPropertiesUtils.ValidationError> validationErrors = null;
@@ -659,9 +669,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                         retValue = false;
                     } else if (vmImages.size() > 0) {
                         Guid storageDomainId = vmImages.get(0).getstorage_id().getValue();
+                        ValidationResult vmDuringSnapshotResult =
+                                snapshotsValidator.vmNotDuringSnapshot(vm.getId());
+                        if (!vmDuringSnapshotResult.isValid()) {
+                            message.add(vmDuringSnapshotResult.getMessage().name());
+                            retValue = false;
+                        }
+
                         // check isValid, storageDomain and diskSpace only
                         // if VM is not HA VM
-                        if (!ImagesHandler
+                        if (retValue && !ImagesHandler
                                     .PerformImagesChecks(vm.getId(), message, vm.getstorage_pool_id(),
                                             storageDomainId, !vm.getauto_startup(), true, false, false, false, false,
                                             !vm.getauto_startup() && !storageDomainId.equals(Guid.Empty)

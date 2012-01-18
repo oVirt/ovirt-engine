@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.spy;
@@ -23,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
@@ -45,6 +47,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskImageDAO;
@@ -295,7 +298,8 @@ public class RunVmCommandTest {
         Assert.assertFalse(RunVmCommand.CanRunVm(vm,
                 messages,
                 new RunVmParams(),
-                new VdsSelector(vm, new NGuid(), true)));
+                new VdsSelector(vm, new NGuid(), true),
+                mockSuccessfulSnapshotValidator()));
         Assert.assertTrue(messages.contains("VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK"));
     }
 
@@ -314,8 +318,31 @@ public class RunVmCommandTest {
         Assert.assertFalse(RunVmCommand.CanRunVm(vm,
                 messages,
                 new RunVmParams(),
-                new VdsSelector(vm, new NGuid(), true)));
+                new VdsSelector(vm, new NGuid(), true),
+                mockSuccessfulSnapshotValidator()));
         Assert.assertTrue(messages.contains("ACTION_TYPE_FAILED_VM_IS_RUNNING"));
+    }
+
+    @Test
+    public void canRunVmFailVmDuringSnapshot() {
+        final ArrayList<DiskImage> disks = new ArrayList<DiskImage>();
+        final DiskImage diskImage = new DiskImage();
+        diskImage.setstorage_id(new Guid());
+        disks.add(diskImage);
+        final VmDevice vmDevice = new VmDevice();
+        vmDevice.setIsPlugged(true);
+        initMocks(disks, new HashMap<VDSCommandType, Boolean>(), Collections.singletonList(vmDevice));
+        final VM vm = new VM();
+        final ArrayList<String> messages = new ArrayList<String>();
+        SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
+        when(snapshotsValidator.vmNotDuringSnapshot(vm.getId()))
+                .thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT));
+        Assert.assertFalse(RunVmCommand.CanRunVm(vm,
+                messages,
+                new RunVmParams(),
+                new VdsSelector(vm, new NGuid(), true),
+                snapshotsValidator));
+        Assert.assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT.name()));
     }
 
     private void canRunStatelessVmTest(boolean autoStartUp,
@@ -344,7 +371,8 @@ public class RunVmCommandTest {
         final ArrayList<String> messages = new ArrayList<String>();
         final RunVmParams runParams = new RunVmParams();
         runParams.setRunAsStateless(isStatelessParam);
-        boolean canRunVm = RunVmCommand.CanRunVm(vm, messages, runParams, vdsSelector);
+        boolean canRunVm =
+                RunVmCommand.CanRunVm(vm, messages, runParams, vdsSelector, mockSuccessfulSnapshotValidator());
 
         if (shouldPass) {
             Assert.assertTrue(canRunVm);
@@ -508,4 +536,9 @@ public class RunVmCommandTest {
         Mockito.when(ImagesHandler.isVmInPreview(disks)).thenReturn(false);
     }
 
+    private SnapshotsValidator mockSuccessfulSnapshotValidator() {
+        SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
+        when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(new ValidationResult());
+        return snapshotsValidator;
+    }
 }

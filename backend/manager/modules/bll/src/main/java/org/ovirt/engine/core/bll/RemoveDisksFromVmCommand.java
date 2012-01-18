@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveDisksFromVmParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
@@ -39,6 +40,9 @@ public class RemoveDisksFromVmCommand<T extends RemoveDisksFromVmParameters> ext
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
+
+        retValue = retValue && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()));
+
         for (Guid imageId : getParameters().getImageIds()) {
             DiskImage disk = DbFacade.getInstance().getDiskImageDAO().get(imageId);
             if (disk == null) {
@@ -47,6 +51,7 @@ public class RemoveDisksFromVmCommand<T extends RemoveDisksFromVmParameters> ext
                 break;
             }
             retValue = retValue
+                    && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
                     && ImagesHandler.PerformImagesChecks(getVmId(), getReturnValue().getCanDoActionMessages(), getVm()
                             .getstorage_pool_id(), disk.getstorage_id().getValue(), false, true, false, false, true,
                             true, true);

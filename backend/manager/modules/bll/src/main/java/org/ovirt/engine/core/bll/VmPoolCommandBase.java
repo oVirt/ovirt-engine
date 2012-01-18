@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
@@ -131,11 +132,18 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
         // check vm images:
         else {
-            List<DiskImage> vmImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId);
-            Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_id().getValue() : Guid.Empty;
-            returnValue = ImagesHandler.PerformImagesChecks(vmId, messages,
-                    DbFacade.getInstance().getVmDAO().getById(vmId).getstorage_pool_id(), storageDomainId, false, true,
-                    false, false, true, false, !storageDomainId.equals(Guid.Empty));
+            ValidationResult vmDuringSnapshotResult =
+                    new SnapshotsValidator().vmNotDuringSnapshot(vmId);
+            if (!vmDuringSnapshotResult.isValid()) {
+                messages.add(vmDuringSnapshotResult.getMessage().name());
+                returnValue = false;
+            } else {
+                List<DiskImage> vmImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId);
+                Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_id().getValue() : Guid.Empty;
+                returnValue = ImagesHandler.PerformImagesChecks(vmId, messages,
+                        DbFacade.getInstance().getVmDAO().getById(vmId).getstorage_pool_id(), storageDomainId, false, true,
+                        false, false, true, false, !storageDomainId.equals(Guid.Empty));
+            }
 
             if (!returnValue) {
                 if (messages != null) {
@@ -156,7 +164,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         VdsSelector vdsSelector = new VdsSelector(vm,
                 ((runVmParams.getDestinationVdsId()) != null) ? runVmParams.getDestinationVdsId()
                         : vm.getdedicated_vm_for_vds(), true);
-        return RunVmCommand.CanRunVm(vm, messages, runVmParams, vdsSelector);
+        return RunVmCommand.CanRunVm(vm, messages, runVmParams, vdsSelector, new SnapshotsValidator());
     }
 
     @Override

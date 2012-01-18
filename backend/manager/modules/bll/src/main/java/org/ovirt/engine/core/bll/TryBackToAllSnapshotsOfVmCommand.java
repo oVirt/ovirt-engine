@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
@@ -104,8 +105,12 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         // a.Value).FirstOrDefault();
         DiskImage vmDisk = LinqUtils.first(getVm().getDiskMap().values());
         boolean result = true;
+
+        result = result && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()));
+
         if (vmDisk != null) {
-            result = ImagesHandler.PerformImagesChecks(getVmId(), getReturnValue().getCanDoActionMessages(), getVm()
+            result = result &&
+                    ImagesHandler.PerformImagesChecks(getVmId(), getReturnValue().getCanDoActionMessages(), getVm()
                     .getstorage_pool_id(), vmDisk.getstorage_id().getValue(), true, true, false, false, true, true,
                     true);
         }

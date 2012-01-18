@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
@@ -52,6 +53,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     private VdsSelector privateVdsSelector;
     protected boolean _isRerun = false;
     protected VDS _destinationVds;
+    private SnapshotsValidator snapshotsValidator;
 
     protected RunVmCommandBase(Guid commandId) {
         super(commandId);
@@ -69,6 +71,14 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     protected void setVdsSelector(VdsSelector value) {
         privateVdsSelector = value;
+    }
+
+    public SnapshotsValidator getSnapshotsValidator() {
+        return snapshotsValidator;
+    }
+
+    public void setSnapshotsValidator(SnapshotsValidator snapshotsValidator) {
+        this.snapshotsValidator = snapshotsValidator;
     }
 
     /**

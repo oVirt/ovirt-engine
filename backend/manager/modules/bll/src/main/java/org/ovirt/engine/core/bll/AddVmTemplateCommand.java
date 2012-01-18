@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -38,7 +39,6 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-
 
 //TODO: revisit - need to be able to specify where the disks will go for the template.
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -147,6 +147,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             setStorageDomainId(getParameters().getDestinationStorageDomainId());
         } else {
             setStorageDomainId(srcStorageDomainId);
+        }
+
+        if (!validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))) {
+            return false;
         }
 
         if (!ImagesHandler.PerformImagesChecks(getParameters().getMasterVm().getId(),

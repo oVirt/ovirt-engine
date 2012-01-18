@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -125,6 +128,13 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
             if (vmDynamicFromDb.getstatus() != VMStatus.Down && vmDynamicFromDb.getstatus() != VMStatus.Suspended) {
                 log.infoFormat("Vm Running failed - vm {0}:{1} already running, status {2}", guid, vmName, vmStatus);
                 getVDSReturnValue().setReturnValue(vmDynamicFromDb.getstatus());
+                return false;
+            }
+
+            List<Snapshot> snapshots = DbFacade.getInstance().getSnapshotDao().getForVm(guid);
+
+            if (!snapshots.isEmpty() && SnapshotStatus.LOCKED == snapshots.get(snapshots.size() - 1).getStatus()) {
+                log.infoFormat("VM Running failed - VM {0}:{1} - cannot run VM when VM during Snapshot", guid, vmName);
                 return false;
             }
         }

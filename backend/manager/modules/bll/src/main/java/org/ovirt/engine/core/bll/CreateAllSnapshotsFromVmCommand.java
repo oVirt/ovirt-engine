@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
@@ -105,8 +106,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     protected boolean canDoAction() {
         boolean result = true;
         if (getDisksList().size() > 0) {
-            result =
-                    ImagesHandler.PerformImagesChecks(getVmId(),
+            result = validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
+                    && ImagesHandler.PerformImagesChecks(getVmId(),
                             getReturnValue().getCanDoActionMessages(),
                             getVm().getstorage_pool_id(),
                             getDisksList().get(0).getstorage_id().getValue(),

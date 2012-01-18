@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
@@ -89,10 +90,13 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         // Since 'VmId' is overriden, 'Vm' should be retrieved manually.
         setVm(DbFacade.getInstance().getVmDAO().getById(getVmId()));
 
-        getReturnValue().setCanDoAction(
-                ImagesHandler.PerformImagesChecks(getParameters().getVmId(), getReturnValue().getCanDoActionMessages(),
+        getReturnValue().setCanDoAction(validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId())));
+
+        if (!ImagesHandler.PerformImagesChecks(getParameters().getVmId(), getReturnValue().getCanDoActionMessages(),
                         getVm().getstorage_pool_id(), getSourceImages().get(0).getstorage_id().getValue(), true, true,
-                        true, true, true, true, true));
+                        true, true, true, true, true)) {
+            getReturnValue().setCanDoAction(false);
+        }
 
         // check that we are not deleting the template
         if (DbFacade.getInstance().getVmTemplateDAO().get(getSourceImages().get(0).getId()) != null) {

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -194,6 +195,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (retVal) {
             retVal = CheckVmInStorageDomain();
         }
+
+        retVal = retVal && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()));
 
         if (retVal) {
 

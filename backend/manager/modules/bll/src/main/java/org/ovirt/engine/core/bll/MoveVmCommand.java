@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MoveMultipleImageGroupsParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -65,6 +66,9 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         } else {
             setDescription(getVmName());
         }
+
+        retValue = retValue && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()));
+
         // check that vm is down and images are ok
         // not checking storage domain, there is a check in
         // CheckTemplateInStorageDomain later
