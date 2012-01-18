@@ -14,7 +14,7 @@ import random
 import re
 
 SUPPORTED_PLATFORMS = [ "RedHatEnterpriseServer", "Fedora" ]
-HYPERVISOR_PLATFORMS = [ "RedHatEnterpriseVirtualizationHypervisor", "RedHatEnterpriseHypervisor" ]
+HYPERVISOR_PLATFORMS = [ "RedHatEnterpriseVirtualizationHypervisor", "RedHatEnterpriseHypervisor", "oVirtNodeHypervisor" ]
 HYPERVISOR_RELEASE_FILE = '/etc/rhev-hypervisor-release'
 REDHAT_RELEASE_FILE = '/etc/redhat-release'
 vdsm_reg_conf_file = '/etc/vdsm-reg/vdsm-reg.conf'
@@ -105,7 +105,7 @@ def lsb_release():
 def testPlatform():
     ''' testPlatform evaluates the platform version and returns
         0 - platform is eligible for installation
-        1 - platform is RHEV-H
+        1 - platform is ovirt-node
         2 - platform is not eligible for installation
     '''
     fReturn = 0
@@ -123,7 +123,7 @@ def testPlatform():
         elif res in HYPERVISOR_PLATFORMS:
             fReturn = 1
             component = "RHEV_INSTALL"
-            message = "RHEV-H DETECTED"
+            message = "oVirt Node DETECTED"
             logging.debug(message)
             st = "OK"
         elif res not in SUPPORTED_PLATFORMS:
