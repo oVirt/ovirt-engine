@@ -70,19 +70,19 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
         };
         getTable().addColumn(descColumn, "Description");
 
-        getTable().addActionButton(new UiCommandButtonDefinition<vm_pools>("New", false, false) {
+        getTable().addActionButton(new UiCommandButtonDefinition<vm_pools>("New") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<vm_pools>("Edit", false, false) {
+        getTable().addActionButton(new UiCommandButtonDefinition<vm_pools>("Edit") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<vm_pools>("Remove", false, false) {
+        getTable().addActionButton(new UiCommandButtonDefinition<vm_pools>("Remove") {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();

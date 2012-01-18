@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
@@ -32,8 +33,30 @@ public class PoolModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<vm_pools, PoolListModel> getPoolListProvider(ClientGinjector ginjector) {
-        return new MainTabModelProvider<vm_pools, PoolListModel>(ginjector, PoolListModel.class);
+    public MainModelProvider<vm_pools, PoolListModel> getPoolListProvider(ClientGinjector ginjector,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<PoolNewPopupPresenterWidget> poolPopupProvider) {
+        return new MainTabModelProvider<vm_pools, PoolListModel>(ginjector, PoolListModel.class) {
+            @Override
+            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getNewCommand()) {
+                    return poolPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getEditCommand()) {
+                    return poolPopupProvider.get();
+                } else {
+                    return super.getModelPopup(lastExecutedCommand);
+                }
+            }
+
+            @Override
+            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                    return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(lastExecutedCommand);
+                }
+            }
+        };
     }
 
     // Form Detail Models

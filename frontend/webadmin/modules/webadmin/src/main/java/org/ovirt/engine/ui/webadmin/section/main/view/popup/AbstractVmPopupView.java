@@ -19,10 +19,12 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.widget.Align;
+import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelLabelEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelSliderWithTextBoxEditor;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelTextBoxEditor;
@@ -105,6 +107,25 @@ public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel
     @Path(value = "oSType.selectedItem")
     ListModelListBoxEditor<Object> oSTypeEditor;
 
+    // == Pools ==
+    @UiField
+    protected DialogTab poolTab;
+
+    @UiField(provided = true)
+    @Path(value = "poolType.selectedItem")
+    ListModelListBoxEditor<Object> poolTypeEditor;
+
+    @UiField
+    @Path(value = "assignedVms.entity")
+    protected EntityModelLabelEditor assignedVmsEditor;
+
+    @UiField
+    protected SimpleDialogButton addVmsButton;
+
+    @UiField
+    @Path(value = "numOfDesktops.entity")
+    protected EntityModelTextBoxEditor numOfDesktopsEditor;
+
     // ==Windows Prep Tab==
     @UiField
     protected DialogTab windowsSysPrepTab;
@@ -147,7 +168,7 @@ public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel
 
     @UiField(provided = true)
     @Path(value = "dontMigrateVM.entity")
-    EntityModelCheckBoxEditor dontMigrateVMEditor;
+    protected EntityModelCheckBoxEditor dontMigrateVMEditor;
 
     @UiField(provided = true)
     @Ignore
@@ -271,6 +292,7 @@ public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel
 
         // Default is false
         windowsSysPrepTab.setVisible(false);
+        poolTab.setVisible(false);
 
         localize(constants);
         Driver.driver.initialize(this);
@@ -300,6 +322,14 @@ public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel
         });
 
         oSTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+
+        //Pools
+        poolTypeEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((EntityModel) object).getTitle();
+            }
+        });
 
         // Windows Sysprep
         domainEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
@@ -401,6 +431,11 @@ public class AbstractVmPopupView extends AbstractModelBoundPopupView<UnitVmModel
         numOfSocketsEditor.setLabel("CPU Sockets");
         oSTypeEditor.setLabel("Operating System");
         isStatelessEditor.setLabel("Stateless");
+
+        //Pools Tab
+        poolTab.setLabel("Pool");
+        poolTypeEditor.setLabel("Pool Type");
+        assignedVmsEditor.setLabel("Assigned VMs");
 
         // Windows Sysprep Tab
         windowsSysPrepTab.setLabel("Windows Sysprep");

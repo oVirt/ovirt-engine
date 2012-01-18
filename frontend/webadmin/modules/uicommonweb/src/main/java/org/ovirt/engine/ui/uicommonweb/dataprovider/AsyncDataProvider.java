@@ -56,6 +56,7 @@ import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
+import org.ovirt.engine.core.common.queries.IsVmPoolWithSameNameExistsParameters;
 import org.ovirt.engine.core.common.queries.IsVmTemlateWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
@@ -82,10 +83,8 @@ import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 
 @SuppressWarnings("unused")
-public final class AsyncDataProvider
-{
-    public static void GetDomainListViaPublic(AsyncQuery aQuery, boolean filterInternalDomain)
-    {
+public final class AsyncDataProvider {
+    public static void GetDomainListViaPublic(AsyncQuery aQuery, boolean filterInternalDomain) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -99,8 +98,7 @@ public final class AsyncDataProvider
         Frontend.RunPublicQuery(VdcQueryType.GetDomainList, tempVar, aQuery);
     }
 
-    public static void IsBackendAvailable(AsyncQuery aQuery)
-    {
+    public static void IsBackendAvailable(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -113,8 +111,7 @@ public final class AsyncDataProvider
         Frontend.RunPublicQuery(VdcQueryType.GetDomainList, tempVar, aQuery);
     }
 
-    public static void IsCustomPropertiesAvailable(AsyncQuery aQuery, String version)
-    {
+    public static void IsCustomPropertiesAvailable(AsyncQuery aQuery, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -128,8 +125,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetConfigurationValue, tempVar, aQuery);
     }
 
-    public static void GetIsoDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId)
-    {
+    public static void GetIsoDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -154,8 +150,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, getIsoParams, aQuery);
     }
 
-    public static void GetExportDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId)
-    {
+    public static void GetExportDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -177,8 +172,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, getExportParams, aQuery);
     }
 
-    public static void GetIrsImageList(AsyncQuery aQuery, Guid isoDomainId, boolean forceRefresh)
-    {
+    public static void GetIrsImageList(AsyncQuery aQuery, Guid isoDomainId, boolean forceRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -205,8 +199,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetAllIsoImagesList, parameters, aQuery);
     }
 
-    public static void GetFloppyImageList(AsyncQuery aQuery, Guid isoDomainId, boolean forceRefresh)
-    {
+    public static void GetFloppyImageList(AsyncQuery aQuery, Guid isoDomainId, boolean forceRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -233,8 +226,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetAllFloppyImagesList, parameters, aQuery);
     }
 
-    public static void GetClusterById(AsyncQuery aQuery, Guid id)
-    {
+    public static void GetClusterById(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -245,8 +237,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetVdsGroupById, new GetVdsGroupByIdParameters(id), aQuery);
     }
 
-    public static void GetPoolById(AsyncQuery aQuery, Guid poolId)
-    {
+    public static void GetPoolById(AsyncQuery aQuery, Guid poolId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -257,8 +248,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetVmPoolById, new GetVmPoolByIdParameters(poolId), aQuery);
     }
 
-    public static void GetVmById(AsyncQuery aQuery, Guid vmId)
-    {
+    public static void GetVmById(AsyncQuery aQuery, Guid vmId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -269,8 +259,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetVmByVmId, new GetVmByVmIdParameters(vmId), aQuery);
     }
 
-    public static void GetAnyVm(AsyncQuery aQuery, String poolName)
-    {
+    public static void GetAnyVm(AsyncQuery aQuery, String poolName) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -282,8 +271,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM), aQuery);
     }
 
-    public static void GetTimeZoneList(AsyncQuery aQuery)
-    {
+    public static void GetTimeZoneList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -298,8 +286,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetTimeZones, new VdcQueryParametersBase(), aQuery);
     }
 
-    public static void GetDataCenterList(AsyncQuery aQuery)
-    {
+    public static void GetDataCenterList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -316,8 +303,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetMinimalVmMemSize(AsyncQuery aQuery)
-    {
+    public static void GetMinimalVmMemSize(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -330,8 +316,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetMaximalVmMemSize64OS(AsyncQuery aQuery, String version)
-    {
+    public static void GetMaximalVmMemSize64OS(AsyncQuery aQuery, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -345,8 +330,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetConfigurationValue, tempVar, aQuery);
     }
 
-    public static void GetMaximalVmMemSize32OS(AsyncQuery aQuery)
-    {
+    public static void GetMaximalVmMemSize32OS(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -359,8 +343,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetMaxNumOfVmSockets(AsyncQuery aQuery, String version)
-    {
+    public static void GetMaxNumOfVmSockets(AsyncQuery aQuery, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -374,8 +357,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetConfigurationValue, tempVar, aQuery);
     }
 
-    public static void GetMaxNumOfVmCpus(AsyncQuery aQuery, String version)
-    {
+    public static void GetMaxNumOfVmCpus(AsyncQuery aQuery, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -389,8 +371,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetConfigurationValue, tempVar, aQuery);
     }
 
-    public static void GetMaxNumOfCPUsPerSocket(AsyncQuery aQuery, String version)
-    {
+    public static void GetMaxNumOfCPUsPerSocket(AsyncQuery aQuery, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -404,8 +385,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetConfigurationValue, tempVar, aQuery);
     }
 
-    public static void GetClusterList(AsyncQuery aQuery, Guid dataCenterId)
-    {
+    public static void GetClusterList(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -424,8 +404,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetClusterList(AsyncQuery aQuery)
-    {
+    public static void GetClusterList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -442,8 +421,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetAllVdsGroups, new VdcQueryParametersBase(), aQuery);
     }
 
-    public static void GetTemplateDiskList(AsyncQuery aQuery, Guid templateId)
-    {
+    public static void GetTemplateDiskList(AsyncQuery aQuery, Guid templateId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -458,8 +436,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetVmTemplatesDisks, new GetVmTemplatesDisksParameters(templateId), aQuery);
     }
 
-    public static void GetRoundedPriority(AsyncQuery aQuery, int priority)
-    {
+    public static void GetRoundedPriority(AsyncQuery aQuery, int priority) {
         aQuery.setData(new Object[] { priority });
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -491,8 +468,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetTemplateListByDataCenter(AsyncQuery aQuery, Guid dataCenterId)
-    {
+    public static void GetTemplateListByDataCenter(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -525,8 +501,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetTemplateListByStorage(AsyncQuery aQuery, Guid storageId)
-    {
+    public static void GetTemplateListByStorage(AsyncQuery aQuery, Guid storageId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -553,8 +528,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetNumOfMonitorList(AsyncQuery aQuery)
-    {
+    public static void GetNumOfMonitorList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -577,8 +551,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetStorageDomainListByTemplate(AsyncQuery aQuery, Guid templateId)
-    {
+    public static void GetStorageDomainListByTemplate(AsyncQuery aQuery, Guid templateId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -595,8 +568,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetStorageDomainList(AsyncQuery aQuery, Guid dataCenterId)
-    {
+    public static void GetStorageDomainList(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -613,8 +585,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetMaxVmPriority(AsyncQuery aQuery)
-    {
+    public static void GetMaxVmPriority(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -631,8 +602,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetDefaultTimeZone(AsyncQuery aQuery)
-    {
+    public static void GetDefaultTimeZone(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -647,8 +617,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetDefualtTimeZone, new VdcQueryParametersBase(), aQuery);
     }
 
-    public static void GetHostListByCluster(AsyncQuery aQuery, String clusterName)
-    {
+    public static void GetHostListByCluster(AsyncQuery aQuery, String clusterName) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -666,8 +635,7 @@ public final class AsyncDataProvider
                 SearchType.VDS), aQuery);
     }
 
-    public static void GetHostListByDataCenter(AsyncQuery aQuery, String dataCenterName)
-    {
+    public static void GetHostListByDataCenter(AsyncQuery aQuery, String dataCenterName) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -685,8 +653,7 @@ public final class AsyncDataProvider
                 + " sortby name", SearchType.VDS), aQuery);
     }
 
-    public static void GetVmDiskList(AsyncQuery aQuery, Guid vmId, boolean isRefresh)
-    {
+    public static void GetVmDiskList(AsyncQuery aQuery, Guid vmId, boolean isRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -703,66 +670,55 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, params, aQuery);
     }
 
-    public final static class GetSnapshotListQueryResult
-    {
+    public final static class GetSnapshotListQueryResult {
         private Guid privatePreviewingImage = new Guid();
 
-        public Guid getPreviewingImage()
-        {
+        public Guid getPreviewingImage() {
             return privatePreviewingImage;
         }
 
-        private void setPreviewingImage(Guid value)
-        {
+        private void setPreviewingImage(Guid value) {
             privatePreviewingImage = value;
         }
 
         private java.util.ArrayList<DiskImage> privateSnapshots;
 
-        public java.util.ArrayList<DiskImage> getSnapshots()
-        {
+        public java.util.ArrayList<DiskImage> getSnapshots() {
             return privateSnapshots;
         }
 
-        private void setSnapshots(java.util.ArrayList<DiskImage> value)
-        {
+        private void setSnapshots(java.util.ArrayList<DiskImage> value) {
             privateSnapshots = value;
         }
 
         private DiskImage privateDisk;
 
-        public DiskImage getDisk()
-        {
+        public DiskImage getDisk() {
             return privateDisk;
         }
 
-        private void setDisk(DiskImage value)
-        {
+        private void setDisk(DiskImage value) {
             privateDisk = value;
         }
 
         private Guid privateVmId = new Guid();
 
-        public Guid getVmId()
-        {
+        public Guid getVmId() {
             return privateVmId;
         }
 
-        public void setVmId(Guid value)
-        {
+        public void setVmId(Guid value) {
             privateVmId = value;
         }
 
-        public GetSnapshotListQueryResult(Guid previewingImage, java.util.ArrayList<DiskImage> snapshots, DiskImage disk)
-        {
+        public GetSnapshotListQueryResult(Guid previewingImage, java.util.ArrayList<DiskImage> snapshots, DiskImage disk) {
             setPreviewingImage(previewingImage);
             setSnapshots(snapshots);
             setDisk(disk);
         }
     }
 
-    public static void GetSnapshotList(AsyncQuery aQuery, Guid vmId, DiskImage disk)
-    {
+    public static void GetSnapshotList(AsyncQuery aQuery, Guid vmId, DiskImage disk) {
         aQuery.setData(new Object[] { disk });
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -780,8 +736,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetMaxVmMemSize(AsyncQuery aQuery, boolean is64)
-    {
+    public static void GetMaxVmMemSize(AsyncQuery aQuery, boolean is64) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -799,8 +754,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetDomainList(AsyncQuery aQuery, boolean filterInternalDomain)
-    {
+    public static void GetDomainList(AsyncQuery aQuery, boolean filterInternalDomain) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -814,8 +768,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetDomainList, tempVar, aQuery);
     }
 
-    public static void GetRoleList(AsyncQuery aQuery)
-    {
+    public static void GetRoleList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -826,8 +779,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetAllRoles, new MultilevelAdministrationsQueriesParameters(), aQuery);
     }
 
-    public static void GetStorageDomainById(AsyncQuery aQuery, Guid storageDomainId)
-    {
+    public static void GetStorageDomainById(AsyncQuery aQuery, Guid storageDomainId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -840,8 +792,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetDiskPresetList(AsyncQuery aQuery, VmType vmType, StorageType storageType)
-    {
+    public static void GetDiskPresetList(AsyncQuery aQuery, VmType vmType, StorageType storageType) {
         aQuery.setData(new Object[] { vmType, storageType });
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -892,8 +843,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetDiskConfigurationList, new VdcQueryParametersBase(), aQuery);
     }
 
-    public static void GetClusterNetworkList(AsyncQuery aQuery, Guid clusterId)
-    {
+    public static void GetClusterNetworkList(AsyncQuery aQuery, Guid clusterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -908,8 +858,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetAllNetworksByClusterId, new VdsGroupQueryParamenters(clusterId), aQuery);
     }
 
-    public static void GetDataCenterById(AsyncQuery aQuery, Guid dataCenterId)
-    {
+    public static void GetDataCenterById(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -920,8 +869,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetStoragePoolById, new StoragePoolQueryParametersBase(dataCenterId), aQuery);
     }
 
-    public static void GetTemplateById(AsyncQuery aQuery, Guid templateId)
-    {
+    public static void GetTemplateById(AsyncQuery aQuery, Guid templateId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -932,8 +880,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(templateId), aQuery);
     }
 
-    public static void GetHostList(AsyncQuery aQuery)
-    {
+    public static void GetHostList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -952,8 +899,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.Search, searchParameters, aQuery);
     }
 
-    public static void GetRpmVersionViaPublic(AsyncQuery aQuery)
-    {
+    public static void GetRpmVersionViaPublic(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -966,8 +912,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetSearchResultsLimit(AsyncQuery aQuery)
-    {
+    public static void GetSearchResultsLimit(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -980,8 +925,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetSANWipeAfterDelete(AsyncQuery aQuery)
-    {
+    public static void GetSANWipeAfterDelete(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -994,8 +938,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetCustomPropertiesList(AsyncQuery aQuery)
-    {
+    public static void GetCustomPropertiesList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1006,8 +949,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetVmCustomProperties, new VdcQueryParametersBase(), aQuery);
     }
 
-    public static void GetPermissionsByAdElementId(AsyncQuery aQuery, Guid userId)
-    {
+    public static void GetPermissionsByAdElementId(AsyncQuery aQuery, Guid userId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1021,8 +963,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetRoleActionGroupsByRoleId(AsyncQuery aQuery, Guid roleId)
-    {
+    public static void GetRoleActionGroupsByRoleId(AsyncQuery aQuery, Guid roleId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1036,8 +977,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void IsTemplateNameUnique(AsyncQuery aQuery, String name)
-    {
+    public static void IsTemplateNameUnique(AsyncQuery aQuery, String name) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1050,8 +990,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void IsVmNameUnique(AsyncQuery aQuery, String name)
-    {
+    public static void IsVmNameUnique(AsyncQuery aQuery, String name) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1062,8 +1001,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.IsVmWithSameNameExist, new IsVmWithSameNameExistParameters(name), aQuery);
     }
 
-    public static void GetDataCentersWithPermittedActionOnClusters(AsyncQuery aQuery, ActionGroup actionGroup)
-    {
+    public static void GetDataCentersWithPermittedActionOnClusters(AsyncQuery aQuery, ActionGroup actionGroup) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1084,8 +1022,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetClustersWithPermittedAction(AsyncQuery aQuery, ActionGroup actionGroup)
-    {
+    public static void GetClustersWithPermittedAction(AsyncQuery aQuery, ActionGroup actionGroup) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1106,8 +1043,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetClustersWithPermittedAction, getEntitiesWithPermittedActionParameters, aQuery);
     }
 
-    public static void GetVmTemplatesWithPermittedAction(AsyncQuery aQuery, ActionGroup actionGroup)
-    {
+    public static void GetVmTemplatesWithPermittedAction(AsyncQuery aQuery, ActionGroup actionGroup) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1144,8 +1080,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void IsUSBEnabledByDefault(AsyncQuery aQuery)
-    {
+    public static void IsUSBEnabledByDefault(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1158,8 +1093,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetStorageConnectionById(AsyncQuery aQuery, String id, boolean isRefresh)
-    {
+    public static void GetStorageConnectionById(AsyncQuery aQuery, String id, boolean isRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1172,8 +1106,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetStorageServerConnectionById, params, aQuery);
     }
 
-    public static void GetDataCentersByStorageDomain(AsyncQuery aQuery, Guid storageDomainId)
-    {
+    public static void GetDataCentersByStorageDomain(AsyncQuery aQuery, Guid storageDomainId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1186,8 +1119,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetDataCenterVersions(AsyncQuery aQuery, NGuid dataCenterId)
-    {
+    public static void GetDataCenterVersions(AsyncQuery aQuery, NGuid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1210,8 +1142,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetAvailableClusterVersionsByStoragePool, tempVar, aQuery);
     }
 
-    public static void GetDataCenterMaxNameLength(AsyncQuery aQuery)
-    {
+    public static void GetDataCenterMaxNameLength(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1224,8 +1155,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetClusterServerMemoryOverCommit(AsyncQuery aQuery)
-    {
+    public static void GetClusterServerMemoryOverCommit(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1238,8 +1168,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetClusterDesktopMemoryOverCommit(AsyncQuery aQuery)
-    {
+    public static void GetClusterDesktopMemoryOverCommit(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1252,8 +1181,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetCPUList(AsyncQuery aQuery, Version version)
-    {
+    public static void GetCPUList(AsyncQuery aQuery, Version version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1264,8 +1192,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetAllServerCpuList, new GetAllServerCpuListParameters(version), aQuery);
     }
 
-    public static void GetPmTypeList(AsyncQuery aQuery, Version version)
-    {
+    public static void GetPmTypeList(AsyncQuery aQuery, Version version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1287,8 +1214,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetConfigurationValue, tempVar, aQuery);
     }
 
-    public static void GetPmOptions(AsyncQuery aQuery, String pmType)
-    {
+    public static void GetPmOptions(AsyncQuery aQuery, String pmType) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1315,8 +1241,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetAgentFenceOptions2, new VdcQueryParametersBase(), aQuery);
     }
 
-    public static void GetNetworkList(AsyncQuery aQuery, Guid dataCenterId)
-    {
+    public static void GetNetworkList(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1328,8 +1253,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetAllNetworks, new GetAllNetworkQueryParamenters(dataCenterId), aQuery);
     }
 
-    public static void GetISOStorageDomainList(AsyncQuery aQuery)
-    {
+    public static void GetISOStorageDomainList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1358,8 +1282,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.Search, searchParams, aQuery);
     }
 
-    public static void GetStorageDomainList(AsyncQuery aQuery)
-    {
+    public static void GetStorageDomainList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1375,8 +1298,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.Search, searchParams, aQuery);
     }
 
-    public static void GetLocalStorageHost(AsyncQuery aQuery, String dataCenterName)
-    {
+    public static void GetLocalStorageHost(AsyncQuery aQuery, String dataCenterName) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1396,8 +1318,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.Search, sp, aQuery);
     }
 
-    public static void GetStorageDomainsByConnection(AsyncQuery aQuery, NGuid storagePoolId, String connectionPath)
-    {
+    public static void GetStorageDomainsByConnection(AsyncQuery aQuery, NGuid storagePoolId, String connectionPath) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1408,8 +1329,7 @@ public final class AsyncDataProvider
 
         GetStorageDomainsByConnectionParameters param = new GetStorageDomainsByConnectionParameters();
         param.setConnection(connectionPath);
-        if (storagePoolId != null)
-        {
+        if (storagePoolId != null) {
             param.setStoragePoolId(storagePoolId.getValue());
         }
 
@@ -1419,8 +1339,7 @@ public final class AsyncDataProvider
     public static void GetExistingStorageDomainList(AsyncQuery aQuery,
             Guid hostId,
             StorageDomainType domainType,
-            String path)
-    {
+            String path) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1435,8 +1354,7 @@ public final class AsyncDataProvider
                 path), aQuery);
     }
 
-    public static void GetLocalFSPath(AsyncQuery aQuery)
-    {
+    public static void GetLocalFSPath(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1449,8 +1367,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetStorageDomainMaxNameLength(AsyncQuery aQuery)
-    {
+    public static void GetStorageDomainMaxNameLength(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1463,8 +1380,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void IsStorageDomainNameUnique(AsyncQuery aQuery, String name)
-    {
+    public static void IsStorageDomainNameUnique(AsyncQuery aQuery, String name) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1482,8 +1398,7 @@ public final class AsyncDataProvider
                 SearchType.StorageDomain), aQuery);
     }
 
-    public static void GetHighUtilizationForEvenDistribution(AsyncQuery aQuery)
-    {
+    public static void GetHighUtilizationForEvenDistribution(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1496,8 +1411,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetLowUtilizationForPowerSave(AsyncQuery aQuery)
-    {
+    public static void GetLowUtilizationForPowerSave(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1510,8 +1424,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetHighUtilizationForPowerSave(AsyncQuery aQuery)
-    {
+    public static void GetHighUtilizationForPowerSave(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1524,8 +1437,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetRootTag(AsyncQuery aQuery)
-    {
+    public static void GetRootTag(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1554,8 +1466,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetRootTag, new VdcQueryParametersBase(), aQuery);
     }
 
-    private static void SetAttachedTagsConverter(AsyncQuery aQuery)
-    {
+    private static void SetAttachedTagsConverter(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1578,29 +1489,25 @@ public final class AsyncDataProvider
         };
     }
 
-    public static void GetAttachedTagsToVm(AsyncQuery aQuery, Guid id)
-    {
+    public static void GetAttachedTagsToVm(AsyncQuery aQuery, Guid id) {
         SetAttachedTagsConverter(aQuery);
 
         Frontend.RunQuery(VdcQueryType.GetTagsByVmId, new GetTagsByVmIdParameters(id.toString()), aQuery);
     }
 
-    public static void GetAttachedTagsToUser(AsyncQuery aQuery, Guid id)
-    {
+    public static void GetAttachedTagsToUser(AsyncQuery aQuery, Guid id) {
         SetAttachedTagsConverter(aQuery);
 
         Frontend.RunQuery(VdcQueryType.GetTagsByUserId, new GetTagsByUserIdParameters(id.toString()), aQuery);
     }
 
-    public static void GetAttachedTagsToUserGroup(AsyncQuery aQuery, Guid id)
-    {
+    public static void GetAttachedTagsToUserGroup(AsyncQuery aQuery, Guid id) {
         SetAttachedTagsConverter(aQuery);
 
         Frontend.RunQuery(VdcQueryType.GetTagsByUserGroupId, new GetTagsByUserGroupIdParameters(id.toString()), aQuery);
     }
 
-    public static void GetAttachedTagsToHost(AsyncQuery aQuery, Guid id)
-    {
+    public static void GetAttachedTagsToHost(AsyncQuery aQuery, Guid id) {
         SetAttachedTagsConverter(aQuery);
 
         Frontend.RunQuery(VdcQueryType.GetTagsByVdsId, new GetTagsByVdsIdParameters(id.toString()), aQuery);
@@ -1619,8 +1526,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetoVirtISOs, new VdsIdParametersBase(id), aQuery);
     }
 
-    public static void GetLunsByVgId(AsyncQuery aQuery, String vgId)
-    {
+    public static void GetLunsByVgId(AsyncQuery aQuery, String vgId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1633,8 +1539,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetLunsByVgId, tempVar, aQuery);
     }
 
-    public static void GetAllTemplatesFromExportDomain(AsyncQuery aQuery, Guid storagePoolId, Guid storageDomainId)
-    {
+    public static void GetAllTemplatesFromExportDomain(AsyncQuery aQuery, Guid storagePoolId, Guid storageDomainId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1648,8 +1553,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, getAllFromExportDomainQueryParamenters, aQuery);
     }
 
-    public static void GetUpHostListByCluster(AsyncQuery aQuery, String clusterName)
-    {
+    public static void GetUpHostListByCluster(AsyncQuery aQuery, String clusterName) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1704,8 +1608,7 @@ public final class AsyncDataProvider
                 }), storageDomainId);
     }
 
-    public static void GetDiskMaxSize(AsyncQuery aQuery)
-    {
+    public static void GetDiskMaxSize(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1719,8 +1622,7 @@ public final class AsyncDataProvider
                 aQuery);
     }
 
-    public static void GetVmNicList(AsyncQuery aQuery, Guid id)
-    {
+    public static void GetVmNicList(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1733,8 +1635,7 @@ public final class AsyncDataProvider
         Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(id), aQuery);
     }
 
-    public static void GetVmDiskList(AsyncQuery aQuery, Guid id)
-    {
+    public static void GetVmDiskList(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1754,5 +1655,36 @@ public final class AsyncDataProvider
         };
 
         Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(id), aQuery);
+    }
+
+    public static void GetVmList(AsyncQuery aQuery, String poolName) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+                 {
+                     java.util.ArrayList<VM> vms = Linq.<VM> Cast((java.util.ArrayList<IVdcQueryable>) source);
+                     return vms;
+                 }
+        };
+        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM), aQuery);
+    }
+
+    public static void IsPoolNameUnique(AsyncQuery aQuery, String name) {
+
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+                 {
+                     if (source != null)
+                     {
+                         return !(Boolean) source;
+                     }
+
+                     return false;
+                 }
+        };
+        Frontend.RunQuery(VdcQueryType.IsVmPoolWithSameNameExists,
+                     new IsVmPoolWithSameNameExistsParameters(name),
+                     aQuery);
     }
 }

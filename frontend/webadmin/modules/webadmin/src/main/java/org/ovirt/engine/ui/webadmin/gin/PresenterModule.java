@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterf
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDestroyPopupPresenterWidget;
@@ -149,6 +150,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInterfacePo
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.ManualFenceConfirmationPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindMultiDcPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindSingleDcPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageDestroyPopupView;
@@ -502,6 +504,9 @@ public class PresenterModule extends AbstractPresenterModule {
                 SubTabPoolPermissionPresenter.ViewDef.class,
                 SubTabPoolPermissionView.class,
                 SubTabPoolPermissionPresenter.ProxyDef.class);
+        bindPresenterWidget(PoolNewPopupPresenterWidget.class,
+                PoolNewPopupPresenterWidget.ViewDef.class,
+                PoolNewPopupView.class);
 
         // Template
         bindPresenter(TemplateSubTabPanelPresenter.class,

@@ -85,6 +85,9 @@
 								<g:FlowPanel addStyleNames="{style.sectionPanel}">
 									<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 									<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+									<e:EntityModelLabelEditor ui:field="assignedVmsEditor" />
+									<d:SimpleDialogButton ui:field="addVmsButton"/>
+									<e:EntityModelTextBoxEditor ui:field="numOfDesktopsEditor" />
 									<e:ListModelListBoxEditor ui:field="templateEditor" />
 								</g:FlowPanel>
 								<g:FlowPanel addStyleNames="{style.sectionPanel}">
@@ -96,6 +99,15 @@
 									<e:ListModelListBoxEditor ui:field="oSTypeEditor" />
 									<e:EntityModelCheckBoxEditor ui:field="isStatelessEditor" addStyleNames="{style.checkbox}" />
 								</g:FlowPanel>
+							</g:FlowPanel>
+						</t:content>
+					</t:DialogTab>
+				</t:tab>
+				<t:tab>
+					<t:DialogTab ui:field="poolTab">
+						<t:content>
+							<g:FlowPanel>
+								<e:ListModelListBoxEditor ui:field="poolTypeEditor" />
 							</g:FlowPanel>
 						</t:content>
 					</t:DialogTab>

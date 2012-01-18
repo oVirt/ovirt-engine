@@ -792,7 +792,7 @@ public class UnitVmModel extends Model
 
     }
 
-    private IVmModelBehavior behavior;
+    private final IVmModelBehavior behavior;
 
     private int _minMemSize = 1;
 
@@ -916,6 +916,15 @@ public class UnitVmModel extends Model
         setIsDisplayTabValid(getIsAllocationTabValid());
         setIsFirstRunTabValid(getIsDisplayTabValid());
         setIsGeneralTabValid(getIsFirstRunTabValid());
+
+        // NOTE: This is because currently the auto generated view code tries to register events of pooltype for
+        // VM/Template views as this model is shared across VM/Template/Pool models
+        setPoolType(new ListModel());
+        setNumOfDesktops(new EntityModel());
+        setAssignedVms(new EntityModel());
+
+        getNumOfDesktops().setIsAvailable(false);
+        getAssignedVms().setIsAvailable(false);
     }
 
     public void Initialize(SystemTreeItemModel SystemTreeSelectedItem)
@@ -1624,7 +1633,7 @@ public class UnitVmModel extends Model
         getTemplate().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         getStorageDomain().setIsValid(true);
-        if (template != null && !template.getId().equals(NGuid.Empty) && storageDomain == null)
+        if (template != null && !template.getId().equals(Guid.Empty) && storageDomain == null)
         {
             getStorageDomain().setIsValid(false);
             getStorageDomain().getInvalidityReasons().add("Storage Domain must be specified.");
@@ -1732,5 +1741,78 @@ public class UnitVmModel extends Model
         }
 
         memorySizeEntityModel.setIsValid(isValid);
+    }
+
+    private ListModel privatePoolType;
+
+    public ListModel getPoolType()
+    {
+        return privatePoolType;
+    }
+
+    protected void setPoolType(ListModel value)
+    {
+        privatePoolType = value;
+    }
+
+    private EntityModel privateNumOfDesktops;
+
+    public EntityModel getNumOfDesktops()
+    {
+        return privateNumOfDesktops;
+    }
+
+    protected void setNumOfDesktops(EntityModel value)
+    {
+        privateNumOfDesktops = value;
+    }
+
+    public boolean getCanDefineVM()
+    {
+        return getIsNew() || (Integer) getNumOfDesktops().getEntity() == 0;
+    }
+
+    private EntityModel assignedVms;
+
+    public EntityModel getAssignedVms()
+    {
+        return assignedVms;
+    }
+
+    public void setAssignedVms(EntityModel value)
+    {
+        assignedVms = value;
+    }
+
+    private boolean isPoolTabValid;
+
+    public boolean getIsPoolTabValid()
+    {
+        return isPoolTabValid;
+    }
+
+    public void setIsPoolTabValid(boolean value)
+    {
+        if (isPoolTabValid != value)
+        {
+            isPoolTabValid = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsPoolTabValid"));
+        }
+    }
+
+    private boolean isAddVMMode;
+
+    public boolean getIsAddVMMode()
+    {
+        return isAddVMMode;
+    }
+
+    public void setIsAddVMMode(boolean value)
+    {
+        if (isAddVMMode != value)
+        {
+            isAddVMMode = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsAddVMMode"));
+        }
     }
 }
