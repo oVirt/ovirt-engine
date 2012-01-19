@@ -105,6 +105,8 @@ public class PermissionsPopupPresenterWidget extends AbstractModelBoundPopupPres
             }
         });
 
+        getView().hideEveryoneSelection((Boolean) model.getIsEveryoneSelectionHidden().getEntity());
+
         model.getIsEveryoneSelectionHidden().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {

@@ -120,6 +120,7 @@ public class SystemPermissionListModel extends SearchableListModel
         }
 
         AdElementListModel model = new AdElementListModel();
+        model.getIsEveryoneSelectionHidden().setEntity(true);
         setWindow(model);
         model.setTitle("Add System Permission to User");
         model.setHashName("add_system_permission_to_user");
