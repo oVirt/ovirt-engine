@@ -1989,6 +1989,7 @@ def configJbossXml():
         isProxyEnabled = utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes")
         if isProxyEnabled:
             configJbossAjpConnector(xmlObj)
+        configRewriteRules(xmlObj)
         logging.debug("Jboss has been configured")
 
         xmlObj.close()
@@ -2258,6 +2259,24 @@ def configJbossSSL(xmlObj):
     node.setProp("enable-welcome-root", "false")
 
     logging.debug("SSL has been configured for jboss")
+
+
+def configRewriteRules(xmlObj):
+    """
+    config rewrite rules for backward comptability of old rhev-h
+    """
+
+    logging.debug("Configuring rewrite rules for jboss")
+    logging.debug("Registering web namespaces")
+    xmlObj.registerNs('web', xmlObj.getNs('urn:jboss:domain:web'))
+
+    rewriteNode = '''<rewrite pattern="^/RHEVManager(.*)$" substitution="/OvirtEngine$1" flags="last"/>'''
+    virtualServerPath = '//web:subsystem/web:virtual-server'
+
+    xmlObj.removeNodes(virtualServerPath + '/web:rewrite')
+    xmlObj.addNodes(virtualServerPath, rewriteNode)
+
+    logging.debug("rewrite rules have been configured for jboss")
 
 def startRhevmDbRelatedServices():
     """

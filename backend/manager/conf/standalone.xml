@@ -338,6 +338,7 @@
             <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http"/>
             <virtual-server name="default-host" enable-welcome-root="false">
                 <alias name="localhost"/>
+                <rewrite pattern="^/RHEVManager(.*)$" substitution="/OvirtEngine$1" flags="last"/>
             </virtual-server>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:webservices:1.1">
