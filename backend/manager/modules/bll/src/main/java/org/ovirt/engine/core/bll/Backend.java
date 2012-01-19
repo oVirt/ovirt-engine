@@ -22,6 +22,7 @@ import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
@@ -36,6 +37,7 @@ import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.AsyncQueryResults;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
@@ -193,6 +195,10 @@ public class Backend implements BackendInternal, BackendRemote {
         _vdsErrorsTranslator = new ErrorTranslatorImpl(VdsErrorsFileName);
         log.infoFormat("VdsErrorTranslator: {0}", new Date());
 
+        // initialize the JobRepository object and finalize non-terminated jobs
+        log.infoFormat("Mark uncompleted jobs as {0}: {1}", JobExecutionStatus.UNKNOWN.name(), new Date());
+        initJobRepository();
+
         Integer sessionTimoutInterval = Config.<Integer> GetValue(ConfigValues.UserSessionTimeOutInterval);
         // negative value means session should never expire, therefore no need to clean sessions.
         if (sessionTimoutInterval > 0) {
@@ -213,6 +219,14 @@ public class Backend implements BackendInternal, BackendRemote {
             }
         } catch (SecurityException se) {
             log.error("Cleanup lockfile failed!", se);
+        }
+    }
+
+    private void initJobRepository() {
+        try {
+            JobRepositoryFactory.getJobRepository().finalizeJobs();
+        } catch (Exception e) {
+            log.error("Failed to finalize running Jobs", e);
         }
     }
 
