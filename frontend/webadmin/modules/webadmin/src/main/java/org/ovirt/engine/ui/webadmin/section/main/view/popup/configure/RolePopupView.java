@@ -214,8 +214,6 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
                 modelListTreeViewModel.getAsyncTreeDataProvider();
         asyncTreeDataProvider.updateRowCount(rootNodes.size(), true);
         asyncTreeDataProvider.updateRowData(0, rootNodes);
-
-        expandTree();
     }
 
     @Override
