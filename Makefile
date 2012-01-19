@@ -30,6 +30,7 @@ TARBALL=ovirt-engine-$(RPM_VERSION).tar.gz
 SRPM=$(OUTPUT_DIR)/ovirt-engine-$(RPM_VERSION)*.src.rpm
 ARCH=$(shell uname -i)
 BUILD_FILE=$(shell bash -c "pwd -P")/build_mvn
+SOURCE_DIR=$(RPMBUILD)/SOURCES
 
 CURR_DIR=$(shell bach -c "pwd -P")
 all: build_mvn
@@ -46,10 +47,26 @@ clean:
 test:
 	$(MVN) install $(BUILD_FLAGS)
 
-install: build_mvn create_dirs install_ear install_quartz install_tools \
-		install_config install_log_collector install_iso_uploader install_image_uploader\
-		install_sysprep install_notification_service install_db_scripts \
-		install_misc install_setup install_sec
+install: build_mvn pre_copy create_dirs install_ear common_install
+
+install_without_maven: create_dirs install_brew_ear common_install
+
+common_install: install_quartz install_tools install_image_uploader\
+	install_config install_log_collector install_iso_uploader \
+	install_sysprep install_notification_service install_db_scripts \
+	install_misc install_setup install_sec
+
+# Brew compatibility hack
+# We want both env (local and brew) to work the same
+pre_copy:
+	echo $(SOURCE_DIR)
+	cp -f ./backend/manager/tools/engine-tools-common/target/engine-tools-common-$(APP_VERSION).jar $(SOURCE_DIR)/
+	cp -f ./backend/manager/tools/engine-config/target/engine-config-$(APP_VERSION).jar $(SOURCE_DIR)/
+	cp -f ./backend/manager/modules/engineencryptutils/target/engineencryptutils-$(APP_VERSION).jar $(SOURCE_DIR)/
+	cp -f ./backend/manager/modules/compat/target/compat-$(APP_VERSION).jar $(SOURCE_DIR)/
+	cp -f ./backend/manager/tools/engine-notifier/engine-notifier-service/target/engine-notifier-service-$(APP_VERSION).jar $(SOURCE_DIR)/
+	mkdir -p $(SOURCE_DIR)/ear
+	cp -rf $(EAR_SRC_DIR)/* $(SOURCE_DIR)/ear/
 
 tarball: $(TARBALL)
 $(TARBALL):
@@ -104,7 +121,12 @@ create_dirs:
 install_ear:
 	@echo "*** Deploying EAR to $(PREFIX)"
 	mkdir -p $(PREFIX)$(EAR_DIR)
-	cp -rf $(EAR_SRC_DIR)/* $(PREFIX)$(EAR_DIR)
+	cp -rf $(SOURCE_DIR)/ear/* $(PREFIX)$(EAR_DIR)
+
+install_brew_ear:
+	@echo "*** Deploying EAR to $(PREFIX)"
+	mkdir -p $(PREFIX)$(EAR_DIR)
+	unzip $(SOURCE_DIR)/*.ear -d $(PREFIX)$(EAR_DIR)
 
 install_quartz:
 	@echo "*** Deploying quartz.jar to $(PREFIX)"
@@ -112,7 +134,7 @@ install_quartz:
 
 install_tools:
 	@echo "*** Installing Common Tools"
-	cp -f ./backend/manager/tools/engine-tools-common/target/engine-tools-common-$(APP_VERSION).jar $(PREFIX)/usr/share/java/
+	cp -f $(SOURCE_DIR)/engine-tools-common-$(APP_VERSION).jar $(PREFIX)/usr/share/java/
 	rm -f $(PREFIX)/usr/share/java/engine-tools-common.jar
 	ln -s /usr/share/java/engine-tools-common-$(APP_VERSION).jar $(PREFIX)/usr/share/java/engine-tools-common.jar
 
@@ -179,11 +201,11 @@ install_config:
 	chmod 644 $(PREFIX)/etc/ovirt-engine/engine-config/engine-config.*properties
 	cp -f ./backend/manager/tools/engine-config/src/main/resources/log4j.xml $(PREFIX)/etc/ovirt-engine/engine-config/
 	chmod 644 $(PREFIX)/etc/ovirt-engine/engine-config/log4j.xml
-	cp -f ./backend/manager/tools/engine-config/target/engine-config-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/
+	cp -f $(SOURCE_DIR)/engine-config-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/
 	rm -f $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/engine-config.jar
 	ln -s /usr/share/ovirt-engine/engine-config/lib/engine-config-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/engine-config.jar
-	cp -f ./backend/manager/modules/engineencryptutils/target/engineencryptutils-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/engine-encryptutils.jar
-	cp -f ./ear/target/engine/lib/engine-compat.jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/
+	cp -f $(SOURCE_DIR)/engineencryptutils-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/engine-encryptutils.jar
+	cp -f $(SOURCE_DIR)/compat-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/engine-compat.jar
 	rm -f $(PREFIX)/usr/bin/engine-config
 	ln -s /usr/share/ovirt-engine/engine-config/engine-config $(PREFIX)/usr/bin/engine-config
 
@@ -193,7 +215,7 @@ install_config:
 	chmod 755 $(PREFIX)/etc/ovirt-engine/engine-manage-domains/engine-manage-domains.conf
 	cp -f ./backend/manager/modules/utils/src/main/resources/engine-manage-domains/log4j.xml $(PREFIX)/etc/ovirt-engine/engine-manage-domains/
 	chmod 644 $(PREFIX)/etc/ovirt-engine/engine-manage-domains/log4j.xml
-	cp -f ./ear/target/engine/lib/engine-compat.jar $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/lib/
+	cp -f $(SOURCE_DIR)/compat-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/lib/engine-compat.jar
 	rm -f $(PREFIX)/usr/bin/engine-manage-domains
 	ln -s /usr/share/ovirt-engine/engine-manage-domains/engine-manage-domains $(PREFIX)/usr/bin/engine-manage-domains
 
@@ -260,7 +282,7 @@ install_notification_service:
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/notifier/notifier.sh
 	cp -f ./backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/engine-notifierd $(PREFIX)/etc/init.d/
 	chmod 755 $(PREFIX)/etc/init.d/engine-notifierd
-	cp -f ./backend/manager/tools/engine-notifier/engine-notifier-service/target/engine-notifier-service-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/notifier/engine-notifier.jar
+	cp -f $(SOURCE_DIR)/engine-notifier-service-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/notifier/engine-notifier.jar
 	chmod 644 $(PREFIX)/usr/share/ovirt-engine/notifier/engine-notifier.jar
 
 install_db_scripts:

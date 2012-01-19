@@ -8,11 +8,24 @@
 %define __useradd /usr/sbin/useradd
 %define __usermod /usr/sbin/usermod
 %define _engineeardir %{_datadir}/%{name}/engine.ear
+%define mead_build 0
+%define uversion %(echo $version | sed s/_/-/)
 
 Name: ovirt-engine
 Version: $version
-Release: 1.8%{?dist}
-Source: %{name}-%{version}.tar.gz
+Release: $release%{?dist}
+%if %mead_build
+Source0: org.ovirt.engine-root-%{uversion}-sources.zip
+Source1: engine-server-ear-%{uversion}.ear
+Source2: engine-tools-common-%{uversion}.jar
+Source3: engine-config-%{uversion}.jar
+Source4: engineencryptutils-%{uversion}.jar
+Source5: common-%{uversion}.jar
+Source6: engine-notifier-service-%{uversion}.jar
+Source7: compat-%{uversion}.jar
+%else
+Source0: %{name}-%{version}.tar.gz
+%endif
 License: ASL 2.0
 Summary: Management server for Open Virtualization
 Group: Virtualization/Management
@@ -23,6 +36,7 @@ BuildArch: x86_64
 BuildRequires: unzip
 BuildRequires: openssl-devel
 BuildRequires: gcc-c++
+BuildRequires: make
 Requires: java-1.6.0-openjdk
 Requires: policycoreutils-python
 Requires: cracklib-python
@@ -184,14 +198,21 @@ Requires: %{name}-tools-common = %{version}-%{release}
 The configuration tool for oVirt Engine
 
 %prep
+%if %mead_build
+%setup -q -T -b 0 -n ovirt-engine
+%else
 %setup -c -q
+%endif
 
 %build
 
 %install
 rm -rf %{buildroot}/*
-make PREFIX=%{buildroot}/ install
-
+%if %mead_build
+make PREFIX=%{buildroot}/ SOURCE_DIR=%_sourcedir install_without_maven
+%else
+make PREFIX=%{buildroot}/ SOURCE_DIR=%_sourcedir install
+%endif
 
 %preun
 #raw
