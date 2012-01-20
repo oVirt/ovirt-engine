@@ -28,7 +28,13 @@ public class TextBoxLabel extends TextBox {
     @Override
     public void setText(String text) {
         String renderedText = new EmptyValueRenderer<String>(handleEmptyValue).render(text);
+        renderedText = unEscapeRenderedText(renderedText);
         super.setText(renderedText);
         super.setTitle(renderedText);
+    }
+
+    private String unEscapeRenderedText(String renderedText) {
+        renderedText = renderedText.replace("&lt;", "<");
+        return renderedText;
     }
 }
