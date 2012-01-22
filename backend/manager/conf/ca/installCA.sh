@@ -46,6 +46,7 @@ cd $WORKDIR
 
 # Create CA
 ./CreateCA.sh $COUNTRY "$ORG" "CA-$CA_SUBJECT" "$DATE"
+[ $? == 0 ] || die "CreateCA.sh exited with errors"
 [ -s private/ca.pem ] || die "file private/ca.pem does not exist!"
 [ -s requests/ca.csr ] || die "file requests/ca.csr does not exist!"
 [ -s ca.pem ] || die "file ca.pem does not exist!"

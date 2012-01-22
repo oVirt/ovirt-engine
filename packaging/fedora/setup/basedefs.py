@@ -138,6 +138,11 @@ CONST_FD_OPEN = 65535
 CONST_FD_LINE = "jboss           %s    nofile          %s"
 CONST_SHMMAX=35554432
 
+# This is needed for avoiding error in create_ca when supporting max cn length of 64.
+# please DONT increase this size, any value over 55 will fail the setup.
+# the truncated host-fqdn is concatenated with a random string to create a unique CN value.
+CONST_MAX_HOST_FQDN_LEN=55
+
 #text colors
 RED="\033[0;31m"
 GREEN="\033[92m"

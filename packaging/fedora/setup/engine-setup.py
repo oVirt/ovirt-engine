@@ -779,7 +779,12 @@ def _createCA():
 
             # Add random string to certificate CN field
             randInt = random.randint(10000,99999)
-            uniqueCN = conf["HOST_FQDN"] + "." + str(randInt)
+
+	    # Truncating host fqdn to max allowed in certificate CN field
+	    truncatedFqdn = conf["HOST_FQDN"][0:basedefs.CONST_MAX_HOST_FQDN_LEN]
+	    logging.debug("truncated HOST_FQDN '%s' to '%s'. sized reduced to %d.."%(conf["HOST_FQDN"],truncatedFqdn,len(truncatedFqdn)))
+            uniqueCN = truncatedFqdn + "." + str(randInt)
+	    logging.debug("using unique CN: '%s' for CA certificate"%uniqueCN)
 
             # Create the CA
             cmd = [os.path.join(basedefs.DIR_OVIRT_PKI, "installCA.sh"), conf["HOST_FQDN"],
