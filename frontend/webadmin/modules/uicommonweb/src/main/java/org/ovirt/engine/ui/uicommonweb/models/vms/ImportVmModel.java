@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
@@ -328,8 +329,18 @@ public class ImportVmModel extends ListWithDetailsModel {
                 .size());
     }
 
+    storage_domains currStorageDomain = null;
+
     private void DestinationStorage_SelectedItemChanged() {
-        UpdateImportWarnings();
+        storage_domains selectedStorageDomain = (storage_domains) getDestinationStorage().getSelectedItem();
+        if (selectedStorageDomain == null) {
+            selectedStorageDomain = (storage_domains) ((List) getDestinationStorage().getItems()).get(0);
+        }
+        if (currStorageDomain == null
+                || !currStorageDomain.getQueryableId().equals(selectedStorageDomain.getQueryableId())) {
+            currStorageDomain = selectedStorageDomain;
+            UpdateImportWarnings();
+        }
     }
 
     @Override

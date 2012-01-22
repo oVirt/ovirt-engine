@@ -46,6 +46,10 @@ public class VmImportDiskListModel extends VmDiskListModel
         SetDisksVolumeTypeAvailability();
     }
 
+    public VmImportDiskListModel() {
+        setIsTimerDisabled(true);
+    }
+
     @Override
     protected void OnEntityChanged()
     {

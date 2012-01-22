@@ -5,6 +5,10 @@ import org.ovirt.engine.core.common.businessentities.VM;
 @SuppressWarnings("unused")
 public class VmImportInterfaceListModel extends VmInterfaceListModel
 {
+    public VmImportInterfaceListModel() {
+        setIsTimerDisabled(true);
+    }
+
     @Override
     protected void OnEntityChanged()
     {
@@ -19,5 +23,10 @@ public class VmImportInterfaceListModel extends VmInterfaceListModel
         {
             setItems(null);
         }
+    }
+
+    @Override
+    protected void SyncSearch() {
+
     }
 }
