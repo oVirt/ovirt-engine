@@ -1837,7 +1837,7 @@ def deployJbossModules():
         logging.debug("registering name space")
         xmlObj.registerNs('module','urn:jboss:module:1.1')
 
-        paths = ['''<path name="sun/security"/>''', '''<path name="sun/security/krb5"/>''']
+        paths = ['''<path name="sun/security"/>''', '''<path name="sun/security/krb5"/>''', '''<path name="com/sun/jndi/url"/>''', '''<path name="com/sun/jndi/url/dns"/>''' ]
 
         for path in paths:
             logging.debug("adding %s as node", path)
