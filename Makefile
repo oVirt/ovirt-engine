@@ -85,8 +85,7 @@ create_dirs:
 	@mkdir -p $(PREFIX)/var/log/ovirt-engine/{notifier,engine-manage-domains}
 	@mkdir -p $(PREFIX)/var/run/ovirt-engine/notifier
 	@mkdir -p $(PREFIX)/var/lock/ovirt-engine
-	@mkdir -p $(PREFIX)/etc/init.d/
-	@mkdir -p $(PREFIX)/etc/cron.daily/
+	@mkdir -p $(PREFIX)/etc/{init.d,tmpfiles.d,cron.daily}
 	@mkdir -p $(PREFIX)/etc/ovirt-engine/{engine-config,engine-manage-domains}
 	@mkdir -p $(PREFIX)$(EAR_DIR)
 	@mkdir -p $(PREFIX)$(JBOSS_HOME)/modules/org/postgresql/main/
@@ -249,5 +248,6 @@ install_misc:
 	cp -f ./LICENSE $(PREFIX)/usr/share/ovirt-engine
 	cp -f ./packaging/ovirtlogrot.sh ${PREFIX}/usr/share/ovirt-engine/scripts/
 	cp -f ./packaging/resources/ovirt-cron ${PREFIX}/etc/cron.daily/
+	cp -f ./packaging/resources/ovirt-tmpfilesd ${PREFIX}/etc/tmpfiles.d/ovirt-engine.conf
 
 

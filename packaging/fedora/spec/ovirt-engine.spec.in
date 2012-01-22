@@ -250,6 +250,7 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %attr (755,root,root) %{_datadir}/%{name}/scripts/vds_installer.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/ovirtlogrot.sh
 %attr (755,root,root) %{_sysconfdir}/cron.daily/ovirt-cron
+%attr (644,root,root) %{_sysconfdir}/tmpfiles.d/ovirt-engine.conf
 %attr (755,jboss-as,jboss-as) %{_datadir}/%{name}/resources/jboss
 %dir %{_sysconfdir}/%{name}
 %attr (755,jboss-as,jboss-as) %{_sysconfdir}/pki/%{name}
