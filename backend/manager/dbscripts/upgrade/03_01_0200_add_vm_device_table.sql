@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION add_vm_device_03_01_0110()
+CREATE OR REPLACE FUNCTION add_vm_device_03_01_0200()
 RETURNS void
 AS $function$
 BEGIN
@@ -25,6 +25,6 @@ BEGIN
 END; $function$
 LANGUAGE plpgsql;
 
-SELECT * FROM add_vm_device_03_01_0110();
-DROP FUNCTION add_vm_device_03_01_0110();
+SELECT * FROM add_vm_device_03_01_0200();
+DROP FUNCTION add_vm_device_03_01_0200();
 
