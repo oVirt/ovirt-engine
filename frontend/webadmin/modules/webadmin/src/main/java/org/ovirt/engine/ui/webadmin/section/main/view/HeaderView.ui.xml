@@ -57,7 +57,10 @@
 			bottom: 0;
 			left: 250px;
 			height: 28px;
-			overflow: hidden;
+		}
+
+		.mainTabContainer {
+			min-width: 800px;
 		}
 	</ui:style>
 
@@ -84,7 +87,7 @@
 				<g:SimplePanel ui:field="searchPanelContainer" addStyleNames="{style.searchPanel}" />
 
 				<g:HTMLPanel ui:field="mainTabBarPanel" addStyleNames="{style.mainTabBar}">
-					<g:FlowPanel ui:field="mainTabContainer" />
+					<g:FlowPanel ui:field="mainTabContainer" addStyleNames="{style.mainTabContainer}"/>
 					<div style="clear: both;" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>

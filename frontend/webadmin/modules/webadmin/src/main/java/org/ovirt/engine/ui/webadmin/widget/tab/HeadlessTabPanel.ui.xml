@@ -4,8 +4,8 @@
 
 	<ui:style>
 		.content {
-			overflow: hidden;
 			border-top: 2px solid #7B7B7B;
+			min-width: 800px;
 		}
 	</ui:style>
 
