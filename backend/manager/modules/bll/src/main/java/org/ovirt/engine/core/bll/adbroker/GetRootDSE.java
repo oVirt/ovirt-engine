@@ -97,16 +97,19 @@ public class GetRootDSE {
         return new InitialDirContext(env);
     }
 
-    public LdapProviderType retrieveLdapProviderType(String domain) {
+    public LdapProviderType retrieveLdapProviderType(String domain) throws NamingException {
         LdapProviderType retVal = LdapProviderType.general;
         Attributes attributes = getDomainAttributes(LdapProviderType.general, domain);
         if (attributes != null) {
             if (attributes.get(ADRootDSEAttributes.domainControllerFunctionality.name()) != null) {
                 retVal = LdapProviderType.activeDirectory;
-            } else if (attributes.get(RHDSRootDSEAttributes.netscapemdsuffix.name()) != null) {
-                retVal = LdapProviderType.rhds;
-            } else if (attributes.get(IPARootDSEAttributes.namingContexts.name()) != null) {
-                retVal = LdapProviderType.ipa;
+            } else if (attributes.get(RHDSRootDSEAttributes.vendorName.name()) != null) {
+                String vendorName = (String) attributes.get(RHDSRootDSEAttributes.vendorName.name()).get(0);
+                if (vendorName.equals(LdapVendorNameEnum.IPAVendorName.getName())) {
+                    retVal = LdapProviderType.ipa;
+                } else if (vendorName.equals(LdapVendorNameEnum.RHDSVendorName.getName())) {
+                    retVal = LdapProviderType.rhds;
+                }
             }
         }
 
