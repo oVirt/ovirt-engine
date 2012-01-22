@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -18,21 +21,35 @@ import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmMonitorCommandVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 /**
- * Base class for asincronious running process handling
+ * Base class for asynchronous running process handling
  */
 public abstract class RunVmCommandBase<T extends VmOperationParameterBase> extends VmCommand<T> implements
         IVdsAsyncCommand {
+
+    private static Log log = LogFactory.getLog(RunVmCommandBase.class);
     private static VdsSelectionAlgorithm _defaultSelectionAlgorithm = VdsSelectionAlgorithm.EvenlyDistribute;
-    protected static final java.util.HashMap<Guid, Integer> _vds_pending_vm_count =
-            new java.util.HashMap<Guid, Integer>();
+    protected static final HashMap<Guid, Integer> _vds_pending_vm_count = new HashMap<Guid, Integer>();
+
+    static {
+        try {
+            _defaultSelectionAlgorithm =
+                    VdsSelectionAlgorithm.valueOf(Config.<String> GetValue(ConfigValues.VdsSelectionAlgorithm));
+        } catch (Exception e) {
+            // todo
+        }
+    }
+
+    private final Object _decreaseLock = new Object();
     private VdsSelector privateVdsSelector;
+    protected boolean _isRerun = false;
+    protected VDS _destinationVds;
 
     protected RunVmCommandBase(Guid commandId) {
         super(commandId);
@@ -42,6 +59,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         super(parameters);
     }
 
+    protected abstract VDS getDestinationVds();
+
     protected VdsSelector getVdsSelector() {
         return privateVdsSelector;
     }
@@ -50,27 +69,16 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         privateVdsSelector = value;
     }
 
-    static {
-        try {
-            _defaultSelectionAlgorithm = VdsSelectionAlgorithm.valueOf(Config
-                    .<String> GetValue(ConfigValues.VdsSelectionAlgorithm));
-        } catch (java.lang.Exception e) {
-            // todo
-        }
-    }
-
     /**
      * List on all vdss, vm run on. In the case of problem to run vm will be more then one
      */
-    private java.util.ArrayList<Guid> getRunVdssList() {
+    private ArrayList<Guid> getRunVdssList() {
         return getVdsSelector().getRunVdssList();
     }
 
     public static VdsSelectionAlgorithm getDefaultSelectionAlgorithm() {
         return _defaultSelectionAlgorithm;
     }
-
-    protected boolean _isRerun = false;
 
     /**
      * Check if the given host has enough CPU to run the VM, without exceeding the high utilization threshold.
@@ -160,7 +168,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     public static void DoCompressionCheck(VDS vds, VmDynamic vm) {
         if (Config.<Boolean> GetValue(ConfigValues.PowerClientSpiceDynamicCompressionManagement)) {
-            // comrpession allways enabled on VDS
+            // compression always enabled on VDS
             if (vds.getvds_type() != VDSType.PowerClient) {
                 return;
             } else {
@@ -236,19 +244,19 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
-                AnonymousMethod1();
+                processVmPoolOnStopVm();
             }
         });
     }
 
-    private void AnonymousMethod1() {
+    private void processVmPoolOnStopVm() {
         VmPoolHandler.ProcessVmPoolOnStopVm(getVm().getvm_guid(),
                 ExecutionHandler.createDefaultContexForTasks(executionContext));
     }
 
     /**
-     * Asyncronious event, send by vds on running vm success. Vm decided successfully run when it's status turn to Up.
-     * If there are vdss, not succeded to run vm - treat them as suspicious.
+     * Asynchronous event, send by vds on running vm success. Vm decided successfully run when it's status turn to Up.
+     * If there are vdss, not succeeded to run vm - treat them as suspicious.
      */
     @Override
     public void RunningSucceded() {
@@ -303,12 +311,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         return null;
     }
 
-    protected VDS _destinationVds;
-
-    protected abstract VDS getDestinationVds();
-
-    private final Object _decreaseLock = new Object();
-
     protected void DecreasePendingVms(Guid vdsId) {
         synchronized (_decreaseLock) {
             boolean updateDynamic = false;
@@ -359,5 +361,4 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         }
     }
 
-    private static Log log = LogFactory.getLog(RunVmCommandBase.class);
 }
