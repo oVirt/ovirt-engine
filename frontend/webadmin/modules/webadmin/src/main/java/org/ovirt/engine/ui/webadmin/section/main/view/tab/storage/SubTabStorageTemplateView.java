@@ -74,9 +74,9 @@ public class SubTabStorageTemplateView extends AbstractSubTabTableView<storage_d
 
     void initHeader() {
         table.addColumn(new EmptyColumn(), "Name");
-        table.addColumn(new EmptyColumn(), "Disks", "120px");
-        table.addColumn(new EmptyColumn(), "Actual Size", "120px");
-        table.addColumn(new EmptyColumn(), "Creation Date", "210px");
+        table.addColumn(new EmptyColumn(), "Disks", "110px");
+        table.addColumn(new EmptyColumn(), "Actual Size", "110px");
+        table.addColumn(new EmptyColumn(), "Creation Date", "170px");
     }
 
     @Override

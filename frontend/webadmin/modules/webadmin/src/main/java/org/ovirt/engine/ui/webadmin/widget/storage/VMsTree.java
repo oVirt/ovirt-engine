@@ -47,8 +47,9 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel> {
                     for (DiskImage disk : vm.getDiskList()) {
                         TreeItem diskItem = getDiskNode(disk);
 
-                        for (DiskImage snapshot : disk.getSnapshots()) {
-                            TreeItem snapshotItem = getSnapshotsNode(snapshot);
+                        ArrayList<DiskImage> snapshots = disk.getSnapshots();
+                        if (!snapshots.isEmpty()) {
+                            TreeItem snapshotItem = getSnapshotsNode(snapshots);
                             diskItem.addItem(snapshotItem);
                             styleItem(snapshotItem);
                         }
@@ -70,15 +71,6 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel> {
 
         Element col = (Element) tableElm.getElementsByTagName("td").getItem(0);
         col.setAttribute("width", "20px");
-    }
-
-    private TreeItem creatEntityItem(EntityModelCellTable<ListModel> table, Object entity) {
-        EntityModel entityModel = new EntityModel();
-        entityModel.setEntity(entity);
-        table.setRowData(new ArrayList<EntityModel>(Arrays.asList(entityModel)));
-        table.setWidth("100%");
-        TreeItem item = new TreeItem(table);
-        return item;
     }
 
     private TreeItem getVMNode(VM vm) {
@@ -108,7 +100,7 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel> {
                 return String.valueOf(((VM) object.getEntity()).getDiskMap().size());
             }
         };
-        table.addColumn(diskColumn, "Disks", "120px");
+        table.addColumn(diskColumn, "Disks", "80px");
 
         TextColumnWithTooltip<EntityModel> templateColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -116,7 +108,7 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel> {
                 return ((VM) object.getEntity()).getvmt_name();
             }
         };
-        table.addColumn(templateColumn, "Template", "180px");
+        table.addColumn(templateColumn, "Template", "160px");
 
         DiskSizeColumn<EntityModel> vSizeColumn = new DiskSizeColumn<EntityModel>(DiskSizeUnit.GIGABYTE) {
             @Override
@@ -124,7 +116,7 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel> {
                 return (long) ((VM) object.getEntity()).getDiskSize();
             }
         };
-        table.addColumn(vSizeColumn, "V-Size", "120px");
+        table.addColumn(vSizeColumn, "V-Size", "110px");
 
         DiskSizeColumn<EntityModel> actualSizeColumn = new DiskSizeColumn<EntityModel>(DiskSizeUnit.GIGABYTE) {
             @Override
@@ -132,7 +124,7 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel> {
                 return (long) ((VM) object.getEntity()).getActualDiskWithSnapshotsSize();
             }
         };
-        table.addColumn(actualSizeColumn, "Actual Size", "120px");
+        table.addColumn(actualSizeColumn, "Actual Size", "110px");
 
         TextColumnWithTooltip<EntityModel> creationDateColumn = new GeneralDateTimeColumn<EntityModel>() {
             @Override
@@ -140,12 +132,13 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel> {
                 return ((VM) object.getEntity()).getvm_creation_date();
             }
         };
-        table.addColumn(creationDateColumn, "Creation Date", "180px");
+        table.addColumn(creationDateColumn, "Creation Date", "140px");
 
-        return creatEntityItem(table, vm);
+        ArrayList<EntityModel> entityModelList = toEntityModelList(new ArrayList<VM>(Arrays.asList(vm)));
+        return createTreeItem(table, entityModelList);
     }
 
-    private TreeItem getDiskOrSnapshotNode(DiskImage disk, final boolean isDisk) {
+    private TreeItem getDiskOrSnapshotNode(ArrayList<EntityModel> entityModelList, final boolean isDisk) {
         EntityModelCellTable<ListModel> table = new EntityModelCellTable<ListModel>(false,
                 (Resources) GWT.create(TreeHeaderlessTableResources.class),
                 true);
@@ -166,8 +159,8 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel> {
         };
         table.addColumn(nameColumn, "Name");
 
-        table.addColumn(new EmptyColumn(), "Disks", "120px");
-        table.addColumn(new EmptyColumn(), "Template", "180px");
+        table.addColumn(new EmptyColumn(), "Disks", "80px");
+        table.addColumn(new EmptyColumn(), "Template", "160px");
 
         DiskSizeColumn<EntityModel> vSizeColumn = new DiskSizeColumn<EntityModel>(DiskSizeUnit.GIGABYTE) {
             @Override
@@ -175,7 +168,7 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel> {
                 return (long) ((DiskImage) object.getEntity()).getSizeInGigabytes();
             }
         };
-        table.addColumn(vSizeColumn, "V-Size", "120px");
+        table.addColumn(vSizeColumn, "V-Size", "110px");
 
         DiskSizeColumn<EntityModel> actualSizeColumn = new DiskSizeColumn<EntityModel>(DiskSizeUnit.GIGABYTE) {
             @Override
@@ -183,7 +176,7 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel> {
                 return (long) ((DiskImage) object.getEntity()).getActualDiskWithSnapshotsSize();
             }
         };
-        table.addColumn(actualSizeColumn, "Actual Size", "120px");
+        table.addColumn(actualSizeColumn, "Actual Size", "110px");
 
         TextColumnWithTooltip<EntityModel> creationDateColumn = new GeneralDateTimeColumn<EntityModel>() {
             @Override
@@ -191,16 +184,19 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel> {
                 return ((DiskImage) object.getEntity()).getcreation_date();
             }
         };
-        table.addColumn(creationDateColumn, "Creation Date", "180px");
+        table.addColumn(creationDateColumn, "Creation Date", "140px");
 
-        return creatEntityItem(table, disk);
+        return createTreeItem(table, entityModelList);
     }
 
     private TreeItem getDiskNode(DiskImage disk) {
-        return getDiskOrSnapshotNode(disk, true);
+        ArrayList<EntityModel> entityModelList = toEntityModelList(new ArrayList<DiskImage>(Arrays.asList(disk)));
+        return getDiskOrSnapshotNode(entityModelList, true);
     }
 
-    private TreeItem getSnapshotsNode(DiskImage disk) {
-        return getDiskOrSnapshotNode(disk, false);
+    private TreeItem getSnapshotsNode(ArrayList<DiskImage> disks) {
+        ArrayList<EntityModel> entityModelList = toEntityModelList(disks);
+        return getDiskOrSnapshotNode(entityModelList, false);
     }
+
 }

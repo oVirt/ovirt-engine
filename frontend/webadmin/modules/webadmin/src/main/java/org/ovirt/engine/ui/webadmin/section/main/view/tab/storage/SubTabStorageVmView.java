@@ -73,11 +73,11 @@ public class SubTabStorageVmView extends AbstractSubTabTableView<storage_domains
 
     void initHeader() {
         table.addColumn(new EmptyColumn(), "Name");
-        table.addColumn(new EmptyColumn(), "Disks", "120px");
-        table.addColumn(new EmptyColumn(), "Template", "180px");
-        table.addColumn(new EmptyColumn(), "V-Size", "120px");
-        table.addColumn(new EmptyColumn(), "Actual Size", "120px");
-        table.addColumn(new EmptyColumn(), "Creation Date", "210px");
+        table.addColumn(new EmptyColumn(), "Disks", "80px");
+        table.addColumn(new EmptyColumn(), "Template", "160px");
+        table.addColumn(new EmptyColumn(), "V-Size", "110px");
+        table.addColumn(new EmptyColumn(), "Actual Size", "110px");
+        table.addColumn(new EmptyColumn(), "Creation Date", "170px");
     }
 
     @Override

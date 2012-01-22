@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.widget.storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -44,11 +45,11 @@ public class TemplatesTree extends AbstractSubTabTree<StorageTemplateListModel> 
                 for (VmTemplate template : templates) {
                     TreeItem vmItem = getTemplateNode(template);
 
-                    for (DiskImage disk : template.getDiskImageMap().values()) {
-                        TreeItem diskItem = getDiskNode(disk);
-
-                        vmItem.addItem(diskItem);
-                        styleItem(diskItem);
+                    Collection<DiskImage> disks = template.getDiskImageMap().values();
+                    if (!disks.isEmpty()) {
+                        TreeItem snapshotItem = getDiskNode(new ArrayList<DiskImage>(disks));
+                        vmItem.addItem(snapshotItem);
+                        styleItem(snapshotItem);
                     }
 
                     tree.addItem(vmItem);
@@ -102,7 +103,7 @@ public class TemplatesTree extends AbstractSubTabTree<StorageTemplateListModel> 
                 return String.valueOf(((VmTemplate) object.getEntity()).getDiskMap().size());
             }
         };
-        table.addColumn(diskColumn, "Disks", "120px");
+        table.addColumn(diskColumn, "Disks", "110px");
 
         DiskSizeColumn<EntityModel> actualSizeColumn = new DiskSizeColumn<EntityModel>(DiskSizeUnit.GIGABYTE) {
             @Override
@@ -110,7 +111,7 @@ public class TemplatesTree extends AbstractSubTabTree<StorageTemplateListModel> 
                 return (long) ((VmTemplate) object.getEntity()).getActualDiskSize();
             }
         };
-        table.addColumn(actualSizeColumn, "Actual Size", "120px");
+        table.addColumn(actualSizeColumn, "Actual Size", "110px");
 
         TextColumnWithTooltip<EntityModel> creationDateColumn = new GeneralDateTimeColumn<EntityModel>() {
             @Override
@@ -118,12 +119,13 @@ public class TemplatesTree extends AbstractSubTabTree<StorageTemplateListModel> 
                 return ((VmTemplate) object.getEntity()).getcreation_date();
             }
         };
-        table.addColumn(creationDateColumn, "Creation Date", "180px");
+        table.addColumn(creationDateColumn, "Creation Date", "140px");
 
-        return creatEntityItem(table, template);
+        ArrayList<EntityModel> entityModelList = toEntityModelList(new ArrayList<VmTemplate>(Arrays.asList(template)));
+        return createTreeItem(table, entityModelList);
     }
 
-    private TreeItem getDiskNode(DiskImage disk) {
+    private TreeItem getDiskNode(ArrayList<DiskImage> disks) {
         EntityModelCellTable<ListModel> table = new EntityModelCellTable<ListModel>(false,
                 (Resources) GWT.create(TreeHeaderlessTableResources.class),
                 true);
@@ -143,7 +145,7 @@ public class TemplatesTree extends AbstractSubTabTree<StorageTemplateListModel> 
         };
         table.addColumn(nameColumn, "Name");
 
-        table.addColumn(new EmptyColumn(), "Disks", "120px");
+        table.addColumn(new EmptyColumn(), "Disks", "110px");
 
         DiskSizeColumn<EntityModel> actualSizeColumn = new DiskSizeColumn<EntityModel>(DiskSizeUnit.GIGABYTE) {
             @Override
@@ -151,7 +153,7 @@ public class TemplatesTree extends AbstractSubTabTree<StorageTemplateListModel> 
                 return (long) ((DiskImage) object.getEntity()).getActualSize();
             }
         };
-        table.addColumn(actualSizeColumn, "Actual Size", "120px");
+        table.addColumn(actualSizeColumn, "Actual Size", "110px");
 
         TextColumnWithTooltip<EntityModel> creationDateColumn = new GeneralDateTimeColumn<EntityModel>() {
             @Override
@@ -159,8 +161,9 @@ public class TemplatesTree extends AbstractSubTabTree<StorageTemplateListModel> 
                 return ((DiskImage) object.getEntity()).getcreation_date();
             }
         };
-        table.addColumn(creationDateColumn, "Creation Date", "180px");
+        table.addColumn(creationDateColumn, "Creation Date", "140px");
 
-        return creatEntityItem(table, disk);
+        ArrayList<EntityModel> entityModelList = toEntityModelList(disks);
+        return createTreeItem(table, entityModelList);
     }
 }
