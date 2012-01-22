@@ -35,21 +35,21 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends VmReturnVdsBrokerCommand<P> {
-    protected VM mVm;
-    protected XmlRpcStruct mCreateInfo = new XmlRpcStruct();
+    protected VM vm;
+    protected XmlRpcStruct createInfo = new XmlRpcStruct();
 
     public CreateVDSCommand(P parameters) {
         super(parameters, parameters.getVm().getvm_guid());
-        mVm = parameters.getVm();
+        vm = parameters.getVm();
     }
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
         buildVmData();
-        mVmReturn = getBroker().create(mCreateInfo);
+        mVmReturn = getBroker().create(createInfo);
         logCommandInfo();
         ProceedProxyReturnValue();
-        VdsBrokerObjectsBuilder.updateVMDynamicData(mVm.getDynamicData(),
+        VdsBrokerObjectsBuilder.updateVMDynamicData(vm.getDynamicData(),
                 mVmReturn.mVm);
     }
 
@@ -61,11 +61,11 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         final char SEP = ',';
         StringBuilder info = new StringBuilder();
         String sep = "";
-        for (String o : mCreateInfo.getKeys()) {
+        for (String o : createInfo.getKeys()) {
             info.append(sep);
             info.append(o);
             info.append(EQUAL);
-            info.append(mCreateInfo.getItem(o));
+            info.append(createInfo.getItem(o));
             sep = (new Character(SEP)).toString();
         }
         log.infoFormat("{0} {1}", getClass().getName(), info.toString());
@@ -83,80 +83,80 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     }
 
     private void buildVmProperties() {
-        mCreateInfo.add(VdsProperties.vm_guid, mVm.getvm_guid().toString());
-        mCreateInfo.add(VdsProperties.vm_name, mVm.getvm_name());
-        mCreateInfo.add(VdsProperties.mem_size_mb, mVm.getvm_mem_size_mb());
-        mCreateInfo.add(VdsProperties.num_of_monitors,
-                (new Integer(mVm.getnum_of_monitors())).toString());
-        mCreateInfo.add(VdsProperties.num_of_cpus,
-                (new Integer(mVm.getnum_of_cpus())).toString());
+        createInfo.add(VdsProperties.vm_guid, vm.getvm_guid().toString());
+        createInfo.add(VdsProperties.vm_name, vm.getvm_name());
+        createInfo.add(VdsProperties.mem_size_mb, vm.getvm_mem_size_mb());
+        createInfo.add(VdsProperties.num_of_monitors,
+                (new Integer(vm.getnum_of_monitors())).toString());
+        createInfo.add(VdsProperties.num_of_cpus,
+                (new Integer(vm.getnum_of_cpus())).toString());
         if (Config.<Boolean> GetValue(ConfigValues.SendSMPOnRunVm)) {
-            mCreateInfo.add(VdsProperties.cores_per_socket,
-                    (new Integer(mVm.getcpu_per_socket())).toString());
+            createInfo.add(VdsProperties.cores_per_socket,
+                    (new Integer(vm.getcpu_per_socket())).toString());
         }
-        mCreateInfo.add(VdsProperties.emulatedMachine, Config
-                .<String> GetValue(ConfigValues.EmulatedMachine, mVm
+        createInfo.add(VdsProperties.emulatedMachine, Config
+                .<String> GetValue(ConfigValues.EmulatedMachine, vm
                         .getvds_group_compatibility_version().toString()));
         // send cipher suite and spice secure channels parameters only if ssl
         // enabled.
         if (Config.<Boolean> GetValue(ConfigValues.SSLEnabled)) {
-            mCreateInfo.add(VdsProperties.spiceSslCipherSuite,
+            createInfo.add(VdsProperties.spiceSslCipherSuite,
                     Config.<String> GetValue(ConfigValues.CipherSuite));
-            mCreateInfo.add(VdsProperties.SpiceSecureChannels,
+            createInfo.add(VdsProperties.SpiceSecureChannels,
                     Config.<String> GetValue(ConfigValues.SpiceSecureChannels));
         }
-        mCreateInfo.add(VdsProperties.kvmEnable, mVm.getkvm_enable().toString()
+        createInfo.add(VdsProperties.kvmEnable, vm.getkvm_enable().toString()
                 .toLowerCase());
-        mCreateInfo.add(VdsProperties.acpiEnable, mVm.getacpi_enable()
+        createInfo.add(VdsProperties.acpiEnable, vm.getacpi_enable()
                 .toString().toLowerCase());
 
-        mCreateInfo.add(VdsProperties.Custom,
-                VmPropertiesUtils.getVMProperties(mVm.getStaticData()));
-        mCreateInfo
-                .add(VdsProperties.display, mVm.getdisplay_type().toString()); // vnc,
+        createInfo.add(VdsProperties.Custom,
+                VmPropertiesUtils.getVMProperties(vm.getStaticData()));
+        createInfo
+                .add(VdsProperties.display, vm.getdisplay_type().toString()); // vnc,
         // qxl
-        mCreateInfo.add(VdsProperties.vm_type, "kvm"); // "qemu", "kvm"
-        if (mVm.getRunAndPause()) {
-            mCreateInfo.add(VdsProperties.launch_paused_param, "true");
+        createInfo.add(VdsProperties.vm_type, "kvm"); // "qemu", "kvm"
+        if (vm.getRunAndPause()) {
+            createInfo.add(VdsProperties.launch_paused_param, "true");
         }
-        if (mVm.getvds_group_cpu_flags_data() != null) {
-            mCreateInfo.add(VdsProperties.cpuType, mVm.getvds_group_cpu_flags_data());
+        if (vm.getvds_group_cpu_flags_data() != null) {
+            createInfo.add(VdsProperties.cpuType, vm.getvds_group_cpu_flags_data());
         }
-        mCreateInfo.add(VdsProperties.niceLevel,
-                (new Integer(mVm.getnice_level())).toString());
-        if (mVm.getstatus() == VMStatus.Suspended
-                && !StringHelper.isNullOrEmpty(mVm.gethibernation_vol_handle())) {
-            mCreateInfo.add(VdsProperties.hiberVolHandle, mVm.gethibernation_vol_handle());
+        createInfo.add(VdsProperties.niceLevel,
+                (new Integer(vm.getnice_level())).toString());
+        if (vm.getstatus() == VMStatus.Suspended
+                && !StringHelper.isNullOrEmpty(vm.gethibernation_vol_handle())) {
+            createInfo.add(VdsProperties.hiberVolHandle, vm.gethibernation_vol_handle());
         }
-        mCreateInfo.add(VdsProperties.KeyboardLayout,
+        createInfo.add(VdsProperties.KeyboardLayout,
                 Config.<String> GetValue(ConfigValues.VncKeyboardLayout));
-        if (mVm.getvm_os().isLinux()) {
-            mCreateInfo.add(VdsProperties.PitReinjection, "false");
+        if (vm.getvm_os().isLinux()) {
+            createInfo.add(VdsProperties.PitReinjection, "false");
         }
 
-        if (mVm.getdisplay_type() == DisplayType.vnc) {
-            mCreateInfo.add(VdsProperties.TabletEnable, "true");
+        if (vm.getdisplay_type() == DisplayType.vnc) {
+            createInfo.add(VdsProperties.TabletEnable, "true");
         }
-        mCreateInfo.add(VdsProperties.transparent_huge_pages,
-                mVm.getTransparentHugePages() ? "true" : "false");
+        createInfo.add(VdsProperties.transparent_huge_pages,
+                vm.getTransparentHugePages() ? "true" : "false");
     }
 
     private void buildVmDrives() {
         int[] ideIndexSlots = new int[] { 0, 1, 3 };
-        Map[] drives = new Map[mVm.getDiskMap().size()];
+        Map[] drives = new Map[vm.getDiskMap().size()];
         int ideCount = 0, pciCount = 0;
         int i = 0;
 
-        if (!StringHelper.isNullOrEmpty(mVm.getCdPath())) {
-            mCreateInfo.add(VdsProperties.CDRom, mVm.getCdPath());
+        if (!StringHelper.isNullOrEmpty(vm.getCdPath())) {
+            createInfo.add(VdsProperties.CDRom, vm.getCdPath());
         }
-        if (!StringHelper.isNullOrEmpty(mVm.getFloppyPath())) {
-            mCreateInfo.add(VdsProperties.Floppy, mVm.getFloppyPath());
+        if (!StringHelper.isNullOrEmpty(vm.getFloppyPath())) {
+            createInfo.add(VdsProperties.Floppy, vm.getFloppyPath());
         }
 
         // order first by drive numbers and then order by boot for the bootable
         // drive to be first (important for IDE to be index 0) !
-        List<DiskImage> diskImages = new ArrayList<DiskImage>(mVm.getDiskMap()
+        List<DiskImage> diskImages = new ArrayList<DiskImage>(vm.getDiskMap()
                 .values());
         Collections.sort(diskImages, new DiskImageByDriveMappingComparator());
         Collections.sort(diskImages,
@@ -192,30 +192,30 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
             drives[i] = drive;
             i++;
         }
-        mCreateInfo.add("drives", drives);
+        createInfo.add("drives", drives);
     }
     private void buildVmNetworkInterfaces() {
         StringBuilder macs = new StringBuilder();
         StringBuilder nics = new StringBuilder();
         StringBuilder networks = new StringBuilder();
-        for (int i = 0; i < mVm.getInterfaces().size(); i++) {
-            macs.append(mVm.getInterfaces().get(i).getMacAddress());
-            networks.append(mVm.getInterfaces().get(i).getNetworkName());
+        for (int i = 0; i < vm.getInterfaces().size(); i++) {
+            macs.append(vm.getInterfaces().get(i).getMacAddress());
+            networks.append(vm.getInterfaces().get(i).getNetworkName());
 
             VmInterfaceType ifaceType = VmInterfaceType.rtl8139;
-            if (mVm.getInterfaces().get(i).getType() != null) {
-                ifaceType = VmInterfaceType.forValue(mVm.getInterfaces().get(i)
+            if (vm.getInterfaces().get(i).getType() != null) {
+                ifaceType = VmInterfaceType.forValue(vm.getInterfaces().get(i)
                         .getType());
             }
 
             if (ifaceType == VmInterfaceType.rtl8139_pv) {
                 Boolean useRtl8139_pv = Config.<Boolean> GetValue(
-                        ConfigValues.UseRtl8139_pv, mVm
+                        ConfigValues.UseRtl8139_pv, vm
                                 .getvds_group_compatibility_version()
                                 .toString());
 
                 if (!useRtl8139_pv) {
-                    if (mVm.getHasAgent()) {
+                    if (vm.getHasAgent()) {
                         nics.append("pv");
                     } else {
                         nics.append("rtl8139");
@@ -223,9 +223,9 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
                 } else {
                     nics.append("rtl8139,pv");
                     macs.append(",");
-                    macs.append(mVm.getInterfaces().get(i).getMacAddress());
+                    macs.append(vm.getInterfaces().get(i).getMacAddress());
                     networks.append(",");
-                    networks.append(mVm.getInterfaces().get(i).getNetworkName());
+                    networks.append(vm.getInterfaces().get(i).getNetworkName());
                 }
             } else {
 
@@ -233,22 +233,22 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
 
             }
 
-            if (i < mVm.getInterfaces().size() - 1) {
+            if (i < vm.getInterfaces().size() - 1) {
                 macs.append(",");
                 nics.append(",");
                 networks.append(",");
             }
         }
         if (!StringHelper.isNullOrEmpty(macs.toString().trim())) {
-            mCreateInfo.add(VdsProperties.mac_addr, macs.toString());
-            mCreateInfo.add(VdsProperties.nic_type, nics.toString());
-            mCreateInfo.add(VdsProperties.bridge, networks.toString());
+            createInfo.add(VdsProperties.mac_addr, macs.toString());
+            createInfo.add(VdsProperties.nic_type, nics.toString());
+            createInfo.add(VdsProperties.bridge, networks.toString());
         }
     }
     private void buildVmNetworkCluster() {
         // set Display network
         List<network_cluster> all = DbFacade.getInstance()
-                .getNetworkClusterDAO().getAllForCluster(mVm.getvds_group_id());
+                .getNetworkClusterDAO().getAllForCluster(vm.getvds_group_id());
         network_cluster networkCluster = null;
         for (network_cluster tempNetworkCluster : all) {
             if (tempNetworkCluster.getis_display()) {
@@ -267,36 +267,36 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
                 }
             }
             if (net != null) {
-                mCreateInfo.add(VdsProperties.displaynetwork, net.getname());
+                createInfo.add(VdsProperties.displaynetwork, net.getname());
             }
         }
     }
 
     private void buildVmBootSequence() {
         // get device list for the VM
-        List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmId(mVm.getvm_guid());
+        List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmId(vm.getvm_guid());
         String bootSeqInDB = VmDeviceCommonUtils.getBootSequence(devices).toString().toLowerCase();
-        String bootSeqInBE = mVm.getboot_sequence().toString().toLowerCase();
+        String bootSeqInBE = vm.getboot_sequence().toString().toLowerCase();
         // TODO : find another way to distinguish run vs. run-once
         if (bootSeqInBE.equals(bootSeqInDB))
-            mCreateInfo.add(VdsProperties.Boot, bootSeqInDB);
+            createInfo.add(VdsProperties.Boot, bootSeqInDB);
         else
             // run once
-            mCreateInfo.add(VdsProperties.Boot, bootSeqInBE);
+            createInfo.add(VdsProperties.Boot, bootSeqInBE);
 
     }
 
     private void setVmBootOptions() {
         // Boot Options
-        if (!StringHelper.isNullOrEmpty(mVm.getinitrd_url())) {
-            mCreateInfo.add(VdsProperties.InitrdUrl, mVm.getinitrd_url());
+        if (!StringHelper.isNullOrEmpty(vm.getinitrd_url())) {
+            createInfo.add(VdsProperties.InitrdUrl, vm.getinitrd_url());
         }
-        if (!StringHelper.isNullOrEmpty(mVm.getkernel_url())) {
-            mCreateInfo.add(VdsProperties.KernelUrl, mVm.getkernel_url());
+        if (!StringHelper.isNullOrEmpty(vm.getkernel_url())) {
+            createInfo.add(VdsProperties.KernelUrl, vm.getkernel_url());
 
-            if (!StringHelper.isNullOrEmpty(mVm.getkernel_params())) {
-                mCreateInfo.add(VdsProperties.KernelParams,
-                        mVm.getkernel_params());
+            if (!StringHelper.isNullOrEmpty(vm.getkernel_params())) {
+                createInfo.add(VdsProperties.KernelParams,
+                        vm.getkernel_params());
             }
         }
     }
@@ -304,25 +304,25 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         final String OS_REGEX = "^.*%1s,([^,]*).*$";
         final String DEFAULT_TYPE = "default";
 
-        if (mVm.getvm_type() == VmType.Desktop) {
+        if (vm.getvm_type() == VmType.Desktop) {
 
             String soundDeviceTypeConfig = Config.<String> GetValue(
-                    ConfigValues.DesktopAudioDeviceType, mVm
+                    ConfigValues.DesktopAudioDeviceType, vm
                             .getvds_group_compatibility_version().toString());
-            String vmOS = mVm.getos().name();
+            String vmOS = vm.getos().name();
 
             Pattern regexPattern = Pattern.compile(String.format(OS_REGEX, vmOS));
             Matcher regexMatcher = regexPattern.matcher(soundDeviceTypeConfig);
 
             if (regexMatcher.find()) {
-                mCreateInfo.add(VdsProperties.soundDevice, regexMatcher.group(1));
+                createInfo.add(VdsProperties.soundDevice, regexMatcher.group(1));
             } else {
                 regexPattern = Pattern.compile(String
                         .format(OS_REGEX, DEFAULT_TYPE));
                 regexMatcher = regexPattern.matcher(soundDeviceTypeConfig);
 
                 if (regexMatcher.find()) {
-                    mCreateInfo.add(VdsProperties.soundDevice,
+                    createInfo.add(VdsProperties.soundDevice,
                             regexMatcher.group(1));
                 }
             }
@@ -330,14 +330,14 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     }
     private void buildVmTimeZone() {
         // send vm_dynamic.utc_diff if exist, if not send vm_static.time_zone
-        if (mVm.getutc_diff() != null) {
-            mCreateInfo.add(VdsProperties.utc_diff, mVm.getutc_diff()
+        if (vm.getutc_diff() != null) {
+            createInfo.add(VdsProperties.utc_diff, vm.getutc_diff()
                     .toString());
         } else {
             // get vm timezone
             String timeZone = TimeZoneInfo.Local.getId();
-            if (!StringHelper.isNullOrEmpty(mVm.gettime_zone())) {
-                timeZone = mVm.gettime_zone();
+            if (!StringHelper.isNullOrEmpty(vm.gettime_zone())) {
+                timeZone = vm.gettime_zone();
             }
 
             // convert to java & calculate offset
@@ -348,7 +348,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
                 offset = (TimeZone.getTimeZone(javaZoneId).getOffset(
                         new Date().getTime()) / 1000);
             }
-            mCreateInfo.add(VdsProperties.utc_diff, "" + offset);
+            createInfo.add(VdsProperties.utc_diff, "" + offset);
         }
     }
 

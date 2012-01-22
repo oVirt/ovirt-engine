@@ -12,7 +12,7 @@ public class CreateVmFromSysPrepVDSCommand<P extends CreateVmFromSysPrepVDSComma
 
         if (!StringHelper.EqOp(strSysPrepContent, "")) {
             byte[] binarySysPrep = StringUtils.charsetDecodeStringUTF8(strSysPrepContent);
-            mCreateInfo.add(VdsProperties.sysprepInf, binarySysPrep);
+            createInfo.add(VdsProperties.sysprepInf, binarySysPrep);
         }
     }
 }
