@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
@@ -70,7 +71,9 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             tempVar.setEntityId(getParameters().getEntityId());
             ImagesContainterParametersBase p = tempVar;
             VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
-                    VdcActionType.RemoveSnapshotSingleDisk, p);
+                            VdcActionType.RemoveSnapshotSingleDisk,
+                            p,
+                            ExecutionHandler.createDefaultContexForTasks(executionContext));
             getParameters().getImagesParameters().add(p);
 
             if (vdcReturnValue != null && vdcReturnValue.getInternalTaskIdList() != null) {

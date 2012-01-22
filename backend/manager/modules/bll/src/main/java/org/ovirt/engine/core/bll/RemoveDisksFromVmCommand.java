@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveDisksFromVmParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
@@ -76,7 +77,9 @@ public class RemoveDisksFromVmCommand<T extends RemoveDisksFromVmParameters> ext
                     RemoveImageParameters p = tempVar;
                     p.setParentParemeters(getParameters());
                     VdcReturnValueBase vdcReturnValue =
-                            Backend.getInstance().runInternalAction(VdcActionType.RemoveImage, p);
+                            Backend.getInstance().runInternalAction(VdcActionType.RemoveImage,
+                                    p,
+                                    ExecutionHandler.createDefaultContexForTasks(executionContext));
                     getParameters().getImagesParameters().add(p);
                     getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
                     if (!vdcReturnValue.getSucceeded()) {

@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -184,7 +185,9 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     }
                     p.setParentParemeters(getParameters());
                     VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
-                            VdcActionType.MoveOrCopyImageGroup, p);
+                                    VdcActionType.MoveOrCopyImageGroup,
+                                    p,
+                                    ExecutionHandler.createDefaultContexForTasks(executionContext));
                     getParameters().getImagesParameters().add(p);
 
                     getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -52,8 +53,10 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
             RestoreAllSnapshotsParameters tempVar = new RestoreAllSnapshotsParameters(getVm().getvm_guid(), Guid.Empty);
             tempVar.setShouldBeLogged(false);
             tempVar.setImagesList(imagesList);
-            VdcReturnValueBase vdcReturn = Backend.getInstance().runInternalAction(VdcActionType.RestoreAllSnapshots,
-                    tempVar);
+            VdcReturnValueBase vdcReturn =
+                    Backend.getInstance().runInternalAction(VdcActionType.RestoreAllSnapshots,
+                            tempVar,
+                            ExecutionHandler.createDefaultContexForTasks(executionContext));
             returnVal = vdcReturn.getSucceeded();
         }
         setSucceeded(returnVal);

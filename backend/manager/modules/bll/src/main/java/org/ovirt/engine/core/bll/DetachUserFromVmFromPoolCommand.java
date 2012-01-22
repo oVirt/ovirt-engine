@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -79,7 +80,9 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
             RestoreAllSnapshotsParameters tempVar = new RestoreAllSnapshotsParameters(vm.getvm_guid(), Guid.Empty);
             tempVar.setShouldBeLogged(false);
             tempVar.setImagesList(imagesList);
-            Backend.getInstance().runInternalAction(VdcActionType.RestoreAllSnapshots, tempVar);
+            Backend.getInstance().runInternalAction(VdcActionType.RestoreAllSnapshots,
+                    tempVar,
+                    ExecutionHandler.createDefaultContexForTasks(executionContext));
         }
     }
 

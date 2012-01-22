@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -59,7 +60,8 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
             if (returnValue != null && returnValue.getSucceeded()) {
                 LogSettingVmToDown(getVds().getvds_id(), vm.getvm_guid());
             }
-            VmPoolHandler.ProcessVmPoolOnStopVm(vm.getvm_guid());
+            VmPoolHandler.ProcessVmPoolOnStopVm(vm.getvm_guid(),
+                    ExecutionHandler.createDefaultContexForTasks(executionContext));
         }
 
         Backend.getInstance()

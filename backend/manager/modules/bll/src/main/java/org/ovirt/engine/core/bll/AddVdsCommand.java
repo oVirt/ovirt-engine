@@ -7,6 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
@@ -92,9 +94,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             VdsActionParameters tempVar = new VdsActionParameters(getVdsIdRef().getValue());
             tempVar.setSessionId(getParameters().getSessionId());
             tempVar.setCompensationEnabled(true);
-            VdcReturnValueBase addVdsSpmIdReturn = Backend.getInstance().runInternalAction(VdcActionType.AddVdsSpmId,
-                    tempVar,
-                    getCompensationContext());
+            CompensationContext compensationContext = getCompensationContext();
+            VdcReturnValueBase addVdsSpmIdReturn =
+                    Backend.getInstance().runInternalAction(VdcActionType.AddVdsSpmId,
+                            tempVar,
+                            new CommandContext(compensationContext));
             if (!addVdsSpmIdReturn.getSucceeded()) {
                 setSucceeded(false);
                 getReturnValue().setFault(addVdsSpmIdReturn.getFault());

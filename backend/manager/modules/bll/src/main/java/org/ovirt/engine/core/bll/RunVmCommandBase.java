@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
@@ -241,7 +242,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     private void AnonymousMethod1() {
-        VmPoolHandler.ProcessVmPoolOnStopVm(getVm().getvm_guid());
+        VmPoolHandler.ProcessVmPoolOnStopVm(getVm().getvm_guid(),
+                ExecutionHandler.createDefaultContexForTasks(executionContext));
     }
 
     /**

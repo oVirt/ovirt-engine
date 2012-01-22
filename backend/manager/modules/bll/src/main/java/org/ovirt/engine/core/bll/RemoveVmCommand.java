@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
@@ -153,8 +154,10 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         tempVar.setParentCommand(getActionType());
         tempVar.setEntityId(getParameters().getEntityId());
         tempVar.setParentParemeters(getParameters());
-        VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(VdcActionType.RemoveAllVmImages,
-                tempVar);
+        VdcReturnValueBase vdcRetValue =
+                Backend.getInstance().runInternalAction(VdcActionType.RemoveAllVmImages,
+                        tempVar,
+                        ExecutionHandler.createDefaultContexForTasks(executionContext));
 
         if (vdcRetValue.getSucceeded()) {
             getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());

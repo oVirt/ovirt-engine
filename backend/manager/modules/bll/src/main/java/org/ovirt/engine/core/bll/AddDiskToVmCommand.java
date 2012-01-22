@@ -268,7 +268,6 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
         VdcReturnValueBase tmpRetValue =
                 Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch,
                         parameters,
-                        null,
                         ExecutionHandler.createDefaultContexForTasks(executionContext));
         getReturnValue().getTaskIdList().addAll(tmpRetValue.getInternalTaskIdList());
         getReturnValue().setActionReturnValue(tmpRetValue.getActionReturnValue());

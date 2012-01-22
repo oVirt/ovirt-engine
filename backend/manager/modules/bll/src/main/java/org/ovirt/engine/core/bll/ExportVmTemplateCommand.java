@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
@@ -52,7 +53,9 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                         p.setSourceDomainId(getSourceDomain().getid());
                     }
                     VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
-                            VdcActionType.MoveOrCopyImageGroup, p);
+                                    VdcActionType.MoveOrCopyImageGroup,
+                                    p,
+                                    ExecutionHandler.createDefaultContexForTasks(executionContext));
                     getParameters().getImagesParameters().add(p);
 
                     getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());

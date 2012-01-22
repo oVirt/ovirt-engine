@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MoveMultipleImageGroupsParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -180,8 +181,10 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         tempVar.setParentCommand(getActionType());
         tempVar.setEntityId(getParameters().getEntityId());
         MoveMultipleImageGroupsParameters p = tempVar;
-        VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(VdcActionType.MoveMultipleImageGroups,
-                p);
+        VdcReturnValueBase vdcRetValue =
+                Backend.getInstance().runInternalAction(VdcActionType.MoveMultipleImageGroups,
+                        p,
+                        ExecutionHandler.createDefaultContexForTasks(executionContext));
 
         getParameters().getImagesParameters().add(p);
         getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());

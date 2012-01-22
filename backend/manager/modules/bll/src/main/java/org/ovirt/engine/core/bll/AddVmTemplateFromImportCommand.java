@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddImagesFromImportParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateFromImportParameters;
@@ -163,7 +164,8 @@ public class AddVmTemplateFromImportCommand<T extends AddVmTemplateFromImportPar
                 VdcActionType.AddTemplateImagesFromImport,
                 new AddImagesFromImportParameters(candidateID.toString(), candidateID, baseImageIds, getParameters()
                         .getCandidateInfoParams().getPath(), getParameters().getCandidateInfoParams()
-                        .getCandidateSource(), getParameters().getForce(), _candidateInfo.getImagesData()));
+                        .getCandidateSource(), getParameters().getForce(), _candidateInfo.getImagesData()),
+                ExecutionHandler.createDefaultContexForTasks(executionContext));
 
     }
 

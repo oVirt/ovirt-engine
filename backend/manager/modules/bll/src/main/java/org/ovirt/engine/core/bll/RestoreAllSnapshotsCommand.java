@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
@@ -48,7 +49,9 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 p.setParentCommand(getActionType());
                 p.setParentParemeters(getParameters());
                 returnValue = Backend.getInstance().runInternalAction(
-                        VdcActionType.RestoreFromSnapshot, p);
+                                VdcActionType.RestoreFromSnapshot,
+                                p,
+                                ExecutionHandler.createDefaultContexForTasks(executionContext));
                 getParameters().getImagesParameters().add(p);
                 getTaskIdList().addAll(returnValue.getInternalTaskIdList());
             }

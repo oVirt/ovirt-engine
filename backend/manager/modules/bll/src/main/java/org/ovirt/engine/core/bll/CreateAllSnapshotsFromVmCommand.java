@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
@@ -69,7 +70,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 getParameters().getImagesParameters().add(p);
                 p.setParentParemeters(getParameters());
                 VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
-                        VdcActionType.CreateSnapshot, p);
+                                VdcActionType.CreateSnapshot,
+                                p,
+                                ExecutionHandler.createDefaultContexForTasks(executionContext));
 
                 if (vdcReturnValue.getSucceeded()) {
                     getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());

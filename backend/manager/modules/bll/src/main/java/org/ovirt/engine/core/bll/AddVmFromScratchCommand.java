@@ -121,7 +121,6 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                 VdcReturnValueBase tmpRetValue = Backend.getInstance().runInternalAction(
                                 VdcActionType.AddImageFromScratch,
                                 tempVar,
-                                null,
                                 ExecutionHandler.createDefaultContexForTasks(executionContext));
 
                 drivesCount++;

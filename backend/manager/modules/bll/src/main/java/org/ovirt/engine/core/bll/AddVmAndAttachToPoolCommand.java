@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
@@ -28,7 +29,10 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
                     .getDiskInfoList(), getParameters().getStorageDomainId());
             tempVar.setSessionId(getParameters().getSessionId());
             tempVar.setDontAttachToDefaultTag(true);
-            returnValueFromAddVm = Backend.getInstance().runInternalAction(VdcActionType.AddVmFromScratch, tempVar);
+            returnValueFromAddVm =
+                    Backend.getInstance().runInternalAction(VdcActionType.AddVmFromScratch,
+                            tempVar,
+                            ExecutionHandler.createDefaultContexForTasks(executionContext));
         } else {
             VmManagementParametersBase tempVar2 = new VmManagementParametersBase(vmStatic);
             tempVar2.setSessionId(getParameters().getSessionId());

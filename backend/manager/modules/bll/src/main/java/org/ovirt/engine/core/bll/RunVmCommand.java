@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
@@ -292,8 +293,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             tempVar.setEntityId(getParameters().getEntityId());
             CreateAllSnapshotsFromVmParameters p = tempVar;
 
-            VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
-                    VdcActionType.CreateAllSnapshotsFromVm, p, getCompensationContext());
+            VdcReturnValueBase vdcReturnValue =
+                    Backend.getInstance().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
+                            p,
+                            new CommandContext(getCompensationContext()));
 
             setSucceeded(vdcReturnValue.getSucceeded());
             if (vdcReturnValue.getSucceeded()) {
@@ -333,7 +336,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
     private void removeVmStatlessImages() {
         isFailedStatlessSnapshot = true;
-        VmPoolHandler.removeVmStatelessImages(getVm().getvm_guid());
+        VmPoolHandler.removeVmStatelessImages(getVm().getvm_guid(), new CommandContext(executionContext));
         setSucceeded(true);
     }
 

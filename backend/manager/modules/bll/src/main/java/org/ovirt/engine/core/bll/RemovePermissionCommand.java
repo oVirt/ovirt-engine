@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
@@ -59,7 +60,8 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParametes> e
             VM vm = DbFacade.getInstance().getVmDAO().get(perms.getObjectId());
             if (vm != null && vm.getVmPoolId() != null) {
                 Backend.getInstance().runInternalAction(VdcActionType.DetachUserFromVmFromPool,
-                        new VmPoolSimpleUserParameters(vm.getVmPoolId(), userId));
+                        new VmPoolSimpleUserParameters(vm.getVmPoolId(), userId),
+                        ExecutionHandler.createDefaultContexForTasks(executionContext));
             }
         }
 

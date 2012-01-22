@@ -78,7 +78,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void ProcessOnVmStop(Guid vmId) {
-        VmPoolHandler.ProcessVmPoolOnStopVm(vmId);
+        VmPoolHandler.ProcessVmPoolOnStopVm(vmId, null);
         /**
          * Vitaly wating for Vm.ExitStatus in DB.
          * //HighAvailableVmsDirector.TryRunHighAvailableVmsOnVmDown(vmId);

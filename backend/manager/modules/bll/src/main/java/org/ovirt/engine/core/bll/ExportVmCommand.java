@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -317,7 +318,9 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             MoveOrCopyImageGroupParameters p = tempVar;
             p.setParentParemeters(getParameters());
             VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
-                    VdcActionType.MoveOrCopyImageGroup, p);
+                            VdcActionType.MoveOrCopyImageGroup,
+                            p,
+                            ExecutionHandler.createDefaultContexForTasks(executionContext));
             getParameters().getImagesParameters().add(p);
 
             getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());

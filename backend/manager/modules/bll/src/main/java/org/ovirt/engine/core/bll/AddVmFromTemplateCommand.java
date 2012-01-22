@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -57,7 +58,9 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 tempVar.setEntityId(getParameters().getEntityId());
                 CreateCloneOfTemplateParameters p = tempVar;
                 VdcReturnValueBase result = Backend.getInstance().runInternalAction(
-                        VdcActionType.CreateCloneOfTemplate, p);
+                                VdcActionType.CreateCloneOfTemplate,
+                                p,
+                                ExecutionHandler.createDefaultContexForTasks(executionContext));
                 getParameters().getImagesParameters().add(p);
 
                 /**

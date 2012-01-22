@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
@@ -58,8 +59,10 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setParentParemeters(getParameters());
                 ImagesContainterParametersBase p = tempVar;
-                VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
-                        VdcActionType.TryBackToSnapshot, p);
+                VdcReturnValueBase vdcReturnValue =
+                        Backend.getInstance().runInternalAction(VdcActionType.TryBackToSnapshot,
+                                p,
+                                ExecutionHandler.createDefaultContexForTasks(executionContext));
                 getParameters().getImagesParameters().add(p);
 
                 if (vdcReturnValue.getSucceeded()) {

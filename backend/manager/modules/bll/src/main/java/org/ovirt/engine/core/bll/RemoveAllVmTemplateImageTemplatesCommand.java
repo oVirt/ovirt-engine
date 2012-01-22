@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -47,7 +48,9 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                 tempVar.setWipeAfterDelete(disk.getwipe_after_delete());
                 tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                 VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
-                        VdcActionType.RemoveTemplateSnapshot, tempVar);
+                                VdcActionType.RemoveTemplateSnapshot,
+                                tempVar,
+                                ExecutionHandler.createDefaultContexForTasks(executionContext));
 
                 if (vdcReturnValue.getSucceeded()) {
                     getReturnValue().getInternalTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
@@ -86,7 +87,9 @@ public class RemoveAdGroupCommand<T extends AdElementParametersBase> extends AdG
                 .getAllDirectPermissionsForAdElement(getAdGroup().getid())) {
             PermissionsOperationsParametes param = new PermissionsOperationsParametes(permission);
             param.setSessionId(getParameters().getSessionId());
-            Backend.getInstance().runInternalAction(VdcActionType.RemovePermission, param);
+            Backend.getInstance().runInternalAction(VdcActionType.RemovePermission,
+                    param,
+                    ExecutionHandler.createDefaultContexForTasks(executionContext));
         }
         DbFacade.getInstance().getAdGroupDAO().remove(getAdGroup().getid());
         setSucceeded(true);

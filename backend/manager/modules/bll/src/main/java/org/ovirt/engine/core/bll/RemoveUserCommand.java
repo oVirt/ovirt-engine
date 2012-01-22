@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
@@ -41,7 +42,9 @@ public class RemoveUserCommand<T extends AdElementParametersBase> extends UserCo
                 .getAllDirectPermissionsForAdElement(getAdUserId())) {
             PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes(permission);
             tempVar.setShouldBeLogged(false);
-            Backend.getInstance().runInternalAction(VdcActionType.RemovePermission, tempVar);
+            Backend.getInstance().runInternalAction(VdcActionType.RemovePermission,
+                    tempVar,
+                    ExecutionHandler.createDefaultContexForTasks(executionContext));
         }
         DbFacade.getInstance().getDbUserDAO().remove(getAdUserId());
         setSucceeded(true);
