@@ -14,7 +14,7 @@ public class RootDSEQueryInfo {
     public static final String DEFAULT_NAMING_CONTEXT_RESULT_ATTRIBUTE = "defaultNamingContext";
     public static final String NAMING_CONTEXTS_RESULT_ATTRIBUTE = "NamingContexts";
     // Property used to auto-identify RHDS ldap provider
-    public static final String RHDS_PROPERTY = "netscapemdsuffix";
+    public static final String PROVIDER_TYPE_PROPERTY = "vendorName";
 
     /**
      * Creates search controls object for the purpose of ROOT DSE query

@@ -38,13 +38,14 @@ public class RootDSEData {
             retVal = true;
         } else {
             Attribute namingContextAttribute = attributes.get(RootDSEQueryInfo.NAMING_CONTEXTS_RESULT_ATTRIBUTE);
-            Attribute rhdsAttribute = attributes.get(RootDSEQueryInfo.RHDS_PROPERTY);
+            Attribute vendorNameAttribute = attributes.get(RootDSEQueryInfo.PROVIDER_TYPE_PROPERTY);
             if (namingContextAttribute != null) {
                 domainDN = getDefaultNamingContextFromNamingContexts(namingContextAttribute);
-                if (rhdsAttribute != null) {
-                    ldapProviderType = LdapProviderType.rhds;
-                } else {
+                String vendorName = (String) vendorNameAttribute.get(0);
+                if (vendorName.equals(LdapVendorNameEnum.IPAVendorName.getName())) {
                     ldapProviderType = LdapProviderType.ipa;
+                } else if (vendorName.equals(LdapVendorNameEnum.RHDSVendorName.getName())) {
+                    ldapProviderType = LdapProviderType.rhds;
                 }
                 retVal = true;
             }
