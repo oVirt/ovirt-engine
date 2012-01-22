@@ -322,7 +322,11 @@ public class RsdlBuilder {
                         param.setName(key.toString());
                         Object value = action.getRequest().getUrlparams().get(key);
                         if (value != null) {
-                            param.setValue(value.toString());
+                            UrlParamData urlParamData = (UrlParamData)value;
+                            param.setType(urlParamData.getType());
+                            param.setContext(urlParamData.getContext());
+                            param.setValue(urlParamData.getValue());
+                            param.setRequired(urlParamData.getRequired()==null ? false : urlParamData.getRequired());
                         }
                         ps.getParameters().add(param);
                     }

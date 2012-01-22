@@ -6,13 +6,13 @@ import java.util.Map;
 public class Request {
 
     private Body body;
-    private Map<Object, Object> urlparams = new HashMap<Object, Object>();
-    private Map<Object, Object> headers = new HashMap<Object, Object>();
+    private Map<String, UrlParamData> urlparams = new HashMap<String, UrlParamData>();
+    private Map<String, String> headers = new HashMap<String, String>();
 
-    public Map<Object, Object> getUrlparams() {
+    public Map<String, UrlParamData> getUrlparams() {
         return urlparams;
     }
-    public void setUrlparams(Map<Object, Object> urlparams) {
+    public void setUrlparams(Map<String, UrlParamData> urlparams) {
         this.urlparams = urlparams;
     }
     public Body getBody() {
@@ -22,16 +22,16 @@ public class Request {
         this.body = body;
     }
 
-    public Map<Object, Object> getHeaders() {
+    public Map<String, String> getHeaders() {
         return headers;
     }
-    public void setHeaders(Map<Object, Object> headers) {
+    public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
     }
     public void addHeader(String name, String type) {
         this.headers.put(name, type);
     }
-    public void addUrl_params(String name, String value) {
+    public void addUrl_params(String name, UrlParamData value) {
         this.urlparams.put(name, value);
     }
 }
