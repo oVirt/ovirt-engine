@@ -434,6 +434,63 @@ END; $function$
 LANGUAGE plpgsql;
 
 
+-----------------------
+-- Quota Functions ----
+-----------------------
+DROP TYPE IF EXISTS vds_group_usage_rs CASCADE;
+CREATE TYPE vds_group_usage_rs AS
+    ( virtual_cpu_usage INTEGER,mem_size_mb_usage BIGINT);
+
+
+-- Summarize the VCPU usage and the RAM usage for all the VMs in the quota which are not down or suspended
+-- If vds group id is null, then returns the global usage of the quota, other wise returns only the summarize of all VMs in the specific cluster.
+CREATE OR REPLACE FUNCTION CalculateVdsGroupUsage(v_quota_id UUID, v_vds_group_id UUID)
+RETURNS SETOF vds_group_usage_rs
+AS $function$
+BEGIN
+    RETURN QUERY SELECT cast(COALESCE(sum(num_of_sockets * cpu_per_socket), 0) as INTEGER) as virtual_cpu_usage,
+    COALESCE(sum(mem_size_mb), 0) as mem_size_mb_usage
+    FROM vm_static,vm_dynamic
+    WHERE quota_id = v_quota_id
+      AND vm_dynamic.vm_guid = vm_static.vm_guid
+      AND vm_dynamic.status not in (0, 13 , 14, 15)
+      AND (v_vds_group_id = vm_static.vds_group_id or v_vds_group_id IS NULL);
+END; $function$
+LANGUAGE plpgsql;
+
+
+-- Summarize the storage usage for all the disks in the quota
+-- For active disks, we summarize the full size and for snapshots and other disks, we summarize only the actual size.
+-- If v_storage_id is null, then return only the global usage of the quota, other wise return only the summarize in the specific storage.
+CREATE OR REPLACE FUNCTION CalculateStorageUsage(v_quota_id UUID, v_storage_id UUID)
+RETURNS double precision
+AS $function$
+DECLARE
+	v_virtual_size double precision;
+	v_actual_size double precision;
+BEGIN
+	-- Summarize size of all disks that are active.
+    SELECT COALESCE(sum(size) / (1024 * 1024 * 1024),0) INTO v_virtual_size
+	FROM disk_image_dynamic, images
+	WHERE image_guid = disk_image_dynamic.image_id
+    AND image_guid in (SELECT image_guid
+                       FROM image_vm_map ivm,images
+                       WHERE ivm.image_id = images.image_guid and active = 't')
+	AND quota_id = v_quota_id
+    AND (v_storage_id = images.storage_id or v_storage_id IS NULL);
+
+	-- Summarize the actual size of all the rest disks that are read only disks such as snapshots, not active, template disks.
+	SELECT COALESCE(sum(actual_size) / (1024 * 1024 * 1024),0) INTO v_actual_size
+	FROM disk_image_dynamic, images
+	WHERE image_guid = disk_image_dynamic.image_id
+    AND image_guid not in (SELECT image_guid
+                           FROM image_vm_map ivm,images
+                           WHERE ivm.image_id = images.image_guid and active = 't')
+	AND quota_id = v_quota_id
+	AND (v_storage_id = images.storage_id or v_storage_id IS NULL);
+	RETURN v_actual_size + v_virtual_size;
+END; $function$
+LANGUAGE plpgsql;
 
 
 
