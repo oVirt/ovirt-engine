@@ -2735,6 +2735,30 @@
 			<value>1</value>
         </row>
     </table>
-
-
+    <table name="vm_device">
+        <column>device_id</column>
+        <column>vm_id</column>
+        <column>type</column>
+        <column>device</column>
+        <column>address</column>
+        <column>boot_order</column>
+        <column>spec_params</column>
+        <column>is_managed</column>
+        <column>is_plugged</column>
+        <column>is_shared</column>
+        <column>is_readonly</column>
+        <row>
+            <value>e14ed6f0-3b12-11e1-b614-63d00126418d</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>disk</value>
+            <value>disk</value>
+            <value>sample</value>
+            <value>1</value>
+            <value>sample</value>
+            <value>true</value>
+            <value>false</value>
+            <value>false</value>
+            <value>false</value>
+        </row>
+     </table>
 </dataset>
