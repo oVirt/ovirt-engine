@@ -116,18 +116,22 @@ public class PermissionsPopupPresenterWidget extends AbstractModelBoundPopupPres
             }
         });
 
-        getView().setPopupKeyPressHandler(new PermissionPopupNativeKeyPressHandler(getView().getNativeKeyPressHandler()));
+        PermissionPopupNativeKeyPressHandler keyPressHandler =
+                new PermissionPopupNativeKeyPressHandler(getView().getNativeKeyPressHandler(), model);
+        getView().setPopupKeyPressHandler(keyPressHandler);
 
     }
 
     class PermissionPopupNativeKeyPressHandler implements PopupNativeKeyPressHandler {
 
-        private PopupNativeKeyPressHandler decorated;
+        private final PopupNativeKeyPressHandler decorated;
+        private final AdElementListModel model;
 
         private boolean hasFocus = false;
 
-        public PermissionPopupNativeKeyPressHandler(PopupNativeKeyPressHandler decorated) {
+        public PermissionPopupNativeKeyPressHandler(PopupNativeKeyPressHandler decorated, AdElementListModel model) {
             this.decorated = decorated;
+            this.model = model;
 
             ((HasFocusHandlers) getView().getSearchStringEditor()).addFocusHandler(new FocusHandler() {
 
@@ -149,6 +153,7 @@ public class PermissionsPopupPresenterWidget extends AbstractModelBoundPopupPres
         @Override
         public void onKeyPress(NativeEvent event) {
             if (hasFocus && KeyCodes.KEY_ENTER == event.getKeyCode()) {
+                model.setSearchString(getView().getSearchString().getValue());
                 getView().getSearchButton().getCommand().Execute();
             } else {
                 decorated.onKeyPress(event);
