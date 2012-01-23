@@ -65,7 +65,11 @@ public class ErrorPopupView extends AbstractPopupView<DialogBox> implements Erro
         if ((desc2msgs.size() == 1)) {
             String desc = desc2msgs.keySet().iterator().next();
             if ((desc2msgs.get(desc).size() == 1) && ((desc == null) || (desc.equals("")))) {
-                messageLabel.setText(messages.uiCommonFrontendFailure(desc2msgs.get(desc).iterator().next()));
+                SafeHtmlBuilder sb = new SafeHtmlBuilder();
+                sb.append(SafeHtmlUtils.fromSafeConstant(desc2msgs.get(desc).iterator().next()));
+                SafeHtml sh =
+                        SafeHtmlUtils.fromSafeConstant(messages.uiCommonFrontendFailure(sb.toSafeHtml().asString()));
+                messageLabel.setHTML(sh);
                 return;
             }
         }
