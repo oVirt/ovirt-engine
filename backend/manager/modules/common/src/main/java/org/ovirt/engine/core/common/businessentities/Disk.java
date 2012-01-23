@@ -2,6 +2,10 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 
+import javax.validation.constraints.NotNull;
+
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -101,6 +105,7 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
         this.internalDriveMapping = internalDriveMapping;
     }
 
+    @NotNull(message = "VALIDATION.DISK_TYPE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     public DiskType getDiskType() {
         return diskType;
     }
@@ -109,6 +114,7 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
         this.diskType = diskType;
     }
 
+    @NotNull(message = "VALIDATION.DISK_INTERFACE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     public DiskInterface getDiskInterface() {
         return diskInterface;
     }
