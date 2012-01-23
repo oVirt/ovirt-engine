@@ -315,7 +315,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 VmHandler.updateDisksFromDb(getVm());
             } else {
                 if (vdcReturnValue.getCanDoActionMessages().contains(
-                        VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED)) {
+                        VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED.name())) {
                     throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
                 } else {
                     getReturnValue().setFault(vdcReturnValue.getFault());
