@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
@@ -180,8 +181,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                         .RunAsyncVdsCommand(VDSCommandType.Resume,
                                 new ResumeVDSCommandParameters(getVdsId(), getVm().getvm_guid()), this);
                 setActionReturnValue(result.getReturnValue());
-
                 setSucceeded(result.getSucceeded());
+                ExecutionHandler.setAsyncJob(executionContext, true);
             } finally {
                 DecrementVdsPendingVmsCount();
             }
@@ -198,6 +199,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 IncrementVdsPendingVmsCount();
                 AttachCd();
                 status = CreateVm();
+                ExecutionHandler.setAsyncJob(executionContext, true);
             } finally {
                 DecrementVdsPendingVmsCount();
             }

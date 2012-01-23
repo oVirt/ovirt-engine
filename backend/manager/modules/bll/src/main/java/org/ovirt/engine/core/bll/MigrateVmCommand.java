@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
@@ -125,6 +126,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             getVm().setmigrating_to_vds(null);
             throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_MIGRATION_FAILED_AT_DST);
         }
+        ExecutionHandler.setAsyncJob(executionContext, true);
     }
 
     @Override

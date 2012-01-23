@@ -248,6 +248,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 processVmPoolOnStopVm();
             }
         });
+        ExecutionHandler.setAsyncJob(executionContext, false);
+        ExecutionHandler.endJob(executionContext, false);
     }
 
     private void processVmPoolOnStopVm() {
@@ -266,6 +268,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         setSucceeded(true);
         setActionReturnValue(VMStatus.Up);
         log();
+        ExecutionHandler.setAsyncJob(executionContext, false);
+        ExecutionHandler.endJob(executionContext, true);
         for (Guid vdsId : getRunVdssList()) {
             if (!getCurrentVdsId().equals(vdsId)) {
                 Backend.getInstance().getResourceManager()

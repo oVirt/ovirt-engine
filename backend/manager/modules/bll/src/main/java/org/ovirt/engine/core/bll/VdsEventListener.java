@@ -305,7 +305,10 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void RemoveAsyncRunningCommand(Guid vmId) {
-        Backend.getInstance().getResourceManager().RemoveAsyncRunningCommand(vmId);
+        IVdsAsyncCommand command = Backend.getInstance().getResourceManager().RemoveAsyncRunningCommand(vmId);
+        if (command != null) {
+            command.reportCompleted();
+        }
     }
 
     private static Log log = LogFactory.getLog(VdsEventListener.class);

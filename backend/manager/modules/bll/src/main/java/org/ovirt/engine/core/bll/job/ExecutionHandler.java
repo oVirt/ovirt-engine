@@ -492,4 +492,20 @@ public class ExecutionHandler {
             }
         }
     }
+
+    /**
+     * Mark the Job as an Async Job which should be terminated by external process to the current command scope.
+     *
+     * @param executionContext
+     *            The context which describe the running job.
+     * @param isAsync
+     *            indicates if the job should be ended by current action
+     */
+    public static void setAsyncJob(ExecutionContext executionContext, boolean isAsync) {
+        Job job = executionContext.getJob();
+        if (executionContext.getExecutionMethod() == ExecutionMethod.AsJob && job != null) {
+            job.setIsAsyncJob(isAsync);
+        }
+    }
+
 }
