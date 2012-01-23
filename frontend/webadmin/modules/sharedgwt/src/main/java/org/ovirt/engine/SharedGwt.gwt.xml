@@ -57,6 +57,7 @@
 		<include name="core/common/businessentities/roles.java" />
 		<include name="core/common/businessentities/ServerCpu.java" />
 		<include name="core/common/businessentities/SessionState.java" />
+		<include name="core/common/businessentities/Snapshot.java" />
 		<include name="core/common/businessentities/storage_domain_dynamic.java" />
 		<include name="core/common/businessentities/storage_domain_static.java" />
 		<include name="core/common/businessentities/storage_domains.java" />
