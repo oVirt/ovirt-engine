@@ -15,11 +15,11 @@ import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 
 /**
- * This class extends Composite instead of InputText and embeds a slider widget
- * for setting its value.
+ * This class extends Composite instead of InputText and embeds a slider widget for setting its value.
  */
 public class EntityModelInputWithSlider extends Composite implements
         EditorWidget<Object, LeafValueEditor<Object>>, TakesValue<Object>,
@@ -28,6 +28,8 @@ public class EntityModelInputWithSlider extends Composite implements
     private TakesValueWithChangeHandlersEditor<Object> editor;
     private TextBox t;
     private IntegerSlider slider;
+    private Label maxValueLabel;
+    private Label minValueLabel;
 
     public EntityModelInputWithSlider(int min, int max) {
         HorizontalPanel panel = new HorizontalPanel();
@@ -36,7 +38,31 @@ public class EntityModelInputWithSlider extends Composite implements
         t.setEnabled(false);
         t.setVisibleLength(2);
 
-        slider = new IntegerSlider(min, max);
+        minValueLabel = new Label(Integer.toString(min));
+        minValueLabel.setStyleName("gwt-SliderBar-minrange-label");
+        maxValueLabel = new Label(Integer.toString(max));
+        maxValueLabel.setStyleName("gwt-SliderBar-maxrange-label");
+
+        slider = new IntegerSlider(min, max) {
+            @Override
+            public void setMinValue(double minValue) {
+                super.setMinValue(minValue);
+                minValueLabel.setText(Integer.toString(Double.valueOf(minValue).intValue()));
+            }
+
+            @Override
+            public void setMaxValue(double maxValue) {
+                super.setMaxValue(maxValue);
+                maxValueLabel.setText(Integer.toString(Double.valueOf(maxValue).intValue()));
+            }
+
+            @Override
+            public void setStepSize(double stepSize) {
+                super.setStepSize(stepSize);
+                setNumTicks((Double.valueOf((getMaxValue() - getMinValue()) / stepSize).intValue()));
+            };
+        };
+
         slider.setNumTicks(max - 1);
         slider.setStepSize(1);
         slider.setNumLabels(0);
@@ -49,8 +75,10 @@ public class EntityModelInputWithSlider extends Composite implements
 
         panel.add(t);
         panel.setCellVerticalAlignment(t, HasVerticalAlignment.ALIGN_BOTTOM);
+        panel.add(minValueLabel);
         panel.add(slider);
         panel.setCellWidth(slider, "80%");
+        panel.add(maxValueLabel);
 
         initWidget(panel);
     }
@@ -112,6 +140,7 @@ public class EntityModelInputWithSlider extends Composite implements
         asSlider().setEnabled(enabled);
     }
 
+    @Override
     public Object getValue() {
         return asSlider().getValue();
     }

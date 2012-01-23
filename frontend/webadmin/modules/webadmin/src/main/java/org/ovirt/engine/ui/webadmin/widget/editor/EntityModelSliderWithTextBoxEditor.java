@@ -41,4 +41,9 @@ public class EntityModelSliderWithTextBoxEditor extends
     public void setStepSize(int stepSize) {
         getContentWidget().asSlider().setStepSize(stepSize);
     }
+
+    // Needed in order not to have the border in the element style
+    @Override
+    protected void applyCommonValidationStyles() {
+    }
 }

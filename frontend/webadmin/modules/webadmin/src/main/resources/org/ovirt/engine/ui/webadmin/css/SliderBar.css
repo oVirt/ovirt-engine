@@ -1,5 +1,5 @@
 .gwt-SliderBar-shell {
-	height: 34pt;
+	height: 34px;
 	width: 50%;
 }
 
@@ -8,7 +8,7 @@
 	background-color: white;
 	height: 4px;
 	width: 95%;
-	top: 22pt;
+	top: 18px;
 	overflow: hidden;
 }
 
@@ -17,7 +17,7 @@
 }
 
 .gwt-SliderBar-shell .gwt-SliderBar-knob {
-	top: 14pt;
+	top: 10px;
 	width: 11px;
 	height: 21px;
 	z-index: 1;
@@ -25,9 +25,9 @@
 }
 
 .gwt-SliderBar-shell .gwt-SliderBar-tick {
-	top: 16pt;
+	top: 12px;
 	width: 1px;
-	height: 6pt;
+	height: 6px;
 	background: black;
 	overflow: hidden;
 }
@@ -37,8 +37,8 @@
 }
 
 .gwt-SliderBar-shell .gwt-SliderBar-label {
-	top: 2pt;
-	font-size: 8pt;
+	top: 2px;
+	font-size: 8px;
 	cursor: default;
 }
 
@@ -48,4 +48,14 @@
 
 .gwt-SliderBar-shell .gwt-SliderBar-line-sliding {
 	cursor: pointer;
+}
+
+.gwt-SliderBar-minrange-label,
+.gwt-SliderBar-maxrange-label {
+	font-size: 9px;
+}
+
+.gwt-SliderBar-minrange-label {
+	width: 10px;
+	text-align: right;
 }
