@@ -270,6 +270,7 @@ public class BackendHostsResourceTest
         expect(statistics.getswap_free()).andReturn(25L).anyTimes();
         expect(statistics.getswap_total()).andReturn(30L).anyTimes();
         expect(statistics.getmem_available()).andReturn(35L).anyTimes();
+        expect(statistics.getmem_shared()).andReturn(38L).anyTimes();
         expect(statistics.getksm_cpu_percent()).andReturn(40).anyTimes();
         expect(statistics.getcpu_user()).andReturn(45.0).anyTimes();
         expect(statistics.getcpu_sys()).andReturn(50.0).anyTimes();

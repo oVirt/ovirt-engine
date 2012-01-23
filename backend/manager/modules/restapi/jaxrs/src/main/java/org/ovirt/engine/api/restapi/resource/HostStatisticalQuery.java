@@ -13,6 +13,7 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
     private final static Statistic MEM_TOTAL   = create("memory.total",       "Total memory",    GAUGE, BYTES,   INTEGER);
     private final static Statistic MEM_USED    = create("memory.used",        "Used memory",           GAUGE, BYTES,   INTEGER);
     private final static Statistic MEM_FREE    = create("memory.free",        "Free memory",           GAUGE, BYTES,   INTEGER);
+    private final static Statistic MEM_SHARED  = create("memory.shared",      "Shared memory",         GAUGE, BYTES,   INTEGER);
     private final static Statistic MEM_BUFFERS = create("memory.buffers",     "IO buffers",            GAUGE, BYTES,   INTEGER);
     private final static Statistic MEM_CACHED  = create("memory.cached",      "OS caches",     GAUGE, BYTES,   INTEGER);
     private final static Statistic SWAP_TOTAL  = create("swap.total",         "Total swap",            GAUGE, BYTES,   INTEGER);
@@ -41,6 +42,7 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
         return asList(setDatum(clone(MEM_TOTAL),   mem),
                       setDatum(clone(MEM_USED),    (int)(memUsedByCent/100)),
                       setDatum(clone(MEM_FREE),    (s==null || s.getmem_available()==null) ? 0 : s.getmem_available()*Mb),
+                      setDatum(clone(MEM_SHARED),  (s==null || s.getmem_shared()==null) ? 0 : s.getmem_shared()*Mb),
                       setDatum(clone(MEM_BUFFERS), 0),
                       setDatum(clone(MEM_CACHED),  0),
                       setDatum(clone(SWAP_TOTAL),  (s==null || s.getswap_total()==null) ? 0 : s.getswap_total()*Mb),
