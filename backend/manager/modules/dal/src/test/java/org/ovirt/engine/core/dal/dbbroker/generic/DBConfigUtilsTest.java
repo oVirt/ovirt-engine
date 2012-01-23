@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.dal.dbbroker.generic;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.lang.reflect.Field;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assert;
-
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.OptionBehaviour;
@@ -44,6 +45,8 @@ public class DBConfigUtilsTest {
             }
 
             TypeConverterAttribute typeAttr = configField.getAnnotation(TypeConverterAttribute.class);
+            assertNotNull("The following field is missing the " + TypeConverterAttribute.class.getSimpleName()
+                    + " annotation: " + curConfig.name(), typeAttr);
             Class<?> c = typeAttr.value();
 
             Object obj = config.GetValue(curConfig, Config.DefaultConfigurationVersion);
