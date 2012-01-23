@@ -47,39 +47,31 @@ public class GetRootDSETask implements Callable<Boolean> {
             baseDNExist = false;
             throw new DomainNotConfiguredException(domainName);
         } else {
-            LdapProviderType ldapProviderType = domainObject.getLdapProviderType();
-            RootDSE rootDSE = domainObject.getRootDSE();
-            // If no rootDSE is set for domain - try to set it - if in
-            // construct a rootDSE object and provide a baseDN that assumes
-            // that all users will be under "cn=users"
-            if (rootDSE == null) {
-                domainObject.getLock().lock();
-                try {
-                    rootDSE = domainObject.getRootDSE();
-                    if (rootDSE == null) {
-                        if (ldapProviderType.equals(LdapProviderType.general)) {
-                            GetRootDSE query = createGetRootDSE(ldapURI);
-                            ldapProviderType = query.retrieveLdapProviderType(domainName);
-                            if (!ldapProviderType.equals(LdapProviderType.general)) {
-                                Attributes rootDseRecords = query.getDomainAttributes(ldapProviderType, domainName);
-                                if (rootDseRecords != null) {
-                                    setRootDSE(domainObject, ldapProviderType, rootDseRecords);
-                                    baseDNExist = true;
-                                }
-                            } else {
-                                log.errorFormat("Couldn't deduce provider type for domain {0}", domainName);
-                                throw new EngineDirectoryServiceException(AuthenticationResult.CONNECTION_ERROR,
-                                        "Failed to get rootDSE record for server " + ldapURI);
+            synchronized (domainObject) {
+                LdapProviderType ldapProviderType = domainObject.getLdapProviderType();
+                RootDSE rootDSE = domainObject.getRootDSE();
+                // If no rootDSE is set for domain - try to set it - if in
+                // construct a rootDSE object and provide a baseDN that assumes
+                // that all users will be under "cn=users"
+                if (rootDSE == null) {
+                    if (ldapProviderType.equals(LdapProviderType.general)) {
+                        GetRootDSE query = createGetRootDSE(ldapURI);
+                        ldapProviderType = query.retrieveLdapProviderType(domainName);
+                        if (!ldapProviderType.equals(LdapProviderType.general)) {
+                            Attributes rootDseRecords = query.getDomainAttributes(ldapProviderType, domainName);
+                            if (rootDseRecords != null) {
+                                setRootDSE(domainObject, ldapProviderType, rootDseRecords);
+                                baseDNExist = true;
                             }
+                        } else {
+                            log.errorFormat("Couldn't deduce provider type for domain {0}",domainName);
+                            throw new EngineDirectoryServiceException(AuthenticationResult.CONNECTION_ERROR,
+                                    "Failed to get rootDSE record for server " + ldapURI);
                         }
-                    } else {
-                        baseDNExist = true;
                     }
-                } finally {
-                    domainObject.getLock().unlock();
+                } else {
+                    baseDNExist = true;
                 }
-            } else {
-                baseDNExist = true;
             }
         }
         searcher.setBaseDNExist(baseDNExist);
