@@ -177,7 +177,8 @@ actions:
   request:
     body:
       parameterType: CdRom
-      signatures: []
+      signatures:
+      - mandatoryArguments: {cdrom.file.id: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml, Expect: 201-created}
 - name: /api/vms/{vm:id}/disks|rel=get
@@ -212,7 +213,13 @@ actions:
   request:
     body:
       parameterType: Disk
-      signatures: []
+      signatures:
+      - mandatoryArguments: {size: 'xs:int', disk.type: 'xs:string', disk.interface: 'xs:string', disk.format: 'xs:string'}
+        optionalArguments:
+          disk.sparse: xs:boolean
+          disk.bootable: xs:boolean
+          disk.propagate_errors: xs:boolean
+          disk.wipe_after_delete: xs:boolean
     urlparams: {}
     headers: {Content-Type: application/xml, Expect: 201-created}
 - name: /api/vms/{vm:id}/nics|rel=get
@@ -323,7 +330,8 @@ actions:
   request:
     body:
       parameterType: Snapshot
-      signatures: []
+      signatures:
+      - mandatoryArguments: {snapshot.description: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml, Expect: 201-created}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}/restore
@@ -360,7 +368,6 @@ actions:
       parameterType: Tag
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
-        optionalArguments: {}
     urlparams: {}
     headers: {Content-Type: application/xml, Expect: 201-created}
 - name: /api/capabilities|rel=get
@@ -587,79 +594,8 @@ actions:
   request:
     body:
       parameterType: Network
-      signatures: []
-    urlparams: {}
-    headers: {Content-Type: application/xml, Expect: 201-created}
-- name: /api/clusters|rel=get
-  request:
-    body:
-      parameterType: null
-      signatures: []
-    urlparams: {search: query}
-    headers: {}
-- name: /api/clusters/{cluster:id}|rel=get
-  request:
-    body:
-      parameterType: null
-      signatures: []
-    urlparams: {}
-    headers: {}
-- name: /api/clusters/{cluster:id}|rel=delete
-  request:
-    body:
-      parameterType: null
-      signatures: []
-    urlparams: {}
-    headers: {}
-- name: /api/clusters/{cluster:id}|rel=update
-  request:
-    body:
-      parameterType: Cluster
-      signatures: []
-    urlparams: {}
-    headers: {Content-Type: application/xml}
-- name: /api/clusters|rel=add
-  request:
-    body:
-      parameterType: Cluster
       signatures:
-      - mandatoryArguments: {cluster.datacenter.id|name: 'xs:string', cluster.name: 'xs:string'}
-        optionalArguments: {}
-    urlparams: {}
-    headers: {Content-Type: application/xml, Expect: 201-created}
-- name: /api/clusters/{cluster:id}/networks|rel=get
-  request:
-    body:
-      parameterType: null
-      signatures: []
-    urlparams: {}
-    headers: {}
-- name: /api/clusters/{cluster:id}/networks/{network:id}|rel=get
-  request:
-    body:
-      parameterType: null
-      signatures: []
-    urlparams: {}
-    headers: {}
-- name: /api/clusters/{cluster:id}/networks/{network:id}|rel=delete
-  request:
-    body:
-      parameterType: null
-      signatures: []
-    urlparams: {}
-    headers: {}
-- name: /api/clusters/{cluster:id}/networks|rel=update
-  request:
-    body:
-      parameterType: Network
-      signatures: []
-    urlparams: {}
-    headers: {Content-Type: application/xml}
-- name: /api/clusters/{cluster:id}/networks|rel=add
-  request:
-    body:
-      parameterType: Network
-      signatures: []
+      - mandatoryArguments: {network.id|name: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml, Expect: 201-created}
 - name: /api/clusters/{cluster:id}/permissions|rel=get
@@ -733,7 +669,11 @@ actions:
   request:
     body:
       parameterType: DataCenter
-      signatures: []
+      signatures:
+      - mandatoryArguments: {datacenter.name: 'xs:string', datacenter.storage_type: 'xs:string', datacenter.supported_versions.version--LIST: {major: 'xs:int', minor: 'xs:int'}}
+        optionalArguments:
+          datacenter.description: xs:string
+          datacenter.storage_format: xs:string
     urlparams: {}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/permissions|rel=get
@@ -893,7 +833,8 @@ actions:
   request:
     body:
       parameterType: Group
-      signatures: []
+      signatures:
+      - mandatoryArguments: {group.name: 'xs:string'}
     urlparams: {}
     headers: {}
 - name: /api/groups/{group:id}/permissions|rel=get
@@ -963,7 +904,8 @@ actions:
   request:
     body:
       parameterType: Role
-      signatures: []
+      signatures:
+      - mandatoryArguments: {role.id: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/groups/{group:id}/roles/{role:id}/permits|rel=get
@@ -1058,7 +1000,11 @@ actions:
   request:
     body:
       parameterType: Host
-      signatures: []
+      signatures:
+      - mandatoryArguments: {host.name: 'xs:string', host.address: 'xs:string', host.root_password: 'xs:string', host.cluster.id: 'xs:string'}
+        optionalArguments: {host.port: 'xs:int', host.storage_manager.priority: 'xs:int', host.power_management.type: 'xs:string',
+          host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string', host.power_management.user_name: 'xs:string',
+          host.power_management.password: 'xs:string', host.power_management.options.option--LIST: {name: 'xs:string', value: 'xs:string',}}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/hosts/{host:id}/activate|rel=activate
@@ -1284,7 +1230,6 @@ actions:
       parameterType: Tag
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
-        optionalArguments: {}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/networks|rel=get
@@ -1351,7 +1296,9 @@ actions:
   request:
     body:
       parameterType: Role
-      signatures: []
+      signatures:
+      - mandatoryArguments: {role.name: 'xs:string', role.permits.permit--LIST: {id: 'xs:string'}}
+        optionalArguments: {role.description: 'xs:string', role.administrative: 'xs:boolean'}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/roles/{role:id}/permits|rel=get
@@ -1416,7 +1363,9 @@ actions:
   request:
     body:
       parameterType: Tag
-      signatures: []
+      signatures:
+      - mandatoryArguments: {tag.name: 'xs:string'}
+        optionalArguments: {tag.description: 'xs:string', tag.parent.name: 'xs:string'}
     urlparams: {}
     headers: {}
 - name: /api/templates|rel=get
@@ -1562,11 +1511,26 @@ actions:
         optionalArguments: {}
     urlparams: {}
     headers: {Content-Type: application/xml}
+- name: /api/users|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {search: query}
+    headers: {}
 - name: /api/users/{user:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
+    urlparams: {search: query}
+    headers: {}
+- name: /api/users|rel=add
+  request:
+    body:
+      parameterType: User
+      signatures:
+      - mandatoryArguments: {user.user_name: 'xs:string', user.domain.id|name: 'xs:string'}
     urlparams: {search: query}
     headers: {}
 - name: /api/users/{user:id}|rel=delete
@@ -1643,7 +1607,8 @@ actions:
   request:
     body:
       parameterType: Role
-      signatures: []
+      signatures:
+      - mandatoryArguments: {role.id: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/users/{user:id}/roles/{role:id}/permits|rel=get
@@ -1703,7 +1668,6 @@ actions:
       parameterType: Tag
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
-        optionalArguments: {}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/vmpools|rel=get
