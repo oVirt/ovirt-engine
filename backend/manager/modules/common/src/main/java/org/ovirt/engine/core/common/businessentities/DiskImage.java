@@ -37,8 +37,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         this.setappList(appList);
     }
 
-    private Disk disk = new Disk();
-
     // TODO comes from image_vm_map
     private Boolean activeField;
 
@@ -65,7 +63,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
                 + ((status == null) ? 0 : status.hashCode());
         result = prime
                 * result
-                + ((disk == null) ? 0 : disk
+                + ((getDisk() == null) ? 0 : getDisk()
                         .hashCode());
         result = prime * result
                 + ((id == null) ? 0 : id.hashCode());
@@ -126,10 +124,10 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
             return false;
         if (status != other.status)
             return false;
-        if (disk == null) {
-            if (other.disk != null)
+        if (getDisk() == null) {
+            if (other.getDisk() != null)
                 return false;
-        } else if (!disk.equals(other.disk))
+        } else if (!getDisk().equals(other.getDisk()))
             return false;
         if (id == null) {
             if (other.id != null)
@@ -379,11 +377,11 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     private Guid imageGroupId = null;
 
     public Guid getimage_group_id() {
-        return disk.getId();
+        return getDisk().getId();
     }
 
     public void setimage_group_id(Guid value) {
-        disk.setId(value);
+        getDisk().setId(value);
         OnPropertyChanged(new PropertyChangedEventArgs("image_group_id"));
     }
 
@@ -591,16 +589,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     }
 
     @Override
-    public DiskType getdisk_type() {
-        return disk.getDiskType();
-    }
-
-    @Override
-    public void setdisk_type(DiskType value) {
-        disk.setDiskType(value);
-    }
-
-    @Override
     public long getsize() {
         return super.getsize();
     }
@@ -608,26 +596,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     @Override
     public void setsize(long value) {
         super.setsize(value);
-    }
-
-    @Override
-    public String getinternal_drive_mapping() {
-        return Integer.toString(disk.getInternalDriveMapping());
-    }
-
-    @Override
-    public void setinternal_drive_mapping(String value) {
-        disk.setInternalDriveMapping(Integer.parseInt(value));
-    }
-
-    @Override
-    public DiskInterface getdisk_interface() {
-        return disk.getDiskInterface();
-    }
-
-    @Override
-    public void setdisk_interface(DiskInterface value) {
-        disk.setDiskInterface(value);
     }
 
     @Override
@@ -641,26 +609,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     }
 
     @Override
-    public boolean getwipe_after_delete() {
-        return disk.isWipeAfterDelete();
-    }
-
-    @Override
-    public void setwipe_after_delete(boolean value) {
-        disk.setWipeAfterDelete(value);
-    }
-
-    @Override
-    public PropagateErrors getpropagate_errors() {
-        return disk.getPropagateErrors();
-    }
-
-    @Override
-    public void setpropagate_errors(PropagateErrors value) {
-        disk.setPropagateErrors(value);
-    }
-
-    @Override
     public Guid getId() {
         return id;
     }
@@ -668,13 +616,5 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     @Override
     public void setId(Guid id) {
         this.id = id;
-    }
-
-    public Disk getDisk() {
-        return disk;
-    }
-
-    public void setDisk(Disk disk) {
-        this.disk = disk;
     }
 }
