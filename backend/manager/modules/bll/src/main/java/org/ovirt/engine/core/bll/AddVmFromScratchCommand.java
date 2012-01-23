@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -118,7 +119,10 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setParentParemeters(getParameters());
                 VdcReturnValueBase tmpRetValue = Backend.getInstance().runInternalAction(
-                        VdcActionType.AddImageFromScratch, tempVar);
+                                VdcActionType.AddImageFromScratch,
+                                tempVar,
+                                null,
+                                ExecutionHandler.createDefaultContexForTasks(executionContext));
 
                 drivesCount++;
                 if (!tmpRetValue.getSucceeded()) {

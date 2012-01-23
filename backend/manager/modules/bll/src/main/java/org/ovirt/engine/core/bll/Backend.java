@@ -337,18 +337,29 @@ public class Backend implements BackendInternal, BackendRemote {
     public VdcReturnValueBase endAction(VdcActionType actionType,
             VdcActionParametersBase parameters,
             CompensationContext compensationContext) {
+        return endAction(actionType, parameters, compensationContext, null);
+    }
+
+    public VdcReturnValueBase EndAction(VdcActionType actionType, VdcActionParametersBase parameters) {
+        return endAction(actionType, parameters, null, null);
+    }
+
+    @Override
+    public VdcReturnValueBase endAction(VdcActionType actionType,
+            VdcActionParametersBase parameters,
+            CompensationContext compensationContext,
+            ExecutionContext executionContext) {
         CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
 
         if (compensationContext != null) {
             command.setCompensationContext(compensationContext);
         }
 
-        return command.EndAction();
-    }
+        if (executionContext != null) {
+            command.setExecutionContext(executionContext);
+        }
 
-    @Override
-    public VdcReturnValueBase EndAction(VdcActionType actionType, VdcActionParametersBase parameters) {
-        return endAction(actionType, parameters, null);
+        return command.EndAction();
     }
 
     @Override

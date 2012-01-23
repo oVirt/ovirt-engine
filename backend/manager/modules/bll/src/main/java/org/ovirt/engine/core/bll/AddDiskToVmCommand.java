@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
@@ -264,8 +265,11 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
         getParameters().getImagesParameters().add(parameters);
         getParameters().setVmSnapshotId(parameters.getVmSnapshotId());
         parameters.setParentParemeters(getParameters());
-        VdcReturnValueBase tmpRetValue = Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch,
-                parameters);
+        VdcReturnValueBase tmpRetValue =
+                Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch,
+                        parameters,
+                        null,
+                        ExecutionHandler.createDefaultContexForTasks(executionContext));
         getReturnValue().getTaskIdList().addAll(tmpRetValue.getInternalTaskIdList());
         getReturnValue().setActionReturnValue(tmpRetValue.getActionReturnValue());
         getReturnValue().setFault(tmpRetValue.getFault());

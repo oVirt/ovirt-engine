@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
@@ -96,15 +98,16 @@ public class EntityAsyncTask extends SPMAsyncTask {
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
-                    EndCommandAction(null);
+                    EndCommandAction();
                 }
             });
         }
     }
 
-    private void EndCommandAction(Object data) {
+    private void EndCommandAction() {
         EntityMultiAsyncTasks entityInfo = GetEntityMultiAsyncTasks();
         VdcReturnValueBase vdcReturnValue = null;
+        ExecutionContext context = null;
 
         boolean success = true;
         for (EndedTaskInfo taskInfo : entityInfo.getEndedTasksInfo().getTasksInfo()) {
@@ -121,12 +124,20 @@ public class EntityAsyncTask extends SPMAsyncTask {
         }
 
         try {
-            log.infoFormat("EntityAsyncTask::EndCommandAction [within thread]: Attempting to EndAction '{0}'",
+            log.infoFormat("EntityAsyncTask::EndCommandAction [within thread]context: Attempting to EndAction '{0}'",
                     entityInfo.getActionType());
 
             try {
-                vdcReturnValue = Backend.getInstance().EndAction(entityInfo.getActionType(),
-                        this.getParameters().getDbAsyncTask().getaction_parameters());
+                /**
+                 * Creates context for the job which monitors the action
+                 */
+                context = ExecutionHandler.createJobFinlalizingContext(getParameters().getDbAsyncTask().getStepId());
+
+                vdcReturnValue =
+                        Backend.getInstance().endAction(entityInfo.getActionType(),
+                                this.getParameters().getDbAsyncTask().getaction_parameters(),
+                                null,
+                                context);
             } catch (RuntimeException Ex) {
                 String errorMessage =
                         String
@@ -144,12 +155,14 @@ public class EntityAsyncTask extends SPMAsyncTask {
         }
 
         finally {
-            HandleEndActionResult(entityInfo, vdcReturnValue);
+            handleEndActionResult(entityInfo, vdcReturnValue, context);
             _endActionsInProgress.decrementAndGet();
         }
     }
 
-    private static void HandleEndActionResult(EntityMultiAsyncTasks entityInfo, VdcReturnValueBase vdcReturnValue) {
+    private static void handleEndActionResult(EntityMultiAsyncTasks entityInfo,
+            VdcReturnValueBase vdcReturnValue,
+            ExecutionContext context) {
         try {
             if (entityInfo != null) {
                 log.infoFormat(
@@ -169,6 +182,14 @@ public class EntityAsyncTask extends SPMAsyncTask {
                             "EntityAsyncTask::HandleEndActionResult [within thread]: EndAction for action type {0} {1}succeeded, clearing tasks.",
                             entityInfo.getActionType(),
                             (vdcReturnValue.getSucceeded() ? "" : "hasn't "));
+
+                    /**
+                     * Terminate the job by the return value of EndAction.
+                     * The operation will end also the FINALIZING step.
+                     */
+                    if (context != null) {
+                        ExecutionHandler.endJob(context, vdcReturnValue.getSucceeded());
+                    }
 
                     entityInfo.ClearTasks();
 

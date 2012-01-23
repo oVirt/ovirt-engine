@@ -30,7 +30,10 @@ public final class AsyncTaskFactory {
         async_tasks asyncTask = DbFacade.getInstance().getAsyncTaskDAO().get(creationInfo.getTaskID());
         if (asyncTask == null || asyncTask.getaction_parameters() == null) {
             asyncTask = new async_tasks(VdcActionType.Unknown, AsyncTaskResultEnum.success,
-                    AsyncTaskStatusEnum.running, creationInfo.getTaskID(), new VdcActionParametersBase(), null);
+                            AsyncTaskStatusEnum.running,
+                            creationInfo.getTaskID(),
+                            new VdcActionParametersBase(),
+                            creationInfo.getStepId());
             creationInfo.setTaskType(AsyncTaskType.unknown);
         }
         AsyncTaskParameters asyncTaskParams = new AsyncTaskParameters(creationInfo, asyncTask);

@@ -80,7 +80,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     protected Guid ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
         AsyncTaskParameters p = new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
-                getParametersForTask(parentCommand, getParameters()), null));
+                getParametersForTask(parentCommand, getParameters()), asyncTaskCreationInfo.getStepId()));
         p.setEntityId(getParameters().getEntityId());
         Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.deleteImage, p, false);
 

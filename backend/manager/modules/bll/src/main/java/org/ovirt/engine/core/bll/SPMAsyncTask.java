@@ -2,11 +2,13 @@ package org.ovirt.engine.core.bll;
 
 import static org.ovirt.engine.core.common.config.ConfigValues.UknownTaskPrePollingLapse;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -216,14 +218,17 @@ public class SPMAsyncTask {
         }
 
         if (HasTaskEndedSuccessfully()) {
+            ExecutionHandler.endTaskStep(privateParameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FINISHED);
             OnTaskEndSuccess();
         }
 
         else if (HasTaskEndedInFailure()) {
+            ExecutionHandler.endTaskStep(privateParameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
             OnTaskEndFailure();
         }
 
         else if (!DoesTaskExist()) {
+            ExecutionHandler.endTaskStep(privateParameters.getDbAsyncTask().getStepId(), JobExecutionStatus.UNKNOWN);
             OnTaskDoesNotExist();
         }
     }

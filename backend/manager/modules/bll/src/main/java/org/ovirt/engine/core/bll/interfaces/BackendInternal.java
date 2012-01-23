@@ -49,6 +49,25 @@ public interface BackendInternal extends BackendLocal {
             VdcActionParametersBase parameters,
             CompensationContext compensationContext);
 
+    /**
+     * End the command with the passed compensation context, so that the calling command can compensate the internal
+     * changes if need to.
+     *
+     * @param actionType
+     *            The type of command to end.
+     * @param parameters
+     *            The command's parameters.
+     * @param compensationContext
+     *            The compensation context to use.
+     * @param executionContext
+     *            The context by which the command should be ended: stores the {@code Job} entity describes the action.
+     * @return The result of the command ending.
+     */
+    VdcReturnValueBase endAction(VdcActionType actionType,
+            VdcActionParametersBase parameters,
+            CompensationContext compensationContext,
+            ExecutionContext executionContext);
+
     public VdcQueryReturnValue runInternalQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
 
     ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
