@@ -2735,6 +2735,7 @@
 			<value>1</value>
         </row>
     </table>
+
     <table name="vm_device">
         <column>device_id</column>
         <column>vm_id</column>
@@ -2759,4 +2760,272 @@
             <value>false</value>
         </row>
      </table>
+
+    <table name="job">
+        <column>job_id</column>
+        <column>status</column>
+        <column>owner_id</column>
+        <column>action_type</column>
+        <column>description</column>
+        <column>visible</column>
+        <column>start_time</column>
+        <column>end_time</column>
+        <column>last_update_time</column>
+        <column>correlation_id</column>
+
+       <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5889</value>
+            <value>STARTED</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>AddVm</value>
+            <value>AddVm</value>
+            <value>true</value>
+            <value>2012-01-08 10:49:24</value>
+            <null/>
+            <value>2012-01-08 10:49:24</value>
+            <value>54947df8-job1</value>
+       </row>
+       <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5111</value>
+            <value>STARTED</value>
+            <value>9bf7c640-b620-456f-a550-0348f3665111</value>
+            <value>UpdateVds</value>
+            <value>UpdateVds</value>
+            <value>true</value>
+            <value>2012-01-01 10:49:24</value>
+            <null/>
+            <value>2012-01-01 10:49:24</value>
+            <value>54947df8-job2</value>
+       </row>
+       <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5222</value>
+            <value>FAILED</value>
+            <value>9bf7c640-b620-456f-a550-0348f3665222</value>
+            <value>AddVds</value>
+            <value>AddVds</value>
+            <value>true</value>
+            <value>2012-02-08 10:00:00</value>
+            <value>2012-02-08 10:11:00</value>
+            <value>2012-02-08 10:11:00</value>
+            <value>54947df8-job3</value>
+       </row>
+       <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5333</value>
+            <value>STARTED</value>
+            <value>9bf7c640-b620-456f-a550-0348f3665333</value>
+            <value>AddVds</value>
+            <value>AddVds</value>
+            <value>true</value>
+            <value>2012-02-08 10:00:00</value>
+            <value>2012-02-08 10:11:00</value>
+            <null/>
+            <value>54947df8-job4</value>
+       </row>
+    </table>
+
+    <table name="job_subject_entity">
+        <column>job_id</column>
+        <column>entity_id</column>
+        <column>entity_type</column>
+
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5889</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>VM</value>
+        </row>
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5889</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>VmTemplate</value>
+        </row>
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5111</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>VDS</value>
+        </row>
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5222</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a1</value>
+            <value>VDS</value>
+        </row>
+    </table>
+
+    <table name="step">
+        <column>step_id</column>
+        <column>parent_step_id</column>
+        <column>job_id</column>
+        <column>step_type</column>
+        <column>description</column>
+        <column>step_number</column>
+        <column>status</column>
+        <column>start_time</column>
+        <column>end_time</column>
+        <column>correlation_id</column>
+        <column>external_id</column>
+        <column>external_system_type</column>
+
+        <!-- Steps for Job 54947df8-0e9e-4471-a2f9-9af509fb5889 -->
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5abc</value>
+            <null/>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5889</value>
+            <value>VALIDATING</value>
+            <value>Validaton step of the job</value>
+            <value>0</value>
+            <value>FINISHED</value>
+            <value>2012-01-08 10:52:24</value>
+            <value>2012-01-08 10:55:24</value>
+            <value>54947df8-job1</value>
+            <null/>
+            <null/>
+        </row>
+
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5223</value>
+            <null/>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5889</value>
+            <value>EXECUTING</value>
+            <value>Execution step of the job</value>
+            <value>1</value>
+            <value>STARTED</value>
+            <value>2012-01-08 10:57:30</value>
+            <null/>
+            <value>54947df8-job1</value>
+            <null/>
+            <null/>
+        </row>
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5224</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5223</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5889</value>
+            <value>CREATE_VOLUME</value>
+            <value>Create disk for some test</value>
+            <value>0</value>
+            <value>STARTED</value>
+            <value>2012-01-08 10:57:38</value>
+            <null/>
+            <value>54947df8-job1</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509f12345</value>
+            <value>VDSM</value>
+        </row>
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5225</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5223</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5889</value>
+            <value>CREATE_VOLUME</value>
+            <value>Create disk for some test</value>
+            <value>1</value>
+            <value>STARTED</value>
+            <value>2012-01-08 10:57:38</value>
+            <null/>
+            <value>54947df8-job1</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509f12345</value>
+            <value>VDSM</value>
+        </row>
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5226</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5223</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5889</value>
+            <value>CREATE_VOLUME</value>
+            <value>Create disk for some test</value>
+            <value>2</value>
+            <value>STARTED</value>
+            <value>2012-01-08 10:57:38</value>
+            <null/>
+            <value>54947df8-job1</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509f12345</value>
+            <value>VDSM</value>
+        </row>
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5227</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5226</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5889</value>
+            <value>CREATE_VOLUME</value>
+            <value>Create disk for some test</value>
+            <value>0</value>
+            <value>STARTED</value>
+            <value>2012-01-08 10:57:38</value>
+            <null/>
+            <value>54947df8-job1</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509f12345</value>
+            <value>VDSM</value>
+        </row>
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5228</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5227</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5889</value>
+            <value>CREATE_VOLUME</value>
+            <value>Create disk for some test</value>
+            <value>0</value>
+            <value>STARTED</value>
+            <value>2012-01-08 10:57:38</value>
+            <null/>
+            <value>54947df8-job1</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509f12345</value>
+            <value>VDSM</value>
+        </row>
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5229</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5226</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5889</value>
+            <value>CREATE_VOLUME</value>
+            <value>Create disk for some test</value>
+            <value>1</value>
+            <value>STARTED</value>
+            <value>2012-01-08 10:57:38</value>
+            <null/>
+            <value>54947df8-job1</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509f12345</value>
+            <value>VDSM</value>
+        </row>
+
+        <!-- Steps for Job 54947df8-0e9e-4471-a2f9-9af509fb5111 -->
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509111111</value>
+            <null/>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5111</value>
+            <value>VALIDATING</value>
+            <value>Validaton step of the job</value>
+            <value>0</value>
+            <value>FINISHED</value>
+            <value>2012-02-13 10:11:20</value>
+            <value>2012-02-13 10:11:25</value>
+            <value>54947df8-job2</value>
+            <null/>
+            <null/>
+        </row>
+
+        <!-- Steps for Job 54947df8-0e9e-4471-a2f9-9af509fb5222 -->
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509111222</value>
+            <null/>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5222</value>
+            <value>VALIDATING</value>
+            <value>Validaton step of the job</value>
+            <value>0</value>
+            <value>FAILED</value>
+            <value>2012-02-08 10:11:00</value>
+            <value>2012-02-08 10:11:00</value>
+            <value>54947df8-job3</value>
+            <value>54947df8-0e9e-4471-a2f9-9af509fbabab</value>
+            <value>VDSM</value>
+        </row>
+
+        <!-- Steps for Job 54947df8-0e9e-4471-a2f9-9af509fb5333 -->
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509111333</value>
+            <null/>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb5333</value>
+            <value>VALIDATING</value>
+            <value>Validaton step of the job</value>
+            <value>0</value>
+            <value>STARTED</value>
+            <value>2012-02-08 10:11:00</value>
+            <null/>
+            <value>54947df8-job4</value>
+            <null/>
+            <null/>
+        </row>
+    </table>
+
 </dataset>

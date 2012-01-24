@@ -57,6 +57,8 @@ import org.ovirt.engine.core.dao.EventDAO;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.ImageVmMapDAO;
 import org.ovirt.engine.core.dao.InterfaceDAO;
+import org.ovirt.engine.core.dao.JobDao;
+import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.NetworkClusterDAO;
 import org.ovirt.engine.core.dao.NetworkDAO;
@@ -65,6 +67,7 @@ import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.RepoFileMetaDataDAO;
 import org.ovirt.engine.core.dao.RoleDAO;
 import org.ovirt.engine.core.dao.RoleGroupMapDAO;
+import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
@@ -733,6 +736,34 @@ public class DbFacade {
 
     public VmDeviceDAO getVmDeviceDAO() {
         return getDAO(VmDeviceDAO.class);
+    }
+
+    /**
+     *
+     * Returns the singleton instance of {@link JobDao}.
+     *
+     * @return the dao
+     */
+    public JobDao getJobDao() {
+        return getDAO(JobDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link getJobSubjectEntityDao}.
+     *
+     * @return the dao
+     */
+    public JobSubjectEntityDao getJobSubjectEntityDao() {
+        return getDAO(JobSubjectEntityDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link JobDao}.
+     *
+     * @return the dao
+     */
+    public StepDao getStepDao() {
+        return getDAO(StepDao.class);
     }
 
     public void setOnStartConnectionTimeout(int onStartConnectionTimeout) {

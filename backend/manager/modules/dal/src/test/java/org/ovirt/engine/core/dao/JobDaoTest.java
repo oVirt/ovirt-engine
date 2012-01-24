@@ -1,0 +1,125 @@
+package org.ovirt.engine.core.dao;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
+import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.core.compat.Guid;
+
+public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
+
+    private static final Guid EXISTING_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5889");
+    private static final int TOTAL_JOBS = 4;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @Override
+    protected Guid getExistingEntityId() {
+        return EXISTING_JOB_ID;
+    }
+
+    @Override
+    protected JobDao prepareDao() {
+        return prepareDAO(dbFacade.getJobDao());
+    }
+
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.NewGuid();
+    }
+
+    @Override
+    protected int getEneitiesTotalCount() {
+        return TOTAL_JOBS;
+    }
+
+    @Override
+    protected Job generateNewEntity() {
+        Job job = new Job();
+        job.setId(Guid.NewGuid());
+        job.setActionType(VdcActionType.ActivateStorageDomain);
+        job.setDescription(VdcActionType.ActivateStorageDomain.name());
+        job.setStatus(JobExecutionStatus.STARTED);
+        job.setOwnerId(Guid.NewGuid());
+        job.setVisible(true);
+        job.setStartTime(new Date());
+        job.setLastUpdateTime(new Date());
+        job.setCorrelationId(Guid.NewGuid().toString());
+        return job;
+    }
+
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setEndTime(new Date());
+        existingEntity.setStatus(JobExecutionStatus.FINISHED);
+    }
+
+    @Test
+    public void existStep() {
+        assertTrue(dao.exists(EXISTING_JOB_ID));
+    }
+
+    @Test
+    public void nonExistStep() {
+        assertFalse(dao.exists(Guid.NewGuid()));
+    }
+
+    @Test
+    public void getJobsByOffsetAndPageSize() {
+        List<Job> jobsList = dao.getJobsByOffsetAndPageSize(0, 20);
+        assertTrue(!jobsList.isEmpty());
+    }
+
+    @Test
+    public void updateJobLastUpdateTime() throws ParseException {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date updateDate = df.parse("2012-10-01 10:00:00");
+        List<Job> jobsList = dao.getAll();
+        assertTrue("Check there are Job entries", !jobsList.isEmpty());
+        Job job = jobsList.get(0);
+        Date lastUpdateTime = job.getLastUpdateTime();
+        dao.updateJobLastUpdateTime(getExistingEntityId(), updateDate);
+        Job jobAfterUpdate = dao.get(job.getId());
+        assertTrue("Compare the previous date is differ than new one",
+                !lastUpdateTime.equals(jobAfterUpdate.getLastUpdateTime()));
+        assertEquals("Compare date was persisted by reading it from database",
+                updateDate,
+                jobAfterUpdate.getLastUpdateTime());
+    }
+
+    @Test
+    public void deleteJobOlderThanDateWithStatus() throws ParseException {
+        int sizeBeforeDelete = dao.getAll().size();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dao.deleteJobOlderThanDateWithStatus(df.parse("2012-10-02 10:00:00"), Arrays.asList(JobExecutionStatus.FAILED));
+        int sizeAfterDelete = dao.getAll().size();
+        assertTrue("Check an entry was deleted", sizeBeforeDelete > sizeAfterDelete);
+    }
+
+    @Test
+    public void deleteCompletedJobs() throws ParseException {
+        int sizeBeforeDelete = dao.getAll().size();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date dateToDelete = df.parse("2013-02-9 10:11:00");
+        dao.deleteCompletedJobs(dateToDelete, dateToDelete);
+        int sizeAfterDelete = dao.getAll().size();
+        assertTrue("Check an entry was deleted", sizeBeforeDelete > sizeAfterDelete);
+    }
+
+}
