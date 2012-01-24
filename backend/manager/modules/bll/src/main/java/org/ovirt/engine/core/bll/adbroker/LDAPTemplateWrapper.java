@@ -100,11 +100,9 @@ public abstract class LDAPTemplateWrapper {
                     domainName);
             return null;
         }
-        synchronized (domain) {
-            RootDSE rootDSE = domain.getRootDSE();
-            if (rootDSE != null) {
-                return rootDSE.getDefaultNamingContext();
-            }
+        RootDSE rootDSE = domain.getRootDSE();
+        if (rootDSE != null) {
+            return rootDSE.getDefaultNamingContext();
         }
         return null;
     }

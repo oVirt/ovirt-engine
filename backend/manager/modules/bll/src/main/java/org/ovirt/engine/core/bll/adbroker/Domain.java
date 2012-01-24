@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
@@ -17,6 +18,7 @@ public class Domain {
     private LDAPSecurityAuthentication ldapSecurityAuthentication;
     private String userName;
     private String password;
+    private ReentrantLock lock = new ReentrantLock();
 
     // for this
     private final static LogCompat log = LogFactoryCompat.getLog(ScorableLDAPServer.class);
@@ -63,7 +65,6 @@ public class Domain {
     }
 
     public void scoreLdapServer(URI ldapURI, Score score) {
-        ScorableLDAPServer target = null;
         for (ScorableLDAPServer server : ldapServers) {
             if (server.getURI().getAuthority().equals(ldapURI.getAuthority()) && server.getScore() != score.getValue()) {
                 server.setScore(score.getValue());
@@ -103,6 +104,10 @@ public class Domain {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public ReentrantLock getLock() {
+        return lock;
     }
 
 }

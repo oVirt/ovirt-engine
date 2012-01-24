@@ -12,6 +12,8 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
 
@@ -32,8 +34,6 @@ public class GetRootDSE {
 
     /**
      * Perform an LDAP query to the inner LDAP server to fetch the rootDSE table.
-     *
-     * @return EnumMap with the attributes as key and their string values.
      */
     private void execute(LdapProviderType ldapProviderType, String domain) {
         Hashtable<String, String> env = new Hashtable<String, String>();
@@ -56,6 +56,7 @@ public class GetRootDSE {
             searchControls.setSearchScope(queryExecution.getSearchScope());
             // Added this in order to prevent a warning saying: "the returning obj flag wasn't set, setting it to true"
             searchControls.setReturningObjFlag(true);
+            searchControls.setTimeLimit(Config.<Integer> GetValue(ConfigValues.LDAPQueryTimeout) * 1000);
             NamingEnumeration<SearchResult> search =
                     ctx.search(queryExecution.getBaseDN(), queryExecution.getFilter(), searchControls);
 

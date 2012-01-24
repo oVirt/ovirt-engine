@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.adbroker;
 
 import java.net.ConnectException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import javax.naming.OperationNotSupportedException;
 import javax.security.sasl.SaslException;
@@ -21,35 +19,32 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
     @Override
     public LdapSearchExceptionHandlingResponse handle(Exception e) {
         LdapSearchExceptionHandlingResponse response = new LdapSearchExceptionHandlingResponse();
-        if (e instanceof TimeoutException) { // LDAP server didn't respond fast enough
-            handleTimeout(response);
-        } else if (e instanceof ExecutionException) { // thrown by FutureTask and may contain relevant Runtime
-                                                      // Exceptions.
-            Throwable cause = e.getCause();
-            if (cause != null) {
-                if (cause instanceof EngineDirectoryServiceException) {
-                    handleEngineDirectoryServiceException(response, cause);
-                } else if (cause instanceof AuthenticationException) {
-                    handleAuthenticationException(response);
-                } else if (cause instanceof CommunicationException) {
-                    handleCommunicationException(response, cause);
-                } else if (cause instanceof InterruptedException) {
-                    handleInterruptException(response, cause);
-                } else {
-                    handleGeneralException(response, e);
+        if (e instanceof EngineDirectoryServiceException) {
+            handleEngineDirectoryServiceException(response, e);
+        } else if (e instanceof AuthenticationException) {
+            handleAuthenticationException(response);
+        } else if (e instanceof CommunicationException) {
+            handleCommunicationException(response, e);
+        } else if (e instanceof InterruptedException) {
+            handleInterruptException(response, e);
+        } else {
+            boolean found = false;
+            for (Throwable throwable : ExceptionUtils.getThrowables(e)) {
+                if ((throwable instanceof SaslException || throwable instanceof ConnectException)) {
+                    handleSaslException(response, throwable);
+                    found = true;
+                    break;
+                } else if (throwable instanceof OperationNotSupportedException) {
+                    handleOperationException(response, throwable);
+                    found = true;
+                    break;
                 }
-            } else {
-                for (Throwable throwable : ExceptionUtils.getThrowables(e)) {
-                    if ((throwable instanceof SaslException || throwable instanceof ConnectException)) {
-                        handleSaslException(response, cause);
-                    } else if (throwable instanceof OperationNotSupportedException) {
-                        handleOperationException(response, throwable);
-                    }
-                }
+            }
+            if (!found) {
+                handleGeneralException(response, e);
             }
         }
         return response;
-
     }
 
     private void handleGeneralException(LdapSearchExceptionHandlingResponse response, Exception e) {

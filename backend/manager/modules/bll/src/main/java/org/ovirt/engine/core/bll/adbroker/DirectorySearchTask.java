@@ -5,9 +5,11 @@ import java.util.concurrent.Callable;
 
 import javax.naming.directory.SearchControls;
 
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.springframework.ldap.core.ContextMapperCallbackHandler;
 
-public class DirectorySearchTask implements Callable<List> {
+public class DirectorySearchTask implements Callable<List<?>> {
 
     private final LDAPTemplateWrapper ldapTemplate;
     private final long resultcount;
@@ -22,7 +24,7 @@ public class DirectorySearchTask implements Callable<List> {
     }
 
     @Override
-    public List call() throws Exception {
+    public List<?> call() throws Exception {
 
         ContextMapperCallbackHandler cmCallback =
                 new NotNullContextMapperCallbackHandler(queryExecution.getContextMapper());
@@ -35,6 +37,7 @@ public class DirectorySearchTask implements Callable<List> {
         controls.setCountLimit(resultcount);
         // Added this in order to prevent a warning saying: "the returning obj flag wasn't set, setting it to true"
         controls.setReturningObjFlag(true);
+        controls.setTimeLimit(Config.<Integer> GetValue(ConfigValues.LDAPQueryTimeout) * 1000);
 
         ldapTemplate.search("",
                 queryExecution.getFilter(),
