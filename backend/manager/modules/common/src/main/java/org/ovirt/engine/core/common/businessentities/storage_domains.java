@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -13,7 +14,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 
 @XmlAccessorType(XmlAccessType.NONE)
@@ -44,6 +44,10 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         this.setstorage_type(StorageType.forValue(storage_pool_type));
         this.setstorage_domain_type(StorageDomainType.forValue(storage_type));
     }
+
+    //this member is in use only by the Frontend project
+    @Transient
+    private String vdcQueryableId;
 
     private Set<VdcBllErrors> alerts;
 
@@ -281,8 +285,16 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
     }
 
     public Object getQueryableId() {
-        return StringFormat.format("%1$s_%2$s", getid().toString(), getstorage_pool_id() != null ? getstorage_pool_id()
-                .getValue().toString() : Guid.Empty.toString());
+        if(vdcQueryableId == null){
+            return getid();
+        }
+        //used only by the Frontend project
+        return vdcQueryableId;
+    }
+
+    //this setter is in use only by Frontend project
+    public void setQueryableId(String value) {
+        this.vdcQueryableId = value;
     }
 
     private static final java.util.ArrayList<String> _spProperties = new java.util.ArrayList<String>(

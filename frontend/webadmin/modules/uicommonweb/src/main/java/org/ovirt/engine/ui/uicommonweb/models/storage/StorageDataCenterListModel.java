@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -204,7 +205,15 @@ public class StorageDataCenterListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
-                searchableListModel.setItems((java.util.ArrayList<storage_domains>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                java.util.ArrayList<storage_domains> domains =
+                        (java.util.ArrayList<storage_domains>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                for (storage_domains domain : domains) {
+                    String guid =
+                            domain.getstorage_pool_id() != null ? domain.getstorage_pool_id().getValue().toString()
+                                    : Guid.Empty.toString();
+                    domain.setQueryableId(domain.getid() + "_" + guid);
+                }
+                searchableListModel.setItems(domains);
                 setIsEmpty(((java.util.List) searchableListModel.getItems()).size() == 0);
             }
         };
