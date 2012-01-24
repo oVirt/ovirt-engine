@@ -24,8 +24,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -34,6 +32,8 @@ import org.ovirt.engine.core.dal.dbbroker.user_sessions;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class LoginBaseCommand<T extends LoginUserParameters> extends CommandBase<T> {
+
+    private static final String VDC_USER = "VdcUser";
 
     public LoginBaseCommand(T parameters) {
         super(parameters);
@@ -56,7 +56,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             return;
         }
 
-        VdcBllMessages canDoActionMessage = VdcBllMessages.USER_FAILED_TO_AUTHENTICATE;
         LoginResult result = LoginResult.CantAuthenticate;
         if (!Config.<String> GetValue(ConfigValues.AuthenticationMethod).toUpperCase().equals("LDAP")) {
             // In case we're using LDAP+GSSAPI/Kerberos - and there was an
@@ -143,40 +142,19 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     @Override
     protected boolean canDoAction() {
         boolean authenticated = false;
-        VdcUser vdcUser = (VdcUser) SessionDataContainer.getInstance().GetData("VdcUser");
+        VdcUser vdcUser = (VdcUser) SessionDataContainer.getInstance().GetData(VDC_USER);
         if (vdcUser == null) {
-            // if (LicenseManager.LicenseManager.Instance == null ||
-            // LicenseManager.LicenseManager.Instance.LicenseSettings == null)
-            // {
-            // log.error("User Login: License manager illegal");
-            // ReturnValue.CanDoActionMessages.Add(VdcBllMessages.ERROR_LICENSE_ILLEGAL.toString());
-            // ((VdcLoginReturnValueBase)ReturnValue).LoginResult =
-            // LoginResult.CantAuthenticate;
-            // return false;
-            // }
-            // else if
-            // (LicenseManager.LicenseManager.Instance.LicenseSettings.IsInNoLicenseState)
-            // {
-            // log.error("Licence Manager is in 'No-License' state");
-            // ReturnValue.CanDoActionMessages.Add(VdcBllMessages.ERROR_LICENSE_NO_LICENSE.toString());
-            // ((VdcLoginReturnValueBase)ReturnValue).LoginResult =
-            // LoginResult.CantAuthenticate;
-            // return false;
-            // }
-            // else
-            {
-                boolean domainFound = false;
-                List<String> vdcDomains = LdapBrokerUtils.getDomainsList();
-                for (String domain : vdcDomains) {
-                    if (StringHelper.EqOp(domain.toLowerCase(), getDomain().toLowerCase())) {
-                        domainFound = true;
-                        break;
-                    }
+            boolean domainFound = false;
+            List<String> vdcDomains = LdapBrokerUtils.getDomainsList();
+            for (String domain : vdcDomains) {
+                if (StringHelper.EqOp(domain.toLowerCase(), getDomain().toLowerCase())) {
+                    domainFound = true;
+                    break;
                 }
-                if (!domainFound) {
-                    addCanDoActionMessage(VdcBllMessages.USER_CANNOT_LOGIN_DOMAIN_NOT_SUPPORTED);
-                    return false;
-                }
+            }
+            if (!domainFound) {
+                addCanDoActionMessage(VdcBllMessages.USER_CANNOT_LOGIN_DOMAIN_NOT_SUPPORTED);
+                return false;
             }
             boolean isLocalBackend = false;
             boolean isAdmin = false;
@@ -207,27 +185,19 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             setCurrentUser(currentUser);
 
             if (!StringHelper.isNullOrEmpty(getParameters().getSessionId())) {
-                SessionDataContainer.getInstance().SetData(getParameters().getSessionId(), "VdcUser", getCurrentUser());
-                //
-                // if (SessionContainer.getInstance().GetData("VdcUser") ==
-                // null)
-                // {
-                // SessionContainer.getInstance().SetData("VdcUser",CurrentUser);
-                // }
-            } else if(!SessionDataContainer.getInstance().SetData("VdcUser", getCurrentUser())) {
+                SessionDataContainer.getInstance().SetData(getParameters().getSessionId(), VDC_USER, getCurrentUser());
+            } else if (!SessionDataContainer.getInstance().SetData(VDC_USER, getCurrentUser())) {
                 addCanDoActionMessage(VdcBllMessages.USER_CANNOT_LOGIN_SESSION_MISSING);
                 authenticated = false;
             }
-            //Persist the most updated version of the user, as received from AD, as this may
-            //affect MLA later on
+            // Persist the most updated version of the user, as received from AD, as this may
+            // affect MLA later on
             if (authenticated) {
                 authenticated = UserCommandBase.persistAuthenticatedUser(_adUser) != null;
             }
         }
         return authenticated;
     }
-
-    private static LogCompat log = LogFactoryCompat.getLog(LoginBaseCommand.class);
 
     @Override
     protected boolean IsUserAutorizedToRunAction() {
