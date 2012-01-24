@@ -872,7 +872,8 @@ SELECT     	id AS vm_interface_id,
 			_create_date AS create_date,
             _update_date AS update_date
 FROM         vm_interface
-WHERE     (_create_date >
+WHERE     vmt_guid IS NULL AND
+         (_create_date >
                           (SELECT     var_datetime
                            FROM          dwh_history_timekeeping
                            WHERE      (var_name = 'lastSync'))) OR
@@ -906,10 +907,14 @@ SELECT i.image_guid AS vm_disk_id,
        i._update_date AS update_date
 FROM   images as i
            INNER JOIN
-	       disk_image_dynamic ON i.image_guid = disk_image_dynamic.image_id
+	           image_vm_map as map ON i.image_guid = map.image_id
+		              INNER JOIN
+		                  vm_static ON vm_static.vm_guid = map.vm_id
            INNER JOIN
                disks as d ON i.image_group_id = d.disk_id
-WHERE     (i._create_date >
+WHERE     map.active = true AND
+                 vm_static.entity_type = 'VM' AND
+          (i._create_date >
                           (SELECT     var_datetime
                            FROM         dwh_history_timekeeping
                            WHERE      (var_name = 'lastSync'))) OR
@@ -923,11 +928,9 @@ AS
 SELECT image_id as vm_disk_id,
        vm_id
   FROM image_vm_map
-WHERE active = true
-UNION ALL
-SELECT  image_guid as vm_disk_id,
-		vm_guid as vm_id
-  FROM image_vm_pool_map;
+  		         INNER JOIN
+		             vm_static ON vm_static.vm_guid = image_vm_map.vm_id
+WHERE active = true AND vm_static.entity_type = 'VM';
 
 CREATE OR REPLACE VIEW dwh_vm_disks_history_view
 AS
@@ -942,7 +945,13 @@ SELECT
 	disk_image_dynamic.flush_latency_seconds as flush_latency_seconds
 FROM    images
 			INNER JOIN
-				disk_image_dynamic ON images.image_guid = disk_image_dynamic.image_id;
+				disk_image_dynamic ON images.image_guid = disk_image_dynamic.image_id
+           INNER JOIN
+	            image_vm_map as map ON images.image_guid = map.image_id
+				    INNER JOIN
+		                  vm_static ON vm_static.vm_guid = map.vm_id
+WHERE map.active = true
+             AND  vm_static.entity_type = 'VM';
 
 CREATE OR REPLACE VIEW dwh_remove_tags_relations_history_view AS
 SELECT    tag_id as entity_id,
