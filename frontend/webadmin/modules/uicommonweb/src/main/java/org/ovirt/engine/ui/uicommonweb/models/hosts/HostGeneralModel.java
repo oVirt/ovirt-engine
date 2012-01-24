@@ -691,7 +691,7 @@ public class HostGeneralModel extends EntityModel
                         public void OnSuccess(Object target, Object returnValue) {
 
                             InstallModel installModel = (InstallModel) target;
-                            ArrayList<String> isos = (ArrayList<String>) returnValue;
+                            ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
                             installModel.getOVirtISO().setItems(isos);
                             installModel.getOVirtISO().setSelectedItem(Linq.FirstOrDefault(isos));
                             installModel.getOVirtISO().setIsAvailable(true);
@@ -888,7 +888,7 @@ public class HostGeneralModel extends EntityModel
                         public void OnSuccess(Object target, Object returnValue) {
 
                             HostGeneralModel hostGeneralModel = (HostGeneralModel) target;
-                            java.util.ArrayList<String> isos = (java.util.ArrayList<String>) returnValue;
+                            ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
                             if (isos.size() > 0)
                             {
                                 VDS vds = hostGeneralModel.getEntity();

@@ -73,6 +73,7 @@ import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -1519,8 +1520,8 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? new java.util.ArrayList<String>((java.util.ArrayList<String>) source)
-                        : new java.util.ArrayList<String>();
+                return source != null ? new java.util.ArrayList<RpmVersion>((java.util.ArrayList<RpmVersion>) source)
+                        : new java.util.ArrayList<RpmVersion>();
             }
         };
         Frontend.RunQuery(VdcQueryType.GetoVirtISOs, new VdsIdParametersBase(id), aQuery);
