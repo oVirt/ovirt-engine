@@ -142,7 +142,7 @@ public class ImportVmTemplateCommandTest {
                 spy(new ImportVmTemplateCommand(createParameters()));
 
         Backend backend = mock(Backend.class);
-        when(command.getBackend()).thenReturn(backend);
+        doReturn(backend).when(command).getBackend();
         mockGetTemplatesFromExportDomainQuery(volumeFormat, volumeType, command);
         mockStorageDomainStatic(command, storageType);
         doReturn(mock(VmTemplateDAO.class)).when(command).getVmTemplateDAO();
