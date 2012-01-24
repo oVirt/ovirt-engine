@@ -291,7 +291,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
         }
         String result = password;
 
-        String keyFile = Config.<String> GetValue(ConfigValues.keystoreUrl, Config.DefaultConfigurationVersion);
+        String keyFile = Config.resolveKeyStorePath();
         String passwd = Config.<String> GetValue(ConfigValues.keystorePass, Config.DefaultConfigurationVersion);
         String alias = Config.<String> GetValue(ConfigValues.CertAlias, Config.DefaultConfigurationVersion);
         try {
@@ -308,7 +308,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
         }
         String result = password;
 
-        String keyFile = Config.<String> GetValue(ConfigValues.keystoreUrl, Config.DefaultConfigurationVersion);
+        String keyFile = Config.resolveKeyStorePath();
         String passwd = Config.<String> GetValue(ConfigValues.keystorePass, Config.DefaultConfigurationVersion);
         String alias = Config.<String> GetValue(ConfigValues.CertAlias, Config.DefaultConfigurationVersion);
         try {
