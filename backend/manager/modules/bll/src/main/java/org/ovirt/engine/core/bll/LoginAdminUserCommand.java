@@ -15,9 +15,7 @@ public class LoginAdminUserCommand<T extends LoginUserParameters> extends LoginU
 
     @Override
     protected boolean canDoAction() {
-        // first call to super to check user with directory services
-        // it also added to db in case it is needed
-        boolean autheticated = super.canDoAction();
+        boolean autheticated = isUserCanBeAuthenticated();
 
         // only admin users can use LoginAdmin command
         if (autheticated) {
@@ -28,6 +26,8 @@ public class LoginAdminUserCommand<T extends LoginUserParameters> extends LoginU
                 if (log.isDebugEnabled()) {
                     log.debugFormat("LoginAdminUser: No admin role found for user - login failed.");
                 }
+            } else {
+                autheticated = persistUserSession();
             }
 
         }

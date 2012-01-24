@@ -141,6 +141,26 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     @Override
     protected boolean canDoAction() {
+        return isUserCanBeAuthenticated() && persistUserSession();
+    }
+
+    protected boolean persistUserSession() {
+        boolean authenticated = true;
+        if (!StringHelper.isNullOrEmpty(getParameters().getSessionId())) {
+            SessionDataContainer.getInstance().SetData(getParameters().getSessionId(), VDC_USER, getCurrentUser());
+        } else if (!SessionDataContainer.getInstance().SetData(VDC_USER, getCurrentUser())) {
+            addCanDoActionMessage(VdcBllMessages.USER_CANNOT_LOGIN_SESSION_MISSING);
+            authenticated = false;
+        }
+        // Persist the most updated version of the user, as received from AD, as this may
+        // affect MLA later on
+        if (authenticated) {
+            authenticated = UserCommandBase.persistAuthenticatedUser(_adUser) != null;
+        }
+        return authenticated;
+    }
+
+    protected boolean isUserCanBeAuthenticated() {
         boolean authenticated = false;
         VdcUser vdcUser = (VdcUser) SessionDataContainer.getInstance().GetData(VDC_USER);
         if (vdcUser == null) {
@@ -179,22 +199,9 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         } else {
             addCanDoActionMessage(VdcBllMessages.USER_IS_ALREADY_LOGGED_IN);
         }
-        // todo: temp because Current user is null until execute
         if (authenticated) {
             VdcUser currentUser = new VdcUser(_adUser);
             setCurrentUser(currentUser);
-
-            if (!StringHelper.isNullOrEmpty(getParameters().getSessionId())) {
-                SessionDataContainer.getInstance().SetData(getParameters().getSessionId(), VDC_USER, getCurrentUser());
-            } else if (!SessionDataContainer.getInstance().SetData(VDC_USER, getCurrentUser())) {
-                addCanDoActionMessage(VdcBllMessages.USER_CANNOT_LOGIN_SESSION_MISSING);
-                authenticated = false;
-            }
-            // Persist the most updated version of the user, as received from AD, as this may
-            // affect MLA later on
-            if (authenticated) {
-                authenticated = UserCommandBase.persistAuthenticatedUser(_adUser) != null;
-            }
         }
         return authenticated;
     }
