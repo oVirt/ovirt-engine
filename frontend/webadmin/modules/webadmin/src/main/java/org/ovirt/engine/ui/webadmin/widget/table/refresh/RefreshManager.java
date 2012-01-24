@@ -92,6 +92,9 @@ public class RefreshManager {
         String refreshRate = Cookies.getCookie(REFRESH_RATE_COOKIE_NAME + "_" + controller.getId());
 
         try {
+            if (refreshRate == null) {
+                return DEFAULT_REFRESH_RATE;
+            }
             return new Integer(refreshRate).intValue();
         } catch (NumberFormatException e) {
             return DEFAULT_REFRESH_RATE;
