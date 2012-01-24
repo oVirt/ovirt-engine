@@ -25,6 +25,7 @@ import org.ovirt.engine.api.common.invocation.Current;
 import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.model.API;
 import org.ovirt.engine.api.model.Link;
+import org.ovirt.engine.api.model.SpecialObjects;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
@@ -45,6 +46,14 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { Config.class })
 public class BackendApiResourceTest extends Assert {
+
+    private static final String ROOT_TAG_REL = "tags/root";
+
+    private static final String ROOT_TAG_HREF = "/api/tags/00000000-0000-0000-0000-000000000000";
+
+    private static final String BLANK_TEMPLATE_REL = "templates/blank";
+
+    private static final String BLANK_TEMPLATE_HREF = "/api/templates/00000000-0000-0000-0000-000000000000";
 
     protected BackendApiResource resource;
 
@@ -224,6 +233,9 @@ public class BackendApiResourceTest extends Assert {
             assertEquals(hrefs[i], l.getHref());
         }
 
+        assertNotNull(api.getSpecialObjects());
+        assertContainsRootTag(api.getSpecialObjects());
+        assertContainsBlankTemplate(api.getSpecialObjects());
         assertNotNull(api.getProductInfo());
         assertNotNull(api.getProductInfo().getVersion());
         assertEquals(MAJOR,    api.getProductInfo().getVersion().getMajor());
@@ -240,6 +252,24 @@ public class BackendApiResourceTest extends Assert {
         assertEquals(ACTIVE_USERS,           api.getSummary().getUsers().getActive());
         assertEquals(TOTAL_STORAGE_DOMAINS,  api.getSummary().getStorageDomains().getTotal());
         assertEquals(ACTIVE_STORAGE_DOMAINS, api.getSummary().getStorageDomains().getActive());
+    }
+
+    private void assertContainsBlankTemplate(SpecialObjects objs) {
+        for (Link link : objs.getLinks()) {
+            if (link.getHref().equals(BLANK_TEMPLATE_HREF) && link.getRel().equals(BLANK_TEMPLATE_REL)) {
+                return;
+            }
+        }
+        fail();
+    }
+
+    private void assertContainsRootTag(SpecialObjects objs) {
+        for (Link link : objs.getLinks()) {
+            if (link.getHref().equals(ROOT_TAG_HREF) && link.getRel().equals(ROOT_TAG_REL)) {
+                return;
+            }
+        }
+        fail();
     }
 
     private static void assertEquals(long expected, Long actual) {

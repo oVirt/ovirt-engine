@@ -98,6 +98,20 @@ public class BackendApiResource
         return links;
     }
 
+    private Link createBlankTemplateLink() {
+        Link link = new Link();
+        link.setRel("templates/blank");
+        link.setHref(getTemplateBlankUri());
+        return link;
+    }
+
+    private Link createRootTagLink() {
+        Link link = new Link();
+        link.setRel("tags/root");
+        link.setHref(getTagRootUri());
+        return link;
+    }
+
     private API getApi() {
         API api = new API();
         for (DetailedLink detailedLink : getLinks()) {
@@ -107,6 +121,10 @@ public class BackendApiResource
             if (detailedLink.isSetLinkCapabilities() && detailedLink.getLinkCapabilities().isSetSearchable() && detailedLink.getLinkCapabilities().isSearchable()) {
                 api.getLinks().add(LinkHelper.createLink(detailedLink.getHref(), detailedLink.getRel(), detailedLink.getRequest().getUrl().getParametersSets()));
             }
+            //add special links
+            api.setSpecialObjects(new SpecialObjects());
+            api.getSpecialObjects().getLinks().add(createBlankTemplateLink());
+            api.getSpecialObjects().getLinks().add(createRootTagLink());
         }
         return api;
     }
@@ -128,28 +146,12 @@ public class BackendApiResource
         return rels;
     }
 
-    private BaseResource getSpecialObjects(API api) {
-        api.setSpecialObjects(new SpecialObjects());
-        return api.getSpecialObjects();
-    }
-
     private String getTagRootUri() {
         return LinkHelper.combine(getUriInfo().getBaseUri().getPath(), "tags/00000000-0000-0000-0000-000000000000");
     }
 
     private String getTemplateBlankUri() {
         return LinkHelper.combine(getUriInfo().getBaseUri().getPath(), "templates/00000000-0000-0000-0000-000000000000");
-    }
-
-    private void addStaticLinks(List<Link> linker, String[] rels, String[] refs) {
-        if(rels.length == refs.length){
-            for(int i = 0; i < rels.length; i++){
-                Link link = new Link();
-                link.setRel(rels[i]);
-                link.setHref(refs[i]);
-                linker.add(link);
-            }
-        }
     }
 
     private DetailedLink createLink(String rel, LinkFlags flags) {
