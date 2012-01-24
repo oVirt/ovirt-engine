@@ -1,26 +1,23 @@
 package org.ovirt.engine.ui.common.widget.table.refresh;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Cookies;
 
 /**
  * Manages the Refresh Rate for a {@link GridController}.
  */
-// TODO(vszocs) create map-like service object (singleton) that
-// abstracts from cookie or HTML5-storage persistence details
 public abstract class AbstractRefreshManager {
 
     protected static final Integer DEFAULT_REFRESH_RATE = GridTimer.DEFAULT_NORMAL_RATE;
-    protected static final String REFRESH_RATE_COOKIE_NAME = "GridRefreshRate";
+    protected static final String REFRESH_RATE_ITEM_NAME = "GridRefreshRate";
     protected static final Set<Integer> REFRESH_RATES = new LinkedHashSet<Integer>();
 
     static {
@@ -38,13 +35,16 @@ public abstract class AbstractRefreshManager {
     }
 
     protected final GridController controller;
+    private final ClientStorage clientStorage;
 
     /**
      * Create a Manager for the specified {@link GridController}
      */
-    public AbstractRefreshManager(GridController controller) {
+    public AbstractRefreshManager(GridController controller, ClientStorage clientStorage) {
         this.controller = controller;
-        controller.setRefreshRate(readRefreshRateCookie());
+        this.clientStorage = clientStorage;
+
+        controller.setRefreshRate(readRefreshRate());
         controller.getTimer().addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
@@ -54,10 +54,6 @@ public abstract class AbstractRefreshManager {
     }
 
     protected abstract void onRefresh(String status);
-
-    public int getCurrentRefreshRate() {
-        return controller.getRefreshRate();
-    }
 
     /**
      * Called when the Grid becomes hidden
@@ -75,27 +71,35 @@ public abstract class AbstractRefreshManager {
 
     public void setCurrentRefreshRate(int newRefreshRate) {
         controller.setRefreshRate(newRefreshRate);
-        saveRefreshRateCookie();
+        saveRefreshRate(newRefreshRate);
     }
 
-    // Return refresh rate value from the cookie - if exists; Otherwise, return default refresh rate
-    private int readRefreshRateCookie() {
-        String refreshRate = Cookies.getCookie(REFRESH_RATE_COOKIE_NAME + "_" + controller.getId());
+    public int getCurrentRefreshRate() {
+        return controller.getRefreshRate();
+    }
+
+    String getRefreshRateItemKey() {
+        return REFRESH_RATE_ITEM_NAME + "_" + controller.getId();
+    }
+
+    /**
+     * Saves the Grid refresh rate into local storage.
+     */
+    void saveRefreshRate(int newRefreshRate) {
+        clientStorage.setLocalItem(getRefreshRateItemKey(), String.valueOf(newRefreshRate));
+    }
+
+    /**
+     * Returns the Grid refresh rate if it was saved. Otherwise, returns the default refresh rate.
+     */
+    int readRefreshRate() {
+        String refreshRate = clientStorage.getLocalItem(getRefreshRateItemKey());
 
         try {
             return new Integer(refreshRate).intValue();
         } catch (NumberFormatException e) {
             return DEFAULT_REFRESH_RATE;
         }
-    }
-
-    // Save refresh rate value to a cookie and set expire date to fifty years from now
-    private void saveRefreshRateCookie() {
-        long expire = new Date().getTime() + 1000 * 60 * 60 * 24 * 365 * 50; // fifty years
-
-        Cookies.setCookie(REFRESH_RATE_COOKIE_NAME + "_" + controller.getId(),
-                String.valueOf(getCurrentRefreshRate()),
-                new Date(expire));
     }
 
 }

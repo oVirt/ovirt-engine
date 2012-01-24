@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButton;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
@@ -49,7 +50,7 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerResources) {
         super(dataProvider, resources, headerResources, getEventBus(), getApplicationConstants());
-        this.refreshManager = new RefreshManager(dataProvider.getModel());
+        this.refreshManager = new RefreshManager(dataProvider.getModel(), getClientStorage());
         this.refreshPanel = refreshManager.getRefreshPanel();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         localize(ClientGinjectorProvider.instance().getApplicationConstants());
@@ -65,6 +66,10 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
 
     static EventBus getEventBus() {
         return ClientGinjectorProvider.instance().getEventBus();
+    }
+
+    static ClientStorage getClientStorage() {
+        return ClientGinjectorProvider.instance().getClientStorage();
     }
 
     void localize(ApplicationConstants constants) {

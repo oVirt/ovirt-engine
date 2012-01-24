@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -171,6 +172,8 @@ public interface ManagedComponents {
     ApplicationTemplates getApplicationTemplates();
 
     ApplicationMessages getApplicationMessages();
+
+    ClientStorage getClientStorage();
 
     // PresenterWidgets
 
