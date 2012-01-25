@@ -11,11 +11,17 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.MainSectionPresente
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedResourcePresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedTemplatePresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedVirtualMachinePresenter;
 import org.ovirt.engine.ui.userportal.section.main.view.HeaderView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainTabPanelView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabBasicView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabExtendedView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedResourceView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedTemplateView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedVirtualMachineView;
 import org.ovirt.engine.ui.userportal.view.ErrorPopupView;
 
 /**
@@ -59,6 +65,20 @@ public class PresenterModule extends BasePresenterModule {
                 MainTabExtendedPresenter.ViewDef.class,
                 MainTabExtendedView.class,
                 MainTabExtendedPresenter.ProxyDef.class);
+
+        // Main section: side tabs
+        bindPresenter(SideTabExtendedVirtualMachinePresenter.class,
+                SideTabExtendedVirtualMachinePresenter.ViewDef.class,
+                SideTabExtendedVirtualMachineView.class,
+                SideTabExtendedVirtualMachinePresenter.ProxyDef.class);
+        bindPresenter(SideTabExtendedTemplatePresenter.class,
+                SideTabExtendedTemplatePresenter.ViewDef.class,
+                SideTabExtendedTemplateView.class,
+                SideTabExtendedTemplatePresenter.ProxyDef.class);
+        bindPresenter(SideTabExtendedResourcePresenter.class,
+                SideTabExtendedResourcePresenter.ViewDef.class,
+                SideTabExtendedResourceView.class,
+                SideTabExtendedResourcePresenter.ProxyDef.class);
     }
 
 }

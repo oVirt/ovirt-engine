@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style>
+		.bar {
+			float: left;
+			width: 150px;
+			height: 100%;
+			background-color: #E5E5E5;
+			padding: 5px 0;
+			border: 1px solid #AAAAAA;
+		}
+		
+		.content {
+			overflow: hidden;
+			padding: 5px;
+			border: 1px solid #719823;
+		}
+	</ui:style>
+
+	<g:HTMLPanel>
+		<g:FlowPanel ui:field="tabContainer" addStyleNames="{style.bar}" />
+		<g:SimplePanel ui:field="tabContentContainer" addStyleNames="{style.content}" />
+		<div style="clear: both;" />
+	</g:HTMLPanel>
+
+</ui:UiBinder>

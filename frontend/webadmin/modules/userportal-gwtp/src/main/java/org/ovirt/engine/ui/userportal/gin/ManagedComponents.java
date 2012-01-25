@@ -9,6 +9,9 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.MainSectionPresente
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedResourcePresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedTemplatePresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedVirtualMachinePresenter;
 
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.inject.Provider;
@@ -46,5 +49,13 @@ public interface ManagedComponents {
     AsyncProvider<MainTabBasicPresenter> getMainTabBasicPresenter();
 
     AsyncProvider<MainTabExtendedPresenter> getMainTabExtendedPresenter();
+
+    // Presenters: Main section: side tabs
+
+    AsyncProvider<SideTabExtendedVirtualMachinePresenter> getSideTabExtendedVirtualMachinePresenter();
+
+    AsyncProvider<SideTabExtendedTemplatePresenter> getSideTabExtendedTemplatePresenter();
+
+    AsyncProvider<SideTabExtendedResourcePresenter> getSideTabExtendedResourcePresenter();
 
 }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style type="org.ovirt.engine.ui.common.widget.tab.AbstractTab.Style">
+		.tab {
+			height: 25px;
+			font-family: Arial, sans-serif;
+			line-height: 25px;
+		}
+		
+		.middle {
+			padding: 0 5px;
+		}
+		
+		.activeMiddle {
+			background-color: #719823;
+		}
+		
+		.inactiveMiddle {
+			background-color: #E5E5E5;
+		}
+		
+		a.middleLink {
+			font-weight: bold;
+		}
+		
+		a.activeMiddleLink {
+			color: white;
+		}
+		
+		a.inactiveMiddleLink {
+			color: #719823;
+		}
+		
+		.activeLeft {}
+		.inactiveLeft {}
+		.activeRight {}
+		.inactiveRight {}
+		.activeArrow {}
+		.inactiveArrow {}
+		.alignLeft {}
+		.alignRight {}
+	</ui:style>
+
+	<g:HTMLPanel ui:field="tabContainer" addStyleNames="{style.tab}">
+		<div ui:field="leftElement" />
+		<div ui:field="rightElement" />
+		<div ui:field="middleElement" class="{style.middle} {style.inactiveMiddle}">
+			<g:InlineHyperlink ui:field="hyperlink" addStyleNames="{style.middleLink} {style.inactiveMiddleLink}" />
+		</div>
+		<div ui:field="arrowElement" />
+	</g:HTMLPanel>
+
+</ui:UiBinder>

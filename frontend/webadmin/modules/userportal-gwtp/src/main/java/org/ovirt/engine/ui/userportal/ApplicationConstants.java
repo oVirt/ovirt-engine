@@ -35,4 +35,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Extended")
     String extendedMainTabLabel();
 
+    @DefaultStringValue("Virtual Machines")
+    String extendedVirtualMachineSideTabLabel();
+
+    @DefaultStringValue("Templates")
+    String extendedTemplateSideTabLabel();
+
+    @DefaultStringValue("Resources")
+    String extendedResourceSideTabLabel();
+
 }

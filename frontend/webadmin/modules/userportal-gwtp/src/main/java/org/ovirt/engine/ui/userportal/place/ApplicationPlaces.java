@@ -9,10 +9,16 @@ public class ApplicationPlaces {
 
     public static final String loginPlace = "login";
 
-    // Main section
+    // Main section: main tabs
 
     public static final String basicMainTabPlace = "basic";
 
-    public static final String extendedMainTabPlace = "extended";
+    // Main section: side tabs
+
+    public static final String extendedVirtualMachineSideTabPlace = "extended-vm";
+
+    public static final String extendedTemplateSideTabPlace = "extended-template";
+
+    public static final String extendedResourceSideTabPlace = "extended-resource";
 
 }
