@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterf
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.MainModelProvider;
@@ -147,10 +148,20 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VM, HostListModel, HostVmListModel> getHostVmListProvider(ClientGinjector ginjector) {
+    public SearchableDetailModelProvider<VM, HostListModel, HostVmListModel> getHostVmListProvider(ClientGinjector ginjector,
+            final Provider<VmMigratePopupPresenterWidget> migratePopupProvider) {
         return new SearchableDetailTabModelProvider<VM, HostListModel, HostVmListModel>(ginjector,
                 HostListModel.class,
-                HostVmListModel.class);
+                HostVmListModel.class) {
+
+            @Override
+            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getMigrateCommand()) {
+                    return migratePopupProvider.get();
+                }
+                return super.getModelPopup(lastExecutedCommand);
+            }
+        };
     }
 
     @Provides
