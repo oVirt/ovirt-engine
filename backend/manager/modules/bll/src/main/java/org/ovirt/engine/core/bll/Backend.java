@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
@@ -49,8 +50,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -64,6 +63,8 @@ import org.ovirt.engine.core.utils.ThreadLocalSessionCleanerInterceptor;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
@@ -202,6 +203,10 @@ public class Backend implements BackendInternal, BackendRemote {
         // initialize the JobRepository object and finalize non-terminated jobs
         log.infoFormat("Mark uncompleted jobs as {0}: {1}", JobExecutionStatus.UNKNOWN.name(), new Date());
         initJobRepository();
+
+        // initializes the JobRepositoryCleanupManager
+        log.infoFormat("JobRepositoryCleanupManager: {0}", new Date());
+        JobRepositoryCleanupManager.getInstance().initialize();
 
         log.infoFormat("ExecutionMessageDirector: {0}", new Date());
         initExecutionMessageDirector();

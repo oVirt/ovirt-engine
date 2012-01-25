@@ -1065,6 +1065,19 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     SetupNetworksPollingTimeout(340),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    JobCleanupRateInMinutes(341),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    SucceededJobCleanupTimeInMinutes(342),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("60")
+    FailedJobCleanupTimeInMinutes(343),
+
     Invalid(65535);
 
     private int intValue;
