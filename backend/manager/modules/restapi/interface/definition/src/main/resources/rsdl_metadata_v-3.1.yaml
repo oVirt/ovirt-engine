@@ -8,6 +8,7 @@ actions:
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {filter: true|false}
 - name: /api/vms/{vm:id}|rel=get
   request:
@@ -183,7 +184,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vms/{vm:id}/cdroms/{cdrom:id}|rel=get
   request:
@@ -223,7 +225,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vms/{vm:id}/disks/{disk:id}|rel=get
   request:
@@ -301,7 +304,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vms/{vm:id}/nics/{nic:id}|rel=get
   request:
@@ -355,7 +359,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vms/{vm:id}/permissions/{permission:id}|rel=get
   request:
@@ -388,7 +393,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vms/{vm:id}/statistics/{statistic:id}|rel=get
   request:
@@ -402,7 +408,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}|rel=get
   request:
@@ -481,7 +488,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vms/{vm:id}/tags/{tag:id}|rel=get
   request:
@@ -513,6 +521,8 @@ actions:
       signatures: []
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/disks/{disk:id}|rel=get
   request:
@@ -577,7 +587,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}|rel=get
   request:
@@ -643,6 +654,7 @@ actions:
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/files/{file:id}|rel=get
   request:
@@ -656,7 +668,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/permissions/{permission:id}|rel=get
   request:
@@ -689,7 +702,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/templates/{template:id}|rel=get
   request:
@@ -712,7 +726,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/vms/{vm:id}|rel=get
   request:
@@ -738,6 +753,7 @@ actions:
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {filter: true|false}
 - name: /api/clusters/{cluster:id}|rel=get
   request:
@@ -782,7 +798,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: 
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/clusters/{cluster:id}/networks/{network:id}|rel=get
   request:
@@ -821,7 +838,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/clusters/{cluster:id}/permissions/{permission:id}|rel=get
   request:
@@ -872,6 +890,7 @@ actions:
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/datacenters/{datacenter:id}|rel=get
   request:
@@ -945,7 +964,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}|rel=get
   request:
@@ -990,7 +1010,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/domains/{domain:id}|rel=get
   request:
@@ -1007,6 +1028,7 @@ actions:
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/domains/{domain:id}/groups/{group:id}|rel=get
   request:
@@ -1023,6 +1045,7 @@ actions:
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/domains/{domain:id}/users/{user:id}|rel=get
   request:
@@ -1040,6 +1063,7 @@ actions:
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       from: {context: matrix, type: 'xs:string', value: event_id, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/events/{event:id}|rel=get
   request:
@@ -1056,6 +1080,7 @@ actions:
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/groups/{group:id}|rel=get
   request:
@@ -1085,7 +1110,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/groups/{group:id}/permissions/{permission:id}|rel=get
   request:
@@ -1128,7 +1154,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/groups/{group:id}/roles/{role:id}|rel=get
   request:
@@ -1158,7 +1185,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/groups/{group:id}/roles/{role:id}/permits/{permit:id}|rel=get
   request:
@@ -1189,7 +1217,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/groups/{group:id}/tags/{tag:id}|rel=get
   request:
@@ -1223,6 +1252,7 @@ actions:
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {filter: true|false}
 - name: /api/hosts/{host:id}|rel=get
   request:
@@ -1330,7 +1360,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/hosts/{host:id}/nics/{nic:id}|rel=get
   request:
@@ -1424,7 +1455,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/hosts/{host:id}/nics/{nic:id}/statistics/{statistic:id}|rel=get
   request:
@@ -1438,7 +1470,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/hosts/{host:id}/permissions/{permission:id}|rel=get
   request:
@@ -1471,7 +1504,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/hosts/{host:id}/statistics/{statistic:id}|rel=get
   request:
@@ -1485,7 +1519,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/hosts/{host:id}/storage/{storag:id}|rel=get
   request:
@@ -1499,7 +1534,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/hosts/{host:id}/tags/{tag:id}|rel=get
   request:
@@ -1532,6 +1568,7 @@ actions:
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/networks/{network:id}|rel=get
   request:
@@ -1575,7 +1612,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/roles/{role:id}|rel=get
   request:
@@ -1615,7 +1653,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/roles/{role:id}/permits/{permit:id}|rel=get
   request:
@@ -1646,7 +1685,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/tags/{tag:id}|rel=get
   request:
@@ -1689,6 +1729,7 @@ actions:
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {filter: true|false}
 - name: /api/templates/{template:id}|rel=get
   request:
@@ -1786,7 +1827,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/templates/{template:id}/cdroms/{cdrom:id}|rel=get
   request:
@@ -1800,7 +1842,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/templates/{template:id}/disks/{disk:id}|rel=get
   request:
@@ -1828,7 +1871,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/templates/{template:id}/nics/{nic:id}|rel=get
   request:
@@ -1842,7 +1886,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/templates/{template:id}/permissions/{permission:id}|rel=get
   request:
@@ -1877,7 +1922,8 @@ actions:
       signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false} 
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/users/{user:id}|rel=get
   request:
@@ -1909,7 +1955,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/users/{user:id}/permissions/{permission:id}|rel=get
   request:
@@ -1952,7 +1999,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/users/{user:id}/roles/{role:id}|rel=get
   request:
@@ -1982,7 +2030,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/users/{user:id}/roles/{role:id}/permits/{permit:id}|rel=get
   request:
@@ -2013,7 +2062,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/users/{user:id}/tags/{tag:id}|rel=get
   request:
@@ -2046,6 +2096,7 @@ actions:
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {filter: true|false}
 - name: /api/vmpools/{vmpool:id}|rel=get
   request:
@@ -2087,7 +2138,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vmpools/{vmpool:id}/permissions/{permission:id}|rel=get
   request:

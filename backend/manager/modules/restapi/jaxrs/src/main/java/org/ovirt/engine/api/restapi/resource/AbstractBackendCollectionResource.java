@@ -50,8 +50,8 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
 
     protected List<Q> getBackendCollection(SearchType searchType, String constraint) {
         return getBackendCollection(entityType,
-                                    VdcQueryType.Search,
-                                    getSearchParameters(searchType, constraint));
+                VdcQueryType.Search,
+                getSearchParameters(searchType, constraint));
     }
 
     private SearchParameters getSearchParameters(SearchType searchType, String constraint) {
@@ -77,6 +77,9 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             }
         }
 
+        if (QueryHelper.hasMatrixParam(getUriInfo(), MAX) && getMaxResults()!=NO_LIMIT) {
+            searchParams.setMaxCount(getMaxResults());
+        }
         return searchParams;
     }
 

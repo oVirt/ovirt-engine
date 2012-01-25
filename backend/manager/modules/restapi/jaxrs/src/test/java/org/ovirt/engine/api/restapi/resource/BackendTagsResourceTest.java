@@ -1,10 +1,16 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -36,6 +42,26 @@ public class BackendTagsResourceTest
     @Ignore
     @Override
     public void testQuery() throws Exception {
+    }
+
+    @Test
+    public void testList_LimitResults() throws Exception {
+        UriInfo uriInfo = setUpUriExpectationsWithMax(false);
+        setUpQueryExpectations("");
+        collection.setUriInfo(uriInfo);
+        List<Tag> results = getCollection();
+        assertNotNull(collection);
+        assertEquals(2, results.size());
+    }
+
+    @Test
+    public void testList_LimitResults_BadFormat() throws Exception {
+        UriInfo uriInfo = setUpUriExpectationsWithMax(true);
+        setUpQueryExpectations("");
+        collection.setUriInfo(uriInfo);
+        List<Tag> results = getCollection();
+        assertNotNull(collection);
+        assertEquals(4, results.size());
     }
 
     @Test
@@ -310,5 +336,30 @@ public class BackendTagsResourceTest
         assertEquals("root", root.getDescription());
         assertNull(root.getParent());
         verifyLinks(root);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected UriInfo setUpUriExpectationsWithMax(boolean badFormat) {
+        UriInfo uriInfo = control.createMock(UriInfo.class);;
+        expect(uriInfo.getBaseUri()).andReturn(URI.create(URI_BASE)).anyTimes();
+        List<PathSegment> psl = new ArrayList<PathSegment>();
+
+        PathSegment ps = control.createMock(PathSegment.class);
+        MultivaluedMap<String, String> matrixParams = control.createMock(MultivaluedMap.class);
+
+        expect(matrixParams.isEmpty()).andReturn(false).anyTimes();
+        expect(matrixParams.containsKey("max")).andReturn(true).anyTimes();
+
+        List<String> matrixParamsList = control.createMock(List.class);
+        expect(matrixParams.get("max")).andReturn(matrixParamsList).anyTimes();
+
+        expect(ps.getMatrixParameters()).andReturn(matrixParams).anyTimes();
+        expect(matrixParamsList.size()).andReturn(1).anyTimes();
+        expect(matrixParamsList.get(0)).andReturn(badFormat ? "bla3" : "2").anyTimes();
+
+        psl.add(ps);
+
+        expect(uriInfo.getPathSegments()).andReturn(psl).anyTimes();
+        return uriInfo;
     }
 }

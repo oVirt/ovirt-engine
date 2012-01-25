@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -21,13 +22,18 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class BackendResource extends BaseBackendResource {
+    protected static final int NO_LIMIT = -1;
     private static final String CORRELATION_ID = "Correlation-Id";
     private static final String ASYNC_CONSTRAINT = "async";
+    protected static final String MAX = "max";
     private static final String EXPECT_HEADER = "Expect";
     private static final String NON_BLOCKING_EXPECTATION = "202-accepted";
+    protected static final Log LOG = LogFactory.getLog(BackendResource.class);
 
     protected <T> T getEntity(Class<T> clz, SearchType searchType, String constraint) {
         try {
@@ -95,9 +101,28 @@ public class BackendResource extends BaseBackendResource {
             if (!result.getSucceeded()) {
                 throw new BackendFailureException(localize(result.getExceptionString()));
             }
-            return asCollection(clz, result.getReturnValue());
+            List<T> results = asCollection(clz, result.getReturnValue());
+            if (results!=null && getMaxResults()!=NO_LIMIT && getMaxResults()<results.size()) {
+                results = results.subList(0, getMaxResults()-1);
+            }
+            return results;
         } catch (Exception e) {
             return handleError(e, false);
+        }
+    }
+
+    protected int getMaxResults() {
+        if (getUriInfo()!=null && QueryHelper.hasMatrixParam(getUriInfo(), MAX)) {
+            HashMap<String,String> matrixConstraints = QueryHelper.getMatrixConstraints(getUriInfo(), MAX);
+            String maxString = matrixConstraints.get(MAX);
+            try {
+                return Integer.valueOf(maxString);
+            } catch (NumberFormatException e) {
+                LOG.error("Max number of results is not a valid number: '" + maxString + "'. Resorting to default behavior - no limit on number of query results.");
+                return NO_LIMIT;
+            }
+        } else {
+            return NO_LIMIT;
         }
     }
 
