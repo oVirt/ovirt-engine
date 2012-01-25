@@ -26,11 +26,9 @@ public class AbstractLdapTest {
         validProvider = false;
     }
 
-
     protected void setValidProvider(boolean value) {
         validProvider = value;
     }
-
 
     protected DirContext mockDirContext(final List<SearchResult> searchResults)
             throws NamingException {
@@ -52,6 +50,8 @@ public class AbstractLdapTest {
     protected DirContext mockDirContext() throws NamingException {
         Attributes attributes = new BasicAttributes();
         attributes.put("namingContexts", "DC=example,DC=com");
+        attributes.put("domainControllerFunctionality", "1");
+        attributes.put("defaultNamingContext", "dummyContext");
         final List<SearchResult> searchResults = new ArrayList<SearchResult>();
         searchResults.add(new SearchResult("1", "dummy", attributes));
         searchResults.add(new SearchResult("2", "dummy2", attributes));

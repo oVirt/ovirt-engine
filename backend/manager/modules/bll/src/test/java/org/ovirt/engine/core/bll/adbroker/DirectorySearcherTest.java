@@ -23,13 +23,22 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Tests GetRootDSE functionality In this test it is checked how GetRootDSE handles a various scenarios *
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(Config.class)
 public class DirectorySearcherTest extends AbstractLdapTest {
 
     private static final String BAD_URL = "ldap://badurl.com:389";
@@ -47,6 +56,8 @@ public class DirectorySearcherTest extends AbstractLdapTest {
     @Before
     public void setup() throws Exception {
         super.setup();
+        mockStatic(Config.class);
+        when(Config.GetValue(ConfigValues.LDAPQueryTimeout)).thenReturn(30);
         MockitoAnnotations.initMocks(this);
         dirContext = mockDirContext();
     }
@@ -60,8 +71,8 @@ public class DirectorySearcherTest extends AbstractLdapTest {
         GetRootDSETask task1 = mockRootDSETask(dirSearcher, "mydomain", urls.get(0));
         GetRootDSETask task2 = mockRootDSETask(dirSearcher, "mydomain", urls.get(1));
         try {
-        assertTrue(execute(task1));
-        assertTrue(execute(task2));
+        assertTrue(task1.call());
+        assertTrue(task2.call());
         } catch (Exception e) {
             Assert.fail("one of the servers was failed to return rootDSE record due to " + e.getMessage());
         }
