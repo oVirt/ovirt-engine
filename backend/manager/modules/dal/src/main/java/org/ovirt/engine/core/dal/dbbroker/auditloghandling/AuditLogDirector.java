@@ -735,28 +735,47 @@ public final class AuditLogDirector {
         String returnValue = message;
         if (logable != null) {
             Map<String, String> map = getAvalableValues(logable);
-            Matcher matcher = pattern.matcher(message);
-
-            StringBuffer buffer = new StringBuffer();
-            while (matcher.find()) {
-                String token = matcher.group();
-                token = token.substring(2); // remove leading ${
-                token = token.substring(0, token.length() - 1); // remove
-                                                                // trailing }
-
-                String value = map.get(token.toLowerCase()); // get value from
-                                                             // value map
-                if (value == null || value.isEmpty())
-                    value = token; // replace value with token if value not
-                                   // defined
-                matcher.appendReplacement(buffer, Matcher.quoteReplacement(value)); // put the value into
-                // message
-            }
-
-            matcher.appendTail(buffer); // append the rest of the message
-            returnValue = buffer.toString();
+            returnValue = resolveMessage(message, map);
         }
         return returnValue;
+    }
+
+    /**
+     * Resolves a message which contains place holders by replacing them with the value from the map.
+     *
+     * @param message
+     *            A text representing a message with place holders
+     * @param values
+     *            a map of the place holder to its values
+     * @return a resolved message
+     */
+    public static String resolveMessage(String message, Map<String, String> values) {
+        Matcher matcher = pattern.matcher(message);
+
+        StringBuffer buffer = new StringBuffer();
+        String value;
+        String token;
+        while (matcher.find()) {
+            token = matcher.group();
+
+            // remove leading ${
+            token = token.substring(2);
+
+            // remove trailing }
+            token = token.substring(0, token.length() - 1);
+
+            // get value from value map
+            value = values.get(token.toLowerCase());
+            if (value == null || value.isEmpty()) {
+                // replace value with token if value not defined
+                value = token;
+            }
+            matcher.appendReplacement(buffer, Matcher.quoteReplacement(value)); // put the value into message
+        }
+
+        // append the rest of the message
+        matcher.appendTail(buffer);
+        return buffer.toString();
     }
 
     static Map<String, String> getAvalableValues(AuditLogableBase logable) {
