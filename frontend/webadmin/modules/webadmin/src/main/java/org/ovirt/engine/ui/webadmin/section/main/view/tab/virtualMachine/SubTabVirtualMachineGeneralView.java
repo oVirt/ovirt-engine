@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.form.FormBuilder;
 import org.ovirt.engine.ui.webadmin.widget.form.FormItem;
 import org.ovirt.engine.ui.webadmin.widget.form.GeneralFormPanel;
+import org.ovirt.engine.ui.webadmin.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.TextBoxLabel;
 
 import com.google.gwt.core.client.GWT;
@@ -47,10 +48,10 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
     TextBoxLabel domain = new TextBoxLabel();
     TextBoxLabel timeZone = new TextBoxLabel();
 
+    BooleanLabel isHighlyAvailable = new BooleanLabel("Yes", "No");
+
     @Ignore
     TextBoxLabel monitorCount = new TextBoxLabel();
-    @Ignore
-    TextBoxLabel isHighlyAvailable = new TextBoxLabel();
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
@@ -133,7 +134,6 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
 
         // TODO required because of GWT#5864
         monitorCount.setText(Integer.toString(getDetailModel().getMonitorCount()));
-        isHighlyAvailable.setText(Boolean.toString(getDetailModel().getIsHighlyAvailable()));
 
         formBuilder.showForm(getDetailModel(), Driver.driver);
     }
