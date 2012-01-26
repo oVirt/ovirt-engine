@@ -2318,20 +2318,6 @@ def _checkAvailableMemory():
         logging.warn("There is less then %s available memory " % basedefs.CONST_WARN_MEMORY_GB)
         messages.append(output_messages.WARN_LOW_MEMORY)
 
-def checkLocale():
-    """
-    Checks that current configured locale in enviornment matches 
-    the supported locale
-    """
-    # Get current locale
-    osLocale = os.environ.get("LANG")
-    
-    # Compare with supported locale list
-    if not osLocale in basedefs.SUPPORTED_LOCALE:
-        logging.error("Locale %s is not supported" % osLocale)
-        logging.error("Supported locale are: %s" % ",".join(basedefs.SUPPORTED_LOCALE))
-        raise Exception(output_messages.ERR_EXP_LOCALE_SUPPORT % (osLocale, ",".join(basedefs.SUPPORTED_LOCALE)))
-    
 def initCmdLineParser():
     """
     Initiate the optparse object, add all the groups and general command line flags
@@ -2410,7 +2396,6 @@ def initMain():
 
     # Validate host has enough memory 
     _checkAvailableMemory()
-    checkLocale()
     
 if __name__ == "__main__":
     try:

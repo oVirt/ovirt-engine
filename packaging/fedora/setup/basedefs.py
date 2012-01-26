@@ -147,6 +147,3 @@ NO_COLOR="\033[0m"
 
 #space len size for color print
 SPACE_LEN=70
-
-# Supported locale
-SUPPORTED_LOCALE=["en_US.UTF-8", "en_US.utf-8", "en_US.utf8"]

@@ -338,7 +338,6 @@ ERR_SOURCE_DIR_NOT_SUPPORTED="Error: function supports copy of files only and no
 # Command line parsing errors:
 ERR_ONLY_1_FLAG="Error: The %s flag is mutually exclusive to all other command line options"
 ERR_NO_ANSWER_FILE="Error: Could not find file %s"
-ERR_EXP_LOCALE_SUPPORT="Error: current locale (%s) is not supported. supported locales are: %s"
 
 ERR_EXP_EDIT_PSQL_CONF="Error: failed editing %s" % basedefs.FILE_PSQL_CONF
 ERR_EXP_FAILED_LIMITS="Error: Could not edit %s" % basedefs.FILE_LIMITS_CONF
