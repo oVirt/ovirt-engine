@@ -172,6 +172,11 @@ public class VdcQueryParametersBase implements Serializable {
      */
     private boolean refresh = true;
 
+    /**
+     * The boolean flag which specifies if the query should be run as a user (as opposed to the default, which is running as admin)
+     */
+    private boolean runAsUser = false;
+
     public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
         return RegisterableQueryReturnDataType.LIST_IQUERYABLE;
     }
@@ -195,7 +200,7 @@ public class VdcQueryParametersBase implements Serializable {
         this.httpSessionId = httpSessionId;
     }
 
-    @XmlElement(name="Refresh", defaultValue="true")
+    @XmlElement(name = "Refresh", defaultValue = "true")
     public boolean getRefresh() {
         return refresh;
     }
@@ -204,4 +209,11 @@ public class VdcQueryParametersBase implements Serializable {
         this.refresh = refresh;
     }
 
+    public boolean isRunAsUser() {
+        return runAsUser;
+    }
+
+    public void setRunAsUser(boolean isRunAsUser) {
+        this.runAsUser = isRunAsUser;
+    }
 }

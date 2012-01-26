@@ -222,18 +222,39 @@ public enum VdcQueryType implements Serializable {
     // oVirt
     GetoVirtISOs,
     // Async Tasks
-    GetTasksStatusesByTasksIDs;
+    GetTasksStatusesByTasksIDs,
+
+    // Default type instead of having to null check
+    Unknown(VdcQueryAuthType.User);
+
+    /**
+     * What kind of authorization the query requires. Although this is essentially a <code>boolean</code>, it's
+     * implemented as an enum for future extendability.
+     */
+    public static enum VdcQueryAuthType {
+        Admin,
+        User
+    }
 
     private static final String DEFAULT_PACKAGE_NAME = "org.ovirt.engine.core.bll";
 
     private String packageName;
 
+    private VdcQueryAuthType authType;
+
     private VdcQueryType() {
         packageName = DEFAULT_PACKAGE_NAME;
+        authType = VdcQueryAuthType.Admin;
     }
 
     private VdcQueryType(String packageName) {
         this.packageName = packageName;
+        authType = VdcQueryAuthType.Admin;
+    }
+
+    private VdcQueryType(VdcQueryAuthType authType) {
+        packageName = DEFAULT_PACKAGE_NAME;
+        this.authType = authType;
     }
 
     public int getValue() {
@@ -246,5 +267,13 @@ public enum VdcQueryType implements Serializable {
 
     public String getPackageName() {
         return packageName;
+    }
+
+    public VdcQueryAuthType getAuthType() {
+        return authType;
+    }
+
+    public boolean isAdmin() {
+        return authType == VdcQueryAuthType.Admin;
     }
 }
