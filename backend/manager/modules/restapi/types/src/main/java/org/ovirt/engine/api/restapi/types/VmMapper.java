@@ -103,7 +103,8 @@ public class VmMapper {
         }
         if (vm.isSetMemory()) {
             staticVm.setmem_size_mb((int) (vm.getMemory() / BYTES_PER_MB));
-        } else {
+        } else if (staticVm.getmem_size_mb()==0){
+          //TODO: Get rid of this logic code when Backend supports default memory.
             staticVm.setmem_size_mb(DEFAULT_MEMORY_SIZE);
         }
         if (vm.isSetTemplate() && vm.getTemplate().getId() != null) {
