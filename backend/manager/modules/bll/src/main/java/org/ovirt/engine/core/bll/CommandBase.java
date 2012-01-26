@@ -840,17 +840,32 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @return Guid of the created task.
      */
     protected Guid CreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+        return CreateTask(asyncTaskCreationInfo, parentCommand, null);
+    }
+
+    /**
+     * Use this method in order to create task in the AsyncTaskManager in a safe
+     * way. If you use this method within a certain command, make sure that the
+     * command implemented the ConcreteCreateTask method.
+     *
+     * @param asyncTaskCreationInfo
+     *            info to send to AsyncTaskManager when creating the task.
+     * @param parentCommand
+     *            VdcActionType of the command that its EndAction we want to
+     *            invoke when tasks are finished.
+     * @param description A message which describes the task
+     * @return Guid of the created task.
+     */
+    protected Guid CreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand, String description) {
         Guid retValue = Guid.Empty;
 
         Transaction transaction = TransactionSupport.suspend();
 
         try {
-            // TODO: Set step description by resource bundle which holds the message and populate its properties by the
-            // command.
             Step taskStep =
                     ExecutionHandler.addTaskStep(executionContext,
                             StepEnum.getStepNameByTaskType(asyncTaskCreationInfo.getTaskType()),
-                            null);
+                            description);
             if (taskStep != null) {
                 asyncTaskCreationInfo.setStepId(taskStep.getId());
             }
