@@ -75,8 +75,8 @@ public interface ApplicationTemplates extends SafeHtmlTemplates {
     @Template("<table cellspacing='0' cellpadding='0'><tr>" +
             "<td style='background: url({2});width:2px;'></td>" +
             "<td style='text-align:center;'>" +
-            "<div class='{5} {6}' style='background: url({3}) repeat-x; height:20px;'>" +
-            "<span style='vertical-align: middle; margin-right: 3px;'>{0}</span>{1}</div>" +
+            "<div class='{5} {6}' style='background: url({3}) repeat-x; height: 20px;'>" +
+            "<span style='vertical-align: middle; margin-right: 3px; line-height: 20px;'>{0}</span>{1}</div>" +
             "</td>" +
             "<td style='background: url({4});width:2px;'></td>" +
             "</tr></table>")
