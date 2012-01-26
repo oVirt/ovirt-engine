@@ -53,6 +53,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
+import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.searchbackend.BaseConditionFieldAutoCompleter;
 import org.ovirt.engine.core.utils.ErrorTranslatorImpl;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
@@ -199,6 +200,9 @@ public class Backend implements BackendInternal, BackendRemote {
         log.infoFormat("Mark uncompleted jobs as {0}: {1}", JobExecutionStatus.UNKNOWN.name(), new Date());
         initJobRepository();
 
+        log.infoFormat("ExecutionMessageDirector: {0}", new Date());
+        initExecutionMessageDirector();
+
         Integer sessionTimoutInterval = Config.<Integer> GetValue(ConfigValues.UserSessionTimeOutInterval);
         // negative value means session should never expire, therefore no need to clean sessions.
         if (sessionTimoutInterval > 0) {
@@ -227,6 +231,14 @@ public class Backend implements BackendInternal, BackendRemote {
             JobRepositoryFactory.getJobRepository().finalizeJobs();
         } catch (Exception e) {
             log.error("Failed to finalize running Jobs", e);
+        }
+    }
+
+    private void initExecutionMessageDirector() {
+        try {
+            ExecutionMessageDirector.getInstance().initialize(ExecutionMessageDirector.EXECUTION_MESSAGES_FILE_PATH);
+        } catch (RuntimeException e) {
+            log.error("Failed to initialize ExecutionMessageDirector", e);
         }
     }
 
