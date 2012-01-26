@@ -1,9 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 
-import java.util.ArrayList;
-import java.util.Map.Entry;
-
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -48,7 +44,7 @@ public class SubTabStorageTemplateBackupPresenter extends AbstractSubTabPresente
             ViewDef view,
             ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<Entry<VmTemplate, ArrayList<DiskImage>>, StorageListModel, TemplateBackupModel> modelProvider) {
+            SearchableDetailModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

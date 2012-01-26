@@ -1,11 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 
 @SuppressWarnings("unused")
 public class TemplateImportInterfaceListModel extends TemplateInterfaceListModel
 {
+    public TemplateImportInterfaceListModel() {
+        setIsTimerDisabled(true);
+    }
+
     @Override
     protected void OnEntityChanged()
     {
@@ -13,14 +16,16 @@ public class TemplateImportInterfaceListModel extends TemplateInterfaceListModel
 
         if (getEntity() != null)
         {
-            java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> pair =
-                    (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>) getEntity();
-            VmTemplate template = pair.getKey();
+            VmTemplate template = (VmTemplate) getEntity();
             setItems(template.getInterfaces());
         }
         else
         {
             setItems(null);
         }
+    }
+
+    @Override
+    protected void SyncSearch() {
     }
 }

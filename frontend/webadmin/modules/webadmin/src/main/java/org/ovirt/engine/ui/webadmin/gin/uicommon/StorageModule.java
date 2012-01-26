@@ -1,10 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
-import java.util.ArrayList;
-import java.util.Map.Entry;
-
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
@@ -32,6 +28,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSin
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDestroyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageRemovePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DetailTabModelProvider;
@@ -181,10 +178,28 @@ public class StorageModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Entry<VmTemplate, ArrayList<DiskImage>>, StorageListModel, TemplateBackupModel> getTemplateBackupProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<Entry<VmTemplate, ArrayList<DiskImage>>, StorageListModel, TemplateBackupModel>(ginjector,
+    public SearchableDetailModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> getTemplateBackupProvider(ClientGinjector ginjector,
+            final Provider<ImportTemplatePopupPresenterWidget> importTemplatePopupProvider,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<VmTemplate, StorageListModel, TemplateBackupModel>(ginjector,
                 StorageListModel.class,
-                TemplateBackupModel.class);
+                TemplateBackupModel.class) {
+            @Override
+            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getRestoreCommand()) {
+                    return importTemplatePopupProvider.get();
+                }
+                return super.getModelPopup(lastExecutedCommand);
+            }
+
+            @Override
+            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                    return removeConfirmPopupProvider.get();
+                }
+                return super.getConfirmModelPopup(lastExecutedCommand);
+            }
+        };
     }
 
     @Provides

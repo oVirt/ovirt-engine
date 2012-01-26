@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+import java.util.Map.Entry;
+
 import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -22,7 +25,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -35,16 +37,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 public class TemplateBackupModel extends ManageBackupModel
 {
 
-    @Override
-    public java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> getSelectedItem()
-    {
-        return (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>) super.getSelectedItem();
-    }
-
-    public void setSelectedItem(java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> value)
-    {
-        super.setSelectedItem(value);
-    }
+    private ArrayList<Entry<VmTemplate, ArrayList<DiskImage>>> extendedItems;
 
     public TemplateBackupModel()
     {
@@ -66,14 +59,10 @@ public class TemplateBackupModel extends ManageBackupModel
         model.setTitle("Remove Backed up Template(s)");
         model.setHashName("remove_backed_up_template");
         model.setMessage("Template(s)");
-        // model.Items = SelectedItems.Cast<KeyValuePair<VmTemplate, List<DiskImage>>>().Select(a => a.getKey().name);
-
         java.util.ArrayList<String> items = new java.util.ArrayList<String>();
         for (Object a : getSelectedItems())
         {
-            java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> item =
-                    (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>) a;
-            VmTemplate template = item.getKey();
+            VmTemplate template = (VmTemplate) a;
             items.add(template.getname());
         }
         model.setItems(items);
@@ -92,26 +81,30 @@ public class TemplateBackupModel extends ManageBackupModel
 
     private void OnRemove()
     {
-        storage_pool pool = DataProvider.GetFirstStoragePoolByStorageDomain(getEntity().getid());
-        // Frontend.RunMultipleActions(VdcActionType.RemoveVmTemplateFromImportExport,
-        // SelectedItems.Cast<KeyValuePair<VmTemplate, List<DiskImage>>>()
-        // .Select(a => (VdcActionParametersBase)new VmTemplateImportExportParameters(a.getKey().vmt_guid, Entity.id,
-        // pool.id))
-        // .ToList()
-        // );
-        java.util.ArrayList<VdcActionParametersBase> prms = new java.util.ArrayList<VdcActionParametersBase>();
-        for (Object a : getSelectedItems())
-        {
-            java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> item =
-                    (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>) a;
-            VmTemplate template = item.getKey();
-            prms.add(new VmTemplateImportExportParameters(template.getId(), getEntity().getid(), pool.getId()));
-        }
+        AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
 
-        Frontend.RunMultipleAction(VdcActionType.RemoveVmTemplateFromImportExport, prms);
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+                TemplateBackupModel templateBackupModel = (TemplateBackupModel) model;
+                ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
+                if (pools != null && pools.size() > 0) {
+                    storage_pool pool = pools.get(0);
+                    java.util.ArrayList<VdcActionParametersBase> prms =
+                            new java.util.ArrayList<VdcActionParametersBase>();
+                    for (Object a : templateBackupModel.getSelectedItems())
+                    {
+                        VmTemplate template = (VmTemplate) a;
+                        prms.add(new VmTemplateImportExportParameters(template.getId(),
+                                getEntity().getid(),
+                                pool.getId()));
+                    }
 
+                    Frontend.RunMultipleAction(VdcActionType.RemoveVmTemplateFromImportExport, prms);
+                }
+            }
+        }),
+                getEntity().getid());
         Cancel();
-        OnEntityChanged();
     }
 
     @Override
@@ -128,59 +121,109 @@ public class TemplateBackupModel extends ManageBackupModel
         setWindow(model);
         model.setTitle("Import Template(s)");
         model.setHashName("import_template");
-        java.util.ArrayList<VDSGroup> clusters = DataProvider.GetClusterListByStorageDomain(getEntity().getid());
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.Model = this;
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
 
-        model.getCluster().setItems(clusters);
-        model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+            @Override
+            public void OnSuccess(Object returnModel, Object returnValue) {
+                TemplateBackupModel templateBackupModel = (TemplateBackupModel) returnModel;
+                java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
 
-        model.setSourceStorage(getEntity().getStorageStaticData());
-        model.setStoragePool(DataProvider.GetFirstStoragePoolByStorageDomain(getEntity().getStorageStaticData().getId()));
+                ImportTemplateModel iTemplateModel = (ImportTemplateModel) templateBackupModel
+                        .getWindow();
+                iTemplateModel.getCluster().setItems(clusters);
+                iTemplateModel.getCluster().setSelectedItem(
+                        Linq.FirstOrDefault(clusters));
 
-        // var destStorages = DataProvider.GetDataDomainsListByDomain(Entity.id)
-        // .Where(a => (a.storage_domain_type == StorageDomainType.Data || a.storage_domain_type ==
-        // StorageDomainType.Master)
-        // && a.status.HasValue && a.status.Value == StorageDomainStatus.Active)
-        // .ToList();
+                iTemplateModel.setSourceStorage(templateBackupModel.getEntity()
+                        .getStorageStaticData());
 
-        java.util.ArrayList<storage_domains> destStorages = new java.util.ArrayList<storage_domains>();
-        for (storage_domains domain : DataProvider.GetDataDomainsListByDomain(getEntity().getid()))
-        {
-            if ((domain.getstorage_domain_type() == StorageDomainType.Data || domain.getstorage_domain_type() == StorageDomainType.Master)
-                    && domain.getstatus() != null && domain.getstatus() == StorageDomainStatus.Active)
-            {
-                destStorages.add(domain);
+                AsyncQuery _asyncQuery1 = new AsyncQuery();
+                _asyncQuery1.Model = templateBackupModel;
+                _asyncQuery1.asyncCallback = new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object returnModel1,
+                            Object returnValue1) {
+                        ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue1;
+                        storage_pool pool = null;
+                        if (pools != null && pools.size() > 0) {
+                            pool = pools.get(0);
+                        }
+                        TemplateBackupModel tempalteBackupModel1 = (TemplateBackupModel) returnModel1;
+                        ImportTemplateModel iTemplateModel1 = (ImportTemplateModel) tempalteBackupModel1
+                                .getWindow();
+                        iTemplateModel1.setStoragePool(pool);
+
+                        AsyncQuery _asyncQuery2 = new AsyncQuery();
+                        _asyncQuery2.Model = tempalteBackupModel1;
+                        _asyncQuery2.asyncCallback = new INewAsyncCallback() {
+                            @Override
+                            public void OnSuccess(Object returnModel2,
+                                    Object returnValue2) {
+                                TemplateBackupModel tempalteBackupModel2 = (TemplateBackupModel) returnModel2;
+                                ImportTemplateModel iTemplateModel2 =
+                                        (ImportTemplateModel) tempalteBackupModel2.getWindow();
+                                java.util.ArrayList<storage_domains> destStorages =
+                                        new java.util.ArrayList<storage_domains>();
+                                ArrayList<storage_domains> list = (ArrayList<storage_domains>) returnValue2;
+                                for (storage_domains domain : list)
+                                {
+                                    if ((domain.getstorage_domain_type() == StorageDomainType.Data || domain.getstorage_domain_type() == StorageDomainType.Master)
+                                            && domain.getstatus() != null
+                                            && domain.getstatus() == StorageDomainStatus.Active)
+                                    {
+                                        destStorages.add(domain);
+                                    }
+                                }
+
+                                iTemplateModel2.getDestinationStorage().setItems(destStorages);
+                                iTemplateModel2.getDestinationStorage()
+                                        .setSelectedItem(Linq.FirstOrDefault(destStorages));
+
+                                iTemplateModel2.setItems(getSelectedItems());
+                                iTemplateModel2.setExtendedItems(getExtendedItems());
+                                if (destStorages.isEmpty())
+                                {
+                                    iTemplateModel2.getDestinationStorage().setIsChangable(false);
+                                    iTemplateModel2.getDestinationStorage()
+                                            .getChangeProhibitionReasons()
+                                            .add("Cannot import Template.");
+
+                                    iTemplateModel2.setMessage("There is no Data Storage Domain to import the Template into. Please attach a Data Storage Domain to the Template's Data Center.");
+
+                                    UICommand tempVar = new UICommand("Cancel", tempalteBackupModel2);
+                                    tempVar.setTitle("Close");
+                                    tempVar.setIsDefault(true);
+                                    tempVar.setIsCancel(true);
+                                    iTemplateModel2.getCommands().add(tempVar);
+                                }
+                                else
+                                {
+                                    UICommand tempVar2 = new UICommand("OnRestore", tempalteBackupModel2);
+                                    tempVar2.setTitle("OK");
+                                    tempVar2.setIsDefault(true);
+                                    iTemplateModel2.getCommands().add(tempVar2);
+                                    UICommand tempVar3 = new UICommand("Cancel", tempalteBackupModel2);
+                                    tempVar3.setTitle("Cancel");
+                                    tempVar3.setIsCancel(true);
+                                    iTemplateModel2.getCommands().add(tempVar3);
+                                }
+                            }
+                        };
+                        AsyncDataProvider.GetDataDomainsListByDomain(_asyncQuery2, iTemplateModel1
+                                .getSourceStorage().getId());
+
+                    }
+
+                };
+                AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery1,
+                        templateBackupModel.getEntity().getid());
             }
-        }
+        };
 
-        model.getDestinationStorage().setItems(destStorages);
-        model.getDestinationStorage().setSelectedItem(Linq.FirstOrDefault(destStorages));
-
-        model.setItems(getSelectedItems());
-
-        if (destStorages.isEmpty())
-        {
-            model.getDestinationStorage().setIsChangable(false);
-            model.getDestinationStorage().getChangeProhibitionReasons().add("Cannot import Template.");
-
-            model.setMessage("There is no Data Storage Domain to import the Template into. Please attach a Data Storage Domain to the Template's Data Center.");
-
-            UICommand tempVar = new UICommand("Cancel", this);
-            tempVar.setTitle("Close");
-            tempVar.setIsDefault(true);
-            tempVar.setIsCancel(true);
-            model.getCommands().add(tempVar);
-        }
-        else
-        {
-            UICommand tempVar2 = new UICommand("OnRestore", this);
-            tempVar2.setTitle("OK");
-            tempVar2.setIsDefault(true);
-            model.getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", this);
-            tempVar3.setTitle("Cancel");
-            tempVar3.setIsCancel(true);
-            model.getCommands().add(tempVar3);
-        }
+        AsyncDataProvider.GetClusterListByStorageDomain(_asyncQuery,
+                getEntity().getid());
     }
 
     private void OnRestore()
@@ -196,27 +239,15 @@ public class TemplateBackupModel extends ManageBackupModel
         {
             return;
         }
-
-        // List<VdcReturnValueBase> ret = Frontend.RunMultipleActions(VdcActionType.ImportVmTemplate,
-        // SelectedItems.Cast<KeyValuePair<VmTemplate, List<DiskImage>>>()
-        // .Select(a => (VdcActionParametersBase)new ImprotVmTemplateParameters(model.StoragePool.id,
-        // model.SourceStorage.id,
-        // model.DestinationStorage.ValueAs<storage_domains>().id,
-        // model.Cluster.ValueAs<VDSGroup>().ID,
-        // a.getKey())
-        // )
-        // .ToList()
-        // );
         java.util.ArrayList<VdcActionParametersBase> prms = new java.util.ArrayList<VdcActionParametersBase>();
         for (Object a : getSelectedItems())
         {
-            java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> item =
-                    (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>) a;
+            VmTemplate item = (VmTemplate) a;
             prms.add(new ImprotVmTemplateParameters(model.getStoragePool().getId(),
                     model.getSourceStorage().getId(),
                     ((storage_domains) model.getDestinationStorage().getSelectedItem()).getid(),
                     ((VDSGroup) model.getCluster().getSelectedItem()).getID(),
-                    item.getKey()));
+                    item));
         }
 
         model.StartProgress(null);
@@ -241,9 +272,7 @@ public class TemplateBackupModel extends ManageBackupModel
                             int counter = 0;
                             for (Object a : templateBackupModel.getSelectedItems())
                             {
-                                java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> item =
-                                        (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>) a;
-                                VmTemplate template = item.getKey();
+                                VmTemplate template = (VmTemplate) a;
                                 if (retVals.get(counter) != null && retVals.get(counter).getSucceeded()) {
                                     importedTemplates += template.getname() + ", ";
                                 }
@@ -314,7 +343,9 @@ public class TemplateBackupModel extends ManageBackupModel
                                 {
                                     items.add(item);
                                 }
-                                backupModel1.setItems(items);
+                                ArrayList<VmTemplate> list = new ArrayList<VmTemplate>(dictionary.keySet());
+                                backupModel1.setItems(list);
+                                backupModel1.setExtendedItems(items);
                             }
                         };
                         GetAllFromExportDomainQueryParamenters tempVar =
@@ -327,6 +358,14 @@ public class TemplateBackupModel extends ManageBackupModel
             };
             AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery, getEntity().getid());
         }
+    }
+
+    protected void setExtendedItems(ArrayList<Entry<VmTemplate, ArrayList<DiskImage>>> items) {
+        this.extendedItems = items;
+    }
+
+    public ArrayList<Entry<VmTemplate, ArrayList<DiskImage>>> getExtendedItems() {
+        return extendedItems;
     }
 
     @Override

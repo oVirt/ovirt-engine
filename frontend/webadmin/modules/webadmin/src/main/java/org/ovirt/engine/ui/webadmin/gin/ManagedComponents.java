@@ -1,8 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin;
 
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -282,7 +280,7 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabStorageTemplateBackupPresenter> getSubTabStorageTemplateBackupPresenter();
 
-    SearchableDetailModelProvider<Entry<VmTemplate, ArrayList<DiskImage>>, StorageListModel, TemplateBackupModel> getSubTabStorageTemplateBackupModelProvider();
+    SearchableDetailModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> getSubTabStorageTemplateBackupModelProvider();
 
     AsyncProvider<SubTabStorageVmPresenter> getSubTabStorageVmPresenter();
 

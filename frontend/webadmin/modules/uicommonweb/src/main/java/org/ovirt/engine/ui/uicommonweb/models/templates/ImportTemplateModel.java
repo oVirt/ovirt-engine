@@ -1,12 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
+import java.util.ArrayList;
+import java.util.Map.Entry;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -67,6 +69,7 @@ public class ImportTemplateModel extends ListWithDetailsModel
     }
 
     private String nameAndDescription;
+    private TemplateImportDiskListModel templateImportDiskListModel;
 
     public String getNameAndDescription()
     {
@@ -96,7 +99,8 @@ public class ImportTemplateModel extends ListWithDetailsModel
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new TemplateGeneralModel());
         list.add(new TemplateImportInterfaceListModel());
-        list.add(new TemplateImportDiskListModel());
+        this.templateImportDiskListModel = new TemplateImportDiskListModel();
+        list.add(templateImportDiskListModel);
         setDetailModels(list);
     }
 
@@ -115,17 +119,17 @@ public class ImportTemplateModel extends ListWithDetailsModel
         super.OnSelectedItemChanged();
         if (getSelectedItem() != null)
         {
-            java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> selectedItem =
-                    (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>) getSelectedItem();
-            VmTemplate template = selectedItem.getKey();
-            setNameAndDescription(StringFormat.format("%1$s%2$s",
-                    template.getname(),
-                    !StringHelper.isNullOrEmpty(template.getdescription()) ? " [" + template.getdescription() + "]"
-                            : ""));
+            //            java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> selectedItem =
+            //                    (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>) getSelectedItem();
+            //            VmTemplate template = selectedItem.getKey();
+            //            setNameAndDescription(StringFormat.format("%1$s%2$s",
+            //                    template.getname(),
+            //                    !StringHelper.isNullOrEmpty(template.getdescription()) ? " [" + template.getdescription() + "]"
+            //                            : ""));
         }
         else
         {
-            setNameAndDescription("");
+            //            setNameAndDescription("");
         }
 
     }
@@ -133,5 +137,9 @@ public class ImportTemplateModel extends ListWithDetailsModel
     @Override
     protected String getListName() {
         return "ImportTemplateModel";
+    }
+
+    public void setExtendedItems(ArrayList<Entry<VmTemplate, ArrayList<DiskImage>>> extendedItems) {
+        templateImportDiskListModel.setExtendedItems(extendedItems);
     }
 }
