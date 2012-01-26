@@ -77,6 +77,7 @@ execute_file "common_sp.sql" ${DATABASE} > /dev/null
 refresh_views() {
     printf "Creating views...\n"
     execute_file "create_views.sql" ${DATABASE} > /dev/null
+    execute_file "create_dwh_views.sql" ${DATABASE} > /dev/null
 }
 
 #refreshes sps
@@ -135,7 +136,7 @@ get_db_time(){
 }
 
 is_view_or_sp_changed() {
-    md5sum create_views.sql *_sp.sql upgrade/*.sql > .scripts.md5.tmp
+    md5sum create_views.sql create_dwh_views.sql *_sp.sql upgrade/*.sql > .scripts.md5.tmp
     diff -s -q .scripts.md5 .scripts.md5.tmp >& /dev/null
     result=$?
 
