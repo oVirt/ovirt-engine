@@ -43,14 +43,14 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     }
 
     // get correct return value type
-    private final VdcQueryReturnValue _returnValue;
-    private final VdcQueryType _type;
-    private final P _parameters;
+    private final VdcQueryReturnValue returnValue;
+    private final VdcQueryType type;
+    private final P parameters;
 
     public QueriesCommandBase(P parameters) {
-        _returnValue = CreateReturnValue();
-        _parameters = parameters;
-        _type = initQueryType();
+        this.parameters = parameters;
+        returnValue = CreateReturnValue();
+        type = initQueryType();
     }
 
     private final VdcQueryType initQueryType() {
@@ -58,7 +58,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
             String name = getClass().getSimpleName();
             name = name.substring(0, name.length() - QuerySuffix.length());
             return VdcQueryType.valueOf(name);
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             return VdcQueryType.Unknown;
         }
     }
@@ -67,17 +67,17 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     protected void ExecuteCommand() {
         if (validatePermissions() && validateInputs()) {
             try {
-                _returnValue.setSucceeded(true);
+                returnValue.setSucceeded(true);
                 executeQueryCommand();
             } catch (RuntimeException ex) {
-                _returnValue.setSucceeded(false);
+                returnValue.setSucceeded(false);
                 Throwable th = ex instanceof VdcBLLException ? ex : ex.getCause();
                 if (th != null && th instanceof VdcBLLException) {
                     VdcBLLException vdcExc = (VdcBLLException) th;
                     if (vdcExc.getErrorCode() != null) {
-                        _returnValue.setExceptionString(vdcExc.getErrorCode().toString());
+                        returnValue.setExceptionString(vdcExc.getErrorCode().toString());
                     } else {
-                        _returnValue.setExceptionString(vdcExc.getMessage());
+                        returnValue.setExceptionString(vdcExc.getMessage());
                     }
                     log.errorFormat("Query {0} failed. Exception message is {1}",
                             getClass().getSimpleName(),
@@ -86,7 +86,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
                         log.debugFormat("Detailed stacktrace:", vdcExc);
                     }
                 } else {
-                    _returnValue.setExceptionString(ex.getMessage());
+                    returnValue.setExceptionString(ex.getMessage());
                     log.errorFormat("Query {0} failed. Exception message is {1}",
                             getClass().getSimpleName(),
                             ex.getMessage());
@@ -96,7 +96,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
                 }
             }
         } else {
-            log.error("Query execution failed due to invalid inputs. " + _returnValue.getExceptionString());
+            log.error("Query execution failed due to invalid inputs. " + returnValue.getExceptionString());
         }
     }
 
@@ -108,7 +108,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     */
     private final boolean validatePermissions() {
         // Stub implementation as a placeholder to allow a small commit - currently, all the queries are admin queries
-        return _type.isAdmin();
+        return type.isAdmin();
     }
 
     /**
@@ -118,21 +118,22 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     private boolean validateInputs() {
         Set<ConstraintViolation<P>> violations = validator.validate(getParameters());
         if (!violations.isEmpty()) {
-            _returnValue.setExceptionString(violations.toString());
+            returnValue.setExceptionString(violations.toString());
             return false;
         }
         return true;
     }
 
     protected void ProceedOnFail() {
+        // Empty default implementation, method is here to allow inheriting classes to override.
     }
 
     public VdcQueryReturnValue getQueryReturnValue() {
-        return _returnValue;
+        return returnValue;
     }
 
     public P getParameters() {
-        return _parameters;
+        return parameters;
     }
 
     @Override
@@ -145,6 +146,6 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
 
     @Override
     public void setReturnValue(Object value) {
-        _returnValue.setReturnValue(value);
+        returnValue.setReturnValue(value);
     }
 }

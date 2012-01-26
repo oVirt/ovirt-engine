@@ -1,11 +1,10 @@
 package org.ovirt.engine.core.common.queries;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.Serializable;
+import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.queries.VdcQueryType.VdcQueryAuthType;
 
 /** A test case for the {@link VdcQueryType} class. */
 public class VdcQueryTypeTest {
@@ -17,11 +16,9 @@ public class VdcQueryTypeTest {
                 VdcQueryType.GetAgentFenceOptions2);
     }
 
-    @SuppressWarnings("cast")
     @Test
-    public void testSerializable() {
-        // Prove that it's still serializable even though explicit definition has been removed.
-        assertTrue(VdcQueryType.CanFenceVds instanceof Serializable);
+    public void testAuthTypes() {
+        assertEquals("Unknown should not be an admin query", VdcQueryAuthType.User, VdcQueryType.Unknown.getAuthType());
+        assertFalse("Unknown should not be an admin query", VdcQueryType.Unknown.isAdmin());
     }
-
 }

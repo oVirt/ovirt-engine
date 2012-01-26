@@ -2,13 +2,9 @@ package org.ovirt.engine.core.common.queries;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(name = "VdcQueryType")
+@SuppressWarnings("unused")
 public enum VdcQueryType implements Serializable {
-    /**
-     * Vm queries
-     */
+    // VM queries
     IsVmWithSameNameExist,
     GetImportCandidates,
     GetImportCandidatesInfo,
@@ -19,9 +15,8 @@ public enum VdcQueryType implements Serializable {
     GetVmsRunningOnVDSCount,
     GetTopSizeVmsFromStorageDomain,
     GetVmCustomProperties,
-    /**
-     * Vds queries
-     */
+
+    // Vds queries
     IsVdsWithSameNameExist,
     IsVdsWithSameHostExist,
     IsVdsWithSameIpExists,
@@ -39,26 +34,22 @@ public enum VdcQueryType implements Serializable {
     GetVlanParanet,
     GetVdsHooksById,
     GetVdsHooksById2,
-    /**
-     * Vds Networks
-     */
+
+    // Vds Networks
     GetVdsInterfacesByVdsId,
     GetVdsFreeBondsByVdsId,
     GetAllNetworks,
     GetAllNetworksByClusterId,
     GetNetworkDisplayByClusterId,
     GetNonOperationalVds,
-    /**
-     * Vm Network
-     */
+
+    // Vm Network
     GetVmInterfacesByVmId,
-    /**
-     * Template Network
-     */
+
+    // Template Network
     GetTemplateInterfacesByTemplateId,
-    /**
-     * VdsGroups
-     */
+
+    // VdsGroups
     GetVdsCertificateSubjectByVdsId,
     GetAllVdsGroups,
     GetVdsGroupByVdsGroupId,
@@ -66,13 +57,11 @@ public enum VdcQueryType implements Serializable {
     GetVdsGroupByName,
     IsVdsGroupWithSameNameExist,
     GetVdsGroupsByStoragePoolId,
-    /**
-     * certificate
-     */
+
+    // Certificate
     GetCACertificate,
-    /**
-     * Vm Templates queries
-     */
+
+    // VM Templates queries
     IsVmTemlateWithSameNameExist,
     GetVmTemplate,
     GetAllVmTemplates,
@@ -80,14 +69,14 @@ public enum VdcQueryType implements Serializable {
     GetVmTemplatesDisks,
     GetVmTemplatesByStoragePoolId,
     GetSystemPermissions,
-    /**
-     * Images queries
-     */
+
+    // Images queries
     GetAllVmSnapshotsByDrive,
     GetAllIsoImagesList,
     GetAllFloppyImagesList,
     GetAllDisksByVmId,
     GetImageByImageId,
+
     // Users queries
     GetUserVmsByUserIdAndGroups,
     GetTimeLeasedUsersByVmPoolId,
@@ -96,11 +85,13 @@ public enum VdcQueryType implements Serializable {
     GetVmsByUserid,
     GetUserMessage,
     GetUserBySessionId,
+
     // AdGroups queries
     GetAllAdGroups,
     GetAdGroupsAttachedToTimeLeasedVmPool,
     GetVmPoolsAttachedToAdGroup,
     GetAdGroupById,
+
     // VM pools queries
     GetVmPoolById,
     GetVmPoolsMapByVmPoolId,
@@ -108,6 +99,7 @@ public enum VdcQueryType implements Serializable {
     HasFreeVmsInPool,
     GetAllVmPoolsAttachedToUser,
     IsVmPoolWithSameNameExists,
+
     // Tags queries
     GetAllTags,
     GetAllNotReadonlyTags,
@@ -124,15 +116,19 @@ public enum VdcQueryType implements Serializable {
     GetTagVdsMapByTagName,
     GetTagIdsAndChildrenIdsByRegExp,
     GetTagIdAndChildrenIds,
+
     // System
     GetSystemStatistics,
     GetStorageStatistics,
+
     // Bookmarks
     GetBookmarkById,
     GetBookmarkByName,
     GetAllBookmarks,
+
     // FieldsUpdating
     CanUpdateFieldGeneric,
+
     // Configuration values
     GetConfigurationValue,
     GetTimeZones,
@@ -141,23 +137,27 @@ public enum VdcQueryType implements Serializable {
     GetAvailableClusterVersions,
     GetAvailableStoragePoolVersions,
     GetAvailableClusterVersionsByStoragePool,
+
     // AuditLog
     GetVdsMessages,
     GetVmsMessages,
     GetUserMessages,
     GetEventMessages,
     GetTemplateMessages,
+
     // Search queries
     Search,
     RegisterSearch,
     UnregisterSearch,
-    // public services
+
+    // Public services
     GetDomainList,
     IsLicenseValid,
     IsLicenseSupported,
     RegisterVds,
     CheckDBConnection,
-    // license queries
+
+    // License queries
     GetLicenseProperties,
     GetLicenseProductType,
     GetResourceUsage,
@@ -167,7 +167,8 @@ public enum VdcQueryType implements Serializable {
     GetMACAddress,
     GetAllServerCpuList,
     GetAvailableClustersByServerCpu,
-    // multi level administration queries
+
+    // Multi Level Administration queries
     GetAllRoles,
     GetRolesByAdElement,
     GetRolesByAdElementIdAndNullTag,
@@ -209,6 +210,7 @@ public enum VdcQueryType implements Serializable {
     GetStoragePoolsByStorageDomainId,
     GetStorageDomainListById,
     GetLunsByVgId,
+
     // Event Notification
     GetEventNotificationMethods,
     GetEventNotificationMethodByType,
@@ -216,11 +218,14 @@ public enum VdcQueryType implements Serializable {
     GetAllEventSubscribers,
     GetEventSubscribersBySubscriberId,
     GetEventSubscribersBySubscriberIdGrouped,
+
     // Query registration
     RegisterQuery,
     UnregisterQuery,
+
     // oVirt
     GetoVirtISOs,
+
     // Async Tasks
     GetTasksStatusesByTasksIDs,
 
