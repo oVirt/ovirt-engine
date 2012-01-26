@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Date;
+
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -21,10 +23,10 @@ import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParamete
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * This command responsible to creating snapshot from existing image and replace it to VM, holds the image. This command
@@ -162,7 +164,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             getImage().setdescription(mDescription);
         }
         getParameters().setOldLastModifiedValue(getDiskImage().getlastModified());
-        getDiskImage().setlastModified(getNow());
+        getDiskImage().setlastModified(new Date());
         DbFacade.getInstance().getDiskImageDAO().update(getDiskImage());
         DbFacade.getInstance()
                 .getImageVmMapDAO()

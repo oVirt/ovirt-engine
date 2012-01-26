@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Date;
+
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -50,8 +52,8 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             mNewCreatedDiskImage.setvolume_format(getParameters().getDiskInfo().getvolume_format());
             mNewCreatedDiskImage.setdisk_type(getParameters().getDiskInfo().getdisk_type());
             mNewCreatedDiskImage.setdescription(CalculateImageDescription());
-            mNewCreatedDiskImage.setcreation_date(getNow());
-            mNewCreatedDiskImage.setlastModified(getNow());
+            mNewCreatedDiskImage.setcreation_date(new Date());
+            mNewCreatedDiskImage.setlastModified(new Date());
             mNewCreatedDiskImage.setactive(true);
             mNewCreatedDiskImage.setimageStatus(ImageStatus.LOCKED);
             mNewCreatedDiskImage.setvm_snapshot_id(getParameters().getVmSnapshotId());

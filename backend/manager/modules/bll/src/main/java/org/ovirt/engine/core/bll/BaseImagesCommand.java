@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
@@ -264,7 +265,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         retDiskImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
         retDiskImage.setvm_guid(getImageContainerId());
         retDiskImage.setimage_group_id(getImageGroupId());
-        retDiskImage.setlast_modified_date(getNow());
+        retDiskImage.setlast_modified_date(new Date());
         return retDiskImage;
     }
 

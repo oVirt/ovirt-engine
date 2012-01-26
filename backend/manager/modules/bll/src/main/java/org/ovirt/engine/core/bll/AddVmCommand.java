@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +42,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.GetImageDomainsListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -50,6 +49,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.All;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
@@ -455,7 +456,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             vmStatic.setorigin(OriginType.valueOf(Config.<String>GetValue(ConfigValues.OriginType)));
         }
         vmStatic.setId(getVmId());
-        vmStatic.setcreation_date(getNow());
+        vmStatic.setcreation_date(new Date());
         // Parses the custom properties field that was filled by frontend to
         // predefined and user defined fields
         if (vmStatic.getCustomProperties() != null) {

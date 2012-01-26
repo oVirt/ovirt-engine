@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Date;
+
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -85,7 +87,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         // 2. as it_guid
         // TODO: review it after bug will be fixed
         DiskImageTemplate dt = new DiskImageTemplate(newImage.getId(), getImageContainerId(),
-                newImage.getinternal_drive_mapping(), newImage.getId(), "", "", getNow(),
+                newImage.getinternal_drive_mapping(), newImage.getId(), "", "", new Date(),
                 newImage.getactual_size(), newImage.getdescription(), null);
         DbFacade.getInstance().getDiskImageTemplateDAO().save(dt);
         DbFacade.getInstance().getDiskImageDAO().save(newImage);

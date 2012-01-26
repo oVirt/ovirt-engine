@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -316,7 +317,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
 
         for (DiskImage image : getParameters().getImages()) {
             DiskImageTemplate dt = new DiskImageTemplate(image.getId(), getParameters().getVmTemplate()
-                    .getId(), image.getinternal_drive_mapping(), image.getId(), "", "", getNow(),
+                    .getId(), image.getinternal_drive_mapping(), image.getId(), "", "", new Date(),
                     image.getsize(), image.getdescription(), null);
 
             DbFacade.getInstance().getDiskImageDAO().save(image);

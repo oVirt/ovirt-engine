@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -54,7 +55,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             getParameters().getVmStaticData().setcreation_date(mOldVmStatic.getcreation_date());
             if (getParameters().getVmStaticData().getcreation_date().equals(DateTime.getMinValue())
                     || getParameters().getVmStaticData().getcreation_date().equals(DateTime.getMinValue())) {
-                getParameters().getVmStaticData().setcreation_date(getNow());
+                getParameters().getVmStaticData().setcreation_date(new Date());
             }
             if (mOldVmStatic != null) {
                 UpdateVmNetworks();

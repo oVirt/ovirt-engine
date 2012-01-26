@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddImagesFromImportParameters;
@@ -8,9 +9,9 @@ import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @InternalCommandAttribute
 public class AddTemplateImagesFromImportCommand<T extends AddImagesFromImportParameters> extends
@@ -36,7 +37,7 @@ public class AddTemplateImagesFromImportCommand<T extends AddImagesFromImportPar
             {
                 DiskImageTemplate dt = new DiskImageTemplate(importedImage.getId(),
                         importedImage.getcontainer_guid(), importedImage.getinternal_drive_mapping(),
-                        importedImage.getId(), "", "", getNow(), importedImage.getsize(),
+                        importedImage.getId(), "", "", new Date(), importedImage.getsize(),
                         importedImage.getdescription(), null);
 
                 try {

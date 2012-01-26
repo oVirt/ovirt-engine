@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -31,10 +32,10 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -222,7 +223,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     protected void AddVmTemplateToDb() {
         // TODO: add timezone handling
-        setVmTemplate(new VmTemplate(0, getNow(), getParameters().getDescription(),
+        setVmTemplate(new VmTemplate(0, new Date(), getParameters().getDescription(),
                 getParameters().getMasterVm().getmem_size_mb(), getVmTemplateName(),
                 getParameters().getMasterVm().getnum_of_sockets(), getParameters().getMasterVm()
                         .getcpu_per_socket(), getParameters().getMasterVm().getos(),

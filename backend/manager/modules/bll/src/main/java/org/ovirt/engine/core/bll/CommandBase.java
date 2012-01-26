@@ -50,8 +50,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -72,6 +70,8 @@ import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.RollbackHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -536,7 +536,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected List<tags> GetTagsAttachedToObject() {
         // tags_permissions_map
-        return new java.util.ArrayList<tags>();
+        return new ArrayList<tags>();
     }
 
     protected boolean canDoAction() {
@@ -772,11 +772,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return annotation == null;
     }
 
-    protected static java.util.Date getNow() {
-        long nowMiliSeconds = System.currentTimeMillis();
-        return new java.util.Date(nowMiliSeconds);
-    }
-
     protected T getParameters() {
         return _parameters;
     }
@@ -797,7 +792,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 actionType = VdcActionType.valueOf(name);
             }
             return actionType;
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             return VdcActionType.Unknown;
         }
     }
@@ -898,7 +893,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    protected java.util.ArrayList<Guid> getTaskIdList() {
+    protected ArrayList<Guid> getTaskIdList() {
         return getParameters().getParentCommand() != VdcActionType.Unknown ? getReturnValue().getInternalTaskIdList()
                 : getReturnValue().getTaskIdList();
     }
@@ -921,7 +916,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         public Object runInTransaction() {
                             try {
                                 AsyncTaskManager.getInstance().CancelTasks(getReturnValue().getTaskIdList());
-                            } catch (java.lang.Exception e) {
+                            } catch (Exception e) {
                                 log.errorFormat("Failed to cancel tasks for command: {0}.",
                                         CommandBase.this.getClass().getName());
                             }
@@ -935,11 +930,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected void RevertTasks() {
         if (getParameters().getTaskIds() != null) {
-            // list to send to the PollTasks method
-            java.util.ArrayList<Guid> taskIdAsList = new java.util.ArrayList<Guid>();
+            // list to send to the PollTasks mathod
+            ArrayList<Guid> taskIdAsList = new ArrayList<Guid>();
+
             for (Guid taskId : getParameters().getTaskIds()) {
                 taskIdAsList.add(taskId);
-                java.util.ArrayList<AsyncTaskStatus> tasksStatuses = AsyncTaskManager.getInstance().PollTasks(
+                ArrayList<AsyncTaskStatus> tasksStatuses = AsyncTaskManager.getInstance().PollTasks(
                         taskIdAsList);
                 // call revert task only if ended successfully
                 if (tasksStatuses.get(0).getTaskEndedSuccessfully()) {
