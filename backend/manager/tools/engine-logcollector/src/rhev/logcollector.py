@@ -24,9 +24,9 @@ FILE_LOG_FORMAT = '%(asctime)s::%(levelname)s::%(module)s::%(lineno)d::%(name)s:
 FILE_LOG_DSTMP = '%Y-%m-%d %H:%M:%S'
 DEFAULT_SSH_KEY = "/etc/pki/engine/keys/engine_id_rsa"
 DEFAULT_SSH_USER = 'root'
-DEFAULT_CONFIGURATION_FILE = "/etc/engine/logcollector.conf"
+DEFAULT_CONFIGURATION_FILE = "/etc/ovirt-engine/logcollector.conf"
 DEFAULT_SCRATCH_DIR='/tmp/logcollector'
-DEFAULT_LOG_FILE='/var/log/engine/engine-log-collector.log'
+DEFAULT_LOG_FILE='/var/log/ovirt-engine/engine-log-collector.log'
 DEFAULT_TIME_SHIFT_FILE='time_diff.txt'
 
 

@@ -1685,7 +1685,7 @@ def _editToolsConfFile():
             fileHandler.open()
 
             logging.debug("Adding host & secure port")
-            fileHandler.editParam("rhevm", "%s:%s" % (conf["HOST_FQDN"], conf["HTTPS_PORT"]))
+            fileHandler.editParam("engine", "%s:%s" % (conf["HOST_FQDN"], conf["HTTPS_PORT"]))
 
             logging.debug("Adding username")
             fileHandler.editParam("user", "%s@%s" % (basedefs.INTERNAL_ADMIN, basedefs.INTERNAL_DOMAIN))
