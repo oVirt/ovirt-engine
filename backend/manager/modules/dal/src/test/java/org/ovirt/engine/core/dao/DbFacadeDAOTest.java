@@ -24,11 +24,19 @@ import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.bookmarks;
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -38,6 +46,20 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 public class DbFacadeDAOTest extends BaseDAOTestCase {
+
+    // entity IDs for testing retrieving an entity by id and type
+    private static final Guid VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5001");
+    private static final Guid VM_TEMPLATE_ID = new Guid("00000000-0000-0000-0000-000000000000");
+    private static final Guid VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
+    private static final Guid VM_POOL_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
+    private static final Guid TAG_ID = new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c");
+    private static final Guid BOOKMARK_ID = new Guid("a4affabf-7b45-4a6c-b0a9-107d0bbe265e");
+    private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    private static final Guid STORAGE_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
+    private static final Guid STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
+    private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
+    private static final Guid ROLE_ID = new Guid("119caae6-5c1b-4a82-9858-dd9e5d2e1400");
+
     private static final Guid ADMIN_ROLE_TYPE_FROM_FIXTURE_ID = new Guid("F5972BFA-7102-4D33-AD22-9DD421BFBA78");
     private static final Guid SYSTEM_OBJECT_ID = new Guid("AAA00000-0000-0000-0000-123456789AAA");
     private static final String STATIC_VM_NAME = "rhel5-pool-50";
@@ -364,11 +386,91 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     }
 
     @Test
-    public void testGetEntityNameByIdAndType() {
-        VmStatic vmStatic = dbFacade.getVmStaticDAO().get(VM_STATIC_GUID);
+    public void testGetEntityNameByIdAndTypeForVM() {
+        VmStatic vmStatic = dbFacade.getVmStaticDAO().get(VM_ID);
         assertNotNull(vmStatic);
-        String nameOfVmStatic = vmStatic.getvm_name();
-        assertTrue(nameOfVmStatic.equals(dbFacade.getEntityNameByIdAndType(VM_STATIC_GUID, VdcObjectType.VM)));
+        String name = vmStatic.getvm_name();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VM_STATIC_GUID, VdcObjectType.VM)));
+    }
+
+    @Test
+    public void testGetEntityNameByIdAndTypeForVmTemplate() {
+        VmTemplate vmTemplate = dbFacade.getVmTemplateDAO().get(VM_TEMPLATE_ID);
+        assertNotNull(vmTemplate);
+        String name = vmTemplate.getname();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VM_TEMPLATE_ID, VdcObjectType.VmTemplate)));
+    }
+
+    @Test
+    public void testGetEntityNameByIdAndTypeForHost() {
+        VdsStatic vds = dbFacade.getVdsStaticDAO().get(VDS_ID);
+        assertNotNull(vds);
+        String name = vds.getvds_name();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VDS_ID, VdcObjectType.VDS)));
+    }
+
+    @Test
+    public void testGetEntityNameByIdAndTypeForVmPool() {
+        vm_pools vmPool = dbFacade.getVmPoolDAO().get(VM_POOL_ID);
+        assertNotNull(vmPool);
+        String name = vmPool.getvm_pool_name();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VM_POOL_ID, VdcObjectType.VmPool)));
+    }
+
+    @Test
+    public void testGetEntityNameByIdAndTypeForTag() {
+        tags tag = dbFacade.getTagDAO().get(TAG_ID);
+        assertNotNull(tag);
+        String name = tag.gettag_name();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(TAG_ID, VdcObjectType.Tags)));
+    }
+
+    @Test
+    public void testGetEntityNameByIdAndTypeForBookmark() {
+        bookmarks bookmark = dbFacade.getBookmarkDAO().get(BOOKMARK_ID);
+        assertNotNull(bookmark);
+        String name = bookmark.getbookmark_name();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(BOOKMARK_ID, VdcObjectType.Bookmarks)));
+    }
+
+    @Test
+    public void testGetEntityNameByIdAndTypeForCluster() {
+        VDSGroup vdsGroup = dbFacade.getVdsGroupDAO().get(CLUSTER_ID);
+        assertNotNull(vdsGroup);
+        String name = vdsGroup.getname();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(CLUSTER_ID, VdcObjectType.VdsGroups)));
+    }
+
+    @Test
+    public void testGetEntityNameByIdAndTypeForStorageDomain() {
+        storage_domains storageDomain = dbFacade.getStorageDomainDAO().get(STORAGE_DOMAIN_ID);
+        assertNotNull(storageDomain);
+        String name = storageDomain.getstorage_name();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(STORAGE_DOMAIN_ID, VdcObjectType.Storage)));
+    }
+
+    @Test
+    public void testGetEntityNameByIdAndTypeForDataCenter() {
+        storage_pool storagePool = dbFacade.getStoragePoolDAO().get(STORAGE_POOL_ID);
+        assertNotNull(storagePool);
+        String name = storagePool.getname();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(STORAGE_POOL_ID, VdcObjectType.StoragePool)));
+    }
+
+    @Test
+    public void testGetEntityNameByIdAndTypeForUser() {
+        DbUser dbUser = dbFacade.getDbUserDAO().get(USER_ID);
+        assertNotNull(dbUser);
+        String name = dbUser.getusername();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(USER_ID, VdcObjectType.User)));
+    }
+
+    @Test
+    public void testGetEntityNameByIdAndTypeForRole() {
+        roles role = dbFacade.getRoleDAO().get(ROLE_ID);
+        assertNotNull(role);
+        String name = role.getname();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(ROLE_ID, VdcObjectType.Role)));
     }
 
     @Test

@@ -259,7 +259,7 @@ BEGIN
    					images.storage_id = v_storage_domain_id );
         -- convert to GB from bytes
 	mult := CAST((mult * 0.000000000931322574615478515625) AS bigint);
-        result := CAST(mult as integer); 
+    result := CAST(mult as integer);
 
 	RETURN result;
 END;$function$
@@ -382,12 +382,20 @@ BEGIN
         result := ( SELECT vds_name FROM vds_static WHERE vds_id = v_entity_id );
     WHEN v_entity_type = 5 THEN
         result := ( SELECT vm_pool_name FROM vm_pools WHERE vm_pool_id = v_entity_id );
+    WHEN v_entity_type = 7 THEN
+        result := ( SELECT tag_name FROM tags WHERE tag_id = v_entity_id );
+    WHEN v_entity_type = 8 THEN
+        result := ( SELECT bookmark_name FROM bookmarks WHERE bookmark_id = v_entity_id );
     WHEN v_entity_type = 9 THEN
         result := ( SELECT name FROM vds_groups WHERE vds_group_id = v_entity_id );
     WHEN v_entity_type = 11 THEN
-	result := ( SELECT storage_name FROM storage_domain_static WHERE id = v_entity_id );
+        result := ( SELECT storage_name FROM storage_domain_static WHERE id = v_entity_id );
     WHEN v_entity_type = 14 THEN
         result := ( SELECT name FROM storage_pool WHERE id = v_entity_id );
+    WHEN v_entity_type = 15 THEN
+        result := ( SELECT username FROM users WHERE user_id = v_entity_id );
+    WHEN v_entity_type = 16 THEN
+        result := ( SELECT name FROM roles WHERE id = v_entity_id );
     ELSE
         result := 'Unknown type ' ||  v_entity_type;
     END CASE;
