@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ejb.TransactionRolledbackLocalException;
@@ -103,6 +105,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * The execution context which defines how to monitor the command
      */
     protected ExecutionContext executionContext = new ExecutionContext();
+
+    /**
+     * A map contains the properties for describing the job
+     */
+    private Map<String, String> jobProperties;
 
     protected CommandActionState getActionState() {
         return _actionState;
@@ -553,15 +560,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected boolean getSucceeded() {
-
         return getReturnValue().getSucceeded();
-
     }
 
     protected void setSucceeded(boolean value) {
-
         getReturnValue().setSucceeded(value);
-
     }
 
     public boolean getCommandShouldBeLogged() {
@@ -1063,6 +1066,39 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @return Map of GUIDs to Object types
      */
     public abstract Map<Guid, VdcObjectType> getPermissionCheckSubjects();
+
+    /**
+     * Returns the properties which used to populate the job message. The default properties resolving will use
+     * {@link #getPermissionCheckSubjects()} to get the entities associated with the command. The property key is the
+     * type of the entity by {@code VdcObjectType.name()} and the value is the name of the entity or the entity
+     * {@code Guid} in case non-resolvable entity name.
+     *
+     * @return A map which contains the data to be used to populate the {@code Job} description.
+     */
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = new HashMap<String, String>();
+            Map<Guid, VdcObjectType> subjects = getPermissionCheckSubjects();
+            if (!subjects.isEmpty()) {
+                VdcObjectType entityType;
+                Guid entityId;
+                String value;
+                for (Entry<Guid, VdcObjectType> entry : subjects.entrySet()) {
+                    entityType = entry.getValue();
+                    entityId = entry.getKey();
+                    if (entityType != null && entityId != null) {
+                        value = DbFacade.getInstance().getEntityNameByIdAndType(entityId, entityType);
+                        if (value == null) {
+                            value = entityId.toString();
+                        }
+                        jobProperties.put(entityType.name().toLowerCase(), value);
+                    }
+                }
+            }
+        }
+
+        return jobProperties;
+    }
 
     public void setExecutionContext(ExecutionContext executionContext) {
         if (executionContext != null) {
