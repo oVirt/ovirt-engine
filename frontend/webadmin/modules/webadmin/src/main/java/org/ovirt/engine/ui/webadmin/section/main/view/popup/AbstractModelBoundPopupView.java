@@ -107,6 +107,9 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
 
         // Show dialog buttons when stopping progress
         asWidget().setFooterPanelVisible(true);
+
+        // Now that the panel is visible we can try to focus
+        focusInput();
     }
 
     @Override

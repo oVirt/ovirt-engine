@@ -48,7 +48,7 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
     @UiField
     SimplePopupPanel popup;
 
-    @UiField
+    @UiField(provided = true)
     @Path("userName.entity")
     @WithElementId("userName")
     EntityModelTextBoxEditor userNameEditor;
@@ -82,6 +82,18 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
             InternalConfiguration intConf,
             ApplicationMessages messages) {
         super(eventBus, resources);
+
+        // We need this code because resetAndFocus is called when userNameEditor is Disabled
+        userNameEditor = new EntityModelTextBoxEditor() {
+            @Override
+            public void setEnabled(boolean enabled) {
+                super.setEnabled(enabled);
+                if (enabled) {
+                    userNameEditor.asValueBox().selectAll();
+                    userNameEditor.setFocus(true);
+                }
+            }
+        };
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         asWidget().setGlassEnabled(false);
         localize(constants);

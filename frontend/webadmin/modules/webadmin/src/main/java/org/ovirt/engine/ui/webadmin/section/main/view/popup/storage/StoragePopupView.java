@@ -229,6 +229,12 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     @Override
     public void focusInput() {
         nameEditor.setFocus(true);
+
+        if (storageView != null) {
+            if (!nameEditor.isVisible()) {
+                storageView.focus();
+            }
+        }
     }
 
     @Override
