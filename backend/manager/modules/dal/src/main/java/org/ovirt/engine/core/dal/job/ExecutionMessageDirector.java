@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 /**
  * Contains messages by the context of Job or Step, as read from <i>bundles/ExecutionMessages.properties</i>
@@ -152,5 +153,23 @@ public class ExecutionMessageDirector {
             message = type.name();
         }
         return message;
+    }
+
+    public static String resolveJobMessage(VdcActionType actionType, Map<String, String> values) {
+        String jobMessage = getInstance().getJobMessage(actionType);
+        if (jobMessage != null) {
+            return AuditLogDirector.resolveMessage(jobMessage, values);
+        } else {
+            return actionType.name();
+        }
+    }
+
+    public static String resolveStepMessage(StepEnum stepName, Map<String, String> values) {
+        String stepMessage = getInstance().getStepMessage(stepName);
+        if (stepMessage != null) {
+            return AuditLogDirector.resolveMessage(stepMessage, values);
+        } else {
+            return stepName.name();
+        }
     }
 }

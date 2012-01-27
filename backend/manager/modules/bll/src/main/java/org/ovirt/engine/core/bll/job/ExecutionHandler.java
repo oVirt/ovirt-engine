@@ -48,10 +48,7 @@ public class ExecutionHandler {
 
         job.setId(Guid.NewGuid());
         job.setActionType(actionType);
-
-        // TODO: create job description by resource bundle
-        job.setDescription(actionType.name());
-
+        job.setDescription(ExecutionMessageDirector.resolveJobMessage(actionType, command.getJobMessageProperties()));
         job.setJobSubjectEntities(command.getPermissionCheckSubjects());
         job.setOwnerId(command.getUserId());
         job.setStatus(JobExecutionStatus.STARTED);
@@ -161,7 +158,6 @@ public class ExecutionHandler {
 
         try {
             boolean isMonitored = shouldMonitorCommand(actionType, runAsInternal);
-            context.setMonitored(isMonitored);
 
             // A monitored job is created for monitored external flows
             if (isMonitored) {
@@ -170,6 +166,7 @@ public class ExecutionHandler {
                 context.setExecutionMethod(ExecutionMethod.AsJob);
                 context.setJob(job);
                 command.setExecutionContext(context);
+                context.setMonitored(isMonitored);
             }
         } catch (Exception e) {
             log.errorFormat("Failed to prepare command of type {0} for monitoring due to error {1}",
@@ -270,6 +267,7 @@ public class ExecutionHandler {
 
     private static Step addSubStep(Step parentStep, StepEnum stepName, String description) {
         Step step = null;
+
         if (parentStep != null) {
             if (description == null) {
                 description = ExecutionMessageDirector.getInstance().getStepMessage(stepName);
@@ -312,6 +310,10 @@ public class ExecutionHandler {
 
         try {
             if (context.isMonitored()) {
+                if (description == null) {
+                    description = ExecutionMessageDirector.getInstance().getStepMessage(newStepName);
+                }
+
                 if (context.getExecutionMethod() == ExecutionMethod.AsJob) {
                     if (DbFacade.getInstance().getStepDao().exists(parentStep.getId())) {
                         if (parentStep.getJobId().equals(context.getJob().getId())) {
