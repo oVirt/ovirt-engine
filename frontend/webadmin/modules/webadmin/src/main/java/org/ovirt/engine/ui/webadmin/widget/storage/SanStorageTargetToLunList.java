@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.storage;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
@@ -23,10 +24,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
 public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetModel, ListModel> {
 
@@ -65,74 +67,6 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         }, "", "20px");
 
-        // Create header table
-        initRootNodeTable(table);
-
-        // Add last blank column
-        table.addColumn(new TextColumn<SanTargetModel>() {
-            @Override
-            public String getValue(SanTargetModel model) {
-                return "";
-            }
-        }, "", "75px");
-
-        // Add blank item list
-        table.setRowData(new ArrayList<EntityModel>());
-
-        // Add table as header widget
-        treeHeader.add(table);
-    }
-
-    @Override
-    protected TreeItem createRootNode(SanTargetModel rootModel) {
-        EntityModelCellTable<ListModel> table =
-                new EntityModelCellTable<ListModel>(false,
-                        (Resources) GWT.create(SanStorageListTargetRootResources.class),
-                        true);
-
-        // Create table
-        initRootNodeTable(table);
-
-        // Update and edit table
-        List<SanTargetModel> items = new ArrayList<SanTargetModel>();
-        items.add(rootModel);
-        table.setRowData(items);
-        table.edit(model);
-
-        // Create tree node's panel
-        HorizontalPanel panel = new HorizontalPanel();
-        panel.add(table);
-
-        // Add login button column
-        table.addColumn(new TextColumn<SanTargetModel>() {
-            @Override
-            public String getValue(SanTargetModel model) {
-                return "";
-            }
-        }, "", "0px");
-
-        // Create login button
-        ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
-        final UiCommandButton loginButton = new UiCommandButton();
-        loginButton.setCommand(rootModel.getLoginCommand());
-        loginButton.setLabel(constants.storageIscsiPopupLoginButtonLabel());
-        loginButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                treeScrollPosition = treeContainer.getVerticalScrollPosition();
-                loginButton.getCommand().Execute();
-            }
-        });
-        loginButton.setWidth("50px");
-
-        TreeItem item = new TreeItem(panel);
-        panel.add(loginButton);
-        panel.setCellVerticalAlignment(loginButton, HasVerticalAlignment.ALIGN_MIDDLE);
-
-        return item;
-    }
-
-    private void initRootNodeTable(EntityModelCellTable<ListModel> table) {
         table.addColumn(new ScrollableTextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
@@ -145,27 +79,94 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             public String getValue(SanTargetModel model) {
                 return model.getAddress();
             }
-        }, "Address", "100px");
+        }, "Address", "95px");
 
         table.addColumn(new ScrollableTextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
                 return model.getPort();
             }
-        }, "Port", "80px");
+        }, "Port", "65px");
 
         table.setWidth("100%", true);
+
+        // Add last blank column
+        table.addColumn(new TextColumn<SanTargetModel>() {
+            @Override
+            public String getValue(SanTargetModel model) {
+                return "";
+            }
+        }, "", "80px");
+
+        // Add blank item list
+        table.setRowData(new ArrayList<EntityModel>());
+
+        // Add table as header widget
+        treeHeader.add(table);
+    }
+
+    private void addLoginButton(HorizontalPanel panel, SanTargetModel rootModel) {
+        ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+        final UiCommandButton loginButton = new UiCommandButton();
+        loginButton.setCommand(rootModel.getLoginCommand());
+        loginButton.setLabel(constants.storageIscsiPopupLoginButtonLabel());
+        loginButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                treeScrollPosition = treeContainer.getVerticalScrollPosition();
+                loginButton.getCommand().Execute();
+            }
+        });
+        loginButton.setWidth("55px");
+
+        panel.add(loginButton);
+        panel.setCellWidth(loginButton, "60px");
+        panel.setCellHorizontalAlignment(loginButton, HasHorizontalAlignment.ALIGN_RIGHT);
+    }
+
+    private void additemToRootNodePanel(HorizontalPanel panel,
+            TextBoxLabel item,
+            String text,
+            String width,
+            TextAlignment align) {
+        item.getElement().getStyle().setBackgroundColor("transparent");
+        item.getElement().getStyle().setColor("black");
+        item.setAlignment(align);
+        item.setText(text);
+
+        panel.add(item);
+        panel.setCellWidth(item, width);
+    }
+
+    @Override
+    protected TreeItem createRootNode(SanTargetModel rootModel) {
+        HorizontalPanel panel = new HorizontalPanel();
+
+        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getName(), "310px", TextAlignment.LEFT);
+        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getAddress(), "80px", TextAlignment.CENTER);
+        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getPort(), "45px", TextAlignment.CENTER);
+        addLoginButton(panel, rootModel);
+
+        panel.setSpacing(1);
+        panel.setWidth("100%");
+
+        return new TreeItem(panel);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected TreeItem createLeafNode(ListModel leafModel) {
-        if (hideLeaf) {
-            return null;
+        TreeItem item = new TreeItem();
+        List<LunModel> items = (List<LunModel>) leafModel.getItems();
+
+        if (hideLeaf || items.isEmpty()) {
+            item.setUserObject(Boolean.TRUE);
+            return item;
         }
 
         EntityModelCellTable<ListModel> table =
-                new EntityModelCellTable<ListModel>(true, (Resources) GWT.create(SanStorageListLunTableResources.class));
+                new EntityModelCellTable<ListModel>(true,
+                        (Resources) GWT.create(SanStorageListLunTableResources.class));
 
         LunSelectionColumn lunSelectionColumn = new LunSelectionColumn() {
             @Override
@@ -218,18 +219,12 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         }, "Serial", "90px");
 
+        table.setRowData(items == null ? new ArrayList<LunModel>() : items);
+        table.edit(leafModel);
+
         ScrollPanel panel = new ScrollPanel();
         panel.add(table);
-        TreeItem item = new TreeItem(panel);
-
-        List<LunModel> items = (List<LunModel>) leafModel.getItems();
-        if (!items.isEmpty()) {
-            table.setRowData(items == null ? new ArrayList<LunModel>() : items);
-            table.edit(leafModel);
-        }
-        else {
-            item.setUserObject(Boolean.TRUE);
-        }
+        item.setWidget(panel);
 
         return item;
     }

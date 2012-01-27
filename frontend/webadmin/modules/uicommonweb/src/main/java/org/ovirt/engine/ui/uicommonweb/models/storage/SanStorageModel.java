@@ -78,6 +78,8 @@ public abstract class SanStorageModel extends SanStorageModelBase
         // Remember all discovered targets.
         lastDiscoveredTargets.clear();
         lastDiscoveredTargets.addAll(newItems);
+
+        getContainer().StopProgress();
     }
 
     @Override

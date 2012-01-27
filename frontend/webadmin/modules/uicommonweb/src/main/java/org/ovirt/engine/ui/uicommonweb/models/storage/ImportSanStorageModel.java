@@ -82,6 +82,8 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
         super.PostDiscoverTargets(newItems);
 
         InitializeItems(newItems);
+
+        getContainer().StopProgress();
     }
 
     @Override

@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -193,6 +196,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     public boolean loginAllInProgress;
     public SanTargetModel sanTargetModel;
+    private ArrayList<SanTargetModel> targetsToConnect;
 
     protected SanStorageModelBase()
     {
@@ -231,77 +235,89 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }
     }
 
-    private void SanTargetModel_LoggedIn(Object sender, EventArgs args)
-    {
+    private void postLogin(FrontendActionAsyncResult result) {
+        VdcReturnValueBase returnValue = result.getReturnValue();
+        SanStorageModelBase sanStorageModel = (SanStorageModelBase) result.getState();
+        SanTargetModel sanTargetModel = sanStorageModel.targetsToConnect.remove(0);
+        boolean success = returnValue != null && returnValue.getSucceeded();
+
+        if (success)
+        {
+            sanTargetModel.setIsLoggedIn(true);
+            sanTargetModel.getLoginCommand().setIsExecutionAllowed(false);
+        }
+
+        if (sanStorageModel.targetsToConnect.isEmpty()) {
+            sanStorageModel.getContainer().StopProgress();
+            sanStorageModel.UpdateInternal();
+        }
+    }
+
+    private void connectTargets() {
+
         VDS host = (VDS) getContainer().getHost().getSelectedItem();
         if (host == null)
         {
             return;
         }
 
-        SanTargetModel model = (SanTargetModel) sender;
-        sanTargetModel = model;
+        java.util.ArrayList<VdcActionType> actionTypes = new java.util.ArrayList<VdcActionType>();
+        ArrayList<VdcActionParametersBase> paramerters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
 
-        storage_server_connections tempVar = new storage_server_connections();
-        tempVar.setportal("0");
-        tempVar.setstorage_type(StorageType.ISCSI);
-        tempVar.setuser_name((Boolean) getUseUserAuth().getEntity() ? (String) getUserName().getEntity() : "");
-        tempVar.setpassword((Boolean) getUseUserAuth().getEntity() ? (String) getPassword().getEntity() : "");
-        tempVar.setiqn(model.getName());
-        tempVar.setconnection(model.getAddress());
-        tempVar.setport(String.valueOf(model.getPort()));
-        storage_server_connections connection = tempVar;
+        IFrontendActionAsyncCallback loginCallback = new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+                SanStorageModelBase sanStorageModel = (SanStorageModelBase) result.getState();
+                sanStorageModel.postLogin(result);
+            }
+        };
+
+        for (int i = 0; i < targetsToConnect.size(); i++) {
+            SanTargetModel model = targetsToConnect.get(i);
+            storage_server_connections connection = new storage_server_connections();
+            connection.setportal("0");
+            connection.setstorage_type(StorageType.ISCSI);
+            connection.setuser_name((Boolean) getUseUserAuth().getEntity() ? (String) getUserName().getEntity() : "");
+            connection.setpassword((Boolean) getUseUserAuth().getEntity() ? (String) getPassword().getEntity() : "");
+            connection.setiqn(model.getName());
+            connection.setconnection(model.getAddress());
+            connection.setport(String.valueOf(model.getPort()));
+
+            actionTypes.add(VdcActionType.ConnectStorageToVds);
+            paramerters.add(new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+            callbacks.add(loginCallback);
+        }
 
         getContainer().StartProgress(null);
 
-        Frontend.RunAction(VdcActionType.ConnectStorageToVds, new StorageServerConnectionParametersBase(connection,
-                host.getvds_id()),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+        Frontend.RunMultipleActions(actionTypes, paramerters, callbacks, null, this);
+    }
 
-                        VdcReturnValueBase returnValue = result.getReturnValue();
-                        boolean success = returnValue != null && returnValue.getSucceeded();
-                        SanStorageModelBase sanStorageModel = (SanStorageModelBase) result.getState();
-                        if (success)
-                        {
-                            sanStorageModel.sanTargetModel.setIsLoggedIn(true);
-                            sanStorageModel.sanTargetModel.getLoginCommand().setIsExecutionAllowed(false);
-                            sanStorageModel.getContainer().StopProgress();
-                            if (!sanStorageModel.loginAllInProgress)
-                            {
-                                sanStorageModel.UpdateInternal();
-                            }
-                        }
-
-                    }
-                }, this);
+    private void SanTargetModel_LoggedIn(Object sender, EventArgs args)
+    {
+        SanTargetModel model = (SanTargetModel) sender;
+        targetsToConnect = new ArrayList<SanTargetModel>();
+        targetsToConnect.add(model);
+        connectTargets();
     }
 
     private void LoginAll()
     {
         // Cast to list of SanTargetModel because we get call
         // to this method only from target/LUNs mode.
-
-        loginAllInProgress = true;
-        boolean updateRequired = false;
         java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>) getItems();
+        targetsToConnect = new ArrayList<SanTargetModel>();
 
         for (SanTargetModel item : items)
         {
             if (!item.getIsLoggedIn())
             {
-                item.getLoginCommand().Execute();
-                updateRequired = true;
+                targetsToConnect.add(item);
             }
         }
 
-        if (updateRequired)
-        {
-            UpdateInternal();
-        }
-
-        loginAllInProgress = false;
+        connectTargets();
     }
 
     private void DiscoverTargets()
@@ -362,8 +378,6 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
             newItems.add(model);
         }
-
-        getContainer().StopProgress();
 
         if (items.isEmpty())
         {

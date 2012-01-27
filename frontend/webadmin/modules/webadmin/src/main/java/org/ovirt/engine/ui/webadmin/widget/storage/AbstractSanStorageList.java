@@ -97,6 +97,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
             if (isLeafEmpty != null && isLeafEmpty.equals(Boolean.TRUE)) {
                 rootItem.getElement().getElementsByTagName("td").getItem(0).getStyle().setVisibility(Visibility.HIDDEN);
             }
+            rootItem.getElement().getElementsByTagName("td").getItem(1).getStyle().setWidth(100, Unit.PCT);
         }
 
         tree.addItem(rootItem);

@@ -533,7 +533,7 @@ public class Frontend {
                     public void Executed(FrontendActionAsyncResult result) {
                         VdcReturnValueBase returnValue = result.getReturnValue();
                         boolean success = returnValue != null && returnValue.getSucceeded();
-                        if (success)
+                        if (success || failureCallback == null)
                         {
                             IFrontendActionAsyncCallback callback = callbacks.get(0);
                             if (callback != null)
@@ -547,10 +547,7 @@ public class Frontend {
                         }
                         else
                         {
-                            if (failureCallback != null)
-                            {
-                                failureCallback.Executed(result);
-                            }
+                            failureCallback.Executed(result);
                         }
                     }
                 }, state);
