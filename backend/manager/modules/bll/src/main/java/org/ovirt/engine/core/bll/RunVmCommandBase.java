@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -288,6 +289,19 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
                             new UpdateVmDynamicDataVDSCommandParameters(getCurrentVdsId(), getVm().getDynamicData()));
+        }
+    }
+
+    @Override
+    public void reportCompleted() {
+        if (executionContext != null && executionContext.isMonitored()) {
+            if (!executionContext.isCompleted()) {
+                if (executionContext.getExecutionMethod() == ExecutionMethod.AsJob) {
+                    ExecutionHandler.endJob(executionContext, false);
+                } else if (executionContext.getExecutionMethod() == ExecutionMethod.AsStep) {
+                    ExecutionHandler.endStep(executionContext, executionContext.getStep(), false);
+                }
+            }
         }
     }
 
