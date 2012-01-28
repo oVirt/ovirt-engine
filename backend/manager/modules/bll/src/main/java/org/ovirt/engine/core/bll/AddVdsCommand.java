@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -9,6 +10,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
@@ -28,6 +31,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
@@ -37,6 +42,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.CommandParametersInitializer;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -126,12 +132,26 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             final InstallVdsParameters installVdsParameters = new InstallVdsParameters(getVdsId(),
                     getParameters().getRootPassword());
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
+            Map<String, String> values = new HashMap<String, String>();
+            values.put(VdcObjectType.VDS.name().toLowerCase(), getParameters().getvds().getvds_name());
+            Step installStep = ExecutionHandler.addSubStep(executionContext,
+                    executionContext.getJob().getStep(StepEnum.EXECUTING),
+                    StepEnum.INSTALLING_HOST,
+                    ExecutionMessageDirector.resolveStepMessage(StepEnum.INSTALLING_HOST, values));
+            final ExecutionContext installCtx = new ExecutionContext();
+            installCtx.setJob(executionContext.getJob());
+            installCtx.setStep(installStep);
+            installCtx.setMonitored(true);
+            installCtx.setShouldEndJob(true);
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
-                    Backend.getInstance().runInternalAction(VdcActionType.InstallVds, installVdsParameters);
+                    Backend.getInstance().runInternalAction(VdcActionType.InstallVds,
+                            installVdsParameters,
+                            new CommandContext(installCtx));
                 }
             });
+            ExecutionHandler.setAsyncJob(executionContext, true);
         }
     }
 
@@ -405,5 +425,17 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     private static Log log = LogFactory.getLog(AddVdsCommand.class);
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        Map<String, String> jobMessageProperties = super.getJobMessageProperties();
+        VDS vds = getParameters().getvds();
+        if (vds != null && vds.getvds_name() != null) {
+            jobMessageProperties.put(VdcObjectType.VDS.name().toLowerCase(), vds.getvds_name());
+        } else {
+            jobMessageProperties.put(VdcObjectType.VDS.name(), "");
+        }
+        return jobMessageProperties;
+    }
 
 }
