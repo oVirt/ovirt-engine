@@ -77,6 +77,7 @@ public class ExecutionHandler {
     public static void endStep(ExecutionContext context, Step step, boolean exitStatus) {
 
         if (context.isMonitored()) {
+            context.setCompleted(true);
             Job job = context.getJob();
             try {
                 if (context.getExecutionMethod() == ExecutionMethod.AsJob && job != null) {
@@ -349,6 +350,7 @@ public class ExecutionHandler {
 
         try {
             if (context.isMonitored()) {
+                context.setCompleted(true);
                 if (context.getExecutionMethod() == ExecutionMethod.AsJob && job != null) {
                     if (!(job.isAsyncJob() && exitStatus)) {
                         endJob(exitStatus, job);

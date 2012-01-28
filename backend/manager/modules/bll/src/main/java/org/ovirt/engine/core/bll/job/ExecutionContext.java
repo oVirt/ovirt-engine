@@ -81,6 +81,12 @@ public class ExecutionContext implements Serializable{
     private boolean isTasksMonitored = true;
 
     /**
+     * A flag used to identified completed Job or Step. Is turned on by {@code IVdsAsyncCommand.RunningSucceded} or by
+     * any asynchronous step of the command.
+     */
+    private boolean isCompleted;
+
+    /**
      * Default constructor which defines the default monitored steps of the internal command
      */
     public ExecutionContext() {
@@ -160,6 +166,14 @@ public class ExecutionContext implements Serializable{
 
     public void setTasksMonitored(boolean isTasksMonitored) {
         this.isTasksMonitored = isTasksMonitored;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean isCompleted) {
+        this.isCompleted = isCompleted;
     }
 
 }
