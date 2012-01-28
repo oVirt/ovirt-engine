@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.backendinterfaces.IResourceManager;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -19,6 +22,8 @@ import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
 
 public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
+
+    private Map<Guid, IVdsAsyncCommand> _asyncRunningCommands = new HashMap<Guid, IVdsAsyncCommand>();
 
     /*
      * (non-Javadoc)
@@ -53,9 +58,6 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
         }
         return result;
     }
-
-    private java.util.HashMap<Guid, IVdsAsyncCommand> _asyncRunningCommands =
-            new java.util.HashMap<Guid, IVdsAsyncCommand>();
 
     /*
      * (non-Javadoc)
@@ -101,11 +103,8 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
      * org.ovirt.engine.core.bll.VDSBrokerFrontend#RemoveAsyncRunningCommand(com.
      * redhat.engine.compat.Guid)
      */
-    @Override
-    public void RemoveAsyncRunningCommand(Guid vmId) {
-        if (_asyncRunningCommands.containsKey(vmId)) {
-            _asyncRunningCommands.remove(vmId);
-        }
+    public IVdsAsyncCommand RemoveAsyncRunningCommand(Guid vmId) {
+        return _asyncRunningCommands.remove(vmId);
     }
 
     @Override

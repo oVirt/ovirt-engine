@@ -435,7 +435,8 @@ public class RunVmCommandTest {
             }
 
             @Override
-            public void RemoveAsyncRunningCommand(Guid vmId) {
+            public IVdsAsyncCommand RemoveAsyncRunningCommand(Guid vmId) {
+                return null;
             }
 
             @Override

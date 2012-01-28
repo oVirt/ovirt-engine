@@ -18,7 +18,7 @@ public interface VDSBrokerFrontend {
 
     public abstract IVdsAsyncCommand GetAsyncCommandForVm(Guid vmId);
 
-    public abstract void RemoveAsyncRunningCommand(Guid vmId);
+    public abstract IVdsAsyncCommand RemoveAsyncRunningCommand(Guid vmId);
 
     public abstract FutureVDSCall<VDSReturnValue> runFutureVdsCommand(FutureVDSCommandType commandType,
             VdsIdVDSCommandParametersBase parameters);
