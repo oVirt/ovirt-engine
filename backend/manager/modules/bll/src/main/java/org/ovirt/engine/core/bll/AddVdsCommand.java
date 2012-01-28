@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -40,6 +39,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.CommandParametersInitializer;
 import org.ovirt.engine.core.utils.FileUtil;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -123,13 +123,15 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         // do not install vds's which added in pending mode (currently power
         // clients). they are installed as part of the approve process
         if (Config.<Boolean> GetValue(ConfigValues.InstallVds) && !getParameters().getAddPending()) {
-            InstallVdsParameters installVdsParameters = new InstallVdsParameters(getVdsId(),
+            final InstallVdsParameters installVdsParameters = new InstallVdsParameters(getVdsId(),
                     getParameters().getRootPassword());
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
-            Backend.getInstance().runInternalMultipleActions(
-                    VdcActionType.InstallVds,
-                    new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays
-                            .asList(new VdcActionParametersBase[] { installVdsParameters })));
+            ThreadPoolUtil.execute(new Runnable() {
+                @Override
+                public void run() {
+                    Backend.getInstance().runInternalAction(VdcActionType.InstallVds, installVdsParameters);
+                }
+            });
         }
     }
 
