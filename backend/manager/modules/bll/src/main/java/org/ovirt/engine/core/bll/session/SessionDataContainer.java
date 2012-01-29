@@ -89,7 +89,7 @@ public class SessionDataContainer {
             return currentContext.get(key);
         }
         if (refresh) {
-            if((currentContext = oldContext.remove(sessionId)) != null) {
+            if ((currentContext = oldContext.remove(sessionId)) != null) {
                 newContext.put(sessionId, currentContext);
             }
         } else {
@@ -122,7 +122,7 @@ public class SessionDataContainer {
 
     /**
      * This method will move all newGeneration to old generation and old
-     * generation will be cleaned automaticly
+     * generation will be cleaned automatically
      *
      * @return
      */
@@ -169,7 +169,7 @@ public class SessionDataContainer {
      */
     @OnTimerMethodAnnotation("cleanExpiredUsersSessions")
     public final void cleanExpiredUsersSessions() {
-        Map<String, Map<String, Object>> map = getInstance().deleteOldGeneration();
+        Map<String, Map<String, Object>> map = deleteOldGeneration();
         if (map != null && !map.isEmpty()) {
             Map<String, Guid> userSessionMap = new HashMap<String, Guid>();
             for (Map.Entry<String, Map<String, Object>> entry : map.entrySet()) {
