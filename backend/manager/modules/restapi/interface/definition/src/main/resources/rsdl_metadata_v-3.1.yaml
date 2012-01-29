@@ -567,7 +567,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {search: query}
+    urlparams: {}
     headers: {}
 - name: /api/clusters/{cluster:id}/networks/{network:id}|rel=get
   request:
@@ -1531,7 +1531,7 @@ actions:
       parameterType: User
       signatures:
       - mandatoryArguments: {user.user_name: 'xs:string', user.domain.id|name: 'xs:string'}
-    urlparams: {search: query}
+    urlparams: {}
     headers: {}
 - name: /api/users/{user:id}|rel=delete
   request:
