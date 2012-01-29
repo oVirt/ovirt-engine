@@ -1036,6 +1036,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("20")
     QuotaGraceStorage(334),
 
+    /**
+     * The base URL for the documentation web-site
+     */
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    DocsURL(335),
+
     Invalid(65535);
 
     private int intValue;

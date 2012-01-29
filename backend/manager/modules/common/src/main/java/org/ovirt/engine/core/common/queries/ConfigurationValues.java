@@ -70,7 +70,8 @@ public enum ConfigurationValues {
     SupportedClusterLevels,
     ProductRPMVersion,
     RhevhLocalFSPath,
-    CustomPublicConfig_AppsWebSite;
+    CustomPublicConfig_AppsWebSite,
+    DocsURL;
 
     public int getValue() {
         return this.ordinal();
