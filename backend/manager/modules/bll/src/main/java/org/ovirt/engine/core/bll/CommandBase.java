@@ -234,7 +234,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * </ol>
      * <li>Remove all the snapshots for this command, since we handled them.</li> </ol>
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "synthetic-access" })
     protected void compensate() {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
             @Override
@@ -246,7 +246,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 log.debugFormat("Command [id={0}]: {1} compensation data.", commandId,
                         entitySnapshots.isEmpty() ? "No" : "Going over");
                 for (BusinessEntitySnapshot snapshot : entitySnapshots) {
-                    Class<Serializable> snapshotClass = (Class<Serializable>)ReflectionUtils.getClassFor(snapshot.getSnapshotClass());
+                    Class<Serializable> snapshotClass =
+                            (Class<Serializable>) ReflectionUtils.getClassFor(snapshot.getSnapshotClass());
                     Serializable snapshotData = deserializer.deserialize(snapshot.getEntitySnapshot(), snapshotClass);
                     log.infoFormat("Command [id={0}]: Compensating {1} of {2}; snapshot: {3}.",
                             commandId,
@@ -255,7 +256,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                             (snapshot.getSnapshotType() == SnapshotType.CHANGED_ENTITY ? "id=" + snapshot.getEntityId()
                                     : snapshotData.toString()));
                     Class<BusinessEntity<Serializable>> entityClass =
-                        (Class<BusinessEntity<Serializable>>) ReflectionUtils.getClassFor(snapshot.getEntityType());
+                            (Class<BusinessEntity<Serializable>>) ReflectionUtils.getClassFor(snapshot.getEntityType());
                     GenericDao<BusinessEntity<Serializable>, Serializable> daoForEntity =
                             DbFacade.getInstance().getDaoForEntity(entityClass);
 
@@ -286,9 +287,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         });
     }
 
-     /**
-     * Delete the compensation data, so that we don't accidentaly try to compensate it at a later time.
-     */
+    /**
+    * Delete the compensation data, so that we don't accidentaly try to compensate it at a later time.
+    */
     private void cleanUpCompensationData() {
         getBusinessEntitySnapshotDAO().removeAllForCommandId(commandId);
     }
@@ -401,8 +402,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             log.error("Data access error during CanDoActionFailure.", dataAccessEx);
             addCanDoActionMessage(VdcBllMessages.CAN_DO_ACTION_DATABASE_CONNECTION_FAILURE);
             return false;
-        }
-        catch (RuntimeException ex) {
+        } catch (RuntimeException ex) {
             log.error("Error during CanDoActionFailure.", ex);
             addCanDoActionMessage(VdcBllMessages.CAN_DO_ACTION_GENERAL_FAILURE);
             return false;
@@ -418,7 +418,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         List<Class<?>> validationGroupList = getValidationGroups();
         Set<ConstraintViolation<T>> violations =
                 validator.validate(getParameters(),
-                        ((Class<?>[]) validationGroupList.toArray(new Class<?>[validationGroupList.size()])));
+                        validationGroupList.toArray(new Class<?>[validationGroupList.size()]));
         if (!violations.isEmpty()) {
             ArrayList<String> msgs = getReturnValue().getCanDoActionMessages();
             for (ConstraintViolation<T> constraintViolation : violations) {
@@ -435,11 +435,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * instead set them at the canDoAction()
      */
     protected void setActionMessageParameters() {
+        // No-op method for inheritors to implement
     }
 
     protected List<Class<?>> getValidationGroups() {
         return validationGroups;
-    };
+    }
 
     protected List<Class<?>> addValidationGroup(Class<?>... validationGroup) {
         validationGroups.addAll(Arrays.asList(validationGroup));
@@ -599,9 +600,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @param parameters parameter of the creating command
      * @return
      */
-    protected VdcActionParametersBase getParametersForTask(VdcActionType parentCommandType, VdcActionParametersBase parameters) {
-        //If there is no parent command, the command that its type
-        //will be stored in the DB for thr task is the one creating the command
+    protected VdcActionParametersBase getParametersForTask(VdcActionType parentCommandType,
+            VdcActionParametersBase parameters) {
+        // If there is no parent command, the command that its type
+        // will be stored in the DB for thr task is the one creating the command
         if (parentCommandType == VdcActionType.Unknown) {
             return parameters;
         }
@@ -609,7 +611,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (parentParameters == null) {
             String msg = "No parameters exist for " + parentCommandType;
             log.error(msg);
-            throw new VdcBLLException(VdcBllErrors.NO_PARAMETERS_FOR_TASK,msg);
+            throw new VdcBLLException(VdcBllErrors.NO_PARAMETERS_FOR_TASK, msg);
         }
         return parentParameters;
     }
@@ -727,7 +729,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             TransactionSupport.executeInScope(scope, this);
         } catch (TransactionRolledbackLocalException e) {
             log.infoFormat("Transaction was aborted in {0}", this.getClass().getName());
-            //Transaction was aborted - we must sure we compensation for all previous applicative stages of the command
+            // Transaction was aborted - we must sure we compensation for all previous applicative stages of the command
             compensate();
         } finally {
             freeLock();
@@ -856,6 +858,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return retValue;
     }
 
+    @SuppressWarnings("unused")
     protected Guid ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
         throw new NotImplementedException();
     }
@@ -910,13 +913,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected void RevertTasks() {
         if (getParameters().getTaskIds() != null) {
-            // list to send to the PollTasks mathod
+            // list to send to the PollTasks method
             java.util.ArrayList<Guid> taskIdAsList = new java.util.ArrayList<Guid>();
             for (Guid taskId : getParameters().getTaskIds()) {
                 taskIdAsList.add(taskId);
                 java.util.ArrayList<AsyncTaskStatus> tasksStatuses = AsyncTaskManager.getInstance().PollTasks(
                         taskIdAsList);
-                // call revert task only if ended succeesfully
+                // call revert task only if ended successfully
                 if (tasksStatuses.get(0).getTaskEndedSuccessfully()) {
                     SPMTaskGuidBaseVDSCommandParameters tempVar = new SPMTaskGuidBaseVDSCommandParameters(
                             getStoragePool().getId(), taskId);
@@ -981,11 +984,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     public Object runInTransaction() {
         if (_actionState == CommandActionState.EXECUTE) {
             executeActionInTransactionScope();
-            return null;
         } else {
             endActionInTransactionScope();
-            return null;
         }
+        return null;
     }
 
     protected boolean isInternalExecution() {
@@ -1040,7 +1042,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * Permissions are attached to object so every command must declare its
      * object target type and its GUID
      *
-     * @return Map of Guids to Object types
+     * @return Map of GUIDs to Object types
      */
     public abstract Map<Guid, VdcObjectType> getPermissionCheckSubjects();
 
