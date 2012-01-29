@@ -3,7 +3,10 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.utils.WebUtils;
 import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetHandler;
+import org.ovirt.engine.ui.uicommonweb.Configurator;
+import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.uicommon.WebAdminConfigurator;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -99,13 +102,11 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
         registerHandler(getView().getGuideLink().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                String url = com.google.gwt.user.client.Window.Location
-                .getProtocol()
-                + "//"
-                + com.google.gwt.user.client.Window.Location.getHost()
-                + "/rhev-docs/en-US/html/Administration_Guide/index.html";
-
-                WebUtils.openUrlInNewWindow("ENGINE Web Admin Documentation", url);
+                Configurator configurator = (Configurator) TypeResolver.getInstance().Resolve(Configurator.class);
+                if (configurator.isDocumentationAvailable()) {
+                    String url = configurator.getDocumentationLibURL() + WebAdminConfigurator.DOCUMENTATION_GUIDE_PATH;
+                    WebUtils.openUrlInNewWindow("ENGINE Web Admin Documentation", url);
+                }
             }
         }));
     }

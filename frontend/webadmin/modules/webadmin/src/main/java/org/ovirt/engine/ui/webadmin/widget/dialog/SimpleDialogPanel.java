@@ -1,12 +1,16 @@
 package org.ovirt.engine.ui.webadmin.widget.dialog;
 
 import org.ovirt.engine.ui.common.widget.dialog.AbstractDialogPanel;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -38,11 +42,17 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     FlowPanel footerButtonPanel;
 
     @UiField
+    ButtonBase helpButton;
+
+    UICommand helpCommand;
+
+    @UiField
     Style style;
 
     public SimpleDialogPanel() {
         setWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         getElement().getStyle().setZIndex(1);
+        addHelpButtonHandler();
     }
 
     @Override
@@ -90,4 +100,17 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
         contentPanel.addStyleName(styleName);
     }
 
+    private void addHelpButtonHandler() {
+        helpButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                helpCommand.Execute();
+            }
+        });
+    }
+
+    public void setHelpCommand(UICommand command) {
+        helpCommand = command;
+        helpButton.setVisible(command != null);
+    }
 }

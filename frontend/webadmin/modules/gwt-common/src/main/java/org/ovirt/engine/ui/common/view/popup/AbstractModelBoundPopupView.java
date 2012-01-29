@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.IsProgressContentWidget;
 import org.ovirt.engine.ui.common.widget.dialog.AbstractDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 import com.google.gwt.event.shared.EventBus;
@@ -76,6 +77,11 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
     @Override
     public void setHashName(String name) {
         this.hashName = name;
+    }
+
+    @Override
+    public void setHelpCommand(UICommand command) {
+        asWidget().setHelpCommand(command);
     }
 
     @Override

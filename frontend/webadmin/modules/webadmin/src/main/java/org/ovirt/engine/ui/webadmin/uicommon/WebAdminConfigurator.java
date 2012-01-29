@@ -7,7 +7,10 @@ import org.ovirt.engine.core.compat.EventDefinition;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
+import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
 import org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
@@ -15,27 +18,39 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+import com.google.inject.Inject;
 
-public class WebAdminConfigurator extends Configurator implements IEventListener {
+public class WebAdminConfigurator extends Configurator implements IEventListener, UiCommonInitHandler {
 
     // Temporarily save the locations of webadmin and userportal.
     // TODO: create a new SPICE RPM for webadmin
     private static final String WEBADMIN_ROOT_FOLDER = "/webadmin/webadmin/";
     private static final String USERPORTAL_ROOT_FOLDER = "/userportal-gwtp/userportal/";
 
+    public static final String DOCUMENTATION_GUIDE_PATH = "Administration_Guide/index.html";
+
     public EventDefinition spiceVersionFileFetchedEvent_Definition =
-        new EventDefinition("spiceVersionFileFetched", WebAdminConfigurator.class);
+            new EventDefinition("spiceVersionFileFetched", WebAdminConfigurator.class);
 
     public Event spiceVersionFileFetchedEvent = new Event(spiceVersionFileFetchedEvent_Definition);
 
+    public EventDefinition documentationFileFetchedEvent_Definition = new EventDefinition("documentationFileFetched",
+            WebAdminConfigurator.class);
+    public Event documentationFileFetchedEvent = new Event(documentationFileFetchedEvent_Definition);
+
     private boolean isInitialized;
 
-    public WebAdminConfigurator() {
+    @Inject
+    public WebAdminConfigurator(EventBus eventBus)
+    {
+        eventBus.addHandler(UiCommonInitEvent.getType(), this);
+
         // Set default configuration values
         setIsAdmin(true);
         setSpiceAdminConsole(true);
@@ -43,6 +58,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
         // Add event listeners
         spiceVersionFileFetchedEvent.addListener(this);
+        documentationFileFetchedEvent.addListener(this);
 
         // Update Spice version if needed
         updateSpiceVersion();
@@ -62,11 +78,15 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     }
 
     public void updateSpice32Version() {
-        fetchFile("SpiceVersion.txt", spiceVersionFileFetchedEvent);
+        fetchFile(getSpiceBaseURL() + "SpiceVersion.txt", spiceVersionFileFetchedEvent);
     }
 
     public void updateSpice64Version() {
-        fetchFile("SpiceVersion_x64.txt", spiceVersionFileFetchedEvent);
+        fetchFile(getSpiceBaseURL() + "SpiceVersion_x64.txt", spiceVersionFileFetchedEvent);
+    }
+
+    public void updateDocumentationPathFile() {
+        fetchFile(getDocumentationBaseURL() + "DocumentationPath.csv", documentationFileFetchedEvent);
     }
 
     public void updateIsUsbEnabled(final ISpice spice) {
@@ -80,14 +100,30 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         }));
     }
 
-    public static String getSpiceBaseURL() {
+    public void updateDocumentationBaseURL() {
+        // Get 'EnableUSBAsDefault' value from database
+        AsyncDataProvider.GetDocumentationBaseURL(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        String documentationBaseURL = (String) returnValue;
+                        boolean isDocumentationAvailable = !documentationBaseURL.equals("");
+
+                        setDocumentationAvailable(isDocumentationAvailable);
+                        setDocumentationBasePath(documentationBaseURL);
+                        updateDocumentationPathFile();
+                    }
+                }));
+    }
+
+    public String getSpiceBaseURL() {
         return GWT.getModuleBaseURL().replace(WEBADMIN_ROOT_FOLDER, USERPORTAL_ROOT_FOLDER);
     }
 
     // Fetch file from a specified path
     public void fetchFile(String filePath, final Event onFetched) {
 
-        RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, getSpiceBaseURL() + filePath);
+        RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, filePath);
         try {
             requestBuilder.sendRequest(null, new RequestCallback() {
                 @Override
@@ -114,6 +150,11 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         if (ev.equals(spiceVersionFileFetchedEvent_Definition)) {
             Version spiceVersion = parseVersion(((FileFetchEventArgs) args).getFileContent());
             setSpiceVersion(spiceVersion);
+        }
+        else if (ev.equals(documentationFileFetchedEvent_Definition))
+        {
+            String documentationPathFileContent = ((FileFetchEventArgs) args).getFileContent();
+            DocumentationPathTranslator.init(documentationPathFileContent);
         }
     }
 
@@ -143,7 +184,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         case qxl:
             ClientAgentType cat = new ClientAgentType();
             return (cat.os.equalsIgnoreCase("Windows") && cat.browser.equalsIgnoreCase("Explorer")) ||
-            (cat.os.equalsIgnoreCase("Linux") && cat.browser.equalsIgnoreCase("Firefox"));
+                    (cat.os.equalsIgnoreCase("Linux") && cat.browser.equalsIgnoreCase("Firefox"));
         }
 
         return false;
@@ -156,7 +197,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         spice.setCurrentVersion(getSpiceVersion());
         spice.setAdminConsole(getSpiceAdminConsole());
         spice.setFullScreen(getSpiceFullScreen());
-        spice.setSpiceBaseURL(WebAdminConfigurator.getSpiceBaseURL());
+        spice.setSpiceBaseURL(getSpiceBaseURL());
 
         if (!isInitialized) {
             updateIsUsbEnabled(spice);
@@ -164,4 +205,8 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         }
     }
 
+    @Override
+    public void onUiCommonInit(UiCommonInitEvent event) {
+        updateDocumentationBaseURL();
+    }
 }

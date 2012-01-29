@@ -5,12 +5,17 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 
+import com.google.gwt.core.client.GWT;
+
 /**
  * Provides configuration values for client side.
  */
 @SuppressWarnings("unused")
 public class Configurator
 {
+    private static final String DOCUMENTATION_LANG_PATH = "/en-US/";
+    private static final String DOCUMENTATION_LIB_PATH = "html/";
+
     /**
      * Gets the value indincating whether the model state should be changed asynchronous in response on property change
      * or command execution.
@@ -164,6 +169,35 @@ public class Configurator
     protected void setPollingTimerInterval(int value)
     {
         privatePollingTimerInterval = value;
+    }
+
+    private boolean isDocumentationAvailable;
+
+    public boolean isDocumentationAvailable() {
+        return isDocumentationAvailable;
+    }
+
+    protected void setDocumentationAvailable(boolean isDocumentationAvailable) {
+        this.isDocumentationAvailable = isDocumentationAvailable;
+    }
+
+    private String documentationBasePath;
+
+    public String getDocumentationBasePath() {
+        return documentationBasePath;
+    }
+
+    protected void setDocumentationBasePath(String documentationBasePath) {
+        this.documentationBasePath = documentationBasePath;
+    }
+
+    public String getDocumentationBaseURL() {
+        return GWT.getModuleBaseURL().replaceAll(GWT.getModuleName() + "/", "") + getDocumentationBasePath()
+                + DOCUMENTATION_LANG_PATH;
+    }
+
+    public String getDocumentationLibURL() {
+        return getDocumentationBaseURL() + DOCUMENTATION_LIB_PATH;
     }
 
     public Configurator()

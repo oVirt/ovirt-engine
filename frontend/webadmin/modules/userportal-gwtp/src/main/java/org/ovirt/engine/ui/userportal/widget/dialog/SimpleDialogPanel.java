@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.widget.dialog;
 
 import org.ovirt.engine.ui.common.widget.dialog.AbstractDialogPanel;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
@@ -88,6 +89,10 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     @Override
     public void addContentStyleName(String styleName) {
         contentPanel.addStyleName(styleName);
+    }
+
+    @Override
+    public void setHelpCommand(UICommand command) {
     }
 
 }

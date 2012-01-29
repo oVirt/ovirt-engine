@@ -360,4 +360,14 @@ public interface ApplicationResources extends CommonApplicationResources {
     @NotStrict
     @Source("css/SliderBar.css")
     CssResource sliderBarCss();
+
+    @Source("images/icon_help.png")
+    ImageResource dialogIconHelp();
+
+    @Source("images/icon_help_down.png")
+    ImageResource dialogIconHelpDown();
+
+    @Source("images/icon_help_rollover.png")
+    ImageResource dialogIconHelpRollover();
+
 }

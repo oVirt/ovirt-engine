@@ -5,7 +5,9 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
+import org.ovirt.engine.ui.common.utils.WebUtils;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
@@ -46,6 +48,8 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
         HasUiCommandClickHandlers addFooterButton(String label, String uniqueId);
 
+        void setHelpCommand(UICommand command);
+
         void removeButtons();
 
         void startProgress(String progressMessage);
@@ -85,6 +89,8 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
                     updateItems(model);
                 } else if ("HashName".equals(propName)) {
                     updateHashName(model);
+                } else if ("OpenDocumentation".equals(propName)) {
+                    openDocumentation(model);
                 }
             }
         });
@@ -144,7 +150,20 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
     }
 
     void updateHashName(T model) {
-        getView().setHashName(model.getHashName());
+        String hashName = model.getHashName();
+        getView().setHashName(hashName);
+
+        UICommand openDocumentationCommand = model.getOpenDocumentationCommand();
+        if (openDocumentationCommand != null) {
+            boolean isDocumentationAvailable = model.getConfigurator().isDocumentationAvailable() &&
+                    hashName != null && DocumentationPathTranslator.getPath(hashName) != null;
+            openDocumentationCommand.setIsAvailable(isDocumentationAvailable);
+            updateHelpCommand(isDocumentationAvailable ? openDocumentationCommand : null);
+        }
+    }
+
+    void updateHelpCommand(UICommand command) {
+        getView().setHelpCommand(command);
     }
 
     void updateItems(T model) {
@@ -192,6 +211,14 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
      */
     public void stopProgress() {
         getView().stopProgress();
+    }
+
+    protected void openDocumentation(T model) {
+        String hashName = model.getHashName();
+        String documentationPath = DocumentationPathTranslator.getPath(hashName);
+        String documentationLibURL = model.getConfigurator().getDocumentationLibURL();
+
+        WebUtils.openUrlInNewWindow("_blank", documentationLibURL + documentationPath);
     }
 
 }

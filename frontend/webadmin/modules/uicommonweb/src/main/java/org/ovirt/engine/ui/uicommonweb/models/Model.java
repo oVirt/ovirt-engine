@@ -67,7 +67,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
 
     private Configurator privateConfigurator;
 
-    protected Configurator getConfigurator()
+    public Configurator getConfigurator()
     {
         return privateConfigurator;
     }

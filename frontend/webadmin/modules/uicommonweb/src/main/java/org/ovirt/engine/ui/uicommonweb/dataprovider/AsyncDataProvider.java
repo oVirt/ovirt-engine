@@ -1688,4 +1688,17 @@ public final class AsyncDataProvider {
                      new IsVmPoolWithSameNameExistsParameters(name),
                      aQuery);
     }
+
+    public static void GetDocumentationBaseURL(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (String) source : "";
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+                new GetConfigurationValueParameters(ConfigurationValues.DocsURL),
+                aQuery);
+    }
 }
