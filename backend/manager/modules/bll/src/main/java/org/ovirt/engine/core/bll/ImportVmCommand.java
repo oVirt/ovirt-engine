@@ -10,6 +10,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -668,23 +669,15 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     private void addInterfacesFromTemplate() {
+        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
+
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
-            if (MacPoolManager.getInstance().IsMacInUse(iface.getMacAddress())) {
-                AuditLogableBase logable = new AuditLogableBase();
-                logable.AddCustomValue("MACAddr", iface.getMacAddress());
-                logable.AddCustomValue("VmName", getVm().getvm_name());
-                AuditLogDirector.log(logable, AuditLogType.MAC_ADDRESS_IS_IN_USE);
-            }
-            else {
-                macAdded = MacPoolManager.getInstance().AddMac(iface.getMacAddress());
-            }
             iface.setId(Guid.NewGuid());
             iface.setVmTemplateId(null);
             iface.setVmId(getVm().getStaticData().getId());
-            DbFacade.getInstance().getVmNetworkInterfaceDAO().save(iface);
-            DbFacade.getInstance().getVmNetworkStatisticsDAO().save(iface.getStatistics());
-            getCompensationContext().snapshotNewEntity(iface);
-            getCompensationContext().snapshotNewEntity(iface.getStatistics());
+            iface.setVmName(getVm().getvm_name());
+
+            macAdded = vmInterfaceManager.add(iface, getCompensationContext());
         }
     }
 
@@ -742,17 +735,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     protected void RemoveVmNetwork() {
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
-                .getAllForVm(getVmId());
-        if (interfaces != null) {
-            for (VmNetworkInterface iface : interfaces) {
-                if (macAdded) {
-                    MacPoolManager.getInstance().freeMac(iface.getMacAddress());
-                }
-                DbFacade.getInstance().getVmNetworkInterfaceDAO().remove(iface.getId());
-                DbFacade.getInstance().getVmNetworkStatisticsDAO().remove(iface.getId());
-            }
-        }
+        new VmInterfaceManager().removeAll(macAdded, getVmId());
     }
 
     protected void EndImportCommand() {
