@@ -305,6 +305,16 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         RHDSUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new RHDSSimpleLdapQueryExecutionFormatter(),
                         new RHDSLdapGuidEncoder()));
+        // In RHDS there is no UPN, so we do the same query as getUserByName, using a formatter that will adjust the filter
+        // to contain the user name instead of the UPN
+        dsHashMap.put(LdapQueryType.getUserByPrincipalName, new LdapQueryMetadataImpl(
+                        "(&(objectClass=person)(uid=%1$s))",
+                        "",
+                        new RHDSUserContextMapper(),
+                        SearchControls.SUBTREE_SCOPE,
+                        RHDSUserContextMapper.USERS_ATTRIBUTE_FILTER,
+                        new RHDSUPNLdapQueryExecutionFormatter(),
+                        new RHDSLdapGuidEncoder()));
         dsHashMap.put(LdapQueryType.rootDSE, new LdapQueryMetadataImpl(
                         "(objectClass=*)",
                         "",
