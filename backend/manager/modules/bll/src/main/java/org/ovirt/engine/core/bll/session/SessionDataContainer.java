@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -181,5 +182,27 @@ public class SessionDataContainer {
                 DbFacade.getInstance().getDbUserDAO().removeUserSessions(userSessionMap);
             }
         }
+    }
+
+    /**
+     * This method will add a user to thread local, at case that user is not
+     * already added to context. If session is null or empty will try to get
+     * session from thread local
+     *
+     * @param sessionId
+     *            -id of session
+     */
+    public IVdcUser addUserToThreadContext(String sessionId) {
+        IVdcUser vdcUser = ThreadLocalParamsContainer.getVdcUser();
+        if (vdcUser == null) {
+            if (!StringHelper.isNullOrEmpty(sessionId)) {
+                vdcUser = (IVdcUser) GetData(sessionId, "VdcUser");
+                ThreadLocalParamsContainer.setHttpSessionId(sessionId);
+            } else {
+                vdcUser = (IVdcUser) GetData("VdcUser");
+            }
+            ThreadLocalParamsContainer.setVdcUser(vdcUser);
+        }
+        return vdcUser;
     }
 }

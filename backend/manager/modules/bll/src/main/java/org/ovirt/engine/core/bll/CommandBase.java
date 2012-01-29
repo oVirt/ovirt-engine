@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.interfaces.IBackendCallBackServer;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -66,7 +65,6 @@ import org.ovirt.engine.core.dao.StatusAwareDao;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
-import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -109,7 +107,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected CommandBase(T parameters) {
         _parameters = parameters;
-        setCurrentUser(addUserToThredContext(parameters.getSessionId()));
+        setCurrentUser(SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId()));
     }
 
     /**
@@ -161,28 +159,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     public void setCompensationContext(CompensationContext compensationContext) {
         this.compensationContext = compensationContext;
-    }
-
-    /**
-     * This method will add a user to thread local, at case that user is not
-     * already added to context. If session is null or empty will try to get
-     * session from thread local
-     *
-     * @param sessionId
-     *            -id of session
-     */
-    private IVdcUser addUserToThredContext(String sessionId) {
-        IVdcUser vdcUser = ThreadLocalParamsContainer.getVdcUser();
-        if (vdcUser == null) {
-            if (!StringHelper.isNullOrEmpty(sessionId)) {
-                vdcUser = (IVdcUser) SessionDataContainer.getInstance().GetData(sessionId, "VdcUser");
-                ThreadLocalParamsContainer.setHttpSessionId(sessionId);
-            } else {
-                vdcUser = (IVdcUser) SessionDataContainer.getInstance().GetData("VdcUser");
-            }
-            ThreadLocalParamsContainer.setVdcUser(vdcUser);
-        }
-        return vdcUser;
     }
 
     private String _description = "";
