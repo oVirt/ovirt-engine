@@ -12,10 +12,15 @@ JBOSS_HOME=/usr/share/jboss-as
 EAR_DIR=/usr/share/ovirt-engine/engine.ear
 EAR_SRC_DIR=ear/target/engine
 PY_SITE_PKGS:=$(shell python -c "from distutils.sysconfig import get_python_lib as f;print f()")
+
+# RPM version
 APP_VERSION:=$(shell cat pom.xml | grep '<engine.version>' | awk -F\> '{print $$2}' | awk -F\< '{print $$1}')
 RPM_VERSION:=$(shell echo $(APP_VERSION) | sed "s/-/_/")
 
-#RPM_RELEASE:=$(shell echo $(APP_VERSION) | awk -F\. '{print $$3"%{?dist}"}')
+# Release Version; used to create y in <x.x.x-y> numbering.
+# Should be used to create releases.
+RELEASE_VERSION=1.4
+
 SPEC_FILE_IN=packaging/fedora/spec/ovirt-engine.spec.in
 SPEC_FILE=ovirt-engine.spec
 RPMBUILD=$(shell bash -c "pwd -P")/rpmbuild
@@ -54,7 +59,8 @@ srpm: $(SRPM)
 
 $(SRPM): tarball $(SPEC_FILE_IN)
 	mkdir -p $(OUTPUT_DIR)
-	sed 's/^Version:.*/Version: $(RPM_VERSION)/' $(SPEC_FILE_IN) > $(SPEC_FILE)
+	sed -e 's/^Version:.*/Version: $(RPM_VERSION)/' \
+            -e 's/^Release:.*/Release: $(RELEASE_VERSION)%{?dist}/' $(SPEC_FILE_IN) > $(SPEC_FILE)
 	mkdir -p $(SRCRPMBUILD)/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
 	cp -f $(SPEC_FILE) $(SRCRPMBUILD)/SPECS/
 	cp -f  $(TARBALL) $(SRCRPMBUILD)/SOURCES/
@@ -138,7 +144,7 @@ install_setup:
 	cp -f ./packaging/fedora/setup/engine-cleanup.py $(PREFIX)/usr/share/ovirt-engine/scripts
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/engine-cleanup.py
 	ln -s /usr/share/ovirt-engine/scripts/engine-cleanup.py $(PREFIX)/usr/bin/engine-cleanup
-	sed -i "s/MYVERSION/$(RPM_VERSION)/" $(PREFIX)/usr/share/ovirt-engine/resources/jboss/ROOT.war/engineVersion.js
+	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RELEASE_VERSION)/" $(PREFIX)/usr/share/ovirt-engine/resources/jboss/ROOT.war/engineVersion.js
 
 install_sec:
 	cd backend/manager/3rdparty/pub2ssh/; chmod +x pubkey2ssh.sh; mkdir -p bin; ./pubkey2ssh.sh; cd -
