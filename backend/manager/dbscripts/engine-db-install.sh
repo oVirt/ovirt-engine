@@ -35,8 +35,13 @@ DB_USER=engine
 TABLE_NAME=vdc_options
 DB_NAME=engine
 SYSTEMCTL=/bin/systemctl
-PGSQL_SERVICE="/sbin/service $PGSQL"
-POSTGRESQL_SERVICE=postgresql.service
+PGSQL_SERVICE="/etc/init.d/postgresql"
+
+#Figure out if we're support systemd
+SYSTEMD_SUPPORT=0
+if [ -d /lib/systemd ]; then
+	SYSTEMD_SUPPORT=1
+fi
 
 #auth security file path
 PG_HBA_FILE=/var/lib/pgsql/data/pg_hba.conf
@@ -118,22 +123,37 @@ verifyPostgresPkgAreInstalled()
 verifyPkgIsInstalled()
 {
 	RPM="$1"
-	rpm -q $RPM >> $LOG_FILE 2>&1  
+	rpm -q $RPM >> $LOG_FILE 2>&1
 	_verifyRC $? "error, rpm $RPM is not installed"
 }
 
 verifyPostgresService()
 {
-   echo "[$SCRIPT_NAME] verifying postgres service exists." >> $LOG_FILE 
-   if [ ! -f /lib/systemd/system/postgresql.service ]
+   echo "[$SCRIPT_NAME] verifying postgres service exists." >> $LOG_FILE
+   rc=0
+   if [ $SYSTEMD_SUPPORT -eq 1 ]
    then
-        echo "[$SCRIPT_NAME] postgresql service cannot be executed from $PGSQL_SERVICE" 
-        exit 1 
-   fi 
+	   if [ ! -f /lib/systemd/system/postgresql.service ]
+	   then
+	   		rc=1
+	   fi
+   else
+	   if [ ! -x $PGSQL_SERVICE ]
+   	   then
+   	   		rc=1
+       fi
+   fi
+
+   if [ $rc != 0 ]
+   then
+        echo "[$SCRIPT_NAME] postgresql service cannot be executed from $PGSQL_SERVICE"
+        exit 1
+   fi
+
    if [ ! -x $PSQL ]
    then
-        echo "[$SCRIPT_NAME] postgres psql command cannot be executed from $PSQL" 
-        exit 1 
+        echo "[$SCRIPT_NAME] postgres psql command cannot be executed from $PSQL"
+        exit 1
    fi 
 }
 
@@ -145,11 +165,15 @@ initPgsqlDB()
     then
         echo "[$SCRIPT_NAME] psgql db already been initialized." >> $LOG_FILE
     else
-		#This is how it is handled in RHEL6, im leaving this remark in case
-		#We'll need to revert
-        #$PGSQL_SERVICE initdb >> $LOG_FILE 2>&1
-		/usr/bin/postgresql-setup initdb postgresql >> $LOG_FILE 2>&1
-	    _verifyRC $? "error, failed initializing postgresql db"
+		if [ $SYSTEMD_SUPPORT -eq 1 ]
+		then
+			/usr/bin/postgresql-setup initdb postgresql >> $LOG_FILE 2>&1
+			rc=$?
+		else
+			$PGSQL_SERVICE initdb >> $LOG_FILE 2>&1
+			rc=$?
+		fi
+	    _verifyRC $rc "error, failed initializing postgresql db"
     fi
 }
 
