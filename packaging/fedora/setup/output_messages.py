@@ -141,7 +141,7 @@ INFO_VAL_ORG_NAME_ILLEGAL_CHARS="ERROR: organization name can't contain ',', '%'
 #iso domain warning
 WARN_ISO_DOMAIN_SECURITY="A default ISO share has been created on this host.\n\
    If IP based access restrictions are required, please edit %s entry in /etc/exports"
-WARN_LOW_MEMORY="There is less than %s GB available free memory on the Host.\nIt is  recommended to have at least %s GB available memory to run the RHEV Manager." % (basedefs.CONST_WARN_MEMORY_GB, basedefs.CONST_WARN_MEMORY_GB)
+WARN_LOW_MEMORY="There is less than %s GB of available free memory on this machine.\nIt is  recommended to have at least %s GB of available memory to run the %s." % (basedefs.CONST_WARN_MEMORY_GB, basedefs.CONST_WARN_MEMORY_GB, MY_NAME)
 
 WARN_WEAK_PASS="Warning: Weak Password."
 
