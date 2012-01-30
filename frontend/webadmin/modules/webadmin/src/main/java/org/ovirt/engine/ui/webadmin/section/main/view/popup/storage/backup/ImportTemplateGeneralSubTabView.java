@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup;
 
+import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.template.SubTabTemplateGeneralView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
 
 import com.google.gwt.user.client.ui.IsWidget;
 

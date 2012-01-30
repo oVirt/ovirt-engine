@@ -11,6 +11,11 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateImportDiskListModel;
@@ -20,16 +25,11 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundPopupView;
-import org.ovirt.engine.ui.webadmin.uicommon.model.DetailModelProvider;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.IVdcQueryableCellTable;
-import org.ovirt.engine.ui.webadmin.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.webadmin.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DiskSizeColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.FullDateTimeColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
@@ -49,7 +49,7 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 
-public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportTemplateModel> implements ImportTemplatePopupPresenterWidget.ViewDef {
+public class ImportTemplatePopupView extends WebAdminModelBoundPopupView<ImportTemplateModel> implements ImportTemplatePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ImportTemplateModel, ImportTemplatePopupView> {
         Driver driver = GWT.create(Driver.class);
