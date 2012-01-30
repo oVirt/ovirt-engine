@@ -70,6 +70,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Users")
     String userMainTabLabel();
 
+    @DefaultStringValue("Quotas")
+    String quotaMainTabLabel();
+
     @DefaultStringValue("Storage")
     String dataCenterStorageSubTabLabel();
 
@@ -106,6 +109,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Clusters")
     String dataCenterClusterSubTabLabel();
 
+    @DefaultStringValue("Quotas")
+    String dataCenterQuotaSubTabLabel();
+
     @DefaultStringValue("Permissions")
     String dataCenterPermissionSubTabLabel();
 
@@ -123,6 +129,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Compatibility Version")
     String dataCenterPopupVersionLabel();
+
+    @DefaultStringValue("Quota Mode")
+    String dataCenterPopupQuotaEnforceTypeLabel();
 
     @DefaultStringValue("Edit Network Parameters")
     String dataCenterNetworkPopupLabel();
@@ -373,6 +382,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Permissions")
     String userPermissionSubTabLabel();
 
+    @DefaultStringValue("Quotas")
+    String userQuotaSubTabLabel();
+
     @DefaultStringValue("Directory Groups")
     String userGroupsSubTabLabel();
 
@@ -498,6 +510,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Host Cluster")
     String makeTemplateClusterLabel();
+
+    @DefaultStringValue("Quota")
+    String makeTemplateQuotaLabel();
 
     @DefaultStringValue("Storage Domain")
     String makeTemplateStorageDomainLabel();
@@ -740,4 +755,24 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Thin Provision")
     String thisAllocation();
 
+    @DefaultStringValue("Disk Activate/Deactivate while VM is running, is supported only for Clusters of version 3.1 and above")
+    String diskHotPlugNotSupported();
+
+    @DefaultStringValue("Clusters")
+    String quotaClusterSubTabLabel();
+
+    @DefaultStringValue("Storages")
+    String quotaStorageSubTabLabel();
+
+    @DefaultStringValue("Users")
+    String quotaUserSubTabLabel();
+
+    @DefaultStringValue("Permissions")
+    String quotaPermissionSubTabLabel();
+
+    @DefaultStringValue("Events")
+    String quotaEventSubTabLabel();
+
+    @DefaultStringValue("VMs")
+    String quotaVmSubTabLabel();
 }

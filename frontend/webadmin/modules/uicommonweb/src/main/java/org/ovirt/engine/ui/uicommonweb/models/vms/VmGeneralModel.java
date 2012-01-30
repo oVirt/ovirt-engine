@@ -174,6 +174,16 @@ public class VmGeneralModel extends EntityModel
         }
     }
 
+    private String quotaName;
+
+    public String getQuotaName() {
+        return quotaName;
+    }
+
+    public void setQuotaName(String quotaName) {
+        this.quotaName = quotaName;
+    }
+
     private int monitorCount;
 
     public int getMonitorCount()
@@ -547,6 +557,7 @@ public class VmGeneralModel extends EntityModel
 
         setName(vm.getvm_name());
         setDescription(vm.getvm_description());
+        setQuotaName(vm.getStaticData().getQuotaId() != null ? vm.getStaticData().getQuotaId().toString() : "");
         setTemplate(vm.getvmt_name());
         setDefinedMemory(vm.getvm_mem_size_mb() + " MB");
         setMinAllocatedMemory(vm.getMinAllocatedMem() + " MB");

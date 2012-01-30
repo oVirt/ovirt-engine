@@ -1,18 +1,24 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaPermissionListModel;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -75,9 +81,34 @@ public class UserPermissionListModel extends SearchableListModel
         {
             return;
         }
+        MultilevelAdministrationByAdElementIdParameters mlaParams =
+                new MultilevelAdministrationByAdElementIdParameters(getEntity().getuser_id());
 
-        super.SyncSearch(VdcQueryType.GetPermissionsByAdElementId,
-                new MultilevelAdministrationByAdElementIdParameters(getEntity().getuser_id()));
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object ReturnValue)
+            {
+                SearchableListModel searchableListModel = (SearchableListModel) model;
+                ArrayList<permissions> list =
+                        (java.util.ArrayList<permissions>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                ArrayList<permissions> newList = new ArrayList<permissions>();
+                for (permissions permission : list) {
+                    if (!permission.getrole_id().equals(QuotaPermissionListModel.CONSUME_QUOTA_ROLE_ID)) {
+                        newList.add(permission);
+                    }
+                }
+                searchableListModel.setItems(newList);
+            }
+        };
+
+        mlaParams.setRefresh(getIsQueryFirstTime());
+
+        Frontend.RunQuery(VdcQueryType.GetPermissionsByAdElementId, mlaParams, _asyncQuery);
+
+        setIsQueryFirstTime(false);
+
     }
 
     @Override

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+	
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaClusterPopupView.WidgetStyle">
+		.textBoxWidth {
+			width: 30px;
+		}
+		.radioButtonWidth {
+			width: 120px;
+		}
+		.labelVisible {
+			display: none;
+		}
+		.labelStyle {
+			font-weight: bold;
+			padding-left: 5px;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="450px" height="300px">
+	<d:content>
+		<g:VerticalPanel height="200px">
+			<g:Label ui:field="memLabel" addStyleNames="{style.labelStyle}"/>
+			<g:HorizontalPanel>
+				<e:EntityModelRadioButtonEditor
+					ui:field="unlimitedMemRadioButtonEditor" addStyleNames="{style.radioButtonWidth}"/>
+				<e:EntityModelRadioButtonEditor
+					ui:field="specificMemRadioButtonEditor" addStyleNames="{style.radioButtonWidth}"/>
+				<e:EntityModelTextBoxEditor ui:field="memValueEditor" addStyleNames="{style.textBoxWidth}" />
+			</g:HorizontalPanel>
+			<g:Label ui:field="cpuLabel" addStyleNames="{style.labelStyle}"/>
+			<g:HorizontalPanel>
+				<e:EntityModelRadioButtonEditor
+					ui:field="unlimitedCpuRadioButtonEditor" addStyleNames="{style.radioButtonWidth}"/>
+				<e:EntityModelRadioButtonEditor
+					ui:field="specificCpuRadioButtonEditor" addStyleNames="{style.radioButtonWidth}"/>
+				<e:EntityModelTextBoxEditor ui:field="cpuValueEditor" addStyleNames="{style.textBoxWidth}" />
+			</g:HorizontalPanel>
+		</g:VerticalPanel>
+	</d:content>
+</d:SimpleDialogPanel>
+
+</ui:UiBinder>

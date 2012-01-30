@@ -18,6 +18,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
 
     TextBoxLabel name = new TextBoxLabel();
     TextBoxLabel description = new TextBoxLabel();
+    TextBoxLabel quotaName = new TextBoxLabel();
     TextBoxLabel template = new TextBoxLabel();
     TextBoxLabel definedMemory = new TextBoxLabel();
     TextBoxLabel minAllocatedMemory = new TextBoxLabel();
@@ -75,6 +76,14 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
                 return getModel().getHasUsbPolicy();
             }
         });
+
+        formBuilder.addFormItem(new FormItem("Quota", quotaName, 5, 2) {
+            @Override
+            public boolean isVisible() {
+                return true;
+            }
+        });
+
         formBuilder.addFormItem(new FormItem("Resides on Storage Domain", storageDomain, 5, 1, "HasStorageDomain") {
             @Override
             public boolean isVisible() {

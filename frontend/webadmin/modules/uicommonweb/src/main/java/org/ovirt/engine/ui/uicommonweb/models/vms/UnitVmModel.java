@@ -392,6 +392,18 @@ public class UnitVmModel extends Model
         privateMinAllocatedMemory = value;
     }
 
+    private ListModel privateQuota;
+
+    public ListModel getQuota()
+    {
+        return privateQuota;
+    }
+
+    private void setQuota(ListModel value)
+    {
+        privateQuota = value;
+    }
+
     private ListModel privateCluster;
 
     public ListModel getCluster()
@@ -912,6 +924,9 @@ public class UnitVmModel extends Model
 
         setTemplate(new ListModel());
         getTemplate().getSelectedItemChangedEvent().addListener(this);
+
+        setQuota(new ListModel());
+        getQuota().setIsAvailable(false);
 
         setCluster(new ListModel());
         getCluster().getSelectedItemChangedEvent().addListener(this);

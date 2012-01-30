@@ -38,6 +38,9 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManage
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.qouta.EditQuotaClusterPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.qouta.EditQuotaStoragePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.qouta.QuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
@@ -65,6 +68,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenter
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabReportsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabTemplatePresenter;
@@ -81,6 +85,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTab
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterPermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostEventPresenter;
@@ -93,6 +98,13 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.PoolSubTabPa
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolVmPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.QuotaSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaClusterPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaEventPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaPermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaStoragePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaUserPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.StorageSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageEventPresenter;
@@ -116,6 +128,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserEv
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserPermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.UserSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineApplicationPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineEventPresenter;
@@ -159,6 +172,9 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementP
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.ManualFenceConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaClusterPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaStoragePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.QuotaPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.DisksAllocationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindMultiDcPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindSingleDcPopupView;
@@ -186,6 +202,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabDataCenterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabHostView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabPoolView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabQuotaView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabReportsView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabStorageView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabTemplateView;
@@ -202,6 +219,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataC
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterNetworkView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterPermissionView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterQuotaView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterStorageView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostEventView;
@@ -214,6 +232,13 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.pool.PoolSubTabPanelVi
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.pool.SubTabPoolGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.pool.SubTabPoolPermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.pool.SubTabPoolVmView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.QuotaSubTabPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaClusterView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaEventView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaPermissionView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaStorageView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaUserView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaVmView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.StorageSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageDataCenterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageEventView;
@@ -237,6 +262,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserEventVi
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserGroupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserPermissionView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserQuotaView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.UserSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineApplicationView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineEventView;
@@ -337,6 +363,10 @@ public class PresenterModule extends BasePresenterModule {
                 MainTabReportsPresenter.ViewDef.class,
                 MainTabReportsView.class,
                 MainTabReportsPresenter.ProxyDef.class);
+        bindPresenter(MainTabQuotaPresenter.class,
+                MainTabQuotaPresenter.ViewDef.class,
+                MainTabQuotaView.class,
+                MainTabQuotaPresenter.ProxyDef.class);
 
         // Main section: sub tabs
 
@@ -357,6 +387,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabDataCenterClusterPresenter.ViewDef.class,
                 SubTabDataCenterClusterView.class,
                 SubTabDataCenterClusterPresenter.ProxyDef.class);
+        bindPresenter(SubTabDataCenterQuotaPresenter.class,
+                SubTabDataCenterQuotaPresenter.ViewDef.class,
+                SubTabDataCenterQuotaView.class,
+                SubTabDataCenterQuotaPresenter.ProxyDef.class);
         bindPresenter(SubTabDataCenterPermissionPresenter.class,
                 SubTabDataCenterPermissionPresenter.ViewDef.class,
                 SubTabDataCenterPermissionView.class,
@@ -581,6 +615,40 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabUserGroupPresenter.ViewDef.class,
                 SubTabUserGroupView.class,
                 SubTabUserGroupPresenter.ProxyDef.class);
+        bindPresenter(SubTabUserQuotaPresenter.class,
+                SubTabUserQuotaPresenter.ViewDef.class,
+                SubTabUserQuotaView.class,
+                SubTabUserQuotaPresenter.ProxyDef.class);
+
+        // Quota
+        bindPresenter(QuotaSubTabPanelPresenter.class,
+                QuotaSubTabPanelPresenter.ViewDef.class,
+                QuotaSubTabPanelView.class,
+                QuotaSubTabPanelPresenter.ProxyDef.class);
+        bindPresenter(SubTabQuotaClusterPresenter.class,
+                SubTabQuotaClusterPresenter.ViewDef.class,
+                SubTabQuotaClusterView.class,
+                SubTabQuotaClusterPresenter.ProxyDef.class);
+        bindPresenter(SubTabQuotaStoragePresenter.class,
+                SubTabQuotaStoragePresenter.ViewDef.class,
+                SubTabQuotaStorageView.class,
+                SubTabQuotaStoragePresenter.ProxyDef.class);
+        bindPresenter(SubTabQuotaVmPresenter.class,
+                SubTabQuotaVmPresenter.ViewDef.class,
+                SubTabQuotaVmView.class,
+                SubTabQuotaVmPresenter.ProxyDef.class);
+        bindPresenter(SubTabQuotaUserPresenter.class,
+                SubTabQuotaUserPresenter.ViewDef.class,
+                SubTabQuotaUserView.class,
+                SubTabQuotaUserPresenter.ProxyDef.class);
+        bindPresenter(SubTabQuotaPermissionPresenter.class,
+                SubTabQuotaPermissionPresenter.ViewDef.class,
+                SubTabQuotaPermissionView.class,
+                SubTabQuotaPermissionPresenter.ProxyDef.class);
+        bindPresenter(SubTabQuotaEventPresenter.class,
+                SubTabQuotaEventPresenter.ViewDef.class,
+                SubTabQuotaEventView.class,
+                SubTabQuotaEventPresenter.ProxyDef.class);
 
         // MAIN SECTION: -POPUPS-
         bindPresenterWidget(RemoveConfirmationPopupPresenterWidget.class,
@@ -769,6 +837,18 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ReportPresenterWidget.class,
                 ReportPresenterWidget.ViewDef.class,
                 ReportView.class);
+        // Quota
+        bindPresenterWidget(QuotaPopupPresenterWidget.class,
+                QuotaPopupPresenterWidget.ViewDef.class,
+                QuotaPopupView.class);
+
+        bindPresenterWidget(EditQuotaClusterPopupPresenterWidget.class,
+                EditQuotaClusterPopupPresenterWidget.ViewDef.class,
+                EditQuotaClusterPopupView.class);
+
+        bindPresenterWidget(EditQuotaStoragePopupPresenterWidget.class,
+                EditQuotaStoragePopupPresenterWidget.ViewDef.class,
+                EditQuotaStoragePopupView.class);
     }
 
 }

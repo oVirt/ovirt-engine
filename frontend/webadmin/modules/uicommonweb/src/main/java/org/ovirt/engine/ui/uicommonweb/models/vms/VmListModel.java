@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -1921,6 +1922,9 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         VM tempVar = new VM();
         tempVar.setId(vm.getId());
         tempVar.setvm_type(model.getVmType());
+        if (model.getQuota().getSelectedItem() != null) {
+            tempVar.getStaticData().setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+        }
         tempVar.setvm_os((VmOsType) model.getOSType().getSelectedItem());
         tempVar.setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
         tempVar.setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : "");
@@ -2486,6 +2490,9 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         getcurrentVm().setvm_type(model.getVmType());
         getcurrentVm().setvmt_guid(template.getId());
         getcurrentVm().setvm_name(name);
+        if (model.getQuota().getSelectedItem() != null) {
+            getcurrentVm().getStaticData().setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+        }
         getcurrentVm().setvm_os((VmOsType) model.getOSType().getSelectedItem());
         getcurrentVm().setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
         getcurrentVm().setvm_description((String) model.getDescription().getEntity());

@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
+import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
@@ -555,7 +556,7 @@ public class CommonModel extends ListModel
 
         reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled()
                 && (model.getType() == SystemTreeItemType.System
-                || model.getType() == SystemTreeItemType.DataCenter || model.getType() == SystemTreeItemType.Clusters));
+                        || model.getType() == SystemTreeItemType.DataCenter || model.getType() == SystemTreeItemType.Clusters));
 
         // Select a default item depending on system tree selection.
         ListModel oldSelectedItem = getSelectedItem();
@@ -725,6 +726,7 @@ public class CommonModel extends ListModel
     private SearchableListModel userList;
     private SearchableListModel eventList;
     private ReportsListModel reportsList;
+    private SearchableListModel quotaList;
     private SearchableListModel monitor;
 
     private void InitItems()
@@ -762,6 +764,10 @@ public class CommonModel extends ListModel
         reportsList.setUser("ovirt");
         reportsList.setPassword("1234");
         list.add(reportsList);
+
+        reportsList.setIsAvailable(false);
+        quotaList = new QuotaListModel();
+        list.add(quotaList);
 
         setItems(list);
 

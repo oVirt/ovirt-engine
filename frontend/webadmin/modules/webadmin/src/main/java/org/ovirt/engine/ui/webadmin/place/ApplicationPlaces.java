@@ -67,6 +67,13 @@ public class ApplicationPlaces {
 
     public static final String reportsMainTabPlace = "reports";
 
+    public static final String quotaMainTabPlace = "quotas";
+
+    public static String getQuotaMainTabPlace() {
+        return quotaMainTabPlace;
+    }
+
+    // Main section: sub tabs
     public static String getReportsMainTabPlace() {
         return reportsMainTabPlace;
     }
@@ -83,6 +90,8 @@ public class ApplicationPlaces {
             + "logical_networks";
 
     public static final String dataCenterClusterSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX + "clusters";
+
+    public static final String dataCenterQuotaSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX + "quotas";
 
     public static final String dataCenterPermissionSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
             + "permissions";
@@ -187,6 +196,8 @@ public class ApplicationPlaces {
 
     public static final String userGeneralSubTabPlace = userMainTabPlace + SUB_TAB_PREFIX + "general";
 
+    public static final String userQuotaSubTabPlace = userMainTabPlace + SUB_TAB_PREFIX + "quotas";
+
     public static final String userGroupSubTabPlace = userMainTabPlace + SUB_TAB_PREFIX + "directory_groups";
 
     public static final String userEventNotifierSubTabPlace = userMainTabPlace + SUB_TAB_PREFIX + "event_notifier";
@@ -194,5 +205,19 @@ public class ApplicationPlaces {
     public static final String userPermissionSubTabPlace = userMainTabPlace + SUB_TAB_PREFIX + "permissions";
 
     public static final String userEventSubTabPlace = userMainTabPlace + SUB_TAB_PREFIX + "events";
+
+    // Quota
+
+    public static final String quotaClusterSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX + "clusters";
+
+    public static final String quotaStorageSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX + "storages";
+
+    public static final String quotaUserSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX + "users";
+
+    public static final String quotaPermissionSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX + "permissions";
+
+    public static final String quotaEventSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX + "events";
+
+    public static final String quotaVmSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX + "vms";;
 
 }

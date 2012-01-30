@@ -36,7 +36,7 @@ public class SubTabUserEventPresenter extends AbstractSubTabPresenter<DbUser, Us
 
     @TabInfo(container = UserSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().userEventSubTabLabel(), 4,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().userEventSubTabLabel(), 5,
                 ginjector.getSubTabUserEventModelProvider(), Align.RIGHT);
     }
 

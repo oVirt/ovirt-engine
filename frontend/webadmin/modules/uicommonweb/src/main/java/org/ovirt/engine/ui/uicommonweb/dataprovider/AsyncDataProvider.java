@@ -1,18 +1,91 @@
 package org.ovirt.engine.ui.uicommonweb.dataprovider;
 
-import org.ovirt.engine.core.common.businessentities.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.DiskType;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.ServerCpu;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.TagsType;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
+import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
+import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveParameters;
+import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveQueryReturnValue;
+import org.ovirt.engine.core.common.queries.GetAvailableClusterVersionsByStoragePoolParameters;
+import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
+import org.ovirt.engine.core.common.queries.GetDomainListParameters;
+import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
+import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
+import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
+import org.ovirt.engine.core.common.queries.GetStorageDomainsByConnectionParameters;
+import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
+import org.ovirt.engine.core.common.queries.GetTagsByUserGroupIdParameters;
+import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
+import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.GetVmTemplatesByStoragePoolIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
+import org.ovirt.engine.core.common.queries.IsVmPoolWithSameNameExistsParameters;
+import org.ovirt.engine.core.common.queries.IsVmTemlateWithSameNameExistParameters;
+import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
+import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
+import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
+import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
+import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
+import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.RpmVersion;
+import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.IAsyncConverter;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 @SuppressWarnings("unused")
 public final class AsyncDataProvider {
@@ -187,8 +260,8 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.Search,
-            new SearchParameters("Cluster: name=" + name + " sortby name", SearchType.Cluster),
-            aQuery);
+                new SearchParameters("Cluster: name=" + name + " sortby name", SearchType.Cluster),
+                aQuery);
     }
 
     public static void GetPoolById(AsyncQuery aQuery, Guid poolId) {
@@ -270,8 +343,8 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.Search,
-            new SearchParameters("DataCenter: name=" + name + " sortby name", SearchType.StoragePool),
-            aQuery);
+                new SearchParameters("DataCenter: name=" + name + " sortby name", SearchType.StoragePool),
+                aQuery);
     }
 
     public static void GetMinimalVmMemSize(AsyncQuery aQuery) {
@@ -733,7 +806,7 @@ public final class AsyncDataProvider {
         GetConfigFromCache(
                 new GetConfigurationValueParameters(is64 ? ConfigurationValues.VM64BitMaxMemorySizeInMB
                         : ConfigurationValues.VM32BitMaxMemorySizeInMB),
-                        aQuery);
+                aQuery);
     }
 
     public static void GetDomainList(AsyncQuery aQuery, boolean filterInternalDomain) {
@@ -1577,17 +1650,17 @@ public final class AsyncDataProvider {
         GetDataCentersByStorageDomain(new AsyncQuery(_asyncQuery,
                 new INewAsyncCallback() {
 
-            @Override
-            public void OnSuccess(Object model, Object returnValue) {
-                ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
-                storage_pool pool = pools.get(0);
-                if (pool != null) {
-                    GetStorageDomainList((AsyncQuery) model,
-                            pool.getId());
-                }
+                    @Override
+                    public void OnSuccess(Object model, Object returnValue) {
+                        ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
+                        storage_pool pool = pools.get(0);
+                        if (pool != null) {
+                            GetStorageDomainList((AsyncQuery) model,
+                                    pool.getId());
+                        }
 
-            }
-        }), storageDomainId);
+                    }
+                }), storageDomainId);
     }
 
     public static void GetDiskMaxSize(AsyncQuery aQuery) {
@@ -1770,5 +1843,12 @@ public final class AsyncDataProvider {
     public static void GetConfigFromCache(ConfigurationValues configValue, AsyncQuery aQuery)
     {
         GetConfigFromCache(new GetConfigurationValueParameters(configValue), aQuery);
+    }
+
+    public static ArrayList<QuotaEnforcmentTypeEnum> getQuotaEnforcmentTypes() {
+        return new ArrayList<QuotaEnforcmentTypeEnum>(Arrays.asList(new QuotaEnforcmentTypeEnum[] {
+                QuotaEnforcmentTypeEnum.DISABLED,
+                QuotaEnforcmentTypeEnum.SOFT_ENFORCEMENT,
+                QuotaEnforcmentTypeEnum.HARD_ENFORCEMENT }));
     }
 }

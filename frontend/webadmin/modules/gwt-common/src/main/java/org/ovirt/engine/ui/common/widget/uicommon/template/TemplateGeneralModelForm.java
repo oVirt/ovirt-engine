@@ -27,6 +27,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     TextBoxLabel usbPolicy = new TextBoxLabel();
     TextBoxLabel domain = new TextBoxLabel();
     TextBoxLabel timeZone = new TextBoxLabel();
+    TextBoxLabel quotaName = new TextBoxLabel();
 
     @Ignore
     TextBoxLabel monitorCount = new TextBoxLabel();
@@ -73,6 +74,8 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
                 return getModel().getHasTimeZone();
             }
         });
+
+        formBuilder.addFormItem(new FormItem("Quota", quotaName, 4, 2));
     }
 
     @Override

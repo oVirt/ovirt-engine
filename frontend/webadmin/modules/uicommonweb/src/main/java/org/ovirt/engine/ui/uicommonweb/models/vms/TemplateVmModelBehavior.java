@@ -1,14 +1,22 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.queries.GetQuotaByStoragePoolIdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -17,7 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 @SuppressWarnings("unused")
 public class TemplateVmModelBehavior extends IVmModelBehavior
 {
-    private VmTemplate template;
+    private final VmTemplate template;
 
     public TemplateVmModelBehavior(VmTemplate template)
     {
@@ -75,6 +83,35 @@ public class TemplateVmModelBehavior extends IVmModelBehavior
 
                     }
                 }, getModel().getHash()), dataCenter.getId());
+        if (dataCenter.getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED) {
+            getModel().getQuota().setIsAvailable(true);
+            GetQuotaByStoragePoolIdQueryParameters params = new GetQuotaByStoragePoolIdQueryParameters();
+            params.setStoragePoolId(dataCenter.getId());
+            Frontend.RunQuery(VdcQueryType.GetQuotaByStoragePoolId, params, new AsyncQuery(new Object[] { this,
+                    getModel() }, new INewAsyncCallback() {
+
+                @Override
+                public void OnSuccess(Object model, Object returnValue) {
+                    Object[] array = (Object[]) model;
+                    TemplateVmModelBehavior behavior = (TemplateVmModelBehavior) array[0];
+                    UnitVmModel unitVmModel = (UnitVmModel) array[1];
+                    VmTemplate vmTemplate = behavior.template;
+                    ArrayList<Quota> quotaList =
+                            (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    unitVmModel.getQuota().setItems(quotaList);
+                    if (vmTemplate.getQuotaId() != null) {
+                        for (Quota quota : quotaList) {
+                            if (quota.getId().equals(quota.getId())) {
+                                unitVmModel.getQuota().setSelectedItem(quota);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }));
+        } else {
+            getModel().getQuota().setIsAvailable(false);
+        }
     }
 
     @Override

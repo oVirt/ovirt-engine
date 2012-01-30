@@ -5,6 +5,9 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaStorage;
+import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -31,6 +34,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterClusterListM
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterQuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
@@ -43,6 +47,13 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaClusterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaEventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaListModel;
+import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaPermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaStorageListModel;
+import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaUserListModel;
+import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
@@ -67,6 +78,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserGroup;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.users.UserQuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
@@ -95,6 +107,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenter
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabReportsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabTemplatePresenter;
@@ -111,6 +124,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTab
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterPermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostEventPresenter;
@@ -123,6 +137,13 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.PoolSubTabPa
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolVmPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.QuotaSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaClusterPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaEventPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaPermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaStoragePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaUserPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.StorageSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageEventPresenter;
@@ -146,6 +167,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserEv
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserPermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.UserSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineApplicationPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineEventPresenter;
@@ -247,6 +269,10 @@ public interface ManagedComponents {
 
     MainModelProvider<Void, ReportsListModel> getMainTabReportsModelProvider();
 
+    AsyncProvider<MainTabQuotaPresenter> getMainTabQuotaPresenter();
+
+    MainModelProvider<Quota, QuotaListModel> getMainTabQuotaModelProvider();
+
     // Presenters & model providers: Main section: sub tabs
 
     // DataCenter
@@ -264,6 +290,10 @@ public interface ManagedComponents {
     AsyncProvider<SubTabDataCenterClusterPresenter> getSubTabDataCenterClusterPresenter();
 
     SearchableDetailModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel> getSubTabDataCenterClusterModelProvider();
+
+    AsyncProvider<SubTabDataCenterQuotaPresenter> getSubTabDataCenterQuotaPresenter();
+
+    SearchableDetailModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel> getSubTabDataCenterQuotaModelProvider();
 
     AsyncProvider<SubTabDataCenterPermissionPresenter> getSubTabDataCenterPermissionPresenter();
 
@@ -468,5 +498,37 @@ public interface ManagedComponents {
     AsyncProvider<SubTabUserGroupPresenter> getSubTabUserGroupPresenter();
 
     SearchableDetailModelProvider<UserGroup, UserListModel, UserGroupListModel> getSubTabUserGroupModelProvider();
+
+    AsyncProvider<SubTabUserQuotaPresenter> getSubTabUserQuotaPresenter();
+
+    SearchableDetailModelProvider<Quota, UserListModel, UserQuotaListModel> getSubTabUserQuotaModelProvider();
+
+    // Quota
+
+    AsyncProvider<QuotaSubTabPanelPresenter> getQuotaSubTabPanelPresenter();
+
+    AsyncProvider<SubTabQuotaClusterPresenter> getSubTabQuotaClusterPresenter();
+
+    SearchableDetailModelProvider<QuotaVdsGroup, QuotaListModel, QuotaClusterListModel> getSubTabQuotaClusterModelProvider();
+
+    AsyncProvider<SubTabQuotaStoragePresenter> getSubTabQuotaStoragePresenter();
+
+    SearchableDetailModelProvider<QuotaStorage, QuotaListModel, QuotaStorageListModel> getSubTabQuotaStorageModelProvider();
+
+    AsyncProvider<SubTabQuotaUserPresenter> getSubTabQuotaUserPresenter();
+
+    SearchableDetailModelProvider<permissions, QuotaListModel, QuotaUserListModel> getSubTabQuotaUserModelProvider();
+
+    AsyncProvider<SubTabQuotaPermissionPresenter> getSubTabQuotaPermissionPresenter();
+
+    SearchableDetailModelProvider<permissions, QuotaListModel, QuotaPermissionListModel> getSubTabQuotaPermissionModelProvider();
+
+    AsyncProvider<SubTabQuotaEventPresenter> getSubTabQuotaEventPresenter();
+
+    SearchableDetailModelProvider<AuditLog, QuotaListModel, QuotaEventListModel> getSubTabQuotaEventModelProvider();
+
+    AsyncProvider<SubTabQuotaVmPresenter> getSubTabQuotaVmPresenter();
+
+    SearchableDetailModelProvider<VM, QuotaListModel, QuotaVmListModel> getSubTabQuotaVmModelProvider();
 
 }

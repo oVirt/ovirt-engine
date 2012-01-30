@@ -74,6 +74,16 @@ public class TemplateGeneralModel extends EntityModel
         }
     }
 
+    private String quotaName;
+
+    public String getQuotaName() {
+        return quotaName;
+    }
+
+    public void setQuotaName(String quotaName) {
+        this.quotaName = quotaName;
+    }
+
     private String hostCluster;
 
     public String getHostCluster()
@@ -408,6 +418,7 @@ public class TemplateGeneralModel extends EntityModel
 
         setName(template.getname());
         setDescription(template.getdescription());
+        setQuotaName(template.getQuotaId().toString());
         setHostCluster(template.getvds_group_name());
         setDefinedMemory(template.getmem_size_mb() + " MB");
         setIsHighlyAvailable(template.getauto_startup());

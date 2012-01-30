@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -344,12 +345,12 @@ public class PermissionListModel extends SearchableListModel
         }
     }
 
-    private Guid getEntityGuid()
+    protected Guid getEntityGuid()
     {
         return DataProvider.GetEntityGuid(getEntity());
     }
 
-    private VdcObjectType getObjectType()
+    protected VdcObjectType getObjectType()
     {
         if (getEntity() instanceof VM)
         {
@@ -378,6 +379,10 @@ public class PermissionListModel extends SearchableListModel
         if (getEntity() instanceof vm_pools)
         {
             return VdcObjectType.VmPool;
+        }
+        if (getEntity() instanceof Quota)
+        {
+            return VdcObjectType.Quota;
         }
         return VdcObjectType.Unknown;
     }

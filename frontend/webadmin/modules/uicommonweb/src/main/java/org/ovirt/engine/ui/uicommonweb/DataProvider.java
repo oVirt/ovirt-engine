@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
@@ -2798,6 +2799,10 @@ public final class DataProvider
         else if (entity instanceof DbUser)
         {
             return ((DbUser) entity).getuser_id();
+        }
+        else if (entity instanceof Quota)
+        {
+            return ((Quota) entity).getId();
         }
         return new Guid();
     }

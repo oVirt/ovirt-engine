@@ -3,11 +3,12 @@ package org.ovirt.engine.ui.webadmin.widget.storage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.StorageVmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 
 import com.google.gwt.resources.client.ImageResource;
@@ -16,7 +17,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class VMsTree extends AbstractSubTabTree<StorageVmListModel, VM, DiskImage> {
+public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M, VM, DiskImage> {
 
     @Override
     protected TreeItem getRootItem(VM vm) {
@@ -52,7 +53,7 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel, VM, DiskImag
 
     @Override
     protected boolean getIsNodeEnabled(DiskImage disk) {
-        return disk.getstorage_ids().get(0).equals(listModel.getEntity().getId());
+        return disk.getstorage_ids().get(0).equals(((BusinessEntity) listModel.getEntity()).getId());
     }
 
     @Override

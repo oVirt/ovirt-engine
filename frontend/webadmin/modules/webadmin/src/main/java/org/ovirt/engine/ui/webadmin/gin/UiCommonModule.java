@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.webadmin.gin.uicommon.DataCenterModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.EventModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.HostModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.PoolModule;
+import org.ovirt.engine.ui.webadmin.gin.uicommon.QuotaModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.ReportsModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.StorageModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.TemplateModule;
@@ -19,6 +20,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.GuideModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.QuotaModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
@@ -53,6 +55,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         install(new UserModule());
         install(new EventModule());
         install(new ReportsModule());
+        install(new QuotaModule());
 
         // SystemTreeModel
         bind(SystemTreeModelProvider.class).asEagerSingleton();
@@ -86,6 +89,9 @@ public class UiCommonModule extends BaseUiCommonModule {
 
         // Guide Models
         bind(GuideModelProvider.class).asEagerSingleton();
+
+        // Guide Models
+        bind(QuotaModelProvider.class).asEagerSingleton();
     }
 
     void bindIntegration() {

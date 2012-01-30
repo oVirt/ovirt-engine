@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
@@ -21,6 +22,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserGroup;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.users.UserQuotaListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
@@ -115,6 +117,14 @@ public class UserModule extends AbstractGinModule {
                 }
             }
         };
+    }
+
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<Quota, UserListModel, UserQuotaListModel> getUserQuotaListProvider(ClientGinjector ginjector) {
+        return new SearchableDetailTabModelProvider<Quota, UserListModel, UserQuotaListModel>(ginjector,
+                UserListModel.class,
+                UserQuotaListModel.class);
     }
 
     @Provides

@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
+import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaPermissionListModel;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -231,6 +232,10 @@ public class RoleListModel extends ListWithDetailsModel
                 java.util.ArrayList<roles> filteredList = new java.util.ArrayList<roles>();
                 for (roles item : (java.util.ArrayList<roles>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
                 {
+                    //ignore CONSUME_QUOTA_ROLE in UI
+                    if (item.getId().equals(QuotaPermissionListModel.CONSUME_QUOTA_ROLE_ID)) {
+                        continue;
+                    }
                     if (roleListModel.getItemsFilter() == null || roleListModel.getItemsFilter() == item.getType())
                     {
                         filteredList.add(item);

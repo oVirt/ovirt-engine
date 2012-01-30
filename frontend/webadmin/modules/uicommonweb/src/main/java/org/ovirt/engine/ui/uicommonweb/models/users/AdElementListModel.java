@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -22,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaPermissionListModel;
 
 @SuppressWarnings("unused")
 public class AdElementListModel extends SearchableListModel
@@ -173,6 +176,13 @@ public class AdElementListModel extends SearchableListModel
                         roles roleValue = null;
                         boolean first = true;
                         java.util.ArrayList<roles> roles = (java.util.ArrayList<roles>) result1;
+                        java.util.ArrayList<roles> newRoles = new ArrayList<roles>();
+                        for (roles r : roles) {
+                            //ignore CONSUME_QUOTA_ROLE in UI
+                            if (!r.getId().equals(QuotaPermissionListModel.CONSUME_QUOTA_ROLE_ID)) {
+                                newRoles.add(r);
+                            }
+                        }
                         for (roles r : roles)
                         {
                             if (first)
@@ -187,7 +197,7 @@ public class AdElementListModel extends SearchableListModel
                             }
                         }
 
-                        adElementListModel1.getRole().setItems(roles);
+                        adElementListModel1.getRole().setItems(newRoles);
                         adElementListModel1.getRole().setSelectedItem(roleValue);
 
                     }

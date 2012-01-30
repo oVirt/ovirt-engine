@@ -56,6 +56,11 @@ public class DataCenterPopupView extends WebAdminModelBoundPopupView<DataCenterM
     @WithElementId
     ListModelListBoxEditor<Object> versionEditor;
 
+    @UiField(provided = true)
+    @Path(value = "quotaEnforceTypeListModel.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<Object> quotaEnforceTypeEditor;
+
     @UiField
     Style style;
 
@@ -80,6 +85,8 @@ public class DataCenterPopupView extends WebAdminModelBoundPopupView<DataCenterM
                 return ((Version) object).getValue();
             }
         });
+
+        quotaEnforceTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
     }
 
     void localize(ApplicationConstants constants) {
@@ -87,6 +94,7 @@ public class DataCenterPopupView extends WebAdminModelBoundPopupView<DataCenterM
         descriptionEditor.setLabel(constants.dataCenterPopupDescriptionLabel());
         storageTypeListEditor.setLabel(constants.dataCenterPopupStorageTypeLabel());
         versionEditor.setLabel(constants.dataCenterPopupVersionLabel());
+        quotaEnforceTypeEditor.setLabel(constants.dataCenterPopupQuotaEnforceTypeLabel());
     }
 
     @Override

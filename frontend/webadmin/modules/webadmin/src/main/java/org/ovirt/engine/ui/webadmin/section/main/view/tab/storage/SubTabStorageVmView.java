@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.webadmin.widget.storage.VMsTree;
 
 import com.google.inject.Inject;
 
-public class SubTabStorageVmView extends AbstractSubTabTreeView<VMsTree, storage_domains, VM, StorageListModel, StorageVmListModel>
+public class SubTabStorageVmView extends AbstractSubTabTreeView<VMsTree<StorageVmListModel>, storage_domains, VM, StorageListModel, StorageVmListModel>
         implements SubTabStorageVmPresenter.ViewDef {
 
     @Inject

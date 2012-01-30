@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -18,6 +19,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTempla
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.Editor.Path;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -52,6 +54,10 @@ public class VmMakeTemplatePopupView extends WebAdminModelBoundPopupView<UnitVmM
     @Ignore
     DisksAllocationView disksAllocationView;
 
+    @Ignore
+    @Path(value = "quota.selectedItem")
+    ListModelListBoxEditor<Object> quotaEditor;
+
     @UiField(provided = true)
     @Path(value = "isTemplatePrivate.entity")
     EntityModelCheckBoxEditor isTemplatePrivateEditor;
@@ -81,6 +87,13 @@ public class VmMakeTemplatePopupView extends WebAdminModelBoundPopupView<UnitVmM
                 return ((VDSGroup) object).getname();
             }
         });
+
+        quotaEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((Quota) object).getQuotaName();
+            }
+        });
     }
 
     void initCheckBoxEditors() {
@@ -91,6 +104,7 @@ public class VmMakeTemplatePopupView extends WebAdminModelBoundPopupView<UnitVmM
         nameEditor.setLabel(constants.makeTemplatePopupNameLabel());
         descriptionEditor.setLabel(constants.makeTemplatePopupDescriptionLabel());
         clusterEditor.setLabel(constants.makeTemplateClusterLabel());
+        quotaEditor.setLabel(constants.makeTemplateQuotaLabel());
         isTemplatePrivateEditor.setLabel(constants.makeTemplateIsTemplatePrivateEditorLabel());
         disksAllocationLabel.setText(constants.disksAllocation());
     }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.permissions;
@@ -21,6 +22,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterClusterListM
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterQuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
@@ -164,6 +166,14 @@ public class DataCenterModule extends AbstractGinModule {
             }
 
         };
+    }
+
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel> getDataCenterQuotaListProvider(ClientGinjector ginjector) {
+        return new SearchableDetailTabModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel>(ginjector,
+                DataCenterListModel.class,
+                DataCenterQuotaListModel.class);
     }
 
     @Provides

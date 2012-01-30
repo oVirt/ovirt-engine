@@ -397,6 +397,7 @@ public class UserListModel extends ListWithDetailsModel
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new UserGeneralModel());
+        list.add(new UserQuotaListModel());
         list.add(new UserPermissionListModel());
         list.add(new UserEventListModel());
         userGroupListModel = new UserGroupListModel();

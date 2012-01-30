@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
+import java.util.ArrayList;
+
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
@@ -132,6 +135,16 @@ public class DataCenterModel extends Model
         privateMaxNameLength = value;
     }
 
+    ListModel quotaEnforceTypeListModel;
+
+    public ListModel getQuotaEnforceTypeListModel() {
+        return quotaEnforceTypeListModel;
+    }
+
+    public void setQuotaEnforceTypeListModel(ListModel quotaEnforceTypeListModel) {
+        this.quotaEnforceTypeListModel = quotaEnforceTypeListModel;
+    }
+
     public DataCenterModel()
     {
         setName(new EntityModel());
@@ -141,6 +154,12 @@ public class DataCenterModel extends Model
         setStorageTypeList(new ListModel());
         getStorageTypeList().getSelectedItemChangedEvent().addListener(this);
         getStorageTypeList().setItems(DataProvider.GetStoragePoolTypeList());
+
+        setQuotaEnforceTypeListModel(new ListModel());
+        ArrayList<QuotaEnforcmentTypeEnum> list = AsyncDataProvider.getQuotaEnforcmentTypes();
+        getQuotaEnforceTypeListModel().setItems(list);
+        getQuotaEnforceTypeListModel().setSelectedItem(list.get(0));
+
         setMaxNameLength(1);
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);

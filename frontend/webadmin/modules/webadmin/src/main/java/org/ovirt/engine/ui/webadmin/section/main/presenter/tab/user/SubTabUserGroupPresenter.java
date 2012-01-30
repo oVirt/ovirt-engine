@@ -36,7 +36,7 @@ public class SubTabUserGroupPresenter extends AbstractSubTabPresenter<DbUser, Us
 
     @TabInfo(container = UserSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().userGroupsSubTabLabel(), 2,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().userGroupsSubTabLabel(), 3,
                 ginjector.getSubTabUserGroupModelProvider(), Align.LEFT);
     }
 

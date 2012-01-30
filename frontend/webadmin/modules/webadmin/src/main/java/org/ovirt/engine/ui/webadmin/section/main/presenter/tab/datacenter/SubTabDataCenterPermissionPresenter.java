@@ -35,7 +35,7 @@ public class SubTabDataCenterPermissionPresenter extends AbstractSubTabPresenter
 
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().dataCenterPermissionSubTabLabel(), 3,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().dataCenterPermissionSubTabLabel(), 4,
                 ginjector.getSubTabDataCenterPermissionModelProvider());
     }
 

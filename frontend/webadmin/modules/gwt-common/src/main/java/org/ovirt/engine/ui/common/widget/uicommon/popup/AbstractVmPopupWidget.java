@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -81,6 +82,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
     ListModelListBoxEditor<Object> clusterEditor;
+
+    @UiField(provided = true)
+    @Path(value = "quota.selectedItem")
+    ListModelListBoxEditor<Object> quotaEditor;
 
     @UiField
     @Path(value = "name.entity")
@@ -333,6 +338,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             }
         });
 
+        quotaEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((Quota) object).getQuotaName();
+            }
+        });
+
         templateEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
@@ -431,6 +443,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         generalTab.setLabel("General");
         dataCenterEditor.setLabel("Data Center");
         clusterEditor.setLabel("Host Cluster");
+        quotaEditor.setLabel("Quota");
         nameEditor.setLabel("Name");
         descriptionEditor.setLabel("Description");
         templateEditor.setLabel("Based on Template");

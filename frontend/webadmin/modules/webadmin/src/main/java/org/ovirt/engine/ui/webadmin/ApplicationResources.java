@@ -274,4 +274,12 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/icon_task.png")
     ImageResource iconTask();
 
+    @Source("images/icon_audit.png")
+    ImageResource iconAudit();
+
+    @Source("images/icon_disable.png")
+    ImageResource iconDisable();
+
+    @Source("images/icon_enforce.png")
+    ImageResource iconEnforce();
 }

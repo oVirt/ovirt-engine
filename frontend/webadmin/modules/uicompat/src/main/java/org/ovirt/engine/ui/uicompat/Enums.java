@@ -708,4 +708,10 @@ public interface Enums extends ConstantsWithLookup {
     String ImageStatus___INVALID();
     
     String ImageStatus___ILLEGAL();
+
+    String QuotaEnforcmentTypeEnum___DISABLED();
+
+    String QuotaEnforcmentTypeEnum___SOFT_ENFORCEMENT();
+
+    String QuotaEnforcmentTypeEnum___HARD_ENFORCEMENT();
 }
