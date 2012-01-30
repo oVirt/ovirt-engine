@@ -13,13 +13,13 @@ import org.ovirt.engine.ui.webadmin.widget.form.FormBuilder;
 import org.ovirt.engine.ui.webadmin.widget.form.FormItem;
 import org.ovirt.engine.ui.webadmin.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.webadmin.widget.label.EnumLabel;
+import org.ovirt.engine.ui.webadmin.widget.label.TextBoxLabel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserListModel, UserGeneralModel> implements SubTabUserGeneralPresenter.ViewDef, Editor<UserGeneralModel> {
@@ -32,17 +32,11 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
         Driver driver = GWT.create(Driver.class);
     }
 
-    @Ignore
-    // TODO: @Path("entity.domain")
-    Label domain = new Label();;
+    TextBoxLabel domain = new TextBoxLabel();
 
-    @Ignore
-    // TODO: @Path("entity.adStatus")
     EnumLabel<AdRefStatus> status = new EnumLabel<AdRefStatus>();
 
-    @Ignore
-    // TODO: @Path("entity.email")
-    Label email = new Label();
+    TextBoxLabel email = new TextBoxLabel();
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
@@ -74,11 +68,6 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
     @Override
     public void setMainTabSelectedItem(DbUser selectedItem) {
         Driver.driver.edit(getDetailModel());
-
-        // TODO: required because getEntity() returns Object
-        domain.setText(selectedItem.getdomain());
-        status.setValue(selectedItem.getAdStatus());
-        email.setText(selectedItem.getemail());
 
         formBuilder.showForm(getDetailModel(), Driver.driver);
     }
