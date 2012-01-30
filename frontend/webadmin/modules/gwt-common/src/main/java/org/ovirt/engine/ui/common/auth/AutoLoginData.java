@@ -13,13 +13,21 @@ public final class AutoLoginData extends JavaScriptObject {
     protected AutoLoginData() {
     }
 
-    public static native AutoLoginData instance() /*-{ return $wnd.userInfo; }-*/;
+    public static native AutoLoginData instance() /*-{
+        return $wnd.userInfo;
+    }-*/;
 
-    private native String getId() /*-{ return this.id; }-*/;
+    private native String getId() /*-{
+        return this.id;
+    }-*/;
 
-    private native String getUserName() /*-{ return this.userName; }-*/;
+    private native String getUserName() /*-{
+        return this.userName;
+    }-*/;
 
-    private native String getDomain() /*-{ return this.domain; }-*/;
+    private native String getDomain() /*-{
+        return this.domain;
+    }-*/;
 
     public VdcUser getVdcUser() {
         return new VdcUser(Guid.createGuidFromString(getId()), getUserName(), getDomain());

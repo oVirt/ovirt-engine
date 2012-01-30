@@ -104,7 +104,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
         this.treeModelProvider = treeModelProvider;
         this.alertModelProvider = alertModelProvider;
         this.eventModelProvider = eventModelProvider;
-        this.westStackPanel = createWestStackPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider);
+        westStackPanel = createWestStackPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
@@ -218,35 +218,35 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     }
 
     native void attachWindowFocusEvents() /*-{
-                                          var clientAgentType = @org.ovirt.engine.ui.common.uicommon.ClientAgentType::new()();
-                                          var browser = clientAgentType.@org.ovirt.engine.ui.common.uicommon.ClientAgentType::browser;
-                                          var isIE = browser.toLowerCase() == "explorer";
+        var clientAgentType = @org.ovirt.engine.ui.common.uicommon.ClientAgentType::new()();
+        var browser = clientAgentType.@org.ovirt.engine.ui.common.uicommon.ClientAgentType::browser;
+        var isIE = browser.toLowerCase() == "explorer";
 
-                                          if (isIE) {
-                                          $doc.attachEvent("onfocusin", onFocus);
-                                          $doc.attachEvent("onfocusout", onBlur);
-                                          } else {
-                                          $wnd.addEventListener("focus", onFocus, false);
-                                          $wnd.addEventListener("blur", onBlur, false);
-                                          }
+        if (isIE) {
+            $doc.attachEvent("onfocusin", onFocus);
+            $doc.attachEvent("onfocusout", onBlur);
+        } else {
+            $wnd.addEventListener("focus", onFocus, false);
+            $wnd.addEventListener("blur", onBlur, false);
+        }
 
-                                          var context = this;
-                                          function onFocus() {
-                                          // only focus if previous event was a blur or we get lots of focus events (On IE)
-                                          if (context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::lastEventWasBlur) {
-                                          context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::lastEventWasBlur = false;
-                                          context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::onWindowFocus()();
-                                          }
-                                          }
-                                          function onBlur() {
-                                          debugger;
-                                          if (context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::activeElement != $doc.activeElement) {
-                                          context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::activeElement = $doc.activeElement;
-                                          } else {
-                                          context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::lastEventWasBlur = true;
-                                          context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::onWindowBlur()();
-                                          }
-                                          }
-                                          }-*/;
+        var context = this;
+        function onFocus() {
+            // only focus if previous event was a blur or we get lots of focus events (On IE)
+            if (context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::lastEventWasBlur) {
+                context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::lastEventWasBlur = false;
+                context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::onWindowFocus()();
+            }
+        }
+        function onBlur() {
+            debugger;
+            if (context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::activeElement != $doc.activeElement) {
+                context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::activeElement = $doc.activeElement;
+            } else {
+                context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::lastEventWasBlur = true;
+                context.@org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView::onWindowBlur()();
+            }
+        }
+    }-*/;
 
 }
