@@ -95,7 +95,8 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("origin", template.getorigin())
                 .addValue("initrd_url", template.getinitrd_url())
                 .addValue("kernel_url", template.getkernel_url())
-                .addValue("kernel_params", template.getkernel_params());
+                .addValue("kernel_params", template.getkernel_params())
+                .addValue("quota_id", template.getQuotaId());
     }
 
     @Override

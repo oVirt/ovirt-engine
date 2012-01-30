@@ -72,7 +72,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("predefined_properties", vm.getPredefinedProperties())
                 .addValue("userdefined_properties",
                         vm.getUserDefinedProperties())
-                .addValue("min_allocated_mem", vm.getMinAllocatedMem());
+                .addValue("min_allocated_mem", vm.getMinAllocatedMem())
+                .addValue("quota_id", vm.getQuotaId());
 
         getCallsHandler().executeModification("InsertVmStatic", parameterSource);
 
@@ -119,7 +120,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("predefined_properties", vm.getPredefinedProperties())
                 .addValue("userdefined_properties",
                         vm.getUserDefinedProperties())
-                .addValue("min_allocated_mem", vm.getMinAllocatedMem());
+                .addValue("min_allocated_mem", vm.getMinAllocatedMem())
+                .addValue("quota_id", vm.getQuotaId());
 
         getCallsHandler().executeModification("UpdateVmStatic", parameterSource);
     }
@@ -228,6 +230,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             entity.setUserDefinedProperties(userDefinedProperties);
             entity.setCustomProperties(VmPropertiesUtils.customProperties(predefinedProperties, userDefinedProperties));
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
+            entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
 
             return entity;
         }

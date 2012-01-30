@@ -64,6 +64,9 @@ public class VmStatic extends VmBase {
     @Column(name = "predefined_properties")
     private String predefinedProperties;
 
+    @Column(name = "quota_id")
+    private Guid quotaId;
+
     /**
      * Disk size in sectors of 512 bytes
      */
@@ -117,7 +120,8 @@ public class VmStatic extends VmBase {
                 vmStatic.getorigin(),
                 vmStatic.getkernel_url(),
                 vmStatic.getkernel_params(),
-                vmStatic.getinitrd_url());
+                vmStatic.getinitrd_url(),
+                vmStatic.getQuotaId());
         name = vmStatic.getvm_name();
         vmt_guid = vmStatic.getvmt_guid();
         setnum_of_monitors(vmStatic.getnum_of_monitors());
@@ -137,7 +141,7 @@ public class VmStatic extends VmBase {
             int numOfMonitors,
             UsbPolicy usb_policy, String time_zone, boolean auto_startup, boolean is_stateless, boolean fail_back,
             BootSequence default_boot_sequence, VmType vm_type, HypervisorType hypervisor_type,
-            OperationMode operation_mode, int minAllocatedMem) {
+            OperationMode operation_mode, int minAllocatedMem, Guid quotaGuid) {
         super(vm_guid,
                 vds_group_id,
                 os,
@@ -164,7 +168,8 @@ public class VmStatic extends VmBase {
                 OriginType.valueOf(Config.<String>GetValue(ConfigValues.OriginType)),
                 null,
                 null,
-                null);
+                null,
+                quotaGuid);
 
         this.name = vm_name;
         this.vmt_guid = vmt_guid;

@@ -133,6 +133,7 @@ public class VmTemplate extends VmBase {
                 OriginType.valueOf(Config.<String>GetValue(ConfigValues.OriginType)),
                 null,
                 null,
+                null,
                 null);
 
         diskTemplateMap = new HashMap<String, DiskImage>();

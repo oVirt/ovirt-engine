@@ -48,6 +48,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         newVmStatic.setvds_group_id(VDS_GROUP_ID);
         newVmStatic.setvmt_guid(vmtemplate.getId());
         newVmStatic.setorigin(OriginType.OVIRT);
+        newVmStatic.setQuotaId(Guid.NewGuid());
     }
 
     /**

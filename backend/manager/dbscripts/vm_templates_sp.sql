@@ -37,7 +37,8 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_origin INTEGER ,
  v_initrd_url    VARCHAR(4000) ,
  v_kernel_url    VARCHAR(4000) ,
- v_kernel_params VARCHAR(4000))
+ v_kernel_params VARCHAR(4000) ,
+ v_quota_id UUID)
 RETURNS VOID
    AS $procedure$
 BEGIN
@@ -75,7 +76,8 @@ INTO vm_static(
     initrd_url,
     kernel_url,
     kernel_params,
-    entity_type)
+    entity_type,
+    quota_id)
 VALUES(
     -- This field is meaningless for templates for the time being, however we want to keep it not null for VMs.
     -- Thus, since templates are top level elements they "point" to the 'Blank' template.
@@ -111,7 +113,8 @@ VALUES(
     v_initrd_url,
     v_kernel_url,
     v_kernel_params,
-    'TEMPLATE');
+    'TEMPLATE',
+    v_quota_id);
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -149,7 +152,8 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_origin INTEGER ,
  v_initrd_url VARCHAR(4000) ,
  v_kernel_url VARCHAR(4000) ,
- v_kernel_params VARCHAR(4000))
+ v_kernel_params VARCHAR(4000),
+ v_quota_id UUID)
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -167,7 +171,7 @@ BEGIN
       default_display_type = v_default_display_type, 
       priority = v_priority,auto_startup = v_auto_startup,is_stateless = v_is_stateless, 
       iso_path = v_iso_path,origin = v_origin,initrd_url = v_initrd_url, 
-      kernel_url = v_kernel_url,kernel_params = v_kernel_params, _update_date = CURRENT_TIMESTAMP
+      kernel_url = v_kernel_url,kernel_params = v_kernel_params, _update_date = CURRENT_TIMESTAMP, quota_id = v_quota_id
       WHERE vm_guid = v_vmt_guid
       AND   entity_type = 'TEMPLATE';
 END; $procedure$

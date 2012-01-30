@@ -141,6 +141,8 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
    public VmBase() {
    }
 
+   private Guid quotaId;
+
     public VmBase(Guid id,
             Guid vds_group_id,
             VmOsType mOs,
@@ -167,7 +169,8 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
             OriginType origin,
             String kernelUrl,
             String kernelParams,
-            String initrdUrl) {
+            String initrdUrl,
+            Guid quotaId) {
         super();
         this.id = id;
         this.vds_group_id = vds_group_id;
@@ -196,6 +199,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         this.kernelUrl = kernelUrl;
         this.kernelParams = kernelParams;
         this.initrdUrl = initrdUrl;
+        this.setQuotaId(quotaId);
     }
 
     @XmlElement(name = "Id")
@@ -476,6 +480,8 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         result = prime * result + ((usbPolicy == null) ? 0 : usbPolicy.hashCode());
         result = prime * result + ((vds_group_id == null) ? 0 : vds_group_id.hashCode());
         result = prime * result + ((vmType == null) ? 0 : vmType.hashCode());
+        result = prime * result + ((quotaId== null) ? 0 : quotaId.hashCode());
+
         return result;
     }
 
@@ -612,6 +618,19 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         if (vmType != other.vmType) {
             return false;
         }
+        if (quotaId == null) {
+            if (other.quotaId != null)
+                return false;
+        } else if (!quotaId.equals(other.quotaId))
+            return false;
         return true;
+    }
+
+    public Guid getQuotaId() {
+        return quotaId;
+    }
+
+    public void setQuotaId(Guid quotaId) {
+        this.quotaId = quotaId;
     }
 }
