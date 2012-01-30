@@ -89,6 +89,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setwrite_rate(rs.getInt("write_rate"));
                 String entityType = rs.getString("entity_type");
                 handleEntityType(entityType, entity);
+                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
                 return entity;
             }
         };
@@ -162,6 +163,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setwrite_rate(rs.getInt("write_rate"));
                 String entityType = rs.getString("entity_type");
                 handleEntityType(entityType, entity);
+                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
                 return entity;
             }
         };
@@ -230,6 +232,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setwrite_rate(rs.getInt("write_rate"));
                 String entityType = rs.getString("entity_type");
                 handleEntityType(entityType, entity);
+                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
                 return entity;
             }
         };
@@ -290,6 +293,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setwrite_rate(rs.getInt("write_rate"));
                 String entityType = rs.getString("entity_type");
                 handleEntityType(entityType, entity);
+                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
                 return entity;
             }
         };
@@ -350,6 +354,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setwrite_rate(rs.getInt("write_rate"));
                 String entityType = rs.getString("entity_type");
                 handleEntityType(entityType, entity);
+                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
                 return entity;
             }
         };
@@ -410,6 +415,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setwrite_rate(rs.getInt("write_rate"));
                 String entityType = rs.getString("entity_type");
                 handleEntityType(entityType, entity);
+                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
                 return entity;
             }
         };
@@ -470,6 +476,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setwrite_rate(rs.getInt("write_rate"));
                 String entityType = rs.getString("entity_type");
                 handleEntityType(entityType, entity);
+                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
                 return entity;
             }
         };
@@ -529,6 +536,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setwrite_rate(rs.getInt("write_rate"));
                 String entityType = rs.getString("entity_type");
                 handleEntityType(entityType, entity);
+                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
                 return entity;
             }
         };
@@ -558,8 +566,8 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 .addValue("disk_interface", image.getdisk_interface())
                 .addValue("boot", image.getboot())
                 .addValue("wipe_after_delete", image.getwipe_after_delete())
-                .addValue("propagate_errors", image.getpropagate_errors());
-
+                .addValue("propagate_errors", image.getpropagate_errors())
+                .addValue("quota_id", image.getQuotaId());
         getCallsHandler().executeModification("InsertImage", parameterSource);
     }
 
@@ -585,7 +593,8 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 .addValue("disk_interface", image.getdisk_interface())
                 .addValue("boot", image.getboot())
                 .addValue("wipe_after_delete", image.getwipe_after_delete())
-                .addValue("propagate_errors", image.getpropagate_errors());
+                .addValue("propagate_errors", image.getpropagate_errors())
+                .addValue("quota_id", image.getQuotaId());
 
         getCallsHandler().executeModification("UpdateImage", parameterSource);
     }
@@ -764,6 +773,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setwipe_after_delete(rs.getBoolean("wipe_after_delete"));
                 entity.setpropagate_errors(PropagateErrors.forValue(rs
                         .getInt("propagate_errors")));
+                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
                 return entity;
             }
         };

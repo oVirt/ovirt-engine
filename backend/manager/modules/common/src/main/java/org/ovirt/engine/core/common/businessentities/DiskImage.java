@@ -20,7 +20,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     public DiskImage(Boolean active, java.util.Date creation_date, java.util.Date last_modified_date, long actual_size,
             String description, Guid image_guid, String internal_drive_mapping, Guid it_guid, long size, Guid vm_guid,
-            Guid parentId, ImageStatus imageStatus, java.util.Date lastModified, String appList,VmEntityType vmEntityType) {
+            Guid parentId, ImageStatus imageStatus, java.util.Date lastModified, String appList,VmEntityType vmEntityType, Guid quotaId) {
         this.activeField = active;
         this.creation_dateField = creation_date;
         this.setlast_modified_date(last_modified_date);
@@ -36,6 +36,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         this.setlastModified(lastModified);
         this.setappList(appList);
         this.setVmEntityType(vmEntityType);
+        this.setQuotaId(quotaId);
     }
 
     private VmEntityType vmEntityType;
@@ -450,6 +451,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         setboot(diskImageBase.getboot());
         setwipe_after_delete(diskImageBase.getwipe_after_delete());
         setpropagate_errors(diskImageBase.getpropagate_errors());
+        setQuotaId(diskImageBase.getQuotaId());
     }
 
     private double _actualDiskWithSnapthotsSize;
@@ -514,7 +516,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
                     "description", "internal_drive_mapping", "appList", "it_guid", "vm_guid", "ParentId",
                     "imageStatus", "lastModified", "storage_id", "vm_snapshot_id", "storage_path", "image_group_id",
                     "storage_pool_id", "boot", "volume_type", "volume_format", "disk_interface", "wipe_after_delete",
-                    "propagate_errors", "read_rate", "write_rate", "ActualSize" }));
+                    "propagate_errors", "read_rate", "write_rate", "ActualSize", "QuotaId" }));
 
     @Override
     public java.util.ArrayList<String> getChangeablePropertiesList() {

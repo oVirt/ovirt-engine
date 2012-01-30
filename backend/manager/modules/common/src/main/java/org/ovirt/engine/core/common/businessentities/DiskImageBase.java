@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.compat.Guid;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "DiskImageBase")
@@ -29,6 +30,11 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
     private VolumeFormat volumeFormat;
 
     private Boolean plugged;
+
+    /**
+     * The quota id the image consumes from.
+     */
+    private Guid quotaId;
 
     public DiskImageBase() {
         size = 0;
@@ -59,6 +65,14 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
 
     public void setdisk_type(DiskType value) {
         disk.setDiskType(value);
+    }
+
+    public Guid getQuotaId() {
+        return this.quotaId;
+    }
+
+    public void setQuotaId(Guid quotaId) {
+        this.quotaId = quotaId;
     }
 
     private long size = 0L;

@@ -7,6 +7,7 @@ public class StorageDomainParametersBase extends StoragePoolParametersBase {
 
     private Guid storageDomainId = new Guid();
     private boolean isInternal;
+    private Guid quotaId;
 
     public StorageDomainParametersBase() {
     }
@@ -30,5 +31,13 @@ public class StorageDomainParametersBase extends StoragePoolParametersBase {
 
     public void setIsInternal(boolean value) {
         isInternal = value;
+    }
+
+    public Guid getQuotaId() {
+        return quotaId;
+    }
+
+    public void setQuotaId(Guid quotaId) {
+        this.quotaId = quotaId;
     }
 }

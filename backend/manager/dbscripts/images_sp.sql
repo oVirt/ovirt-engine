@@ -20,14 +20,15 @@ Create or replace FUNCTION InsertImage(v_creation_date TIMESTAMP WITH TIME ZONE,
 	v_volume_type INTEGER,
 	v_volume_format INTEGER,
 	v_image_group_id UUID ,
-    v_boot BOOLEAN)
+    v_boot BOOLEAN,
+    v_quota_id UUID)
 RETURNS VOID
    AS $procedure$
 BEGIN
 INSERT INTO images(creation_date, description, image_guid, it_guid, size, ParentId,imageStatus,lastModified, app_list,
-    vm_snapshot_id, volume_type, image_group_id, volume_format, boot)
+    vm_snapshot_id, volume_type, image_group_id, volume_format, boot, quota_id)
 	VALUES(v_creation_date, v_description, v_image_guid, v_it_guid, v_size, v_ParentId, v_imageStatus, v_lastModified,v_app_list,
-	v_vm_snapshot_id, v_volume_type, v_image_group_id, v_volume_format, v_boot);
+	v_vm_snapshot_id, v_volume_type, v_image_group_id, v_volume_format, v_boot, v_quota_id);
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -48,7 +49,8 @@ Create or replace FUNCTION UpdateImage(v_creation_date TIMESTAMP WITH TIME ZONE,
 	v_volume_type INTEGER,
 	v_volume_format INTEGER,
 	v_image_group_id UUID ,
-    v_boot BOOLEAN)
+    v_boot BOOLEAN,
+    v_quota_id UUID)
 RETURNS VOID
 
 	--The [images] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -61,7 +63,7 @@ BEGIN
       app_list = v_app_list, 
       vm_snapshot_id = v_vm_snapshot_id,volume_type = v_volume_type,image_group_id = v_image_group_id, 
       volume_format = v_volume_format,
-      boot = v_boot,
+      boot = v_boot, quota_id = v_quota_id,
       _update_date = LOCALTIMESTAMP
       WHERE image_guid = v_image_guid;
 END; $procedure$

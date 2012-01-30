@@ -6,8 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -99,7 +97,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         newImage.setdisk_interface(DiskInterface.IDE);
         newImage.setdisk_type(DiskType.Data);
         newImage.setimage_group_id(Guid.NewGuid());
-        newImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.Empty)));
+        newImage.setQuotaId(Guid.NewGuid());
         newImageVmPoolMapping = new image_vm_pool_map(FREE_IMAGE_ID, "z", FREE_VM_ID);
 
         existingStatelessDiskImageMap = dao.getStatelessVmImageMapForImageId(existingEntity.getId());

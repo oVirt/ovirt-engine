@@ -126,7 +126,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
                 new Guid(UUID.randomUUID()),
                 ImageStatus.OK,
                 new Date(),
-                "",VmEntityType.VM);
+                "",VmEntityType.VM, null);
     }
 
     @Test

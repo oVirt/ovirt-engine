@@ -41,7 +41,6 @@ SELECT DISTINCT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
     images.volume_format as volume_format,
     images.boot as boot,
     images.imageStatus as imageStatus,
-    images.quota_id as quota_id,
     disks.disk_id as image_group_id,
     vm_static.entity_type as entity_type,
     CAST (disks.internal_drive_mapping AS VARCHAR(50)) as internal_drive_mapping,
@@ -60,6 +59,7 @@ SELECT DISTINCT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
     CASE WHEN disks.propagate_errors = 'On' THEN 1
          ELSE 0
     END AS propagate_errors,
+    images.quota_id as quota_id,
     disk_image_dynamic.actual_size as actual_size,
     disk_image_dynamic.read_rate as read_rate,
     disk_image_dynamic.write_rate as write_rate
@@ -102,7 +102,7 @@ SELECT     images_storage_domain_view.storage_path as storage_path, images_stora
                       images_storage_domain_view.app_list as app_list, images_storage_domain_view.storage_id as storage_id, images_storage_domain_view.vm_snapshot_id as vm_snapshot_id,
                       images_storage_domain_view.volume_type as volume_type, images_storage_domain_view.image_group_id as image_group_id, image_vm_map.vm_id as vm_guid,
                       image_vm_map.active as active, images_storage_domain_view.volume_format as volume_format, images_storage_domain_view.disk_type as disk_type,
-                      images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors,images_storage_domain_view.entity_type as entity_type
+                      images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors,images_storage_domain_view.entity_type as entity_type,images_storage_domain_view.quota_id as quota_id
 FROM         image_vm_map INNER JOIN
 images_storage_domain_view ON image_vm_map.image_id = images_storage_domain_view.image_guid
 INNER JOIN disk_image_dynamic ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id;
