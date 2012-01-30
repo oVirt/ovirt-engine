@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
@@ -90,14 +95,6 @@ public class SyntaxChecker implements ISyntaxChecker {
         Err,
         Normal,
         FreeText;
-
-        public int getValue() {
-            return this.ordinal();
-        }
-
-        public static ValueParseResult forValue(int value) {
-            return values()[value];
-        }
     }
 
     private ValueParseResult handleValuePhrase(boolean final2, String searchText, int idx, RefObject<Integer> startPos,
@@ -181,22 +178,22 @@ public class SyntaxChecker implements ISyntaxChecker {
         }
 
     }
-    public SyntaxContainer analyzeSyntaxState(String searchText, boolean final2) {
-        SyntaxContainer retval = new SyntaxContainer(searchText);
+    public SyntaxContainer analyzeSyntaxState(final String searchText, boolean final2) {
+        final SyntaxContainer syntaxContainer = new SyntaxContainer(searchText);
         IConditionFieldAutoCompleter curConditionFieldAC = null;
         IAutoCompleter curConditionRelationAC = null;
-        java.util.ArrayList<String> freeTextObjSearched = new java.util.ArrayList<String>();
+        final List<String> freeTextObjSearched = new ArrayList<String>();
         char[] searchCharArr = searchText.toCharArray();
         int curStartPos = 0;
 
         String tryNextObj = "";
         boolean keepValid;
         for (int idx = 0; idx < searchCharArr.length; idx++) {
-            SyntaxObjectType curState = retval.getState();
-            char curChar = searchCharArr[idx];
+            final SyntaxObjectType curState = syntaxContainer.getState();
+            final char curChar = searchCharArr[idx];
             if (mDisAllowedChars.contains(curChar)) {
-                retval.setErr(SyntaxError.INVALID_CHARECTER, curStartPos, idx + 1);
-                return retval;
+                syntaxContainer.setErr(SyntaxError.INVALID_CHARECTER, curStartPos, idx + 1);
+                return syntaxContainer;
             }
             if ((curChar == ' ') && (curState != SyntaxObjectType.CONDITION_RELATION)
                     && (curState != SyntaxObjectType.COLON) && (curState != SyntaxObjectType.CONDITION_VALUE)
@@ -211,8 +208,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                 // we have found a search-object
                 if (!mSearchObjectAC.validate(nextObject)) {
                     if (!mSearchObjectAC.validateCompletion(nextObject)) {
-                        retval.setErr(SyntaxError.INVALID_SEARCH_OBJECT, curStartPos, idx - curStartPos + 1);
-                        return retval;
+                        syntaxContainer.setErr(SyntaxError.INVALID_SEARCH_OBJECT, curStartPos, idx - curStartPos + 1);
+                        return syntaxContainer;
                     }
                 } else {
                     if (searchCharArr.length >= idx + 2) // Check that this
@@ -227,8 +224,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                             nextObject = sb.toString();
                         }
                     }
-                    retval.addSyntaxObject(SyntaxObjectType.SEARCH_OBJECT, nextObject, curStartPos, idx + 1);
-                    retval.setvalid(true);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.SEARCH_OBJECT, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.setvalid(true);
                     curStartPos = idx + 1;
                 }
                 break;
@@ -236,68 +233,68 @@ public class SyntaxChecker implements ISyntaxChecker {
 
                 if (!mColonAC.validate(nextObject)) {
                     if (!mColonAC.validateCompletion(nextObject)) {
-                        retval.setErr(SyntaxError.COLON_NOT_NEXT_TO_SEARCH_OBJECT, curStartPos, idx + 1);
-                        return retval;
+                        syntaxContainer.setErr(SyntaxError.COLON_NOT_NEXT_TO_SEARCH_OBJECT, curStartPos, idx + 1);
+                        return syntaxContainer;
                     }
                 } else {
-                    retval.addSyntaxObject(SyntaxObjectType.COLON, nextObject, idx, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.COLON, nextObject, idx, idx + 1);
                     curStartPos = idx + 1;
-                    retval.setvalid(true);
+                    syntaxContainer.setvalid(true);
                 }
                 break;
             case CROSS_REF_OBJ:
-                String curRefObj = retval.getPreviousSyntaxObject(0, SyntaxObjectType.CROSS_REF_OBJ);
+                String curRefObj = syntaxContainer.getPreviousSyntaxObject(0, SyntaxObjectType.CROSS_REF_OBJ);
                 curConditionRelationAC = mSearchObjectAC.getObjectRelationshipAutoCompleter(curRefObj);
                 if (idx + 1 < searchCharArr.length) {
                     tryNextObj = searchText.substring(curStartPos, idx + 2).toUpperCase();
                 }
                 if (curConditionRelationAC == null) {
-                    retval.setErr(SyntaxError.CONDITION_CANT_CREATE_RRELATIONS_AC, curStartPos, idx + 1);
-                    return retval;
+                    syntaxContainer.setErr(SyntaxError.CONDITION_CANT_CREATE_RRELATIONS_AC, curStartPos, idx + 1);
+                    return syntaxContainer;
                 }
                 if (mDotAC.validate(nextObject)) {
-                    retval.addSyntaxObject(SyntaxObjectType.DOT, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.DOT, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
                 } else if ((!StringHelper.EqOp(tryNextObj, "")) && (curConditionRelationAC.validate(tryNextObj))) {
                     break; // i.e. the relation object has another charecter
                 } else if (curConditionRelationAC.validate(nextObject)) {
-                    retval.addSyntaxObject(SyntaxObjectType.CONDITION_RELATION, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_RELATION, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
 
                 } else if ((!curConditionRelationAC.validateCompletion(nextObject))
                         && (!mDotAC.validateCompletion(nextObject))) {
-                    retval.setErr(SyntaxError.INVALID_POST_CROSS_REF_OBJ, curStartPos, idx + 1);
-                    return retval;
+                    syntaxContainer.setErr(SyntaxError.INVALID_POST_CROSS_REF_OBJ, curStartPos, idx + 1);
+                    return syntaxContainer;
                 }
                 tryNextObj = "";
                 break;
             case DOT:
-                curRefObj = retval.getPreviousSyntaxObject(1, SyntaxObjectType.CROSS_REF_OBJ);
+                curRefObj = syntaxContainer.getPreviousSyntaxObject(1, SyntaxObjectType.CROSS_REF_OBJ);
                 curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(curRefObj);
                 if (curConditionFieldAC == null) {
 
-                    retval.setErr(SyntaxError.CANT_GET_CONDITION_FIELD_AC, curStartPos, idx);
-                    return retval;
+                    syntaxContainer.setErr(SyntaxError.CANT_GET_CONDITION_FIELD_AC, curStartPos, idx);
+                    return syntaxContainer;
                 }
                 if (!curConditionFieldAC.validate(nextObject)) {
                     if (!curConditionFieldAC.validateCompletion(nextObject)) {
-                        retval.setErr(SyntaxError.INVALID_CONDITION_FILED, curStartPos, idx + 1);
-                        return retval;
+                        syntaxContainer.setErr(SyntaxError.INVALID_CONDITION_FILED, curStartPos, idx + 1);
+                        return syntaxContainer;
                     }
                 } else {
-                    retval.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
                 }
                 break;
             case AND:
             case OR:
                 keepValid = false;
-                curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(retval.getSearchObjectStr());
+                curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(syntaxContainer.getSearchObjectStr());
                 if (curConditionFieldAC.validate(nextObject)) {
-                    retval.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
 
-                } else if (mSearchObjectAC.isCrossReferece(nextObject, retval.getFirst().getBody())) {
+                } else if (mSearchObjectAC.isCrossReferece(nextObject, syntaxContainer.getFirst().getBody())) {
                     if (searchCharArr.length >= idx + 2) // Check that this
                                                          // maybe a plural
                     {
@@ -310,47 +307,47 @@ public class SyntaxChecker implements ISyntaxChecker {
                             nextObject = sb.toString();
                         }
                     }
-                    retval.addSyntaxObject(SyntaxObjectType.CROSS_REF_OBJ, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.CROSS_REF_OBJ, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
                 } else {
                     RefObject<Integer> tempRefObject = new RefObject<Integer>(curStartPos);
-                    ValueParseResult ans = handleValuePhrase(final2, searchText, idx, tempRefObject, retval);
+                    ValueParseResult ans = handleValuePhrase(final2, searchText, idx, tempRefObject, syntaxContainer);
                     curStartPos = tempRefObject.argvalue;
                     if (ans != ValueParseResult.Err) {
                         if (ans == ValueParseResult.FreeText) {
-                            curRefObj = retval.getSearchObjectStr();
+                            curRefObj = syntaxContainer.getSearchObjectStr();
                             if (freeTextObjSearched.contains(curRefObj)) {
-                                retval.setErr(SyntaxError.FREE_TEXT_ALLOWED_ONCE_PER_OBJ, curStartPos, idx + 1);
-                                return retval;
+                                syntaxContainer.setErr(SyntaxError.FREE_TEXT_ALLOWED_ONCE_PER_OBJ, curStartPos, idx + 1);
+                                return syntaxContainer;
                             }
                             freeTextObjSearched.add(curRefObj);
-                            retval.setvalid(true);
+                            syntaxContainer.setvalid(true);
                             keepValid = true;
                         }
                     } else if ((!curConditionFieldAC.validateCompletion(nextObject))
                             && (!mSearchObjectAC.validateCompletion(nextObject))) {
-                        retval.setErr(SyntaxError.INVALID_POST_OR_AND_PHRASE, curStartPos, idx + 1);
-                        return retval;
+                        syntaxContainer.setErr(SyntaxError.INVALID_POST_OR_AND_PHRASE, curStartPos, idx + 1);
+                        return syntaxContainer;
                     }
                 }
                 if (keepValid == false) {
-                    retval.setvalid(false);
+                    syntaxContainer.setvalid(false);
                 }
                 break;
             case COLON:
                 keepValid = false;
-                curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(retval.getSearchObjectStr());
+                curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(syntaxContainer.getSearchObjectStr());
                 if (curConditionFieldAC.validate(nextObject)) {
-                    retval.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
 
                 } else if (mSortbyAC.validate(nextObject)) {
-                    retval.addSyntaxObject(SyntaxObjectType.SORTBY, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.SORTBY, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
                 } else if (mPageAC.validate(nextObject)) {
-                    retval.addSyntaxObject(SyntaxObjectType.PAGE, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.PAGE, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
-                } else if (mSearchObjectAC.isCrossReferece(nextObject, retval.getFirst().getBody())) {
+                } else if (mSearchObjectAC.isCrossReferece(nextObject, syntaxContainer.getFirst().getBody())) {
                     if (searchCharArr.length >= idx + 2) // Check that this
                                                          // maybe a plural
                     {
@@ -363,45 +360,45 @@ public class SyntaxChecker implements ISyntaxChecker {
                             nextObject = sb.toString();
                         }
                     }
-                    retval.addSyntaxObject(SyntaxObjectType.CROSS_REF_OBJ, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.CROSS_REF_OBJ, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
                 } else {
                     RefObject<Integer> tempRefObject2 = new RefObject<Integer>(curStartPos);
-                    ValueParseResult ans = handleValuePhrase(final2, searchText, idx, tempRefObject2, retval);
+                    ValueParseResult ans = handleValuePhrase(final2, searchText, idx, tempRefObject2, syntaxContainer);
                     curStartPos = tempRefObject2.argvalue;
                     if (ans != ValueParseResult.Err) {
                         if (ans == ValueParseResult.FreeText) {
-                            freeTextObjSearched.add(retval.getSearchObjectStr());
+                            freeTextObjSearched.add(syntaxContainer.getSearchObjectStr());
                         }
                         keepValid = true;
                     } else if ((!curConditionFieldAC.validateCompletion(nextObject))
                             && (!mSortbyAC.validateCompletion(nextObject))
                             && (!mSearchObjectAC.validateCompletion(nextObject))) {
-                        retval.setErr(SyntaxError.INVALID_POST_COLON_PHRASE, curStartPos, idx + 1);
-                        return retval;
+                        syntaxContainer.setErr(SyntaxError.INVALID_POST_COLON_PHRASE, curStartPos, idx + 1);
+                        return syntaxContainer;
                     }
                 }
                 if (keepValid == false) {
-                    retval.setvalid(false);
+                    syntaxContainer.setvalid(false);
                 }
                 break;
             case CONDITION_VALUE:
                 nextObject = nextObject.trim();
                 if (nextObject.length() > 0) {
                     keepValid = false;
-                    curRefObj = retval.getSearchObjectStr();
+                    curRefObj = syntaxContainer.getSearchObjectStr();
                     curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(curRefObj);
                     if (curConditionFieldAC.validate(nextObject)) {
-                        retval.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD, nextObject, curStartPos, idx + 1);
+                        syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD, nextObject, curStartPos, idx + 1);
                         curStartPos = idx + 1;
 
                     } else if (mSortbyAC.validate(nextObject)) {
-                        retval.addSyntaxObject(SyntaxObjectType.SORTBY, nextObject, curStartPos, idx + 1);
+                        syntaxContainer.addSyntaxObject(SyntaxObjectType.SORTBY, nextObject, curStartPos, idx + 1);
                         curStartPos = idx + 1;
                     } else if (mPageAC.validate(nextObject)) {
-                        retval.addSyntaxObject(SyntaxObjectType.PAGE, nextObject, curStartPos, idx + 1);
+                        syntaxContainer.addSyntaxObject(SyntaxObjectType.PAGE, nextObject, curStartPos, idx + 1);
                         curStartPos = idx + 1;
-                    } else if (mSearchObjectAC.isCrossReferece(nextObject, retval.getFirst().getBody())) {
+                    } else if (mSearchObjectAC.isCrossReferece(nextObject, syntaxContainer.getFirst().getBody())) {
                         if (searchCharArr.length >= idx + 2) // Check that this
                                                              // maybe a
                                                              // plural
@@ -415,13 +412,13 @@ public class SyntaxChecker implements ISyntaxChecker {
                                 nextObject = sb.toString();
                             }
                         }
-                        retval.addSyntaxObject(SyntaxObjectType.CROSS_REF_OBJ, nextObject, curStartPos, idx + 1);
+                        syntaxContainer.addSyntaxObject(SyntaxObjectType.CROSS_REF_OBJ, nextObject, curStartPos, idx + 1);
                         curStartPos = idx + 1;
                     } else if (mAndAC.validate(nextObject)) {
-                        retval.addSyntaxObject(SyntaxObjectType.AND, nextObject, curStartPos, idx + 1);
+                        syntaxContainer.addSyntaxObject(SyntaxObjectType.AND, nextObject, curStartPos, idx + 1);
                         curStartPos = idx + 1;
                     } else if (mOrAC.validate(nextObject)) {
-                        retval.addSyntaxObject(SyntaxObjectType.OR, nextObject, curStartPos, idx + 1);
+                        syntaxContainer.addSyntaxObject(SyntaxObjectType.OR, nextObject, curStartPos, idx + 1);
                         curStartPos = idx + 1;
                     }
 
@@ -430,36 +427,36 @@ public class SyntaxChecker implements ISyntaxChecker {
                             && (!mSearchObjectAC.validateCompletion(nextObject))
                             && (!mAndAC.validateCompletion(nextObject)) && (!mOrAC.validateCompletion(nextObject))) {
                         RefObject<Integer> tempRefObject3 = new RefObject<Integer>(curStartPos);
-                        ValueParseResult ans = handleValuePhrase(final2, searchText, idx, tempRefObject3, retval);
+                        ValueParseResult ans = handleValuePhrase(final2, searchText, idx, tempRefObject3, syntaxContainer);
                         curStartPos = tempRefObject3.argvalue;
                         if (ans != ValueParseResult.Err) {
                             if (ans == ValueParseResult.FreeText) {
                                 if (freeTextObjSearched.contains(curRefObj)) {
-                                    retval.setErr(SyntaxError.FREE_TEXT_ALLOWED_ONCE_PER_OBJ, curStartPos, idx + 1);
-                                    return retval;
+                                    syntaxContainer.setErr(SyntaxError.FREE_TEXT_ALLOWED_ONCE_PER_OBJ, curStartPos, idx + 1);
+                                    return syntaxContainer;
                                 }
                                 freeTextObjSearched.add(curRefObj);
-                                retval.setvalid(true);
+                                syntaxContainer.setvalid(true);
                                 keepValid = true;
                             }
                         } else {
-                            retval.setErr(SyntaxError.INVALID_POST_CONDITION_VALUE_PHRASE, curStartPos, idx + 1);
-                            return retval;
+                            syntaxContainer.setErr(SyntaxError.INVALID_POST_CONDITION_VALUE_PHRASE, curStartPos, idx + 1);
+                            return syntaxContainer;
                         }
                     }
                     if (keepValid == false) {
-                        retval.setvalid(false);
+                        syntaxContainer.setvalid(false);
                     }
                 }
                 break;
             case CONDITION_FIELD:
-                curRefObj = retval.getPreviousSyntaxObject(2, SyntaxObjectType.CROSS_REF_OBJ);
-                String curConditionField = retval.getPreviousSyntaxObject(0, SyntaxObjectType.CONDITION_FIELD);
+                curRefObj = syntaxContainer.getPreviousSyntaxObject(2, SyntaxObjectType.CROSS_REF_OBJ);
+                String curConditionField = syntaxContainer.getPreviousSyntaxObject(0, SyntaxObjectType.CONDITION_FIELD);
                 curConditionRelationAC = mSearchObjectAC
                         .getFieldRelationshipAutoCompleter(curRefObj, curConditionField);
                 if (curConditionRelationAC == null) {
-                    retval.setErr(SyntaxError.CONDITION_CANT_CREATE_RRELATIONS_AC, curStartPos, idx + 1);
-                    return retval;
+                    syntaxContainer.setErr(SyntaxError.CONDITION_CANT_CREATE_RRELATIONS_AC, curStartPos, idx + 1);
+                    return syntaxContainer;
                 }
                 if (idx + 1 < searchCharArr.length) {
                     tryNextObj = searchText.substring(curStartPos, idx + 2).toUpperCase();
@@ -469,31 +466,31 @@ public class SyntaxChecker implements ISyntaxChecker {
                 }
                 if (!curConditionRelationAC.validate(nextObject)) {
                     if (!curConditionRelationAC.validateCompletion(nextObject)) {
-                        retval.setErr(SyntaxError.INVALID_CONDITION_RELATION, curStartPos, idx + 1);
-                        return retval;
+                        syntaxContainer.setErr(SyntaxError.INVALID_CONDITION_RELATION, curStartPos, idx + 1);
+                        return syntaxContainer;
                     }
                 } else {
-                    retval.addSyntaxObject(SyntaxObjectType.CONDITION_RELATION, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_RELATION, nextObject, curStartPos, idx + 1);
                 }
                 curStartPos = idx + 1;
-                retval.setvalid(false);
+                syntaxContainer.setvalid(false);
                 tryNextObj = "";
 
                 break;
             case CONDITION_RELATION: {
                 RefObject<Integer> tempRefObject4 = new RefObject<Integer>(curStartPos);
-                ValueParseResult ans = handleValuePhrase(final2, searchText, idx, tempRefObject4, retval);
+                ValueParseResult ans = handleValuePhrase(final2, searchText, idx, tempRefObject4, syntaxContainer);
                 curStartPos = tempRefObject4.argvalue;
                 if (ans == ValueParseResult.Err) {
-                    return retval;
+                    return syntaxContainer;
                 }
                 if (ans == ValueParseResult.FreeText) {
-                    if (retval.getPreviousSyntaxObjectType(2) == SyntaxObjectType.CROSS_REF_OBJ) {
-                        curRefObj = retval.getObjSingularName(retval.getPreviousSyntaxObject(2,
+                    if (syntaxContainer.getPreviousSyntaxObjectType(2) == SyntaxObjectType.CROSS_REF_OBJ) {
+                        curRefObj = syntaxContainer.getObjSingularName(syntaxContainer.getPreviousSyntaxObject(2,
                                 SyntaxObjectType.CROSS_REF_OBJ));
                         if (freeTextObjSearched.contains(curRefObj)) {
-                            retval.setErr(SyntaxError.FREE_TEXT_ALLOWED_ONCE_PER_OBJ, curStartPos, idx + 1);
-                            return retval;
+                            syntaxContainer.setErr(SyntaxError.FREE_TEXT_ALLOWED_ONCE_PER_OBJ, curStartPos, idx + 1);
+                            return syntaxContainer;
                         }
                         freeTextObjSearched.add(curRefObj);
                     }
@@ -501,16 +498,16 @@ public class SyntaxChecker implements ISyntaxChecker {
             }
                 break;
             case SORTBY:
-                curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(retval.getSearchObjectStr());
+                curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(syntaxContainer.getSearchObjectStr());
                 if (!curConditionFieldAC.validate(nextObject)) {
                     if (!curConditionFieldAC.validateCompletion(nextObject)) {
-                        retval.setErr(SyntaxError.INVALID_SORT_FIELD, curStartPos, idx + 1);
-                        return retval;
+                        syntaxContainer.setErr(SyntaxError.INVALID_SORT_FIELD, curStartPos, idx + 1);
+                        return syntaxContainer;
                     }
                 } else {
-                    retval.addSyntaxObject(SyntaxObjectType.SORT_FIELD, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.SORT_FIELD, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
-                    retval.setvalid(true);
+                    syntaxContainer.setvalid(true);
                 }
                 break;
             case PAGE:
@@ -519,8 +516,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                 boolean tempVar = !IntegerCompat.TryParse(nextObject, tempRefObject5);
                 pageNumber = tempRefObject5.argvalue;
                 if (tempVar) {
-                    retval.setErr(SyntaxError.INVALID_CHARECTER, curStartPos, idx + 1);
-                    return retval;
+                    syntaxContainer.setErr(SyntaxError.INVALID_CHARECTER, curStartPos, idx + 1);
+                    return syntaxContainer;
                 } else {
                     final StringBuilder buff = new StringBuilder();
                     int pos = idx;
@@ -532,48 +529,48 @@ public class SyntaxChecker implements ISyntaxChecker {
                         nextObject = strRealObj.toUpperCase();
                     }
                     buff.append(nextObject);
-                    retval.addSyntaxObject(SyntaxObjectType.PAGE_VALUE, buff.toString(), curStartPos, idx + buff.length());
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.PAGE_VALUE, buff.toString(), curStartPos, idx + buff.length());
                     // update index position
                     idx = pos + 1;
-                    retval.setvalid(true);
+                    syntaxContainer.setvalid(true);
                 }
                 break;
             case SORT_FIELD:
                 if (!mSortDirectionAC.validate(nextObject)) {
                     if (!mSortDirectionAC.validateCompletion(nextObject)) {
-                        retval.setErr(SyntaxError.INVALID_SORT_DIRECTION, curStartPos, idx + 1);
-                        return retval;
+                        syntaxContainer.setErr(SyntaxError.INVALID_SORT_DIRECTION, curStartPos, idx + 1);
+                        return syntaxContainer;
                     }
                 } else {
-                    retval.addSyntaxObject(SyntaxObjectType.SORT_DIRECTION, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.SORT_DIRECTION, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
-                    retval.setvalid(true);
+                    syntaxContainer.setvalid(true);
                 }
                 break;
             case PAGE_VALUE:
                 if (curChar != ' ') {
-                    retval.setErr(SyntaxError.NOTHING_COMES_AFTER_PAGE_VALUE, curStartPos, idx + 1);
-                    return retval;
+                    syntaxContainer.setErr(SyntaxError.NOTHING_COMES_AFTER_PAGE_VALUE, curStartPos, idx + 1);
+                    return syntaxContainer;
                 }
                 break;
             case SORT_DIRECTION:
                 if (!mPageAC.validate(nextObject)) {
                     if (!mPageAC.validateCompletion(nextObject)) {
-                        retval.setErr(SyntaxError.INVALID_PAGE_FEILD, curStartPos, idx);
-                        return retval;
+                        syntaxContainer.setErr(SyntaxError.INVALID_PAGE_FEILD, curStartPos, idx);
+                        return syntaxContainer;
                     }
                 } else {
-                    retval.addSyntaxObject(SyntaxObjectType.PAGE, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.PAGE, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
-                    retval.setvalid(true);
+                    syntaxContainer.setvalid(true);
                 }
                 break;
             default:
-                retval.setErr(SyntaxError.UNIDENTIFIED_STATE, curStartPos, idx);
-                return retval;
+                syntaxContainer.setErr(SyntaxError.UNIDENTIFIED_STATE, curStartPos, idx);
+                return syntaxContainer;
             }
         }
-        return retval;
+        return syntaxContainer;
 
     }
 
@@ -772,9 +769,9 @@ public class SyntaxChecker implements ISyntaxChecker {
     private String generateSqlFromSyntaxContainer(SyntaxContainer syntax, boolean isSafe) {
         String retval = "";
         if (syntax.getvalid()) {
-            java.util.ListIterator<SyntaxObject> objIter = syntax.listIterator(0);
+            ListIterator<SyntaxObject> objIter = syntax.listIterator(0);
             IConditionFieldAutoCompleter conditionFieldAC;
-            java.util.LinkedList<String> whereBuilder = new java.util.LinkedList<String>();
+            LinkedList<String> whereBuilder = new java.util.LinkedList<String>();
             String searchObjStr = syntax.getSearchObjectStr();
             String sortByPhrase = "";
             String fromStatement = "";
@@ -926,14 +923,6 @@ public class SyntaxChecker implements ISyntaxChecker {
         FreeTextSpecificObj,
         ConditionWithDefaultObj,
         ConditionwithSpesificObj;
-
-        public int getValue() {
-            return this.ordinal();
-        }
-
-        public static ConditionType forValue(int value) {
-            return values()[value];
-        }
     }
 
     private String generateConditionStatment(SyntaxObject obj, java.util.ListIterator<SyntaxObject> objIter,
@@ -991,7 +980,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         BaseConditionFieldAutoCompleter conditionAsBase =
                 (BaseConditionFieldAutoCompleter) ((conditionFieldAC instanceof BaseConditionFieldAutoCompleter) ? conditionFieldAC
                         : null);
-        java.lang.Class curType = null;
+        Class<?> curType = null;
         if (conditionAsBase != null && (curType = conditionAsBase.getTypeDictionary().get(fieldName)) != null
                 && curType == String.class && !StringHelper.isNullOrEmpty(customizedValue)
                 && !StringHelper.EqOp(customizedValue, "''") && !StringHelper.EqOp(customizedValue, "'*'")) {

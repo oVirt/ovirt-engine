@@ -12,7 +12,7 @@ import org.ovirt.engine.core.dal.dbbroker.user_sessions;
  *
  *
  */
-public interface DbUserDAO extends DAO {
+public interface DbUserDAO extends DAO, SearchDAO<DbUser> {
 
     /**
      * Retrieves the suser with the specified id.
@@ -49,15 +49,6 @@ public interface DbUserDAO extends DAO {
      * @return the list of users
      */
     List<DbUser> getAllTimeLeasedUsersForVm(int vmid);
-
-    /**
-     * Retrieves all users who meet some arbitrary SQL query.
-     *
-     * @param query
-     *            the query
-     * @return the list of users
-     */
-    List<DbUser> getAllWithQuery(String query);
 
     /**
      * Retrieves all defined used.

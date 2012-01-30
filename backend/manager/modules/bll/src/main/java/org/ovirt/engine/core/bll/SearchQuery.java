@@ -35,11 +35,14 @@ import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.SearchDAO;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
+import org.ovirt.engine.core.utils.list.ListUtils;
+import org.ovirt.engine.core.utils.list.ListUtils.Filter;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
     private static java.util.HashMap<String, QueryData2> mQueriesCache = new java.util.HashMap<String, QueryData2>();
@@ -130,7 +133,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         getSearchReturnValue().setReturnValue(returnValue);
     }
 
-    protected List<VM> searchVmsFromDb() {
+    private List<VM> searchVmsFromDb() {
         List<VM> returnValue = null;
         QueryData2 data = InitQueryData(true);
         if (data == null) {
@@ -148,142 +151,106 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return returnValue;
     }
 
-    protected List<VDS> searchVDSsByDb() {
-        List<VDS> returnValue = null;
-        QueryData2 data = InitQueryData(true);
-        if (data == null) {
-            returnValue = new ArrayList<VDS>();
-        } else {
-            returnValue = DbFacade.getInstance().getVdsDAO().getAllWithQuery(data.getQuery());
-            for (VDS vds : returnValue) {
-                vds.setCpuName(CpuFlagsManagerHandler.FindMaxServerCpuByFlags(vds.getcpu_flags(),
-                        vds.getvds_group_compatibility_version()));
+    private List<VDS> searchVDSsByDb() {
+        return genericSearch(DbFacade.getInstance().getVdsDAO(), true, new Filter<VDS>() {
+            public List<VDS> filter(List<VDS> data) {
+                for (VDS vds : data) {
+                    vds.setCpuName(CpuFlagsManagerHandler.FindMaxServerCpuByFlags(vds.getcpu_flags(),
+                            vds.getvds_group_compatibility_version()));
+                }
+                return data;
             }
-        }
-        return returnValue;
+        });
     }
 
-    protected java.util.ArrayList<AdUser> searchAdUsers() {
+    private List<AdUser> searchAdUsers() {
         QueryData2 data = InitQueryData(true);
 
         if (data == null) {
-            return new java.util.ArrayList<AdUser>();
+            return new ArrayList<AdUser>();
         } else {
             LdapQueryData ldapQueryData = new LdapQueryDataImpl();
             ldapQueryData.setLdapQueryType(LdapQueryType.searchUsers);
             ldapQueryData.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
             ldapQueryData.setDomain(data.getDomain());
-            java.util.ArrayList<AdUser> result = (java.util.ArrayList<AdUser>) LdapFactory
+            @SuppressWarnings("unchecked")
+            List<AdUser> result = (List<AdUser>) LdapFactory
                     .getInstance(data.getDomain())
                     .RunAdAction(AdActionType.SearchUserByQuery,
                             new LdapSearchByQueryParameters(data.getDomain(), ldapQueryData))
                     .getReturnValue();
-            return (result != null) ? result : new java.util.ArrayList<AdUser>();
+            return (result != null) ? result : new ArrayList<AdUser>();
         }
     }
 
-    protected List<DbUser> searchDbUsers() {
-        List<DbUser> returnValue = null;
-        QueryData2 data = InitQueryData(true);
-        if (data == null) {
-            returnValue = new ArrayList<DbUser>();
-        } else {
-            returnValue = DbFacade.getInstance().getDbUserDAO().getAllWithQuery(data.getQuery());
-        }
-
-        return returnValue;
+    private List<DbUser> searchDbUsers() {
+        return genericSearch(DbFacade.getInstance().getDbUserDAO(), true, null);
     }
 
-    protected java.util.ArrayList<ad_groups> searchAdGroups() {
+    private ArrayList<ad_groups> searchAdGroups() {
         QueryData2 data = InitQueryData(true);
 
         if (data == null) {
-            return new java.util.ArrayList<ad_groups>();
+            return new ArrayList<ad_groups>();
         } else {
             LdapQueryData ldapQueryData = new LdapQueryDataImpl();
             ldapQueryData.setLdapQueryType(LdapQueryType.searchGroups);
             ldapQueryData.setDomain(data.getDomain());
             ldapQueryData.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
 
-            java.util.ArrayList<ad_groups> result = (java.util.ArrayList<ad_groups>) LdapFactory
+            @SuppressWarnings("unchecked")
+            ArrayList<ad_groups> result = (ArrayList<ad_groups>) LdapFactory
                     .getInstance(data.getDomain())
                     .RunAdAction(AdActionType.SearchGroupsByQuery,
                             new LdapSearchByQueryParameters(data.getDomain(), ldapQueryData))
                     .getReturnValue();
-            return (result != null) ? result : new java.util.ArrayList<ad_groups>();
+            return (result != null) ? result : new ArrayList<ad_groups>();
         }
     }
 
-    protected List<VmTemplate> searchVMTemplates() {
-        List<VmTemplate> returnValue;
-        QueryData2 data = InitQueryData(true);
-        if (data == null) {
-            returnValue = new ArrayList<VmTemplate>();
-        } else {
-            List<VmTemplate> tmp = DbFacade.getInstance().getVmTemplateDAO().getAllWithQuery(data.getQuery());
-            for (IVdcQueryable vmt_helper : tmp) {
-                VmTemplate vmt = (VmTemplate) vmt_helper;
-                VmTemplateHandler.UpdateDisksFromDb(vmt);
+    private List<VmTemplate> searchVMTemplates() {
+        return genericSearch(DbFacade.getInstance().getVmTemplateDAO(), true, new Filter<VmTemplate>() {
+            @Override
+            public List<VmTemplate> filter(final List<VmTemplate> data) {
+                for (IVdcQueryable vmt_helper : data) {
+                    VmTemplate vmt = (VmTemplate) vmt_helper;
+                    VmTemplateHandler.UpdateDisksFromDb(vmt);
+                }
+                return data;
             }
-            returnValue = tmp;
-        }
-        return returnValue;
+        });
     }
 
-    protected List<AuditLog> searchAuditLogEvents() {
-        List<AuditLog> returnValue = null;
-        QueryData2 data = InitQueryData(false);
+
+    private final <T extends IVdcQueryable> List<T> genericSearch(final SearchDAO<T> dao,
+            final boolean useCache,
+            final Filter<T> filter) {
+        final QueryData2 data = InitQueryData(useCache);
         if (data == null) {
-            returnValue = new ArrayList<AuditLog>();
+            return new ArrayList<T>();
         } else {
-            returnValue = DbFacade.getInstance().getAuditLogDAO().getAllWithQuery(data.getQuery());
+            return ListUtils.filter(dao.getAllWithQuery(data.getQuery()), filter);
         }
-        return returnValue;
     }
 
-    protected List<vm_pools> searchVmPools() {
-        List<vm_pools> returnValue = null;
-        QueryData2 data = InitQueryData(true);
-        if (data == null) {
-            returnValue = new ArrayList<vm_pools>();
-        } else {
-            returnValue = DbFacade.getInstance().getVmPoolDAO().getAllWithQuery(data.getQuery());
-        }
-
-        return returnValue;
+    private List<AuditLog> searchAuditLogEvents() {
+        return genericSearch(DbFacade.getInstance().getAuditLogDAO(), false, null);
     }
 
-    protected List<VDSGroup> searchClusters() {
-        List<VDSGroup> returnValue = null;
-        QueryData2 data = InitQueryData(true);
-        if (data == null) {
-            returnValue = new ArrayList<VDSGroup>();
-        } else {
-            returnValue = DbFacade.getInstance().getVdsGroupDAO().getAllWithQuery(data.getQuery());
-        }
-        return returnValue;
+    private List<vm_pools> searchVmPools() {
+        return genericSearch(DbFacade.getInstance().getVmPoolDAO(), true, null);
     }
 
-    protected List<storage_pool> searchStoragePool() {
-        List<storage_pool> returnValue = null;
-        QueryData2 data = InitQueryData(true);
-        if (data == null) {
-            returnValue = new ArrayList<storage_pool>();
-        } else {
-            returnValue = DbFacade.getInstance().getStoragePoolDAO().getAllWithQuery(data.getQuery());
-        }
-        return returnValue;
+    private List<VDSGroup> searchClusters() {
+        return genericSearch(DbFacade.getInstance().getVdsGroupDAO(), true, null);
     }
 
-    protected List<storage_domains> searchStorageDomain() {
-        List<storage_domains> returnValue = null;
-        QueryData2 data = InitQueryData(true);
-        if (data == null) {
-            returnValue = new ArrayList<storage_domains>();
-        } else {
-            returnValue = DbFacade.getInstance().getStorageDomainDAO().getAllWithQuery(data.getQuery());
-        }
-        return returnValue;
+    private List<storage_pool> searchStoragePool() {
+        return genericSearch(DbFacade.getInstance().getStoragePoolDAO(), true, null);
+    }
+
+    private List<storage_domains> searchStorageDomain() {
+        return genericSearch(DbFacade.getInstance().getStorageDomainDAO(), true, null);
     }
 
     private QueryData2 InitQueryData(boolean useCache) {
@@ -353,15 +320,15 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     int length = endPos - startPos;
                     String error =
                             (length > 0 && ((startPos + 1 + length) < searchText.length())
-                                               && (endPos + 1 < searchText.length()))
-                                                       ?
-                                                       searchText.substring(0, startPos)
-                                                               + "$"
-                                                               + searchText.substring(startPos + 1, startPos + 1
-                                                                       + length) + "$"
-                                                               + searchText.substring(endPos + 1)
-                                                       :
-                                                       searchObj.getError().toString();
+                            && (endPos + 1 < searchText.length()))
+                                    ?
+                                    searchText.substring(0, startPos)
+                                            + "$"
+                                            + searchText.substring(startPos + 1, startPos + 1
+                                                    + length) + "$"
+                                            + searchText.substring(endPos + 1)
+                                    :
+                                    searchObj.getError().toString();
                     getSearchReturnValue().setExceptionString(error);
                     return null;
                 }
@@ -383,7 +350,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 if (!containsStaticInValues(data.getQuery()))
                     mQueriesCache.put(searchKey, data);
             }
-        } catch (SearchEngineIllegalCharacterException e){
+        } catch (SearchEngineIllegalCharacterException e) {
             log.error("Search expression can not end with ESCAPE character:" + getParameters().getSearchPattern());
             data = null;
             getSearchReturnValue().setIsSearchValid(false);
@@ -404,5 +371,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return query.toLowerCase().contains(MATCH_IN_TAG_ID_CLAUSE);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(SearchQuery.class);
+    private static final LogCompat log = LogFactoryCompat.getLog(SearchQuery.class);
+
 }

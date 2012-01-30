@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.NGuid;
  *
  *
  */
-public interface VdsDAO extends DAO {
+public interface VdsDAO extends DAO, SearchDAO<VDS> {
     /**
      * Retrieves the instance with the given id.
      *
@@ -84,15 +84,6 @@ public interface VdsDAO extends DAO {
      * @return the list of instances
      */
     List<VDS> getAllForVdsGroupWithoutMigrating(Guid vdsGroup);
-
-    /**
-     * Retrieves all instances using the supplied SQL query.
-     *
-     * @param query
-     *            the query
-     * @return the list of instances
-     */
-    List<VDS> getAllWithQuery(String query);
 
     /**
      * Retrieves all VDS instances.

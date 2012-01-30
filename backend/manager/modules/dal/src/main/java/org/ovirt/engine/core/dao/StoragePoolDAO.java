@@ -13,7 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  *
  */
-public interface StoragePoolDAO  extends GenericDao<storage_pool, Guid>, StatusAwareDao<Guid, StoragePoolStatus> {
+public interface StoragePoolDAO  extends GenericDao<storage_pool, Guid>, StatusAwareDao<Guid, StoragePoolStatus>, SearchDAO<storage_pool> {
 
     /**
      * Retrieves the storage pool with the given name.
@@ -59,15 +59,6 @@ public interface StoragePoolDAO  extends GenericDao<storage_pool, Guid>, StatusA
      * @return the list of storage pools
      */
     List<storage_pool> getAllForStorageDomain(Guid storageDomain);
-
-    /**
-     * Retrieves all storage pools that satisfy the given SQL query.
-     *
-     * @param query
-     *            the query
-     * @return the list of storage pools
-     */
-    List<storage_pool> getAllWithQuery(String query);
 
     /**
      * The following method should update only part of storage pool. It will update only name, description and

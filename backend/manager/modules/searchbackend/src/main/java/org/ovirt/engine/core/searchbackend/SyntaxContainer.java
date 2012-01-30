@@ -1,14 +1,22 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.ovirt.engine.core.compat.StringBuilderCompat;
+import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.core.compat.StringHelper;
 
 public class SyntaxContainer implements Iterable<SyntaxObject> {
-    private String mOrigText = null;
+
+    private final String mOrigText;
+    private final LinkedList<SyntaxObject> mObjList = new LinkedList<SyntaxObject>();
+    private final List<String> mCurrentCompletions = new ArrayList<String>();
+
     private boolean mValid = false;
     private SyntaxError mError = SyntaxError.NO_ERROR;
     private int[] mErrorPos = new int[2];
-    private java.util.LinkedList<SyntaxObject> mObjList = null;
-    private java.util.ArrayList<String> mCurrentCompletions = null;
     private int privateMaxCount;
     private long searchFrom = 0;
     private boolean caseSensitive=true;
@@ -61,19 +69,15 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
     }
 
     public String getSearchObjectStr() {
-        String retval = null;
         if (mObjList.getFirst() != null) {
-            retval = getObjSingularName(mObjList.getFirst().getBody());
+            return getObjSingularName(mObjList.getFirst().getBody());
         }
-        return retval;
+        return null;
     }
 
-    public SyntaxContainer(String origText) {
+    public SyntaxContainer(final String origText) {
         mOrigText = origText;
         mValid = false;
-        mObjList = new java.util.LinkedList<SyntaxObject>();
-        mCurrentCompletions = new java.util.ArrayList<String>();
-
     }
 
     public void setErr(SyntaxError errCode, int startPos, int endPos) {

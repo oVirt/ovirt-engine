@@ -10,7 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * <code>VmTemplateDAO</code> defines a type for performing CRUD operations on instances of {@link VmTemplate}.
  */
-public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAwareDao<Guid, VmTemplateStatus> {
+public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAwareDao<Guid, VmTemplateStatus>, SearchDAO<VmTemplate> {
 
     /**
      * Retrieves all templates for the specified storage domain.
@@ -20,15 +20,6 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
      * @return the list of templates
      */
     List<VmTemplate> getAllForStorageDomain(Guid storageDomain);
-
-    /**
-     * Retrieves all templates using a SQL query.
-     *
-     * @param query
-     *            the query
-     * @return the list of templates
-     */
-    List<VmTemplate> getAllWithQuery(String query);
 
     /**
      * Retrieves all templates for the specified VDS group.

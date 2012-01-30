@@ -2,6 +2,10 @@ package org.ovirt.engine.core.searchbackend;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
 import org.ovirt.engine.core.common.config.Config;
@@ -15,20 +19,14 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     public static final int DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
 
-    protected java.util.HashMap<String, java.util.ArrayList<valueValidationFunction>> mValidationDict = null;
-    private java.util.HashMap<String, Class> mTypeDict = null;
-    protected java.util.HashMap<String, String> mColumnNameDict = null;
-    protected java.util.ArrayList<String> mNotFreeTextSearchableFieldsList = new java.util.ArrayList<String>();
-
-    public BaseConditionFieldAutoCompleter() {
-        mValidationDict = new java.util.HashMap<String, java.util.ArrayList<valueValidationFunction>>();
-        mTypeDict = new java.util.HashMap<String, Class>();
-        mColumnNameDict = new java.util.HashMap<String, String>();
-    }
+    protected final Map<String, List<valueValidationFunction>> mValidationDict =
+            new HashMap<String, List<valueValidationFunction>>();
+    private Map<String, Class<?>> mTypeDict = new HashMap<String, Class<?>>();
+    protected Map<String, String> mColumnNameDict = new HashMap<String, String>();
+    protected List<String> mNotFreeTextSearchableFieldsList = new java.util.ArrayList<String>();
 
     /**
      * Gets the LIKE clause syntax for non case-sensitive search
-     *
      * @return the LIKE syntax according to current DBEngine.
      */
     public static String getLikeSyntax(boolean caseSensitive) {
@@ -55,7 +53,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     public static ITagsHandler TagsHandler;
 
-    public java.util.HashMap<String, java.lang.Class> getTypeDictionary() {
+    public Map<String, Class<?>> getTypeDictionary() {
         return mTypeDict;
     }
 
@@ -69,8 +67,8 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         valueValidationFunction dateEnumValidationFunc = validateDateEnumValueByValueAC;
 
         for (String key : mVerbs.keySet()) {
-            java.util.ArrayList<valueValidationFunction> curList = new java.util.ArrayList<valueValidationFunction>();
-            java.lang.Class curType = mTypeDict.get(key);
+            List<valueValidationFunction> curList = new java.util.ArrayList<valueValidationFunction>();
+            Class<?> curType = mTypeDict.get(key);
             if (curType == java.math.BigDecimal.class) {
                 curList.add(decimalValidationFunction);
             } else if (curType == Integer.class) {
@@ -96,7 +94,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     public boolean validateFieldValue(String fieldName, String fieldValue) {
         if (mValidationDict.containsKey(fieldName)) {
-            java.util.ArrayList<valueValidationFunction> validationList = mValidationDict.get(fieldName);
+            List<valueValidationFunction> validationList = mValidationDict.get(fieldName);
             for (valueValidationFunction curValidationFunc : validationList) {
                 if (!curValidationFunc.invoke(fieldName, fieldValue)) {
                     return false;
@@ -114,8 +112,8 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         return retval;
     }
 
-    public java.lang.Class getDbFieldType(String fieldName) {
-        java.lang.Class retval = null;
+    public Class<?> getDbFieldType(String fieldName) {
+        Class<?> retval = null;
         if (mTypeDict.containsKey(fieldName)) {
             retval = mTypeDict.get(fieldName);
         }
@@ -276,7 +274,10 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         return null;
     }
 
-    public void formatValue(String fieldName, RefObject<String> relations, RefObject<String> value, boolean caseSensitive) {
+    public void formatValue(String fieldName,
+            RefObject<String> relations,
+            RefObject<String> value,
+            boolean caseSensitive) {
         if (fieldName == null) {
             return;
         }
@@ -311,7 +312,8 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                 value.argvalue = StringHelper.trim(value.argvalue, '\'');
                 tags tag = TagsHandler.GetTagByTagName(value.argvalue);
                 if (tag != null) {
-                    value.argvalue = StringFormat.format("(%1$s)", TagsHandler.GetTagNameAndChildrenNames(tag.gettag_id()));
+                    value.argvalue =
+                            StringFormat.format("(%1$s)", TagsHandler.GetTagNameAndChildrenNames(tag.gettag_id()));
                 } else {
                     value.argvalue = StringFormat.format("('%1$s')", Guid.Empty);
                 }

@@ -1,11 +1,16 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.compat.*;
 
 public class BaseAutoCompleter implements IAutoCompleter {
-    protected final java.util.HashMap<String, String> mVerbs = new java.util.HashMap<String, String>();
-    protected final java.util.HashMap<String, java.util.ArrayList<String>> mVerbCompletion =
-            new java.util.HashMap<String, java.util.ArrayList<String>>();
+    protected final Map<String, String> mVerbs = new HashMap<String, String>();
+    protected final Map<String, List<String>> mVerbCompletion =
+            new HashMap<String, List<String>>();
 
     public BaseAutoCompleter() {
 
@@ -24,16 +29,16 @@ public class BaseAutoCompleter implements IAutoCompleter {
     }
 
     protected void buildCompletions() {
-        java.util.ArrayList<String> emptyKeyList = new java.util.ArrayList<String>();
+        final List<String> emptyKeyList = new ArrayList<String>();
         for (String title : mVerbs.keySet()) {
             emptyKeyList.add(changeCaseDisplay(title));
             for (int idx = 1; idx <= title.length(); idx++) {
                 String curKey = title.substring(0, idx);
                 if (!mVerbCompletion.containsKey(curKey)) {
-                    java.util.ArrayList<String> newList = new java.util.ArrayList<String>();
+                    java.util.ArrayList<String> newList = new ArrayList<String>();
                     mVerbCompletion.put(curKey, newList);
                 }
-                java.util.ArrayList<String> curList = mVerbCompletion.get(curKey);
+                List<String> curList = mVerbCompletion.get(curKey);
                 curList.add(changeCaseDisplay(title));
             }
         }
@@ -44,7 +49,7 @@ public class BaseAutoCompleter implements IAutoCompleter {
     public String[] getCompletion(String wordPart) {
         String[] retval = new String[0];
         if (mVerbCompletion.containsKey(wordPart.toUpperCase())) {
-            java.util.ArrayList<String> curList = mVerbCompletion.get(wordPart.toUpperCase());
+            List<String> curList = mVerbCompletion.get(wordPart.toUpperCase());
             retval = new String[curList.size()];
             retval = curList.toArray(new String[] {});
         }

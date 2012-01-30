@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.NGuid;
  *
  *
  */
-public interface StorageDomainDAO extends DAO {
+public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains> {
     /**
      * Retrieves the master storage domain for the specified pool.
      *
@@ -77,15 +77,6 @@ public interface StorageDomainDAO extends DAO {
      * @return the list of storage domains
      */
     List<storage_domains> getAllForStorageDomain(Guid id);
-
-    /**
-     * Retrieves all domains that fulfill the supplied query.
-     *
-     * @param query
-     *            the SQL query
-     * @return the list of domains
-     */
-    List<storage_domains> getAllWithQuery(String query);
 
     /**
      * Retrieves all storage domains.

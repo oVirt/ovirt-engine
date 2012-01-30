@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  *
  */
-public interface AuditLogDAO extends DAO {
+public interface AuditLogDAO extends DAO, SearchDAO<AuditLog> {
     /**
      * Retrieves the entry with the given id.
      *
@@ -29,15 +29,6 @@ public interface AuditLogDAO extends DAO {
      * @return the list of entries
      */
     List<AuditLog> getAllAfterDate(Date cutoff);
-
-    /**
-     * Finds all entries using a supplied SQL query.
-     *
-     * @param query
-     *            the query
-     * @return the list of entries
-     */
-    List<AuditLog> getAllWithQuery(String query);
 
     /**
      * Retrieves all audit log entries.

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.NGuid;
  * <code>VmPoolDAO</code> defines a type that performs CRUD operations on instances of {@link vm_pool}.
  *
  */
-public interface VmPoolDAO extends DAO {
+public interface VmPoolDAO extends DAO, SearchDAO<vm_pools>{
     /**
      * Removes the specified VM from the pool.
      *
@@ -63,15 +63,6 @@ public interface VmPoolDAO extends DAO {
      * @return the list of pools
      */
     List<vm_pools> getAllForAdGroup(Guid adGroup);
-
-    /**
-     * Retrieves all VM pools which satisfy the supplied query.
-     *
-     * @param query
-     *            the SQL query
-     * @return the list of pools
-     */
-    List<vm_pools> getAllWithQuery(String query);
 
     /**
      * Saves the specified pool.

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
  * <code>VdsGroupDAO</code> defines a type that performs CRUD operations on instances of {@link VDSGroup}.
  *
  */
-public interface VdsGroupDAO extends DAO {
+public interface VdsGroupDAO extends DAO, SearchDAO<VDSGroup> {
     /**
      * Gets the group with the specified id.
      *
@@ -46,15 +46,6 @@ public interface VdsGroupDAO extends DAO {
      * @return the list of groups
      */
     List<VDSGroup> getAllForStoragePool(Guid id);
-
-    /**
-     * Retrieves groups using a SQL query snippet.
-     *
-     * @param query
-     *            the query
-     * @return the list of groups
-     */
-    List<VDSGroup> getAllWithQuery(String query);
 
     /**
      * Retrieves all VDS groups.
