@@ -9,6 +9,10 @@ import org.ovirt.engine.core.compat.Version;
 
 public class VmDeviceCommonUtils {
 
+    final static String NETWORK_CHAR = "N";
+    final static String CDROM_CHAR = "D";
+    final static String DRIVE_CHAR = "C";
+
     public static boolean isNetwork(VmDevice device) {
         return (device.getType().equals(VmDeviceType.getName(VmDeviceType.INTERFACE)));
     }
@@ -28,28 +32,28 @@ public class VmDeviceCommonUtils {
      * @return
      */
     public static BootSequence getBootSequence(List<VmDevice> devices) {
+        StringBuilder sb = new StringBuilder();
         BootSequence ret = BootSequence.C;
-        String seq = "";
         for (VmDevice device : devices) {
             if (device.getBootOrder() > 0) {
-                if (isNetwork(device) && seq.indexOf('N') < 0) {
-                    seq.concat("N");
+                if (isNetwork(device) && sb.indexOf(NETWORK_CHAR) < 0) {
+                    sb.append(NETWORK_CHAR);
                 }
-                if (isDisk(device) && seq.indexOf('C') < 0) {
-                    seq.concat("C");
+                if (isDisk(device) && sb.indexOf(DRIVE_CHAR) < 0) {
+                    sb.append(DRIVE_CHAR);
                 }
-                if (isCD(device) && seq.indexOf('D') < 0) {
-                    seq.concat("D");
+                if (isCD(device) && sb.indexOf(CDROM_CHAR) < 0) {
+                    sb.append(CDROM_CHAR);
                 }
                 // maximum string is 3 characters, so, if reached , exit loop.
-                if (seq.length() == 3) {
+                if (sb.length() == 3) {
                     break;
                 }
             }
         }
 
         for (BootSequence bs : BootSequence.values()) {
-            if (bs.name().equals(seq)) {
+            if (bs.name().equals(sb.toString())) {
                 ret = bs;
                 break;
             }
