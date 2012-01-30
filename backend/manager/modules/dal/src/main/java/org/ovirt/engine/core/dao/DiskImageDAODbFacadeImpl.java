@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
@@ -27,6 +28,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  * developed code from {@link DbFacade}.
  */
 public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskImageDAO {
+
 
     @Override
     public DiskImage get(Guid id) {
@@ -81,6 +83,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                         .getInt("propagate_errors")));
                 entity.setread_rate(rs.getInt("read_rate"));
                 entity.setwrite_rate(rs.getInt("write_rate"));
+                String entityType = rs.getString("entity_type");
+                VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
+                entity.setVmEntityType(vmEntityType);
                 return entity;
             }
         };
@@ -138,6 +143,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                         .getInt("propagate_errors")));
                 entity.setread_rate(rs.getInt("read_rate"));
                 entity.setwrite_rate(rs.getInt("write_rate"));
+                String entityType = rs.getString("entity_type");
+                VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
+                entity.setVmEntityType(vmEntityType);
                 return entity;
             }
         };
@@ -203,6 +211,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                         .getInt("propagate_errors")));
                 entity.setread_rate(rs.getInt("read_rate"));
                 entity.setwrite_rate(rs.getInt("write_rate"));
+                String entityType = rs.getString("entity_type");
+                VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
+                entity.setVmEntityType(vmEntityType);
                 return entity;
             }
         };
@@ -260,6 +271,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                         .getInt("propagate_errors")));
                 entity.setread_rate(rs.getInt("read_rate"));
                 entity.setwrite_rate(rs.getInt("write_rate"));
+                String entityType = rs.getString("entity_type");
+                VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
+                entity.setVmEntityType(vmEntityType);
                 return entity;
             }
         };
@@ -317,6 +331,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                         .getInt("propagate_errors")));
                 entity.setread_rate(rs.getInt("read_rate"));
                 entity.setwrite_rate(rs.getInt("write_rate"));
+                String entityType = rs.getString("entity_type");
+                VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
+                entity.setVmEntityType(vmEntityType);
                 return entity;
             }
         };
@@ -374,6 +391,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                         .getInt("propagate_errors")));
                 entity.setread_rate(rs.getInt("read_rate"));
                 entity.setwrite_rate(rs.getInt("write_rate"));
+                String entityType = rs.getString("entity_type");
+                VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
+                entity.setVmEntityType(vmEntityType);
                 return entity;
             }
         };
@@ -431,6 +451,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                         .getInt("propagate_errors")));
                 entity.setread_rate(rs.getInt("read_rate"));
                 entity.setwrite_rate(rs.getInt("write_rate"));
+                String entityType = rs.getString("entity_type");
+                VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
+                entity.setVmEntityType(vmEntityType);
                 return entity;
             }
         };
@@ -487,6 +510,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                         .getInt("propagate_errors")));
                 entity.setread_rate(rs.getInt("read_rate"));
                 entity.setwrite_rate(rs.getInt("write_rate"));
+                String entityType = rs.getString("entity_type");
+                VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
+                entity.setVmEntityType(vmEntityType);
                 return entity;
             }
         };
@@ -565,7 +591,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             imagesList.add(image.getId());
 
             List<DiskImage> imagesForDisk =
-                DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(image.getimage_group_id());
+                    DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(image.getimage_group_id());
             if (imagesForDisk == null || imagesForDisk.isEmpty()) {
                 DbFacade.getInstance().getDiskDao().remove(image.getimage_group_id());
             }

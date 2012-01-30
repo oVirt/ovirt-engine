@@ -30,10 +30,15 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
     private static final Guid FREE_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
     private static final Guid EXISTING_IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
     private static final Guid FREE_IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f579");
-    private static final Guid EXISTING_IMAGE_DISK_TEMPLATE = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
+    private static final Guid EXISTING_IMAGE_DISK_TEMPLATE = new Guid("52058975-3d5e-484a-80c1-01c31207f578");
     private static final Guid ANCESTOR_IMAGE_ID = new Guid("c9a559d9-8666-40d1-9967-759502b19f0b");
+    private static final Guid EXISTING_VM_TEMPLATE = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
 
-    private static final int TOTAL_DISK_IMAGES = 4;
+    private DiskImage existingTemplate;
+
+
+
+    private static final int TOTAL_DISK_IMAGES = 5;
     private DiskImageDynamicDAO diskImageDynamicDao;
     private DiskDao diskDao;
     private DiskImage newImage;
@@ -96,9 +101,10 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
 
         existingStatelessDiskImageMap = dao.getStatelessVmImageMapForImageId(existingEntity.getId());
         newStatelessVmImageMap = new stateless_vm_image_map(FREE_IMAGE_ID, "q", FREE_VM_ID);
+        existingTemplate = dao.get(EXISTING_IMAGE_DISK_TEMPLATE );
     }
 
-    /**
+     /**
      * Ensures that saving a disk image works as expected.
      */
     @Test
@@ -256,6 +262,24 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         assertFullGetAllForVMResult(disks);
     }
 
+   public void testGetTemplate() {
+        DiskImage result = dao.get(EXISTING_IMAGE_DISK_TEMPLATE);
+        assertNotNull(result);
+        assertEquals(existingTemplate, result);
+    }
+
+    @Test
+    public void testGetAllForVm() {
+        List<DiskImage> result = dao
+                .getAllForVm(EXISTING_VM_TEMPLATE);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        for (DiskImage template : result) {
+            assertEquals(EXISTING_IMAGE_DISK_TEMPLATE, template.getId());
+        }
+    }
+
     /**
      * Asserts the result of {@link DiskImageDAO#getAllForVm(Guid)} contains the correct disks.
      * @param disks The result to check
@@ -263,4 +287,5 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
     private static void assertFullGetAllForVMResult(List<DiskImage> disks) {
         assertEquals("VM should have two disks", 2, disks.size());
     }
+
 }

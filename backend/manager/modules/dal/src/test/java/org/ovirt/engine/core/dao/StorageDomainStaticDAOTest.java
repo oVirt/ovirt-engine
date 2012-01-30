@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -214,8 +216,23 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
     @Test
     public void testRemove() {
         dynamicDao.remove(existingDomain.getId());
-        for (DiskImage image : imageDao.getAllSnapshotsForStorageDomain(existingDomain.getId())) {
-            imageDao.remove(image.getId());
+        List<DiskImage> imagesToRemove = imageDao.getAllSnapshotsForStorageDomain(existingDomain.getId());
+        Set<Guid> itGuids = new HashSet<Guid>();
+        for (DiskImage image : imagesToRemove) {
+            itGuids.add(image.getit_guid());
+        }
+        // First remove images that are not image templates
+        for (DiskImage image : imagesToRemove) {
+            if (!itGuids.contains(image.getId())) {
+                imageDao.remove(image.getId());
+            }
+        }
+        // Remove images of templates - the blank image guid (empty guid was also inserted) so it is first removed from
+        // the set
+        // as it has no representation as image on the storage domain
+        itGuids.remove(Guid.Empty);
+        for (Guid guid : itGuids) {
+            imageDao.remove(guid);
         }
         dao.remove(existingDomain.getId());
 

@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
@@ -213,7 +212,6 @@ public abstract class BaseDAOTestCase {
                             .addAnnotatedClass(DbUser.class)
                             .addAnnotatedClass(DiskImage.class)
                             .addAnnotatedClass(DiskImageDynamic.class)
-                            .addAnnotatedClass(DiskImageTemplate.class)
                             .addAnnotatedClass(event_map.class)
                             .addAnnotatedClass(event_notification_hist.class)
                             .addAnnotatedClass(event_notification_methods.class)

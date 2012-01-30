@@ -116,4 +116,5 @@ public interface DiskImageDAO extends GenericDao<DiskImage, Guid> {
     void removeStatelessVmImageMap(Guid imageId);
 
     List<stateless_vm_image_map> getAllStatelessVmImageMapsForVm(Guid vmId);
+
 }

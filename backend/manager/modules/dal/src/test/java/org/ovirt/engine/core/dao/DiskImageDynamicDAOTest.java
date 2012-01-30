@@ -19,7 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class DiskImageDynamicDAOTest extends BaseDAOTestCase{
     private static final Guid EXISTING_IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
-    private static final int TOTAL_DYNAMIC_DISK_IMAGES = 3;
+    private static final int TOTAL_DYNAMIC_DISK_IMAGES = 4;
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid EXISTING_IMAGE_DISK_TEMPLATE = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
 

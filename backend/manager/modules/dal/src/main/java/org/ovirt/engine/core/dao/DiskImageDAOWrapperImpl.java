@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.images.DiskImageDAOHibernateImpl;
 import org.ovirt.engine.core.dao.images.DiskImageDynamicDAOHibernateImpl;
-import org.ovirt.engine.core.dao.images.DiskImageTemplateDAOHibernateImpl;
 import org.ovirt.engine.core.dao.images.ImageVmMapDAOHibernateImpl;
 import org.ovirt.engine.core.dao.images.ImageVmPoolMapDAOHibernateImpl;
 import org.ovirt.engine.core.dao.images.StatelessImageVmMapDAOHibernateImpl;
@@ -22,13 +21,11 @@ import org.ovirt.engine.core.dao.images.StatelessImageVmMapDAOHibernateImpl;
  *
  */
 public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskImageDAO {
-    private final DiskImageDAOHibernateImpl imageDAO = new DiskImageDAOHibernateImpl();
-    private final DiskImageDynamicDAOHibernateImpl dynamicDAO = new DiskImageDynamicDAOHibernateImpl();
-    private final DiskImageTemplateDAOHibernateImpl templateDAO = new DiskImageTemplateDAOHibernateImpl();
-    private final ImageVmMapDAOHibernateImpl imageVmMapDAO = new ImageVmMapDAOHibernateImpl();
-    private final ImageVmPoolMapDAOHibernateImpl imageVmPoolMapDAO = new ImageVmPoolMapDAOHibernateImpl();
-    private final StatelessImageVmMapDAOHibernateImpl statelessImageVmMapDAO =
-            new StatelessImageVmMapDAOHibernateImpl();
+    private DiskImageDAOHibernateImpl imageDAO = new DiskImageDAOHibernateImpl();
+    private DiskImageDynamicDAOHibernateImpl dynamicDAO = new DiskImageDynamicDAOHibernateImpl();
+    private ImageVmMapDAOHibernateImpl imageVmMapDAO = new ImageVmMapDAOHibernateImpl();
+    private ImageVmPoolMapDAOHibernateImpl imageVmPoolMapDAO = new ImageVmPoolMapDAOHibernateImpl();
+    private StatelessImageVmMapDAOHibernateImpl statelessImageVmMapDAO = new StatelessImageVmMapDAOHibernateImpl();
 
     @Override
     public void setSession(Session session) {
@@ -36,7 +33,6 @@ public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskI
 
         imageDAO.setSession(session);
         dynamicDAO.setSession(session);
-        templateDAO.setSession(session);
         imageVmMapDAO.setSession(session);
     }
 
