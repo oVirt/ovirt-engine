@@ -510,7 +510,7 @@ public class ClusterModel extends Model
             public void OnSuccess(Object model, Object result)
             {
                 ClusterModel clusterModel = (ClusterModel) model;
-                clusterModel.setServerOverCommit((Integer) result);
+                clusterModel.setDesktopOverCommit((Integer) result);
                 AsyncQuery _asyncQuery1 = new AsyncQuery();
                 _asyncQuery1.setModel(clusterModel);
                 _asyncQuery1.asyncCallback = new INewAsyncCallback() {
@@ -518,7 +518,7 @@ public class ClusterModel extends Model
                     public void OnSuccess(Object model1, Object result1)
                     {
                         ClusterModel clusterModel1 = (ClusterModel) model1;
-                        clusterModel1.setDesktopOverCommit((Integer) result1);
+                        clusterModel1.setServerOverCommit((Integer) result1);
 
                         // temp is used for conversion purposes
                         EntityModel temp;
