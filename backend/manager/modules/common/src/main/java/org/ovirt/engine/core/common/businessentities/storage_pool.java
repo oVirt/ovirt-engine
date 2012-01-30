@@ -120,6 +120,8 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
     @Transient
     private Version version;
 
+    private QuotaEnforcmentTypeEnum quotaEnforcementType = QuotaEnforcmentTypeEnum.DISABLED;
+
     public storage_pool() {
         description = "";
         masterDomainVersion = 0;
@@ -267,6 +269,7 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
         result = prime * result + storagePoolType;
         result = prime * result + ((vdsGroups == null) ? 0 : vdsGroups.hashCode());
         result = prime * result + ((storagePoolFormatType == null) ? 0 : storagePoolFormatType.hashCode());
+        result = prime * result + ((quotaEnforcementType == null) ? 0 : quotaEnforcementType.hashCode());
         return result;
     }
 
@@ -332,7 +335,18 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
                 return false;
         } else if (storagePoolFormatType != other.storagePoolFormatType)
             return false;
+        if (quotaEnforcementType != other.quotaEnforcementType) {
+            return false;
+        }
         return true;
+    }
+
+    public QuotaEnforcmentTypeEnum getQuotaEnforcementType() {
+        return quotaEnforcementType;
+    }
+
+    public void setQuotaEnforcementType(QuotaEnforcmentTypeEnum quotaEnforcementType) {
+        this.quotaEnforcementType = quotaEnforcementType;
     }
 
 }
