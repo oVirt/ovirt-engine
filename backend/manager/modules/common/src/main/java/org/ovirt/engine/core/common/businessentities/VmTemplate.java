@@ -90,7 +90,7 @@ public class VmTemplate extends VmBase {
     private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
 
     @Transient
-    private HashMap<String, DiskImageTemplate> diskTemplateMap = new HashMap<String, DiskImageTemplate>();
+    private HashMap<String, DiskImage> diskTemplateMap = new HashMap<String, DiskImage>();
 
     @XmlElement(name = "SizeGB")
     @Transient
@@ -102,7 +102,7 @@ public class VmTemplate extends VmBase {
     public VmTemplate() {
         setis_auto_suspend(false);
         setnice_level(0);
-        diskTemplateMap = new HashMap<String, DiskImageTemplate>();
+        diskTemplateMap = new HashMap<String, DiskImage>();
     }
 
     public VmTemplate(int child_count, Date creation_date, String description, int mem_size_mb, String name,
@@ -137,7 +137,7 @@ public class VmTemplate extends VmBase {
                 null,
                 null);
 
-        diskTemplateMap = new HashMap<String, DiskImageTemplate>();
+        diskTemplateMap = new HashMap<String, DiskImage>();
 
         this.childCount = child_count;
         this.name = name;
@@ -247,7 +247,7 @@ public class VmTemplate extends VmBase {
         bootDiskSizeGB = value;
     }
 
-    public HashMap<String, DiskImageTemplate> getDiskMap() {
+    public HashMap<String, DiskImage> getDiskMap() {
         return diskTemplateMap;
     }
 
@@ -302,10 +302,10 @@ public class VmTemplate extends VmBase {
         diskList = disks;
     }
 
-    public boolean addDiskImageTemplate(DiskImageTemplate dit) {
+    public boolean addDiskImage(DiskImage di) {
         boolean retval = false;
-        if (!getDiskMap().containsKey(dit.getinternal_drive_mapping())) {
-            getDiskMap().put(dit.getinternal_drive_mapping(), dit);
+        if (!getDiskMap().containsKey(di.getinternal_drive_mapping())) {
+            getDiskMap().put(di.getinternal_drive_mapping(), di);
             retval = true;
         }
         return retval;

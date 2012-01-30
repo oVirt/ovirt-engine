@@ -19,7 +19,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     public DiskImage(Boolean active, java.util.Date creation_date, java.util.Date last_modified_date, long actual_size,
             String description, Guid image_guid, String internal_drive_mapping, Guid it_guid, long size, Guid vm_guid,
-            Guid parentId, ImageStatus imageStatus, java.util.Date lastModified, String appList) {
+            Guid parentId, ImageStatus imageStatus, java.util.Date lastModified, String appList,VmEntityType vmEntityType) {
         this.activeField = active;
         this.creation_dateField = creation_date;
         this.setlast_modified_date(last_modified_date);
@@ -34,6 +34,17 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         this.setimageStatus(imageStatus);
         this.setlastModified(lastModified);
         this.setappList(appList);
+        this.setVmEntityType(vmEntityType);
+    }
+
+    private VmEntityType vmEntityType;
+
+    public VmEntityType getVmEntityType() {
+        return vmEntityType;
+    }
+
+    public void setVmEntityType(VmEntityType vmEntityType) {
+        this.vmEntityType = vmEntityType;
     }
 
     // TODO comes from image_vm_map
@@ -89,6 +100,9 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         result = prime * result
                 + ((vm_guidField == null) ? 0 : vm_guidField.hashCode());
         result = prime * result + writeRateFromDiskImageDynamic;
+        result = prime
+        * result
+        + ((vmEntityType == null) ? 0 : vmEntityType.hashCode());
         return result;
     }
 
@@ -177,6 +191,8 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         } else if (!vm_guidField.equals(other.vm_guidField))
             return false;
         if (writeRateFromDiskImageDynamic != other.writeRateFromDiskImageDynamic)
+            return false;
+        if (vmEntityType != other.vmEntityType)
             return false;
         return true;
     }
@@ -278,7 +294,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         OnPropertyChanged(new PropertyChangedEventArgs("appList"));
     }
 
-    private Guid it_guid = new Guid();
+    private Guid it_guid = Guid.Empty;
 
     @Override
     public Guid getit_guid() {
