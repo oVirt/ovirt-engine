@@ -33,9 +33,9 @@ public class QuotaStorage extends IVdcQueryable implements INotifyPropertyChange
     private Guid storageId;
 
     /**
-     * The storage name.
+     * Transient field indicates the storage name.
      */
-    private transient String storageName;
+    private String storageName;
 
     /**
      * The storage limitation indicated in Giga byte.
@@ -44,9 +44,9 @@ public class QuotaStorage extends IVdcQueryable implements INotifyPropertyChange
     private Long storageLimitGigaByte;
 
     /**
-     * The storage usage of the storage.
+     * Transient field indicates the storage usage of the storage.
      */
-    private transient Double storageLimitGigaByteUsage;
+    private Double storageLimitGigaByteUsage;
 
     public QuotaStorage() {
     }

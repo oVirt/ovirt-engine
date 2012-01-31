@@ -33,9 +33,9 @@ public class QuotaVdsGroup extends IVdcQueryable implements INotifyPropertyChang
     private Guid vdsGroupId;
 
     /**
-     * The vds group name.
+     * Transient field indicates the vds group name.
      */
-    private transient String vdsGroupName;
+    private String vdsGroupName;
 
     /**
      * The virtual CPU limitations for vds group.
@@ -44,9 +44,9 @@ public class QuotaVdsGroup extends IVdcQueryable implements INotifyPropertyChang
     private Integer virtualCpu;
 
     /**
-     * The virtual CPU usage of the quota vds group.
+     * Transient field indicates the virtual CPU usage of the quota vds group.
      */
-    private transient Integer virtualCpuUsage;
+    private Integer virtualCpuUsage;
 
     /**
      * The virtual memory limitations for specific quota vdsGroup.
@@ -55,9 +55,9 @@ public class QuotaVdsGroup extends IVdcQueryable implements INotifyPropertyChang
     private Long memSizeMB;
 
     /**
-     * The virtual memory usage of the quota vdsGroup.
+     * Transient field indicates the virtual memory usage of the quota vdsGroup.
      */
-    private transient Long memSizeMBUsage;
+    private Long memSizeMBUsage;
 
     /**
      * Default constructor of QuotaVdsGroup.

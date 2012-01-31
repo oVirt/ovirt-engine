@@ -44,7 +44,7 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
     /**
      * The storage pool name the quota is enforced on, for GUI use.
      */
-    private transient String storagePoolName;
+    private String storagePoolName;
 
     /**
      * The quota name.
@@ -93,9 +93,9 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
     private Long storageSizeGB;
 
     /**
-     * The global storage usage in Giga bytes for Quota.
+     * Transient field indicates the global storage usage in Giga bytes for Quota.
      */
-    private transient Double storageSizeGBUsage;
+    private Double storageSizeGBUsage;
 
     /**
      * The global virtual CPU limitations.
@@ -104,9 +104,9 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
     private Integer virtualCpu;
 
     /**
-     * The global virtual CPU usage for Quota.
+     * Transient field indicates the global virtual CPU usage for Quota.
      */
-    private transient Integer virtualCpuUsage;
+    private Integer virtualCpuUsage;
 
     /**
      * The global virtual memory limitations for Quota.
@@ -115,9 +115,9 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
     private Long memSizeMB;
 
     /**
-     * The global virtual memory usage for Quota.
+     * Transient field indicates the global virtual memory usage for Quota.
      */
-    private transient Long memSizeMBUsage;
+    private Long memSizeMBUsage;
 
     /**
      * The quota enforcement type.
