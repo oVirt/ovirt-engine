@@ -259,4 +259,9 @@ public class QuotaVdsGroup extends IVdcQueryable implements INotifyPropertyChang
     public void setVdsGroupName(String vdsGroupName) {
         this.vdsGroupName = vdsGroupName;
     }
+
+    @Override
+    public Object getQueryableId() {
+        return getQuotaVdsGroupId();
+    }
 }

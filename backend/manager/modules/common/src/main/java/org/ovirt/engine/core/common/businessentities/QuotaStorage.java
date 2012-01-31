@@ -203,4 +203,9 @@ public class QuotaStorage extends IVdcQueryable implements INotifyPropertyChange
     public void setStorageName(String storageName) {
         this.storageName = storageName;
     }
+
+    @Override
+    public Object getQueryableId() {
+        return getQuotaStorageId();
+    }
 }

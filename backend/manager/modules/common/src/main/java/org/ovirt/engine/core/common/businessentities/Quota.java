@@ -394,6 +394,11 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
 
 
     @Override
+    public Object getQueryableId() {
+        return getId();
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
