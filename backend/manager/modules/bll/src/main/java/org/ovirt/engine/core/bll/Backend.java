@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -97,6 +99,7 @@ public class Backend implements BackendInternal, BackendRemote {
 
     private VDSBrokerFrontend _resourceManger;
 
+    @Override
     @ExcludeClassInterceptors
     public VDSBrokerFrontend getResourceManager() {
         return _resourceManger;
@@ -112,7 +115,7 @@ public class Backend implements BackendInternal, BackendRemote {
         Initialize();
     }
 
-    private void checkDBConnectivity() {
+    private static void checkDBConnectivity() {
         boolean dbUp = false;
         long expectedTimeout =
                 System.currentTimeMillis()
@@ -139,6 +142,7 @@ public class Backend implements BackendInternal, BackendRemote {
         }
     }
 
+    @Override
     public DateTime getStartedAt() {
         return _startedAt;
     }
@@ -148,8 +152,9 @@ public class Backend implements BackendInternal, BackendRemote {
      *
      * <exception>VdcBLL.VdcBLLException
      */
+    @Override
     public void Initialize() {
-        log.infoFormat("Start time: {0}", new java.util.Date());
+        log.infoFormat("Start time: {0}", new Date());
         // When getting a proxy to this bean using JBoss embedded, the initialize method is called for each method
         // invocation on the proxy, as it is called by setup method which is @PostConstruct - the initialized flag
         // makes sure that initialization occurs only once per class (which is ok, as this is a @Service)
@@ -164,29 +169,29 @@ public class Backend implements BackendInternal, BackendRemote {
 
         _resourceManger = new VDSBrokerFrontendImpl();
 
-        log.infoFormat("VDSBrokerFrontend: {0}", new java.util.Date());
+        log.infoFormat("VDSBrokerFrontend: {0}", new Date());
         CpuFlagsManagerHandler.InitDictionaries();
-        log.infoFormat("CpuFlagsManager: {0}", new java.util.Date());
+        log.infoFormat("CpuFlagsManager: {0}", new Date());
         // ResourceManager res = ResourceManager.Instance;
         // Initialize the AuditLogCleanupManager
         AuditLogCleanupManager.getInstance();
-        log.infoFormat("AuditLogCleanupManager: {0}", new java.util.Date());
+        log.infoFormat("AuditLogCleanupManager: {0}", new Date());
 
         TagsDirector.getInstance();
-        log.infoFormat("TagsDirector: {0}", new java.util.Date());
+        log.infoFormat("TagsDirector: {0}", new Date());
         ImagesSyncronizer.getInstance();
-        log.infoFormat("ImagesSyncronizer: {0}", new java.util.Date());
+        log.infoFormat("ImagesSyncronizer: {0}", new Date());
         IsoDomainListSyncronizer.getInstance();
-        log.infoFormat("IsoDomainListSyncronizer: {0}", new java.util.Date());
+        log.infoFormat("IsoDomainListSyncronizer: {0}", new Date());
         InitHandlers();
-        log.infoFormat("InitHandlers: {0}", new java.util.Date());
+        log.infoFormat("InitHandlers: {0}", new Date());
 
         final String AppErrorsFileName = "bundles/AppErrors.properties";
         final String VdsErrorsFileName = "bundles/VdsmErrors.properties";
         errorsTranslator = new ErrorTranslatorImpl(AppErrorsFileName, VdsErrorsFileName);
-        log.infoFormat("ErrorTranslator: {0}", new java.util.Date());
+        log.infoFormat("ErrorTranslator: {0}", new Date());
         _vdsErrorsTranslator = new ErrorTranslatorImpl(VdsErrorsFileName);
-        log.infoFormat("VdsErrorTranslator: {0}", new java.util.Date());
+        log.infoFormat("VdsErrorTranslator: {0}", new Date());
 
         Integer sessionTimoutInterval = Config.<Integer> GetValue(ConfigValues.UserSessionTimeOutInterval);
         // negative value means session should never expire, therefore no need to clean sessions.
@@ -199,53 +204,54 @@ public class Backend implements BackendInternal, BackendRemote {
         // Set start-up time
         _startedAt = DateTime.getNow();
 
-      try{
+        try {
             File fLock = new File(Config.<String> GetValue(ConfigValues.SignLockFile));
             if (fLock.exists()) {
-                if (! fLock.delete()) {
+                if (!fLock.delete()) {
                     log.error("Cleanup lockfile failed to delete the locking file.");
                 }
             }
-        }
-        catch (SecurityException se) {
+        } catch (SecurityException se) {
             log.error("Cleanup lockfile failed!", se);
-       }
+        }
     }
 
     /**
      * Handles compensation in case of uncompleted compensation-aware commands resulted from server failure.
      */
-    private void compensate() {
+    private static void compensate() {
         // get all command snapshot entries
         List<KeyValue> commandSnapshots =
                 DbFacade.getInstance().getBusinessEntitySnapshotDAO().getAllCommands();
         for (KeyValue commandSnapshot : commandSnapshots) {
             // create an instance of the related command by its class name and command id
             CommandBase<?> cmd =
-                        CommandsFactory.CreateCommand(commandSnapshot.getValue().toString(),
-                                (Guid) commandSnapshot.getKey());
+                    CommandsFactory.CreateCommand(commandSnapshot.getValue().toString(),
+                            (Guid) commandSnapshot.getKey());
             if (cmd != null) {
                 cmd.compensate();
                 log.infoFormat("Running compensation on startup for Command : {0} , Command Id : {1}",
-                            commandSnapshot.getValue(), commandSnapshot.getKey());
+                        commandSnapshot.getValue(), commandSnapshot.getKey());
             } else {
                 log.errorFormat("Failed to run compensation on startup for Command {0} , Command Id : {1}",
-                            commandSnapshot.getValue(), commandSnapshot.getKey());
+                        commandSnapshot.getValue(), commandSnapshot.getKey());
             }
         }
     }
 
+    @Override
     @ExcludeClassInterceptors
     public VdcReturnValueBase runInternalAction(VdcActionType actionType, VdcActionParametersBase parameters) {
         return runActionImpl(actionType, parameters, true, null);
     }
 
+    @Override
     public VdcReturnValueBase RunAction(VdcActionType actionType, VdcActionParametersBase parameters) {
         return runActionImpl(actionType, parameters, false, null);
     }
 
-    private VdcReturnValueBase runActionImpl(VdcActionType actionType, VdcActionParametersBase parameters,
-                                             boolean runAsInternal, CompensationContext context) {
+    private static VdcReturnValueBase runActionImpl(VdcActionType actionType, VdcActionParametersBase parameters,
+            boolean runAsInternal, CompensationContext context) {
         switch (actionType) {
         case AutoLogin:
             VdcReturnValueBase returnValue = new VdcReturnValueBase();
@@ -254,7 +260,7 @@ public class Backend implements BackendInternal, BackendRemote {
             return returnValue;
 
         default: {
-            CommandBase command = CommandsFactory.CreateCommand(actionType, parameters);
+            CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
             command.setInternalExecution(runAsInternal);
             if (context != null) {
                 command.setCompensationContext(context);
@@ -278,21 +284,24 @@ public class Backend implements BackendInternal, BackendRemote {
         return command.EndAction();
     }
 
+    @Override
     public VdcReturnValueBase EndAction(VdcActionType actionType, VdcActionParametersBase parameters) {
         return endAction(actionType, parameters, null);
     }
 
+    @Override
     @ExcludeClassInterceptors
     public VdcQueryReturnValue runInternalQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
         return runQueryImpl(actionType, parameters, false);
     }
 
+    @Override
     public VdcQueryReturnValue RunQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
         return runQueryImpl(actionType, parameters, true);
     }
 
-    private VdcQueryReturnValue runQueryImpl(VdcQueryType actionType, VdcQueryParametersBase parameters,
-                                             boolean isPerformUserCheck) {
+    private static VdcQueryReturnValue runQueryImpl(VdcQueryType actionType, VdcQueryParametersBase parameters,
+            boolean isPerformUserCheck) {
         if (isPerformUserCheck) {
             String sessionId = addSessionToContext(parameters);
             if (StringHelper.isNullOrEmpty(sessionId)
@@ -303,19 +312,20 @@ public class Backend implements BackendInternal, BackendRemote {
                 return returnValue;
             }
         }
-        QueriesCommandBase command = CommandsFactory.CreateQueryCommand(actionType, parameters);
+        QueriesCommandBase<?> command = CommandsFactory.CreateQueryCommand(actionType, parameters);
         command.Execute();
         return command.getQueryReturnValue();
 
     }
 
+    @Override
     public void RunAsyncQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
         addSessionToContext(parameters);
-        QueriesCommandBase command = CommandsFactory.CreateQueryCommand(actionType, parameters);
+        QueriesCommandBase<?> command = CommandsFactory.CreateQueryCommand(actionType, parameters);
         command.Execute();
     }
 
-    private String addSessionToContext(VdcQueryParametersBase parameters) {
+    private static String addSessionToContext(VdcQueryParametersBase parameters) {
         String sessionId = parameters.getHttpSessionId();
         boolean isAddToContext = true;
         if (StringHelper.isNullOrEmpty(sessionId)) {
@@ -335,20 +345,20 @@ public class Backend implements BackendInternal, BackendRemote {
     }
 
     @Override
-    public java.util.ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
-            java.util.ArrayList<VdcActionParametersBase> parameters) {
+    public ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
+            ArrayList<VdcActionParametersBase> parameters) {
         return runMultipleActionsImpl(actionType, parameters, false);
     }
 
     @Override
     @ExcludeClassInterceptors
-    public java.util.ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
-            java.util.ArrayList<VdcActionParametersBase> parameters) {
+    public ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+            ArrayList<VdcActionParametersBase> parameters) {
         return runMultipleActionsImpl(actionType, parameters, true);
     }
 
-    public java.util.ArrayList<VdcReturnValueBase> runMultipleActionsImpl(VdcActionType actionType,
-            java.util.ArrayList<VdcActionParametersBase> parameters,
+    public ArrayList<VdcReturnValueBase> runMultipleActionsImpl(VdcActionType actionType,
+            ArrayList<VdcActionParametersBase> parameters,
             boolean isInternal) {
         String sessionId = ThreadLocalParamsContainer.getHttpSessionId();
         if (!StringHelper.isNullOrEmpty(sessionId)) {
@@ -363,11 +373,13 @@ public class Backend implements BackendInternal, BackendRemote {
         return runner.Execute();
     }
 
+    @Override
     @ExcludeClassInterceptors
     public ErrorTranslator getErrorsTranslator() {
         return errorsTranslator;
     }
 
+    @Override
     @ExcludeClassInterceptors
     public ErrorTranslator getVdsErrorsTranslator() {
         return _vdsErrorsTranslator;
@@ -380,11 +392,12 @@ public class Backend implements BackendInternal, BackendRemote {
      *            The parameters.
      * @return user if success, else null // //
      */
+    @Override
     public VdcReturnValueBase Login(LoginUserParameters parameters) {
         switch (parameters.getActionType()) {
         case AutoLogin:
         case LoginAdminUser: {
-            CommandBase command = CommandsFactory.CreateCommand(parameters.getActionType(), parameters);
+            CommandBase<?> command = CommandsFactory.CreateCommand(parameters.getActionType(), parameters);
             return command.ExecuteAction();
         }
         default: {
@@ -394,13 +407,14 @@ public class Backend implements BackendInternal, BackendRemote {
         }
     }
 
-    private VdcReturnValueBase NotAutorizedError() {
+    private static VdcReturnValueBase NotAutorizedError() {
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setCanDoAction(false);
         returnValue.getCanDoActionMessages().add(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION.toString());
         return returnValue;
     }
 
+    @Override
     public VdcReturnValueBase Logoff(LogoutUserParameters parameters) {
         return RunAction(VdcActionType.LogoutUser, parameters);
     }
@@ -421,18 +435,19 @@ public class Backend implements BackendInternal, BackendRemote {
         return VDSStatus.Down;
     }
 
-    public tags GetTagByTagName(String tagName) {
+    public tags GetTagByTagName(@SuppressWarnings("unused") String tagName) {
         throw new NotImplementedException();
     }
 
-    public String GetTagIdsAndChildrenIdsByRegExp(String tagNameRegExp) {
+    public String GetTagIdsAndChildrenIdsByRegExp(@SuppressWarnings("unused") String tagNameRegExp) {
         throw new NotImplementedException();
     }
 
-    public String GetTagIdAndChildrenIds(int tagId) {
+    public String GetTagIdAndChildrenIds(@SuppressWarnings("unused") int tagId) {
         throw new NotImplementedException();
     }
 
+    @Override
     public VdcQueryReturnValue RunPublicQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
         switch (actionType) {
         case GetDomainList:
@@ -445,12 +460,12 @@ public class Backend implements BackendInternal, BackendRemote {
             if (configParameters.getConfigValue() == ConfigurationValues.VdcVersion ||
                     configParameters.getConfigValue() == ConfigurationValues.ProductRPMVersion) {
                 return runQueryImpl(actionType, parameters, false);
-            } else {
-                VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
-                returnValue.setSucceeded(false);
-                returnValue.setExceptionString(VdcBllMessages.USER_CANNOT_RUN_QUERY_NOT_PUBLIC.toString());
-                return returnValue;
             }
+
+            VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
+            returnValue.setSucceeded(false);
+            returnValue.setExceptionString(VdcBllMessages.USER_CANNOT_RUN_QUERY_NOT_PUBLIC.toString());
+            return returnValue;
         }
         default: {
             VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
@@ -464,20 +479,20 @@ public class Backend implements BackendInternal, BackendRemote {
     public VdcReturnValueBase RunUserAction(VdcActionType actionType, VdcActionParametersBase parameters) {
         if (StringHelper.isNullOrEmpty(parameters.getHttpSessionId())) {
             return NotAutorizedError();
-        } else {
-            return RunAction(actionType, parameters);
         }
+
+        return RunAction(actionType, parameters);
     }
 
     public VdcQueryReturnValue RunUserQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
         return runQueryImpl(actionType, parameters, true);
     }
 
-    public java.util.ArrayList<VdcReturnValueBase> RunUserMultipleActions(VdcActionType actionType,
-            java.util.ArrayList<VdcActionParametersBase> parameters) {
+    public ArrayList<VdcReturnValueBase> RunUserMultipleActions(VdcActionType actionType,
+            ArrayList<VdcActionParametersBase> parameters) {
         for (VdcActionParametersBase parameter : parameters) {
             if (StringHelper.isNullOrEmpty(parameter.getHttpSessionId())) {
-                java.util.ArrayList<VdcReturnValueBase> returnValues = new java.util.ArrayList<VdcReturnValueBase>();
+                ArrayList<VdcReturnValueBase> returnValues = new ArrayList<VdcReturnValueBase>();
                 for (int i = 0; i < parameters.size(); i++) {
                     returnValues.add(NotAutorizedError());
                 }
@@ -489,19 +504,22 @@ public class Backend implements BackendInternal, BackendRemote {
 
     }
 
+    @Override
     public VdcReturnValueBase RunAutoAction(VdcActionType actionType, VdcActionParametersBase parameters) {
         return RunAction(actionType, parameters);
     }
 
+    @Override
     public VdcQueryReturnValue RunAutoQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
         return runInternalQuery(actionType, parameters);
     }
 
+    @Override
     public AsyncQueryResults GetAsyncQueryResults() {
         return BackendCallBacksDirector.getInstance().GetAsyncQueryResults();
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(Backend.class);
+    private static final LogCompat log = LogFactoryCompat.getLog(Backend.class);
 
     @Override
     @ExcludeClassInterceptors
