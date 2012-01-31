@@ -166,7 +166,7 @@ install_config:
 	cp -f ./backend/manager/tools/engine-config/target/engine-config-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/
 	rm -f $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/engine-config.jar
 	ln -s /usr/share/ovirt-engine/engine-config/lib/engine-config-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/engine-config.jar
-	cp -f ./backend/manager/modules/engineencryptutils/target/engineencryptutils-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/
+	cp -f ./backend/manager/modules/engineencryptutils/target/engineencryptutils-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/engine-encryptutils.jar
 	cp -f ./ear/target/engine/lib/engine-compat.jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/
 	rm -f $(PREFIX)/usr/bin/engine-config
 	ln -s /usr/share/ovirt-engine/engine-config/engine-config $(PREFIX)/usr/bin/engine-config
