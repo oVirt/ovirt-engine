@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+
 
 public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> extends AddVmCommand<T> {
     public AddVmFromTemplateCommand(T parameters) {
@@ -48,7 +50,8 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
 
                 CreateCloneOfTemplateParameters tempVar = new CreateCloneOfTemplateParameters(dit.getit_guid(),
                         getParameters().getVmStaticData().getId(), diskInfo);
-                tempVar.setStorageDomainId(getStorageDomainId().getValue());
+                DiskImage img = DbFacade.getInstance().getDiskImageDAO().get(dit.getId());
+                tempVar.setStorageDomainId(img.getstorage_id().getValue());
                 tempVar.setVmSnapshotId(getVmSnapshotId());
                 tempVar.setParentCommand(VdcActionType.AddVmFromTemplate);
                 tempVar.setEntityId(getParameters().getEntityId());
