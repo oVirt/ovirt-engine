@@ -290,6 +290,7 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %{_engineeardir}/engineanagerweb.war
 %{_engineeardir}/engineanager.war
 %{_engineeardir}/components.war
+%{_engineeardir}/userportal-gwtp.war
 %dir %{_engineeardir}/webadmin.war
 
 %files setup
