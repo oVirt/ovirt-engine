@@ -98,11 +98,10 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     }
 
     PlaceRequest getSubTabRequest() {
-        PlaceRequest currentRequest = placeManager.getCurrentPlaceRequest();
-        boolean subTabRequest = currentRequest.getNameToken().startsWith(
-                getMainTabRequest().getNameToken() + ApplicationPlaces.SUB_TAB_PREFIX);
+        String subTabName = modelProvider.getModel().getActiveDetailModel().getTitle().toLowerCase().replace(" ", "_");
+        String requestToken = getMainTabRequest().getNameToken() + ApplicationPlaces.SUB_TAB_PREFIX + subTabName;
 
-        return subTabRequest ? currentRequest : getDefaultSubTabRequest();
+        return new PlaceRequest(requestToken);
     }
 
     /**
@@ -129,13 +128,6 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     T getFirstSelectedItem() {
         return hasSelection() ? getSelectedItems().get(0) : null;
     }
-
-    /**
-     * Returns the place request associated with the default sub tab presenter.
-     * <p>
-     * Will be revealed when the table selection is not empty.
-     */
-    protected abstract PlaceRequest getDefaultSubTabRequest();
 
     @ProxyEvent
     public void onApplicationFocusChange(ApplicationFocusChangeEvent event) {

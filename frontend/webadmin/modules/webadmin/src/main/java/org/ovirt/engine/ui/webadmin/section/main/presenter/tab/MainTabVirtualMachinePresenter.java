@@ -60,10 +60,4 @@ public class MainTabVirtualMachinePresenter extends AbstractMainTabWithDetailsPr
     protected PlaceRequest getMainTabRequest() {
         return new PlaceRequest(ApplicationPlaces.virtualMachineMainTabPlace);
     }
-
-    @Override
-    protected PlaceRequest getDefaultSubTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.virtualMachineGeneralSubTabPlace);
-    }
-
 }

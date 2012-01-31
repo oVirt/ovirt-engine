@@ -61,9 +61,4 @@ public class MainTabStoragePresenter extends AbstractMainTabWithDetailsPresenter
         return new PlaceRequest(ApplicationPlaces.storageMainTabPlace);
     }
 
-    @Override
-    protected PlaceRequest getDefaultSubTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.storageGeneralSubTabPlace);
-    }
-
 }

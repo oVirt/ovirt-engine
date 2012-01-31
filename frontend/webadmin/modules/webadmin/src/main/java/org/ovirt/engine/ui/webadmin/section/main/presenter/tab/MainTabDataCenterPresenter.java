@@ -60,9 +60,4 @@ public class MainTabDataCenterPresenter extends AbstractMainTabWithDetailsPresen
     protected PlaceRequest getMainTabRequest() {
         return new PlaceRequest(ApplicationPlaces.dataCenterMainTabPlace);
     }
-
-    @Override
-    protected PlaceRequest getDefaultSubTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.dataCenterStorageSubTabPlace);
-    }
 }

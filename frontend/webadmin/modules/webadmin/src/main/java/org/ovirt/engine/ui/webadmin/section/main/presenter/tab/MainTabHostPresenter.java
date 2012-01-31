@@ -60,9 +60,4 @@ public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VD
     protected PlaceRequest getMainTabRequest() {
         return new PlaceRequest(ApplicationPlaces.hostMainTabPlace);
     }
-
-    @Override
-    protected PlaceRequest getDefaultSubTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.hostGeneralSubTabPlace);
-    }
 }

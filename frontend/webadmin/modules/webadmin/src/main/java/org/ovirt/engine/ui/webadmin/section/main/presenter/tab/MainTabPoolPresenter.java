@@ -60,9 +60,4 @@ public class MainTabPoolPresenter extends AbstractMainTabWithDetailsPresenter<vm
     protected PlaceRequest getMainTabRequest() {
         return new PlaceRequest(ApplicationPlaces.poolMainTabPlace);
     }
-
-    @Override
-    protected PlaceRequest getDefaultSubTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.poolGeneralSubTabPlace);
-    }
 }

@@ -60,10 +60,4 @@ public class MainTabUserPresenter extends AbstractMainTabWithDetailsPresenter<Db
     protected PlaceRequest getMainTabRequest() {
         return new PlaceRequest(ApplicationPlaces.userMainTabPlace);
     }
-
-    @Override
-    protected PlaceRequest getDefaultSubTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.userGeneralSubTabPlace);
-    }
-
 }
