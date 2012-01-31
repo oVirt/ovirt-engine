@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.userportal.gin;
 import org.ovirt.engine.ui.common.gin.BaseUiCommonModule;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 import org.ovirt.engine.ui.userportal.uicommon.UserPortalConfigurator;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalBasicListProvider;
 
 import com.google.inject.Singleton;
 
@@ -18,7 +19,10 @@ public class UiCommonModule extends BaseUiCommonModule {
     }
 
     void bindModels() {
-        // TODO install() relevant UiCommon modules as needed
+        // Basic tab
+        bind(UserPortalBasicListProvider.class).asEagerSingleton();
+
+        // Extended tab
     }
 
     void bindIntegration() {

@@ -5,8 +5,8 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelChangeEvent;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
@@ -41,29 +41,26 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.hostGeneralSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabHostGeneralPresenter> {
-        // Nothing.
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDS> {
         /**
-         * Clear all the alerts currently displayed in the alerts panel
-         * of the host.
+         * Clear all the alerts currently displayed in the alerts panel of the host.
          */
         void clearAlerts();
 
         /**
          * Displays a new alert in the alerts panel of the host.
          *
-         * @param widget the widget used to display the alert, usually just a
-         *   text label, but can also be a text label with a link to an action
-         *   embedded
+         * @param widget
+         *            the widget used to display the alert, usually just a text label, but can also be a text label with
+         *            a link to an action embedded
          */
         void addAlert(Widget widget);
     }
 
     // We need this to get the text of the alert messages:
     private ApplicationMessages messages;
-    private ViewDef view;
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
@@ -72,49 +69,44 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
     }
 
     @Inject
-    public SubTabHostGeneralPresenter(
-            final EventBus eventBus,
-            final ViewDef view,
-            final ProxyDef proxy,
-            final PlaceManager placeManager,
-            final DetailModelProvider<HostListModel, HostGeneralModel> modelProvider)
-    {
-        // Call the parent constructor:
+    public SubTabHostGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+            PlaceManager placeManager, DetailModelProvider<HostListModel, HostGeneralModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
-        this.view = view;
 
         // Inject a reference to the messages:
         messages = ClientGinjectorProvider.instance().getApplicationMessages();
     }
 
-    public void onCommonModelChange(CommonModelChangeEvent event) {
-        super.onCommonModelChange(event);
+    @Override
+    public void onUiCommonInit(UiCommonInitEvent event) {
+        super.onUiCommonInit(event);
 
         // Initialize the list of alerts:
         final HostGeneralModel model = getModelProvider().getModel();
-        updateAlerts(view, model);
+        updateAlerts(getView(), model);
 
         // Listen for changes in the properties of the model in order
         // to update the alerts panel:
-        model.getPropertyChangedEvent().addListener(
-                new IEventListener() {
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
-                        if (args instanceof PropertyChangedEventArgs) {
-                            PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                            if (changedArgs.PropertyName.contains("Alert")) {
-                                updateAlerts(view, model);
-                            }
-                        }
+        model.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (args instanceof PropertyChangedEventArgs) {
+                    PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
+                    if (changedArgs.PropertyName.contains("Alert")) {
+                        updateAlerts(getView(), model);
                     }
                 }
-                );
+            }
+        });
     }
 
     /**
      * Review the model and if there are alerts add them to the view.
      *
-     * @param view the view where alerts should be added
-     * @param model the model to review
+     * @param view
+     *            the view where alerts should be added
+     * @param model
+     *            the model to review
      */
     private void updateAlerts(final ViewDef view, final HostGeneralModel model) {
         // Clear all the alerts:
@@ -148,11 +140,12 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
     }
 
     /**
-     * Create a widget containing text and add it to the alerts panel of
-     * the host.
+     * Create a widget containing text and add it to the alerts panel of the host.
      *
-     * @param view the view where the alert should be added
-     * @param text the text content of the alert
+     * @param view
+     *            the view where the alert should be added
+     * @param text
+     *            the text content of the alert
      */
     private void addTextAlert(final ViewDef view, final String text) {
         final Label label = new Label(text);
@@ -160,13 +153,14 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
     }
 
     /**
-     * Create a widget containing text and a link that triggers the execution
-     * of a command.
+     * Create a widget containing text and a link that triggers the execution of a command.
      *
-     * @param view the view where the alert should be added
-     * @param text the text content of the alert
-     * @param command the command that should be executed when the link is
-     *   clicked
+     * @param view
+     *            the view where the alert should be added
+     * @param text
+     *            the text content of the alert
+     * @param command
+     *            the command that should be executed when the link is clicked
      */
     private void addTextAndLinkAlert(final ViewDef view, final String text, final UICommand command) {
         // Find the open and close positions of the link within the message:

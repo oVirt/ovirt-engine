@@ -29,4 +29,9 @@ public class ApplicationInit extends BaseApplicationInit {
         CommonModelManager.init(eventBus, user, loginModel);
     }
 
+    @Override
+    public void onLogout() {
+        CommonModelManager.instance().SignOut();
+    }
+
 }

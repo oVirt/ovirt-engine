@@ -5,20 +5,23 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.widget.refresh.BaseRefreshPanel;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
 /**
  * Manages the Refresh Rate for a {@link GridController}.
  */
-public abstract class AbstractRefreshManager {
+public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
 
-    protected static final Integer DEFAULT_REFRESH_RATE = GridTimer.DEFAULT_NORMAL_RATE;
-    protected static final String REFRESH_RATE_ITEM_NAME = "GridRefreshRate";
-    protected static final Set<Integer> REFRESH_RATES = new LinkedHashSet<Integer>();
+    private static final Integer DEFAULT_REFRESH_RATE = GridTimer.DEFAULT_NORMAL_RATE;
+    private static final String REFRESH_RATE_ITEM_NAME = "GridRefreshRate";
+    private static final Set<Integer> REFRESH_RATES = new LinkedHashSet<Integer>();
 
     static {
         REFRESH_RATES.add(DEFAULT_REFRESH_RATE);
@@ -34,15 +37,20 @@ public abstract class AbstractRefreshManager {
         return Collections.unmodifiableSet(REFRESH_RATES);
     }
 
-    protected final GridController controller;
+    private final GridController controller;
     private final ClientStorage clientStorage;
+    private final T refreshPanel;
 
     /**
      * Create a Manager for the specified {@link GridController}
+     *
+     * @param refreshPanel
      */
     public AbstractRefreshManager(GridController controller, ClientStorage clientStorage) {
         this.controller = controller;
         this.clientStorage = clientStorage;
+        this.refreshPanel = createRefreshPane();
+        listenOnManualRefresh();
 
         controller.setRefreshRate(readRefreshRate());
         controller.getTimer().addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -53,7 +61,23 @@ public abstract class AbstractRefreshManager {
         });
     }
 
-    protected abstract void onRefresh(String status);
+    /**
+     * When the user clicks the refresh button, enforce the refresh without even asking the timer.
+     */
+    protected void listenOnManualRefresh() {
+        refreshPanel.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                controller.refresh();
+            }
+        });
+    }
+
+    protected abstract T createRefreshPane();
+
+    protected void onRefresh(String status) {
+        refreshPanel.showStatus(status);
+    }
 
     /**
      * Called when the Grid becomes hidden
@@ -69,6 +93,10 @@ public abstract class AbstractRefreshManager {
         controller.toForground();
     }
 
+    public T getRefreshPanel() {
+        return refreshPanel;
+    }
+
     public void setCurrentRefreshRate(int newRefreshRate) {
         controller.setRefreshRate(newRefreshRate);
         saveRefreshRate(newRefreshRate);
@@ -82,15 +110,12 @@ public abstract class AbstractRefreshManager {
         return REFRESH_RATE_ITEM_NAME + "_" + controller.getId();
     }
 
-    /**
-     * Saves the Grid refresh rate into local storage.
-     */
     void saveRefreshRate(int newRefreshRate) {
         clientStorage.setLocalItem(getRefreshRateItemKey(), String.valueOf(newRefreshRate));
     }
 
     /**
-     * Returns the Grid refresh rate if it was saved. Otherwise, returns the default refresh rate.
+     * Returns refresh rate value if it exists; Otherwise, returns default refresh rate.
      */
     int readRefreshRate() {
         String refreshRate = clientStorage.getLocalItem(getRefreshRateItemKey());

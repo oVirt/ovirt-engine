@@ -35,4 +35,9 @@ public interface GridController {
      */
     String getId();
 
+    /**
+     * Refreshes the model immediately without waiting for the timer.
+     */
+    void refresh();
+
 }

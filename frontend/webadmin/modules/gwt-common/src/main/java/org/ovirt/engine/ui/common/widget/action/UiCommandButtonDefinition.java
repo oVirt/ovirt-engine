@@ -5,8 +5,8 @@ import java.util.List;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelChangeEvent;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelChangeEvent.CommonModelChangeHandler;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 import com.google.gwt.event.logical.shared.InitializeEvent;
@@ -57,10 +57,10 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
         this.availableOnlyFromContext = availableOnlyFromContext;
         update();
 
-        // Add handler to be notified when the CommonModel instance changes
-        getEventBus().addHandler(CommonModelChangeEvent.getType(), new CommonModelChangeHandler() {
+        // Add handler to be notified when UiCommon models are (re)initialized
+        getEventBus().addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
             @Override
-            public void onCommonModelChange(CommonModelChangeEvent event) {
+            public void onUiCommonInit(UiCommonInitEvent event) {
                 update();
             }
         });

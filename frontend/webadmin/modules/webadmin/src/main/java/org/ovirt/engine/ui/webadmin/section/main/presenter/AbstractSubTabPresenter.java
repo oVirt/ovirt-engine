@@ -6,9 +6,9 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelChangeEvent;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
@@ -183,7 +183,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     }
 
     @ProxyEvent
-    public void onCommonModelChange(CommonModelChangeEvent event) {
+    public void onUiCommonInit(UiCommonInitEvent event) {
         modelProvider.getModel().getEntityChangedEvent().addListener(new IEventListener() {
             @SuppressWarnings("unchecked")
             @Override

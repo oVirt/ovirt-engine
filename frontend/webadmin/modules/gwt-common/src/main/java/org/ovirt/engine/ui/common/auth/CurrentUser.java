@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.common.auth;
 
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
@@ -17,6 +15,12 @@ import com.google.inject.Inject;
  */
 public class CurrentUser implements HasHandlers {
 
+    public interface LogoutHandler {
+
+        void onLogout();
+
+    }
+
     private final EventBus eventBus;
 
     private boolean loggedIn = false;
@@ -24,6 +28,8 @@ public class CurrentUser implements HasHandlers {
 
     // Indicates that the user should be logged in automatically
     private boolean autoLogin = false;
+
+    private LogoutHandler logoutHandler;
 
     @Inject
     public CurrentUser(EventBus eventBus) {
@@ -60,14 +66,18 @@ public class CurrentUser implements HasHandlers {
         this.autoLogin = autoLogin;
     }
 
+    public void setLogoutHandler(LogoutHandler logoutHandler) {
+        this.logoutHandler = logoutHandler;
+    }
+
     /**
      * Initiates the sign out operation.
      *
      * @see #onUserLogout()
      */
     public void logout() {
-        if (isLoggedIn()) {
-            CommonModelManager.instance().SignOut();
+        if (isLoggedIn() && logoutHandler != null) {
+            logoutHandler.onLogout();
         }
     }
 

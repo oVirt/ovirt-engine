@@ -4,9 +4,9 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelChangeEvent;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelChangeEvent.CommonModelChangeHandler;
 import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -21,7 +21,7 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 
-public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPresenterWidget.ViewDef> implements CommonModelChangeHandler {
+public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPresenterWidget.ViewDef> implements UiCommonInitHandler {
 
     public interface ViewDef extends View {
 
@@ -52,16 +52,20 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
     @Inject
     public SearchPanelPresenterWidget(EventBus eventBus, ViewDef view) {
         super(eventBus, view);
-        eventBus.addHandler(CommonModelChangeEvent.getType(), this);
+        eventBus.addHandler(UiCommonInitEvent.getType(), this);
 
-        this.commonModel = CommonModelManager.instance();
+        updateCommonModel();
         addCommonModelListeners();
     }
 
     @Override
-    public void onCommonModelChange(CommonModelChangeEvent event) {
-        commonModel = event.getCommonModel();
+    public void onUiCommonInit(UiCommonInitEvent event) {
+        updateCommonModel();
         addCommonModelListeners();
+    }
+
+    void updateCommonModel() {
+        this.commonModel = CommonModelManager.instance();
     }
 
     void addCommonModelListeners() {

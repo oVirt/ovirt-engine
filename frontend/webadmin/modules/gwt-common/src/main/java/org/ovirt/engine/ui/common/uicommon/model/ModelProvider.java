@@ -15,9 +15,4 @@ public interface ModelProvider<M extends EntityModel> {
      */
     M getModel();
 
-    /**
-     * Sets the entity of the model.
-     */
-    void setEntity(Object value);
-
 }

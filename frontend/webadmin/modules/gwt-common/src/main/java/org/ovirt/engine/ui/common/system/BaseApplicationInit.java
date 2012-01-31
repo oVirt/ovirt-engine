@@ -1,14 +1,15 @@
 package org.ovirt.engine.ui.common.system;
 
 import org.ovirt.engine.core.common.users.VdcUser;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
+import org.ovirt.engine.ui.common.auth.CurrentUser.LogoutHandler;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
@@ -22,7 +23,7 @@ import com.google.inject.Provider;
 /**
  * Contains initialization logic that gets executed at application startup.
  */
-public abstract class BaseApplicationInit {
+public abstract class BaseApplicationInit implements LogoutHandler {
 
     private final ITypeResolver typeResolver;
     private final FrontendEventsHandlerImpl frontendEventsHandler;
@@ -46,9 +47,12 @@ public abstract class BaseApplicationInit {
         this.loginModelProvider = loginModelProvider;
         this.eventBus = eventBus;
 
+        user.setLogoutHandler(this);
+
         initUiCommon();
         initLoginModel();
         initFrontend();
+
         handleAutoLogin();
     }
 
@@ -69,7 +73,17 @@ public abstract class BaseApplicationInit {
         });
     }
 
+    /**
+     * Called right before {@link UiCommonInitEvent} gets fired.
+     * <p>
+     * Any remaining UiCommon initialization logic should be performed here.
+     */
     protected abstract void beforeUiCommonInitEvent(LoginModel loginModel);
+
+    @Override
+    public void onLogout() {
+        // No-op, override as necessary
+    }
 
     void clearPassword(LoginModel loginModel) {
         String password = (String) loginModel.getPassword().getEntity();

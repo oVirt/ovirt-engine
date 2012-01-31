@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.renderer;
+package org.ovirt.engine.ui.common.widget.renderer;
 
 import com.google.gwt.text.shared.AbstractRenderer;
 

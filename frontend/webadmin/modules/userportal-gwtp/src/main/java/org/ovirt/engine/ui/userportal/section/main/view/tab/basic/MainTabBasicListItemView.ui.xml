@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:with field='resources'
+		type='org.ovirt.engine.ui.userportal.ApplicationResources' />
+
+	<ui:style
+		type="org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListItemView.Style">
+		.buttonStyle {
+		float: left;
+		width: 24px;
+		height: 24px;
+		}
+
+		.basicVmViewBox {
+		border-style: solid;
+		border-width: 1px;
+		width: 175px;
+		height: 180px;
+		background-color: #3a5f7c;
+		margin-left: 10px;
+		margin-right: 10px;
+		}
+
+		.buttonsBar {
+		float: left;
+		}
+
+		.basicVmContainer {
+		float: left;
+		width: 170px;
+		height: 200px;
+		}
+
+		.machineStatus {
+		text-align: center;
+		font-family: Arial,sans-serif;
+		font-size: 12px;
+		font-weight: bold;
+		color: white;
+		}
+
+		.vmNameStyle {
+		text-align: center;
+		font-family: Arial,sans-serif;
+		color: #3A5F7C;
+		font-size: 14px;
+		}
+		
+		.osType {
+		margin-left: 5px;
+		margin-top: 5px;
+		}
+		
+		.buttonsPanel {
+		margin-left: 25px;
+		}
+	</ui:style>
+
+
+	<g:DockLayoutPanel addStyleNames="{style.basicVmContainer}">
+		<g:north size="20">
+			<g:Label ui:field="vmName" addStyleNames="{style.vmNameStyle}" />
+		</g:north>
+		<g:center>
+			<g:LayoutPanel addStyleNames="{style.basicVmViewBox}">
+				<g:layer>
+					<g:Image ui:field="osType" addStyleNames="{style.osType}"/>
+				</g:layer>
+
+				<g:layer top='125px' height='20px'>
+					<g:Label ui:field="machineStatus" addStyleNames="{style.machineStatus}" />
+				</g:layer>
+
+				<g:layer top='140px' height='40px'>
+					<g:FlowPanel ui:field="buttonsPanel" addStyleNames="{style.buttonsPanel}"/>
+				</g:layer>
+			</g:LayoutPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder>

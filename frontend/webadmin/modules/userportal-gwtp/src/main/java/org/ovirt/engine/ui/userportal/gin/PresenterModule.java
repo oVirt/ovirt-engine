@@ -11,6 +11,9 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.MainSectionPresente
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicListItemPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicListPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedResourcePresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedTemplatePresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedVirtualMachinePresenter;
@@ -19,6 +22,9 @@ import org.ovirt.engine.ui.userportal.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainTabPanelView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabBasicView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabExtendedView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicDetailsView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListItemView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedResourceView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedTemplateView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedVirtualMachineView;
@@ -79,6 +85,17 @@ public class PresenterModule extends BasePresenterModule {
                 SideTabExtendedResourcePresenter.ViewDef.class,
                 SideTabExtendedResourceView.class,
                 SideTabExtendedResourcePresenter.ProxyDef.class);
+
+        // Main section: basic view
+        bindSingletonPresenterWidget(MainTabBasicDetailsPresenterWidget.class,
+                MainTabBasicDetailsPresenterWidget.ViewDef.class,
+                MainTabBasicDetailsView.class);
+        bindSingletonPresenterWidget(MainTabBasicListPresenterWidget.class,
+                MainTabBasicListPresenterWidget.ViewDef.class,
+                MainTabBasicListView.class);
+        bindPresenterWidget(MainTabBasicListItemPresenterWidget.class,
+                MainTabBasicListItemPresenterWidget.ViewDef.class,
+                MainTabBasicListItemView.class);
     }
 
 }

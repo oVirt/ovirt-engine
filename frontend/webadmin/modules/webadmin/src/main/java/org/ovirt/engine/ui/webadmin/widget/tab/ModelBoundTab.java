@@ -4,9 +4,9 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelChangeEvent;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelChangeEvent.CommonModelChangeHandler;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -25,11 +25,11 @@ public class ModelBoundTab extends SimpleTab {
         // at this point CommonModelChangeEvent has already been fired
         registerModelEventListeners(tabData.getModelProvider());
 
-        // Add CommonModel change handler to be notified when the CommonModel instance changes
+        // Add handler to be notified when UiCommon models are (re)initialized
         ClientGinjectorProvider.instance().getEventBus()
-                .addHandler(CommonModelChangeEvent.getType(), new CommonModelChangeHandler() {
+                .addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
                     @Override
-                    public void onCommonModelChange(CommonModelChangeEvent event) {
+                    public void onUiCommonInit(UiCommonInitEvent event) {
                         setAccessible(tabData.getModelProvider().getModel().getIsAvailable());
                         registerModelEventListeners(tabData.getModelProvider());
                     }

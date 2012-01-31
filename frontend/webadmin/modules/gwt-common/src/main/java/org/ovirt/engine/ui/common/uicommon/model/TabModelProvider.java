@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DefaultConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelChangeEvent.CommonModelChangeHandler;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -38,18 +38,13 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
         this.eventBus = ginjector.getEventBus();
         this.defaultConfirmPopupProvider = ginjector.getDefaultConfirmationPopupProvider();
 
-        // Add handler to be notified when the CommonModel instance changes
-        eventBus.addHandler(CommonModelChangeEvent.getType(), new CommonModelChangeHandler() {
+        // Add handler to be notified when UiCommon models are (re)initialized
+        eventBus.addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
             @Override
-            public void onCommonModelChange(CommonModelChangeEvent event) {
+            public void onUiCommonInit(UiCommonInitEvent event) {
                 TabModelProvider.this.onCommonModelChange();
             }
         });
-    }
-
-    @Override
-    public void setEntity(Object value) {
-        getModel().setEntity(value);
     }
 
     protected CommonModel getCommonModel() {

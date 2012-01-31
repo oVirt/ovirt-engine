@@ -84,7 +84,6 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
         super(eventBus, resources);
         loginAutomatically = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        initLoginAutomatically();
         asWidget().setGlassEnabled(false);
         localize(constants);
         passwordEditor.setAutoComplete("off");
@@ -92,14 +91,11 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    protected void initLoginAutomatically() {
-        loginAutomatically.setLabel("Connect Automatically");
-    }
-
     void localize(ApplicationConstants constants) {
         userNameEditor.setLabel(constants.loginFormUserNameLabel());
         passwordEditor.setLabel(constants.loginFormPasswordLabel());
         domainEditor.setLabel(constants.loginFormDomainLabel());
+        loginAutomatically.setLabel(constants.loginFormConnectAutomaticallyLabel());
         loginButton.setText(constants.loginButtonLabel());
     }
 
@@ -155,4 +151,5 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
     public void clearErrorMessage() {
         setErrorMessage(null);
     }
+
 }

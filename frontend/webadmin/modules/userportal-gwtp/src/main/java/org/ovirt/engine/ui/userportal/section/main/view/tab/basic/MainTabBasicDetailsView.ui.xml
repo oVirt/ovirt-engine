@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:with field='resources'
+		type='org.ovirt.engine.ui.userportal.ApplicationResources' />
+
+	<ui:style>
+		.detailsHeaderPanel {
+		margin-top: 10px;
+		margin-left: 10px;
+		border-style: solid;
+		border-width: 1px;
+		border-color: #b5c7d5;
+		width: 95%;
+		background-color: #ffffff;
+		}
+
+		.mainPanel {
+		background-color: #e1e8f2;
+		}
+
+		.osImage {
+		float: left;
+		padding: 10px;
+		}
+		
+		.vmImage {
+		position: relative;
+		top: 38px;
+		left: -17px;
+		}
+
+		.basicInfoVmNameLabel {
+		font-family: Arial,sans-serif;
+		color: #3A5F7C;
+		font-size: 18px;
+		font-weight: bold;
+		position: relative;
+		top: -10px;
+		left: 7px;
+		}
+
+		.basicInfoVmDescriptionLabel {
+		font-family: Arial,sans-serif;
+		color: #728FAD;
+		font-size: 15px;
+		position: relative;
+		top: -12px;
+		left: 7px;
+		}
+
+		.rowIcon {
+		float: left;
+		padding-left: 20px;
+		}
+
+		.rowLabel {
+		float: left;
+		font-family: Arial,sans-serif;
+		color: #3A5F7C;
+		font-size: 19px;
+		font-weight: bold;
+		text-align: left;
+		padding-left: 5px;
+		padding-top: 4px;
+		}
+
+
+		.rowValue {
+		float: right;
+		font-family: Arial,sans-serif;
+		color: #3A5F7C;
+		font-size: 15px;
+		text-align: right;
+		padding-right: 20px;
+		}
+
+		.detailsRow {
+		padding-left: 40px;
+		padding-top: 10px;
+		}
+		
+	</ui:style>
+
+	<g:DockLayoutPanel addStyleNames="{style.mainPanel}">
+		<g:north size='80'>
+			<g:FlowPanel addStyleNames="{style.detailsHeaderPanel}">
+				
+				<g:Image ui:field="osImage" addStyleNames="{style.osImage}" />
+				<g:Image ui:field="vmImage" addStyleNames="{style.vmImage}"/>
+				
+				<g:FlowPanel>
+					<g:Label ui:field="vmName" addStyleNames="{style.basicInfoVmNameLabel}" />
+					<g:Label ui:field="vmDescription" addStyleNames="{style.basicInfoVmDescriptionLabel}" />
+				</g:FlowPanel>
+			</g:FlowPanel>
+
+		</g:north>
+		<g:center>
+			<g:LayoutPanel>
+				<g:layer>
+					<g:FlowPanel addStyleNames="{style.detailsRow}">
+						<g:Image resource='{resources.basicOsIcon}' addStyleNames="{style.rowIcon}" />
+						<g:Label text="Operating System : " addStyleNames="{style.rowLabel}" />
+						<g:Label ui:field="operatingSystem" addStyleNames="{style.rowValue}" />
+					</g:FlowPanel>
+				</g:layer>
+
+				<g:layer top='40px' height='60px'>
+					<g:FlowPanel addStyleNames="{style.detailsRow}">
+						<g:Image resource='{resources.basicMemoryIcon}' addStyleNames="{style.rowIcon}" />
+						<g:Label text="Defined Memory : " addStyleNames="{style.rowLabel}" />
+						<g:Label ui:field="memory" addStyleNames="{style.rowValue}" />
+					</g:FlowPanel>
+				</g:layer>
+				
+				<g:layer top='80px' height='60px'>
+					<g:FlowPanel addStyleNames="{style.detailsRow}">
+						<g:Image resource='{resources.basicCpuIcon}'
+							addStyleNames="{style.rowIcon}" />
+						<g:Label text="Number of Cores : " addStyleNames="{style.rowLabel}" />
+						<g:Label ui:field="numberOfCores" addStyleNames="{style.rowValue}" />
+					</g:FlowPanel>
+				</g:layer>
+			</g:LayoutPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+
+</ui:UiBinder>

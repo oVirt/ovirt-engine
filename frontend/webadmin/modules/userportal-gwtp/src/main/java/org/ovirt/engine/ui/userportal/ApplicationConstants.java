@@ -15,6 +15,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Domain")
     String loginFormDomainLabel();
 
+    @DefaultStringValue("Connect Automatically")
+    String loginFormConnectAutomaticallyLabel();
+
     @DefaultStringValue("Login")
     String loginButtonLabel();
 

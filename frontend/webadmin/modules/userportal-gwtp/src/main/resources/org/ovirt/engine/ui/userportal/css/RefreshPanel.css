@@ -1,0 +1,129 @@
+.refreshMenuTitle,.refreshRateOption {
+	font-family: Arial, sans-serif;
+	font-size: 11px;
+	color: black;
+	width: 90px;
+	height: 16px;
+	background-color: #97B8D7;
+	text-align: center;
+	vertical-align: middle;
+	display: table-cell;
+}
+
+.refreshRateOption {
+	color: gray;
+	background-color: white;
+	text-align: right;
+	cursor: hand;
+	cursor: pointer;
+}
+
+.refreshRateOption .checkitem {
+	cursor: hand;
+	cursor: pointer;
+	margin-right: 10px;
+}
+
+.refreshRateOption .textItem {
+	font-family: Arial, sans-serif;
+	font-size: 11px;
+	color: gray;
+	width: 40px;
+	background: transparent;
+	cursor: hand;
+	cursor: pointer;
+	border: 0px;
+	padding: 0px;
+	outline: none;
+	margin-right: 15px;
+}
+
+.refreshRateOption-selected {
+	background-color: E1E8F2;
+}
+
+.refreshRateMenu {
+	background-color: white;
+	border: 1px solid #96B7D6;
+}
+
+.refreshRateMenuPopup {
+	z-index: 500000;
+	margin-left: -65px;
+	margin-top: 1px;
+}
+
+.refreshRateMenuPopup .popupTopCenter {
+	background: url(images/edges/refreshMenu_T.png) repeat-x;
+}
+
+.refreshRateMenuPopup .popupBottomCenter {
+	background: url(images/edges/refreshMenu_B.png) repeat-x;
+}
+
+.refreshRateMenuPopup .popupMiddleLeft {
+	background: url(images/edges/refreshMenu_L.png) repeat-y;
+}
+
+.refreshRateMenuPopup .popupMiddleRight {
+	background: url(images/edges/refreshMenu_R.png) repeat-y;
+}
+
+.refreshRateMenuPopup .popupTopLeft {
+	background: url(images/edges/refreshMenu_TL.png) no-repeat;
+}
+
+.refreshRateMenuPopup .popupTopRight {
+	background: url(images/edges/refreshMenu_TR.png) no-repeat;
+}
+
+.refreshRateMenuPopup .popupBottomLeft {
+	background: url(images/edges/refreshMenu_BL.png) no-repeat;
+}
+
+.refreshRateMenuPopup .popupBottomRight {
+	background: url(images/edges/refreshMenu_BR.png) no-repeat;
+}
+
+.refreshRateMenuPopup .popupTopLeftInner {
+	width: 4px;
+	height: 4px;
+	overflow: hidden;
+}
+
+.refreshRateMenuPopup .popupTopRightInner {
+	width: 6px;
+	height: 4px;
+	overflow: hidden;
+}
+
+.refreshRateMenuPopup .popupBottomLeftInner {
+	width: 4px;
+	height: 6px;
+	overflow: hidden;
+}
+
+.refreshRateMenuPopup .popupBottomRightInner {
+	width: 6px;
+	height: 6px;
+	overflow: hidden;
+}
+
+.refreshButton,.refreshMenuButton {
+	display: table-cell;
+	cursor: hand;
+	cursor: pointer;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.refreshButton-down-hovering {
+	padding-top: 1px;
+	padding-left: 1px;
+}
+
+.refreshIcon {
+	display: table-cell;
+	vertical-align: middle;
+	margin-top: 2px\9;
+}

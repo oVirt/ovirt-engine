@@ -172,12 +172,6 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
             ScrollPanel generalPanel = new ScrollPanel();
             DetailModelProvider<VmListModel, VmGeneralModel> modelProvider =
                     new DetailModelProvider<VmListModel, VmGeneralModel>() {
-
-                        @Override
-                        public void setEntity(Object value) {
-
-                        }
-
                         @Override
                         public VmGeneralModel getModel() {
                             return (VmGeneralModel) object.getDetailModels().get(0);
@@ -185,7 +179,6 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
 
                         @Override
                         public void onSubTabSelected() {
-
                         }
                     };
             generalView = new ImportVmGeneralSubTabView(modelProvider);

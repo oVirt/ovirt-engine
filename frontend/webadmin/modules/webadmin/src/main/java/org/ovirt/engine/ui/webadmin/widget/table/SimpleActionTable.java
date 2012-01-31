@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButton;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.AbstractActionTable;
+import org.ovirt.engine.ui.common.widget.table.refresh.AbstractRefreshManager;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.SimpleActionButton;
@@ -36,7 +37,7 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     @UiField(provided = true)
     RefreshPanel refreshPanel;
 
-    private final RefreshManager refreshManager;
+    private final AbstractRefreshManager<RefreshPanel> refreshManager;
 
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider) {
         this(dataProvider, null, null);

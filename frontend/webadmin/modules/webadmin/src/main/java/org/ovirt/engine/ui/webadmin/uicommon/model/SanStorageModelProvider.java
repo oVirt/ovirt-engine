@@ -16,8 +16,4 @@ public class SanStorageModelProvider<M extends EntityModel> implements ModelProv
         return model;
     }
 
-    @Override
-    public void setEntity(Object value) {
-    }
-
 }

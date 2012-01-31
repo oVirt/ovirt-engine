@@ -275,19 +275,28 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
                 @Override
                 public void execute() {
-                    logger.info(SearchableListModel.this.getClass().getName() + ": Executing search");
-                    if (getIsAsync())
-                    {
-                        AsyncSearch();
-                    } else {
-                        SyncSearch();
-                    }
+                    performSearch();
                 }
 
             });
             gettimer().setRefreshRate(getConfigurator().getPollingTimerInterval());
         }
         return gettimer();
+    }
+
+    @Override
+    public void refresh() {
+        performSearch();
+    }
+
+    protected void performSearch() {
+        logger.info(SearchableListModel.this.getClass().getName() + ": Executing search");
+        if (getIsAsync())
+        {
+            AsyncSearch();
+        } else {
+            SyncSearch();
+        }
     }
 
     @Override

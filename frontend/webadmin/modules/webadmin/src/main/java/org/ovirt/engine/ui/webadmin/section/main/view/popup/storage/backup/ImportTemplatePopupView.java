@@ -125,12 +125,6 @@ public class ImportTemplatePopupView extends WebAdminModelBoundPopupView<ImportT
             ScrollPanel generalPanel = new ScrollPanel();
             DetailModelProvider<TemplateListModel, TemplateGeneralModel> modelProvider =
                     new DetailModelProvider<TemplateListModel, TemplateGeneralModel>() {
-
-                        @Override
-                        public void setEntity(Object value) {
-
-                        }
-
                         @Override
                         public TemplateGeneralModel getModel() {
                             return (TemplateGeneralModel) object.getDetailModels().get(0);
@@ -138,7 +132,6 @@ public class ImportTemplatePopupView extends WebAdminModelBoundPopupView<ImportT
 
                         @Override
                         public void onSubTabSelected() {
-
                         }
                     };
             generalView = new ImportTemplateGeneralSubTabView(modelProvider);

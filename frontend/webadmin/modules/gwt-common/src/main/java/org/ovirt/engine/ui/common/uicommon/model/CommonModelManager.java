@@ -11,11 +11,6 @@ import com.google.gwt.event.shared.EventBus;
 
 /**
  * Manages the {@link CommonModel} instance shared by all model providers.
- * <p>
- * Triggers following events upon certain actions:
- * <ul>
- * <li>{@link CommonModelChangeEvent} when a new CommonModel instance is created
- * </ul>
  */
 public class CommonModelManager {
 
@@ -52,9 +47,6 @@ public class CommonModelManager {
                 user.onUserLogout();
             }
         });
-
-        // Let others know that the CommonModel reference has changed
-        CommonModelChangeEvent.fire(eventBus, commonModel);
     }
 
     /**

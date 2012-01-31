@@ -7,9 +7,9 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelChangeEvent;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelChangeEvent.CommonModelChangeHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.FeatureNotImplementedYetPopup;
 
@@ -146,15 +146,16 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
 
         addSelectionChangeListener(itemSelectionChangeHandler);
 
-        eventBus.addHandler(CommonModelChangeEvent.getType(), new CommonModelChangeHandler() {
+        // Add handler to be notified when UiCommon models are (re)initialized
+        eventBus.addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
             @Override
-            public void onCommonModelChange(CommonModelChangeEvent event) {
+            public void onUiCommonInit(UiCommonInitEvent event) {
                 addSelectionChangeListener(itemSelectionChangeHandler);
             }
         });
     }
 
-    void addSelectionChangeListener(final IEventListener itemSelectionChangeHandler) {
+    void addSelectionChangeListener(IEventListener itemSelectionChangeHandler) {
         dataProvider.getModel().getSelectedItemChangedEvent().addListener(itemSelectionChangeHandler);
         dataProvider.getModel().getSelectedItemsChangedEvent().addListener(itemSelectionChangeHandler);
     }
