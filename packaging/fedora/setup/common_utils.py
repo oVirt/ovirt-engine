@@ -15,6 +15,7 @@ import libxml2
 import types
 import shutil
 import time
+import tempfile
 
 class ConfigFileHandler:
     def __init__(self, filepath):
@@ -206,7 +207,7 @@ def execExternalCmd(command, failOnError=False, msg=output_messages.ERR_RC_CODE,
         raise Exception(msg)
     return ("".join(output.splitlines(True)), p.returncode)
 
-def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_CODE, maskList=[], useShell=False):
+def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_CODE, maskList=[], useShell=False, usePipeFiles=False):
     """
     Run external shell command with 'shell=false'
     receives a list of arguments for command line execution
@@ -217,12 +218,31 @@ def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_COD
     # We need to join cmd list into one string so we can look for passwords in it and mask them
     logCmd = _maskString((' '.join(cmd)), maskList)
     logging.debug("Executing command --> '%s'"%(logCmd))
-    
+
+    stdErrFD = subprocess.PIPE
+    stdOutFD = subprocess.PIPE
+    stdInFD = subprocess.PIPE
+
+    if usePipeFiles:
+        (stdErrFD, stdErrFile) = tempfile.mkstemp(dir="/tmp")
+        (stdOutFD, stdOutFile) = tempfile.mkstemp(dir="/tmp")
+        (stdInFD, stdInFile) = tempfile.mkstemp(dir="/tmp")
+
     # We use close_fds to close any file descriptors we have so it won't be copied to forked childs
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, stdin=subprocess.PIPE, cwd=cwd, shell=useShell, close_fds=True)
+    proc = subprocess.Popen(cmd, stdout=stdOutFD,
+            stderr=stdErrFD, stdin=stdInFD, cwd=cwd, shell=useShell, close_fds=True)
 
     out, err = proc.communicate()
+    if usePipeFiles:
+        with open(stdErrFile, 'r') as f:
+            err = f.read()
+        os.remove(stdErrFile)
+
+        with open(stdOutFile, 'r') as f:
+            out = f.read()
+        os.remove(stdOutFile)
+        os.remove(stdInFile)
+
     logging.debug("output = %s"%(out))
     logging.debug("stderr = %s"%(err))
     logging.debug("retcode = %s"%(proc.returncode))

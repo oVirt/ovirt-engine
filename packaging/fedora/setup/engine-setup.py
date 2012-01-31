@@ -1639,7 +1639,7 @@ def _handleJbossService(action, infoMsg, errMsg, printToStdout=False):
     logging.debug(infoMsg)
     if printToStdout:
         print infoMsg
-    utils.execCmd(cmdList=cmd,failOnError=True, msg=errMsg)
+    utils.execCmd(cmdList=cmd,failOnError=True, msg=errMsg, usePipeFiles=True)
 
 #def _lockRpmVersion():
 #    """
