@@ -332,6 +332,43 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     }
 
     /**
+     * Test fetch default quota by storage pool id and check that it has default indication as true.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testIsDefaultQuotaFlagEnabledWhenFetchingDefaultQuota() throws Exception {
+        setUp();
+        Quota defaultQuota = dao.getById(FixturesTool.DEFAULT_QUOTA_GENERAL);
+        assertEquals(defaultQuota.getIsDefaultQuota(), true);
+    }
+
+    /**
+     * Test fetch not default quota by storage pool id and check that it has default indication as false.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testIsDefaultQuotaFlagDisabledWhenFetchingNotDefaultQuota() throws Exception {
+        setUp();
+        Quota regularQuota = dao.getById(FixturesTool.QUOTA_GENERAL);
+        assertEquals(regularQuota.getIsDefaultQuota(), false);
+    }
+
+    /**
+     * Test get default quota by storage pool id.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testGetDefaultQuotaByStoragePoolId() throws Exception {
+        setUp();
+        Quota defaultQuota = dao.getDefaultQuotaByStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
+        assertEquals(dao.getById(FixturesTool.DEFAULT_QUOTA_GENERAL).equals(defaultQuota), true);
+    }
+
+
+    /**
      * Test get Quota by Name, with name that does not exist for the storage pool.
      *
      * @throws Exception

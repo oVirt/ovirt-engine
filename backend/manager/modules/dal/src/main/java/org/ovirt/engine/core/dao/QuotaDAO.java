@@ -87,4 +87,9 @@ public interface QuotaDAO extends DAO {
      * Get all quota vds groups, which belong to quota with quotaId.
      */
     public List<QuotaVdsGroup> getQuotaVdsGroupByQuotaGuid(Guid quotaId);
+
+    /**
+     * Get the default quota for storage pool.
+     */
+    public Quota getDefaultQuotaByStoragePoolId(Guid storagePoolId);
 }

@@ -1,0 +1,1 @@
+select fn_db_add_column('quota', 'is_default_quota', 'BOOLEAN');

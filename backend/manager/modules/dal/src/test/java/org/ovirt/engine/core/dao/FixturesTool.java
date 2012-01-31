@@ -48,6 +48,12 @@ public class FixturesTool {
     protected static final Guid QUOTA_GENERAL = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
 
     /**
+     * The default unlimited quota with quota id 88296e00-0cad-4e5a-9291-008a7b7f4404 fir storage pool rhel6.NFS
+     * (72b9e200-f48b-4687-83f2-62828f249a47)
+     */
+    protected static final Guid DEFAULT_QUOTA_GENERAL = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4404");
+
+    /**
      * Predefined quota with specific limitations, Its GUID is 88296e00-0cad-4e5a-9291-008a7b7f4400.
      * <ul>Global limitation:
      * <li>virtual_cpu = 100</li></ul>

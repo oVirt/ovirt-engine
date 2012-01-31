@@ -2402,6 +2402,7 @@
         <column>threshold_storage_percentage</column>
         <column>grace_vds_group_percentage</column>
         <column>grace_storage_percentage</column>
+        <column>is_default_quota</column>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
@@ -2413,6 +2414,20 @@
             <value>80</value>
             <value>20</value>
             <value>20</value>
+            <value>false</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4404</value>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <value>Default unlimited Quota General</value>
+            <value>Default unlimited quota for general quota</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>80</value>
+            <value>80</value>
+            <value>20</value>
+            <value>20</value>
+            <value>true</value>
         </row>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4400</value>
@@ -2425,6 +2440,7 @@
             <value>80</value>
             <value>20</value>
             <value>20</value>
+            <value>false</value>
         </row>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
@@ -2437,6 +2453,7 @@
             <value>80</value>
             <value>20</value>
             <value>20</value>
+            <value>false</value>
         </row>
     </table>
 
@@ -2456,6 +2473,15 @@
             <value>100</value>
             <value>10000</value>
             <value>1000000</value>
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4404</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4404</value>
+			<null />
+            <null />
+            <value>-1</value>
+            <value>-1</value>
+            <value>-1</value>
         </row>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4534</value>

@@ -730,7 +730,8 @@ SELECT q_limit.quota_id as quota_id,
     (CalculateVdsGroupUsage(quota_id,null)).mem_size_mb_usage,
     storage_size_gb,
     CalculateStorageUsage(quota_id,null) as storage_size_gb_usage,
-    storage_pool.quota_enforcement_type as quota_enforcement_type
+    storage_pool.quota_enforcement_type as quota_enforcement_type,
+    is_default_quota
 FROM  quota_limitation q_limit, quota q, storage_pool
 WHERE q_limit.quota_id = q.id
 AND storage_pool.id = q.storage_pool_id
@@ -745,7 +746,8 @@ SELECT q_limit.id as quota_storage_id,
     storage_id,
     storage_domain_static.storage_name as storage_name,
     storage_size_gb,
-    CalculateStorageUsage(quota_id,storage_id) as storage_size_gb_usage
+    CalculateStorageUsage(quota_id,storage_id) as storage_size_gb_usage,
+    is_default_quota
 FROM   quota_limitation q_limit, quota q, storage_domain_static
 WHERE  q_limit.quota_id = q.id
 AND  q_limit.vds_group_id IS NULL
@@ -762,7 +764,8 @@ SELECT q_limit.id as quota_vds_group_id,
     virtual_cpu,
     (CalculateVdsGroupUsage(quota_id,q_limit.vds_group_id)).virtual_cpu_usage as virtual_cpu_usage,
     mem_size_mb,
-    (CalculateVdsGroupUsage(quota_id,q_limit.vds_group_id)).mem_size_mb_usage as mem_size_mb_usage
+    (CalculateVdsGroupUsage(quota_id,q_limit.vds_group_id)).mem_size_mb_usage as mem_size_mb_usage,
+    is_default_quota
 FROM   quota_limitation q_limit, quota q, vds_groups
 WHERE  q_limit.quota_id = q.id
 AND  q_limit.vds_group_id IS NOT NULL

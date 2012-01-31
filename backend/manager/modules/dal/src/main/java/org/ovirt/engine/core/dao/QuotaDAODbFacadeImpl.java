@@ -118,6 +118,16 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
                 parameterSource);
     }
 
+    public Quota getDefaultQuotaByStoragePoolId(Guid storagePoolId) {
+        MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
+        quotaParameterSource.addValue("storage_pool_id", storagePoolId);
+        Quota quotaEntity =
+                getCallsHandler().executeRead("getDefaultQuotaByStoragePoolId",
+                        getQuotaFromResultSet(),
+                        quotaParameterSource);
+        return quotaEntity;
+    }
+
     /**
      * Remove quota with quota id.
      */
@@ -199,6 +209,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
                 entity.setGraceVdsGroupPercentage((Integer) rs.getObject("grace_vds_group_percentage"));
                 entity.setGraceStoragePercentage((Integer) rs.getObject("grace_storage_percentage"));
                 entity.setQuotaEnforcementType(QuotaEnforcmentTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
+                entity.setIsDefaultQuota(rs.getBoolean("is_default_quota"));
                 mapVdsGroupResultSet(rs, entity);
                 mapStorageResultSet(rs, entity);
                 return entity;
@@ -307,7 +318,8 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
                 .addValue("threshold_vds_group_percentage", quota.getThresholdVdsGroupPercentage())
                 .addValue("threshold_storage_percentage", quota.getThresholdStoragePercentage())
                 .addValue("grace_vds_group_percentage", quota.getGraceVdsGroupPercentage())
-                .addValue("grace_storage_percentage", quota.getGraceStoragePercentage());
+                .addValue("grace_storage_percentage", quota.getGraceStoragePercentage())
+                .addValue("is_default_quota", quota.getIsDefaultQuota());
     }
 
     private void saveGlobalQuota(Quota quota) {
