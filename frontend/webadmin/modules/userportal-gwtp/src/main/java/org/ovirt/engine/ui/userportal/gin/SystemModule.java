@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
+import org.ovirt.engine.ui.userportal.system.ApplicationInit;
 
 /**
  * GIN module containing UserPortal infrastructure and configuration bindings.
@@ -20,6 +21,7 @@ public class SystemModule extends BaseSystemModule {
 
     void bindInfrastructure() {
         bindCommonInfrastructure();
+        bind(ApplicationInit.class).asEagerSingleton();
     }
 
     void bindConfiguration() {

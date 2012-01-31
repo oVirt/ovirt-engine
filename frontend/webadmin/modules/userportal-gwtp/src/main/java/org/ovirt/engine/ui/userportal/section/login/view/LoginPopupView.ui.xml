@@ -98,6 +98,11 @@
 						</td>
 					</tr>
 					<tr class="formRow">
+						<td>
+							<e:EntityModelCheckBoxEditor ui:field="loginAutomatically" />
+						</td>
+					</tr>
+					<tr class="formRow">
 						<td height="20">
 							<g:HTMLPanel addStyleNames="{style.buttonBar}">
 								<d:SimpleDialogButton ui:field="loginButton" addStyleNames="{style.button}" />

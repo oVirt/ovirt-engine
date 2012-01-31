@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.gin;
 
 import org.ovirt.engine.ui.common.gin.BaseUiCommonModule;
+import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.ClusterModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.DataCenterModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.EventModule;
@@ -22,6 +23,8 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
+
+import com.google.inject.Singleton;
 
 /**
  * GIN module containing WebAdmin UiCommon model and integration bindings.
@@ -80,6 +83,7 @@ public class UiCommonModule extends BaseUiCommonModule {
     void bindIntegration() {
         bindCommonIntegration();
         bindConfiguratorIntegration(WebAdminConfigurator.class);
+        bind(LoginModel.class).in(Singleton.class);
     }
 
 }

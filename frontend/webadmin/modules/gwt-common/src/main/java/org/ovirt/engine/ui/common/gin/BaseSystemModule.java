@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
 import org.ovirt.engine.ui.common.place.ApplicationPlaceManager;
 import org.ovirt.engine.ui.common.section.DefaultLoginSectionPlace;
 import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
-import org.ovirt.engine.ui.common.system.ApplicationInit;
 import org.ovirt.engine.ui.common.system.AsyncCallFailureHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.system.ErrorPopupManager;
@@ -34,7 +33,6 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(TokenFormatter.class).to(ParameterTokenFormatter.class).in(Singleton.class);
         bind(PlaceManager.class).to(ApplicationPlaceManager.class).in(Singleton.class);
         bind(RootPresenter.class).asEagerSingleton();
-        bind(ApplicationInit.class).asEagerSingleton();
         bind(CurrentUser.class).in(Singleton.class);
         bind(LoggedInGatekeeper.class).in(Singleton.class);
         bind(ErrorPopupManager.class).in(Singleton.class);

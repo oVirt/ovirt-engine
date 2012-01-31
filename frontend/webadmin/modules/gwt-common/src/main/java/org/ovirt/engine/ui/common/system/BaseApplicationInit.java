@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.system;
 
 import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -15,36 +16,70 @@ import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.inject.Inject;
+import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Provider;
 
 /**
  * Contains initialization logic that gets executed at application startup.
  */
-public class ApplicationInit {
+public abstract class BaseApplicationInit {
 
     private final ITypeResolver typeResolver;
     private final FrontendEventsHandlerImpl frontendEventsHandler;
     private final FrontendFailureEventListener frontendFailureEventListener;
-    private final CurrentUser user;
+
+    protected final CurrentUser user;
+    protected final EventBus eventBus;
 
     // Using Provider because any UiCommon model will fail before TypeResolver is initialized
-    private final Provider<LoginModel> loginModelProvider;
+    private final Provider<? extends LoginModel> loginModelProvider;
 
-    @Inject
-    public ApplicationInit(ITypeResolver typeResolver,
+    public BaseApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
             FrontendFailureEventListener frontendFailureEventListener,
-            CurrentUser user, Provider<LoginModel> loginModelProvider) {
+            CurrentUser user, Provider<? extends LoginModel> loginModelProvider,
+            EventBus eventBus) {
         this.typeResolver = typeResolver;
         this.frontendEventsHandler = frontendEventsHandler;
         this.frontendFailureEventListener = frontendFailureEventListener;
         this.user = user;
         this.loginModelProvider = loginModelProvider;
+        this.eventBus = eventBus;
 
         initUiCommon();
+        initLoginModel();
         initFrontend();
         handleAutoLogin();
+    }
+
+    void initLoginModel() {
+        final LoginModel loginModel = loginModelProvider.get();
+        loginModel.getLoggedInEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                // UiCommon login preparation
+                Frontend.setLoggedInUser(loginModel.getLoggedUser());
+                beforeUiCommonInitEvent(loginModel);
+                UiCommonInitEvent.fire(eventBus);
+
+                // UI login actions
+                user.onUserLogin(loginModel.getLoggedUser().getUserName());
+                clearPassword(loginModel);
+            }
+        });
+    }
+
+    protected abstract void beforeUiCommonInitEvent(LoginModel loginModel);
+
+    void clearPassword(LoginModel loginModel) {
+        String password = (String) loginModel.getPassword().getEntity();
+
+        if (password != null) {
+            // Replace all password characters with whitespace
+            password = password.replaceAll(".", " ");
+        }
+
+        loginModel.getPassword().setEntity(password);
     }
 
     void initUiCommon() {

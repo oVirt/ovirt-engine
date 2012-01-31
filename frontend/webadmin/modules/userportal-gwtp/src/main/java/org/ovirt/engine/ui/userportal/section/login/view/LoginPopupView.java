@@ -4,12 +4,14 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
@@ -32,7 +34,7 @@ import com.google.inject.Inject;
 
 public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> implements LoginPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<LoginModel, LoginPopupView> {
+    interface Driver extends SimpleBeanEditorDriver<UserPortalLoginModel, LoginPopupView> {
         Driver driver = GWT.create(Driver.class);
     }
 
@@ -70,18 +72,28 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
     @Ignore
     Label errorMessage;
 
+    @UiField(provided = true)
+    @Path("isAutoConnect.entity")
+    EntityModelCheckBoxEditor loginAutomatically;
+
     @Inject
     public LoginPopupView(EventBus eventBus,
             ApplicationResources resources,
             ApplicationConstants constants,
             ApplicationMessages messages) {
         super(eventBus, resources);
+        loginAutomatically = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        initLoginAutomatically();
         asWidget().setGlassEnabled(false);
         localize(constants);
         passwordEditor.setAutoComplete("off");
         Driver.driver.initialize(this);
         ViewIdHandler.idHandler.generateAndSetIds(this);
+    }
+
+    protected void initLoginAutomatically() {
+        loginAutomatically.setLabel("Connect Automatically");
     }
 
     void localize(ApplicationConstants constants) {
@@ -92,7 +104,7 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
     }
 
     @Override
-    public void edit(LoginModel object) {
+    public void edit(UserPortalLoginModel object) {
         // Activate Login on click
         final UICommand loginCommand = object.getLoginCommand();
         loginButton.addClickHandler(new ClickHandler() {
@@ -122,7 +134,7 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
     }
 
     @Override
-    public LoginModel flush() {
+    public UserPortalLoginModel flush() {
         return Driver.driver.flush();
     }
 
@@ -143,5 +155,4 @@ public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> imple
     public void clearErrorMessage() {
         setErrorMessage(null);
     }
-
 }
