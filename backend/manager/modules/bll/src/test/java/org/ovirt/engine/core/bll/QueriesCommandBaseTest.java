@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.mockito.Mockito.mock;
 
@@ -18,6 +19,30 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 /** A test case for the {@link QueriesCommandBase} class. */
 public class QueriesCommandBaseTest {
     private static final Log log = LogFactory.getLog(QueriesCommandBaseTest.class);
+
+    /* Getters and Setters tests */
+
+    /** Test {@link QueriesCommandBase#isInternalExecution()} and {@link QueriesCommandBase#setInternalExecution(boolean) */
+    public void testIsInternalExecutionDefault() {
+        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(mock(VdcQueryParametersBase.class));
+        assertFalse("By default, a query should not be marked for internel execution", query.isInternalExecution());
+    }
+
+    public void testIsInternalExecutionTrue() {
+        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(mock(VdcQueryParametersBase.class));
+        query.setInternalExecution(true);
+        assertTrue("Query should be marked for internel execution", query.isInternalExecution());
+    }
+
+    public void testIsInternalExecutionFalse() {
+        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(mock(VdcQueryParametersBase.class));
+
+        // Set as true, then override with false
+        query.setInternalExecution(true);
+        query.setInternalExecution(false);
+
+        assertTrue("Query should not be marked for internel execution", query.isInternalExecution());
+    }
 
     /** Test queries are created with the correct type */
     @SuppressWarnings("unchecked")

@@ -313,6 +313,7 @@ public class Backend implements BackendInternal, BackendRemote {
             }
         }
         QueriesCommandBase<?> command = CommandsFactory.CreateQueryCommand(actionType, parameters);
+        command.setInternalExecution(!isPerformUserCheck);
         command.Execute();
         return command.getQueryReturnValue();
 

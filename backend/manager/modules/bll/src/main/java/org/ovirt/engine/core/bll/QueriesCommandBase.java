@@ -46,6 +46,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     private final VdcQueryReturnValue returnValue;
     private final VdcQueryType type;
     private final P parameters;
+    private boolean isInternalExecution = false;
 
     public QueriesCommandBase(P parameters) {
         this.parameters = parameters;
@@ -147,5 +148,13 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     @Override
     public void setReturnValue(Object value) {
         returnValue.setReturnValue(value);
+    }
+
+    public boolean isInternalExecution() {
+        return isInternalExecution;
+    }
+
+    public void setInternalExecution(boolean isInternalExecution) {
+        this.isInternalExecution = isInternalExecution;
     }
 }
