@@ -1,21 +1,28 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.HashSet;
+
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.LogCompat;
+import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @InternalCommandAttribute
 public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsCommand<T> {
+
+    private static LogCompat log = LogFactoryCompat.getLog(HandleVdsVersionCommand.class);
 
     public HandleVdsVersionCommand(T parameters) {
         super(parameters);
@@ -36,20 +43,29 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
 
     @Override
     protected void executeCommand() {
-        VDSGroup cluster = DbFacade.getInstance().getVdsGroupDAO().get(getVds().getvds_group_id());
+        VDS vds = getVds();
+        VDSGroup cluster = DbFacade.getInstance().getVdsGroupDAO().get(vds.getvds_group_id());
 
         // get only major and minor of vdc version
         Version partialVdcVersion = new Version(
                 new Version(Config.<String> GetValue(ConfigValues.VdcVersion)).toString(2));
         // check that vdc support vds OR vds support vdc
-        boolean vdsmVdcVersionSupported = Config.<java.util.HashSet<Version>> GetValue(
-                ConfigValues.SupportedVDSMVersions).contains(getVds().getVersion().getPartialVersion())
-                || (!StringHelper.isNullOrEmpty(getVds().getsupported_engines()) && getVds()
-                        .getSupportedENGINESVersionsSet().contains(partialVdcVersion));
+        boolean vdsmVersionSupported =
+                Config.<HashSet<Version>> GetValue(ConfigValues.SupportedVDSMVersions).contains(vds.getVersion()
+                        .getPartialVersion());
+        if (!vdsmVersionSupported) {
+            if (!StringUtils.isEmpty(vds.getsupported_engines())) {
+                try {
+                    vdsmVersionSupported = vds.getSupportedENGINESVersionsSet().contains(partialVdcVersion);
+                } catch (RuntimeException e) {
+                    log.error(e.getMessage());
+                }
+            }
+        }
 
         // move to non operational if vds-vdc version not supported OR cluster
         // version is not supported
-        if (!vdsmVdcVersionSupported || !VersionSupport.checkClusterVersionSupported(cluster.getcompatibility_version(), getVds())) {
+        if (!vdsmVersionSupported || !VersionSupport.checkClusterVersionSupported(cluster.getcompatibility_version(), vds)) {
             SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVdsId(),
                     NonOperationalReason.VERSION_INCOMPATIBLE_WITH_CLUSTER);
             tempVar.setSaveToDb(true);

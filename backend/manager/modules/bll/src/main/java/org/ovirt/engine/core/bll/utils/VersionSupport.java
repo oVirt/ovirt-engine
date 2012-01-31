@@ -3,17 +3,21 @@ package org.ovirt.engine.core.bll.utils;
 import java.io.Serializable;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.LogCompat;
+import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class VersionSupport implements Serializable {
 
-    private VersionSupport() {
+    private static final long serialVersionUID = 8368679686604395114L;
+    private static LogCompat log = LogFactoryCompat.getLog(VersionSupport.class);
 
+    private VersionSupport() {
     }
 
     public static boolean checkVersionSupported(final Version compatibility_version) {
@@ -38,7 +42,15 @@ public class VersionSupport implements Serializable {
      * @return true if the version is supported, else false
      */
     public static boolean checkClusterVersionSupported(Version clusterCompatibilityVersion, VDS vds) {
-        return (!StringHelper.isNullOrEmpty(vds.getsupported_cluster_levels())
-                && vds.getSupportedClusterVersionsSet().contains(clusterCompatibilityVersion));
+        boolean isVersionSupported = !StringUtils.isEmpty(vds.getsupported_cluster_levels());
+        if (isVersionSupported) {
+            try {
+                isVersionSupported = vds.getSupportedClusterVersionsSet().contains(clusterCompatibilityVersion);
+            } catch (RuntimeException e) {
+                log.errorFormat(e.getMessage());
+                isVersionSupported = false;
+            }
+        }
+        return isVersionSupported;
     }
 }

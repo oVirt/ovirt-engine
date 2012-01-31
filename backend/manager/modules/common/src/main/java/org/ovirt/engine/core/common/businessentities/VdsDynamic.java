@@ -16,11 +16,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -470,16 +467,9 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         supported_cluster_levels = value;
     }
 
-    public java.util.HashSet<Version> getSupportedClusterVersionsSet() {
-        if (_supportedClusterVersionsSet == null && !StringHelper.isNullOrEmpty(getsupported_cluster_levels())) {
-            _supportedClusterVersionsSet = new HashSet<Version>();
-            for (String ver : getsupported_cluster_levels().split("[,]", -1)) {
-                try {
-                    _supportedClusterVersionsSet.add(new Version(ver));
-                } catch (java.lang.Exception e) {
-                    log.errorFormat("Could not parse supported cluster version {0} for vds {1}", ver, getId());
-                }
-            }
+    public HashSet<Version> getSupportedClusterVersionsSet() {
+        if (_supportedClusterVersionsSet == null) {
+            _supportedClusterVersionsSet = parseSupportedVersions(getsupported_cluster_levels());
         }
         return _supportedClusterVersionsSet;
     }
@@ -492,18 +482,37 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         supported_engines = value;
     }
 
-    public java.util.HashSet<Version> getSupportedENGINESVersionsSet() {
-        if (_supportedENGINESVersionsSet == null && !StringHelper.isNullOrEmpty(getsupported_engines())) {
-            _supportedENGINESVersionsSet = new HashSet<Version>();
-            for (String ver : getsupported_engines().split("[,]", -1)) {
+    public HashSet<Version> getSupportedENGINESVersionsSet() {
+        if (_supportedENGINESVersionsSet == null) {
+            _supportedENGINESVersionsSet = parseSupportedVersions(getsupported_engines());
+        }
+        return _supportedENGINESVersionsSet;
+    }
+
+    /**
+     * Used to parse a string containing concatenated list of versions, delimited by a comma.
+     *
+     * @param supportedVersions
+     *            a string contains a concatenated list of supported versions
+     * @returns a set of the parsed versions, or null if {@code supportedVersions} provided empty.
+     * @throws RuntimeException
+     *             thrown in case and parsing a version fails
+     */
+    private HashSet<Version> parseSupportedVersions(String supportedVersions) {
+        HashSet<Version> parsedVersions = null;
+        if (!StringHelper.isNullOrEmpty(supportedVersions)) {
+            parsedVersions = new HashSet<Version>();
+            for (String ver : supportedVersions.split("[,]", -1)) {
                 try {
-                    _supportedENGINESVersionsSet.add(new Version(ver));
-                } catch (java.lang.Exception e) {
-                    log.errorFormat("Could not parse supported engine version {0} for vds {1}", ver, getId());
+                    parsedVersions.add(new Version(ver));
+                } catch (Exception e) {
+                    throw new RuntimeException(StringFormat.format("Could not parse supported version %s for vds %s",
+                            ver,
+                            getId()));
                 }
             }
         }
-        return _supportedENGINESVersionsSet;
+        return parsedVersions;
     }
 
     @XmlElement
@@ -576,8 +585,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     public String getHooksStr() {
         return hooksStr;
     }
-
-    private static LogCompat log = LogFactoryCompat.getLog(VdsDynamic.class);
 
     public NonOperationalReason getNonOperationalReason() {
         return nonOperationalReason;
