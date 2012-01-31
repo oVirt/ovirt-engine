@@ -92,6 +92,18 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         privateEditCommand = value;
     }
 
+    private UICommand privateEditWithPMemphasisCommand;
+
+    public UICommand getEditWithPMemphasisCommand()
+    {
+        return privateEditWithPMemphasisCommand;
+    }
+
+    private void setEditWithPMemphasisCommand(UICommand value)
+    {
+        privateEditWithPMemphasisCommand = value;
+    }
+
     private UICommand privateRemoveCommand;
 
     public UICommand getRemoveCommand()
@@ -266,6 +278,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
 
         setNewCommand(new UICommand("New", this));
         setEditCommand(new UICommand("Edit", this));
+        setEditWithPMemphasisCommand(new UICommand("EditWithPMemphasis", this));
         setRemoveCommand(new UICommand("Remove", this));
         setActivateCommand(new UICommand("Activate", this, true));
         setMaintenanceCommand(new UICommand("Maintenance", this, true));
@@ -596,17 +609,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         setActiveDetailModel(getHostEventListModel());
     }
 
-    public void EditWithPMemphasis()
-    {
-        getEditCommand().Execute();
-
-        HostModel model = (HostModel) getWindow();
-        model.setIsPowerManagementSelected(true);
-        model.getIsPm().setEntity(true);
-        model.getIsPm().setIsChangable(false);
-    }
-
-    public void Edit()
+    public void Edit(final boolean isEditWithPMemphasis)
     {
         if (getWindow() != null)
         {
@@ -624,9 +627,10 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
                 HostModel hostModel = new HostModel();
                 hostListModel.setWindow(hostModel);
                 VDS host = (VDS) hostListModel.getSelectedItem();
-                PrepareModelForApproveEdit(host, hostModel, dataCenters);
+                PrepareModelForApproveEdit(host, hostModel, dataCenters, isEditWithPMemphasis);
                 hostModel.setTitle("Edit Host");
                 hostModel.setHashName("edit_host");
+
                 UICommand tempVar = new UICommand("OnSaveFalse", hostListModel);
                 tempVar.setTitle("OK");
                 tempVar.setIsDefault(true);
@@ -682,7 +686,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
     public void CancelConfirmFocusPM()
     {
         HostModel hostModel = (HostModel) getWindow();
-        hostModel.setIsPowerManagementSelected(true);
+        hostModel.setIsPowerManagementTabSelected(true);
         hostModel.getIsPm().setEntity(true);
 
         setConfirmWindow(null);
@@ -995,7 +999,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
                 java.util.ArrayList<storage_pool> dataCenters = (java.util.ArrayList<storage_pool>) result;
                 VDS host = (VDS) hostListModel.getSelectedItem();
-                hostListModel.PrepareModelForApproveEdit(host, innerHostModel, dataCenters);
+                hostListModel.PrepareModelForApproveEdit(host, innerHostModel, dataCenters, false);
                 innerHostModel.setTitle("Edit and Approve Host");
                 innerHostModel.setHashName("edit_and_approve_host");
 
@@ -1012,7 +1016,10 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         AsyncDataProvider.GetDataCenterList(_asyncQuery);
     }
 
-    private void PrepareModelForApproveEdit(VDS vds, HostModel model, java.util.ArrayList<storage_pool> dataCenters)
+    private void PrepareModelForApproveEdit(VDS vds,
+            HostModel model,
+            java.util.ArrayList<storage_pool> dataCenters,
+            boolean isEditWithPMemphasis)
     {
         model.setHostId(vds.getvds_id());
         model.getRootPassword().setIsAvailable(false);
@@ -1021,11 +1028,20 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         model.getName().setEntity(vds.getvds_name());
         model.getHost().setEntity(vds.gethost_name());
         model.getPort().setEntity(vds.getport());
-        model.getIsPm().setEntity(vds.getpm_enabled());
+
+        if (isEditWithPMemphasis) {
+            model.setIsPowerManagementTabSelected(true);
+            model.getIsPm().setEntity(true);
+            model.getIsPm().setIsChangable(false);
+        } else {
+            model.getIsPm().setEntity(vds.getpm_enabled());
+        }
         model.getManagementIp().setEntity(vds.getManagmentIp());
         model.getPmType().setSelectedItem(vds.getpm_type());
         model.getPmUserName().setEntity(vds.getpm_user());
         model.getPmPassword().setEntity(vds.getpm_password());
+
+
         /*
          * --- JUICOMMENT_BEGIN // * TODO: Need to find a solution for casting ValueObjectMap to Dictionary<string,
          * string> // in Java, and conform the C# code to do that when a solution is found
@@ -1348,7 +1364,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
 
         if (ev.equals(HostGeneralModel.RequestEditEventDefinition))
         {
-            EditWithPMemphasis();
+            getEditWithPMemphasisCommand().Execute();
         }
         if (ev.equals(HostGeneralModel.RequestGOToEventsTabEventDefinition))
         {
@@ -1438,6 +1454,9 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         getEditCommand().setIsExecutionAllowed(items.size() == 1
                 && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.UpdateVds));
 
+        getEditWithPMemphasisCommand().setIsExecutionAllowed(items.size() == 1
+                && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.UpdateVds));
+
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.RemoveVds));
 
@@ -1499,7 +1518,11 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         }
         else if (command == getEditCommand())
         {
-            Edit();
+            Edit(false);
+        }
+        else if (command == getEditWithPMemphasisCommand())
+        {
+            Edit(true);
         }
         else if (command == getRemoveCommand())
         {

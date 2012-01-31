@@ -1562,7 +1562,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         setConfirmWindow(null);
 
         HostModel hostModel = (HostModel) getWindow();
-        hostModel.setIsPowerManagementSelected(true);
+        hostModel.setIsPowerManagementTabSelected(true);
         hostModel.getIsPm().setEntity(true);
     }
 

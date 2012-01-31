@@ -43,17 +43,15 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
             }
         }));
 
-        model.getHost().getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getPropertyChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if (!"Entity".equals(propName)) {
+                if (!"IsPowerManagementTabSelected".equals(propName)) {
                     return;
                 }
-                // If this is not a new host and power management is not enabled then
-                // make sure that the power management tab is displayed:
-                if (!model.getIsNew() && !model.getIsPowerManagementSelected()) {
+                if (model.getIsPowerManagementTabSelected()) {
                     getView().showPowerManagement();
                 }
             }

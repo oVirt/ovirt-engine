@@ -59,6 +59,7 @@ public class HostModule extends AbstractGinModule {
             protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getNewCommand()
                         || lastExecutedCommand == getModel().getEditCommand()
+                        || lastExecutedCommand == getModel().getEditWithPMemphasisCommand()
                         || lastExecutedCommand == getModel().getApproveCommand()) {
                     return popupProvider.get();
                 } else if (lastExecutedCommand == getModel().getAssignTagsCommand()) {

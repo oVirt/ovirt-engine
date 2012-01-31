@@ -307,19 +307,19 @@ public class HostModel extends Model
         }
     }
 
-    private boolean isPowerManagementSelected;
+    private boolean isPowerManagementTabSelected;
 
-    public boolean getIsPowerManagementSelected()
+    public boolean getIsPowerManagementTabSelected()
     {
-        return isPowerManagementSelected;
+        return isPowerManagementTabSelected;
     }
 
-    public void setIsPowerManagementSelected(boolean value)
+    public void setIsPowerManagementTabSelected(boolean value)
     {
-        if (isPowerManagementSelected != value)
+        if (isPowerManagementTabSelected != value)
         {
-            isPowerManagementSelected = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsPowerManagementSelected"));
+            isPowerManagementTabSelected = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsPowerManagementTabSelected"));
         }
     }
 
