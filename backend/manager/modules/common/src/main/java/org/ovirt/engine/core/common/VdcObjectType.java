@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -26,7 +27,8 @@ public enum VdcObjectType {
     ImportExport(13, "ImportExport"),
     StoragePool(14, "Data Center"),
     User(15, "User"),
-    Role(16, "Role");
+    Role(16, "Role"),
+    Quota(17, "Quota");
 
     private int value;
     private String vdcObjectTranslationVal;

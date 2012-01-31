@@ -153,6 +153,7 @@ $function$
 		StoragePool = 14,
 		User = 15,
 		Role = 16
+		Quota = 17
 */
 DECLARE
 	v_entity_type int4 := v_object_type;
@@ -225,6 +226,16 @@ BEGIN
 	WHEN v_entity_type = 9 THEN -- Cluster
 		-- get data center id
 		ds_id := ( SELECT storage_pool_id FROM vds_groups WHERE vds_group_id = v_entity_id );
+
+		RETURN QUERY
+			SELECT system_root_id AS id
+			UNION
+			SELECT ds_id AS id
+			UNION
+			SELECT v_entity_id AS id;
+	WHEN v_entity_type = 17 THEN -- Quota
+		-- get data center id
+		ds_id := ( SELECT storage_pool_id FROM quota WHERE id = v_entity_id );
 
 		RETURN QUERY
 			SELECT system_root_id AS id

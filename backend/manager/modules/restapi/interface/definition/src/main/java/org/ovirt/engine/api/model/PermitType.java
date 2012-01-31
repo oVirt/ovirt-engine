@@ -67,7 +67,10 @@ public enum PermitType {
     CONFIGURE_STORAGE_POOL_NETWORK(703, RoleType.ADMIN),
 
     // rhevm generic
-    CONFIGURE_RHEVM(800, RoleType.ADMIN);
+    CONFIGURE_RHEVM(800, RoleType.ADMIN),
+
+    // Quota
+    CONFIGURE_QUOTA(900, RoleType.ADMIN);
 
     private int id;
     private RoleType role;

@@ -125,6 +125,8 @@ public class PermitMapper {
             return PermitType.CONFIGURE_STORAGE_POOL_NETWORK;
         case CONFIGURE_ENGINE:
             return PermitType.CONFIGURE_RHEVM;
+        case CONFIGURE_QUOTA:
+            return PermitType.CONFIGURE_QUOTA;
         default:
             return null;
         }

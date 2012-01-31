@@ -161,6 +161,12 @@ public enum VdcActionType {
     AttachVdsToTag(511),
     DetachVdsFromTag(512),
     UpdateTagsVmMapDefaultDisplayType(515),
+
+    // Quota
+    AddQuota(601, ActionGroup.CONFIGURE_QUOTA),
+    EditQuota(602, ActionGroup.CONFIGURE_QUOTA),
+    RemoveQuota(603, ActionGroup.CONFIGURE_QUOTA),
+
     // bookmarks
     AddBookmark(701),
     RemoveBookmark(702),
@@ -235,6 +241,7 @@ public enum VdcActionType {
     Users(1207),
     Events(1208),
     Monitor(1209),
+    Quota(1210),
 
     // Config
     SetConfigurationValue(1300, ActionGroup.CONFIGURE_ENGINE);

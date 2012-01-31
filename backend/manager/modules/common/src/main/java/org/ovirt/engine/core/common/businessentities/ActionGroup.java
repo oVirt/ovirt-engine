@@ -61,7 +61,11 @@ public enum ActionGroup {
     CONFIGURE_STORAGE_POOL_NETWORK(703, RoleType.ADMIN, VdcObjectType.StoragePool),
 
     // engine generic
-    CONFIGURE_ENGINE(800, RoleType.ADMIN, VdcObjectType.System);
+    CONFIGURE_ENGINE(800, RoleType.ADMIN, VdcObjectType.System),
+
+    // Quota
+    CONFIGURE_QUOTA(900, RoleType.ADMIN, VdcObjectType.Quota);
+
 
     private int id;
     private RoleType roleType;
