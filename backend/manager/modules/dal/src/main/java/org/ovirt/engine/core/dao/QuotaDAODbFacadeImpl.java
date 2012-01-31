@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaStorageProperties;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
@@ -197,6 +198,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
                 entity.setThresholdStoragePercentage((Integer) rs.getObject("threshold_storage_percentage"));
                 entity.setGraceVdsGroupPercentage((Integer) rs.getObject("grace_vds_group_percentage"));
                 entity.setGraceStoragePercentage((Integer) rs.getObject("grace_storage_percentage"));
+                entity.setQuotaEnforcementType(QuotaEnforcmentTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
                 mapVdsGroupResultSet(rs, entity);
                 mapStorageResultSet(rs, entity);
                 return entity;

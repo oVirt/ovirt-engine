@@ -120,6 +120,11 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
     private transient Long memSizeMBUsage;
 
     /**
+     * The quota enforcement type.
+     */
+    private QuotaEnforcmentTypeEnum quotaEnforcementType;
+
+    /**
      * List of all the specific VdsGroups limitations.
      */
     private List<QuotaVdsGroup> quotaVdsGroupList;
@@ -392,6 +397,20 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
         this.storageSizeGB = storageSizeGB;
     }
 
+    /**
+     * @return the quotaEnforcementType
+     */
+    public QuotaEnforcmentTypeEnum getQuotaEnforcementType() {
+        return this.quotaEnforcementType;
+    }
+
+    /**
+     * @param quotaEnforcementType
+     *            the quotaEnforcementType to set
+     */
+    public void setQuotaEnforcementType(QuotaEnforcmentTypeEnum quotaEnforcementType) {
+        this.quotaEnforcementType = quotaEnforcementType;
+    }
 
     @Override
     public Object getQueryableId() {

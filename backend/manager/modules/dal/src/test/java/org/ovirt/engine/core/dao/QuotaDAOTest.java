@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.config.Config;
@@ -53,6 +54,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         assertNotNull(quotaEntity);
         assertEquals(quotaEntity, quota);
         assertEquals(quotaEntity.getStoragePoolName(), "rhel6.NFS");
+        assertEquals(quotaEntity.getQuotaEnforcementType(), QuotaEnforcmentTypeEnum.DISABLED);
     }
 
     @Test

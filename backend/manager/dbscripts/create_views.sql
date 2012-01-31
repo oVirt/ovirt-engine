@@ -736,7 +736,7 @@ FROM storage_domain_static
 	LEFT OUTER JOIN vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id;
 
 ----------------------------------------------
--- Quotas
+-- Quota
 ----------------------------------------------
 CREATE OR REPLACE VIEW quota_global_view
 AS
@@ -754,7 +754,8 @@ SELECT q_limit.quota_id as quota_id,
     mem_size_mb,
     (CalculateVdsGroupUsage(quota_id,null)).mem_size_mb_usage,
     storage_size_gb,
-    CalculateStorageUsage(quota_id,null) as storage_size_gb_usage
+    CalculateStorageUsage(quota_id,null) as storage_size_gb_usage,
+    storage_pool.quota_enforcement_type as quota_enforcement_type
 FROM  quota_limitation q_limit, quota q, storage_pool
 WHERE q_limit.quota_id = q.id
 AND storage_pool.id = q.storage_pool_id
