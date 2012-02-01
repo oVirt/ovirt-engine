@@ -69,7 +69,8 @@ public enum ConfigurationValues {
     RhevhLocalFSPath,
     CustomPublicConfig_AppsWebSite(ConfigAuthType.User),
     DocsURL(ConfigAuthType.User),
-    HotPlugEnabled(ConfigAuthType.User);
+    HotPlugEnabled(ConfigAuthType.User),
+    ManagementNetwork;
 
     public static enum ConfigAuthType {
         Admin,
