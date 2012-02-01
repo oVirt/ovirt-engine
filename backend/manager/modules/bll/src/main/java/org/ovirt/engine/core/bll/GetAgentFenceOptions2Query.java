@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.HashMap;
 
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.queries.*;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.utils.pm.VdsFencingOptions;
 
 public class GetAgentFenceOptions2Query<P extends VdcQueryParametersBase> extends FencingQueryBase<P> {
 

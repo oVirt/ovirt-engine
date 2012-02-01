@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.utils.pm;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.queries.*;
+import org.ovirt.engine.core.common.queries.ValueObjectMap;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.utils.pm.VdsFencingOptions;
 
 public class GetAgentFenceOptionsQuery<P extends VdcQueryParametersBase> extends FencingQueryBase<P> {
 
