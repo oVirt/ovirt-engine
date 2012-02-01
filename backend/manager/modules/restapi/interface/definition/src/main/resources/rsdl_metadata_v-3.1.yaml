@@ -44,8 +44,7 @@ actions:
         optionalArguments:
           vm.timezone: xs:string
           vm.os.boot.dev: xs:string
-          vm.custom_properties.custom_property: {name: 'xs:string', value: 'xs:string',
-            regex: 'xs:string'}
+          vm.custom_properties.custom_property--LIST: {name: 'xs:string', value: 'xs:string'}
           vm.os.type: xs:string
           vm.usb.enabled: xs:boolean
           vm.type: xs:string
@@ -1004,7 +1003,7 @@ actions:
       - mandatoryArguments: {host.name: 'xs:string', host.address: 'xs:string', host.root_password: 'xs:string', host.cluster.id: 'xs:string'}
         optionalArguments: {host.port: 'xs:int', host.storage_manager.priority: 'xs:int', host.power_management.type: 'xs:string',
           host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string', host.power_management.user_name: 'xs:string',
-          host.power_management.password: 'xs:string', host.power_management.options.option--LIST: {name: 'xs:string', value: 'xs:string',}}
+          host.power_management.password: 'xs:string', host.power_management.options.option--LIST: {name: 'xs:string', value: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/hosts/{host:id}/activate|rel=activate
@@ -1415,8 +1414,7 @@ actions:
           template.stateless: 'xs: boolean'
           template.placement_policy.affinity: xs:string
           template.description: xs:string
-          template.custom_properties.custom_property: {name: 'xs:string', value: 'xs:string',
-            regex: 'xs:string'}
+          template.custom_properties.custom_property--LIST: {name: 'xs:string', value: 'xs:string'}
           template.os.type: xs:string
           template.os.boot.dev: xs:string
           template.cpu.topology.sockets: xs:int
