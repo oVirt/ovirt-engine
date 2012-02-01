@@ -1104,17 +1104,7 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         mVdsStatistics = value;
     }
 
-    public VdsFencingOptions getVdsFencingOptions() {
-        return (StringHelper.isNullOrEmpty(getpm_type())) ? null : new VdsFencingOptions(getpm_type(), getpm_options());
-    }
-
-    // public event PropertyChangedEventHandler PropertyChanged;
-
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {
-        /* if (PropertyChanged != null) */
-        {
-            /* PropertyChanged(this, e); */
-        }
     }
 
     public java.util.ArrayList<network> getNetworks() {
