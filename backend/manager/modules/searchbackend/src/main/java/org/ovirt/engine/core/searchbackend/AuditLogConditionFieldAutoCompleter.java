@@ -70,10 +70,10 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(final String fieldName) {
         if (StringHelper.EqOp(fieldName, "SEVERITY")) {
-            return new NumericConditionRelationAutoCompleter();
+            return NumericConditionRelationAutoCompleter.INSTANCE;
         }
         else if (StringHelper.EqOp(fieldName, "TIME")) {
-            return new TimeConditionRelationAutoCompleter();
+            return TimeConditionRelationAutoCompleter.INSTANCE;
         }
         else if (StringHelper.EqOp(fieldName, "TYPE") || StringHelper.EqOp(fieldName, "MESSAGE")
                 || StringHelper.EqOp(fieldName, "USRNAME") || StringHelper.EqOp(fieldName, "EVENT_HOST")
@@ -82,7 +82,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
                 || StringHelper.EqOp(fieldName, "EVENT_TEMPLATE") || StringHelper.EqOp(fieldName, "_EVENT_TEMPLATE_ID")
                 || StringHelper.EqOp(fieldName, "EVENT_STORAGE") || StringHelper.EqOp(fieldName, "EVENT_DATACENTER")
                 || StringHelper.EqOp(fieldName, "_EVENT_DATACENTER_ID")) {
-            return new StringConditionRelationAutoCompleter();
+            return StringConditionRelationAutoCompleter.INSTANCE;
         } else {
             return null;
         }

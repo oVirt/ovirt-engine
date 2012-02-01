@@ -55,9 +55,9 @@ public class DiskImageConditionFieldAutoCompleter extends BaseConditionFieldAuto
         IAutoCompleter retval;
         if (StringHelper.EqOp(fieldName, "CREATIONDATE") || StringHelper.EqOp(fieldName, "SIZE")
                 || StringHelper.EqOp(fieldName, "PROVISIONED_SIZE")) {
-            retval = new BiggerOrSmallerRelationAutoCompleter();
+            retval = BiggerOrSmallerRelationAutoCompleter.INTSANCE;
         } else {
-            retval = new StringConditionRelationAutoCompleter();
+            retval = StringConditionRelationAutoCompleter.INSTANCE;
         }
         return retval;
     }

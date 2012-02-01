@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.searchbackend;
 
-public class StringOnlyEqualConditionRelationAutoCompleter extends BaseAutoCompleter {
-    public StringOnlyEqualConditionRelationAutoCompleter() {
-        super("=");
+public final class StringOnlyEqualConditionRelationAutoCompleter extends BaseAutoCompleter {
 
+    public final static StringOnlyEqualConditionRelationAutoCompleter INSTANCE =
+            new StringOnlyEqualConditionRelationAutoCompleter();
+
+    private StringOnlyEqualConditionRelationAutoCompleter() {
+        super("=");
     }
 }

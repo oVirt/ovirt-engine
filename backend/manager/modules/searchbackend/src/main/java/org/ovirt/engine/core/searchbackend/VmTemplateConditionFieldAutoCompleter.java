@@ -47,16 +47,13 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        IAutoCompleter retval;
         if (StringHelper.EqOp(fieldName, "CREATIONDATE")) {
-            retval = new TimeConditionRelationAutoCompleter();
-        }
-        else if (StringHelper.EqOp(fieldName, "CHILDCOUNT") || StringHelper.EqOp(fieldName, "MEM")) {
-            retval = new NumericConditionRelationAutoCompleter();
+            return TimeConditionRelationAutoCompleter.INSTANCE;
+        } else if (StringHelper.EqOp(fieldName, "CHILDCOUNT") || StringHelper.EqOp(fieldName, "MEM")) {
+            return NumericConditionRelationAutoCompleter.INSTANCE;
         } else {
-            retval = new StringConditionRelationAutoCompleter();
+            return StringConditionRelationAutoCompleter.INSTANCE;
         }
-        return retval;
     }
 
     @Override

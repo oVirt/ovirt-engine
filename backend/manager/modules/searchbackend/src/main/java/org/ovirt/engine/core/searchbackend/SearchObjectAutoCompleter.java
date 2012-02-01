@@ -384,9 +384,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
     }
 
     public IAutoCompleter getObjectRelationshipAutoCompleter(String obj) {
-        IAutoCompleter retval;
-        retval = new StringConditionRelationAutoCompleter();
-        return retval;
+        return StringConditionRelationAutoCompleter.INSTANCE;
     }
 
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String obj, String fieldName) {

@@ -82,20 +82,18 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        IAutoCompleter retval;
         if (StringHelper.EqOp(fieldName, "UPTIME") || StringHelper.EqOp(fieldName, "CREATIONDATE")) {
-            retval = new BiggerOrSmallerRelationAutoCompleter();
+            return BiggerOrSmallerRelationAutoCompleter.INTSANCE;
         }
         else if (StringHelper.EqOp(fieldName, "CPU_USAGE") || StringHelper.EqOp(fieldName, "MEM_USAGE")
                 || StringHelper.EqOp(fieldName, "MEMORY") || StringHelper.EqOp(fieldName, "NETWORK_USAGE")) {
-            retval = new NumericConditionRelationAutoCompleter();
+            return NumericConditionRelationAutoCompleter.INSTANCE;
         }
         else if (StringHelper.EqOp(fieldName, "TAG")) {
-            retval = new StringOnlyEqualConditionRelationAutoCompleter();
+            return StringOnlyEqualConditionRelationAutoCompleter.INSTANCE;
         } else {
-            retval = new StringConditionRelationAutoCompleter();
+            return StringConditionRelationAutoCompleter.INSTANCE;
         }
-        return retval;
     }
 
     @Override

@@ -76,20 +76,18 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        IAutoCompleter retval = null;
         if (StringHelper.EqOp(fieldName, "MEMORY") || StringHelper.EqOp(fieldName, "CPUS")
                 || StringHelper.EqOp(fieldName, "CPU_USAGE") || StringHelper.EqOp(fieldName, "MEM_USAGE")
                 || StringHelper.EqOp(fieldName, "LOAD") || StringHelper.EqOp(fieldName, "CPU_SPEED")
                 || StringHelper.EqOp(fieldName, "ACTIVE_VMS") || StringHelper.EqOp(fieldName, "NETWORK_USAGE")
                 || StringHelper.EqOp(fieldName, "COMMITTED_MEM")) {
-            retval = new NumericConditionRelationAutoCompleter();
+            return NumericConditionRelationAutoCompleter.INSTANCE;
         }
         else if (StringHelper.EqOp(fieldName, "TAG")) {
-            retval = new StringOnlyEqualConditionRelationAutoCompleter();
+            return StringOnlyEqualConditionRelationAutoCompleter.INSTANCE;
         } else {
-            retval = new StringConditionRelationAutoCompleter();
+            return StringConditionRelationAutoCompleter.INSTANCE;
         }
-        return retval;
     }
 
     @Override

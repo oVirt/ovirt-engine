@@ -30,17 +30,16 @@ public class BaseAutoCompleter implements IAutoCompleter {
         buildCompletions();
     }
 
-    protected void buildCompletions() {
+    protected final void buildCompletions() {
         final List<String> emptyKeyList = new ArrayList<String>();
         for (String title : mVerbs.keySet()) {
             emptyKeyList.add(changeCaseDisplay(title));
             for (int idx = 1; idx <= title.length(); idx++) {
                 String curKey = title.substring(0, idx);
                 if (!mVerbCompletion.containsKey(curKey)) {
-                    java.util.ArrayList<String> newList = new ArrayList<String>();
-                    mVerbCompletion.put(curKey, newList);
+                    mVerbCompletion.put(curKey, new ArrayList<String>());
                 }
-                List<String> curList = mVerbCompletion.get(curKey);
+                final List<String> curList = mVerbCompletion.get(curKey);
                 curList.add(changeCaseDisplay(title));
             }
         }
@@ -48,7 +47,7 @@ public class BaseAutoCompleter implements IAutoCompleter {
         mVerbCompletion.put(" ", emptyKeyList);
     }
 
-    public String[] getCompletion(String wordPart) {
+    public final String[] getCompletion(String wordPart) {
         String[] retval = new String[0];
         if (mVerbCompletion.containsKey(wordPart.toUpperCase())) {
             List<String> curList = mVerbCompletion.get(wordPart.toUpperCase());
@@ -58,11 +57,11 @@ public class BaseAutoCompleter implements IAutoCompleter {
         return retval;
     }
 
-    public boolean validate(String text) {
+    public final boolean validate(String text) {
         return (text != null) ? mVerbs.containsKey(text.toUpperCase()) : false;
     }
 
-    public boolean validateCompletion(String text) {
+    public final boolean validateCompletion(String text) {
         return mVerbCompletion.containsKey(text);
     }
 

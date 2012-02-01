@@ -49,14 +49,11 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        IAutoCompleter retval;
         if (StringHelper.EqOp(fieldName, "TAG")) {
-            retval = new StringOnlyEqualConditionRelationAutoCompleter();
+            return StringOnlyEqualConditionRelationAutoCompleter.INSTANCE;
         } else {
-            retval = new StringConditionRelationAutoCompleter();
+            return StringConditionRelationAutoCompleter.INSTANCE;
         }
-
-        return retval;
     }
 
     @Override

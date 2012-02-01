@@ -40,15 +40,12 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        IAutoCompleter retval;
         if (StringHelper.EqOp(fieldName, "SIZE") || StringHelper.EqOp(fieldName, "USED")
                 || StringHelper.EqOp(fieldName, "COMMITTED")) {
-            retval = new NumericConditionRelationAutoCompleter();
+            return NumericConditionRelationAutoCompleter.INSTANCE;
         } else {
-            retval = new StringConditionRelationAutoCompleter();
+            return StringConditionRelationAutoCompleter.INSTANCE;
         }
-
-        return retval;
     }
 
     @Override

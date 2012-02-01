@@ -8,8 +8,7 @@ import junit.framework.TestCase;
 public class NumericConditionRelationAutoCompleterTest extends TestCase {
 
     public void testValue() {
-        IAutoCompleter comp = new NumericConditionRelationAutoCompleter();
-        List<String> comps = Arrays.asList(comp.getCompletion("<"));
+        List<String> comps = Arrays.asList(NumericConditionRelationAutoCompleter.INSTANCE.getCompletion("<"));
         assertTrue("<", comps.contains("<"));
         assertTrue("<=", comps.contains("<="));
         assertFalse("=", comps.contains("="));

@@ -28,9 +28,7 @@ public class PoolConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        IAutoCompleter retval;
-        retval = new StringConditionRelationAutoCompleter();
-        return retval;
+        return StringConditionRelationAutoCompleter.INSTANCE;
     }
 
     @Override

@@ -43,7 +43,6 @@ public class AdUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCom
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        IAutoCompleter retval = new StringConditionRelationAutoCompleter();
-        return retval;
+        return StringConditionRelationAutoCompleter.INSTANCE;
     }
 }
