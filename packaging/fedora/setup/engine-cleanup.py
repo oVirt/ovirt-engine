@@ -36,6 +36,7 @@ PKI_BACKUP_DIR = "/etc/pki/%s-backups" % (PREFIX)
 MSG_ERROR_USER_NOT_ROOT = "Error: insufficient permissions for user %s, you must run with user root."
 MSG_RC_ERROR = "Return Code is not zero"
 MSG_ERROR_BACKUP_DB = "Error: Database backup failed"
+MSG_ERROR_CLEAR_DB_CONNECTIONS = "Error: failed to clear all DB connections"
 MSG_ERROR_DROP_DB = "Error: Database drop failed"
 MSG_ERROR_CHECK_LOG = "Error: Cleanup failed.\nplease check log at %s"
 MSG_ERR_FAILED_JBOSS_SERVICE_STILL_RUN = "Error: Can't stop jboss service. Please shut it down manually."
@@ -80,7 +81,7 @@ def getOptions():
     parser.add_option("-c", "--dont-remove-ca",
                       action="store_false", dest="remove_ca", default=True,
                       help="Don't remove CA")
-    
+
     parser.add_option("-l", "--dont-unlink-ear",
                       action="store_false", dest="unlink_ear", default=True,
                       help="Don't unlink ear")
@@ -204,7 +205,7 @@ class DB():
 
     def __del__(self):
         if self.dropped:
-            logging.debug(MSG_INFO_DB_BACKUP_FILE + self.sqlfile)
+            logging.debug(MSG_INFO_DB_BACKUP_FILE + " " + self.sqlfile)
             print MSG_INFO_DB_BACKUP_FILE,
             print self.sqlfile
         else:
@@ -226,16 +227,23 @@ class DB():
         Drops db using dropdb
         """
         logging.debug("DB Drop started")
+
+        # Block New connections and disconnect active ones
+        clearQuery = "update pg_database set datallowconn = 'false' where datname = '%s'; SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname = '%s'" % (basedefs.DB_NAME, basedefs.DB_NAME)
+        cmd = [basedefs.EXEC_PSQL, "-U", basedefs.DB_ADMIN, "-c", clearQuery]
+        output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_CLEAR_DB_CONNECTIONS)
+
+        # Drop DB
         cmd = [basedefs.EXEC_DROPDB, "-w", "-U", basedefs.DB_ADMIN, basedefs.DB_NAME]
-        output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_DROP_DB, [])
+        output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_DROP_DB)
         self.dropped = True
         logging.debug("DB Drop completed successfully")
 
     def exists(self):
         """
-        check if db exists
+        check that db exists
         """
-        logging.debug("verifying is db exists")
+        logging.debug("verifying that db '%s' exists" % (basedefs.DB_NAME))
 
         # Making sure postgresql service is up
         postgresql = utils.Service("postgresql")
@@ -324,9 +332,8 @@ def main(options):
     # Stop JBoss
     runFunc(stopJboss, MSG_INFO_STOP_JBOSS)
 
-    # Close all DB connections and drop DB (only if db exists)
+    # Backup and drop DB (only if 'basedefs.DB_NAME' db exists)
     if db.exists() and options.drop_db:
-        runFunc(restartPostgresql, MSG_INFO_KILL_DB_CONNS)
         runFunc([db.backup, db.drop], MSG_INFO_REMOVE_DB)
 
     # Remove CA
