@@ -382,6 +382,11 @@ public class UserPortalItemModel extends EntityModel
         }
     }
 
+    // to simpler integration with the editor framework
+    public boolean getIsVmUp() {
+        return IsVmUp();
+    }
+
     @Override
     protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style type="org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.MainTabBasicListItemActionButton.Style">
+		.buttonStyle {
+			float: left;
+			width: 24px;
+			height: 24px;
+		}
+	</ui:style>
+
+	<g:PushButton ui:field="button" addStyleNames="{style.buttonStyle}" />
+
+</ui:UiBinder>

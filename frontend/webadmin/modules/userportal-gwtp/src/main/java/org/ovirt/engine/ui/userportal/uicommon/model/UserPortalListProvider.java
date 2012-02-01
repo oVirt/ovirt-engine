@@ -8,9 +8,12 @@ import com.google.inject.Inject;
 
 public class UserPortalListProvider extends UserPortalDataBoundModelProvider<UserPortalItemModel, UserPortalListModel> {
 
+    private final UserPortalItemModelKeyProvider keyProvider;
+
     @Inject
-    public UserPortalListProvider(ClientGinjector ginjector) {
+    public UserPortalListProvider(ClientGinjector ginjector, UserPortalItemModelKeyProvider keyProvider) {
         super(ginjector);
+        this.keyProvider = keyProvider;
     }
 
     @Override

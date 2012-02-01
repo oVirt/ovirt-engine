@@ -42,7 +42,7 @@ public class VmImageColumn extends ImageResourceColumn<UserPortalItemModel> {
         case RHEL6x64:
             return getApplicationResources().RHEL6x64SmallImage();
         case OtherLinux:
-            return getApplicationResources().otherLinuxImage();
+            return getApplicationResources().otherLinuxSmallImage();
         case Other:
             return getApplicationResources().otherOsSmallImage();
         case Unassigned:

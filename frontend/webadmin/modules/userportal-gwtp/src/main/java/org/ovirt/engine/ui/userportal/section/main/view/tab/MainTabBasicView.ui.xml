@@ -41,7 +41,9 @@
 
 	<g:DockLayoutPanel addStyleNames="{style.borderPanelStyle}">
 		<g:north size='20' addStyleNames="{style.refreshPanelWrapper}">
-			<r:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}" />
+			<g:SimplePanel width="100%">
+				<r:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}" />
+			</g:SimplePanel>
 		</g:north>
 
 		<g:center>

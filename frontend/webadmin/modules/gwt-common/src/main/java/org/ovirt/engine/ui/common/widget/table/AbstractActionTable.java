@@ -296,11 +296,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         getDataProvider().goForward();
     }
 
-    @UiHandler("refreshPanel")
-    public void handleRefreshPanelClick(ClickEvent event) {
-        getDataProvider().refresh();
-    }
-
     void addColumn(Column<T, ?> column, Header<?> header) {
         table.addColumn(column, header);
         tableHeader.addColumn(column, header);

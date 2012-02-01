@@ -42,6 +42,7 @@ public class MainTabBasicListPresenterWidget extends PresenterWidget<MainTabBasi
 
     @Override
     public void onDataChange(List<UserPortalItemModel> items) {
+        // TODO optimize
         getView().clear();
         for (UserPortalItemModel item : items) {
             MainTabBasicListItemPresenterWidget basicVmPresenterWidget = basicVmPresenterWidgetProvider.get();

@@ -12,6 +12,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.ObservableCollection;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -167,6 +168,18 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     {
         super.AsyncSearch();
         SyncSearch();
+    }
+
+    @Override
+    public void setItems(Iterable value) {
+        if (items != value)
+        {
+            ItemsChanging(value, items);
+            items = value;
+            ItemsChanged();
+            getItemsChangedEvent().raise(this, EventArgs.Empty);
+            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
+        }
     }
 
     @Override
