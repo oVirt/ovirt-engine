@@ -136,9 +136,22 @@
 		<include name="core/common/businessentities/FileRepoMetaData.java"/>
 		<include name="core/common/businessentities/RepoFileMetaData.java"/>
 		<include name="core/common/businessentities/FileTypeExtension.java"/>
-
 		<include name="core/common/job/*.java"/>
 
+		<!-- Quota -->
+		<include name="core/common/businessentities/Quota.java"/>
+		<include name="core/common/businessentities/QuotaEnforcmentTypeEnum.java"/>
+		<include name="core/common/businessentities/QuotaStorage.java"/>
+		<include name="core/common/businessentities/QuotaStorageProperties.java"/>
+		<include name="core/common/businessentities/QuotaVdsGroup.java"/>
+		<include name="core/common/businessentities/QuotaVdsGroupProperties.java"/>
+		<include name="core/common/action/QuotaCRUDParameters.java"/>
+		<include name="core/common/queries/GetQuotaByStoragePoolIdQueryParameters.java"/>
+		<include name="core/common/queries/GetQuotaByQuotaIdQueryParameters.java"/>
+		<include name="core/common/queries/GetQuotaVdsGroupByQuotaIdQueryParameters.java"/>
+		<include name="core/common/queries/GetQuotaStorageByQuotaIdQueryParameters.java"/>
+		
+		
 		<!-- Misc -->
 		<include name="core/common/AuditLogType.java"/>
 		<include name="core/common/AuditLogTimeInterval.java"/>
