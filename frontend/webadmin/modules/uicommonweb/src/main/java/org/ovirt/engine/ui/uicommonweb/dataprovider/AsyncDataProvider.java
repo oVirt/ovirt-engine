@@ -72,6 +72,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringFormat;
@@ -85,6 +86,11 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 
 @SuppressWarnings("unused")
 public final class AsyncDataProvider {
+
+    // dictionary to hold cache of all config values (per version) queried by client, if the request for them succeeded.
+    private static java.util.HashMap<java.util.Map.Entry<ConfigurationValues, String>, Object> CachedConfigValues =
+            new java.util.HashMap<java.util.Map.Entry<ConfigurationValues, String>, Object>();
+
     public static void GetDomainListViaPublic(AsyncQuery aQuery, boolean filterInternalDomain) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -123,7 +129,7 @@ public final class AsyncDataProvider {
         GetConfigurationValueParameters tempVar =
                 new GetConfigurationValueParameters(ConfigurationValues.SupportCustomProperties);
         tempVar.setVersion(version);
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue, tempVar, aQuery);
+        GetConfigFromCache(tempVar, aQuery);
     }
 
     public static void GetIsoDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId) {
@@ -312,7 +318,7 @@ public final class AsyncDataProvider {
                 return source != null ? ((Integer) source).intValue() : 1;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.VMMinMemorySizeInMB),
                 aQuery);
     }
@@ -328,7 +334,7 @@ public final class AsyncDataProvider {
         GetConfigurationValueParameters tempVar =
                 new GetConfigurationValueParameters(ConfigurationValues.VM64BitMaxMemorySizeInMB);
         tempVar.setVersion(version);
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue, tempVar, aQuery);
+        GetConfigFromCache(tempVar, aQuery);
     }
 
     public static void GetMaximalVmMemSize32OS(AsyncQuery aQuery) {
@@ -339,7 +345,7 @@ public final class AsyncDataProvider {
                 return source != null ? ((Integer) source).intValue() : 20480;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.VM32BitMaxMemorySizeInMB),
                 aQuery);
     }
@@ -355,7 +361,7 @@ public final class AsyncDataProvider {
         GetConfigurationValueParameters tempVar =
                 new GetConfigurationValueParameters(ConfigurationValues.MaxNumOfVmSockets);
         tempVar.setVersion(version);
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue, tempVar, aQuery);
+        GetConfigFromCache(tempVar, aQuery);
     }
 
     public static void GetMaxNumOfVmCpus(AsyncQuery aQuery, String version) {
@@ -369,7 +375,7 @@ public final class AsyncDataProvider {
         GetConfigurationValueParameters tempVar =
                 new GetConfigurationValueParameters(ConfigurationValues.MaxNumOfVmCpus);
         tempVar.setVersion(version);
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue, tempVar, aQuery);
+        GetConfigFromCache(tempVar, aQuery);
     }
 
     public static void GetMaxNumOfCPUsPerSocket(AsyncQuery aQuery, String version) {
@@ -383,7 +389,7 @@ public final class AsyncDataProvider {
         GetConfigurationValueParameters tempVar =
                 new GetConfigurationValueParameters(ConfigurationValues.MaxNumOfCpuPerSocket);
         tempVar.setVersion(version);
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue, tempVar, aQuery);
+        GetConfigFromCache(tempVar, aQuery);
     }
 
     public static void GetClusterList(AsyncQuery aQuery, Guid dataCenterId) {
@@ -464,7 +470,7 @@ public final class AsyncDataProvider {
                 return 0;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.VmPriorityMaxValue),
                 aQuery);
     }
@@ -547,7 +553,7 @@ public final class AsyncDataProvider {
                 return nums;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.ValidNumOfMonitors),
                 aQuery);
     }
@@ -598,7 +604,7 @@ public final class AsyncDataProvider {
                 return ((Integer) source).intValue();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.VmPriorityMaxValue),
                 aQuery);
     }
@@ -749,10 +755,10 @@ public final class AsyncDataProvider {
                 return 262144;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(is64 ? ConfigurationValues.VM64BitMaxMemorySizeInMB
                         : ConfigurationValues.VM32BitMaxMemorySizeInMB),
-                aQuery);
+                        aQuery);
     }
 
     public static void GetDomainList(AsyncQuery aQuery, boolean filterInternalDomain) {
@@ -921,7 +927,7 @@ public final class AsyncDataProvider {
                 return source != null ? ((Integer) source).intValue() : 100;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.SearchResultsLimit),
                 aQuery);
     }
@@ -934,7 +940,7 @@ public final class AsyncDataProvider {
                 return source != null ? ((Boolean) source).booleanValue() : false;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.SANWipeAfterDelete),
                 aQuery);
     }
@@ -1089,7 +1095,7 @@ public final class AsyncDataProvider {
                 return source != null ? ((Boolean) source).booleanValue() : false;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.EnableUSBAsDefault),
                 aQuery);
     }
@@ -1151,7 +1157,7 @@ public final class AsyncDataProvider {
                 return source != null ? ((Integer) source).intValue() : 1;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.StoragePoolNameSizeLimit),
                 aQuery);
     }
@@ -1164,7 +1170,7 @@ public final class AsyncDataProvider {
                 return source != null ? ((Integer) source).intValue() : 0;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.MaxVdsMemOverCommitForServers),
                 aQuery);
     }
@@ -1177,7 +1183,7 @@ public final class AsyncDataProvider {
                 return source != null ? ((Integer) source).intValue() : 0;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.MaxVdsMemOverCommit),
                 aQuery);
     }
@@ -1212,7 +1218,7 @@ public final class AsyncDataProvider {
         };
         GetConfigurationValueParameters tempVar = new GetConfigurationValueParameters(ConfigurationValues.VdsFenceType);
         tempVar.setVersion(version != null ? version.toString() : null);
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue, tempVar, aQuery);
+        GetConfigFromCache(tempVar, aQuery);
     }
 
     public static void GetPmOptions(AsyncQuery aQuery, String pmType) {
@@ -1363,7 +1369,7 @@ public final class AsyncDataProvider {
                 return source != null ? (String) source : "";
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.RhevhLocalFSPath),
                 aQuery);
     }
@@ -1376,7 +1382,7 @@ public final class AsyncDataProvider {
                 return source != null ? ((Integer) source).intValue() : 1;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.StorageDomainNameSizeLimit),
                 aQuery);
     }
@@ -1407,7 +1413,7 @@ public final class AsyncDataProvider {
                 return source != null ? ((Integer) source).intValue() : 0;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForEvenlyDistribute),
                 aQuery);
     }
@@ -1420,7 +1426,7 @@ public final class AsyncDataProvider {
                 return source != null ? ((Integer) source).intValue() : 0;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.LowUtilizationForPowerSave),
                 aQuery);
     }
@@ -1433,7 +1439,7 @@ public final class AsyncDataProvider {
                 return source != null ? ((Integer) source).intValue() : 0;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave),
                 aQuery);
     }
@@ -1596,17 +1602,17 @@ public final class AsyncDataProvider {
         GetDataCentersByStorageDomain(new AsyncQuery(_asyncQuery,
                 new INewAsyncCallback() {
 
-                    @Override
-                    public void OnSuccess(Object model, Object returnValue) {
-                        ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
-                        storage_pool pool = pools.get(0);
-                        if (pool != null) {
-                            GetStorageDomainList((AsyncQuery) model,
-                                    pool.getId());
-                        }
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+                ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
+                storage_pool pool = pools.get(0);
+                if (pool != null) {
+                    GetStorageDomainList((AsyncQuery) model,
+                            pool.getId());
+                }
 
-                    }
-                }), storageDomainId);
+            }
+        }), storageDomainId);
     }
 
     public static void GetDiskMaxSize(AsyncQuery aQuery) {
@@ -1618,7 +1624,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.MaxDiskSize),
                 aQuery);
     }
@@ -1662,10 +1668,10 @@ public final class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
-                 {
-                     java.util.ArrayList<VM> vms = Linq.<VM> Cast((java.util.ArrayList<IVdcQueryable>) source);
-                     return vms;
-                 }
+            {
+                java.util.ArrayList<VM> vms = Linq.<VM> Cast((java.util.ArrayList<IVdcQueryable>) source);
+                return vms;
+            }
         };
         Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM), aQuery);
     }
@@ -1675,18 +1681,18 @@ public final class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
-                 {
-                     if (source != null)
-                     {
-                         return !(Boolean) source;
-                     }
+            {
+                if (source != null)
+                {
+                    return !(Boolean) source;
+                }
 
-                     return false;
-                 }
+                return false;
+            }
         };
         Frontend.RunQuery(VdcQueryType.IsVmPoolWithSameNameExists,
-                     new IsVmPoolWithSameNameExistsParameters(name),
-                     aQuery);
+                new IsVmPoolWithSameNameExistsParameters(name),
+                aQuery);
     }
 
     public static void GetDocumentationBaseURL(AsyncQuery aQuery) {
@@ -1697,8 +1703,70 @@ public final class AsyncDataProvider {
                 return source != null ? (String) source : "";
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue,
+        GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.DocsURL),
                 aQuery);
+    }
+
+    /**
+     * method to get an item from config while caching it (config is not supposed to change during a session)
+     *
+     * @param aQuery
+     *            an async query
+     * @param parameters
+     *            a converter for the async query
+     */
+    public static void GetConfigFromCache(GetConfigurationValueParameters parameters, AsyncQuery aQuery)
+    {
+
+        // cache key
+        final java.util.Map.Entry<ConfigurationValues, String> config_key =
+                new KeyValuePairCompat<ConfigurationValues, String>(parameters.getConfigValue(),
+                        parameters.getVersion());
+
+        if (CachedConfigValues.containsKey(config_key)) {
+            // Cache hit
+            Object cached = CachedConfigValues.get(config_key);
+            // return result
+            if (cached != null) {
+                aQuery.asyncCallback.OnSuccess(aQuery.getModel(), cached);
+                return;
+            }
+        }
+
+        // save original converter
+        final IAsyncConverter origConverter = aQuery.converterCallback;
+
+        // Cache miss: run the query and replace the converter to cache the results
+        aQuery.converterCallback = new IAsyncConverter() {
+
+            @Override
+            public Object Convert(Object returnValue, AsyncQuery asyncQuery) {
+                // run original converter
+                if (origConverter != null) {
+                    returnValue = origConverter.Convert(returnValue, asyncQuery);
+                }
+                if (returnValue != null) {
+                    CachedConfigValues.put(config_key, returnValue);
+                }
+                return returnValue;
+            }
+        };
+
+        // run query
+        Frontend.RunQuery(VdcQueryType.GetConfigurationValue, parameters, aQuery);
+    }
+
+    /**
+     * method to get an item from config while caching it (config is not supposed to change during a session)
+     *
+     * @param aQuery
+     *            an async query
+     * @param configValue
+     *            the config value to query
+     */
+    public static void GetConfigFromCache(ConfigurationValues configValue, AsyncQuery aQuery)
+    {
+        GetConfigFromCache(new GetConfigurationValueParameters(configValue), aQuery);
     }
 }
