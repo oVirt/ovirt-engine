@@ -270,7 +270,7 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
         getReturnValue().setFault(tmpRetValue.getFault());
         if (tmpRetValue.getSucceeded()) {
             VmDevice disk =
-                    new VmDevice(new VmDeviceId(getParameters().getVmSnapshotId(), getVmId()),
+                    new VmDevice(new VmDeviceId(getParameters().getDiskInfo().getDisk().getId(), getVmId()),
                             VmDeviceType.getName(VmDeviceType.DISK),
                             VmDeviceType.getName(VmDeviceType.DISK),
                             "",
