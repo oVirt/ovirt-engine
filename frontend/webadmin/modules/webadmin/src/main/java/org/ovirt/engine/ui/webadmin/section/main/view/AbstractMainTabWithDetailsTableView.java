@@ -25,14 +25,4 @@ public abstract class AbstractMainTabWithDetailsTableView<T, M extends ListWithD
         return getTable().getSelectionModel();
     }
 
-    @Override
-    public void onFocus() {
-        getTable().onFocus();
-    }
-
-    @Override
-    public void onBlur() {
-        getTable().onBlur();
-    }
-
 }

@@ -79,20 +79,6 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
         refreshPanel.showStatus(status);
     }
 
-    /**
-     * Called when the Grid becomes hidden
-     */
-    public void onBlur() {
-        controller.toBackground();
-    }
-
-    /**
-     * Called when the Grid becomes visible
-     */
-    public void onFocus() {
-        controller.toForground();
-    }
-
     public T getRefreshPanel() {
         return refreshPanel;
     }

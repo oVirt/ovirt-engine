@@ -1,17 +1,20 @@
 package org.ovirt.engine.ui.common.uicommon;
 
 public class ClientAgentType {
+
     public String os;
     public String browser;
     public Float version;
     private String versionSearchString;
     public String platform;
+    public boolean isIE;
 
     public ClientAgentType() {
         browser = getBrowser();
         version = Float.parseFloat(getVersion());
         os = getOS();
         platform = getPlatform();
+        isIE = "explorer".equalsIgnoreCase(browser);
     }
 
     public native String getBrowser() /*-{
@@ -150,4 +153,5 @@ public class ClientAgentType {
         //GWT fails to return float, returning string instead.
         return result.toString();
     }-*/;
+
 }

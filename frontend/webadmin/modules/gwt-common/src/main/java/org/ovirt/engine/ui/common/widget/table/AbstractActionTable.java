@@ -6,7 +6,6 @@ import java.util.List;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.ReceivesFocus;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
 
 import com.google.gwt.core.client.Scheduler;
@@ -51,7 +50,7 @@ import com.google.gwt.view.client.SelectionModel;
  * @param <T>
  *            Table row data type.
  */
-public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements ReceivesFocus {
+public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
 
     @UiField
     @WithElementId

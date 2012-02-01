@@ -82,16 +82,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         tableContainer.setStyleName(showDefaultHeader ? style.contentWithDefaultHeader() : style.content());
     }
 
-    @Override
-    public void onFocus() {
-        refreshManager.onFocus();
-    }
-
-    @Override
-    public void onBlur() {
-        refreshManager.onBlur();
-    }
-
     public void showRefreshButton() {
         refreshPanel.setVisible(true);
     }

@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
 import org.ovirt.engine.ui.common.system.AsyncCallFailureHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.system.ErrorPopupManager;
+import org.ovirt.engine.ui.common.system.ApplicationFocusManager;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 
 import com.google.gwt.event.shared.EventBus;
@@ -39,6 +40,7 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(AsyncCallFailureHandler.class).asEagerSingleton();
         bind(ClientAgentType.class).in(Singleton.class);
         bind(ClientStorage.class).in(Singleton.class);
+        bind(ApplicationFocusManager.class).asEagerSingleton();
     }
 
     protected void bindPlaceConfiguration(String defaultLoginSectionPlace, String defaultMainSectionPlace) {

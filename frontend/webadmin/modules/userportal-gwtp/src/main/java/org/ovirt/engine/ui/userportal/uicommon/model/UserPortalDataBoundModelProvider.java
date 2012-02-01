@@ -25,6 +25,11 @@ public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableLi
     }
 
     @Override
+    protected boolean isModelReady() {
+        return getModel() != null;
+    }
+
+    @Override
     public M getModel() {
         return model;
     }
