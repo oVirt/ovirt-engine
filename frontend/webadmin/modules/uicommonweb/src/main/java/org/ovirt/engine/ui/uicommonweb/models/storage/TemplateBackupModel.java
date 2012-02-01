@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
@@ -312,7 +313,7 @@ public class TemplateBackupModel extends ManageBackupModel
         if (getEntity() == null || getEntity().getstorage_domain_type() != StorageDomainType.ImportExport
                 || getEntity().getstorage_domain_shared_status() != StorageDomainSharedStatus.Active)
         {
-            setItems(null);
+            setItems(Collections.emptyList());
         }
         else
         {

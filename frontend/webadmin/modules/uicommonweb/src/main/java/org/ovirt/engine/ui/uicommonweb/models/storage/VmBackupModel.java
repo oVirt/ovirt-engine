@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
@@ -393,7 +394,7 @@ public class VmBackupModel extends ManageBackupModel {
         if (getEntity() == null
                 || getEntity().getstorage_domain_type() != StorageDomainType.ImportExport
                 || getEntity().getstorage_domain_shared_status() != StorageDomainSharedStatus.Active) {
-            setItems(null);
+            setItems(Collections.emptyList());
         } else {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);
