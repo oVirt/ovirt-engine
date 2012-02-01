@@ -10,7 +10,7 @@
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
-		<g:north size="30">
+		<g:north size="26">
 			<w:AbstractActionPanel ui:field="actionPanel" addStyleNames="{style.actionPanel}" />
 		</g:north>
 

@@ -80,6 +80,17 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     SafeHtml dialogButton(SafeHtml image, String text, String start, String stretch,
             String end, String contentStyleName, String customContentStyleName);
 
+    @Template("<table cellspacing='0' cellpadding='0'><tr>" +
+            "<td style='background: url({2});width: 4px;'></td>" +
+            "<td style='text-align:center;'>" +
+            "<div class='{5}' style='background: url({3}) repeat-x; white-space: nowrap; height: 20px; line-height: 20px;'>" +
+            "<span style='vertical-align: middle; margin-right: 3px; line-height: 20px;'>{0}</span>{1}</div>" +
+            "</td>" +
+            "<td style='background: url({4});width: 4px;'></td>" +
+            "</tr></table>")
+    SafeHtml alertEventButton(SafeHtml image, String text, String start, String stretch,
+            String end, String contentStyleName);
+
     @Template("<ul style='margin-top:0'>{0}</ul>")
     SafeHtml unsignedList(SafeHtml list);
 

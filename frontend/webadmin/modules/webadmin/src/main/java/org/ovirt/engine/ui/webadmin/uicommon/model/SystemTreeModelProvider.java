@@ -78,6 +78,10 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
         return getCommonModel().getSystemTree();
     }
 
+    public SingleSelectionModel<SystemTreeItemModel> getSelectionModel() {
+        return selectionModel;
+    }
+
     @Override
     public void setSelectedItems(List<SystemTreeItemModel> items) {
         getModel().setSelectedItem(items.size() > 0 ? items.get(0) : null);

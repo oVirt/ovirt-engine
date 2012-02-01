@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -66,6 +67,12 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     @UiField
     Label footerMessage;
 
+    @UiField(provided = true)
+    SplitLayoutPanel verticalSplitLayoutPanel;
+
+    @UiField(provided = true)
+    SplitLayoutPanel horizontalSplitLayoutPanel;
+
     @WithElementId
     Label treeHeader;
 
@@ -89,6 +96,9 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             ApplicationResources resources,
             ApplicationTemplates templates) {
         westStackPanel = createWestStackPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider);
+
+        verticalSplitLayoutPanel = new SplitLayoutPanel(2);
+        horizontalSplitLayoutPanel = new SplitLayoutPanel(2);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initHeaders();

@@ -26,7 +26,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
@@ -67,7 +66,15 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     SimpleActionTable<AuditLog> _alertsTable;
     SimpleActionTable<AuditLog> _eventsTable;
 
+    String buttonUpStart;
+    String buttonUpStretch;
+    String buttonUpEnd;
+    String buttonDownStart;
+    String buttonDownStretch;
+    String buttonDownEnd;
+
     private final ApplicationTemplates templates;
+    private final ApplicationResources resources;
     private final SafeHtml alertImage;
 
     public AlertsEventsFooterView(AlertModelProvider alertModelProvider,
@@ -76,6 +83,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
             EventFirstRowModelProvider eventFirstRowModelProvider,
             ApplicationResources resources,
             ApplicationTemplates templates) {
+        this.resources = resources;
         this.templates = templates;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         initButtonHandlers();
@@ -112,11 +120,13 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         // no body is invoking the alert search (timer)
         alertModelProvider.getModel().Search();
 
+        updateButtonResources();
+        updateEventsButton();
         setAlertCount(0);
     }
 
-    Resources getTableResources() {
-        return GWT.<Resources> create(AlertsEventsFooterResources.class);
+    AlertsEventsFooterResources getTableResources() {
+        return GWT.<AlertsEventsFooterResources> create(AlertsEventsFooterResources.class);
     }
 
     @Override
@@ -125,7 +135,38 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     }
 
     void setAlertCount(int count) {
-        alertButton.setHTML(templates.alertFooterHeader(alertImage, count));
+
+        String countStr = count + " " + "Alerts";
+
+        SafeHtml up = templates.alertEventButton(alertImage, countStr,
+                buttonUpStart, buttonUpStretch, buttonUpEnd, style.alertButtonUpStyle());
+        SafeHtml down = templates.alertEventButton(alertImage, countStr,
+                buttonDownStart, buttonDownStretch, buttonDownEnd, style.alertButtonDownStyle());
+
+        alertButton.getUpFace().setHTML(up);
+        alertButton.getDownFace().setHTML(down);
+    }
+
+    void updateEventsButton() {
+        String eventsGrayImageSrc = AbstractImagePrototype.create(resources.eventsGrayImage()).getHTML();
+        SafeHtml eventsGrayImage = SafeHtmlUtils.fromTrustedString(eventsGrayImageSrc);
+
+        SafeHtml up = templates.alertEventButton(eventsGrayImage, "Events",
+                buttonUpStart, buttonUpStretch, buttonUpEnd, style.eventButtonUpStyle());
+        SafeHtml down = templates.alertEventButton(eventsGrayImage, "Events",
+                buttonDownStart, buttonDownStretch, buttonDownEnd, style.eventButtonDownStyle());
+
+        eventButton.getUpFace().setHTML(up);
+        eventButton.getDownFace().setHTML(down);
+    }
+
+    void updateButtonResources() {
+        buttonUpStart = resources.footerButtonUpStart().getURL();
+        buttonUpStretch = resources.footerButtonUpStretch().getURL();
+        buttonUpEnd = resources.footerButtonUpEnd().getURL();
+        buttonDownStart = resources.footerButtonDownStart().getURL();
+        buttonDownStretch = resources.footerButtonDownStretch().getURL();
+        buttonDownEnd = resources.footerButtonDownEnd().getURL();
     }
 
     void initButtonHandlers() {
@@ -186,13 +227,13 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
                                 .getParentElement()
                                 .getParentElement()
                                 .getChild(3);
-                e.getStyle().setBottom(offset + 8, Unit.PX);
+                e.getStyle().setBottom(offset + 2, Unit.PX);
             }
         });
     }
 
     void initTable(SimpleActionTable<AuditLog> table) {
-        table.addColumn(new AuditLogSeverityColumn(), "", "40px");
+        table.addColumn(new AuditLogSeverityColumn(), "", "30px");
 
         TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
             @Override
@@ -224,6 +265,13 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
 
         String barStyle();
 
+        String alertButtonUpStyle();
+
+        String alertButtonDownStyle();
+
+        String eventButtonUpStyle();
+
+        String eventButtonDownStyle();
     }
 
 }

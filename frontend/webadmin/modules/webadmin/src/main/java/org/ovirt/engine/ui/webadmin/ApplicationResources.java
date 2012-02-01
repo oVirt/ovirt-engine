@@ -370,4 +370,22 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/icon_help_rollover.png")
     ImageResource dialogIconHelpRollover();
 
+    @Source("images/button/footer_button_start.png")
+    ImageResource footerButtonUpStart();
+
+    @Source("images/button/footer_button_stretch.png")
+    ImageResource footerButtonUpStretch();
+
+    @Source("images/button/footer_button_end.png")
+    ImageResource footerButtonUpEnd();
+
+    @Source("images/button/footer_button_Down_start.png")
+    ImageResource footerButtonDownStart();
+
+    @Source("images/button/footer_button_Down_stretch.png")
+    ImageResource footerButtonDownStretch();
+
+    @Source("images/button/footer_button_Down_end.png")
+    ImageResource footerButtonDownEnd();
+
 }

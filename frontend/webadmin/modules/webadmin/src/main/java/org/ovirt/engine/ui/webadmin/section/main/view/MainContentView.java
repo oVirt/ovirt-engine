@@ -11,7 +11,7 @@ public class MainContentView extends AbstractView implements MainContentPresente
 
     private static final int subTabPanelHeight = 300;
 
-    private final SplitLayoutPanel splitPanel = new SplitLayoutPanel();
+    private final SplitLayoutPanel splitPanel = new SplitLayoutPanel(2);
     private final SimplePanel mainTabPanelContainer = new SimplePanel();
     private final SimplePanel subTabPanelContainer = new SimplePanel();
 
