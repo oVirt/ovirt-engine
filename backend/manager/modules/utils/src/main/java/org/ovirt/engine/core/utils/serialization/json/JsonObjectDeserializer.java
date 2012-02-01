@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VdsFencingOptions;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
@@ -41,7 +40,6 @@ public class JsonObjectDeserializer implements Deserializer {
         mapper.getDeserializationConfig().addMixInAnnotations(VM.class, JsonVmMixIn.class);
         mapper.getDeserializationConfig().addMixInAnnotations(ValueObjectMap.class, JsonValueObjectMapMixIn.class);
         mapper.getDeserializationConfig().addMixInAnnotations(VdsStatic.class, JsonVdsStaticMixIn.class);
-        mapper.getDeserializationConfig().addMixInAnnotations(VdsFencingOptions.class, JsonVdsFencingOptionsMixIn.class);
         mapper.getDeserializationConfig().addMixInAnnotations(VDS.class, JsonVDSMixIn.class);
         mapper.getDeserializationConfig().addMixInAnnotations(VmTemplate.class, JsonVmTemplateMixIn.class);
         mapper.getDeserializationConfig().addMixInAnnotations(AddVmFromTemplateParameters.class, JsonAddVmFromTemplateParametersMixIn.class);
