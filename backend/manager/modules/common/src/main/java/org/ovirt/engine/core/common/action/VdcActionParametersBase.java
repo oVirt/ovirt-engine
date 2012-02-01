@@ -40,6 +40,11 @@ public class VdcActionParametersBase implements java.io.Serializable {
 
     private ArrayList<Guid> taskIds;
 
+    /**
+     * A cross system identifier of the executed action
+     */
+    private String correlationId;
+
     public VdcActionParametersBase() {
         shouldbelogged = true;
         transctionOption = TransactionScopeOption.Required;
@@ -181,6 +186,14 @@ public class VdcActionParametersBase implements java.io.Serializable {
         taskIds = value;
     }
 
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -197,6 +210,7 @@ public class VdcActionParametersBase implements java.io.Serializable {
         result = prime * result + ((parentCommand == null) ? 0 : parentCommand.hashCode());
         result = prime * result + (taskGroupSuccess ? 1231 : 1237);
         result = prime * result + ((taskIds == null) ? 0 : taskIds.hashCode());
+        result = prime * result + ((correlationId == null) ? 0 : correlationId.hashCode());
         return result;
     }
 
@@ -245,6 +259,11 @@ public class VdcActionParametersBase implements java.io.Serializable {
             if (other.taskIds != null)
                 return false;
         } else if (!taskIds.equals(other.taskIds))
+            return false;
+        if (correlationId == null) {
+            if (other.correlationId != null)
+                return false;
+        } else if (!correlationId.equals(other.correlationId))
             return false;
         return true;
     }
