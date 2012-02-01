@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.utils;
+package org.ovirt.engine.core.utils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

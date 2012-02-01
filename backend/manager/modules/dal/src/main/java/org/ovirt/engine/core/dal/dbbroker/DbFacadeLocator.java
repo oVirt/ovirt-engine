@@ -8,10 +8,10 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.ovirt.engine.core.common.utils.ResourceUtils;
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.utils.FileUtil;
+import org.ovirt.engine.core.utils.ResourceUtils;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.springframework.jdbc.core.JdbcTemplate;

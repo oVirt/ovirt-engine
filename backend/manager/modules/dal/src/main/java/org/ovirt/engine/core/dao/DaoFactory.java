@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.compat.LogFactoryCompat;
-import org.ovirt.engine.core.common.utils.ResourceUtils;
+import org.ovirt.engine.core.utils.ResourceUtils;
 
 public class DaoFactory {
     private static LogCompat log = LogFactoryCompat.getLog(DaoFactory.class);
