@@ -1,18 +1,17 @@
-package org.ovirt.engine.ui.webadmin.widget.table;
+package org.ovirt.engine.ui.userportal.widget.table;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButton;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager;
 import org.ovirt.engine.ui.common.widget.table.AbstractActionTable;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.SimpleActionButton;
-import org.ovirt.engine.ui.webadmin.widget.refresh.RefreshManager;
-import org.ovirt.engine.ui.webadmin.widget.refresh.RefreshPanel;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.userportal.widget.action.SimpleActionButton;
+import org.ovirt.engine.ui.userportal.widget.refresh.RefreshManager;
+import org.ovirt.engine.ui.userportal.widget.refresh.RefreshPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -21,7 +20,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleActionTable<T> extends AbstractActionTable<T> {
@@ -38,10 +36,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
 
     @UiField(provided = true)
     RefreshPanel refreshPanel;
-
-    @UiField
-    @WithElementId
-    public Label itemsCountLabel;
 
     private final AbstractRefreshManager<RefreshPanel> refreshManager;
 
@@ -65,13 +59,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         refreshPanel.setVisible(false);
         prevPageButton.setVisible(false);
         nextPageButton.setVisible(false);
-        itemsCountLabel.setVisible(false);
-    }
-
-    @Override
-    protected void updateTableControls() {
-        super.updateTableControls();
-        itemsCountLabel.setText(getDataProvider().getItemsCount());
     }
 
     static CommonApplicationConstants getApplicationConstants() {
@@ -87,6 +74,8 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     }
 
     void localize(ApplicationConstants constants) {
+        prevPageButton.setText(constants.actionTablePrevPageButtonLabel());
+        nextPageButton.setText(constants.actionTableNextPageButtonLabel());
     }
 
     void initStyles() {
@@ -95,10 +84,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
 
     public void showRefreshButton() {
         refreshPanel.setVisible(true);
-    }
-
-    public void showItemsCount() {
-        itemsCountLabel.setVisible(true);
     }
 
     public void setBarStyle(String barStyle) {

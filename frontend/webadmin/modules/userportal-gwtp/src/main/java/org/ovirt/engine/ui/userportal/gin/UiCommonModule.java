@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.common.gin.BaseUiCommonModule;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 import org.ovirt.engine.ui.userportal.uicommon.UserPortalConfigurator;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalBasicListProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalListProvider;
 
 import com.google.inject.Singleton;
 
@@ -23,6 +24,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(UserPortalBasicListProvider.class).asEagerSingleton();
 
         // Extended tab
+        bind(UserPortalListProvider.class).asEagerSingleton();
     }
 
     void bindIntegration() {

@@ -1,7 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.table.column;
-
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+package org.ovirt.engine.ui.common.widget.table.column;
 
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -17,10 +14,6 @@ public abstract class SafeHtmlColumn<T> extends Column<T, SafeHtml> {
 
     public SafeHtmlColumn() {
         super(new SafeHtmlCell());
-    }
-
-    protected ApplicationTemplates getApplicationTemplates() {
-        return ClientGinjectorProvider.instance().getApplicationTemplates();
     }
 
 }

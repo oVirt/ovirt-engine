@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.userportal.widget.refresh;
 
+import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager;
 import org.ovirt.engine.ui.common.widget.refresh.BaseRefreshPanel;
-import org.ovirt.engine.ui.common.widget.table.refresh.AbstractRefreshManager;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;

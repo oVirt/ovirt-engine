@@ -10,6 +10,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class LunSelectionCell extends AbstractCell<LunModel> {
+
     private static ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
 
     @Override
@@ -19,15 +20,13 @@ public class LunSelectionCell extends AbstractCell<LunModel> {
 
         if (value.getIsIncluded()) {
             imageCell.render(context, resources.okSmallImage(), sb);
-        }
-        else if (!value.getIsAccessible()) {
+        } else if (!value.getIsAccessible()) {
             imageCell.render(context, resources.logWarningImage(), sb);
-        }
-        else {
+        } else {
             sb.append(SafeHtmlUtils.fromTrustedString("<span style=\"padding-left: 1px;\">"));
             new CheckboxCell(true, false).render(context, value.getIsSelected(), sb);
             sb.append(SafeHtmlUtils.fromTrustedString("</span>"));
         }
-
     }
+
 }

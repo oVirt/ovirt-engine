@@ -59,7 +59,8 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/dialog/progress.gif")
     ImageResource dialogProgressImage();
 
-    /* Login popup resources */
+    // Login popup resources
+
     @Source("images/login/login_page_header_image.png")
     ImageResource loginPopupHeaderImage();
 
@@ -70,6 +71,7 @@ public interface ApplicationResources extends CommonApplicationResources {
     ImageResource loginPopupHeaderTitleImage();
 
     // OS type small images
+
     @Source("images/os/Other.jpg")
     ImageResource otherOsSmallImage();
 
@@ -128,6 +130,7 @@ public interface ApplicationResources extends CommonApplicationResources {
     ImageResource WindowsXPSmallImage();
 
     // OS type large images
+
     @Source("images/os/large/Other.png")
     ImageResource otherOsLargeImage();
 
@@ -185,7 +188,8 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/os/large/WindowsXP.png")
     ImageResource WindowsXPLargeImage();
 
-    // basic icons
+    // Basic tab icons
+
     @Source("images/general/basic_cpu_icon.png")
     ImageResource basicCpuIcon();
 
@@ -205,6 +209,7 @@ public interface ApplicationResources extends CommonApplicationResources {
     ImageResource serverVmIcon();
 
     // Action buttons
+
     @Source("images/actions/play.png")
     ImageResource playIcon();
 
@@ -222,5 +227,28 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/actions/stop_Disabled.png")
     ImageResource stopDisabledIcon();
+
+    // VM status icons
+
+    @Source("images/status/PAUSED.png")
+    ImageResource vmStatusPaused();
+
+    @Source("images/status/QUESTIONMARK.png")
+    ImageResource vmStatusUnknown();
+
+    @Source("images/status/RUNNING.png")
+    ImageResource vmStatusRunning();
+
+    @Source("images/status/STARTING.png")
+    ImageResource vmStatusStarting();
+
+    @Source("images/status/STOPPED.png")
+    ImageResource vmStatusStopped();
+
+    @Source("images/status/STOPPING.png")
+    ImageResource vmStatusStopping();
+
+    @Source("images/status/WAITING.png")
+    ImageResource vmStatusWaiting();
 
 }

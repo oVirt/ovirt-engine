@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.widget.refresh;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.widget.renderer.MilisecondRenderer;
-import org.ovirt.engine.ui.common.widget.table.refresh.AbstractRefreshManager;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;

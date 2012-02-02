@@ -687,4 +687,5 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Cluster:")
     String moveHostPopupClusterLabel();
+
 }

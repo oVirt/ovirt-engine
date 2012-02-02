@@ -102,12 +102,6 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<bookmarks, 
         return getCommonModel().getBookmarkList();
     }
 
-    @Override
-    public void setSelectedItems(List<bookmarks> items) {
-        getModel().setSelectedItem(items.size() > 0 ? items.get(0) : null);
-        getModel().setSelectedItems(items);
-    }
-
     public SingleSelectionModel<bookmarks> getSelectionModel() {
         return selectionModel;
     }

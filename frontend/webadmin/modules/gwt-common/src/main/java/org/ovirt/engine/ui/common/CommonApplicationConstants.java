@@ -19,4 +19,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("This feature is not implemented but available in UserPortal for users assigned with PowerUser role.")
     String featureNotImplementedButAvailInUserPortalMessage();
 
+    // Widgets
+
+    @DefaultStringValue("Next >>")
+    String actionTableNextPageButtonLabel();
+
+    @DefaultStringValue("<< Prev")
+    String actionTablePrevPageButtonLabel();
+
 }

@@ -1,11 +1,10 @@
-package org.ovirt.engine.ui.common.widget.table.refresh;
+package org.ovirt.engine.ui.common.widget.refresh;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
-import org.ovirt.engine.ui.common.widget.refresh.BaseRefreshPanel;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
 

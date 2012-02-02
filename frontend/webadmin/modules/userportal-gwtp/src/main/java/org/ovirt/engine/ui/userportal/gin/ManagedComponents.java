@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.userportal.gin;
 
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
@@ -33,6 +34,8 @@ public interface ManagedComponents {
     ApplicationTemplates getApplicationTemplates();
 
     ApplicationMessages getApplicationMessages();
+
+    ClientStorage getClientStorage();
 
     // Presenters: Login section
 

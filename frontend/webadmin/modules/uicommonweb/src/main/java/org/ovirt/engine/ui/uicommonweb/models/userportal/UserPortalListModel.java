@@ -358,6 +358,19 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     }
 
     @Override
+    public void setItems(Iterable value)
+    {
+        if (items != value)
+        {
+            ItemsChanging(value, items);
+            items = value;
+            ItemsChanged();
+            getItemsChangedEvent().raise(this, EventArgs.Empty);
+            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
+        }
+    }
+
+    @Override
     protected void SyncSearch()
     {
         super.SyncSearch();

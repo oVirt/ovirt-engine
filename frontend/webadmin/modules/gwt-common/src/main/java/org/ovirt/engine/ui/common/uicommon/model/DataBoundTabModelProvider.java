@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.uicommon.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -23,7 +24,7 @@ import com.google.gwt.view.client.ProvidesKey;
  * @param <M>
  *            List model type.
  */
-public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel> extends TabModelProvider<M> implements SearchableModelProvider<T, M> {
+public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel> extends TabModelProvider<M> implements SearchableTableModelProvider<T, M> {
 
     private final AsyncDataProvider<T> dataProvider;
 
@@ -84,6 +85,52 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
         });
     }
 
+    @Override
+    public void setSelectedItems(List<T> items) {
+        // Order is important
+        getModel().setSelectedItem(items.size() > 0 ? items.get(0) : null);
+        getModel().setSelectedItems(items);
+    }
+
+    @Override
+    public Object getKey(T item) {
+        if (item instanceof IVdcQueryable) {
+            return ((IVdcQueryable) item).getQueryableId();
+        }
+
+        return getDataProvider().getKey(item);
+    }
+
+    @Override
+    public boolean canGoForward() {
+        return getModel().getSearchNextPageCommand().getIsExecutionAllowed();
+    }
+
+    @Override
+    public boolean canGoBack() {
+        return getModel().getSearchPreviousPageCommand().getIsExecutionAllowed();
+    }
+
+    @Override
+    public void goForward() {
+        getModel().getSearchNextPageCommand().Execute();
+    }
+
+    @Override
+    public void goBack() {
+        getModel().getSearchPreviousPageCommand().Execute();
+    }
+
+    @Override
+    public void refresh() {
+        getModel().getForceRefreshCommand().Execute();
+    }
+
+    @Override
+    public String getItemsCount() {
+        return getModel().getItemsCountString();
+    }
+
     /**
      * Retrieves current data from model and updates the data provider.
      */
@@ -120,9 +167,7 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
         return dataProvider;
     }
 
-    /**
-     * Adds a {@link HasData} widget to the data provider.
-     */
+    @Override
     public void addDataDisplay(HasData<T> display) {
         dataProvider.addDataDisplay(display);
     }

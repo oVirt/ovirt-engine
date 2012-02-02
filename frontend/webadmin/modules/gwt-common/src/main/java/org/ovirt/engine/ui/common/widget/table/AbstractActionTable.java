@@ -71,10 +71,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
     @UiField
     public SimplePanel tableHeaderContainer;
 
-    @UiField
-    @WithElementId
-    public Label itemsCountLabel;
-
     private final OrderedMultiSelectionModel<T> selectionModel;
 
     @WithElementId("content")
@@ -103,7 +99,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         this.selectionModel = new OrderedMultiSelectionModel<T>(dataProvider);
 
         this.table = new ActionCellTable<T>(dataProvider, resources) {
-
             @Override
             protected void onBrowserEvent2(Event event) {
                 // Enable multiple selection only when Control/Shift key is pressed
@@ -145,13 +140,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
             public void setRowData(int start, List<? extends T> values) {
                 super.setRowData(start, values);
                 selectionModel.resolveChanges();
-
-                // Ensure that paging buttons are updated whenever new data is set
-                prevPageButton.setEnabled(getDataProvider().canGoBack());
-                nextPageButton.setEnabled(getDataProvider().canGoForward());
-
-                itemsCountLabel.setText(getDataProvider().getItemsCount());
-            };
+                updateTableControls();
+            }
         };
 
         // Create table header row
@@ -160,6 +150,16 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         showDefaultHeader = headerRresources == null;
 
         this.selectionModel.setDataDisplay(table);
+    }
+
+    protected void updateTableControls() {
+        prevPageButton.setEnabled(getDataProvider().canGoBack());
+        nextPageButton.setEnabled(getDataProvider().canGoForward());
+    }
+
+    public void showPagingButtons() {
+        prevPageButton.setVisible(true);
+        nextPageButton.setVisible(true);
     }
 
     public void showSelectionCountTooltip() {

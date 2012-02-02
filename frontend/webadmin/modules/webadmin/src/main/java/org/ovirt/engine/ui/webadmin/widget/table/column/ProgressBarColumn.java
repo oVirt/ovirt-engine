@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 /**
@@ -20,7 +23,7 @@ public abstract class ProgressBarColumn<T> extends SafeHtmlColumn<T> {
         // Choose color by progress
         String color = progress < 70 ? "#669966" : progress < 95 ? "#FF9900" : "#FF0000";
 
-        return getApplicationTemplates().progressBar(progress, text, color);
+        return ClientGinjectorProvider.instance().getApplicationTemplates().progressBar(progress, text, color);
     }
 
     /**

@@ -1,14 +1,12 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public abstract class LunTextColumn extends SafeHtmlColumn<LunModel> {
-
-    public LunTextColumn() {
-    }
 
     @Override
     public final SafeHtml getValue(LunModel object) {

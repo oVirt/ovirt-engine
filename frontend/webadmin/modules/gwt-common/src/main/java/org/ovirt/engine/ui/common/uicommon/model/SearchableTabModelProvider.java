@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.common.uicommon.model;
 
-import java.util.List;
-
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -40,56 +37,6 @@ public abstract class SearchableTabModelProvider<T, M extends SearchableListMode
                 }
             }
         });
-    }
-
-    @Override
-    public void setSelectedItems(List<T> items) {
-        // Order is important
-        if (items.size() > 0) {
-            getModel().setSelectedItem(items.get(0));
-        } else {
-            getModel().setSelectedItem(null);
-        }
-
-        getModel().setSelectedItems(items);
-    }
-
-    @Override
-    public Object getKey(T item) {
-        if (item instanceof IVdcQueryable) {
-            return ((IVdcQueryable) item).getQueryableId();
-        }
-
-        return getDataProvider().getKey(item);
-    }
-
-    @Override
-    public boolean canGoForward() {
-        return getModel().getSearchNextPageCommand().getIsExecutionAllowed();
-    }
-
-    @Override
-    public boolean canGoBack() {
-        return getModel().getSearchPreviousPageCommand().getIsExecutionAllowed();
-    }
-
-    @Override
-    public void goForward() {
-        getModel().getSearchNextPageCommand().Execute();
-    }
-
-    @Override
-    public void goBack() {
-        getModel().getSearchPreviousPageCommand().Execute();
-    }
-
-    @Override
-    public void refresh() {
-        getModel().getForceRefreshCommand().Execute();
-    }
-
-    public String getItemsCount() {
-        return getModel().getItemsCountString();
     }
 
 }
