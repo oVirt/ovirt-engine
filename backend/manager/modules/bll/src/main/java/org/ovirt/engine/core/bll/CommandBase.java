@@ -21,6 +21,8 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.context.DefaultCompensationContext;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -40,6 +42,9 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.interfaces.IBackendCallBackServer;
+import org.ovirt.engine.core.common.job.ExternalSystemType;
+import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -97,6 +102,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private Guid commandId = Guid.NewGuid();
 
     protected Log log = LogFactory.getLog(getClass());
+
+    /**
+     * The execution context which defines how to monitor the command
+     */
+    protected ExecutionContext executionContext = new ExecutionContext();
 
     protected CommandActionState getActionState() {
         return _actionState;
@@ -175,12 +185,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     public VdcReturnValueBase ExecuteAction() {
         _actionState = CommandActionState.EXECUTE;
-
         String tempVar = getDescription();
         getReturnValue().setDescription((tempVar != null) ? tempVar : getReturnValue().getDescription());
         setActionMessageParameters();
+
+        boolean actionAllowed = false;
+        Step validatingStep = ExecutionHandler.addStep(executionContext, StepEnum.VALIDATING, null);
+
         try {
-            if (acquireLock() && (getReturnValue().getCanDoAction() || InternalCanDoAction())) {
+            actionAllowed = acquireLock() && (getReturnValue().getCanDoAction() || InternalCanDoAction());
+            ExecutionHandler.endStep(executionContext, validatingStep, actionAllowed);
+
+            if (actionAllowed) {
                 getReturnValue().setCanDoAction(true);
                 getReturnValue().setIsSyncronious(true);
                 getParameters().setTaskStartTime(System.currentTimeMillis());
@@ -271,6 +287,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     public VdcReturnValueBase EndAction() {
+        ExecutionHandler.startFinalizingStep(executionContext);
+
         try {
             SetActionState();
             handleTransactivity();
@@ -700,6 +718,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private void Execute() {
+        ExecutionHandler.addStep(executionContext, StepEnum.EXECUTING, null);
+
         try {
             handleTransactivity();
             TransactionSupport.executeInScope(scope, this);
@@ -708,19 +728,25 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             // Transaction was aborted - we must sure we compensation for all previous applicative stages of the command
             compensate();
         } finally {
-            freeLock();
-            if (getCommandShouldBeLogged()) {
-                LogCommand();
-            }
-            if (getSucceeded()) {
-                // only after creating all tasks, we can start polling them (we
-                // don't want
-                // to start polling before all tasks were created, otherwise we
-                // might change
-                // the VM/VmTemplate status to 'Down'/'OK' too soon.
-                UpdateTasksWithActionParameters();
+            try {
+                freeLock();
+                if (getCommandShouldBeLogged()) {
+                    LogCommand();
+                }
+                if (getSucceeded()) {
+                    // only after creating all tasks, we can start polling them (we
+                    // don't want
+                    // to start polling before all tasks were created, otherwise we
+                    // might change
+                    // the VM/VmTemplate status to 'Down'/'OK' too soon.
+                    UpdateTasksWithActionParameters();
 
-                StartPollingAsyncTasks();
+                    StartPollingAsyncTasks();
+                }
+            } finally {
+                if (getReturnValue().getTaskIdList().isEmpty()) {
+                    ExecutionHandler.endJob(executionContext, getSucceeded());
+                }
             }
         }
     }
@@ -821,12 +847,21 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         Guid retValue = Guid.Empty;
 
         Transaction transaction = TransactionSupport.suspend();
+
         try {
-            try {
-                retValue = ConcreteCreateTask(asyncTaskCreationInfo, parentCommand);
-            } catch (RuntimeException ex) {
-                log.errorFormat("Error during CreateTask for command: {0}. Exception {1}", getClass().getName(), ex);
+            // TODO: Set step description by resource bundle which holds the message and populate its properties by the
+            // command.
+            Step taskStep =
+                    ExecutionHandler.addTaskStep(executionContext,
+                            StepEnum.getStepNameByTaskType(asyncTaskCreationInfo.getTaskType()),
+                            null);
+            if (taskStep != null) {
+                asyncTaskCreationInfo.setStepId(taskStep.getId());
             }
+            retValue = ConcreteCreateTask(asyncTaskCreationInfo, parentCommand);
+            ExecutionHandler.updateStepExternalId(taskStep, retValue, ExternalSystemType.VDSM);
+        } catch (RuntimeException ex) {
+            log.errorFormat("Error during CreateTask for command: {0}. Exception {1}", getClass().getName(), ex);
         } finally {
             TransactionSupport.resume(transaction);
         }
@@ -1021,5 +1056,19 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @return Map of GUIDs to Object types
      */
     public abstract Map<Guid, VdcObjectType> getPermissionCheckSubjects();
+
+    public void setExecutionContext(ExecutionContext executionContext) {
+        if (executionContext != null) {
+            this.executionContext = executionContext;
+        }
+    }
+
+    public ExecutionContext getExecutionContext() {
+        return executionContext;
+    }
+
+    public Guid getCommandId() {
+        return commandId;
+    }
 
 }

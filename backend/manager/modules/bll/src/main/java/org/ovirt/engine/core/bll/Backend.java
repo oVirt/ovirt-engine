@@ -22,6 +22,8 @@ import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
@@ -276,8 +278,27 @@ public class Backend implements BackendInternal, BackendRemote {
         return runActionImpl(actionType, parameters, false, null);
     }
 
-    private static VdcReturnValueBase runActionImpl(VdcActionType actionType, VdcActionParametersBase parameters,
-            boolean runAsInternal, CompensationContext context) {
+    /**
+     * Executes an action according to the provided arguments.
+     *
+     * @param actionType
+     *            The type which define the action. Correlated to a concrete {@code CommandBase} instance.
+     * @param parameters
+     *            The parameters which are used to create the command.
+     * @param runAsInternal
+     *            Indicates if the command should be executed as an internal action or not.
+     * @param context
+     *            The required information for compensating the failed command.
+     * @param executionContext
+     *            The context of the Step/Job execution.
+     * @return The result of executing the action
+     */
+    private VdcReturnValueBase runActionImpl(VdcActionType actionType,
+            VdcActionParametersBase parameters,
+            boolean runAsInternal,
+            CompensationContext context,
+            ExecutionContext executionContext) {
+
         switch (actionType) {
         case AutoLogin:
             VdcReturnValueBase returnValue = new VdcReturnValueBase();
@@ -288,6 +309,13 @@ public class Backend implements BackendInternal, BackendRemote {
         default: {
             CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
             command.setInternalExecution(runAsInternal);
+
+            if (executionContext != null) {
+                command.setExecutionContext(executionContext);
+            } else {
+                ExecutionHandler.prepareCommandForMonitoring(command, actionType, runAsInternal);
+            }
+
             if (context != null) {
                 command.setCompensationContext(context);
             }
@@ -548,11 +576,27 @@ public class Backend implements BackendInternal, BackendRemote {
 
     private static final Log log = LogFactory.getLog(Backend.class);
 
+    private VdcReturnValueBase runActionImpl(VdcActionType actionType,
+            VdcActionParametersBase parameters,
+            boolean runAsInternal,
+            CompensationContext context) {
+        return runActionImpl(actionType, parameters, runAsInternal, context, null);
+    }
+
     @Override
     @ExcludeClassInterceptors
     public VdcReturnValueBase runInternalAction(VdcActionType actionType,
             VdcActionParametersBase parameters,
             CompensationContext context) {
-        return runActionImpl(actionType, parameters, true, context);
+        return runActionImpl(actionType, parameters, true, context, null);
+    }
+
+    @Override
+    @ExcludeClassInterceptors
+    public VdcReturnValueBase runInternalAction(VdcActionType actionType,
+            VdcActionParametersBase parameters,
+            CompensationContext context,
+            ExecutionContext executionContext) {
+        return runActionImpl(actionType, parameters, true, context, executionContext);
     }
 }
