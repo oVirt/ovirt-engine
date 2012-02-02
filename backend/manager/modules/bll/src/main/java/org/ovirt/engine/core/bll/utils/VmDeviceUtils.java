@@ -64,7 +64,7 @@ public class VmDeviceUtils {
                     newVmStatic.getId()),
                     VmDeviceType.getName(VmDeviceType.DISK),
                     VmDeviceType.getName(VmDeviceType.CDROM), "", 0,
-                    newVmStatic.getiso_path(), true, false, false, false);
+                    newVmStatic.getiso_path(), true, false, false);
             DbFacade.getInstance().getVmDeviceDAO().save(cd);
         } else if (!oldVmStatic.getiso_path().isEmpty()
                 && newVmStatic.getiso_path().isEmpty()) {
@@ -100,7 +100,7 @@ public class VmDeviceUtils {
         VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
                 newVmStatic.getId()), VmDeviceType.getName(VmDeviceType.DISK),
                 VmDeviceType.getName(VmDeviceType.CDROM), "", 0,
-                newVmStatic.getiso_path(), true, false, false, false);
+                newVmStatic.getiso_path(), true, false, false);
         DbFacade.getInstance().getVmDeviceDAO().save(cd);
     }
 
@@ -265,8 +265,7 @@ public class VmDeviceUtils {
                 VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
                         newStatic.getId()),
                         VmDeviceType.getName(VmDeviceType.VIDEO),
-                        DisplayType.qxl.name(), "", 0, mem, true, false, false,
-                        false);
+                        DisplayType.qxl.name(), "", 0, mem, true, false, false);
                 DbFacade.getInstance().getVmDeviceDAO().save(cd);
             }
         } else { // delete video cards
@@ -296,8 +295,7 @@ public class VmDeviceUtils {
                 VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
                         newStatic.getId()),
                         VmDeviceType.getName(VmDeviceType.VIDEO),
-                        DisplayType.qxl.name(), "", 0, mem, true, false, false,
-                        false);
+                        DisplayType.qxl.name(), "", 0, mem, true, false, false);
                 DbFacade.getInstance().getVmDeviceDAO().save(cd);
             }
         }

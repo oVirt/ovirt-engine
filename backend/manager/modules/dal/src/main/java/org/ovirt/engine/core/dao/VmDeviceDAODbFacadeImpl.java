@@ -55,7 +55,6 @@ public class VmDeviceDAODbFacadeImpl extends
                 .addValue("spec_params", entity.getSpecParams())
                 .addValue("is_managed", entity.getIsManaged())
                 .addValue("is_plugged", entity.getIsPlugged())
-                .addValue("is_shared", entity.getIsShared())
                 .addValue("is_readonly", entity.getIsReadOnly());
     }
 
@@ -78,7 +77,6 @@ public class VmDeviceDAODbFacadeImpl extends
                 vmDevice.setSpecParams(rs.getString("spec_params"));
                 vmDevice.setIsManaged(rs.getBoolean("is_managed"));
                 vmDevice.setIsPlugged(rs.getBoolean("is_plugged"));
-                vmDevice.setIsShared(rs.getBoolean("is_shared"));
                 vmDevice.setIsReadOnly(rs.getBoolean("is_readonly"));
                 return vmDevice;
             }

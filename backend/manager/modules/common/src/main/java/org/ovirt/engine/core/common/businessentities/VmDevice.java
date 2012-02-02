@@ -68,12 +68,6 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     private boolean isPlugged = false;
 
     /**
-     * The device shared flag
-     */
-
-    private boolean isShared = false;
-
-    /**
      * The device read-only flag
      */
 
@@ -87,7 +81,6 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
             String specParams,
             boolean isManaged,
             boolean isPlugged,
-            boolean isShared,
             boolean isReadOnly) {
         super();
         this.id = id;
@@ -100,7 +93,6 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         this.specParams = specParams;
         this.isManaged = isManaged;
         this.isPlugged = isPlugged;
-        this.isShared = isShared;
         this.isReadOnly = isReadOnly;
     }
 
@@ -194,14 +186,6 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         this.isPlugged = isPlugged;
     }
 
-    public boolean getIsShared() {
-        return isShared;
-    }
-
-    public void setIsShared(boolean isShared) {
-        this.isShared = isShared;
-    }
-
     public boolean getIsReadOnly() {
         return isReadOnly;
     }
@@ -223,7 +207,6 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
                 + ((specParams == null) ? 0 : specParams.hashCode());
         result = prime * result + (isManaged ? 1 : 0);
         result = prime * result + (isPlugged ? 1 : 0);
-        result = prime * result + (isShared ? 1 : 0);
         result = prime * result + (isReadOnly ? 1 : 0);
         return result;
     }
@@ -266,9 +249,6 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
             return false;
         }
         if (isPlugged != other.isPlugged) {
-            return false;
-        }
-        if (isShared != other.isShared) {
             return false;
         }
         if (isReadOnly != other.isReadOnly) {

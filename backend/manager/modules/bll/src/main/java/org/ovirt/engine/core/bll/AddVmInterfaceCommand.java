@@ -78,7 +78,6 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
                         "",
                         true,
                         false,
-                        false,
                         false);
         dbFacade.getVmDeviceDAO().save(iface);
         setSucceeded(true);
