@@ -2745,7 +2745,6 @@
         <column>spec_params</column>
         <column>is_managed</column>
         <column>is_plugged</column>
-        <column>is_shared</column>
         <column>is_readonly</column>
         <row>
             <value>e14ed6f0-3b12-11e1-b614-63d00126418d</value>
@@ -2756,7 +2755,6 @@
             <value>1</value>
             <value>sample</value>
             <value>true</value>
-            <value>false</value>
             <value>false</value>
             <value>false</value>
         </row>
