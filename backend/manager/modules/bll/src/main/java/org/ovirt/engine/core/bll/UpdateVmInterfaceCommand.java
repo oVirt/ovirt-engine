@@ -97,7 +97,9 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             macChanged = true;
             MacPoolManager.getInstance().freeMac(oldIface.getMacAddress());
 
-            if (!MacPoolManager.getInstance().AddMac(getParameters().getInterface().getMacAddress())) {
+            Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
+            if (!MacPoolManager.getInstance().AddMac(getParameters().getInterface().getMacAddress())
+                    && !allowDupMacs) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE);
                 return false;
             }

@@ -1058,6 +1058,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("Windows2008,Windows2008x64,Windows2008R2x64,RHEL5,RHEL5x64,RHEL6,RHEL6x64")
     HotPlugSupportedOsList(338),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    AllowDuplicateMacAddresses(339),
+
     Invalid(65535);
 
     private int intValue;

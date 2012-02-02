@@ -157,7 +157,9 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
                 return false;
             }
 
-            if (!MacPoolManager.getInstance().AddMac(getParameters().getInterface().getMacAddress())) {
+            Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
+            if (!MacPoolManager.getInstance().AddMac(getParameters().getInterface().getMacAddress())
+                    && !allowDupMacs) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE);
                 return false;
             }
