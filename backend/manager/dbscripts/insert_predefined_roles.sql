@@ -192,7 +192,7 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,30
 -------------
 --CLUSTER_ADMIN role
 ---------------
-delete from roles_groups where role_id = v_CLUSTER_ADMIN_ID;INSERT INTO roles(id,name,description,is_readonly,role_type) select v_CLUSTER_ADMIN_ID,'ClusterAdmin','Cluster administrator',true,1 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_CLUSTER_ADMIN_ID and name='ClusterAdmin' and description='Cluster administrator' and is_readonly=true and role_type=1);
+delete from roles_groups where role_id = v_CLUSTER_ADMIN_ID;INSERT INTO roles(id,name,description,is_readonly,role_type) select v_CLUSTER_ADMIN_ID,'ClusterAdmin','Cluster administrator',true,1 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_CLUSTER_ADMIN_ID and name='ClusterAdmin' and description='Cluster administrator' and is_readonly=true and role_type=1);
 
 
 ---Vm Groups
@@ -254,7 +254,7 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,403)
 --DATA_CENTER_ADMIN role
 ---------------
 delete from roles_groups where role_id = v_DATA_CENTER_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_DATA_CENTER_ADMIN_ID,'DataCenterAdmin','Data Center administrator',true,1 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_DATA_CENTER_ADMIN_ID and name='DataCenterAdmin' and description='Data Center administrator' and is_readonly=true and role_type=1);
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_DATA_CENTER_ADMIN_ID,'DataCenterAdmin','Data Center administrator',true,1 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_DATA_CENTER_ADMIN_ID and name='DataCenterAdmin' and description='Data Center administrator' and is_readonly=true and role_type=1);
 
 ---Vm Groups
 --CREATE_VM
