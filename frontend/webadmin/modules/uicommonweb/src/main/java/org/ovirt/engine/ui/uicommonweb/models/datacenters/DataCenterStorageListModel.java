@@ -464,8 +464,12 @@ public class DataCenterStorageListModel extends SearchableListModel
         model.setHashName("detach_storage");
         model.setMessage("Are you sure you want to Detach the following storage(s)?");
 
-        // model.Items = SelectedItems.Cast<storage_domains>().Select(a => a.storage_name);
-        model.setItems(new java.util.ArrayList<String>());
+        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        for (storage_domains item : Linq.<storage_domains> Cast(getSelectedItems()))
+        {
+            list.add(item.getstorage_name());
+        }
+        model.setItems(list);
 
         if (ContainsLocalStorage(model))
         {
@@ -473,11 +477,6 @@ public class DataCenterStorageListModel extends SearchableListModel
             model.getLatch().setIsChangable(true);
 
             model.setNote("Note: " + GetLocalStoragesFormattedString() + " will be removed!");
-        }
-
-        for (storage_domains a : Linq.<storage_domains> Cast(getSelectedItems()))
-        {
-            ((java.util.ArrayList<String>) model.getItems()).add(a.getstorage_name());
         }
 
         UICommand tempVar = new UICommand("OnDetach", this);
