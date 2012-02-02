@@ -503,7 +503,7 @@ class ENGINEData(CollectorBase):
     def sosreport(self):
         self.configuration["reports"] = ",".join((
             "jboss",
-            "rhevm",
+            "engine",
             "rpm",
             "libvirt",
             "general",
