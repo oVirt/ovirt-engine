@@ -14,6 +14,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
+import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
@@ -34,7 +35,7 @@ public class VmStatic extends VmBase {
     @Column(name = "vm_name")
     @ValidName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,
             UpdateEntity.class })
-    private String name = ""; // GREGM, otherwise NPE
+    private String name = "";
 
     @Column(name = "vmt_guid")
     @Type(type = "guid")
@@ -161,7 +162,7 @@ public class VmStatic extends VmBase {
                 auto_startup,
                 is_stateless,
                 null,
-                OriginType.ENGINE,
+                OriginType.valueOf(Config.<String>GetValue(ConfigValues.OriginType)),
                 null,
                 null,
                 null);

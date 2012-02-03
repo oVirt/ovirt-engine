@@ -409,11 +409,13 @@ public interface Enums extends ConstantsWithLookup {
 
     String DisplayType___vnc();
 
-    String OriginType___ENGINE();
+    String OriginType___RHEV();
 
     String OriginType___VMWARE();
 
     String OriginType___XEN();
+
+    String OriginType___OVIRT();
 
     String VmInterfaceType___rtl8139_pv();
 

@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -130,7 +132,7 @@ public class VmTemplate extends VmBase {
                 false,
                 false,
                 null,
-                OriginType.ENGINE,
+                OriginType.valueOf(Config.<String>GetValue(ConfigValues.OriginType)),
                 null,
                 null,
                 null);
