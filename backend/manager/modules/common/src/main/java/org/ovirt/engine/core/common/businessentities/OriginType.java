@@ -10,9 +10,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "OriginType")
 public enum OriginType {
-    ENGINE(0),
+    RHEV(0),
     VMWARE(1),
-    XEN(2);
+    XEN(2),
+    OVIRT(3);
 
     private int intValue;
     private static Map<Integer, OriginType> mappings;

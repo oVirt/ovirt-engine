@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -448,6 +449,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected void AddVmStatic() {
         VmStatic vmStatic = getParameters().getVmStaticData();
+        if (vmStatic.getorigin() == null) {
+            vmStatic.setorigin(OriginType.valueOf(Config.<String>GetValue(ConfigValues.OriginType)));
+        }
         vmStatic.setId(getVmId());
         vmStatic.setcreation_date(getNow());
         // Parses the custom properties field that was filled by frontend to

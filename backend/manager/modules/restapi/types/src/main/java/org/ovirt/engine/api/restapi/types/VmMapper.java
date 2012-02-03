@@ -516,7 +516,7 @@ public class VmMapper {
     @Mapping(from = String.class, to = OriginType.class)
     public static OriginType map(String type, OriginType incoming) {
         try {
-            return type.equals(RHEV) ? OriginType.valueOf(ENGINE.toUpperCase()) : OriginType.valueOf(type.toUpperCase());
+            return OriginType.valueOf(type.toUpperCase());
         } catch (IllegalArgumentException e) {
             return null;
         }
@@ -524,8 +524,7 @@ public class VmMapper {
 
     @Mapping(from = OriginType.class, to = String.class)
     public static String map(OriginType type, String incoming) {
-        String typeStr = type.name().toLowerCase();
-        return typeStr.equals(ENGINE) ? RHEV : typeStr;
+        return type.name().toLowerCase();
     }
 
     @Mapping(from = VMStatus.class, to = VmStatus.class)

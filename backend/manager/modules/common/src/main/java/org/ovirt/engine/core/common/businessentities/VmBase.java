@@ -113,7 +113,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     @XmlElement(name = "origin")
     @Column(name = "origin")
     @Enumerated
-    private OriginType origin = OriginType.ENGINE;
+    private OriginType origin;
 
     @XmlElement(name = "kernel_url")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
@@ -130,8 +130,8 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     @Column(name = "initrd_url", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String initrdUrl;
 
-    public VmBase() {
-    }
+   public VmBase() {
+   }
 
     public VmBase(Guid id,
             Guid vds_group_id,
