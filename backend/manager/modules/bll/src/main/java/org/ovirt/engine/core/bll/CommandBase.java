@@ -75,6 +75,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.springframework.dao.DataAccessException;
 
+@SuppressWarnings("serial")
 public abstract class CommandBase<T extends VdcActionParametersBase> extends AuditLogableBase implements
         RollbackHandler, TransactionMethod<Object> {
     /**

@@ -10,6 +10,7 @@ import java.util.Set;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -25,12 +26,39 @@ import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
+@SuppressWarnings("serial")
 public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParameters> extends
         StorageDomainCommandBase<T> {
 
     public ConnectAllHostsToLunCommand(T parameters) {
         super(parameters);
     }
+
+    public static class ConnectAllHostsToLunCommandReturnValue extends VdcReturnValueBase {
+        private VDS failedVds;
+        private LUNs failedLun;
+
+        public VDS getFailedVds() {
+            return failedVds;
+        }
+
+        public void setFailedVds(VDS failedVds) {
+            this.failedVds = failedVds;
+        }
+
+        public LUNs getFailedLun() {
+            return failedLun;
+        }
+
+        public void setFailedLun(LUNs failedLun) {
+            this.failedLun = failedLun;
+        }
+    }
+
+    protected VdcReturnValueBase CreateReturnValue() {
+        return new ConnectAllHostsToLunCommandReturnValue();
+    }
+
 
     @Override
     protected void executeCommand() {
@@ -46,6 +74,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             }
         }).get(0);
 
+        @SuppressWarnings("unchecked")
         List<LUNs> luns =
                     (List<LUNs>) Backend
                             .getInstance()
@@ -111,6 +140,8 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                         .ConnectStorageToLunByVdsId(getStorageDomain(), vds.getvds_id(), lun)) {
                     log.errorFormat("Could not connect host {0} to lun {1}", vds.getvds_name(), lun.getLUN_id());
                     setVds(vds);
+                    ((ConnectAllHostsToLunCommandReturnValue)getReturnValue()).setFailedVds(vds);
+                    ((ConnectAllHostsToLunCommandReturnValue)getReturnValue()).setFailedLun(lun);
                     return new Pair<Boolean, Map<String, List<Guid>>>(Boolean.FALSE, resultMap);
                 } else {
                     List<Guid> hosts = resultMap.get(lun.getLUN_id());
@@ -125,6 +156,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             if (!Config.<Boolean> GetValue(ConfigValues.SupportGetDevicesVisibility,
                     vds.getvds_group_compatibility_version().getValue())) {
                 Set<String> hostsLunsIds = new HashSet<String>();
+                @SuppressWarnings("unchecked")
                 List<LUNs> hostLuns = (List<LUNs>) Backend
                         .getInstance()
                         .getResourceManager()
@@ -157,6 +189,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
      * @return - true if all connections successes, false otherwise
      */
     private boolean validateConnectedLuns(VDS vds, List<String> processedLunIds) {
+        @SuppressWarnings("unchecked")
         Map<String, Boolean> returnValue = (Map<String, Boolean>) Backend.getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.GetDevicesVisibility,
