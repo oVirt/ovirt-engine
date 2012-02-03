@@ -1,0 +1,38 @@
+package org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget;
+
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListItemResources;
+
+import com.google.gwt.uibinder.client.UiConstructor;
+
+/**
+ * The type of VM such as server, desktop, pool
+ *
+ */
+public class VmTypeImage extends AbstractDynamicImage<UserPortalItemModel, MainTabBasicListItemResources> {
+
+    @UiConstructor
+    public VmTypeImage(MainTabBasicListItemResources resources) {
+        super(resources);
+    }
+
+    @Override
+    protected String imageName(UserPortalItemModel value) {
+        if (value == null) {
+            return defaultImageName(value);
+        }
+        if (value.getIsPool()) {
+            return "poolVmIcon";
+        } else if (value.getIsServer()) {
+            return "serverVmIcon";
+        }
+
+        return "desktopVmIcon";
+    }
+
+    @Override
+    protected String defaultImageName(UserPortalItemModel value) {
+        return "desktopVmIcon";
+    }
+
+}

@@ -18,6 +18,7 @@ public interface ApplicationResources extends CommonApplicationResources {
     ImageResource loginPopupHeaderTitleImage();
 
     // OS type small images
+    // TODO remove this images (they are in MainTabBasicListItemResources. This has to be generalized)
 
     @Source("images/os/Other.jpg")
     ImageResource otherOsSmallImage();
@@ -90,14 +91,11 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/general/basic_os_icon.png")
     ImageResource basicOsIcon();
 
-    @Source("images/vmtypes/desktop_vm_icon.png")
-    ImageResource desktopVmIcon();
+    @Source("images/general/basic_drive_icon.png")
+    ImageResource basicDriveIcon();
 
-    @Source("images/vmtypes/pool_icon.png")
-    ImageResource poolVmIcon();
-
-    @Source("images/vmtypes/server_vm_icon.png")
-    ImageResource serverVmIcon();
+    @Source("images/general/basic_console_icon.png")
+    ImageResource basicConsoleIcon();
 
     // Action buttons
 

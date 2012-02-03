@@ -396,4 +396,10 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     protected String getListName() {
         return "UserPortalBasicListModel";
     }
+
+    // overridden only to allow the UIBinder to access this
+    public UserPortalItemModel getSelectedItem()
+    {
+        return (UserPortalItemModel) super.getSelectedItem();
+    }
 }

@@ -27,4 +27,8 @@ public interface HasPaging {
      */
     void goBack();
 
+    /**
+     * Refresh the current page.
+     */
+    void refresh();
 }

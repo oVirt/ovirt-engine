@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:e="urn:import:org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget">
 
 	<ui:with field='resources'
 		type='org.ovirt.engine.ui.userportal.ApplicationResources' />
 
-	<ui:style>
+	<ui:with field='itemResources'
+		type='org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListItemResources' />
+		
+	<ui:style
+		type="org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicDetailsView.Style">
 		.detailsHeaderPanel {
 		margin-top: 10px;
 		margin-left: 10px;
@@ -78,8 +83,47 @@
 		}
 
 		.detailsRow {
-		padding-left: 40px;
-		padding-top: 10px;
+			padding-left: 40px;
+			padding-top: 10px;
+		}
+		
+		.horizontalLine {
+			float: left;
+			width: 100%;
+			height: 1px;
+			background-color: #B5C5D5;
+			margin-top: 20px;
+			margin-bottom: 20px;
+		}
+		
+		.horizontalLineWrapper {
+			width: 100%;
+			float: left;
+		}
+		
+		.diskImageWidget {
+			float: left;
+			width: 100%;
+		}
+		
+		.protocolWarning, .protocol {
+			float: right;
+			color: #3A5F7C;
+		    font-family: Arial,sans-serif;
+		    font-size: 19px;
+		    font-weight: bold;
+		    padding-left: 10px;
+		    white-space:nowrap;
+		    padding-top: 3px; 
+		}
+		
+		.editProtocolEnabled, .editProtocolDisabled {
+			float: right;
+			color: #3A5F7C;
+		    font-family: Arial,sans-serif;
+		    font-size: 15px;
+		    padding-right: 20px;
+		    padding-top: 5px;
 		}
 		
 	</ui:style>
@@ -87,9 +131,8 @@
 	<g:DockLayoutPanel addStyleNames="{style.mainPanel}">
 		<g:north size='80'>
 			<g:FlowPanel addStyleNames="{style.detailsHeaderPanel}">
-				
-				<g:Image ui:field="osImage" addStyleNames="{style.osImage}" />
-				<g:Image ui:field="vmImage" addStyleNames="{style.vmImage}"/>
+				<e:OsTypeImage ui:field="osImage" addStyleNames="{style.osImage}" resources="{itemResources}" nameUniquePart="Small" />
+				<e:VmTypeImage ui:field="vmImage" addStyleNames="{style.vmImage}" resources="{itemResources}" />
 				
 				<g:FlowPanel>
 					<g:Label ui:field="vmName" addStyleNames="{style.basicInfoVmNameLabel}" />
@@ -104,7 +147,7 @@
 					<g:FlowPanel addStyleNames="{style.detailsRow}">
 						<g:Image resource='{resources.basicOsIcon}' addStyleNames="{style.rowIcon}" />
 						<g:Label text="Operating System : " addStyleNames="{style.rowLabel}" />
-						<g:Label ui:field="operatingSystem" addStyleNames="{style.rowValue}" />
+						<g:ValueLabel ui:field="operatingSystem" addStyleNames="{style.rowValue}" />
 					</g:FlowPanel>
 				</g:layer>
 
@@ -112,7 +155,7 @@
 					<g:FlowPanel addStyleNames="{style.detailsRow}">
 						<g:Image resource='{resources.basicMemoryIcon}' addStyleNames="{style.rowIcon}" />
 						<g:Label text="Defined Memory : " addStyleNames="{style.rowLabel}" />
-						<g:Label ui:field="memory" addStyleNames="{style.rowValue}" />
+						<e:UserPortalEntityModelLabel ui:field="memory" addStyleNames="{style.rowValue}" />
 					</g:FlowPanel>
 				</g:layer>
 				
@@ -121,9 +164,37 @@
 						<g:Image resource='{resources.basicCpuIcon}'
 							addStyleNames="{style.rowIcon}" />
 						<g:Label text="Number of Cores : " addStyleNames="{style.rowLabel}" />
-						<g:Label ui:field="numberOfCores" addStyleNames="{style.rowValue}" />
+						<e:UserPortalEntityModelLabel ui:field="numberOfCores" addStyleNames="{style.rowValue}" />
 					</g:FlowPanel>
 				</g:layer>
+				
+				<g:layer top='120px' height='100%'>
+					<g:FlowPanel>
+					
+						<g:FlowPanel addStyleNames="{style.horizontalLineWrapper}" >
+							<g:FlowPanel addStyleNames="{style.horizontalLine}" />
+						</g:FlowPanel>	
+						
+						<g:FlowPanel addStyleNames="{style.detailsRow}">
+							<g:Image resource='{resources.basicDriveIcon}'
+								addStyleNames="{style.rowIcon}" />
+							<g:Label text="Drives : " addStyleNames="{style.rowLabel}" />
+							<e:DisksImageWidget ui:field="disks" addStyleNames="{style.diskImageWidget}" />
+						</g:FlowPanel>
+						
+						<g:FlowPanel addStyleNames="{style.horizontalLineWrapper}" >
+							<g:FlowPanel addStyleNames="{style.horizontalLine}" />
+						</g:FlowPanel>	
+						
+						<g:FlowPanel addStyleNames="{style.detailsRow}">
+							<g:Image resource='{resources.basicConsoleIcon}' addStyleNames="{style.rowIcon}" />
+							<g:Label text="Console : " addStyleNames="{style.rowLabel}" />
+							<g:HTML ui:field="editProtocol" addStyleNames="{style.editProtocolEnabled}" />
+							<g:Label ui:field="protocolMessage" />
+						</g:FlowPanel>
+					</g:FlowPanel>
+				</g:layer>
+				
 			</g:LayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>
