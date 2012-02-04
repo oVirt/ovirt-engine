@@ -333,6 +333,8 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
                         : privateStoragePoolIsoMapData.hashCode());
         result = prime * result
                 + ((totalDiskSize == null) ? 0 : totalDiskSize.hashCode());
+        result = prime * result
+                + ((getid() == null) ? 0 : getid().hashCode());
         return result;
     }
 
@@ -355,6 +357,11 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
             if (other.totalDiskSize != null)
                 return false;
         } else if (!totalDiskSize.equals(other.totalDiskSize))
+            return false;
+        if (getid() == null) {
+            if (other.getid() != null)
+                return false;
+        } else if (!getid().equals(other.getid()))
             return false;
         return true;
     }
