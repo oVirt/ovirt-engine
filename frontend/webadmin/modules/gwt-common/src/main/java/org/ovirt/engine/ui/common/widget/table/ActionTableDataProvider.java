@@ -18,4 +18,10 @@ public interface ActionTableDataProvider<T> extends ProvidesKey<T>, HasPaging {
      */
     public void addDataDisplay(HasData<T> display);
 
+    /**
+     * return the table items count
+     * @return String (1-40)
+     */
+    public String getItemsCount();
+
 }

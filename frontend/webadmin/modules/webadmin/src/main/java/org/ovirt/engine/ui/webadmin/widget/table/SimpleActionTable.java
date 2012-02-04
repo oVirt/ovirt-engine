@@ -59,6 +59,7 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         refreshPanel.setVisible(false);
         prevPageButton.setVisible(false);
         nextPageButton.setVisible(false);
+        itemsCountLabel.setVisible(false);
     }
 
     static CommonApplicationConstants getApplicationConstants() {
@@ -87,6 +88,10 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     public void showPagingButtons() {
         prevPageButton.setVisible(true);
         nextPageButton.setVisible(true);
+    }
+
+    public void showItemsCount() {
+        itemsCountLabel.setVisible(true);
     }
 
     public void setBarStyle(String barStyle) {

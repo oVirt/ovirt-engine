@@ -88,4 +88,8 @@ public abstract class SearchableTabModelProvider<T, M extends SearchableListMode
         getModel().getForceRefreshCommand().Execute();
     }
 
+    public String getItemsCount() {
+        return getModel().getItemsCountString();
+    }
+
 }

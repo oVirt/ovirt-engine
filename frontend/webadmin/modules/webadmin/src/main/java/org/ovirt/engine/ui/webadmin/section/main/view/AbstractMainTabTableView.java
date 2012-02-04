@@ -30,6 +30,7 @@ public abstract class AbstractMainTabTableView<T, M extends SearchableListModel>
         this.table = new SimpleActionTable<T>(modelProvider, getTableHeaderlessResources(), getTableResources());
         this.table.showRefreshButton();
         this.table.showPagingButtons();
+        this.table.showItemsCount();
     }
 
     protected Resources getTableHeaderlessResources() {

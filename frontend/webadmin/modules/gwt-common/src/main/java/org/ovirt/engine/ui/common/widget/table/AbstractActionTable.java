@@ -30,6 +30,7 @@ import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 import com.google.gwt.user.cellview.client.TextHeader;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.ButtonBase;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
@@ -65,6 +66,10 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
 
     @UiField
     public SimplePanel tableHeaderContainer;
+
+    @UiField
+    @WithElementId
+    public Label itemsCountLabel;
 
     private final OrderedMultiSelectionModel<T> selectionModel;
 
@@ -136,6 +141,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
                 // Ensure that paging buttons are updated whenever new data is set
                 prevPageButton.setEnabled(getDataProvider().canGoBack());
                 nextPageButton.setEnabled(getDataProvider().canGoForward());
+
+                itemsCountLabel.setText(getDataProvider().getItemsCount());
             };
         };
 
