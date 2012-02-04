@@ -388,4 +388,15 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/button/footer_button_Down_end.png")
     ImageResource footerButtonDownEnd();
 
+    @Source("images/page_prev_enable.png")
+    ImageResource pagePrevEnable();
+
+    @Source("images/page_prev_disable.png")
+    ImageResource pagePrevDisable();
+
+    @Source("images/page_next_enable.png")
+    ImageResource pageNextEnable();
+
+    @Source("images/page_next_disable.png")
+    ImageResource pageNextDisable();
 }

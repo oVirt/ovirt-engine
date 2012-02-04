@@ -74,8 +74,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     }
 
     void localize(ApplicationConstants constants) {
-        prevPageButton.setText(constants.actionTablePrevPageButtonLabel());
-        nextPageButton.setText(constants.actionTableNextPageButtonLabel());
     }
 
     void initStyles() {

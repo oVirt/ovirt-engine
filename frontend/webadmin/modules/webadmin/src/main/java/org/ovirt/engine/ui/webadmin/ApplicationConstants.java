@@ -9,12 +9,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     // Widgets
 
-    @DefaultStringValue("Next >>")
-    String actionTableNextPageButtonLabel();
-
-    @DefaultStringValue("<< Prev")
-    String actionTablePrevPageButtonLabel();
-
     @DefaultStringValue("Refresh")
     String actionTableRefreshPageButtonLabel();
 
