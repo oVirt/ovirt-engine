@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
-import java.util.Collections;
-
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -297,7 +295,6 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 MergeLunsToTargets(newLuns, items);
             }
 
-            Collections.sort(items, new Linq.SanTargetModelComparer());
             setItems(items);
 
             UpdateLoginAllAvailability();
