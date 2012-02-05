@@ -29,11 +29,15 @@ import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 import com.google.gwt.user.cellview.client.TextHeader;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
 
 /**
@@ -80,6 +84,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
     private boolean multiSelectionDisabled;
     protected boolean showDefaultHeader;
 
+    private int[] mousePosition = new int[2];
+
     public AbstractActionTable(SearchableTableModelProvider<T, ?> dataProvider,
             EventBus eventBus, CommonApplicationConstants constants) {
         this(dataProvider, null, eventBus, constants);
@@ -101,6 +107,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
             @Override
             protected void onBrowserEvent2(Event event) {
                 // Enable multiple selection only when Control/Shift key is pressed
+                mousePosition[0] = event.getClientX();
+                mousePosition[1] = event.getClientY();
                 if ("click".equals(event.getType()) && !multiSelectionDisabled) {
                     selectionModel.setMultiSelectEnabled(event.getCtrlKey());
                     selectionModel.setMultiRangeSelectEnabled(event.getShiftKey());
@@ -152,6 +160,41 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         showDefaultHeader = headerRresources == null;
 
         this.selectionModel.setDataDisplay(table);
+    }
+
+    public void showSelectionCountTooltip() {
+        this.selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+
+            private PopupPanel tooltip = null;
+
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                int selectedItems = selectionModel.getSelectedList().size();
+                if (selectedItems < 2) {
+                    return;
+                }
+                if (tooltip != null) {
+                    tooltip.hide();
+                }
+                tooltip = new PopupPanel(true);
+
+                tooltip.setWidget(new Label(selectionModel.getSelectedList().size() + " selected"));
+                if (mousePosition[0] == 0 && mousePosition[1] == 0) {
+                    mousePosition[0] = Window.getClientWidth() / 2;
+                    mousePosition[1] = Window.getClientHeight() * 1 / 3;
+                }
+                tooltip.setPopupPosition(mousePosition[0] + 15, mousePosition[1]);
+                tooltip.show();
+                Timer t = new Timer() {
+
+                    @Override
+                    public void run() {
+                        tooltip.hide();
+                    }
+                };
+                t.schedule(500);
+            }
+        });
     }
 
     @Override
