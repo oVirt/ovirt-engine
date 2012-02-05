@@ -1050,6 +1050,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("OVIRT")
     OriginType(336),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    HotPlugEnabled(337),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("Windows2008,Windows2008x64,Windows2008R2x64,RHEL5,RHEL5x64,RHEL6,RHEL6x64")
+    HotPlugSupportedOsList(338),
 
     Invalid(65535);
 
