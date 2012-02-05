@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network;
@@ -162,35 +163,39 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         Collections.sort(diskImages,
                 Collections.reverseOrder(new DiskImageByBootComparator()));
         for (DiskImage disk : diskImages) {
-            Map drive = new HashMap();
-            drive.put("domainID", disk.getstorage_id().toString());
-            drive.put("poolID", disk.getstorage_pool_id().toString());
-            drive.put("volumeID", disk.getId().toString());
-            drive.put("imageID", disk.getimage_group_id().toString());
-            drive.put("format", disk.getvolume_format().toString()
-                    .toLowerCase());
-            drive.put("propagateErrors", disk.getpropagate_errors().toString()
-                    .toLowerCase());
+            VmDevice vmDevice =
+                    DbFacade.getInstance().getVmDeviceDAO().get(new VmDeviceId(disk.getId(), vm.getvm_guid()));
+            if (vmDevice.getIsPlugged()) {
+                Map drive = new HashMap();
+                drive.put("domainID", disk.getstorage_id().toString());
+                drive.put("poolID", disk.getstorage_pool_id().toString());
+                drive.put("volumeID", disk.getId().toString());
+                drive.put("imageID", disk.getimage_group_id().toString());
+                drive.put("format", disk.getvolume_format().toString()
+                        .toLowerCase());
+                drive.put("propagateErrors", disk.getpropagate_errors().toString()
+                        .toLowerCase());
 
-            switch (disk.getdisk_interface()) {
-            case IDE:
-                drive.put("if", "ide");
-                drive.put("index", String.valueOf(ideIndexSlots[ideCount]));
-                ideCount++;
-                break;
-            case VirtIO:
-                drive.put("if", "virtio");
-                drive.put("index", String.valueOf(pciCount));
-                drive.put("boot", String.valueOf(disk.getboot()).toLowerCase());
-                pciCount++;
-                break;
-            default:
-                // ISCI not supported
-                break;
+                switch (disk.getdisk_interface()) {
+                case IDE:
+                    drive.put("if", "ide");
+                    drive.put("index", String.valueOf(ideIndexSlots[ideCount]));
+                    ideCount++;
+                    break;
+                case VirtIO:
+                    drive.put("if", "virtio");
+                    drive.put("index", String.valueOf(pciCount));
+                    drive.put("boot", String.valueOf(disk.getboot()).toLowerCase());
+                    pciCount++;
+                    break;
+                default:
+                    // ISCI not supported
+                    break;
+                }
+
+                drives[i] = drive;
+                i++;
             }
-
-            drives[i] = drive;
-            i++;
         }
         createInfo.add("drives", drives);
     }

@@ -832,4 +832,26 @@ public class VdsServerWrapper implements IVdsServer {
         }
 
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc hotplugDisk(XmlRpcStruct info) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.hotplugDisk(info.getInnerMap());
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc hotunplugDisk(XmlRpcStruct info) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.hotunplugDisk(info.getInnerMap());
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }

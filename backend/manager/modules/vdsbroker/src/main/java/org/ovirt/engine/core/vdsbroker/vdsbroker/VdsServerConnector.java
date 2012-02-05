@@ -166,4 +166,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> revertTask(String taskUUID);
 
+    Map<String, Object> hotplugDisk(Map<String, Object> info);
+
+    Map<String, Object> hotunplugDisk(Map<String, Object> info);
+
 }

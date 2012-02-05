@@ -173,4 +173,8 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc clearTask(String taskUUID);
 
     StatusOnlyReturnForXmlRpc revertTask(String taskUUID);
+
+    StatusOnlyReturnForXmlRpc hotplugDisk(XmlRpcStruct info);
+
+    StatusOnlyReturnForXmlRpc hotunplugDisk(XmlRpcStruct info);
 }
