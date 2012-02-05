@@ -30,7 +30,7 @@ import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmAffinity;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
-import org.ovirt.engine.api.model.VmMemoryPolicy;
+import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
@@ -342,7 +342,7 @@ public class VmMapper {
                 }
             }
         }
-        VmMemoryPolicy policy = new VmMemoryPolicy();
+        MemoryPolicy policy = new MemoryPolicy();
         policy.setGuaranteed(new Long(entity.getMinAllocatedMem()) * BYTES_PER_MB);
         model.setMemoryPolicy(policy);
         model.setTimezone(TimeZoneMapping.getJava(entity.gettime_zone()));
