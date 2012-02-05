@@ -198,7 +198,7 @@ install_log_collector:
 	cp -f ./backend/manager/tools/engine-logcollector/src/sos/plugins/postgresql.py $(PREFIX)$(PY_SITE_PKGS)/sos/plugins
 	chmod 755 $(PREFIX)$(PY_SITE_PKGS)/sos/plugins/*
 	rm -f $(PREFIX)/usr/bin/engine-log-collector
-	ln -s /usr/share/ovirt-engine/log-collector/logcollector.py $(PREFIX)/usr/bin/engine-log-collector	
+	ln -s /usr/share/ovirt-engine/log-collector/logcollector.py $(PREFIX)/usr/bin/engine-log-collector
 
 install_iso_uploader:
 	@echo "*** Deploying iso uploader"
@@ -262,15 +262,12 @@ install_misc:
 	cp -f ./backend/manager/conf/kerberos/* $(PREFIX)/usr/share/ovirt-engine/kerberos
 	chmod 644 $(PREFIX)/usr/share/ovirt-engine/kerberos/*
 	rm -rf $(PREFIX)/usr/share/ovirt-engine/keberos/*.bat
-	cp -f ./backend/manager/conf/vds_installer.py $(PREFIX)/usr/share/ovirt-engine/scripts
-	cp -f ./packaging/ovirtlogrot.sh $(PREFIX)/usr/share/ovirt-engine/scripts
+	cp -f ./backend/manager/conf/vds_installer.py $(PREFIX)/usr/share/ovirt-engine/scripts/
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/vds_installer.py
 	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)$(JBOSS_HOME)/modules/org/postgresql/main/postgresql-jdbc.jar
 	cp -f ./backend/manager/conf/jboss-log4j.xml $(PREFIX)/usr/share/ovirt-engine/conf
 	cp -f ./packaging/fedora/setup/resources/postgres/postgres-ds.xml $(PREFIX)/usr/share/ovirt-engine/conf
 	cp -f ./LICENSE $(PREFIX)/usr/share/ovirt-engine
-	cp -f ./packaging/ovirtlogrot.sh ${PREFIX}/usr/share/ovirt-engine/scripts/
+	cp -f ./packaging/resources/ovirtlogrot.sh ${PREFIX}/usr/share/ovirt-engine/scripts/
 	cp -f ./packaging/resources/ovirt-cron ${PREFIX}/etc/cron.daily/
 	cp -f ./packaging/resources/ovirt-tmpfilesd ${PREFIX}/etc/tmpfiles.d/ovirt-engine.conf
-
-
