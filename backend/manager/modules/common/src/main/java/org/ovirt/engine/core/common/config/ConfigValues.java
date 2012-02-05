@@ -1441,6 +1441,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("ovirtmgmt")
     ManagementNetwork(328),
 
+    /**
+     * The origin type to be used for VM and VM template creation
+     */
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("OVIRT")
+    OriginType(336),
+
     Invalid(65535);
 
     private int intValue;
