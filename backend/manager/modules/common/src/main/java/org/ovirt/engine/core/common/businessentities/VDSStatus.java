@@ -1,8 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.xml.bind.annotation.XmlType;
+import java.util.HashMap;
 
-@XmlType(name = "VDSStatus")
 public enum VDSStatus {
     Unassigned(0),
     Down(1),
@@ -12,16 +11,15 @@ public enum VDSStatus {
     Error(5),
     Installing(6),
     InstallFailed(7),
-    Reboot(
-            8),
+    Reboot(8),
     PreparingForMaintenance(9),
     NonOperational(10),
     PendingApproval(11),
     Initializing(12),
     Problematic(13);
 
+    private static HashMap<Integer, VDSStatus> mappings = new HashMap<Integer, VDSStatus>();
     private int intValue;
-    private static java.util.HashMap<Integer, VDSStatus> mappings = new java.util.HashMap<Integer, VDSStatus>();
 
     static {
         for (VDSStatus status : values()) {
