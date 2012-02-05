@@ -65,6 +65,9 @@ public class DiskMapper {
         if (disk.isSetWipeAfterDelete()) {
             diskImage.setwipe_after_delete(disk.isWipeAfterDelete());
         }
+        if (disk.isSetPlugged()) {
+            diskImage.setPlugged(disk.isPlugged());
+        }
         return diskImage;
     }
 
@@ -105,6 +108,7 @@ public class DiskMapper {
             }
             model.getStorageDomains().getStorageDomains().add(storageDomain);
         }
+        model.setPlugged(entity.getPlugged());
         return model;
     }
 

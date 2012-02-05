@@ -1914,6 +1914,7 @@
           <xs:element name="wipe_after_delete" type="xs:boolean" minOccurs="0"/>
           <xs:element name="propagate_errors" type="xs:boolean" minOccurs="0"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="plugged" type="xs:boolean" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
