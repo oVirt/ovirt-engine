@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 
+import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -11,6 +12,8 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.uicompat.Translator;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
@@ -60,7 +63,7 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
     }
 
     // We need this to get the text of the alert messages:
-    private ApplicationMessages messages;
+    private final ApplicationMessages messages;
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
@@ -135,7 +138,8 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
             addTextAndLinkAlert(view, messages.hostHasNoPowerManagementAlert(), model.getEditHostCommand());
         }
         if (model.getNonOperationalReasonEntity() != null) {
-            addTextAlert(view, model.getNonOperationalReasonEntity().toString());
+            Translator translator = EnumTranslator.Create(NonOperationalReason.class);
+            addTextAlert(view, translator.get(model.getNonOperationalReasonEntity()));
         }
     }
 
