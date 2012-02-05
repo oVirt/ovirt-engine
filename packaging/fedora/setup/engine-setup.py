@@ -24,6 +24,7 @@ import engine_validators as validate
 import random
 import tempfile
 from optparse import OptionParser, OptionGroup
+from engine_params import Group
 
 # Globals
 logFile = os.path.join(basedefs.DIR_LOG,basedefs.FILE_INSTALLER_LOG)
@@ -31,6 +32,7 @@ conf_params = ()
 conf_groups = ()
 conf = {}
 messages = []
+GROUPS=[]
 commandLineValues = {}
 
 # List to hold all values to be masked in logging (i.e. passwords and sensitive data)
@@ -144,218 +146,190 @@ def initConfig():
     """
     global conf_params
     global conf_groups
-    conf_params = (
-        {   "CMD_OPTION"      :"override-iptables",
-            "USAGE"           :output_messages.INFO_CONF_PARAMS_IPTABLES_USAGE,
-            "PROMPT"          :output_messages.INFO_CONF_PARAMS_IPTABLES_PROMPT,
-            "OPTION_LIST"     :["yes","no"],
-            "VALIDATION_FUNC" :validate.validateOptions,
-            "DEFAULT_VALUE"   :"",
-            "REAPEAT"         : True,
-            "MASK_INPUT"      : False,
-            "LOOSE_VALIDATION": False,
-            "CONF_NAME"       : "OVERRIDE_IPTABLES",
-            "USE_DEFAULT"     : False,
-            "NEED_CONFIRM"    : False,
-            "GROUP"           : "IPTABLES"},
-
-        {   "CMD_OPTION"      :"http-port",
-            "USAGE"           :output_messages.INFO_CONF_PARAMS_HTTP_PORT_USAGE,
-            "PROMPT"          :output_messages.INFO_CONF_PARAMS_HTTP_PORT_PROMPT,
-            "OPTION_LIST"     :[],
-            "VALIDATION_FUNC" :validate.validatePort,
-            "DEFAULT_VALUE"   :"8080",
-            "REAPEAT"         : True,
-            "MASK_INPUT"      : False,
-            "LOOSE_VALIDATION": False,
-            "CONF_NAME"       : "HTTP_PORT",
-            "USE_DEFAULT"     : False,
-            "NEED_CONFIRM"    : False,
-            "GROUP"           : "ALL_PARAMS"},
-
-        {   "CMD_OPTION"      :"https-port",
-            "USAGE"           :output_messages.INFO_CONF_PARAMS_HTTPS_PORT_USAGE,
-            "PROMPT"          :output_messages.INFO_CONF_PARAMS_HTTPS_PORT_PROMPT,
-            "OPTION_LIST"     :[],
-            "VALIDATION_FUNC" :validate.validatePort,
-            "DEFAULT_VALUE"   :"8443",
-            "REAPEAT"         : True,
-            "MASK_INPUT"      : False,
-            "LOOSE_VALIDATION": False,
-            "CONF_NAME"       : "HTTPS_PORT",
-            "USE_DEFAULT"     : False,
-            "NEED_CONFIRM"    : False,
-            "GROUP"           : "ALL_PARAMS"},
-
-         {  "CMD_OPTION"      :"mac-range",
-            "USAGE"           :output_messages.INFO_CONF_PARAMS_MAC_RANGE_USAGE,
-            "PROMPT"          :output_messages.INFO_CONF_PARAMS_MAC_RANG_PROMPT,
-            "OPTION_LIST"     :[],
-            "VALIDATION_FUNC" :validate.validateStringNotEmpty,
-            "DEFAULT_VALUE"   :generateMacRange(),
-            "REAPEAT"         : True,
-            "MASK_INPUT"      : False,
-            "LOOSE_VALIDATION": False,
-            "CONF_NAME"       : "MAC_RANGE",
-            "USE_DEFAULT"     : True,
-            "NEED_CONFIRM"    : False,
-            "GROUP"           : "ALL_PARAMS"},
-
-        {   "CMD_OPTION"      :"host-fqdn",
-            "USAGE"           :output_messages.INFO_CONF_PARAMS_FQDN_USAGE,
-            "PROMPT"          :output_messages.INFO_CONF_PARAMS_FQDN_PROMPT,
-            "OPTION_LIST"     :[],
-            "VALIDATION_FUNC" :validate.validateFQDN,
-            "DEFAULT_VALUE"   :socket.getfqdn(),
-            "REAPEAT"         : True,
-            "MASK_INPUT"      : False,
-            "LOOSE_VALIDATION": True,
-            "CONF_NAME"       : "HOST_FQDN",
-            "USE_DEFAULT"     : False,
-            "NEED_CONFIRM"    : False,
-            "GROUP"           : "ALL_PARAMS"},
-
-        {   "CMD_OPTION"      :"auth-pass",
-            "USAGE"           :output_messages.INFO_CONF_PARAMS_AUTH_PASS_USAGE,
-            "PROMPT"          :output_messages.INFO_CONF_PARAMS_AUTH_PASS_PROMPT,
-            "OPTION_LIST"     :[],
-            "VALIDATION_FUNC" :validate.validatePassword,
-            "DEFAULT_VALUE"   :"",
-            "REAPEAT"         : True,
-            "MASK_INPUT"      : True,
-            "LOOSE_VALIDATION": False,
-            "CONF_NAME"       : "AUTH_PASS",
-            "USE_DEFAULT"     : False,
-            "NEED_CONFIRM"    : True,
-            "GROUP"           : "ALL_PARAMS"},
-
-        {   "CMD_OPTION"      :"db-pass",
-            "USAGE"           :output_messages.INFO_CONF_PARAMS_DB_PASSWD_USAGE,
-            "PROMPT"          :output_messages.INFO_CONF_PARAMS_DB_PASSWD_PROMPT,
-            "OPTION_LIST"     :[],
-            "VALIDATION_FUNC" :validate.validatePassword,
-            "DEFAULT_VALUE"   :"",
-            "REAPEAT"         : True,
-            "MASK_INPUT"      : True,
-            "LOOSE_VALIDATION": False,
-            "CONF_NAME"       : "DB_PASS",
-            "USE_DEFAULT"     : False,
-            "NEED_CONFIRM"    : True,
-            "GROUP"           : "ALL_PARAMS"},
-
-         {  "CMD_OPTION"      :"org-name",
-            "USAGE"           :output_messages.INFO_CONF_PARAMS_ORG_NAME_USAGE,
-            "PROMPT"          :output_messages.INFO_CONF_PARAMS_ORG_NAME_PROMPT,
-            "OPTION_LIST"     :[],
-            "VALIDATION_FUNC" :validate.validateOrgName,
-            "DEFAULT_VALUE"   :"",
-            "REAPEAT"         : True,
-            "MASK_INPUT"      : False,
-            "LOOSE_VALIDATION": False,
-            "CONF_NAME"       : "ORG_NAME",
-            "USE_DEFAULT"     : False,
-            "NEED_CONFIRM"    : False,
-            "GROUP"           : "ALL_PARAMS"},
-
-        {   "CMD_OPTION"      :"default-dc-type",
-            "USAGE"           :output_messages.INFO_CONF_PARAMS_DC_TYPE_USAGE,
-            "PROMPT"          :output_messages.INFO_CONF_PARAMS_DC_TYPE_PROMPT,
-            "OPTION_LIST"     :["NFS","FC","ISCSI"],
-            "VALIDATION_FUNC" :validate.validateOptions,
-            "DEFAULT_VALUE"   :"NFS",
-            "REAPEAT"         : True,
-            "MASK_INPUT"      : False,
-            "LOOSE_VALIDATION": False,
-            "CONF_NAME"       : "DC_TYPE",
-            "USE_DEFAULT"     : False,
-            "NEED_CONFIRM"    : False,
-            "GROUP"           : "ALL_PARAMS"},
-
-         {  "CMD_OPTION"      :"config-nfs",
-            "USAGE"           :output_messages.INFO_CONF_PARAMS_CONFIG_NFS_USAGE,
-            "PROMPT"          :output_messages.INFO_CONF_PARAMS_CONFIG_NFS_PROMPT,
-            "OPTION_LIST"     :["yes","no"],
-            "VALIDATION_FUNC" :validate.validateOptions,
-            "DEFAULT_VALUE"   :"yes",
-            "REAPEAT"         : True,
-            "MASK_INPUT"      : False,
-            "LOOSE_VALIDATION": False,
-            "CONF_NAME"       : "CONFIG_NFS",
-            "USE_DEFAULT"     : False,
-            "NEED_CONFIRM"    : False,
-            "GROUP"           : ""},
-
-         {  "CMD_OPTION"      :"nfs-mp",
-            "USAGE"           :output_messages.INFO_CONF_PARAMS_NFS_MP_USAGE,
-            "PROMPT"          :output_messages.INFO_CONF_PARAMS_NFS_MP_PROMPT,
-            "OPTION_LIST"     :[],
-            "VALIDATION_FUNC" :validate.validateMountPoint,
-            "DEFAULT_VALUE"   :"",
-            "REAPEAT"         : True,
-            "MASK_INPUT"      : False,
-            "LOOSE_VALIDATION": False,
-            "CONF_NAME"       : "NFS_MP",
-            "USE_DEFAULT"     : False,
-            "NEED_CONFIRM"    : False,
-            "GROUP"           : "NFS"},
-
-         {  "CMD_OPTION"      :"iso-domain-name",
-            "USAGE"           :output_messages.INFO_CONF_PARAMS_NFS_DESC_USAGE,
-            "PROMPT"          :output_messages.INFO_CONF_PARAMS_NFS_DESC_PROMPT,
-            "OPTION_LIST"     :[],
-            "VALIDATION_FUNC" :validate.validateIsoDomainName,
-            "DEFAULT_VALUE"   :"",
-            "REAPEAT"         : True,
-            "MASK_INPUT"      : False,
-            "LOOSE_VALIDATION": False,
-            "CONF_NAME"       : "ISO_DOMAIN_NAME",
-            "USE_DEFAULT"     : False,
-            "NEED_CONFIRM"    : False,
-            "GROUP"           : "NFS"},
-
-    )
-
+    global GROUPS
     """
-    this implementation has come into place in order
-    to verify a set of params based on user action, which mean
-    that the param named in the CONDITION member will be executed
-    and if the response equals to the CONDITION_RESULT member
-    the rest of the params will be presented to the user
-    in order to by pass the CONDITION check, set CONDITION to False
-    and set CONDITION_RESULT to True
-    EXAMPLE:
-    conf_groups = ( { "GROUP_NAME"            : "ALL_PARAMS",
-                      "PRE_CONDITION"         : False,
-                      "PRE_CONDITION_MATCH"   : True,
-                      "POST_CONDITION"        : False,
-                      "POST_CONDITION_MATCH"  : True},
-                   { "GROUP_NAME"            : "AD",
-                      "PRE_CONDITION"         : False,
-                      "PRE_CONDITION_MATCH"   : True,
-                      "POST_CONDITION"        : validateAD,
-                      "POST_CONDITION_MATCH"  : True},
-                   { "GROUP_NAME"            : "NFS",
-                      "PRE_CONDITION"         : "CONFIG_NFS",
-                      "PRE_CONDITION_MATCH"   : "yes",
-                      "POST_CONDITION"        : False,
-                      "POST_CONDITION_MATCH"  : True},
+    Param Fields:
+    CMD_OPTION       - the command line flag to use for this option
+    USAGE            - usage to display to the user
+    PROMPT           - text to prompt the user with when querying this param
+    OPTION_LIST      - if set, let the user only choose from this list as answer
+    VALIDATION_FUNC  - Validation function for this param
+    DEFAULT_VALUE    - the default value of this param
+    MASK_INPUT       - should we mask the value of this param in the logs?
+    LOOSE_VALIDATION - (True/False) if True, and validation failed, let the user use the failed value
+    CONF_NAME        - Name of param, must be unique, used as key
+    USE_DEFAULT      - (True/False) Should we use the default value instead of querying the user?
+    NEED_CONFIRM     - (True/False) Do we require the user to confirm the input(used in password fields)
+    CONDITION        - (True/False) is this a condition for a group?
+    """
+    conf_params = {
+         "IPTABLES" : [
+            {   "CMD_OPTION"      :"override-iptables",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_IPTABLES_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_IPTABLES_PROMPT,
+                "OPTION_LIST"     :["yes","no"],
+                "VALIDATION_FUNC" :validate.validateOptions,
+                "DEFAULT_VALUE"   :"",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "OVERRIDE_IPTABLES",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False} ]
+         ,
+         "ALL_PARAMS" : [
+            {   "CMD_OPTION"      :"http-port",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_HTTP_PORT_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_HTTP_PORT_PROMPT,
+                "OPTION_LIST"     :[],
+                "VALIDATION_FUNC" :validate.validatePort,
+                "DEFAULT_VALUE"   :"8080",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "HTTP_PORT",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},
 
-    )
-    the given example contains 3 groups,
-    when the group NFS is checked, we get the input for the "PRE_CONDTION" member
-    (i.e the "CONFIG_NFS" param is prompted to the user) and the value
-    of the said param is compared with the "PRE_CONDITION_MATCH" member.
-    if the compare returns True (i.e. the user answered "yes") all the params
-    in which the "GROUP" members is "NFS" are then prompted to the user
-    when the group ALL_PARAMS is checked, since the "CONDITION" member is False
-    we do not check for validity and simply prompt the user with all params
-    in which the "GROUP" member is "ALL_PARAMS"
-    when the group AD is checked, since the "PRE_CONDITION" is False we act just
-    like the ALL_PARAMS group, however, since the "POST_CONDITION" member is populated
-    we run the given function(can be either a function name or a name of a conf_param)
-    and compare it with the value of the "POST_CONDITION_MATCH" member, if the result differs
-    we prompt the user to input the entire set of params which are members of the AD group
-    all over again
+            {   "CMD_OPTION"      :"https-port",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_HTTPS_PORT_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_HTTPS_PORT_PROMPT,
+                "OPTION_LIST"     :[],
+                "VALIDATION_FUNC" :validate.validatePort,
+                "DEFAULT_VALUE"   :"8443",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "HTTPS_PORT",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},
+
+             {  "CMD_OPTION"      :"mac-range",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_MAC_RANGE_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_MAC_RANG_PROMPT,
+                "OPTION_LIST"     :[],
+                "VALIDATION_FUNC" :validate.validateStringNotEmpty,
+                "DEFAULT_VALUE"   :generateMacRange(),
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "MAC_RANGE",
+                "USE_DEFAULT"     : True,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},
+
+            {   "CMD_OPTION"      :"host-fqdn",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_FQDN_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_FQDN_PROMPT,
+                "OPTION_LIST"     :[],
+                "VALIDATION_FUNC" :validate.validateFQDN,
+                "DEFAULT_VALUE"   :socket.getfqdn(),
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": True,
+                "CONF_NAME"       : "HOST_FQDN",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},
+
+            {   "CMD_OPTION"      :"auth-pass",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_AUTH_PASS_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_AUTH_PASS_PROMPT,
+                "OPTION_LIST"     :[],
+                "VALIDATION_FUNC" :validate.validatePassword,
+                "DEFAULT_VALUE"   :"",
+                "MASK_INPUT"      : True,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "AUTH_PASS",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : True,
+                "CONDITION"       : False},
+
+            {   "CMD_OPTION"      :"db-pass",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_DB_PASSWD_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_DB_PASSWD_PROMPT,
+                "OPTION_LIST"     :[],
+                "VALIDATION_FUNC" :validate.validatePassword,
+                "DEFAULT_VALUE"   :"",
+                "MASK_INPUT"      : True,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "DB_PASS",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : True,
+                "CONDITION"       : False},
+
+             {  "CMD_OPTION"      :"org-name",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_ORG_NAME_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_ORG_NAME_PROMPT,
+                "OPTION_LIST"     :[],
+                "VALIDATION_FUNC" :validate.validateOrgName,
+                "DEFAULT_VALUE"   :"",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "ORG_NAME",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},
+
+            {   "CMD_OPTION"      :"default-dc-type",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_DC_TYPE_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_DC_TYPE_PROMPT,
+                "OPTION_LIST"     :["NFS","FC","ISCSI"],
+                "VALIDATION_FUNC" :validate.validateOptions,
+                "DEFAULT_VALUE"   :"NFS",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "DC_TYPE",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False} ]
+         ,
+          "NFS": [
+             {  "CMD_OPTION"      :"nfs-mp",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_NFS_MP_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_NFS_MP_PROMPT,
+                "OPTION_LIST"     :[],
+                "VALIDATION_FUNC" :validate.validateMountPoint,
+                "DEFAULT_VALUE"   :"",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "NFS_MP",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},
+
+             {  "CMD_OPTION"      :"iso-domain-name",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_NFS_DESC_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_NFS_DESC_PROMPT,
+                "OPTION_LIST"     :[],
+                "VALIDATION_FUNC" :validate.validateIsoDomainName,
+                "DEFAULT_VALUE"   :"",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "ISO_DOMAIN_NAME",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},
+
+             {  "CMD_OPTION"      :"config-nfs",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_CONFIG_NFS_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_CONFIG_NFS_PROMPT,
+                "OPTION_LIST"     :["yes","no"],
+                "VALIDATION_FUNC" :validate.validateOptions,
+                "DEFAULT_VALUE"   :"yes",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "CONFIG_NFS",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : True} ]
+    }
+    """
+    Group fields:
+    GROUP_NAME           - Name of group, used as key
+    DESCRIPTION          - Used to prompt the user when showing the command line options
+    PRE_CONDITION        - Condition to match before going over all params in the group, if fails, will not go into group
+    PRE_CONDITION_MATCH  - Value to match condition with
+    POST_CONDITION       - Condition to match after all params in the groups has been queried. if fails, will re-query all parameters
+    POST_CONDITION_MATCH - Value to match condition with
     """
     conf_groups = ( { "GROUP_NAME"            : "ALL_PARAMS",
                       "DESCRIPTION"           : output_messages.INFO_GRP_ALL,
@@ -376,6 +350,9 @@ def initConfig():
                       "POST_CONDITION"        : False,
                       "POST_CONDITION_MATCH"  : True},
     )
+    for group in conf_groups:
+        paramList = conf_params[group["GROUP_NAME"]]
+        GROUPS.append(Group(group, paramList))
 
 #data center types enum
 DC_TYPE = Enum(NFS=1, FC=2, ISCSI=3)
@@ -390,34 +367,19 @@ def _getColoredText (text, color):
     '''
     return color + text + basedefs.NO_COLOR
 
-def _getParamKeyValue(confName, keyName):
-    for param in conf_params:
-        if (param["CONF_NAME"] == confName):
-            return param[keyName]
+def _getParamKeyValue(paramName, keyName):
+    param = _getParamByName(paramName)
+    if param:
+        return param.getKey(keyName)
+    else:
+        return None
 
-def _getParamsPerGroup(groupName):
-    paramsList = []
-    for param in conf_params:
-        if param["GROUP"] == groupName:
-            paramsList.append(param["CONF_NAME"])
-    return paramsList
-
-def _getParamPerName(paramName):
-    for param in conf_params:
-        if param["CONF_NAME"] == paramName:
+def _getParamByName(paramName):
+    for group in GROUPS:
+        param = group.getParamByName(paramName)
+        if param:
             return param
-    return False
-
-def _getParamsPerKey(key, value):
-    """
-    returns a list of  params dictionary that has the supplied key which has the 
-    value of the supplied value
-    """
-    paramsList = []
-    for param in conf_params:
-        if param.has_key(key) and param[key] == value:
-            paramsList.append(param)
-    return paramsList
+    return None
 
 def _getInputFromUser(param):
     """
@@ -429,54 +391,54 @@ def _getInputFromUser(param):
     userInput = None
 
     try:
-        if param["USE_DEFAULT"]:
-            logging.debug("setting default value (%s) for key (%s)" % (mask(param["DEFAULT_VALUE"]), param["CONF_NAME"]))
-            conf[param["CONF_NAME"]] = param["DEFAULT_VALUE"]
+        if param.getKey("USE_DEFAULT"):
+            logging.debug("setting default value (%s) for key (%s)" % (mask(param.getKey("DEFAULT_VALUE")), param.getKey("CONF_NAME")))
+            conf[param.getKey("CONF_NAME")] = param.getKey("DEFAULT_VALUE")
         else:
             while loop:
                 # If the value was not supplied by the command line flags
-                if not commandLineValues.has_key(param["CONF_NAME"]):
+                if not commandLineValues.has_key(param.getKey("CONF_NAME")):
                     message = StringIO()
-                    message.write(param["PROMPT"])
+                    message.write(param.getKey("PROMPT"))
 
-                    if type(param["OPTION_LIST"]) == types.ListType and len(param["OPTION_LIST"]) > 0:
-                        message.write(" %s" % (str(param["OPTION_LIST"]).replace(',', '|')))
+                    if type(param.getKey("OPTION_LIST")) == types.ListType and len(param.getKey("OPTION_LIST")) > 0:
+                        message.write(" %s" % (str(param.getKey("OPTION_LIST")).replace(',', '|')))
 
-                    if param["DEFAULT_VALUE"]:
-                        message.write("  [%s] " % (str(param["DEFAULT_VALUE"])))
+                    if param.getKey("DEFAULT_VALUE"):
+                        message.write("  [%s] " % (str(param.getKey("DEFAULT_VALUE"))))
 
                     message.write(": ")
                     message.seek(0)
                     #mask password or hidden fields
 
-                    if (param["MASK_INPUT"]):
-                        userInput = getpass.getpass("%s :" % (param["PROMPT"]))
+                    if (param.getKey("MASK_INPUT")):
+                        userInput = getpass.getpass("%s :" % (param.getKey("PROMPT")))
                     else:
                         userInput = raw_input(message.read())
                 else:
-                    userInput = commandLineValues[param["CONF_NAME"]]
+                    userInput = commandLineValues[param.getKey("CONF_NAME")]
                 # If DEFAULT_VALUE is set and user did not input anything
-                if userInput == "" and len(param["DEFAULT_VALUE"]) > 0:
-                    userInput = param["DEFAULT_VALUE"]
+                if userInput == "" and len(param.getKey("DEFAULT_VALUE")) > 0:
+                    userInput = param.getKey("DEFAULT_VALUE")
 
                 # If param requires validation
-                if param["VALIDATION_FUNC"](userInput, param["OPTION_LIST"]):
-                    conf[param["CONF_NAME"]] = userInput
+                if param.getKey("VALIDATION_FUNC")(userInput, param.getKey("OPTION_LIST")):
+                    conf[param.getKey("CONF_NAME")] = userInput
                     loop = False
                 # If validation failed but LOOSE_VALIDATION is true, ask user
-                elif param["LOOSE_VALIDATION"]:
+                elif param.getKey("LOOSE_VALIDATION"):
                     answer = _askYesNo("User input failed validation, do you still wish to use it")
                     if answer:
                         loop = False
-                        conf[param["CONF_NAME"]] = userInput
+                        conf[param.getKey("CONF_NAME")] = userInput
                     else:
-                        if commandLineValues.has_key(param["CONF_NAME"]):
-                            del commandLineValues[param["CONF_NAME"]]
+                        if commandLineValues.has_key(param.getKey("CONF_NAME")):
+                            del commandLineValues[param.getKey("CONF_NAME")]
                         loop = True                        
                 else:
                     # Delete value from commandLineValues so that we will prompt the user for input
-                    if commandLineValues.has_key(param["CONF_NAME"]):
-                        del commandLineValues[param["CONF_NAME"]]
+                    if commandLineValues.has_key(param.getKey("CONF_NAME")):
+                        del commandLineValues[param.getKey("CONF_NAME")]
                     loop = True
 
     except KeyboardInterrupt:
@@ -484,7 +446,7 @@ def _getInputFromUser(param):
         raise KeyboardInterrupt
     except:
         logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_READ_INPUT_PARAM % (param["CONF_NAME"]))
+        raise Exception(output_messages.ERR_EXP_READ_INPUT_PARAM % (param.getKey("CONF_NAME")))
 
 def input_param(param):
     """
@@ -493,18 +455,19 @@ def input_param(param):
     """
     # We need to check if a param needs confirmation, (i.e. ask user twice)
     # Do not validate if it was given from the command line
-    if (param["NEED_CONFIRM"]) and not commandLineValues.has_key(param["CONF_NAME"]):
+    if (param.getKey("NEED_CONFIRM") and not commandLineValues.has_key(param.getKey("CONF_NAME"))):
         #create a copy of the param so we can call it twice
         confirmedParam = copy.deepcopy(param)
-        confirmedParamName = param["CONF_NAME"] + "_CONFIRMED"
-        confirmedParam["CONF_NAME"] = confirmedParamName
-        confirmedParam["PROMPT"] = output_messages.INFO_CONF_PARAMS_PASSWD_CONFIRM_PROMPT
-        confirmedParam["VALIDATION_FUNC"] = validate.validateStringNotEmpty
+        confirmedParamName = param.getKey("CONF_NAME") + "_CONFIRMED"
+        confirmedParam.setKey("CONF_NAME", confirmedParamName)
+        confirmedParam.setKey("PROMPT", output_messages.INFO_CONF_PARAMS_PASSWD_CONFIRM_PROMPT)
+        confirmedParam.setKey("VALIDATION_FUNC", validate.validateStringNotEmpty)
         # Now get both values from user (with existing validations
         while True:
             _getInputFromUser(param)
             _getInputFromUser(confirmedParam)
-            if conf[param["CONF_NAME"]] == conf[confirmedParamName]:
+            if conf[param.getKey("CONF_NAME")] == conf[confirmedParamName]:
+                logging.debug("Param confirmation passed, value for both questions is identical")
                 break
             else:
                 print output_messages.INFO_VAL_PASSWORD_DONT_MATCH
@@ -1182,10 +1145,11 @@ def _addDefaultsToMaskedValueSet():
     in the 'masked_value_set'
     """
     global masked_value_set
-    for param in conf_params:
-        # Keep default password values masked, but ignore default empty values
-        if ((param["MASK_INPUT"] == True) and param["DEFAULT_VALUE"] != ""):
-            masked_value_set.add(param["DEFAULT_VALUE"])
+    for group in GROUPS:
+        for param in group.getAllParams():
+            # Keep default password values masked, but ignore default empty values
+            if ((param.getKey("MASK_INPUT") == True) and param.getKey("DEFAULT_VALUE") != ""):
+                masked_value_set.add(param.getKey("DEFAULT_VALUE"))
 
     # Add deault consts we want to mask
     # TODO: add future consts to mask here
@@ -1253,12 +1217,12 @@ def maskString(str):
         str = str.replace(password, '*'*8)
     return str
 
-def _validateParamValue(paramName, paramValue):
-    validateFunc = _getParamKeyValue(paramName, "VALIDATION_FUNC")
-    optionsList  = _getParamKeyValue(paramName, "OPTION_LIST")
-    logging.debug("validating param %s in answer file."%(paramName))
+def _validateParamValue(param, paramValue):
+    validateFunc = param.getKey("VALIDATION_FUNC")
+    optionsList  = param.getKey("OPTION_LIST")
+    logging.debug("validating param %s in answer file." % param.getKey("CONF_NAME"))
     if (not validateFunc(paramValue, optionsList)):
-        raise Exception(output_messages.ERR_EXP_VALIDATE_PARAM % (paramName))
+        raise Exception(output_messages.ERR_EXP_VALIDATE_PARAM % param.getKey("CONF_NAME"))
 
 def _handleGroupCondition(config, conditionName, conditionValue):
     """
@@ -1295,10 +1259,11 @@ def _loadParamFromFile(config, section, paramName):
     value = config.get(section, paramName)
 
     # Validate param value using its validation func
-    _validateParamValue(paramName, value)
+    param = _getParamByName("CONF_NAME")
+    _validateParamValue(param, value)
 
     # Keep param value in our never ending global conf
-    conf[paramName] = value
+    conf[param.getKey("CONF_NAME")] = value
 
     return value
 
@@ -1317,37 +1282,36 @@ def _handleAnswerFileParams(answerFile):
         fconf.read(answerFile)
 
         # Iterate all the groups and check the pre/post conditions
-        for group in conf_groups:
+        for group in GROUPS:
             # Get all params per group
 
             # Handle pre conditions for group
             preConditionValue = True
-            if group["PRE_CONDITION"]:
-                preConditionValue = _handleGroupCondition(fconf, group["PRE_CONDITION"], preConditionValue)
+            if group.getKey("PRE_CONDITION"):
+                preConditionValue = _handleGroupCondition(fconf, group.getKey("PRE_CONDITION"), preConditionValue)
 
             # Handle pre condition match with case insensitive values
-            if utils.compareStrIgnoreCase(preConditionValue, group["PRE_CONDITION_MATCH"]):
-                paramsList = _getParamsPerGroup(group["GROUP_NAME"])
-                for paramName in paramsList:
-                    _loadParamFromFile(fconf, "general", paramName)
+            if utils.compareStrIgnoreCase(preConditionValue, group.getKey("PRE_CONDITION_MATCH")):
+                for param in group.getAllParams():
+                    _loadParamFromFile(fconf, "general", param.getKey("CONF_NAME"))
 
                 # Handle post conditions for group only if pre condition passed
                 postConditionValue = True
-                if group["POST_CONDITION"]:
-                    postConditionValue = _handleGroupCondition(fconf, group["POST_CONDITION"], postConditionValue)
+                if group.getKey("POST_CONDITION"):
+                    postConditionValue = _handleGroupCondition(fconf, group.getKey("POST_CONDITION"), postConditionValue)
 
                     # Handle post condition match for group
-                    if not utils.compareStrIgnoreCase(postConditionValue, group["POST_CONDITION_MATCH"]):
+                    if not utils.compareStrIgnoreCase(postConditionValue, group.getKey("POST_CONDITION_MATCH")):
                         logging.error("The group condition (%s) returned: %s, which differs from the excpeted output: %s"%\
-                                      (group["GROUP_NAME"], postConditionValue, group["POST_CONDITION_MATCH"]))
+                                      (group.getKey("GROUP_NAME"), postConditionValue, group.getKey("POST_CONDITION_MATCH")))
                         raise ValueError(output_messages.ERR_EXP_GROUP_VALIDATION_ANS_FILE%\
-                                         (group["GROUP_NAME"], postConditionValue, group["POST_CONDITION_MATCH"]))
+                                         (group.getKey("GROUP_NAME"), postConditionValue, group("POST_CONDITION_MATCH")))
                     else:
-                        logging.debug("condition (%s) passed"%(group["POST_CONDITION"]))
+                        logging.debug("condition (%s) passed" % group.getKey("POST_CONDITION"))
                 else:
-                    logging.debug("no post condition check for group %s"%(group["GROUP_NAME"]))
+                    logging.debug("no post condition check for group %s" % group.getKey("GROUP_NAME"))
             else:
-                logging.debug("skipping params group %s since value of group validation is %s"%(group["GROUP_NAME"], preConditionValue))
+                logging.debug("skipping params group %s since value of group validation is %s" % (group.getKey("GROUP_NAME"), preConditionValue))
 
     except Exception as e:
         raise Exception(output_messages.ERR_EXP_HANDLE_ANSWER_FILE%(e))
@@ -1355,47 +1319,46 @@ def _handleAnswerFileParams(answerFile):
 def _handleInteractiveParams():
     global conf
     try:
-        for group in conf_groups:
+        for group in GROUPS:
             preConditionValue = True
-            logging.debug("going over group %s" % (group))
+            logging.debug("going over group %s" % group.getKey("GROUP_NAME"))
 
             # If pre_condition is set, get Value
-            if group["PRE_CONDITION"]:
-                preConditionValue = _getConditionValue(group["PRE_CONDITION"])
+            if group.getKey("PRE_CONDITION"):
+                preConditionValue = _getConditionValue(group.getKey("PRE_CONDITION"))
 
             inputLoop = True
 
             # If we have a match, i.e. condition returned True, go over all params in the group
-            if utils.compareStrIgnoreCase(preConditionValue, group["PRE_CONDITION_MATCH"]):
+            if utils.compareStrIgnoreCase(preConditionValue, group.getKey("PRE_CONDITION_MATCH")):
                 while inputLoop:
-                    paramsList = _getParamsPerGroup(group["GROUP_NAME"])
-
-                    for paramName in paramsList:
-                        input_param(_getParamPerName(paramName))
-                        #update password list, so we know to mask them
-                        _updateMaskedValueSet()
+                    for param in group.getAllParams():
+                        if not param.getKey("CONDITION"):
+                            input_param(param)
+                            #update password list, so we know to mask them
+                            _updateMaskedValueSet()
 
                     postConditionValue = True
 
                     # If group has a post condition, we check it after we get the input from
                     # all the params in the group. if the condition returns False, we loop over the group again
-                    if group["POST_CONDITION"]:
-                        postConditionValue = _getConditionValue(group["POST_CONDITION"])
+                    if group.getKey("POST_CONDITION"):
+                        postConditionValue = _getConditionValue(group.getKey("POST_CONDITION"))
 
-                        if postConditionValue == group["POST_CONDITION_MATCH"]:
+                        if postConditionValue == group.getKey("POST_CONDITION_MATCH"):
                             inputLoop = False
                         else:
                             #we clear the value of all params in the group
                             #in order to re-input them by the user
-                            for paramName in paramsList:
-                                if conf.has_key(paramName):
-                                    del conf[paramName]
-                                if commandLineValues.has_key(paramName):
-                                    del commandLineValues[paramName]
+                            for param in group.getAllParams():
+                                if conf.has_key(param.getKey("CONF_NAME")):
+                                    del conf[param.getKey("CONF_NAME")]
+                                if commandLineValues.has_key(param.getKey("CONF_NAME")):
+                                    del commandLineValues[param.getKey("CONF_NAME")]
                     else:
                         inputLoop = False
             else:
-                logging.debug("no post condition check for group %s" % group["GROUP_NAME"])
+                logging.debug("no post condition check for group %s" % group.getKey("GROUP_NAME"))
 
         _displaySummary()
     except KeyboardInterrupt:
@@ -1425,8 +1388,8 @@ def _getConditionValue(matchMember):
         #we assume that if we get a string as a member it is the name
         #of a member of conf_params
         if not conf.has_key(matchMember):
-            paramDict = _getParamPerName(matchMember)
-            input_param(paramDict)
+            param = _getParamByName(matchMember)
+            input_param(param)
         returnValue = conf[matchMember]
     else:
         raise TypeError("%s type (%s) is not supported"%(matchMember, type(matchMember)))
@@ -1439,45 +1402,35 @@ def _displaySummary():
     print output_messages.INFO_DSPLY_PARAMS
     print  "=" * (len(output_messages.INFO_DSPLY_PARAMS) - 1)
     logging.info("*** User input summary ***")
-    for group in conf_groups:
-        paramsList = _getParamsPerGroup(group["GROUP_NAME"])
-        for paramName in paramsList:
-            useDefault = _getParamKeyValue(paramName, "USE_DEFAULT")
-            if not useDefault and conf.has_key(paramName):
-                cmdOption = _getParamKeyValue(paramName, "CMD_OPTION")
+    for group in GROUPS:
+        for param in group.getAllParams():
+            if not param.getKey("USE_DEFAULT") and conf.has_key(param.getKey("CONF_NAME")):
+                cmdOption = param.getKey("CMD_OPTION")
                 l = 30 - len(cmdOption)
-                maskParam = _getParamKeyValue(paramName, "MASK_INPUT")
+                maskParam = param.getKey("MASK_INPUT")
                 # Only call mask on a value if the param has MASK_INPUT set to True
                 if maskParam:
-                    logging.info("%s: %s" % (cmdOption, mask(conf[paramName])))
-                    print "%s:" % (cmdOption) + " " * l + mask(conf[paramName])
+                    logging.info("%s: %s" % (cmdOption, mask(conf[param.getKey("CONF_NAME")])))
+                    print "%s:" % (cmdOption) + " " * l + mask(conf[param.getKey("CONF_NAME")])
                 else:
                     # Otherwise, log & display it as it is
-                    logging.info("%s: %s" % (cmdOption, conf[paramName]))
-                    print "%s:" % (cmdOption) + " " * l + conf[paramName]
+                    logging.info("%s: %s" % (cmdOption, conf[param.getKey("CONF_NAME")]))
+                    print "%s:" % (cmdOption) + " " * l + conf[param.getKey("CONF_NAME")]
     logging.info("*** User input summary ***")
     answer = _askYesNo(output_messages.INFO_USE_PARAMS)
     if not answer:
         logging.debug("user chose to re-enter the user parameters")
-        for group in conf_groups:
-            paramsList = _getParamsPerGroup(group["GROUP_NAME"])
-            preCond = group["PRE_CONDITION"]
-            postCond = group["POST_CONDITION"]
-            for item in [preCond, postCond]:
-                if type(item)== types.StringType:
-                    #item is a string, we assume a param name
-                    paramsList.append(item)
-            for paramName in paramsList:
-                if conf.has_key(paramName):
-                    param = _getParamPerName(paramName)
-                    if not param["MASK_INPUT"]:
-                        param["DEFAULT_VALUE"] = conf[paramName]
+        for group in GROUPS:
+            for param in group.getAllParams():
+                if conf.has_key(param.getKey("CONF_NAME")):
+                    if not param.getKey("MASK_INPUT"):
+                        param.setKey("DEFAULT_VALUE", conf[param.getKey("CONF_NAME")])
                     # Remove the string from mask_value_set in order
                     # to remove values that might be over overwritten. 
-                    removeMaskString(conf[paramName])
-                    del conf[paramName]
-                if commandLineValues.has_key(paramName):
-                    del commandLineValues[paramName]
+                    removeMaskString(conf[param.getKey("CONF_NAME")])
+                    del conf[param.getKey("CONF_NAME")]
+                if commandLineValues.has_key(param.getKey("CONF_NAME")):
+                    del commandLineValues[param.getKey("CONF_NAME")]
             print ""
         logging.debug("calling handleParams in interactive mode")
         return _handleParams(None)
@@ -1762,10 +1715,11 @@ def updateFileDescriptors():
 def _summaryParamsToLog():
     if len(conf) > 0:
         logging.debug("*** The following params were used as user input:")
-        for param in conf_params:
-            if conf.has_key(param["CONF_NAME"]):
-                maskedValue = mask(conf[param["CONF_NAME"]])
-                logging.debug("%s: %s" % (param["CMD_OPTION"], maskedValue ))
+        for group in GROUPS:
+            for param in group.getAllParams():
+                if conf.has_key(param.getKey("CONF_NAME")):
+                    maskedValue = mask(conf[param.getKey("CONF_NAME")])
+                    logging.debug("%s: %s" % (param.getKey("CMD_OPTION"), maskedValue ))
 
 def restartPostgresql():
     """
@@ -2289,8 +2243,9 @@ def generateAnswerFile(outputFile):
     content = StringIO()
     fd = open(outputFile,"w")
     content.write("[general]%s"%(os.linesep))
-    for param in conf_params:
-        content.write("%s=%s%s"%(param["CONF_NAME"], param["DEFAULT_VALUE"],os.linesep))
+    for group in GROUPS:
+        for param in group.getAllParams():
+            content.write("%s=%s%s" % (param.getKey("CONF_NAME"), param.getKey("DEFAULT_VALUE"), os.linesep))
     content.seek(0)
     fd.write(content.read())
     os.chmod(outputFile, 0600)
@@ -2338,22 +2293,14 @@ def initCmdLineParser():
                                             configuration file. using this option excludes all other option")
 
     # For each group, create a group option
-    for group in conf_groups:
-        groupParser = OptionGroup(parser, group["DESCRIPTION"])
-        params = _getParamsPerGroup(group["GROUP_NAME"])
-        # If the pre/post conditions are params, add them to the params list
-        for condition in ["PRE_CONDITION", "POST_CONDITION"]:
-            if group[condition] and type(group[condition]) == types.StringType:
-                params.append(group[condition])
+    for group in GROUPS:
+        groupParser = OptionGroup(parser, group.getKey("DESCRIPTION"))
 
-        # Add each param of this group into the group's parser
-        for param in params:
-            cmdOption = _getParamKeyValue(param, "CMD_OPTION")
-            paramUsage = _getParamKeyValue(param, "USAGE")
-            optionsList = _getParamKeyValue(param, "OPTION_LIST")
-            useDefault = _getParamKeyValue(param, "USE_DEFAULT")
-            # If the param has a populted options_list also provide the choices
-            # directive
+        for param in group.getAllParams():
+            cmdOption = param.getKey("CMD_OPTION")
+            paramUsage = param.getKey("USAGE")
+            optionsList = param.getKey("OPTION_LIST")
+            useDefault = param.getKey("USE_DEFAULT")
             if not useDefault:
                 if optionsList:
                     groupParser.add_option("--%s" % cmdOption, metavar=optionsList, help=paramUsage, choices=optionsList)
@@ -2405,7 +2352,7 @@ def initMain():
 if __name__ == "__main__":
     try:
         initMain()
-        
+
         runConfiguration = True
         confFile = None
 
@@ -2430,10 +2377,11 @@ if __name__ == "__main__":
             else:
                 for key, value in options.__dict__.items():
                     # Replace the _ with - in the string since optparse replace _ with -
-                    list = _getParamsPerKey("CMD_OPTION", key.replace("_","-"))
-                    for param in list:
-                        if value:
-                            commandLineValues[param["CONF_NAME"]] = value
+                    for group in GROUPS:
+                        param = group.getParams("CMD_OPTION", key.replace("_","-"))
+                        if len(param) > 0 and value:
+                            commandLineValues[param[0].getKey("CONF_NAME")] = value
+
             main(confFile)
 
     except SystemExit:
