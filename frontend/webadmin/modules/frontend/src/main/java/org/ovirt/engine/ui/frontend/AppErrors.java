@@ -1091,4 +1091,15 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE();
 
+    String HOT_PLUG_DISK_IS_NOT_SUPPORTED();
+
+    String ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED();
+
+    String HOT_PLUG_DISK_IS_NOT_VIRTIO();
+
+    String HOT_PLUG_DISK_IS_NOT_UNPLUGGED();
+
+    String HOT_UNPLUG_SYSTEM_DISK();
+
+    String HOT_UNPLUG_DISK_IS_NOT_PLUGGED();
 }

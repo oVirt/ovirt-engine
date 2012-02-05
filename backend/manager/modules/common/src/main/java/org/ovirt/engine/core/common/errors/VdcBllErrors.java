@@ -45,6 +45,8 @@ public enum VdcBllErrors {
     destroyErr(42),
     fenceAgent(43),
     NO_IMPLEMENTATION(44),
+    FailedToPlugDisk(45),
+    FailedToUnPlugDisk(46),
     MIGRATION_CANCEL_ERROR(47),
     recovery(99),
     GeneralException(100),

@@ -623,6 +623,10 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String NO_IMPLEMENTATION();
 
+    String FailedToPlugDisk();
+
+    String FailedToUnPlugDisk();
+
     String VOLUME_WAS_NOT_PREPARED_BEFORE_TEARDOWN();
 
     String IMAGES_NOT_SUPPORTED_ERROR();

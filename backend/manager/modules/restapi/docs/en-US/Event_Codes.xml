@@ -464,6 +464,10 @@
 					<row><entry>1167</entry><entry>IMPORTEXPORT_STARTING_REMOVE_VM</entry></row>
 					<row><entry>1168</entry><entry>IMPORTEXPORT_FAILED_TO_IMPORT_VM</entry></row>
 					<row><entry>1169</entry><entry>IMPORTEXPORT_FAILED_TO_IMPORT_TEMPLATE</entry></row>
+					<row><entry>2000</entry><entry>USER_HOTPLUG_DISK</entry></row>
+					<row><entry>2001</entry><entry>USER_FAILED_HOTPLUG_DISK</entry></row>
+					<row><entry>2002</entry><entry>USER_HOTUNPLUG_DISK</entry></row>
+					<row><entry>2003</entry><entry>USER_FAILED_HOTUNPLUG_DISK</entry></row>
 					<row><entry>9000</entry><entry>HOST_ALERT_FENCING_IS_NOT_CONFIGURED</entry></row>
 					<row><entry>9001</entry><entry>HOST_ALERT_FENCING_TEST_FAILED</entry></row>
 					<row><entry>9002</entry><entry>HOST_ALERT_FENCING_OPERATION_FAILED</entry></row>
