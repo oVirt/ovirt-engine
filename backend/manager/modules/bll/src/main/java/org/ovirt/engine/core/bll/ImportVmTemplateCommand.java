@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -199,7 +200,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
             }
         }
         if (retVal) {
-            Map<storage_domains, Integer> domainMap = getSpaceRequirementsForStorageDomains(getVmTemplate().getDiskList());
+            Map<storage_domains, Integer> domainMap = getSpaceRequirementsForStorageDomains(
+                    new ArrayList<DiskImage>(getVmTemplate().getDiskImageMap().values()));
             if (domainMap.isEmpty()) {
                 int sz = 0;
                 if (getVmTemplate().getDiskImageMap() != null) {

@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -283,7 +283,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         return getStorageDomainDAO().getForStoragePool(domainId.getValue(), getStoragePool().getId());
     }
 
-    protected Map<storage_domains, Integer> getSpaceRequirementsForStorageDomains(List<DiskImage> images) {
+    protected Map<storage_domains, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images) {
         Map<DiskImage, storage_domains> spaceMap = new HashMap<DiskImage,storage_domains>();
         Map<Guid, Guid> imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
         for(DiskImage image : images) {
