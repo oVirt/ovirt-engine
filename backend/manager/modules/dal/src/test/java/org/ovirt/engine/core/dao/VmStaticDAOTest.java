@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
@@ -45,6 +46,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         newVmStatic.setvm_name("New Virtual Machine");
         newVmStatic.setvds_group_id(VDS_GROUP_ID);
         newVmStatic.setvmt_guid(vmtemplate.getId());
+        newVmStatic.setorigin(OriginType.OVIRT);
     }
 
     /**
