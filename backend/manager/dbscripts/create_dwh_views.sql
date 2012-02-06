@@ -310,7 +310,7 @@ SELECT i.image_guid AS vm_disk_id,
            WHEN d.disk_interface = 'IDE' THEN cast(0 as smallint)
            WHEN d.disk_interface = 'SCSI' THEN cast(1 as smallint)
            WHEN d.disk_interface = 'VirtIO' THEN cast(2 as smallint)
-       END AS disk_interface,
+       END AS vm_disk_interface,
        i._create_date AS create_date,
        i._update_date AS update_date
 FROM   images as i
