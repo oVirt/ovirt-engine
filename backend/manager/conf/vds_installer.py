@@ -218,7 +218,7 @@ def downloadBootstrap(url_bs, random_num, vds_complete):
         logging.error(traceback.format_exc())
     return install_script
 
-def runInstaller(remote_nfs, orgName, systime, ncport, usevdcrepo, vds_config_str, url_rpm, vds_server, random_num, script, vds_complete, firewall_rules_file, rebootAfterInstallation):
+def runInstaller(remote_nfs, orgName, systime, usevdcrepo, vds_config_str, url_rpm, vds_server, random_num, script, vds_complete, firewall_rules_file, rebootAfterInstallation):
     """ -- Run VDS bootstrap scripts
     """
     try:
@@ -231,8 +231,6 @@ def runInstaller(remote_nfs, orgName, systime, ncport, usevdcrepo, vds_config_st
                     execfn += ["-O", orgName]
                 if systime:
                     execfn += ["-t", systime]
-                if ncport:
-                    execfn += ["-n", ncport]
                 if usevdcrepo:
                     execfn += ["-u", str(usevdcrepo)]
                 if firewall_rules_file:
@@ -328,7 +326,7 @@ def handle_ssh_key(host, port):
     return ssh_result
 
 def main():
-    """Usage: vds_installer.py  [-c vds_config_str] [-m remote_nfs] [-r rev_num] [-O organizationName] [-t YYYY-MM-DDTHH:mm:SS_system_time] [-n netconsole_host:port] [-p engine_port] <url_bs> <url_rpm> <vds_server> <random_num> <vds_complete>
+    """Usage: vds_installer.py  [-c vds_config_str] [-m remote_nfs] [-r rev_num] [-O organizationName] [-t YYYY-MM-DDTHH:mm:SS_system_time] [-p engine_port] <url_bs> <url_rpm> <vds_server> <random_num> <vds_complete>
                     url_bs - components url
                     url_rpm - rpm download url
                     random_num - random number for temp. file names generation
@@ -342,12 +340,11 @@ def main():
         vds_config_str = None
         orgName = None
         systime = None
-        ncport = None
         usevdcrepo = False
         engine_port = None
         firewall_rules_file = None
         rebootAfterInstallation = False
-        opts, args = getopt.getopt(sys.argv[1:], "c:m:r:O:t:n:u:p:bf:")
+        opts, args = getopt.getopt(sys.argv[1:], "c:m:r:O:t:u:p:bf:")
         for o,v in opts:
             if o == "-c":
                 vds_config_str = v
@@ -359,8 +356,6 @@ def main():
                 orgName = v
             if o == "-t":
                 systime = v
-            if o == "-n":
-                ncport = v
             if o == "-u":
                 usevdcrepo = (v[0].upper() == 'T')
             if o == "-p":
@@ -392,7 +387,7 @@ def main():
         if res == 0:
             vds_script = downloadBootstrap(url_bs, random_num, vds_complete)
             if vds_script:
-                runInstaller(remote_nfs, orgName, systime, ncport, usevdcrepo, vds_config_str, url_rpm, vds_server, random_num, vds_script, vds_complete, firewall_rules_file, rebootAfterInstallation)
+                runInstaller(remote_nfs, orgName, systime, usevdcrepo, vds_config_str, url_rpm, vds_server, random_num, vds_script, vds_complete, firewall_rules_file, rebootAfterInstallation)
                 if firewall_rules_file is not None:
                     try:
                         os.unlink(firewall_rules_file)

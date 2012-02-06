@@ -58,7 +58,7 @@ public class VdsInstaller implements IVdsInstallCallBack {
     private final VDS _vds;
     private String serverInstallationTime;
     private String _bootStrapInitialCommand =
-            "chmod +x {vdsInstaller}; {vdsInstaller} -c 'ssl={server_SSL_enabled};management_port={management_port}' -O '{OrganizationName}' {NetConsolePort} -t {utc_time} -u False {OverrideFirewall} {EnginePort} -b {URL1} {URL1} {vds-server} {GUID} {RunFlag}";
+            "chmod +x {vdsInstaller}; {vdsInstaller} -c 'ssl={server_SSL_enabled};management_port={management_port}' -O '{OrganizationName}' -t {utc_time} -u False {OverrideFirewall} {EnginePort} -b {URL1} {URL1} {vds-server} {GUID} {RunFlag}";
 
     protected String _finishCommand = "";
 
@@ -147,13 +147,6 @@ public class VdsInstaller implements IVdsInstallCallBack {
         serverInstallationTime = utcNow.toString("yyyy-MM-ddTHH:mm:ss");
         initialCommand = initialCommand.replace("{utc_time}", serverInstallationTime);
         initialCommand = initialCommand.replace("{management_port}", (Integer.toString(vds.getport())));
-        if (StringHelper.isNullOrEmpty(Config.<String> GetValue(ConfigValues.NetConsolePort))) {
-            // if empty send nothing
-            initialCommand = initialCommand.replace("{NetConsolePort}", "");
-        } else {
-            initialCommand = initialCommand.replace("{NetConsolePort}",
-                    String.format("-n %1$s", Config.<String> GetValue(ConfigValues.NetConsolePort)));
-        }
 
         String publicUrlPort = Config.<String> GetValue(ConfigValues.PublicURLPort);
         if (StringHelper.isNullOrEmpty(publicUrlPort)) {

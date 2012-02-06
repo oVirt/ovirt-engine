@@ -371,9 +371,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("RedHat")
     OrganizationName(125),
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    NetConsolePort(126),
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     IsMultilevelAdministrationOn(127),
