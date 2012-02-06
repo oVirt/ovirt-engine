@@ -15,13 +15,19 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
+import org.apache.commons.lang.StringUtils;
+import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.apache.xmlrpc.client.XmlRpcClientException;
+import org.apache.xmlrpc.client.XmlRpcCommonsTransport;
 import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
+import org.apache.xmlrpc.client.XmlRpcTransport;
 import org.apache.xmlrpc.client.util.ClientFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ssl.AuthSSLProtocolSocketFactory;
@@ -105,7 +111,7 @@ public class XmlRpcUtils {
         XmlRpcClient xmlRpcClient = new XmlRpcClient();
         xmlRpcClient.setConfig(config);
 
-        XmlRpcCommonsTransportFactory transportFactory = new XmlRpcCommonsTransportFactory(xmlRpcClient);
+        XmlRpcCommonsTransportFactory transportFactory = new CustomXmlRpcCommonsTransportFactory(xmlRpcClient);
         HttpClient httpclient = new HttpClient(new MultiThreadedHttpConnectionManager());
         transportFactory.setHttpClient(httpclient);
         xmlRpcClient.setTransportFactory(transportFactory);
@@ -185,5 +191,43 @@ public class XmlRpcUtils {
         }
 
     }
+
+    /**
+     * Designed to extend the request header with a value specifying the correlation ID to propagate to VDSM.
+     */
+    private static class CustomXmlRpcCommonsTransport extends XmlRpcCommonsTransport {
+
+        private static final String FLOW_ID_HEADER_NAME = "FlowID";
+
+        public CustomXmlRpcCommonsTransport(XmlRpcCommonsTransportFactory pFactory) {
+            super(pFactory);
+        }
+
+        @Override
+        protected void initHttpHeaders(XmlRpcRequest pRequest) throws XmlRpcClientException {
+            super.initHttpHeaders(pRequest);
+
+            String correlationId = ThreadLocalParamsContainer.getCorrelationId();
+            if (StringUtils.isNotBlank(correlationId)) {
+                method.setRequestHeader(FLOW_ID_HEADER_NAME, correlationId);
+            }
+        }
+    };
+
+    /**
+     * Designed to to override the factory with a customized transport.
+     */
+    private static class CustomXmlRpcCommonsTransportFactory extends XmlRpcCommonsTransportFactory {
+
+        public CustomXmlRpcCommonsTransportFactory(XmlRpcClient pClient) {
+            super(pClient);
+        }
+
+        @Override
+        public XmlRpcTransport getTransport() {
+            return new CustomXmlRpcCommonsTransport(this);
+        }
+
+    };
 
 }
