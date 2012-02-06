@@ -133,6 +133,8 @@ install_setup:
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/engine_validators.py
 	cp -f ./packaging/fedora/setup/engine_params.py $(PREFIX)/usr/share/ovirt-engine/scripts
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/engine_params.py
+	cp -f ./packaging/fedora/setup/setup_sequences.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/setup_sequences.py
 	cp -f ./packaging/fedora/setup/common_utils.py $(PREFIX)/usr/share/ovirt-engine/scripts
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/common_utils.py
 	cp -f ./packaging/fedora/setup/resources/jboss/web-conf.js $(PREFIX)/etc/ovirt-engine

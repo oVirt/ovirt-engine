@@ -25,6 +25,7 @@ import random
 import tempfile
 from optparse import OptionParser, OptionGroup
 from engine_params import Group
+from setup_sequences import Sequence
 
 # Globals
 logFile = os.path.join(basedefs.DIR_LOG,basedefs.FILE_INSTALLER_LOG)
@@ -34,6 +35,11 @@ conf = {}
 messages = []
 GROUPS=[]
 commandLineValues = {}
+SEQUENCES = []
+
+# Required by stopRhevmDbRelatedServices & startRhevmDbRelatedServices
+etlService = utils.Service("rhevm-etl")
+notificationService = utils.Service("rhevm-notifierd")
 
 # List to hold all values to be masked in logging (i.e. passwords and sensitive data)
 #TODO: read default values from conf_param?
@@ -139,6 +145,59 @@ def generateMacRange():
     else:
         logging.error("Could not find a configured ip address, returning default MAC address range")
         return basedefs.CONST_DEFAULT_MAC_RANGE
+
+def initSequences():
+    sequences_conf = [
+                      { 'description'     : 'Initial Steps',
+                        'condition'       : [],
+                        'condition_match' : [],
+                        'steps'           : [ { 'title'     : output_messages.INFO_CONFIG_OVIRT_ENGINE,
+                                                'functions' : [_createJbossProfile, setMaxSharedMemory] },
+                                              { 'title'     : output_messages.INFO_CREATE_CA,
+                                                'functions' : [_createCA]},
+                                              { 'title'     : output_messages.INFO_UPD_JBOSS_CONF,
+                                                'functions' : [configJbossXml, deployJbossModules, _editRootWar]} ]
+                       },
+                      { 'description'     : 'Create DB',
+                        'condition'       : [_isDbAlreadyInstalled],
+                        'condition_match' : [False],
+                        'steps'           : [ { 'title'     : output_messages.INFO_SET_DB_SECURITY,
+                                                'functions' : [_updatePgPassFile, _encryptDBPass, configEncryptedPass]},
+                                              { 'title'     : output_messages.INFO_CREATE_DB,
+                                                'functions' : [_createDB,  _updateVDCOptions]},
+                                              { 'title'     : output_messages.INFO_UPD_DC_TYPE,
+                                                'functions' : [_updateDefaultDCType]} ]
+                       },
+                      { 'description'     : 'Update DB',
+                        'condition'       : [_isDbAlreadyInstalled],
+                        'condition_match' : [True],
+                        'steps'           : [ { 'title'     : output_messages.INFO_UPGRADE_DB,
+                                                'functions' : [stopRhevmDbRelatedServices, restartPostgresql, _upgradeDB, startRhevmDbRelatedServices]} ]
+                       },
+                      { 'description'     : 'Edit Configuration',
+                        'condition'       : [],
+                        'condition_match' : [],
+                        'steps'           : [ { 'title'     : output_messages.INFO_UPD_RHEVM_CONF,
+                                                'functions' : [_editToolsConfFile, editPostgresConf, updateFileDescriptors] } ]
+                       },
+                      { 'description'     : 'Config NFS',
+                        'condition'       : [utils.compareStrIgnoreCase, conf["CONFIG_NFS"], "yes"],
+                        'condition_match' : [True],
+                        'steps'           : [ { 'title'     : output_messages.INFO_CFG_NFS,
+                                                'functions' : [_configNfsShare] } ]
+                       },
+                      { 'description'     : 'Final Steps',
+                        'condition'       : [],
+                        'condition_match' : [],
+                        'steps'           : [ { 'title'     : output_messages.INFO_CFG_IPTABLES,
+                                                'functions' : [_configIptables] },
+                                              { 'title'     : output_messages.INFO_START_JBOSS,
+                                                'functions' : [_startJboss] } ]
+                       },
+                     ]
+
+    for item in sequences_conf:
+        SEQUENCES.append(Sequence(item['description'], item['condition'], item['condition_match'], item['steps']))
 
 def initConfig():
     """
@@ -1117,27 +1176,6 @@ def _verifyUserPermissions():
     if os.geteuid() != 0:
         sys.exit(output_messages.ERR_EXP_INVALID_PERM%(username))
 
-def runFunction(funcs, displayString):
-    #keep relative space
-    spaceLen = basedefs.SPACE_LEN - len(displayString)
-    try:
-        print "%s..."%(displayString),
-        sys.stdout.flush()
-        if type(funcs) is types.ListType:
-            for funcName in funcs:
-                logging.debug("running %s"%(funcName.func_name))
-                funcName()
-        elif type(funcs) is types.FunctionType:
-            logging.debug("running %s"%(funcs.func_name))
-            funcs()
-        else:
-            logging.error("%s is not a supported type"%(type(funcs)))
-            raise Exception(output_messages.ERR_EXP_RUN_FUNCTION)
-    except Exception, (instance):
-        print ("[ " + _getColoredText(output_messages.INFO_ERROR, basedefs.RED) + " ]").rjust(spaceLen)
-        raise Exception(instance)
-    print ("[ " + _getColoredText(output_messages.INFO_DONE, basedefs.GREEN) + " ]").rjust(spaceLen)
-
 def _addDefaultsToMaskedValueSet():
     """
     For every param in conf_params
@@ -1743,12 +1781,13 @@ def _isDbAlreadyInstalled():
     else:
         return True
 
-def stopRhevmDbRelatedServices(etlService, notificationService):
+def stopRhevmDbRelatedServices():
     """
     shut down etl and notifier services
     in order to disconnect any open sessions to the db
     """
     # If the rhevm-etl service is installed, then try and stop it.
+
     if etlService.isServiceAvailable():
         try:
             etlService.stop(True)
@@ -1768,6 +1807,17 @@ def stopRhevmDbRelatedServices(etlService, notificationService):
             logging.warn("Failed to stop rhevm-notifierd service")
             logging.warn(traceback.format_exc())
             messages.append(output_messages.ERR_FAILED_STOP_SERVICE % "rhevm-notiferd")
+
+    (output, rc) = etlService.conditionalStart()
+    if rc != 0:
+        logging.warn("Failed to start rhevm-etl")
+        messages.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-etl")
+
+    (output, rc) = notificationService.conditionalStart()
+    if rc != 0:
+        logging.warn("Failed to start rhevm-notifierd")
+        messages.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-notifierd")
+
 
 def deployJbossModules():
     """
@@ -2111,7 +2161,7 @@ def configJbossSSL(xmlObj):
 
     logging.debug("SSL has been configured for jboss")
 
-def startRhevmDbRelatedServices(etlService, notificationService):
+def startRhevmDbRelatedServices():
     """
     bring back any service we stopped
     we won't start services that are down
@@ -2127,55 +2177,6 @@ def startRhevmDbRelatedServices(etlService, notificationService):
         logging.warn("Failed to start rhevm-notifierd")
         messages.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-notifierd")
 
-def runMainFunctions(conf):
-    # Create rhevm-slimmed jboss profile
-    runFunction([_createJbossProfile, setMaxSharedMemory], output_messages.INFO_CONFIG_OVIRT_ENGINE)
-
-    # Create CA
-    runFunction(_createCA, output_messages.INFO_CREATE_CA)
-
-    # Edit JBoss configuration
-    runFunction([configJbossXml, deployJbossModules, _editRootWar], output_messages.INFO_UPD_JBOSS_CONF)
-
-    # Install rhevm db if it's not installed and running already
-    if _isDbAlreadyInstalled() == False:
-        # Handle db authtication and password encryption
-        runFunction([_updatePgPassFile, _encryptDBPass, configEncryptedPass], output_messages.INFO_SET_DB_SECURITY)
-
-        # Create db, update vdc_options table and attach user to su role
-        runFunction([_createDB,  _updateVDCOptions], output_messages.INFO_CREATE_DB)
-
-        # Update default dc type
-        runFunction(_updateDefaultDCType, output_messages.INFO_UPD_DC_TYPE)
-
-    else:
-        # Stop ETL and NOTIFIER if services are available and running
-        etlService = utils.Service("rhevm-etl")
-        notificationService = utils.Service("rhevm-notifierd")
-
-        # Close any db connections that might intefere with db upgrade
-        stopRhevmDbRelatedServices(etlService, notificationService)
-
-        # If db already installed, we support db upgrade without deleting exiting data
-        runFunction([restartPostgresql, _upgradeDB], output_messages.INFO_UPGRADE_DB)
-
-        # Bring up any services we shut down before db upgrade
-        startRhevmDbRelatedServices(etlService, notificationService)
-
-    # Update default html welcome pages & conf files for isouploader & logcollector
-    #runFunction([_editExternalConfig, _editDefaultHtml, _editToolsConfFile, editPostgresConf, updateFileDescriptors], output_messages.INFO_UPD_RHEVM_CONF)
-    runFunction([_editToolsConfFile, editPostgresConf, updateFileDescriptors], output_messages.INFO_UPD_RHEVM_CONF)
-
-    if utils.compareStrIgnoreCase(conf["CONFIG_NFS"], "yes"):
-        # Config iso domain folder and load existing iso files
-        runFunction([_configNfsShare], output_messages.INFO_CFG_NFS)
-
-    # Config iptables
-    runFunction(_configIptables, output_messages.INFO_CFG_IPTABLES)
-
-    # Start jboss at the end
-    runFunction([_startJboss], output_messages.INFO_START_JBOSS)
-
 def isSecondRun():
     keystore = os.path.join(basedefs.DIR_OVIRT_PKI, ".keystore")
     engineLink = os.path.join(basedefs.DIR_JBOSS, "server", basedefs.JBOSS_PROFILE_NAME,"deploy","engine.ear")
@@ -2188,6 +2189,11 @@ def isSecondRun():
         return True
     else:
         return False
+
+def runSequences():
+    for sequence in SEQUENCES:
+        if sequence.validateCondition():
+            sequence.run()
 
 def main(configFile=None):
     global conf
@@ -2224,8 +2230,12 @@ def main(configFile=None):
         logging.debug("Entered Configuration stage")
         print "\n",output_messages.INFO_INSTALL
 
+        # Initialize Sequences
+        initSequences()
+
         # Run main setup logic
-        runMainFunctions(conf)
+        #runMainFunctions(conf)
+        runSequences()
 
         # Lock rhevm version
         #_lockRpmVersion()
@@ -2348,7 +2358,7 @@ def initMain():
 
     # Validate host has enough memory 
     _checkAvailableMemory()
-    
+
 if __name__ == "__main__":
     try:
         initMain()

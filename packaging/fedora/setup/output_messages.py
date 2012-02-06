@@ -343,3 +343,4 @@ ERR_EXP_EDIT_PSQL_CONF="Error: failed editing %s" % basedefs.FILE_PSQL_CONF
 ERR_EXP_FAILED_LIMITS="Error: Could not edit %s" % basedefs.FILE_LIMITS_CONF
 
 ERR_EXP_FAILED_KERNEL_PARAMS="Error: failed setting the kernel parameters"
+ERR_CLEAR_DB_CONNECTIONS = "Error: failed to clear all DB connections"

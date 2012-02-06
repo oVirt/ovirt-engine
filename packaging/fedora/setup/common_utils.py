@@ -163,6 +163,16 @@ def setXmlContent(xml,xpath,content):
     else:
         raise Exception(output_messages.ERR_EXP_UPD_XML_CONTENT%(xpath, len(node)))
 
+def getColoredText (text, color):
+    ''' gets text string and color
+        and returns a colored text.
+        the color values are RED/BLUE/GREEN/YELLOW
+        everytime we color a text, we need to disable
+        the color at the end of it, for that
+        we use the NO_COLOR chars.
+    '''
+    return color + text + basedefs.NO_COLOR
+
 def isTcpPortOpen(port):
     """
     checks using lsof that a given tcp port is not open
