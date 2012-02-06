@@ -24,7 +24,7 @@ CREATE OR REPLACE VIEW images_storage_domain_view
 AS
 
 -- TODO: Change code to treat disks values directly instead of through this view.
-SELECT
+SELECT vm_device.vm_id as vm_guid,
 storage_domain_static_view.storage as storage_path,
 	storage_domain_static_view.storage_pool_id as storage_pool_id,
 	images.image_guid as image_guid,
@@ -42,6 +42,7 @@ storage_domain_static_view.storage as storage_path,
     images.boot as boot,
     images.imageStatus as imageStatus,
     disks.disk_id as image_group_id,
+    vm_static.entity_type as entity_type,
     CAST (disks.internal_drive_mapping AS VARCHAR(50)) as internal_drive_mapping,
     CASE WHEN disks.disk_type = 'System' THEN 1
          WHEN disks.disk_type = 'Data' THEN 2
@@ -68,7 +69,7 @@ storage_domain_static_view
 ON
 images.storage_id = storage_domain_static_view.id
 left outer join disk_image_dynamic on images.image_guid = disk_image_dynamic.image_id
-JOIN disks ON images.image_group_id = disks.disk_id;
+JOIN disks ON images.image_group_id = disks.disk_id left outer JOIN vm_device on vm_device.device_id = images.image_guid left outer join vm_static on vm_static.vm_guid = vm_device.vm_id;
 
 
 CREATE OR REPLACE VIEW storage_domain_file_repos
@@ -102,7 +103,7 @@ SELECT     images_storage_domain_view.storage_path as storage_path, images_stora
                       images_storage_domain_view.app_list as app_list, images_storage_domain_view.storage_id as storage_id, images_storage_domain_view.vm_snapshot_id as vm_snapshot_id,
                       images_storage_domain_view.volume_type as volume_type, images_storage_domain_view.image_group_id as image_group_id, image_vm_map.vm_id as vm_guid,
                       image_vm_map.active as active, images_storage_domain_view.volume_format as volume_format, images_storage_domain_view.disk_type as disk_type,
-                      images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors
+                      images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors,images_storage_domain_view.entity_type as entity_type
 FROM         image_vm_map INNER JOIN
 images_storage_domain_view ON image_vm_map.image_id = images_storage_domain_view.image_guid
 INNER JOIN disk_image_dynamic ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id;
@@ -236,32 +237,6 @@ FROM                  vm_static AS vm_templates_1 INNER JOIN
                       images AS images_1 ON images_1.image_guid = vm_template_image_map_1.image_id INNER JOIN
                       image_group_storage_domain_map ON image_group_storage_domain_map.image_group_id = images_1.image_group_id
 WHERE                 entity_type = 'TEMPLATE';
-
-
-
-
-
-
-CREATE OR REPLACE VIEW vm_template_disk
-AS
-
-SELECT
-vm_template_image_map.image_id as vtim_it_guid,
-	vm_template_image_map.vm_id as vmt_guid,
-	image_templates.internal_drive_mapping as internal_drive_mapping,
-	image_templates.it_guid as it_guid,
-	image_templates.os as os,
-	image_templates.os_version as os_version,
-	image_templates.creation_date as creation_date,
-	image_templates.size as size,
-	image_templates.description as description,
-	image_templates.bootable as bootable
-FROM
-image_vm_map AS vm_template_image_map
-INNER JOIN
-image_templates ON (vm_template_image_map.image_id = image_templates.it_guid);
-
-
 
 
 CREATE OR REPLACE VIEW vm_pool_map_view

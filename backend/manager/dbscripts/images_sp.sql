@@ -88,10 +88,6 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
-
-
-
 Create or replace FUNCTION GetAllFromImages() RETURNS SETOF images_storage_domain_view
    AS $procedure$
 BEGIN

@@ -477,47 +477,39 @@ BEGIN
    where images.image_group_id = imap.image_group_id and images.storage_id = imap.storage_domain_id);
 	
    BEGIN
-      CREATE GLOBAL TEMPORARY TABLE tt_TEMPTEMPLATESTABLE AS select vmt_guid
-	
-         from vm_template_disk where vtim_it_guid in(select image_guid from images where storage_id = v_storage_domain_id);
+      CREATE GLOBAL TEMPORARY TABLE tt_TEMPTEMPLATESTABLE AS select vm_guid
+         from images_storage_domain_view where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
       exception when others then
          truncate table tt_TEMPTEMPLATESTABLE;
-         insert into tt_TEMPTEMPLATESTABLE select vmt_guid
-	
-         from vm_template_disk where vtim_it_guid in(select image_guid from images where storage_id = v_storage_domain_id);
+         insert into tt_TEMPTEMPLATESTABLE select vm_guid
+         from images_storage_domain_view where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
    END;
 
    BEGIN
       CREATE GLOBAL TEMPORARY TABLE tt_TEMPTEMPLATEIMAGESTABLE AS select image_id
 	
-         from image_vm_map AS vm_template_image_map where vm_id in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
+         from image_vm_map AS vm_template_image_map where vm_id in(select vm_guid from tt_TEMPTEMPLATESTABLE);
       exception when others then
          truncate table tt_TEMPTEMPLATEIMAGESTABLE;
          insert into tt_TEMPTEMPLATEIMAGESTABLE select image_id
 	
-         from image_vm_map AS vm_template_image_map where vm_id in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
+         from image_vm_map AS vm_template_image_map where vm_id in(select vm_guid from tt_TEMPTEMPLATESTABLE);
    END;
 
    delete FROM permissions where object_id in (select vm_guid from vm_images_view where storage_id = v_storage_domain_id);
-   delete FROM vm_static where vm_guid in(select vm_guid from vm_images_view where storage_id = v_storage_domain_id)
-   or vmt_guid in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
-
+   delete FROM snapshots WHERE vm_id in (select vm_guid from vm_images_view where storage_id  = v_storage_domain_id);
    delete FROM images where storage_id = v_storage_domain_id;
-
-   delete FROM image_vm_map where vm_id in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
-
-   delete FROM image_templates where it_guid in(select it_guid from tt_TEMPTEMPLATEIMAGESTABLE);
-
-   delete FROM vm_interface where vmt_guid in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
-   delete FROM permissions where object_id in (select vmt_guid from tt_TEMPTEMPLATESTABLE);
+   delete FROM image_vm_map where vm_id in(select vm_guid from tt_TEMPTEMPLATESTABLE);
+   delete FROM vm_interface where vmt_guid in(select vm_guid from tt_TEMPTEMPLATESTABLE);
+   delete FROM permissions where object_id in (select vm_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM permissions where object_id = v_storage_domain_id;
-   delete from vm_static where vm_guid in(select vmt_guid from tt_TEMPTEMPLATESTABLE);
+   delete FROM vm_static where vm_guid in(select vm_guid from vm_images_view where storage_id = v_storage_domain_id and vm_images_view.entity_type <> 'TEMPLATE');
+   delete from vm_static where vm_guid in(select vm_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM storage_domain_dynamic where id  = v_storage_domain_id;
    delete FROM storage_domain_static where id  = v_storage_domain_id;
     
 END; $procedure$
 LANGUAGE plpgsql;
-
 
 
 Create or replace FUNCTION Getstorage_domains_By_imageGroupId(v_image_group_id UUID)
