@@ -825,31 +825,22 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         SetIsVmRunningStateless();
 
         if (_isVmRunningStateless) {
-            if (DbFacade.getInstance().getDiskImageDAO().getAllStatelessVmImageMapsForVm(getVmId()).size() > 0) {
-                VdcActionParametersBase createSnapshotParameters = getParameters().getImagesParameters().get(0);
-                if (createSnapshotParameters != null) {
-                    createSnapshotParameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-                }
-                Backend.getInstance().EndAction(
-                        VdcActionType.CreateAllSnapshotsFromVm, createSnapshotParameters);
+            VdcActionParametersBase createSnapshotParameters = getParameters().getImagesParameters().get(0);
+            if (createSnapshotParameters != null) {
+                createSnapshotParameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+            }
+            Backend.getInstance().EndAction(
+                    VdcActionType.CreateAllSnapshotsFromVm, createSnapshotParameters);
 
-                getParameters().setShouldBeLogged(false);
-                getParameters().setRunAsStateless(false);
-                getParameters().setIsInternal(true);
-                setSucceeded(Backend.getInstance().runInternalAction(VdcActionType.RunVm, getParameters())
-                        .getSucceeded());
-                if (!getSucceeded()) {
-                    // could not run the vm don't try to run the end action
-                    // again
-                    log.warnFormat("Could not run the vm {0} on RunVm.EndSuccessfully", getVm().getvm_name());
-                    getReturnValue().setEndActionTryAgain(false);
-                }
-            } else
-            // the stateless-snapshot no longer exists (probably due to
-            // ProcessVmPoolOnStopVm
-            // treatment) -> no point in running the VM or retrying to
-            // EndAction:
-            {
+            getParameters().setShouldBeLogged(false);
+            getParameters().setRunAsStateless(false);
+            getParameters().setIsInternal(true);
+            setSucceeded(Backend.getInstance().runInternalAction(VdcActionType.RunVm, getParameters())
+                    .getSucceeded());
+            if (!getSucceeded()) {
+                // could not run the vm don't try to run the end action
+                // again
+                log.warnFormat("Could not run the vm {0} on RunVm.EndSuccessfully", getVm().getvm_name());
                 getReturnValue().setEndActionTryAgain(false);
             }
         }
