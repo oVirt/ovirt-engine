@@ -58,11 +58,11 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
             if (!connectResult.getSucceeded()) {
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_EXTEND_CONNECTION_FAILED);
                 if (connectResult.getFailedVds() != null) {
-                    getReturnValue().getCanDoActionMessages().add(String.format("$hostName %1s$",
+                    getReturnValue().getCanDoActionMessages().add(String.format("$hostName %1s",
                             connectResult.getFailedVds().getvds_name()));
                 }
                 if (connectResult.getFailedLun() != null) {
-                    getReturnValue().getCanDoActionMessages().add(String.format("$lun %1s$",
+                    getReturnValue().getCanDoActionMessages().add(String.format("$lun %1s",
                             connectResult.getFailedLun().getLUN_id()));
                 }
                 returnValue = false;
