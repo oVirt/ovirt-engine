@@ -48,12 +48,12 @@ Requires: vdsm-bootstrap
 Requires: openssl
 
 %description
-Open Virtualization Manager is a feature-rich
+oVirt Engine is a feature-rich
 server virtualization management system that provides advanced capabilities
 for managing the Open virtualization infrastructure for Servers and Desktops.
 
 %package jboss-deps
-Summary: Jboss dependencies of Open Virtualization Manager
+Summary: Jboss dependencies of oVirt Engine
 Group: Virtualization/Management
 Requires: ovirt-engine-jbossas
 Requires: %{name} = %{version}-%{release}
@@ -61,96 +61,96 @@ Requires: hsqldb >= 1:1.8.0.10-9
 Requires: jakarta-commons-discovery >= 1:0.4-7
 
 %description jboss-deps
-The JBOSS dependencies of Open Virtualization Manager
+The JBOSS dependencies of oVirt Engine
 
 %package backend
-Summary: Engine core of Open Virtualization Manager
+Summary: Engine core of oVirt Engine
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 
 %description backend
-The backend engine of Open Virtualization Manager
+The backend engine of oVirt Engine
 
 %package restapi
-Summary: Open API for Red Hat Enterprise Virtualization Manager
+Summary: RESTful API for oVirt Engine
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 
 %description restapi
-The Open API for Red Hat Enterprise Virtualization Manager
+The RESTful API for oVirt Engine
 
 %package genericapi
-Summary: Generic API for Open Virtualization Manager
+Summary: Generic API for oVirt Engine
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 
 %description genericapi
-The generic API for Open Virtualization Manager
+The generic API for oVirt Engine
 
 %package iso-uploader
-Summary: ISO Uploader tool for Open Virtualization Manager
+Summary: ISO Uploader tool for oVirt Engine
 Group: Virtualization/Management
 Requires: %{name}
 Requires: python-lxml
 
 %description iso-uploader
-ISO Uploader tool for Open Virtualization Manager
+ISO Uploader tool for oVirt Engine
 
 %package image-uploader
-Summary: Image Uploader tool for Open Virtualization Manager
+Summary: Image Uploader tool for oVirt Engine
 Group: Virtualization/Management
 Requires: %{name}
 Requires: python-lxml
 
 %description image-uploader
-Image Uploader tool for Open Virtualization Manager
+Image Uploader tool for oVirt Engine
 
 %package log-collector
-Summary: Log Collector tool for Open Virtualization Manager
+Summary: Log Collector tool for oVirt Engine
 Group: Virtualization/Management
 Requires: %{name}
 Requires: sos
 Requires: python-lxml
 
 %description log-collector
-Log Collector tool for Open Virtualization Manager
+Log Collector tool for oVirt Engine
 
 %package setup
-Summary: Setup and upgrade scripts for Open Virtualization Manager
+Summary: Setup and upgrade scripts for oVirt Engine
 Group: Virtualization/Management
 Requires: %{name}
 Requires: lsof
 Requires: nfs-utils
 
 %description setup
-Setup and upgrade scripts for Open Virtualization Manager
+Setup and upgrade scripts for oVirt Engine
 
 %package dbscripts
-Summary: Database scripts for Open Virtualization Manager
+Summary: Database scripts for oVirt Engine
 Group: Virtualization/Management
 Requires: %{name}
 
 %description dbscripts
-Database scripts for Open Virtualization Manager
+Database scripts for oVirt Engine
 
 %package userportal
-Summary: User Portal of Open Virtualization Manager
+Summary: User Portal of oVirt Engine
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 
 %description userportal
-The user portal interface to Open Virtualization Manager
+The user portal interface to oVirt Engine
 
 %package webadmin-portal
-Summary: Web Admin Portal of Open Virtualization Manager
+Summary: Web Admin Portal of oVirt Engine
 Group: Virtualization/Management
 Requires: %{name}
 
 %description webadmin-portal
-The web administration interface to Open Virtualization Manager
+The web administration interface to oVirt Engine
 
 %package tools-common
-Summary: Common libraries for  Open Virtualization Manager Tools
+Summary: Common libraries for  oVirt Engine Tools
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 Requires: jakarta-commons-collections
@@ -162,25 +162,25 @@ Requires: jakarta-commons-configuration
 Requires: jakarta-commons-jxpath
 
 %description tools-common
-The common libraries used by Open Virtualization Manager Tools
+The common libraries used by oVirt Engine Tools
 
 %package notification-service
-Summary: Notification service for Open Virtualization Manager Tools
+Summary: Notification service for oVirt Engine Tools
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 Requires: %{name}-tools-common = %{version}-%{release}
 Requires: classpathx-mail
 
 %description notification-service
-The notification service used by Open Virtualization Manager
+The notification service used by oVirt Engine
 
 %package config
-Summary: Configuration tool for  Open Virtualization Manager
+Summary: Configuration tool for oVirt Engine
 Group: Virtualization/Management
 Requires: %{name}-tools-common = %{version}-%{release}
 
 %description config
-The configuration tool for Open Virtualization Manager
+The configuration tool for oVirt Engine
 
 %prep
 %setup -c -q
