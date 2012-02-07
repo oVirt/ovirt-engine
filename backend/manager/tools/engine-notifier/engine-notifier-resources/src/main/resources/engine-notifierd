@@ -52,12 +52,6 @@ start() {
     fi
     echo -n $"Starting $prog: at $(date)"
 
-    # deamon doesn't close stdout or stderr and hangs when calling from python
-    # we are forced to close it ourselfs
-    # might be a bug in init.d/functions
-    exec 1>&- # close stdout
-    exec 2>&- # close stderr
-
     daemon --user $ENGINE_USER NOTIFIER_PID=$NOTIFIER_PID $NOTIFIER_SCRIPT
     RETVAL=$?
     [ $RETVAL = 0 ] && touch $lock_file && success || failure
