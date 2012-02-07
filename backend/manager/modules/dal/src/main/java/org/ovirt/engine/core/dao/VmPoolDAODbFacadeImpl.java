@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
@@ -342,6 +343,23 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
 
         return getCallsHandler().executeReadList("GetAllFromtime_lease_vm_pool_map",
                 new TimeLeaseVmPoolRowMapper(),
+                parameterSource);
+    }
+
+    public List<vm_pool_map> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId).addValue("status", vmStatus.getValue());
+
+        ParameterizedRowMapper<vm_pool_map> mapper = new ParameterizedRowMapper<vm_pool_map>() {
+            @Override
+            public vm_pool_map mapRow(ResultSet rs, int rowNum) throws SQLException {
+                vm_pool_map entity = new vm_pool_map();
+                entity.setvm_guid(Guid.createGuidFromString(rs.getString("vm_guid")));
+                entity.setvm_pool_id(Guid.createGuidFromString(rs.getString("vm_pool_id")));
+                return entity;
+            }
+        };
+
+        return getCallsHandler().executeReadList("getVmMapsInVmPoolByVmPoolIdAndStatus", mapper,
                 parameterSource);
     }
 }

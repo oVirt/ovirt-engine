@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
-import org.ovirt.engine.core.common.businessentities.image_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -43,8 +42,8 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
     private DiskImageDynamicDAO diskImageDynamicDao;
     private DiskDao diskDao;
     private DiskImage newImage;
-    private image_vm_pool_map existingVmPoolMapping;
-    private image_vm_pool_map newImageVmPoolMapping;
+    private stateless_vm_image_map existingStatelessMapping;
+    private stateless_vm_image_map newImageVmPoolMapping;
     private stateless_vm_image_map existingStatelessDiskImageMap;
     private stateless_vm_image_map newStatelessVmImageMap;
 
@@ -85,7 +84,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         diskImageDynamicDao = prepareDAO(dbFacade.getDiskImageDynamicDAO());
         diskDao = prepareDAO(dbFacade.getDiskDao());
 
-        existingVmPoolMapping = dao.getImageVmPoolMapByImageId(EXISTING_IMAGE_ID);
+        existingStatelessMapping = dao.getStatelessVmImageMapForImageId(EXISTING_IMAGE_ID);
 
         newImage = new DiskImage();
         newImage.setactive(true);
@@ -100,8 +99,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         newImage.setimage_group_id(Guid.NewGuid());
         newImage.setQuotaId(Guid.NewGuid());
         newImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.Empty)));
-        newImageVmPoolMapping = new image_vm_pool_map(FREE_IMAGE_ID, "z", FREE_VM_ID);
-
+        newImageVmPoolMapping = new stateless_vm_image_map(FREE_IMAGE_ID, "z", FREE_VM_ID);
         existingStatelessDiskImageMap = dao.getStatelessVmImageMapForImageId(existingEntity.getId());
         newStatelessVmImageMap = new stateless_vm_image_map(FREE_IMAGE_ID, "q", FREE_VM_ID);
         existingTemplate = dao.get(EXISTING_IMAGE_DISK_TEMPLATE );
@@ -140,46 +138,46 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
     }
 
     @Test
-    public void testGetImageVmPoolMapByImageIdWithWrongImage() {
-        image_vm_pool_map result = dao.getImageVmPoolMapByImageId(Guid.NewGuid());
+    public void testGetStatelessImageMapByImageIdWithWrongImage() {
+        stateless_vm_image_map result = dao.getStatelessVmImageMapForImageId(Guid.NewGuid());
 
         assertNull(result);
     }
 
     @Test
-    public void testGetImageVmPoolMapByImageId() {
-        image_vm_pool_map result = dao.getImageVmPoolMapByImageId(EXISTING_IMAGE_ID);
+    public void testGetStatelessImageMapByImageId() {
+        stateless_vm_image_map result = dao.getStatelessVmImageMapForImageId(EXISTING_IMAGE_ID);
 
         assertNotNull(result);
-        assertEquals(existingVmPoolMapping, result);
+        assertEquals(existingStatelessMapping, result);
     }
 
     @Test
-    public void testAddImageVmPoolMap() {
-        dao.addImageVmPoolMap(newImageVmPoolMapping);
+    public void testAddStatelessImageMap() {
+        dao.addStatelessVmImageMap(newImageVmPoolMapping);
 
-        image_vm_pool_map result = dao.getImageVmPoolMapByImageId(newImageVmPoolMapping.getimage_guid());
+        stateless_vm_image_map result = dao.getStatelessVmImageMapForImageId(newImageVmPoolMapping.getimage_guid());
 
         assertNotNull(result);
         assertEquals(newImageVmPoolMapping, result);
     }
 
     @Test
-    public void testRemoveImageVmPoolMap() {
-        dao.removeImageVmPoolMap(existingVmPoolMapping.getimage_guid());
+    public void testRemoveStatelessImageMap() {
+        dao.removeStatelessVmImageMap(existingStatelessMapping.getimage_guid());
 
-        image_vm_pool_map result = dao.getImageVmPoolMapByImageId(existingVmPoolMapping.getimage_guid());
+        stateless_vm_image_map result = dao.getStatelessVmImageMapForImageId(existingStatelessMapping.getimage_guid());
 
         assertNull(result);
     }
 
     @Test
-    public void testGetImageVmPoolMapByVmId() {
-        List<image_vm_pool_map> result = dao.getImageVmPoolMapByVmId(FixturesTool.VM_RHEL5_POOL_57);
+    public void testGetStatelessImageMapByVmId() {
+        List<stateless_vm_image_map> result = dao.getAllStatelessVmImageMapsForVm(FixturesTool.VM_RHEL5_POOL_57);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (image_vm_pool_map map : result) {
+        for (stateless_vm_image_map map : result) {
             assertEquals(FixturesTool.VM_RHEL5_POOL_57, map.getvm_guid());
         }
     }

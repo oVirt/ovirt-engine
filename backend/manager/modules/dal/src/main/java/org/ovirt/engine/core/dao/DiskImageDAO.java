@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.image_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -100,16 +99,7 @@ public interface DiskImageDAO extends GenericDao<DiskImage, Guid> {
     DiskImage getAncestor(Guid id);
 
     // TODO mapping methods moved out of DbFacade that will be removed when we have Hibernate
-
-    image_vm_pool_map getImageVmPoolMapByImageId(Guid imageId);
-
-    void addImageVmPoolMap(image_vm_pool_map map);
-
-    void removeImageVmPoolMap(Guid imageId);
-
     List<DiskImage> getAllForQuotaId(Guid quotaId);
-
-    List<image_vm_pool_map> getImageVmPoolMapByVmId(Guid vmId);
 
     stateless_vm_image_map getStatelessVmImageMapForImageId(Guid imageId);
 

@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
-import org.ovirt.engine.core.common.businessentities.image_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -201,58 +200,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         for (Guid guid : imagesList) {
             DbFacade.getInstance().getImageVmMapDAO().remove(new image_vm_map_id(guid, id));
         }
-    }
-
-    @Override
-    public image_vm_pool_map getImageVmPoolMapByImageId(Guid imageId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("image_guid", imageId);
-
-        ParameterizedRowMapper<image_vm_pool_map> mapper = new ParameterizedRowMapper<image_vm_pool_map>() {
-            @Override
-            public image_vm_pool_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                image_vm_pool_map entity = new image_vm_pool_map();
-                entity.setimage_guid(Guid.createGuidFromString(rs.getString("image_guid")));
-                entity.setinternal_drive_mapping(rs.getString("internal_drive_mapping"));
-                entity.setvm_guid(Guid.createGuidFromString(rs.getString("vm_guid")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeRead("Getimage_vm_pool_mapByimage_guid", mapper, parameterSource);
-    }
-
-    @Override
-    public void addImageVmPoolMap(image_vm_pool_map map) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("image_guid",
-                map.getimage_guid()).addValue("internal_drive_mapping", map.getinternal_drive_mapping()).addValue(
-                "vm_guid", map.getvm_guid());
-
-        getCallsHandler().executeModification("Insertimage_vm_pool_map", parameterSource);
-    }
-
-    @Override
-    public void removeImageVmPoolMap(Guid imageId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("image_guid", imageId);
-
-        getCallsHandler().executeModification("Deleteimage_vm_pool_map", parameterSource);
-    }
-
-    @Override
-    public List<image_vm_pool_map> getImageVmPoolMapByVmId(Guid vmId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_guid", vmId);
-
-        ParameterizedRowMapper<image_vm_pool_map> mapper = new ParameterizedRowMapper<image_vm_pool_map>() {
-            @Override
-            public image_vm_pool_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                image_vm_pool_map entity = new image_vm_pool_map();
-                entity.setimage_guid(Guid.createGuidFromString(rs.getString("image_guid")));
-                entity.setinternal_drive_mapping(rs.getString("internal_drive_mapping"));
-                entity.setvm_guid(Guid.createGuidFromString(rs.getString("vm_guid")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("Getimage_vm_pool_mapByvm_guid", mapper, parameterSource);
     }
 
     @Override

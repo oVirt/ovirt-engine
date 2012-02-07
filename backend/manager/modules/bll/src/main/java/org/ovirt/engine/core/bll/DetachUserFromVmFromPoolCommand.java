@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.image_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.Function;
@@ -63,13 +63,13 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
     }
 
     private void RestoreVmFromBaseSnapshot(VM vm) {
-        List<image_vm_pool_map> list = DbFacade.getInstance().getDiskImageDAO().getImageVmPoolMapByVmId(vm.getId());
+        List<stateless_vm_image_map> list = DbFacade.getInstance().getDiskImageDAO().getAllStatelessVmImageMapsForVm(vm.getId());
         // java.util.ArrayList<DiskImage> imagesList = null; // LINQ 32934
         // list.Select(a =>
         // DbFacade.Instance.GetSnapshotById(a.image_guid)).ToList();
-        List<DiskImage> imagesList = LinqUtils.foreach(list, new Function<image_vm_pool_map, DiskImage>() {
+        List<DiskImage> imagesList = LinqUtils.foreach(list, new Function<stateless_vm_image_map, DiskImage>() {
             @Override
-            public DiskImage eval(image_vm_pool_map a) {
+            public DiskImage eval(stateless_vm_image_map a) {
                 return DbFacade.getInstance().getDiskImageDAO().getSnapshotById(a.getimage_guid());
             }
         });

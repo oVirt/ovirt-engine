@@ -6,7 +6,6 @@ import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.image_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.images.DiskImageDAOHibernateImpl;
@@ -104,26 +103,6 @@ public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskI
     @Override
     public void removeAllForVmId(Guid id) {
         imageDAO.removeAllForVmId(id);
-    }
-
-    @Override
-    public image_vm_pool_map getImageVmPoolMapByImageId(Guid imageId) {
-        return imageVmPoolMapDAO.findOneByCriteria(Restrictions.eq("imageId", imageId));
-    }
-
-    @Override
-    public void addImageVmPoolMap(image_vm_pool_map map) {
-        imageVmPoolMapDAO.save(map);
-    }
-
-    @Override
-    public void removeImageVmPoolMap(Guid imageId) {
-        imageVmPoolMapDAO.remove(imageId);
-    }
-
-    @Override
-    public List<image_vm_pool_map> getImageVmPoolMapByVmId(Guid vmId) {
-        return imageVmPoolMapDAO.findByCriteria(Restrictions.eq("vmId", vmId));
     }
 
     @Override

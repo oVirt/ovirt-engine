@@ -93,6 +93,20 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION getVmMapsInVmPoolByVmPoolIdAndStatus(v_vm_pool_id UUID, v_status INTEGER) RETURNS SETOF vm_pool_map
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT vm_pool_id, vm_pool_map.vm_guid
+      FROM vm_pool_map, vm_dynamic
+      WHERE vm_pool_map.vm_guid = vm_dynamic.vm_guid
+      AND vm_pool_id = v_vm_pool_id
+      AND vm_dynamic.status = v_status;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 
 ----------------------------------------------------------------
 -- [image_vm_pool_map] Table

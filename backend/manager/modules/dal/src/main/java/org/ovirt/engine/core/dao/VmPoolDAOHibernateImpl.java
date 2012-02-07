@@ -11,6 +11,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map_id;
@@ -149,5 +150,11 @@ public class VmPoolDAOHibernateImpl extends BaseDAOHibernateImpl<vm_pools, NGuid
     @Override
     public List<time_lease_vm_pool_map> getAllTimeLeasedVmPoolMaps() {
         return timeLeaseVmPoolDAO.getAll();
+    }
+
+    @Override
+    public List<vm_pool_map> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

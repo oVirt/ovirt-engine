@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -270,6 +271,15 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllTimeLeaseVmPoolMaps() {
         List<time_lease_vm_pool_map> result = dao.getAllTimeLeasedVmPoolMaps();
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    public void testGetVmMapsInVmPoolByVmPoolIdAndStatus() {
+        List<vm_pool_map> result = dao.getVmMapsInVmPoolByVmPoolIdAndStatus(
+                existingVmPool.getvm_pool_id(), VMStatus.MigratingFrom);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());

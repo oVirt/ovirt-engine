@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -70,15 +70,56 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     public static Guid GetVmToAttach(NGuid poolId) {
-        List<vm_pool_map> vmPools = DbFacade.getInstance().getVmPoolDAO().getVmPoolsMapByVmPoolId(poolId);
-        if (vmPools != null) {
-            for (vm_pool_map map : vmPools) {
-                if (CanAttacheVmToUser(map.getvm_guid())) {
+        Guid vmGuid = Guid.Empty;
+        vmGuid = getPrestartedVmToAttach(poolId);
+        if (vmGuid == null || Guid.Empty.equals(vmGuid)) {
+            vmGuid = getNonPrestartedVmToAttach(poolId);
+        }
+        return vmGuid;
+    }
+
+    protected static Guid getNonPrestartedVmToAttach(NGuid vmPoolId) {
+        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDAO()
+        .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
+        if (vmPoolMaps != null) {
+            for (vm_pool_map map : vmPoolMaps) {
+                if (CanAttachNonPrestartedVmToUser(map.getvm_guid())) {
                     return map.getvm_guid();
                 }
             }
         }
         return Guid.Empty;
+    }
+
+    protected static Guid getPrestartedVmToAttach(NGuid vmPoolId) {
+        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDAO()
+        .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
+        if (vmPoolMaps != null) {
+            for (vm_pool_map map : vmPoolMaps) {
+                if (CanAttachPrestartedVmToUser(map.getvm_guid())) {
+                    return map.getvm_guid();
+                }
+            }
+        }
+        return Guid.Empty;
+    }
+
+    protected static int getNumOfPrestartedVmsInPool(NGuid poolId) {
+        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDAO()
+        .getVmMapsInVmPoolByVmPoolIdAndStatus(poolId, VMStatus.Up);
+        int prestartedVmsInPool = 0;
+        if (vmPoolMaps != null) {
+            for (vm_pool_map map : vmPoolMaps) {
+                if (CanAttachPrestartedVmToUser(map.getvm_guid())) {
+                    prestartedVmsInPool++;
+                }
+            }
+        }
+        return prestartedVmsInPool;
+    }
+
+    protected static List<vm_pool_map> getListOfVmsInPool(NGuid poolId) {
+        return DbFacade.getInstance().getVmPoolDAO().getVmPoolsMapByVmPoolId(poolId);
     }
 
     /**
@@ -88,19 +129,44 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
      *            the VM GUID to check.
      * @return True if can be attached, false otherwise.
      */
-    protected static boolean CanAttacheVmToUser(Guid vm_guid) {
-        // NOTE: We created the 'messages' variable since there are some methods
-        // that don't check if 'messages' is null or not before adding items to
-        // it (e.g. PerfromImagesCheck, CanFindVdsToRunOn).
+    protected static boolean CanAttachNonPrestartedVmToUser(Guid vm_guid) {
+        return IsVmFree(vm_guid, new java.util.ArrayList<String>());
+    }
+
+    /**
+     * Checks if a Prestarted Vm can be attached to a user.
+     *
+     * @param vmId
+     *            the VM GUID to check.
+     * @return True if can be attached, false otherwise.
+     */
+    protected static boolean CanAttachPrestartedVmToUser(Guid vmId) {
+        boolean returnValue = true;
         java.util.ArrayList<String> messages = new java.util.ArrayList<String>();
-        boolean ret = IsVmFree(vm_guid, messages);
-        if (ret) {
-            VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(vm_guid);
-            if (vmDynamic.getstatus() != VMStatus.Down) {
-                ret = false;
+
+        // check that there isn't another user already attached to this VM:
+        if (vmAssignedToUser(vmId, messages)) {
+            returnValue = false;
+        }
+
+        // Make sure the Vm is running stateless
+        if (returnValue) {
+            if (!vmIsRunningStateless(vmId, messages)) {
+                returnValue = false;
             }
         }
-        return ret;
+
+        return returnValue;
+    }
+
+    private static boolean vmIsRunningStateless(Guid vmId, ArrayList<String> messages) {
+        List<stateless_vm_image_map> list = DbFacade.getInstance().getDiskImageDAO()
+        .getAllStatelessVmImageMapsForVm(vmId);
+        if (list != null && list.size() > 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -118,11 +184,8 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         boolean returnValue;
 
         // check that there isn't another user already attached to this VM:
-        if (DbFacade.getInstance().getDbUserDAO().getAllForVm(vmId).size() > 0) {
+        if (vmAssignedToUser(vmId, messages)) {
             returnValue = false;
-            if (messages != null) {
-                messages.add(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_WITH_USERS_ATTACHED_TO_POOL.toString());
-            }
         }
 
         // check that vm can be run:
@@ -154,6 +217,17 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         }
 
         return returnValue;
+    }
+
+    private static boolean vmAssignedToUser(Guid vmId, ArrayList<String> messages) {
+        boolean vmAssignedToUser = false;
+        if (DbFacade.getInstance().getDbUserDAO().getAllForVm(vmId).size() > 0) {
+            vmAssignedToUser = true;
+            if (messages != null) {
+                messages.add(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_WITH_USERS_ATTACHED_TO_POOL.toString());
+            }
+        }
+        return vmAssignedToUser;
     }
 
     protected static boolean CanRunPoolVm(Guid vmId, java.util.ArrayList<String> messages) {

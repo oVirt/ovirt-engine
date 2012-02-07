@@ -2,9 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.image_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
@@ -69,18 +67,8 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
 
     @Override
     protected void executeCommand() {
-        // if (CanAddVmToPool(VmId,null,null))
-        // {
         DbFacade.getInstance().getVmPoolDAO().addVmToPool(new vm_pool_map(getVmId(), getVmPoolId()));
-        // VM vm = DbFacade.Instance.GetvmsBy_vm_guid(VmId);
-        VmHandler.updateDisksFromDb(getVm());
-        // todo: omer - save only vm_snapshot_id instead all vm images
-        for (DiskImage image : getVm().getDiskMap().values()) {
-            DbFacade.getInstance().getDiskImageDAO().addImageVmPoolMap(
-                    new image_vm_pool_map(image.getId(), image.getinternal_drive_mapping(), getVmId()));
-        }
         setSucceeded(true);
-        // }
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -105,4 +106,11 @@ public interface VmPoolDAO extends DAO, SearchDAO<vm_pools>{
     void removeTimeLeasedVmPoolMap(Guid id, Guid vmPoolId);
 
     List<time_lease_vm_pool_map> getAllTimeLeasedVmPoolMaps();
+
+    /**
+     * Gets the maps of the given pool, for the Vms that are in the given status
+     * @param vmPoolId
+     * @return
+     */
+    List<vm_pool_map> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus);
 }

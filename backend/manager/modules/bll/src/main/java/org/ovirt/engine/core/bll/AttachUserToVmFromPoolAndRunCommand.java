@@ -5,7 +5,6 @@ import java.util.List;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -14,7 +13,6 @@ import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
@@ -46,7 +44,7 @@ VmPoolUserCommandBase<T> {
 
         synchronized (_lockObject) {
             // no available VMs:
-            if (GetVmToAttach(getParameters().getVmPoolId()).equals(Guid.Empty))
+            if (Guid.Empty.equals(GetVmToAttach(getParameters().getVmPoolId())))
             {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_AVAILABLE_POOL_VMS);
                 returnValue = false;
@@ -106,103 +104,78 @@ VmPoolUserCommandBase<T> {
     protected void executeCommand() {
         getParameters().setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
 
-        // we are setting 'Vm' since VmId is overriden and 'Vm' is null
-        // (since 'Vm' is dependant on 'mVmId', which is not set here).
-        setVm(DbFacade.getInstance().getVmDAO().getById(getVmId()));
-
-        /**
-         * TODO: check users throw their groups as well
-         */
         initUser();
+        boolean isPrestartedVm = false;
+        Guid vmToAttach = Guid.Empty;
         synchronized (_lockObject) {
-            // check vm is not attached to user and attach
-            List<permissions> vmUserPermissions = DbFacade
-                    .getInstance()
-                    .getPermissionDAO()
-                    .getAllForRoleAndObject(PredefinedRoles.ENGINE_USER.getId(),
-                            getVmId());
-            if (vmUserPermissions == null || vmUserPermissions.isEmpty()) {
-                setVmId(GetVmToAttach(getParameters().getVmPoolId()));
-                if (!getVmId().equals(Guid.Empty)) {
-                    getParameters().setEntityId(getVmId());
-                    permissions perm = new permissions(getAdUserId(), PredefinedRoles.ENGINE_USER.getId(), getVmId(),
-                            VdcObjectType.VM);
-                    PermissionsOperationsParametes permParams = new PermissionsOperationsParametes(perm);
-                    permParams.setShouldBeLogged(false);
-                    permParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
-                    VdcReturnValueBase vdcReturnValueFromAddPerm = Backend.getInstance().runInternalAction(VdcActionType.AddPermission,
-                            permParams,
-                            (CommandContext) getCompensationContext());
-                    if (!vdcReturnValueFromAddPerm.getSucceeded()) {
-                        log.infoFormat("Failed to give user {0} permission to Vm {1} ", getAdUserId(), getVmId());
-                        setActionReturnValue(vdcReturnValueFromAddPerm);
-                        return;
-                    }
-                    log.infoFormat("Vm {0} was attached to user {1} ", getVmId(), getAdUserId());
+            vmToAttach = getPrestartedVmToAttach(getParameters().getVmPoolId());
+            if (!Guid.Empty.equals(vmToAttach)) {
+                isPrestartedVm = true;
+            } else {
+                vmToAttach = getNonPrestartedVmToAttach(getParameters().getVmPoolId());
+            }
+
+            if (!Guid.Empty.equals(vmToAttach)) {
+                getParameters().setEntityId(vmToAttach);
+                setVmId(vmToAttach);
+                permissions perm = new permissions(getAdUserId(), PredefinedRoles.ENGINE_USER.getId(), vmToAttach,
+                        VdcObjectType.VM);
+                PermissionsOperationsParametes permParams = new PermissionsOperationsParametes(perm);
+                permParams.setShouldBeLogged(false);
+                permParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
+                VdcReturnValueBase vdcReturnValueFromAddPerm = Backend.getInstance().runInternalAction(VdcActionType.AddPermission,
+                        permParams,
+                        new CommandContext(getCompensationContext()));
+                if (!vdcReturnValueFromAddPerm.getSucceeded()) {
+                    log.infoFormat("Failed to give user {0} permission to Vm {1} ", getAdUserId(), vmToAttach);
+                    setActionReturnValue(vdcReturnValueFromAddPerm);
+                    return;
                 } else {
-                    log.infoFormat("No free Vms in pool {0}. Cannot allocate for user {1} ", getVmPoolId(), getAdUserId());
-                    throw new VdcBLLException(VdcBllErrors.NO_FREE_VM_IN_POOL);
+                    log.infoFormat("Succceeded giving user {0} permission to Vm {1} ", getAdUserId(), vmToAttach);
                 }
+            } else {
+                log.infoFormat("No free Vms in pool {0}. Cannot allocate for user {1} ", getVmPoolId(), getAdUserId());
+                throw new VdcBLLException(VdcBllErrors.NO_FREE_VM_IN_POOL);
             }
         }
 
-        CreateAllSnapshotsFromVmParameters tempVar = new CreateAllSnapshotsFromVmParameters(getVmId(),
-                "SnapshotForVmFromPool");
-        tempVar.setShouldBeLogged(false);
-        tempVar.setParentCommand(getParameters().getParentCommand() != VdcActionType.Unknown ? getParameters()
-                .getParentCommand() : VdcActionType.AttachUserToVmFromPoolAndRun);
-        tempVar.setSessionId(getParameters().getSessionId());
-        tempVar.setEntityId(getParameters().getEntityId());
-        CreateAllSnapshotsFromVmParameters p = tempVar;
-        VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
-                VdcActionType.CreateAllSnapshotsFromVm, p, (CommandContext) getCompensationContext());
+        // Only when using a Vm that is not prestarted do we need to run the vm
+        if (!isPrestartedVm) {
+            RunVmParams runVmParams = new RunVmParams(vmToAttach);
+            runVmParams.setSessionId(getParameters().getSessionId());
+            runVmParams.setUseVnc(getVm().getvm_type() == VmType.Server);
+            runVmParams.setParentParemeters(getParameters());
+            runVmParams.setEntityId(vmToAttach);
+            runVmParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
+            runVmParams.setRunAsStateless(true);
+            VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
+                    runVmParams);
 
-        getParameters().getImagesParameters().add(p);
-
-        getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
-        setSucceeded(vdcReturnValue.getSucceeded());
-        setActionReturnValue(getVmId());
-
-        getReturnValue().getTaskIdList().addAll(getReturnValue().getInternalTaskIdList());
+            getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+            setSucceeded(vdcReturnValue.getSucceeded());
+            setActionReturnValue(vmToAttach);
+            getReturnValue().getTaskIdList().addAll(getReturnValue().getInternalTaskIdList());
+        }
     }
 
     @Override
     protected void EndSuccessfully() {
-        // we are setting 'Vm' since VmId is overriden and 'Vm' is null
-        // (since 'Vm' is dependant on 'mVmId', which is not set here).
-        setVm(DbFacade.getInstance().getVmDAO().getById(getVmId()));
-
         if (getVm() != null) {
-            // next line is for retrieving the VmPool from the DB
-            // so we won't get a log-deadlock because of the transaction.
-            if (DbFacade.getInstance().getDiskImageDAO().getImageVmPoolMapByVmId(getVm().getId()).size() > 0) {
-               setSucceeded(Backend.getInstance().endAction(VdcActionType.CreateAllSnapshotsFromVm,
-                                getParameters().getImagesParameters().get(0),
-                                new CommandContext(getCompensationContext()))
-                        .getSucceeded());
+            if (DbFacade.getInstance().getDiskImageDAO().getAllStatelessVmImageMapsForVm(getVm().getId()).size() > 0) {
+                setSucceeded(Backend.getInstance().endAction(VdcActionType.RunVm,
+                        getParameters().getImagesParameters().get(0), new CommandContext(getCompensationContext())).getSucceeded());
 
-                if (getSucceeded()) {
-                    // ParametersCurrentUser =
-                    // PoolUserParameters.ParametersCurrentUser,
-                    RunVmParams tempVar = new RunVmParams(getVm().getId());
-                    tempVar.setSessionId(getParameters().getSessionId());
-                    tempVar.setUseVnc(getVm().getvm_type() == VmType.Server);
-                    VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
-                            tempVar);
-
-                    setSucceeded(vdcReturnValue.getSucceeded());
-                } else {
-                    log.warn("EndSuccessfully: EndAction of CreateAllSnapshotsFromVm failed, detaching user from Vm");
+                if (!getSucceeded()) {
+                    log.warn("EndSuccessfully: EndAction of RunVm failed, detaching user from Vm");
                     detachUserFromVmFromPool(); // just in case.
                     getReturnValue().setEndActionTryAgain(false);
                 }
             }
-
             else
-            // Pool-snapshot is gone (probably due to ProcessVmPoolOnStopVm
-            // treatment) ->
-            // no point in running the VM or trying to run again the EndAction
-            // method:
+                // Pool-snapshot is gone (probably due to ProcessVmPoolOnStopVm
+                // treatment) ->
+                // no point in running the VM or trying to run again the EndAction
+                // method:
             {
                 log.warn("EndSuccessfully: No images were created for Vm, detaching user from Vm");
                 detachUserFromVmFromPool(); // just in case.
@@ -217,21 +190,13 @@ VmPoolUserCommandBase<T> {
 
     @Override
     protected void EndWithFailure() {
-        // we are setting 'Vm' since VmId is overriden and 'Vm' is null
-        // (since 'Vm' is dependant on 'mVmId', which is not set here).
-        setVm(DbFacade.getInstance().getVmDAO().getById(getVmId()));
-
-        // next line is for retrieving the VmPool (and Vm, implicitly) from
-        // the DB so we won't get a log-deadlock because of the transaction.
-        vm_pools vmPool = getVmPool();
-
-        // From AttachUserToVmAndRunCommand
-        Backend.getInstance().endAction(VdcActionType.CreateAllSnapshotsFromVm,
+        setSucceeded(Backend.getInstance().endAction(VdcActionType.RunVm,
                 getParameters().getImagesParameters().get(0),
-                new CommandContext(getCompensationContext()));
+                new CommandContext(getCompensationContext())).getSucceeded());
+        if (!getSucceeded()) {
+            log.warn("AttachUserToVmFromPoolAndRunCommand::EndWitFailure: EndAction of RunVm Failed");
+        }
         detachUserFromVmFromPool();
-        setSucceeded(true);
-
     }
 
     @Override
@@ -252,13 +217,13 @@ VmPoolUserCommandBase<T> {
 
     protected void detachUserFromVmFromPool() {
         // Detach user from vm from pool:
-        if (!getAdUserId().equals(Guid.Empty)) {
+        if (!Guid.Empty.equals(getAdUserId())) {
             permissions perm = DbFacade
-                    .getInstance()
-                    .getPermissionDAO()
-                    .getForRoleAndAdElementAndObject(
-                            PredefinedRoles.ENGINE_USER.getId(), getAdUserId(),
-                            getVmId());
+            .getInstance()
+            .getPermissionDAO()
+            .getForRoleAndAdElementAndObject(
+                    PredefinedRoles.ENGINE_USER.getId(), getAdUserId(),
+                    getVmId());
             if (perm != null) {
                 DbFacade.getInstance().getPermissionDAO().remove(perm.getId());
             }
