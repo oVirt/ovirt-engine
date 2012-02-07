@@ -123,7 +123,6 @@ public enum VdcActionType {
     UpdateVmPoolWithVms(305, ActionGroup.EDIT_VM_POOL_CONFIGURATION),
     AddVmAndAttachToPool(306),
     RemoveVmPool(307, ActionGroup.DELETE_VM_POOL),
-    AttachUserToVmFromPool(310),
     DetachUserFromVmFromPool(312),
     AddVmToPool(313),
     RemoveVmFromPool(314, ActionGroup.EDIT_VM_POOL_CONFIGURATION),
