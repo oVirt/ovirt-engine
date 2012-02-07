@@ -315,7 +315,11 @@ public class VmMapper {
             model.setCreationTime(DateMapper.map(entity.getvm_creation_date(), null));
         }
         if (entity.getelapsed_time() != null) {
-            model.setStartTime(DateMapper.map(new BigDecimal(entity.getelapsed_time()), null));
+            if (entity.getelapsed_time()==0) {
+                model.setStartTime(null);
+            } else {
+                model.setStartTime(DateMapper.map(new BigDecimal(entity.getelapsed_time()), null));
+            }
         }
         model.setPlacementPolicy(new VmPlacementPolicy());
         if(entity.getdedicated_vm_for_vds() !=null){
