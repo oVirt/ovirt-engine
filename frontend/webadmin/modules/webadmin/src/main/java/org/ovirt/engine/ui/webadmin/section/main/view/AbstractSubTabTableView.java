@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable;
 
 import com.google.gwt.core.client.GWT;

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -9,7 +10,6 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.UserSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;

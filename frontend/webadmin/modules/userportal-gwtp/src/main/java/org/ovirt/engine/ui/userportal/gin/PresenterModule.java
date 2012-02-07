@@ -17,6 +17,8 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBa
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedResourcePresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedTemplatePresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedVirtualMachinePresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.ExtendedVmSubTabPanelPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGeneralPresenter;
 import org.ovirt.engine.ui.userportal.section.main.view.HeaderView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainTabPanelView;
@@ -28,6 +30,8 @@ import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicLi
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedResourceView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedTemplateView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedVirtualMachineView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.ExtendedVmSubTabPanelView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmGeneralView;
 import org.ovirt.engine.ui.userportal.view.ErrorPopupView;
 
 /**
@@ -85,6 +89,18 @@ public class PresenterModule extends BasePresenterModule {
                 SideTabExtendedResourcePresenter.ViewDef.class,
                 SideTabExtendedResourceView.class,
                 SideTabExtendedResourcePresenter.ProxyDef.class);
+
+        // Main section: sub tabs
+
+        // Virtual Machine
+        bindPresenter(ExtendedVmSubTabPanelPresenter.class,
+                ExtendedVmSubTabPanelPresenter.ViewDef.class,
+                ExtendedVmSubTabPanelView.class,
+                ExtendedVmSubTabPanelPresenter.ProxyDef.class);
+        bindPresenter(SubTabExtendedVmGeneralPresenter.class,
+                SubTabExtendedVmGeneralPresenter.ViewDef.class,
+                SubTabExtendedVmGeneralView.class,
+                SubTabExtendedVmGeneralPresenter.ProxyDef.class);
 
         // Main section: basic view
         bindSingletonPresenterWidget(MainTabBasicDetailsPresenterWidget.class,

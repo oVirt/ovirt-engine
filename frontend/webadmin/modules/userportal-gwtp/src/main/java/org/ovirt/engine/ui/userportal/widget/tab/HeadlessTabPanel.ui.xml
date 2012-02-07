@@ -8,6 +8,6 @@
 		}
 	</ui:style>
 
-	<g:SimplePanel ui:field="tabContentContainer" addStyleNames="{style.content}" />
+	<g:LayoutPanel ui:field="tabContentContainer" addStyleNames="{style.content}" />
 
 </ui:UiBinder>

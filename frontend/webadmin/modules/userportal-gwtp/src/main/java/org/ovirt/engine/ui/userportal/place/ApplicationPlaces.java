@@ -21,4 +21,13 @@ public class ApplicationPlaces {
 
     public static final String extendedResourceSideTabPlace = "extended-resource";
 
+    // Main section: sub tabs
+
+    public static final String SUB_TAB_PREFIX = "-";
+
+    // Virtual Machines
+
+    public static final String extendedVirtualMachineGeneralSubTabPlace = extendedVirtualMachineSideTabPlace
+            + SUB_TAB_PREFIX + "general";
+
 }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.form;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
@@ -18,7 +19,7 @@ public abstract class AbstractFormPanel extends Composite {
     public HorizontalPanel contentPanel;
 
     // A list of detail viewers - every viewer represents a column of form items
-    public List<Grid> detailViewers;
+    public List<Grid> detailViewers = new ArrayList<Grid>();
 
     public void addFormDetailView(int numOfRows) {
         // Create a new column of form items

@@ -23,8 +23,10 @@ public class FormBuilder {
     // A map between property name and a FormItem
     HashMap<String, FormItem> propertyNamesMap = new HashMap<String, FormItem>();
 
+    // TODO(vszocs) why do we need EditorDriver in this widget?
     @SuppressWarnings("rawtypes")
     SimpleBeanEditorDriver driver;
+
     EntityModel model;
 
     public FormBuilder(AbstractFormPanel formPanel, int numOfColumns, int numOfRows) {

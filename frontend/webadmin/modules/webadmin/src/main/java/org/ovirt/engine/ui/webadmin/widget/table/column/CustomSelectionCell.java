@@ -15,7 +15,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 /**
- * A {@link Cell} used to render a drop-down list.
+ * A cell used to render a drop-down list.
  */
 public class CustomSelectionCell extends AbstractInputCell<String, String> {
 

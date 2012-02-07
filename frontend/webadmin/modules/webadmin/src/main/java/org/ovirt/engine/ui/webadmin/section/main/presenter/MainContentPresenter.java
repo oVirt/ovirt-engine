@@ -20,7 +20,10 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
 
     public interface ViewDef extends View {
 
-        void update(boolean subTabPanelVisible);
+        /**
+         * Controls the sub tab panel visibility.
+         */
+        void setSubTabPanelVisible(boolean subTabPanelVisible);
 
     }
 
@@ -42,7 +45,7 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
 
     @ProxyEvent
     public void onUpdateMainContentLayout(UpdateMainContentLayoutEvent event) {
-        getView().update(event.isSubTabPanelVisible());
+        getView().setSubTabPanelVisible(event.isSubTabPanelVisible());
     }
 
 }

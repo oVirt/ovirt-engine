@@ -39,7 +39,7 @@ public class MainContentView extends AbstractView implements MainContentPresente
     }
 
     @Override
-    public void update(boolean subTabPanelVisible) {
+    public void setSubTabPanelVisible(boolean subTabPanelVisible) {
         if (this.subTabPanelVisible != subTabPanelVisible) {
             splitPanel.clear();
 

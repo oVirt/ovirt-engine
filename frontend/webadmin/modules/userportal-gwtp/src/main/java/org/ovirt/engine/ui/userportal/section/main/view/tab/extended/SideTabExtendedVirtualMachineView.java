@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedVirtualMachinePresenter;
-import org.ovirt.engine.ui.userportal.section.main.view.AbstractSideTabTableView;
+import org.ovirt.engine.ui.userportal.section.main.view.AbstractSideTabWithDetailsView;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.widget.action.UserPortalButtonDefinition;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn;
@@ -16,14 +16,18 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.inject.Inject;
 
-public class SideTabExtendedVirtualMachineView extends AbstractSideTabTableView<UserPortalItemModel, UserPortalListModel>
+public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetailsView<UserPortalItemModel, UserPortalListModel>
         implements SideTabExtendedVirtualMachinePresenter.ViewDef {
 
     @Inject
     public SideTabExtendedVirtualMachineView(UserPortalListProvider modelProvider, ApplicationTemplates templates) {
         super(modelProvider);
         initTable(templates);
-        initWidget(getTable());
+    }
+
+    @Override
+    protected Object getSubTabPanelContentSlot() {
+        return SideTabExtendedVirtualMachinePresenter.TYPE_SetSubTabPanelContent;
     }
 
     void initTable(final ApplicationTemplates templates) {

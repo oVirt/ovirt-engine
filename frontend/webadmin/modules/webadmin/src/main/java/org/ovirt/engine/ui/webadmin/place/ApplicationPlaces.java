@@ -73,17 +73,19 @@ public class ApplicationPlaces {
 
     // Main section: sub tabs
 
-    // DataCenter
-
     public static final String SUB_TAB_PREFIX = "-";
+
+    // DataCenter
 
     public static final String dataCenterStorageSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX + "storage";
 
-    public static final String dataCenterNetworkSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX + "logical_networks";
+    public static final String dataCenterNetworkSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
+            + "logical_networks";
 
     public static final String dataCenterClusterSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX + "clusters";
 
-    public static final String dataCenterPermissionSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX + "permissions";
+    public static final String dataCenterPermissionSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
+            + "permissions";
 
     public static final String dataCenterEventSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX + "events";
 
@@ -95,7 +97,8 @@ public class ApplicationPlaces {
 
     public static final String storageVmBackupSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX + "vm_import";
 
-    public static final String storageTemplateBackupSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX + "template_import";
+    public static final String storageTemplateBackupSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
+            + "template_import";
 
     public static final String storageVmSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX + "virtual_machines";
 
@@ -121,17 +124,23 @@ public class ApplicationPlaces {
 
     // VirtualMachine
 
-    public static final String virtualMachineGeneralSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX + "general";
+    public static final String virtualMachineGeneralSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
+            + "general";
 
-    public static final String virtualMachineNetworkInterfaceSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX + "network_interfaces";
+    public static final String virtualMachineNetworkInterfaceSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
+            + "network_interfaces";
 
-    public static final String virtualMachineVirtualDiskSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX + "virtual_disks";
+    public static final String virtualMachineVirtualDiskSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
+            + "virtual_disks";
 
-    public static final String virtualMachineSnapshotSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX + "snapshots";
+    public static final String virtualMachineSnapshotSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
+            + "snapshots";
 
-    public static final String virtualMachineApplicationSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX + "applications";
+    public static final String virtualMachineApplicationSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
+            + "applications";
 
-    public static final String virtualMachinePermissionSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX + "permissions";
+    public static final String virtualMachinePermissionSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
+            + "permissions";
 
     public static final String virtualMachineEventSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX + "events";
 
@@ -163,7 +172,8 @@ public class ApplicationPlaces {
 
     public static final String templateVmSubTabPlace = templateMainTabPlace + SUB_TAB_PREFIX + "virtual_machines";
 
-    public static final String templateInterfaceSubTabPlace = templateMainTabPlace + SUB_TAB_PREFIX + "network_interfaces";
+    public static final String templateInterfaceSubTabPlace = templateMainTabPlace + SUB_TAB_PREFIX
+            + "network_interfaces";
 
     public static final String templateDiskSubTabPlace = templateMainTabPlace + SUB_TAB_PREFIX + "virtual_disks";
 

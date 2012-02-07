@@ -1,16 +1,15 @@
-package org.ovirt.engine.ui.webadmin.section.main.view;
+package org.ovirt.engine.ui.common.view;
 
+import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPresenter;
 
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 
 /**
- * Base class for form-based sub tab views.
+ * Base class for form-based {@link AbstractSubTabPresenter} views.
  *
  * @param <T>
  *            Main tab table row data type.
@@ -39,7 +38,7 @@ public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, 
 
     @Override
     public void setLoadingState(LoadingState state) {
-        setLoadingState(state);
+        // Form-based sub tab views don't indicate progress
     }
 
 }

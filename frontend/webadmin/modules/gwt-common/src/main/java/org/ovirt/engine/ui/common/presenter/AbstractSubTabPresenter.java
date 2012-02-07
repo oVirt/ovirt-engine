@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.section.main.presenter;
+package org.ovirt.engine.ui.common.presenter;
 
 import java.util.List;
 
@@ -21,10 +21,10 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 /**
- * Base class for sub tab presenters.
+ * Base class for presenters representing sub tabs that react to item selection changes within main tab presenters.
  *
  * @param <T>
  *            Main tab table row data type.
@@ -37,13 +37,13 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
  * @param <P>
  *            Proxy type.
  */
-public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends EntityModel, V extends AbstractSubTabPresenter.ViewDef<T>, P extends ProxyPlace<?>>
+public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends EntityModel, V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
         extends Presenter<V, P> {
 
     public interface ViewDef<T> extends View {
 
         /**
-         * Notifies the view that the main tab table selection has changed.
+         * Notifies the view that the main tab item selection has changed.
          */
         void setMainTabSelectedItem(T selectedItem);
 
@@ -53,6 +53,9 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
          */
         OrderedMultiSelectionModel<?> getTableSelectionModel();
 
+        /**
+         * Sets the loading state of the sub tab view.
+         */
         void setLoadingState(LoadingState state);
 
     }
@@ -67,11 +70,6 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
         this.modelProvider = modelProvider;
-    }
-
-    @Override
-    public boolean useManualReveal() {
-        return true;
     }
 
     @Override
@@ -90,6 +88,25 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         }
     }
 
+    /**
+     * Updates the detail model with items currently selected in the main tab.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    void updateDetailModelSelection() {
+        if (modelProvider instanceof SearchableDetailModelProvider) {
+            ((SearchableDetailModelProvider) modelProvider).setSelectedItems(getSelectedItems());
+        }
+    }
+
+    /**
+     * We use manual reveal since we want to prevent users from accessing this presenter when there is nothing selected
+     * in the main tab.
+     */
+    @Override
+    public boolean useManualReveal() {
+        return true;
+    }
+
     @Override
     protected void onReveal() {
         super.onReveal();
@@ -106,21 +123,11 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         clearSelection();
     }
 
-    /**
-     * Update the detail model selection with currently selected items in the table.
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void updateDetailModelSelection() {
-        if (modelProvider instanceof SearchableDetailModelProvider) {
-            ((SearchableDetailModelProvider) modelProvider).setSelectedItems(getSelectedItems());
-        }
-    }
-
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
 
-        // Reveal presenter only when there is something selected in the main tab table
+        // Reveal presenter only when there is something selected in the main tab
         if (hasMainTabSelection()) {
             getProxy().manualReveal(this);
         } else {
@@ -138,7 +145,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     }
 
     /**
-     * Notifies this sub tab presenter that the main tab table selection has changed.
+     * Notifies this sub tab presenter that the main tab selection has changed.
      */
     protected void updateMainTabSelection(List<T> mainTabSelectedItems) {
         this.mainTabSelectedItems = mainTabSelectedItems;
@@ -154,8 +161,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     /**
      * Returns the place request associated with the main tab presenter for this sub tab.
      * <p>
-     * Will be revealed when the user tries to navigate to this sub tab while there is nothing selected in the main tab
-     * table.
+     * Will be revealed when the user tries to access this sub tab while there is nothing selected in the main tab.
      */
     protected abstract PlaceRequest getMainTabRequest();
 
@@ -184,17 +190,18 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
     @ProxyEvent
     public void onUiCommonInit(UiCommonInitEvent event) {
+        // Notify view when the entity of the detail model changes
         modelProvider.getModel().getEntityChangedEvent().addListener(new IEventListener() {
-            @SuppressWarnings("unchecked")
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 Object entity = modelProvider.getModel().getEntity();
                 if (entity != null) {
-                    getView().setMainTabSelectedItem((T) entity);
+                    onDetailModelEntityChange(entity);
                 }
             }
         });
 
+        // Notify view when the detail model indicates progress
         modelProvider.getModel().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -206,6 +213,21 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
                 }
             }
         });
+    }
+
+    /**
+     * Override this method in case the detail model entity type is different from main model item type.
+     */
+    @SuppressWarnings("unchecked")
+    protected void onDetailModelEntityChange(Object entity) {
+        try {
+            getView().setMainTabSelectedItem((T) entity);
+        } catch (ClassCastException ex) {
+            // Detail model entity type is different from main model item type.
+            // This usually happens with synthetic item types that wrap multiple
+            // logical entities into single type. Since views can typically edit
+            // a single item type, we can do nothing here.
+        }
     }
 
     protected DetailModelProvider<M, D> getModelProvider() {

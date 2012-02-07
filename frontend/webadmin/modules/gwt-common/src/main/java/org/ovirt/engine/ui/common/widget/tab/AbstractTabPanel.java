@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.Tab;
 import com.gwtplatform.mvp.client.TabData;
@@ -22,7 +22,7 @@ import com.gwtplatform.mvp.client.TabPanel;
 public abstract class AbstractTabPanel extends Composite implements TabPanel {
 
     @UiField
-    public SimplePanel tabContentContainer;
+    public Panel tabContentContainer;
 
     // List of tabs managed by this tab panel, sorted by tab priority
     private final List<TabDefinition> tabList = new ArrayList<TabDefinition>();
@@ -85,7 +85,7 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel {
         tabContentContainer.clear();
 
         if (content != null) {
-            tabContentContainer.setWidget(content);
+            tabContentContainer.add(content);
         }
     }
 

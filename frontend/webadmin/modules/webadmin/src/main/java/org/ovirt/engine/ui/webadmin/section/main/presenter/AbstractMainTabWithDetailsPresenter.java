@@ -118,8 +118,4 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
         getView().getTableSelectionModel().clear();
     }
 
-    T getFirstSelectedItem() {
-        return hasSelection() ? getSelectedItems().get(0) : null;
-    }
-
 }

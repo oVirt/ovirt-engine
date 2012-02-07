@@ -4,8 +4,6 @@
 
 	<ui:style>
 		.bar {
-			float: left;
-			width: 150px;
 			height: 100%;
 			background-color: #E5E5E5;
 			padding: 5px 0;
@@ -19,10 +17,13 @@
 		}
 	</ui:style>
 
-	<g:HTMLPanel>
-		<g:FlowPanel ui:field="tabContainer" addStyleNames="{style.bar}" />
-		<g:SimplePanel ui:field="tabContentContainer" addStyleNames="{style.content}" />
-		<div style="clear: both;" />
-	</g:HTMLPanel>
+	<g:DockLayoutPanel unit="PX">
+		<g:west size="150">
+			<g:FlowPanel ui:field="tabContainer" addStyleNames="{style.bar}" />
+		</g:west>
+		<g:center>
+			<g:LayoutPanel ui:field="tabContentContainer" addStyleNames="{style.content}" />
+		</g:center>
+	</g:DockLayoutPanel>
 
 </ui:UiBinder>

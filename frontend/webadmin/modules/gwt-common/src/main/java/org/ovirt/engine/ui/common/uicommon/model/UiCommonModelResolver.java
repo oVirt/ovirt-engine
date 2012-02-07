@@ -51,7 +51,7 @@ public abstract class UiCommonModelResolver {
             }
         }
 
-        throw new IllegalStateException("Cannot resolve detail list model [" + detailModelClass
+        throw new IllegalStateException("Cannot resolve detail model [" + detailModelClass
                 + "] from main list model [" + mainModelClass + "]");
     }
 

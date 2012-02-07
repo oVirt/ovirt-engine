@@ -336,6 +336,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         setChangeCdCommand(new UICommand("ChangeCD", this));
         setNewTemplateCommand(new UICommand("NewTemplate", this));
 
+        UpdateActionAvailability();
+
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {

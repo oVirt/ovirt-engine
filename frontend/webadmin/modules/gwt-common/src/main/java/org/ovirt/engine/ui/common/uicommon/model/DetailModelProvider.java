@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 
 /**
- * Provider of general (non-searchable) detail model instances.
+ * Provider of general (including non-searchable) detail model instances.
  * <p>
  * Contains main model type information to distinguish detail models of the same type for different main models.
  *
