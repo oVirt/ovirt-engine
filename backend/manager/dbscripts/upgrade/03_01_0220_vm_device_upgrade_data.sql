@@ -30,7 +30,7 @@ BEGIN
 
                insert INTO vm_device(
                device_id, vm_id,type,device,address,boot_order,spec_params,is_managed,is_plugged,is_shared,is_readonly)
-               values ( uuid_generate_v1(), v_vm_id, 'video', v_display_type, '', null, v_display_mem, true, false, false, false);
+               values ( uuid_generate_v1(), v_vm_id, 'video', v_display_type, '', null, v_display_mem, true, null, false, false);
            end loop;
 
       else
@@ -150,24 +150,24 @@ BEGIN
        -- insert images (disks) to vm_device
        insert INTO vm_device(
        device_id, vm_id, type, device, address, boot_order, spec_params, is_managed, is_plugged, is_shared, is_readonly)
-       select image_id, vm_id, 'disk', 'disk', '', null, '', true, false, false, false from image_vm_map
+       select image_id, vm_id, 'disk', 'disk', '', null, '', true, true, false, false from image_vm_map
        where active = true ;
 
        -- insert network interfaces to vm_device
        insert INTO vm_device(
        device_id, vm_id, type, device, address, boot_order, spec_params, is_managed, is_plugged, is_shared, is_readonly)
-       select id, vm_guid, 'interface', 'bridge', '', null, '', true, false, false, false  from vm_interface
+       select id, vm_guid, 'interface', 'bridge', '', null, '', true, true, false, false  from vm_interface
        where vm_guid IS NOT NULL;
 
        insert INTO vm_device(
        device_id, vm_id, type, device, address, boot_order, spec_params, is_managed, is_plugged, is_shared, is_readonly)
-       select id, vmt_guid, 'interface', 'bridge', '', null, '', true, false, false, false  from vm_interface
+       select id, vmt_guid, 'interface', 'bridge', '', null, '', true, true, false, false  from vm_interface
        where vmt_guid IS NOT NULL;
 
        -- insert CDROM to vm_device (only 1 is supported currently)
        insert INTO vm_device(
        device_id, vm_id, type, device, address, boot_order, spec_params, is_managed, is_plugged, is_shared, is_readonly)
-       select uuid_generate_v1(), vm_guid, 'disk', 'cdrom', '', null, iso_path, true , false, false, false
+       select uuid_generate_v1(), vm_guid, 'disk', 'cdrom', '', null, iso_path, true , null, false, false
        from vm_static where iso_path != '';
 
        OPEN v_cur;

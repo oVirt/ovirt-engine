@@ -277,7 +277,7 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
                             0,
                             "",
                             true,
-                            false,
+                            true,
                             false);
             DbFacade.getInstance().getVmDeviceDAO().save(disk);
         }
