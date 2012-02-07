@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -124,6 +125,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         }
         case StorageDomain: {
             returnValue = searchStorageDomain();
+            break;
+        }
+        case Quota: {
+            returnValue = searchQuota();
             break;
         }
         default: {
@@ -251,6 +256,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     private List<storage_domains> searchStorageDomain() {
         return genericSearch(DbFacade.getInstance().getStorageDomainDAO(), true, null);
+    }
+
+    private List<Quota> searchQuota() {
+        return genericSearch(DbFacade.getInstance().getQuotaDAO(), true, null);
     }
 
     private QueryData2 InitQueryData(boolean useCache) {

@@ -20,7 +20,8 @@ public enum SearchType implements Serializable {
     VmPools,
     Cluster,
     StoragePool,
-    StorageDomain;
+    StorageDomain,
+    Quota;
 
     public int getValue() {
         return this.ordinal();

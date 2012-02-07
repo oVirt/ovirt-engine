@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
  * <code>QuotaDAO</code> is an interface for operations implements the calling to quota stored procedures. (@see
  * QuotaDAODbFacadeImpl)
  */
-public interface QuotaDAO extends DAO {
+public interface QuotaDAO extends DAO, SearchDAO<Quota> {
 
     /**
      * Saves the Quota definition.

@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaVdsGroupProperties;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * <code>QuotaDAODbFacadeImpl</code> implements the calling to quota stored procedures (@see QuotaDAO).
@@ -353,5 +354,10 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
             getCallsHandler().executeModification("InsertQuotaLimitation",
                     getQuotaStorageParameterMap(quota.getId(), quotaStorage));
         }
+    }
+
+    @Override
+    public List<Quota> getAllWithQuery(String query) {
+        return new SimpleJdbcTemplate(jdbcTemplate).query(query, getQuotaFromResultSet());
     }
 }
