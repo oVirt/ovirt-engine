@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
@@ -52,7 +53,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
                 setSucceeded(Backend.getInstance()
                         .runInternalAction(VdcActionType.AddStoragePoolWithStorages,
                                 parameters,
-                                getCompensationContext())
+                                new CommandContext(getCompensationContext()))
                         .getSucceeded());
 
             } else {

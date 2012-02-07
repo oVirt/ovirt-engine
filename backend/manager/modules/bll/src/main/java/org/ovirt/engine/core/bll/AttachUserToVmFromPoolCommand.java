@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
@@ -125,7 +126,7 @@ public class AttachUserToVmFromPoolCommand<T extends VmPoolUserParameters> exten
                     permParams.setShouldBeLogged(false);
                     Backend.getInstance().runInternalAction(VdcActionType.AddPermission,
                             permParams,
-                            getCompensationContext());
+                            new CommandContext(getCompensationContext()));
                     log.infoFormat("Vm {0} was attached to user {1} ", getVmId(), getAdUserId());
                 }
             }
@@ -144,7 +145,7 @@ public class AttachUserToVmFromPoolCommand<T extends VmPoolUserParameters> exten
         tempVar.setEntityId(getParameters().getEntityId());
         CreateAllSnapshotsFromVmParameters p = tempVar;
         VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
-                VdcActionType.CreateAllSnapshotsFromVm, p, getCompensationContext());
+                VdcActionType.CreateAllSnapshotsFromVm, p, new CommandContext(getCompensationContext()));
 
         getParameters().getImagesParameters().add(p);
 

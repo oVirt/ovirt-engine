@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.action.AdGroupElementParametersBase;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
@@ -35,8 +36,9 @@ public abstract class AdGroupsHandlingOperationBase<T extends AdGroupElementPara
                     AdGroup);
             permissionsParams.setSessionId(sessionId);
 
-            Backend.getInstance().runInternalAction(
-                    VdcActionType.AddPermission, permissionsParams, compensationContext);
+            Backend.getInstance().runInternalAction(VdcActionType.AddPermission,
+                    permissionsParams,
+                    new CommandContext(compensationContext));
         }
     }
 }

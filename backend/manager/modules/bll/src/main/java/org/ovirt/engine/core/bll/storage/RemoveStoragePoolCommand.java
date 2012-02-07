@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
@@ -285,7 +286,9 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             tempVar.setDoFormat(true);
             tempVar.setVdsId(vds.getvds_id());
             if (!Backend.getInstance()
-                    .runInternalAction(VdcActionType.RemoveStorageDomain, tempVar, getCompensationContext())
+                    .runInternalAction(VdcActionType.RemoveStorageDomain,
+                            tempVar,
+                            new CommandContext(getCompensationContext()))
                     .getSucceeded()) {
                 return false;
             }

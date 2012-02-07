@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
@@ -93,8 +94,10 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         getParameters().setCompensationEnabled(true);
         getParameters().setTransactionScopeOption(TransactionScopeOption.RequiresNew);
         if (sourceCluster.getstorage_pool_id() != null) {
-            VdcReturnValueBase removeVdsSpmIdReturn = Backend.getInstance().runInternalAction(
-                    VdcActionType.RemoveVdsSpmId, getParameters(), getCompensationContext());
+            VdcReturnValueBase removeVdsSpmIdReturn =
+                    Backend.getInstance().runInternalAction(VdcActionType.RemoveVdsSpmId,
+                            getParameters(),
+                            new CommandContext(getCompensationContext()));
             if (!removeVdsSpmIdReturn.getSucceeded()) {
                 setSucceeded(false);
                 getReturnValue().setFault(removeVdsSpmIdReturn.getFault());
@@ -103,8 +106,10 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         if (targetStoragePool != null) {
-            VdcReturnValueBase addVdsSpmIdReturn = Backend.getInstance().runInternalAction(
-                        VdcActionType.AddVdsSpmId, getParameters(), getCompensationContext());
+            VdcReturnValueBase addVdsSpmIdReturn =
+                    Backend.getInstance().runInternalAction(VdcActionType.AddVdsSpmId,
+                            getParameters(),
+                            new CommandContext(getCompensationContext()));
             if (!addVdsSpmIdReturn.getSucceeded()) {
                 setSucceeded(false);
                 getReturnValue().setFault(addVdsSpmIdReturn.getFault());

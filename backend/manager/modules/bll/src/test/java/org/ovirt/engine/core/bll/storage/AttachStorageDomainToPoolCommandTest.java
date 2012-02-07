@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -107,8 +108,9 @@ public class AttachStorageDomainToPoolCommandTest {
         returnValue.setSucceeded(true);
         VdcReturnValueBase vdcReturnValue = new VdcReturnValueBase();
         vdcReturnValue.setSucceeded(true);
-        when(backendInternal.runInternalAction(any(VdcActionType.class), any(VdcActionParametersBase.class),
-                any(CompensationContext.class))).thenReturn(vdcReturnValue);
+        when(backendInternal.runInternalAction(any(VdcActionType.class),
+                any(VdcActionParametersBase.class),
+                any(CommandContext.class))).thenReturn(vdcReturnValue);
         when(vdsBrokerFrontend.RunVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class)))
                 .thenReturn(returnValue);
         when(storageHelperDirector.getItem(any(StorageType.class))).thenReturn(mock(IStorageHelper.class));
