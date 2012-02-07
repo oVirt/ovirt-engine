@@ -2,16 +2,17 @@ package org.ovirt.engine.ui.userportal.uicommon.model;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 
 /**
  * A {@link DataBoundTabModelProvider} that creates the UiCommon model instance directly, instead of accessing this
  * instance through CommonModel.
- * <p>
- * Suitable for use in situations where UiCommon models don't have a governing top-level CommonModel that creates them.
  *
  * @param <T>
  *            List model item type.
@@ -33,7 +34,18 @@ public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableLi
 
     public UserPortalDataBoundModelProvider(BaseClientGinjector ginjector) {
         super(ginjector);
-        ginjector.getEventBus().addHandler(UserPortalModelInitEvent.getType(), this);
+        getEventBus().addHandler(UserPortalModelInitEvent.getType(), this);
+    }
+
+    @Override
+    public Object getKey(T item) {
+        if (item instanceof UserPortalItemModel) {
+            UserPortalItemModel itemModel = (UserPortalItemModel) item;
+            return itemModel.getIsPool() ? ((vm_pools) itemModel.getEntity()).getvm_pool_id()
+                    : ((VM) itemModel.getEntity()).getvm_guid();
+        }
+
+        return super.getKey(item);
     }
 
     @Override

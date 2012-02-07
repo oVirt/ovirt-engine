@@ -44,7 +44,7 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
         };
 
         // Add handler to be notified when the application window gains or looses its focus
-        ginjector.getEventBus().addHandler(ApplicationFocusChangeEvent.getType(), new ApplicationFocusChangeHandler() {
+        getEventBus().addHandler(ApplicationFocusChangeEvent.getType(), new ApplicationFocusChangeHandler() {
             @Override
             public void onApplicationFocusChange(ApplicationFocusChangeEvent event) {
                 DataBoundTabModelProvider.this.onWindowFocusChange(event.isInFocus());

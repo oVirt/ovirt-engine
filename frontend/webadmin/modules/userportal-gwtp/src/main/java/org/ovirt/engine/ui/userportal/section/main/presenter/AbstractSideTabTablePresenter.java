@@ -2,14 +2,13 @@ package org.ovirt.engine.ui.userportal.section.main.presenter;
 
 import java.util.List;
 
-import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
@@ -27,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
  *            Proxy type.
  */
 public abstract class AbstractSideTabTablePresenter<T, M extends SearchableListModel, V extends AbstractSideTabTablePresenter.ViewDef<T>, P extends Proxy<?>>
-        extends Presenter<V, P> {
+        extends AbstractModelActivationPresenter<T, M, V, P> {
 
     public interface ViewDef<T> extends View {
 
@@ -38,12 +37,9 @@ public abstract class AbstractSideTabTablePresenter<T, M extends SearchableListM
 
     }
 
-    private final SearchableTableModelProvider<T, M> modelProvider;
-
     public AbstractSideTabTablePresenter(EventBus eventBus, V view, P proxy,
-            SearchableTableModelProvider<T, M> modelProvider) {
-        super(eventBus, view, proxy);
-        this.modelProvider = modelProvider;
+            SearchableModelProvider<T, M> modelProvider) {
+        super(eventBus, view, proxy, modelProvider);
     }
 
     @Override

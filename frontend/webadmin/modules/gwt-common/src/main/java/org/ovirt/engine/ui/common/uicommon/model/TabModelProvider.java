@@ -48,6 +48,10 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
         });
     }
 
+    protected EventBus getEventBus() {
+        return eventBus;
+    }
+
     protected CommonModel getCommonModel() {
         return CommonModelManager.instance();
     }
