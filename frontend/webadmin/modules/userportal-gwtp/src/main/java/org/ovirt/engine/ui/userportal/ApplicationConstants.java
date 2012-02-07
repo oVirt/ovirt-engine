@@ -50,4 +50,28 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("General")
     String extendedVirtualMachineGeneralSubTabLabel();
 
+    // console popup view
+    @DefaultStringValue("Spice")
+    String spice();
+
+    @DefaultStringValue("Pass Ctrl-Alt-Del to virtual machine")
+    String ctrlAltDel();
+
+    @DefaultStringValue("Enable USB Auto-Share")
+    String usbAutoshare();
+
+    @DefaultStringValue("Open in Full Screen")
+    String openInFullScreen();
+
+    @DefaultStringValue("RDP Options")
+    String rdpOptions();
+
+    @DefaultStringValue("Remote Desktop")
+    String remoteDesctop();
+
+    @DefaultStringValue("SPICE Options")
+    String spiceOptions();
+
+    @DefaultStringValue("Console Options")
+    String consoleOptions();
 }

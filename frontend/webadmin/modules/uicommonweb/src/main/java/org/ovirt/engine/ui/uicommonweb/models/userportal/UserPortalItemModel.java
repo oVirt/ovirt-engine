@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 
+
 @SuppressWarnings("unused")
 public class UserPortalItemModel extends EntityModel
 {

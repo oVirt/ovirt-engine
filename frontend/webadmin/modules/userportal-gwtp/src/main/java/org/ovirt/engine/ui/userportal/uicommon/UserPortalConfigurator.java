@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -20,6 +21,8 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class UserPortalConfigurator extends Configurator implements IEventListener {
 
@@ -29,13 +32,16 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     private static final String USERPORTAL_ROOT_FOLDER = "/userportal-gwtp/userportal/";
 
     public EventDefinition spiceVersionFileFetchedEvent_Definition =
-        new EventDefinition("spiceVersionFileFetched", UserPortalConfigurator.class);
+            new EventDefinition("spiceVersionFileFetched", UserPortalConfigurator.class);
 
     public Event spiceVersionFileFetchedEvent = new Event(spiceVersionFileFetchedEvent_Definition);
 
     private boolean isInitialized;
+    private final Provider<MainTabBasicPresenter> basicPresenter;
 
-    public UserPortalConfigurator() {
+    @Inject
+    public UserPortalConfigurator(Provider<MainTabBasicPresenter> basicPresenter) {
+        this.basicPresenter = basicPresenter;
         // Set default configuration values
         setIsAdmin(true);
         setSpiceAdminConsole(true);
@@ -143,10 +149,18 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         case qxl:
             ClientAgentType cat = new ClientAgentType();
             return (cat.os.equalsIgnoreCase("Windows") && cat.browser.equalsIgnoreCase("Explorer")) ||
-            (cat.os.equalsIgnoreCase("Linux") && cat.browser.equalsIgnoreCase("Firefox"));
+                    (cat.os.equalsIgnoreCase("Linux") && cat.browser.equalsIgnoreCase("Firefox"));
         }
 
         return false;
+    }
+
+    /**
+     * Returns true if the basic view is shown, else returns false
+     */
+    @Override
+    public boolean getSpiceFullScreen() {
+        return basicPresenter.get().isVisible();
     }
 
     @Override

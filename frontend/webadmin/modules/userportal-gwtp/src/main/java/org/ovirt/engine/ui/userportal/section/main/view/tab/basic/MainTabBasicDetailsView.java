@@ -13,11 +13,12 @@ import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.VmTypeI
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
@@ -63,7 +64,7 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
 
     @UiField
     @Ignore
-    HTML editProtocol;
+    Anchor editProtocol;
 
     @UiField
     Style style;
@@ -72,6 +73,10 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
         String protocolWarning();
 
         String protocol();
+
+        String basicInfoDetailsLinkDisabled();
+
+        String basicInfoDetailsLink();
     }
 
     interface ViewUiBinder extends UiBinder<Widget, MainTabBasicDetailsView> {
@@ -125,9 +130,17 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     }
 
     @Override
-    public void setEditEnabled(boolean enabled) {
-        editProtocol.setText(" (Edit)");
-        // TODO
+    public void setEditConsoleEnabled(boolean enabled) {
+        if (enabled) {
+            editProtocol.setStyleName(style.basicInfoDetailsLink());
+        } else {
+            editProtocol.setStyleName(style.basicInfoDetailsLinkDisabled());
+        }
+    }
+
+    @Override
+    public HasClickHandlers getEditButton() {
+        return editProtocol;
     }
 
 }

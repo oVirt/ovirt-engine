@@ -10,6 +10,6 @@
 		}
 	</ui:style>
 
-	<g:PushButton ui:field="button" addStyleNames="{style.buttonStyle}" />
+	<g:ToggleButton ui:field="button" addStyleNames="{style.buttonStyle}" />
 
 </ui:UiBinder>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" 
+xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+xmlns:w="urn:import:org.ovirt.engine.ui.userportal.section.main.view.popup.console.widget">
+
+	<ui:with field='constants' type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
+
+	<ui:style>
+		.explanationLabel {
+			font-style: italic;
+			margin-left: 40px;
+			margin-bottom: 10px;
+			width: 300px;
+		}
+		
+		.fullWidth {
+			width: 100%;
+		}
+		
+		.labelStyle {
+			font-size: 11px;
+			font-weight: bold;
+			color: #333333;
+		}
+		
+	</ui:style>
+
+	<d:SimpleDialogPanel width="350px" height="380px">
+		<d:content>
+			<g:FlowPanel addStyleNames="{style.fullWidth}">
+				<g:FlowPanel addStyleNames="{style.fullWidth}">
+					<g:Label ui:field="consoleTitle" addStyleNames="{style.labelStyle}" />
+					<e:EntityModelRadioButtonEditor ui:field="spiceRadioButton" />
+					<e:EntityModelRadioButtonEditor ui:field="remoteDesktopRadioButton" />
+				</g:FlowPanel>
+				
+				<g:FlowPanel ui:field="spicePanel" addStyleNames="{style.fullWidth}">
+					<g:Label ui:field="spiceTitle" text="{constants.spiceOptions}" addStyleNames="{style.labelStyle}" />
+					<w:EntityModelValueCheckBoxEditor ui:field="ctrlAltDel" />
+					<w:EntityModelValueCheckBoxEditor ui:field="enableUsbAutoshare" />
+					<w:EntityModelValueCheckBoxEditor ui:field="openInFullScreen" />
+				</g:FlowPanel>
+				
+				<g:FlowPanel ui:field="rdpPanel" addStyleNames="{style.fullWidth}">
+					<g:Label text="{constants.rdpOptions}" addStyleNames="{style.labelStyle}" />
+					<w:EntityModelValueCheckBoxEditor ui:field="useLocalDrives" />
+				</g:FlowPanel>
+			</g:FlowPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

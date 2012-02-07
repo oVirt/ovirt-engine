@@ -40,7 +40,7 @@ public class ConsoleEditPanel extends NonDraggableModalPanel {
 		consoleTypeLabel.setDefaultValue("Select Console for '" + currentItem.getName() + "':");
 		consoleTypeLabel.setTextBoxStyle("generalLabel");
 		
-		final RadioGroupItem consoleType = new RadioGroupItem();
+        final RadioGroupItem consoleType = new RadioGroupItem();
 		LinkedHashMap<String,String> consoleTypeOptions = new LinkedHashMap<String, String>();
 					
 		if (currentItem.getDefaultConsole() instanceof SpiceConsoleModel && ConsoleUtils.isSpiceAvailable())

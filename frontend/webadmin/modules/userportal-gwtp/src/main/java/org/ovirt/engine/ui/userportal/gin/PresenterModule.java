@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.userportal.section.login.view.LoginSectionView;
 import org.ovirt.engine.ui.userportal.section.main.presenter.HeaderPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsolePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
@@ -22,6 +23,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.Sub
 import org.ovirt.engine.ui.userportal.section.main.view.HeaderView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainTabPanelView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.console.ConsolePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabBasicView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabExtendedView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicDetailsView;
@@ -112,6 +114,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(MainTabBasicListItemPresenterWidget.class,
                 MainTabBasicListItemPresenterWidget.ViewDef.class,
                 MainTabBasicListItemView.class);
+
+        // Console popup
+        bindPresenterWidget(ConsolePopupPresenterWidget.class,
+                ConsolePopupPresenterWidget.ViewDef.class,
+                ConsolePopupView.class);
     }
 
 }

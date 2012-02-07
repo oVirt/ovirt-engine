@@ -8,6 +8,8 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsoleModelChangedEvent;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListItemMessages;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.ConsoleProtocol;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.ConsoleUtils;
@@ -73,12 +75,24 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         this.consoleUtils = consoleUtils;
         this.modelProvider = modelProvider;
         this.messages = messages;
+
+        eventBus.addHandler(ConsoleModelChangedEvent.getType(), new ConsoleModelChangedHandler() {
+
+            @Override
+            public void onConsoleModelChanged(ConsoleModelChangedEvent event) {
+                // update only when my model has changed
+                if (sameEntity(model, event.getItemModel())) {
+                    setuSelectedProtocol(model);
+                }
+            }
+
+        });
     }
 
     public void setModel(final UserPortalItemModel model) {
         this.model = model;
         this.listModel = modelProvider.getModel();
-        selectedProtocol = consoleUtils.determineDefaultProtocol(model);
+        setuSelectedProtocol(model);
         setupDefaultVmStyles();
         getView().edit(model);
 
@@ -96,6 +110,10 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
             getView().setSelected();
         }
 
+    }
+
+    protected void setuSelectedProtocol(final UserPortalItemModel model) {
+        selectedProtocol = consoleUtils.determineDefaultProtocol(model);
     }
 
     protected boolean sameEntity(UserPortalItemModel prevModel, UserPortalItemModel newModel) {
@@ -120,7 +138,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         setupDefaultVmStyles();
     }
 
-    protected void setupDefaultVmStyles() {
+    private void setupDefaultVmStyles() {
         if (!isSelected()) {
             if (model.IsVmUp()) {
                 getView().setVmUpStyle();

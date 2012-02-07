@@ -117,13 +117,24 @@
 		    padding-top: 3px; 
 		}
 		
-		.editProtocolEnabled, .editProtocolDisabled {
-			float: right;
+		.basicInfoDetailsLinkDisabled, .basicInfoDetailsLink {
+			font-family: Arial,sans-serif;
 			color: #3A5F7C;
-		    font-family: Arial,sans-serif;
-		    font-size: 15px;
-		    padding-right: 20px;
+			font-size: 15px;
+			text-align: right;
+			float: right;
+			padding-right: 20px;
 		    padding-top: 5px;
+		}
+		
+		.basicInfoDetailsLinkDisabled {
+ 		 	text-decoration: underline;
+			color: #AAAAAA;
+		}
+
+		.basicInfoDetailsLink {
+			text-decoration: underline;
+			cursor: pointer;
 		}
 		
 	</ui:style>
@@ -189,7 +200,7 @@
 						<g:FlowPanel addStyleNames="{style.detailsRow}">
 							<g:Image resource='{resources.basicConsoleIcon}' addStyleNames="{style.rowIcon}" />
 							<g:Label text="Console : " addStyleNames="{style.rowLabel}" />
-							<g:HTML ui:field="editProtocol" addStyleNames="{style.editProtocolEnabled}" />
+							<g:Anchor ui:field="editProtocol" text="(Edit)" addStyleNames="{style.basicInfoDetailsLinkDisabled}"/>
 							<g:Label ui:field="protocolMessage" />
 						</g:FlowPanel>
 					</g:FlowPanel>
