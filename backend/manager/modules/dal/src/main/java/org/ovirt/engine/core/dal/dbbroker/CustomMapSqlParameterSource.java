@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 public class CustomMapSqlParameterSource extends MapSqlParameterSource {
 
-    private DbEngineDialect dialect;
+    private final DbEngineDialect dialect;
 
     public CustomMapSqlParameterSource(DbEngineDialect dialect) {
         this.dialect = dialect;
@@ -19,36 +19,36 @@ public class CustomMapSqlParameterSource extends MapSqlParameterSource {
 
     @Override
     public MapSqlParameterSource addValue(String paramName, Object value) {
+        Object tmpValue = value;
         // just to be safe
-        if (value != null) {
+        if (tmpValue != null) {
 
             // lets check if we need to translate value
-            if (value.getClass().isEnum())
-                value = extractEnumValue(value);
-            else if (value instanceof NGuid)
-                value = value.toString();
-            else if (value instanceof Version)
-                value = value.toString();
+            if (tmpValue.getClass().isEnum()) {
+                tmpValue = extractEnumValue(tmpValue);
+            } else if (tmpValue instanceof NGuid || tmpValue instanceof Version) {
+                tmpValue = value.toString();
+            }
         }
 
-        return super.addValue(dialect.getParamNamePrefix() + paramName, value);
+        return super.addValue(dialect.getParamNamePrefix() + paramName, tmpValue);
     }
 
-    private Object extractEnumValue(Object value) {
+    private static Object extractEnumValue(Object value) {
         Method getValueMethod = findMethodByName(value, "getValue");
         if (getValueMethod != null) {
             return invokeMethod(value, getValueMethod);
-        } else {
-            Method ordinalMethod = findMethodByName(value, "ordinal");
-            if (ordinalMethod != null) {
-                return invokeMethod(value, ordinalMethod);
-            } else {
-                return Integer.valueOf(0);
-            }
         }
+
+        Method ordinalMethod = findMethodByName(value, "ordinal");
+        if (ordinalMethod != null) {
+            return invokeMethod(value, ordinalMethod);
+        }
+
+        return Integer.valueOf(0);
     }
 
-    private Object invokeMethod(Object object, Method method) {
+    private static Object invokeMethod(Object object, Method method) {
         try {
             return method.invoke(object);
         } catch (Exception e) {
@@ -56,7 +56,7 @@ public class CustomMapSqlParameterSource extends MapSqlParameterSource {
         }
     }
 
-    private Method findMethodByName(Object value, String methodName) {
+    private static Method findMethodByName(Object value, String methodName) {
         try {
             return value.getClass().getMethod(methodName);
         } catch (NoSuchMethodException e) {
