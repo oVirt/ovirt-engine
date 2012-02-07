@@ -20,6 +20,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -296,8 +297,7 @@ public class Backend implements BackendInternal, BackendRemote {
     private VdcReturnValueBase runActionImpl(VdcActionType actionType,
             VdcActionParametersBase parameters,
             boolean runAsInternal,
-            CompensationContext context,
-            ExecutionContext executionContext) {
+            CommandContext context) {
 
         switch (actionType) {
         case AutoLogin:
@@ -310,14 +310,22 @@ public class Backend implements BackendInternal, BackendRemote {
             CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
             command.setInternalExecution(runAsInternal);
 
+            CompensationContext compensationContext = null;
+            ExecutionContext executionContext = null;
+
+            if (context != null) {
+                compensationContext = context.getCompensationContext();
+                executionContext = context.getExecutionContext();
+            }
+
             if (executionContext != null) {
                 command.setExecutionContext(executionContext);
             } else {
                 ExecutionHandler.prepareCommandForMonitoring(command, actionType, runAsInternal);
             }
 
-            if (context != null) {
-                command.setCompensationContext(context);
+            if (compensationContext != null) {
+                command.setCompensationContext(compensationContext);
             }
             return command.ExecuteAction();
         }
@@ -576,27 +584,12 @@ public class Backend implements BackendInternal, BackendRemote {
 
     private static final Log log = LogFactory.getLog(Backend.class);
 
-    private VdcReturnValueBase runActionImpl(VdcActionType actionType,
-            VdcActionParametersBase parameters,
-            boolean runAsInternal,
-            CompensationContext context) {
-        return runActionImpl(actionType, parameters, runAsInternal, context, null);
-    }
-
     @Override
     @ExcludeClassInterceptors
     public VdcReturnValueBase runInternalAction(VdcActionType actionType,
             VdcActionParametersBase parameters,
-            CompensationContext context) {
-        return runActionImpl(actionType, parameters, true, context, null);
+            CommandContext context) {
+        return runActionImpl(actionType, parameters, true, context);
     }
 
-    @Override
-    @ExcludeClassInterceptors
-    public VdcReturnValueBase runInternalAction(VdcActionType actionType,
-            VdcActionParametersBase parameters,
-            CompensationContext context,
-            ExecutionContext executionContext) {
-        return runActionImpl(actionType, parameters, true, context, executionContext);
-    }
 }
