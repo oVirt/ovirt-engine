@@ -71,7 +71,8 @@ public enum ConfigurationValues {
     ProductRPMVersion,
     RhevhLocalFSPath,
     CustomPublicConfig_AppsWebSite,
-    DocsURL;
+    DocsURL,
+    HotPlugEnabled;
 
     public int getValue() {
         return this.ordinal();
