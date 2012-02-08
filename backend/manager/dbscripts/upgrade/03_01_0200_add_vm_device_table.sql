@@ -14,7 +14,7 @@ BEGIN
           boot_order int default 0,
           spec_params text,
           is_managed boolean NOT NULL default false,
-          is_plugged boolean NOT NULL default false,
+          is_plugged boolean NULL ,
           is_shared boolean NOT NULL default false,
           is_readonly boolean NOT NULL default false,
           CONSTRAINT pk_vm_device  PRIMARY KEY(device_id,vm_id)
