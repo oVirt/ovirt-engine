@@ -38,6 +38,7 @@ public class GetLunsByVgIdTest extends BaseMockitoTest {
         expectGetConnections(cnxDAO);
 
         GetLunsByVgIdQuery query = new GetLunsByVgIdQuery(getParams());
+        query.setInternalExecution(true);
         query.ExecuteCommand();
 
         checkSucceeded(query, true);
@@ -95,7 +96,7 @@ public class GetLunsByVgIdTest extends BaseMockitoTest {
 
     protected storage_server_connections setUpConnection(int idx) {
         return new storage_server_connections(ADDRESS, GUIDS[idx].toString(), IQNS[idx], null,
-                                              StorageType.ISCSI, null, PORT, null);
+                StorageType.ISCSI, null, PORT, null);
     }
 
     protected GetLunsByVgIdParameters getParams() {

@@ -149,6 +149,8 @@ public class SessionDataContainerTest {
 
         assertNotNull("Get should return the value since the session was not removed",
                 SessionDataContainer.getInstance().GetData(TEST_SESSION_ID, "VdcUser"));
+        assertNotNull("Get should return the value since the session was not removed",
+                SessionDataContainer.getInstance().getUser(TEST_SESSION_ID));
         verifyZeroInteractions(dbUserDAOMcok);
     }
 
@@ -163,6 +165,8 @@ public class SessionDataContainerTest {
 
         assertNull("Get should return null since the session was removed",
                 SessionDataContainer.getInstance().GetData(TEST_SESSION_ID, "VdcUser"));
+        assertNull("Get should return null since the session was removed",
+                SessionDataContainer.getInstance().getUser(TEST_SESSION_ID));
         verify(dbUserDAOMcok).removeUserSessions(anyMap());
     }
 

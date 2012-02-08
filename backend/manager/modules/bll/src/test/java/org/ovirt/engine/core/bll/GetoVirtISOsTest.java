@@ -31,9 +31,12 @@ public class GetoVirtISOsTest extends BaseMockitoTest {
     private static final String OVIRT_ISOS_REPOSITORY_PATH = "src/test/resources/ovirt-isos";
     private static final String AVAILABLE_OVIRT_ISO_VERSION = "RHEV Hypervisor - 6.2 - 20111010.0.el6";
 
-    @Mock private DbFacade dbFacade;
-    @Mock private VdsDAO vdsDAO;
+    @Mock
+    private DbFacade dbFacade;
+    @Mock
+    private VdsDAO vdsDAO;
 
+    @Override
     @Before
     public void setUp() {
         initMocks(this);
@@ -59,6 +62,7 @@ public class GetoVirtISOsTest extends BaseMockitoTest {
 
         VdsIdParametersBase params = new VdsIdParametersBase(vds.getvds_id());
         GetoVirtISOsQuery<VdsIdParametersBase> query = new GetoVirtISOsQuery<VdsIdParametersBase>(params);
+        query.setInternalExecution(true);
         query.ExecuteCommand();
 
         checkSucceeded(query, true);
@@ -69,6 +73,7 @@ public class GetoVirtISOsTest extends BaseMockitoTest {
     public void testQueryWithNonExistingHostId() {
         VdsIdParametersBase params = new VdsIdParametersBase(Guid.NewGuid());
         GetoVirtISOsQuery<VdsIdParametersBase> query = new GetoVirtISOsQuery<VdsIdParametersBase>(params);
+        query.setInternalExecution(true);
         query.ExecuteCommand();
 
         checkSucceeded(query, true);
@@ -79,6 +84,7 @@ public class GetoVirtISOsTest extends BaseMockitoTest {
     public void testQueryWithoutHostId() {
         VdsIdParametersBase params = new VdsIdParametersBase();
         GetoVirtISOsQuery<VdsIdParametersBase> query = new GetoVirtISOsQuery<VdsIdParametersBase>(params);
+        query.setInternalExecution(true);
         query.ExecuteCommand();
 
         checkSucceeded(query, true);

@@ -6,7 +6,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
+import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveQueryReturnValue;
 import org.ovirt.engine.core.common.queries.LicenseReturnValue;
 import org.ovirt.engine.core.common.queries.SearchReturnValue;
@@ -45,6 +47,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     // get correct return value type
     private final VdcQueryReturnValue returnValue;
     private final VdcQueryType type;
+    private final IVdcUser user;
     private final P parameters;
     private boolean isInternalExecution = false;
 
@@ -52,6 +55,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         this.parameters = parameters;
         returnValue = CreateReturnValue();
         type = initQueryType();
+        user = initUser();
     }
 
     private final VdcQueryType initQueryType() {
@@ -64,40 +68,48 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         }
     }
 
+    private final IVdcUser initUser() {
+        return SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId());
+    }
+
     @Override
     protected void ExecuteCommand() {
-        if (validatePermissions() && validateInputs()) {
-            try {
-                returnValue.setSucceeded(true);
-                executeQueryCommand();
-            } catch (RuntimeException ex) {
-                returnValue.setSucceeded(false);
-                Throwable th = ex instanceof VdcBLLException ? ex : ex.getCause();
-                if (th != null && th instanceof VdcBLLException) {
-                    VdcBLLException vdcExc = (VdcBLLException) th;
-                    if (vdcExc.getErrorCode() != null) {
-                        returnValue.setExceptionString(vdcExc.getErrorCode().toString());
+        if (validatePermissions()) {
+            if (validateInputs()) {
+                try {
+                    returnValue.setSucceeded(true);
+                    executeQueryCommand();
+                } catch (RuntimeException ex) {
+                    returnValue.setSucceeded(false);
+                    Throwable th = ex instanceof VdcBLLException ? ex : ex.getCause();
+                    if (th != null && th instanceof VdcBLLException) {
+                        VdcBLLException vdcExc = (VdcBLLException) th;
+                        if (vdcExc.getErrorCode() != null) {
+                            returnValue.setExceptionString(vdcExc.getErrorCode().toString());
+                        } else {
+                            returnValue.setExceptionString(vdcExc.getMessage());
+                        }
+                        log.errorFormat("Query {0} failed. Exception message is {1}",
+                                getClass().getSimpleName(),
+                                vdcExc.getMessage());
+                        if (log.isDebugEnabled()) {
+                            log.debugFormat("Detailed stacktrace:", vdcExc);
+                        }
                     } else {
-                        returnValue.setExceptionString(vdcExc.getMessage());
-                    }
-                    log.errorFormat("Query {0} failed. Exception message is {1}",
-                            getClass().getSimpleName(),
-                            vdcExc.getMessage());
-                    if (log.isDebugEnabled()) {
-                        log.debugFormat("Detailed stacktrace:", vdcExc);
-                    }
-                } else {
-                    returnValue.setExceptionString(ex.getMessage());
-                    log.errorFormat("Query {0} failed. Exception message is {1}",
-                            getClass().getSimpleName(),
-                            ex.getMessage());
-                    if (log.isDebugEnabled()) {
-                        log.debugFormat("Detailed stacktrace:", ex);
+                        returnValue.setExceptionString(ex.getMessage());
+                        log.errorFormat("Query {0} failed. Exception message is {1}",
+                                getClass().getSimpleName(),
+                                ex.getMessage());
+                        if (log.isDebugEnabled()) {
+                            log.debugFormat("Detailed stacktrace:", ex);
+                        }
                     }
                 }
+            } else {
+                log.error("Query execution failed due to invalid inputs. " + returnValue.getExceptionString());
             }
         } else {
-            log.error("Query execution failed due to invalid inputs. " + returnValue.getExceptionString());
+            log.error("Query execution failed due to insufficient permissions.");
         }
     }
 
@@ -108,8 +120,13 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     *         <code>false</code> otherwise.
     */
     private final boolean validatePermissions() {
-        // Stub implementation as a placeholder to allow a small commit - currently, all the queries are admin queries
-        return type.isAdmin();
+        if (!isInternalExecution && (type.isAdmin() || !parameters.isRunAsUser())) {
+            if (user == null) {
+                return false;
+            }
+            return MultiLevelAdministrationHandler.isAdminUser(user.getUserId());
+        }
+        return true;
     }
 
     /**

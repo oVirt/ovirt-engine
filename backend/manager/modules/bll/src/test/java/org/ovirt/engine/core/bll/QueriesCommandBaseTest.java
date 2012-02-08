@@ -6,17 +6,30 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ovirt.engine.core.bll.session.SessionDataContainer;
+import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /** A test case for the {@link QueriesCommandBase} class. */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(MultiLevelAdministrationHandler.class)
 public class QueriesCommandBaseTest {
     private static final Log log = LogFactory.getLog(QueriesCommandBaseTest.class);
 
@@ -92,6 +105,66 @@ public class QueriesCommandBaseTest {
         assertEquals("Wrong type for 'ThereIsNoSuchQuery' ", VdcQueryType.Unknown, f.get(query));
     }
 
+    /** Tests Admin permission check */
+    @Test
+    public void testPermissionChecking() throws Exception {
+        boolean[] booleans = { true, false };
+        for (VdcQueryType queryType : VdcQueryType.values()) {
+            for (boolean isRunAsUser : booleans) {
+                for (boolean isUserAdmin : booleans) {
+                    for (boolean isInternalExecution : booleans) {
+                        boolean shouldBeAbleToRunQuery =
+                                isInternalExecution || isUserAdmin || (isRunAsUser && !queryType.isAdmin());
+
+                        log.debug("Running on query: " + toString());
+
+                        String sessionId = getClass().getSimpleName();
+
+                        // Mock parameters
+                        VdcQueryParametersBase params = mock(VdcQueryParametersBase.class);
+                        when(params.isRunAsUser()).thenReturn(isRunAsUser);
+                        when(params.getSessionId()).thenReturn(sessionId);
+
+                        Guid guid = mock(Guid.class);
+
+                        PowerMockito.mockStatic(MultiLevelAdministrationHandler.class);
+                        when(MultiLevelAdministrationHandler.isAdminUser(guid)).thenReturn(isUserAdmin);
+
+                        // Set up the user id env.
+                        IVdcUser user = mock(IVdcUser.class);
+                        when(user.getUserId()).thenReturn(guid);
+                        ThreadLocalParamsContainer.setHttpSessionId(sessionId);
+                        ThreadLocalParamsContainer.setVdcUser(user);
+
+                        // Mock-Set the query as admin/user
+                        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(params);
+                        Field adminQueryField = getQueryTypeField();
+                        adminQueryField.set(query, queryType);
+
+                        query.setInternalExecution(isInternalExecution);
+                        query.ExecuteCommand();
+                        assertEquals("Running with type=" + queryType + " isUserAdmin=" + isUserAdmin + " isRunAsUser="
+                                + isRunAsUser + " isInternalExecution=" + isInternalExecution + "\n " +
+                                "Query should succeed is: ", shouldBeAbleToRunQuery, query.getQueryReturnValue()
+                                .getSucceeded());
+
+                        ThreadLocalParamsContainer.clean();
+                        SessionDataContainer.getInstance().removeSession();
+                    }
+                }
+            }
+        }
+    }
+
+    /* Test Utilities */
+
+    @Before
+    @After
+    public void clearSession() {
+        ThreadLocalParamsContainer.clean();
+        SessionDataContainer.getInstance().removeSession();
+    }
+
     /** @return The private type field, via reflection */
     private static Field getQueryTypeField() {
         for (Field f : QueriesCommandBase.class.getDeclaredFields()) {
@@ -115,6 +188,5 @@ public class QueriesCommandBaseTest {
         protected void executeQueryCommand() {
             // Stub method, do nothing
         }
-
     }
 }
