@@ -1,9 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -27,11 +32,29 @@ public class GetAllDisksByVmIdQuery<P extends GetAllDisksByVmIdParameters> exten
                                 return (diskImage.getactive());
                             }
                         });
+        Set<Guid> pluggedDiskIds = getPluggedDiskIds();
         for (DiskImage diskImage : disks) {
             diskImage.getSnapshots().addAll(
                     ImagesHandler.getAllImageSnapshots(diskImage.getId(), diskImage.getit_guid()));
-
+            if (pluggedDiskIds.contains(diskImage.getId())) {
+                diskImage.setPlugged(true);
+            } else {
+                diskImage.setPlugged(false);
+            }
         }
         getQueryReturnValue().setReturnValue(disks);
+    }
+
+    private Set<Guid> getPluggedDiskIds() {
+        List<VmDevice> disksVmDevices =
+                DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(getParameters().getVmId(),
+                        VmDeviceType.getName(VmDeviceType.DISK), VmDeviceType.getName(VmDeviceType.DISK));
+        Set<Guid> pluggedDiskIds = new HashSet<Guid>();
+        for (VmDevice diskVmDevice : disksVmDevices) {
+            if (diskVmDevice.getIsPlugged()) {
+                pluggedDiskIds.add(diskVmDevice.getDeviceId());
+            }
+        }
+        return pluggedDiskIds;
     }
 }
