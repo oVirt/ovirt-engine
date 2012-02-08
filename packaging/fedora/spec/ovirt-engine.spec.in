@@ -277,8 +277,8 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %{_engineeardir}/engine-bll.jar
 %{_engineeardir}/engine-scheduler.jar
 %{_engineeardir}/engine-vdsbroker.jar
-%{_engineeardir}/engineanagerweb.war
-%{_engineeardir}/engineanager.war
+%{_engineeardir}/ovirtengineweb.war
+%{_engineeardir}/ovirtengine.war
 %{_engineeardir}/components.war
 %dir %{_engineeardir}/webadmin.war
 
