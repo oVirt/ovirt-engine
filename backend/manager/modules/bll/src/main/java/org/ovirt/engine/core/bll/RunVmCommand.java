@@ -52,6 +52,8 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
+
+    private static final long serialVersionUID = 3317745769686161108L;
     // this const represent the character for network in the boot sequence
     // options
     private static final char NETWORK_BOOT_SEQUENCE_CHAR = 'N';
@@ -68,7 +70,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
     public RunVmCommand(T runVmParams) {
         super(runVmParams);
-        super.setVmId(runVmParams.getVmId());
         getParameters().setEntityId(runVmParams.getVmId());
         InitRunVmCommand();
     }
@@ -808,7 +809,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 if (createSnapshotParameters != null) {
                     createSnapshotParameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                 }
-                VdcReturnValueBase vdcReturnValue = Backend.getInstance().EndAction(
+                Backend.getInstance().EndAction(
                         VdcActionType.CreateAllSnapshotsFromVm, createSnapshotParameters);
 
                 getParameters().setShouldBeLogged(false);

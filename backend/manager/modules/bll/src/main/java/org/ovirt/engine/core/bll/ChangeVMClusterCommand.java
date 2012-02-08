@@ -30,7 +30,6 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
 
     public ChangeVMClusterCommand(T params) {
         super(params);
-        setVmId(params.getVmId());
     }
 
     @Override

@@ -35,8 +35,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -71,6 +69,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     public VmCommand(T parameters) {
         super(parameters);
+        setVmId(parameters.getVmId());
     }
 
     /**
@@ -392,8 +391,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
         return taskID;
     }
-
-    private static LogCompat log = LogFactoryCompat.getLog(VmCommand.class);
 
     @Override
     public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {

@@ -11,9 +11,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.All;
@@ -21,35 +18,26 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class MergeSnapshotCommand<T extends MergeSnapshotParamenters> extends VmCommand<T> {
+
+    private static final long serialVersionUID = 3162100352844371734L;
+    private List<DiskImage> _sourceImages = null;
+
     public MergeSnapshotCommand(T parameters) {
         super(parameters);
-        if (getVm() == null) {
-            setVm(DbFacade.getInstance().getVmDAO().getById(getVmId()));
-            setVmId(getVm().getvm_guid());
-            String name = "";
-            if (getParameters() != null) {
-                List<DiskImage> images = DbFacade
+    }
+
+    private void initializeObjectState() {
+        String name = "";
+        List<DiskImage> images = DbFacade
                         .getInstance()
                         .getDiskImageDAO()
                         .getAllSnapshotsForVmSnapshot(
                                 getParameters().getSourceVmSnapshotId());
-                if (images.size() > 0) {
-                    name = images.get(0).getdescription();
-                }
-            }
-            setSnapshotName(name);
+        if (images.size() > 0) {
+            name = images.get(0).getdescription();
         }
+        setSnapshotName(name);
     }
-
-    @Override
-    public Guid getVmId() {
-        if (getParameters() != null) {
-            return getParameters().getVmId();
-        }
-        return super.getVmId();
-    }
-
-    private List<DiskImage> _sourceImages = null;
 
     private List<DiskImage> getSourceImages() {
         if (_sourceImages == null) {
@@ -119,6 +107,7 @@ public class MergeSnapshotCommand<T extends MergeSnapshotParamenters> extends Vm
 
     @Override
     protected boolean canDoAction() {
+        initializeObjectState();
         // Since 'VmId' is overriden, 'Vm' should be retrieved manually.
         setVm(DbFacade.getInstance().getVmDAO().getById(getVmId()));
 
@@ -166,6 +155,4 @@ public class MergeSnapshotCommand<T extends MergeSnapshotParamenters> extends Vm
     protected VdcActionType getChildActionType() {
         return VdcActionType.MergeSnapshotSingleDisk;
     }
-
-    private static LogCompat log = LogFactoryCompat.getLog(TryBackToAllSnapshotsOfVmCommand.class);
 }

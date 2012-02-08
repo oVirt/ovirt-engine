@@ -10,9 +10,10 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class SetDedicatedVmCommand<T extends SetDedicatedVmParameters> extends VmCommand<T> {
 
+    private static final long serialVersionUID = 5238609117685190192L;
+
     public SetDedicatedVmCommand(T parameters) {
         super(parameters);
-        super.setVmId(parameters.getVmId());
         super.setVdsId(parameters.getVdsId());
     }
 

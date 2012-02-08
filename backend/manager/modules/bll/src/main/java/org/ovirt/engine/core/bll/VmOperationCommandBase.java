@@ -26,7 +26,6 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
 
     public VmOperationCommandBase(T parameters) {
         super(parameters);
-        super.setVmId(parameters.getVmId());
     }
 
     @Override

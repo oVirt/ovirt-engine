@@ -18,13 +18,15 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 @LockIdNameAttribute(fieldName = "VmId")
 public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> {
+
+    private static final long serialVersionUID = -2407757772735253053L;
+
     protected CreateAllSnapshotsFromVmCommand(Guid commandId) {
         super(commandId);
     }
 
     public CreateAllSnapshotsFromVmCommand(T parameters) {
         super(parameters);
-        super.setVmId(parameters.getVmId());
         parameters.setEntityId(getVmId());
         setSnapshotName(parameters.getDescription());
     }

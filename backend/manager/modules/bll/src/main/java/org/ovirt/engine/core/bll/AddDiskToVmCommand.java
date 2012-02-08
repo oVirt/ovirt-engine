@@ -42,6 +42,8 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmCommand<T> {
 
+    private static final long serialVersionUID = 4499428315430159917L;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -53,7 +55,6 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
 
     public AddDiskToVmCommand(T parameters) {
         super(parameters);
-        setVmId(parameters.getVmId());
         parameters.setEntityId(parameters.getVmId());
     }
 

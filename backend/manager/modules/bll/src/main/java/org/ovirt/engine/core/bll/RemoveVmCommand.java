@@ -20,6 +20,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> {
 
+    private static final long serialVersionUID = -3202434016040084728L;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -31,7 +33,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     public RemoveVmCommand(T parameters) {
         super(parameters);
-        super.setVmId(parameters.getVmId());
         parameters.setEntityId(getVmId());
     }
 

@@ -18,6 +18,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters> extends VmCommand<T> {
 
+    private static final long serialVersionUID = -461387501474222174L;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -29,7 +31,6 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     public RestoreAllSnapshotsCommand(T parameters) {
         super(parameters);
-        super.setVmId(parameters.getVmId());
         parameters.setEntityId(getVmId());
     }
 

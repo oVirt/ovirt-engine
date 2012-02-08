@@ -34,9 +34,10 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 @CustomLogFields({ @CustomLogField("InterfaceName") })
 public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
+    private static final long serialVersionUID = -835005784345476993L;
+
     public AddVmInterfaceCommand(T parameters) {
         super(parameters);
-        setVmId(parameters.getVmId());
     }
 
     public String getInterfaceName() {

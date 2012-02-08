@@ -35,7 +35,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
 
     public UpdateVmDiskCommand(T parameters) {
         super(parameters);
-        setVmId(parameters.getVmId());
     }
 
     private DiskImage _oldDisk;

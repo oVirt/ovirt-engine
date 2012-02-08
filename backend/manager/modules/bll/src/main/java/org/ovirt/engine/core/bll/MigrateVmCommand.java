@@ -21,6 +21,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
 @CustomLogFields({ @CustomLogField("VdsDestination"), @CustomLogField("DueToMigrationError") })
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
+
+    private static final long serialVersionUID = -89419649366187512L;
     private Guid _vdsDestinationId;
     protected boolean forcedMigrationForNonMigratableVM;
 
@@ -31,7 +33,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     public MigrateVmCommand(T parameters) {
         super(parameters);
-        super.setVmId(parameters.getVmId());
         setVdsSelector(new VdsSelector(getVm(), getVdsDestinationId(), true));
         forcedMigrationForNonMigratableVM = parameters.isForceMigrationForNonMigratableVM();
     }

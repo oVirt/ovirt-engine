@@ -18,6 +18,8 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 @CustomLogFields({ @CustomLogField("InterfaceName") })
 public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> extends VmCommand<T> {
+
+    private static final long serialVersionUID = 997624605993881039L;
     private String _interfaceName = "";
 
     public RemoveVmInterfaceCommand(T parameters) {

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
-import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
@@ -27,9 +26,10 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 @CustomLogFields({ @CustomLogField("NetworkName"), @CustomLogField("InterfaceName") })
 public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
+    private static final long serialVersionUID = -2404956975945588597L;
+
     public UpdateVmInterfaceCommand(T parameters) {
         super(parameters);
-        setVmId(parameters.getVmId());
     }
 
     public String getInterfaceName() {
@@ -85,8 +85,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             }
         }
 
-        // check if user change the mac
-        boolean macChanged = false;
         if (!StringHelper.EqOp(oldIface.getMacAddress(), getParameters().getInterface().getMacAddress())) {
             Regex re = new Regex(ValidationUtils.INVALID_NULLABLE_MAC_ADDRESS);
             if (re.IsMatch(getParameters().getInterface().getMacAddress())) {
@@ -94,7 +92,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 return false;
             }
 
-            macChanged = true;
             MacPoolManager.getInstance().freeMac(oldIface.getMacAddress());
 
             Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
@@ -110,17 +107,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         allInterfaces.remove(oldIface);
         allInterfaces.add(getParameters().getInterface());
         VmStatic vm = DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmId());
-        // LINQ 29456
-        // List<DiskImageBase> allDisks =
-        // DbFacade.Instance.GetImagesByVmGuid(AddVmInterfaceParameters.VmId).Select(a
-        // => (DiskImageBase)a).ToList();
-        // if (!CheckPCIAndIDELimit(vm.num_of_monitors, allInterfaces,
-        // allDisks))
-        // {
-        // ReturnValue.CanDoActionMessages.Add(VdcBllMessages.VAR__ACTION__UPDATE.toString());
-        // ReturnValue.CanDoActionMessages.Add(VdcBllMessages.VAR__TYPE__INTERFACE.toString());
-        // return false;
-        // }
 
         List allDisks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getParameters().getVmId());
         if (!CheckPCIAndIDELimit(vm.getnum_of_monitors(), allInterfaces, allDisks, getReturnValue().getCanDoActionMessages())) {
@@ -134,7 +120,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         boolean limitNumOfNics = Config.<Boolean> GetValue(ConfigValues.LimitNumberOfNetworkInterfaces, getVm()
                 .getvds_group_compatibility_version().toString());
         if (limitNumOfNics) {
-            List<VmNetworkInterface> ifaces = new ArrayList<VmNetworkInterface>(interfaces);
             interfaces.remove(oldIface);
             boolean numOfNicsLegal = validateNumberOfNics(interfaces, getParameters().getInterface());
             interfaces.add(oldIface);

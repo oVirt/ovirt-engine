@@ -11,17 +11,17 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfVmParameters> extends VmCommand<T> {
+
+    private static final long serialVersionUID = 2636628918352438919L;
+
     public TryBackToAllSnapshotsOfVmCommand(T parameters) {
         super(parameters);
-        super.setVmId(parameters.getVmId());
         parameters.setEntityId(getVmId());
 
     }
@@ -132,6 +132,4 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     protected VdcActionType getChildActionType() {
         return VdcActionType.TryBackToSnapshot;
     }
-
-    private static LogCompat log = LogFactoryCompat.getLog(TryBackToAllSnapshotsOfVmCommand.class);
 }
