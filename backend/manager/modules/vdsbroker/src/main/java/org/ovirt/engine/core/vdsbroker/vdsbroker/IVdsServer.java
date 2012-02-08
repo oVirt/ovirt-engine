@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
@@ -70,7 +72,9 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc editNetwork(String oldBridge, String newBridge, String vlan, String bond, String[] nics,
             Map<String, String> options);
 
-    StatusOnlyReturnForXmlRpc setupNetworks(XmlRpcStruct networks, XmlRpcStruct bonding, XmlRpcStruct options);
+    Future<Map<String, Object>> setupNetworks(XmlRpcStruct networks,
+            XmlRpcStruct bonding,
+            XmlRpcStruct options);
 
     StatusOnlyReturnForXmlRpc setSafeNetworkConfig();
 
@@ -177,4 +181,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc hotplugDisk(XmlRpcStruct info);
 
     StatusOnlyReturnForXmlRpc hotunplugDisk(XmlRpcStruct info);
+
+    FutureTask<Map<String, Object>> poll();
 }

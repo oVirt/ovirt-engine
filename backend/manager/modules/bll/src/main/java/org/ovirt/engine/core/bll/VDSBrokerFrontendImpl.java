@@ -4,11 +4,14 @@ import org.ovirt.engine.core.common.backendinterfaces.IResourceManager;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
@@ -25,6 +28,7 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
      * .common.vdscommands.VDSCommandType,
      * org.ovirt.engine.core.common.vdscommands.VDSParametersBase)
      */
+    @Override
     public VDSReturnValue RunVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) {
         return handleVdsResult(getResourceManager().runVdsCommand(commandType, parameters));
     }
@@ -62,6 +66,7 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
      * org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase,
      * org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand)
      */
+    @Override
     public VDSReturnValue RunAsyncVdsCommand(VDSCommandType commandType, VdsAndVmIDVDSParametersBase parameters,
                                              IVdsAsyncCommand command) {
         VDSReturnValue result = RunVdsCommand(commandType, parameters);
@@ -82,6 +87,7 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
      * org.ovirt.engine.core.bll.VDSBrokerFrontend#GetAsyncCommandForVm(com.redhat
      * .engine.compat.Guid)
      */
+    @Override
     public IVdsAsyncCommand GetAsyncCommandForVm(Guid vmId) {
         IVdsAsyncCommand result = null;
         result = _asyncRunningCommands.get(vmId);
@@ -95,10 +101,17 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
      * org.ovirt.engine.core.bll.VDSBrokerFrontend#RemoveAsyncRunningCommand(com.
      * redhat.engine.compat.Guid)
      */
+    @Override
     public void RemoveAsyncRunningCommand(Guid vmId) {
         if (_asyncRunningCommands.containsKey(vmId)) {
             _asyncRunningCommands.remove(vmId);
         }
+    }
+
+    @Override
+    public FutureVDSCall<VDSReturnValue> runFutureVdsCommand(FutureVDSCommandType commandType,
+            VdsIdVDSCommandParametersBase parameters) {
+        return getResourceManager().runFutureVdsCommand(commandType, parameters);
     }
 
     private IResourceManager getResourceManager() {

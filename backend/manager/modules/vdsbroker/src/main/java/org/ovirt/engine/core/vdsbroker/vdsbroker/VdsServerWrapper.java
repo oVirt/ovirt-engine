@@ -2,6 +2,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
@@ -23,6 +25,7 @@ public class VdsServerWrapper implements IVdsServer {
         return httpClient;
     }
 
+    @Override
     public OneVmReturnForXmlRpc create(XmlRpcStruct createInfo) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.create(createInfo.getInnerMap());
@@ -34,6 +37,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc destroy(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.destroy(vmId);
@@ -45,6 +49,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc shutdown(String vmId, String timeout, String message) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.shutdown(vmId, timeout, message);
@@ -56,6 +61,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc shutdownHost(int reboot) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.shutdownHost(reboot);
@@ -67,6 +73,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public OneVmReturnForXmlRpc pause(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.pause(vmId);
@@ -78,6 +85,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc hibernate(String vmId, String hiberVolHandle) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.hibernate(vmId, hiberVolHandle);
@@ -89,6 +97,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public OneVmReturnForXmlRpc powerDown(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.shutdown(vmId);
@@ -100,6 +109,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public OneVmReturnForXmlRpc reset(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.reset(vmId);
@@ -111,6 +121,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public OneVmReturnForXmlRpc resume(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.cont(vmId);
@@ -122,6 +133,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public VMListReturnForXmlRpc list() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.list();
@@ -133,6 +145,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public VDSInfoReturnForXmlRpc getCapabilities() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getVdsCapabilities();
@@ -144,6 +157,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public VDSInfoReturnForXmlRpc getVdsStats() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getVdsStats();
@@ -155,6 +169,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc desktopLogin(String vmId, String domain, String user, String password) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.desktopLogin(vmId, domain, user, password);
@@ -166,6 +181,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc desktopLogoff(String vmId, String force) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.desktopLogoff(vmId, force);
@@ -177,6 +193,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc desktopLock(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.desktopLock(vmId);
@@ -188,6 +205,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public synchronized VMInfoListReturnForXmlRpc getVmStats(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getVmStats(vmId);
@@ -199,6 +217,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public VMInfoListReturnForXmlRpc getAllVmStats() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getAllVmStats();
@@ -210,6 +229,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc migrate(Map<String, String> migrationInfo) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.migrate(migrationInfo);
@@ -221,6 +241,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc migrateStatus(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.migrateStatus(vmId);
@@ -232,6 +253,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc migrateCancel(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.migrateCancel(vmId);
@@ -243,6 +265,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public OneVmReturnForXmlRpc changeDisk(String vmId, String imageLocation) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.changeCD(vmId, imageLocation);
@@ -254,6 +277,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public OneVmReturnForXmlRpc changeFloppy(String vmId, String imageLocation) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.changeFloppy(vmId, imageLocation);
@@ -265,6 +289,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc heartBeat() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.heartBeat();
@@ -276,6 +301,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc monitorCommand(String vmId, String monitorCommand) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.monitorCommand(vmId, monitorCommand);
@@ -287,6 +313,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc sendHcCmdToDesktop(String vmId, String hcCommand) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.sendHcCmdToDesktop(vmId, hcCommand);
@@ -298,6 +325,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.setVmTicket(vmId, otp64, sec);
@@ -309,6 +337,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc startSpice(String vdsIp, int port, String ticket) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.startSpice(vdsIp, port, ticket);
@@ -320,6 +349,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc addNetwork(String bridge, String vlan, String bond, String[] nics,
             Map<String, String> options) {
         try {
@@ -332,6 +362,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc delNetwork(String bridge, String vlan, String bond, String[] nics) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.delNetwork(bridge, vlan, bond, nics);
@@ -343,6 +374,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc editNetwork(String oldBridge, String newBridge, String vlan, String bond,
             String[] nics, Map<String, String> options) {
         try {
@@ -356,18 +388,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
-    public StatusOnlyReturnForXmlRpc setupNetworks(XmlRpcStruct networks, XmlRpcStruct bonding, XmlRpcStruct options) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.setupNetworks(networks.getInnerMap(),
-                    bonding.getInnerMap(), options.getInnerMap());
-            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
+    @Override
     public StatusOnlyReturnForXmlRpc setSafeNetworkConfig() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.setSafeNetworkConfig();
@@ -379,6 +400,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public FenceStatusReturnForXmlRpc fenceNode(String ip, String port, String type, String user, String password,
             String action, String secured, String options) {
         try {
@@ -392,6 +414,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public ServerConnectionStatusReturnForXmlRpc connectStorageServer(int serverType, String spUUID,
             Map<String, String>[] args) {
         try {
@@ -405,6 +428,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public ServerConnectionStatusReturnForXmlRpc validateStorageServerConnection(int serverType, String spUUID,
             Map<String, String>[] args) {
         try {
@@ -418,6 +442,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public ServerConnectionStatusReturnForXmlRpc disconnectStorageServer(int serverType, String spUUID,
             Map<String, String>[] args) {
         try {
@@ -431,6 +456,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public ServerConnectionListReturnForXmlRpc getStorageConnectionsList(String spUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getStorageConnectionsList(spUUID);
@@ -442,6 +468,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc validateStorageDomain(String sdUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.validateStorageDomain(sdUUID);
@@ -453,6 +480,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
             int storageType) {
         try {
@@ -466,6 +494,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
             int storageType, String storageFormatType) {
         try {
@@ -479,6 +508,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc formatStorageDomain(String sdUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.formatStorageDomain(sdUUID);
@@ -490,6 +520,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc connectStoragePool(String spUUID, int hostSpmId, String SCSIKey,
             String masterdomainId, int masterVersion) {
         try {
@@ -503,6 +534,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc disconnectStoragePool(String spUUID, int hostSpmId, String SCSIKey) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.disconnectStoragePool(spUUID, hostSpmId, SCSIKey);
@@ -514,6 +546,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc createStoragePool(int poolType, String spUUID, String poolName, String msdUUID,
             String[] domList, int masterVersion, String lockPolicy, int lockRenewalIntervalSec, int leaseTimeSec,
             int ioOpTimeoutSec, int leaseRetries) {
@@ -529,6 +562,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc reconstructMaster(String spUUID, String poolName, String masterDom,
             Map<String, String> domDict, int masterVersion, String lockPolicy, int lockRenewalIntervalSec,
             int leaseTimeSec, int ioOpTimeoutSec, int leaseRetries) {
@@ -543,6 +577,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public OneStorageDomainStatsReturnForXmlRpc getStorageDomainStats(String sdUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getStorageDomainStats(sdUUID);
@@ -554,6 +589,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public OneStorageDomainInfoReturnForXmlRpc getStorageDomainInfo(String sdUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getStorageDomainInfo(sdUUID);
@@ -565,6 +601,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StorageDomainListReturnForXmlRpc getStorageDomainsList(String sdUUID, int domainType, int poolType,
             String path) {
         try {
@@ -577,6 +614,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public IsoListReturnForXmlRpc getIsoList(String spUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getIsoList(spUUID);
@@ -588,6 +626,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.createVG(sdUUID, deviceList);
@@ -599,6 +638,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc removeVG(String vgUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.removeVG(vgUUID);
@@ -610,6 +650,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public VGListReturnForXmlRpc getVGList() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getVGList();
@@ -621,6 +662,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public OneVGReturnForXmlRpc getVGInfo(String vgUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getVGInfo(vgUUID);
@@ -632,6 +674,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public LUNListReturnForXmlRpc getDeviceList(int storageType) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getDeviceList(storageType);
@@ -643,6 +686,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public OneLUNReturnForXmlRpc getDeviceInfo(String devGUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getDeviceInfo(devGUID);
@@ -654,6 +698,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public DevicesVisibilityMapReturnForXmlRpc getDevicesVisibility(String[] devicesList) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getDevicesVisibility(devicesList);
@@ -664,6 +709,7 @@ public class VdsServerWrapper implements IVdsServer {
         }
     }
 
+    @Override
     public IQNListReturnForXmlRpc discoverSendTargets(Map<String, String> args) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.discoverSendTargets(args);
@@ -675,6 +721,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public SessionsListReturnForXmlRpc getSessionList() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getSessionList();
@@ -686,6 +733,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public OneUuidReturnForXmlRpc spmStart(String spUUID, int prevID, String prevLVER, int recoveryMode,
             String SCSIFencing, int maxHostId) {
         try {
@@ -699,6 +747,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public OneUuidReturnForXmlRpc spmStart(String spUUID, int prevID, String prevLVER, int recoveryMode,
             String SCSIFencing, int maxHostId, String storagePoolFormatType) {
         try {
@@ -712,6 +761,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc spmStop(String spUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.spmStop(spUUID);
@@ -723,6 +773,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public SpmStatusReturnForXmlRpc spmStatus(String spUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getSpmStatus(spUUID);
@@ -734,6 +785,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc fenceSpmStorage(String spUUID, int prevID, String prevLVER) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.fenceSpmStorage(spUUID, prevID, prevLVER);
@@ -745,6 +797,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc refreshStoragePool(String spUUID, String msdUUID, int masterVersion) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.refreshStoragePool(spUUID, msdUUID, masterVersion);
@@ -756,6 +809,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public TaskStatusReturnForXmlRpc getTaskStatus(String taskUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getTaskStatus(taskUUID);
@@ -767,6 +821,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public TaskStatusListReturnForXmlRpc getAllTasksStatuses() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getAllTasksStatuses();
@@ -778,6 +833,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public TaskInfoReturnForXmlRpc getTaskInfo(String taskUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getTaskInfo(taskUUID);
@@ -789,6 +845,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public TaskInfoListReturnForXmlRpc getAllTasksInfo() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getAllTasksInfo();
@@ -800,6 +857,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc stopTask(String taskUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.stopTask(taskUUID);
@@ -811,6 +869,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc clearTask(String taskUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.clearTask(taskUUID);
@@ -822,6 +881,7 @@ public class VdsServerWrapper implements IVdsServer {
 
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc revertTask(String taskUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.revertTask(taskUUID);
@@ -854,4 +914,17 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     }
+
+    @Override
+    public Future<Map<String, Object>> setupNetworks(XmlRpcStruct networks,
+            XmlRpcStruct bonds,
+            XmlRpcStruct options) {
+        return vdsServer.futureSetupNetworks(networks.getInnerMap(), bonds.getInnerMap(), options.getInnerMap());
+    }
+
+    @Override
+    public FutureTask<Map<String,Object>> poll() {
+        return vdsServer.futureGetCapabilities();
+    }
+
 }

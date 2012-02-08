@@ -59,14 +59,7 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
             getVDSReturnValue().setSucceeded(true);
             ExecuteVDSCommand();
         } catch (VDSNetworkException ex) {
-            getVDSReturnValue().setSucceeded(false);
-            getVDSReturnValue().setExceptionString(ex.toString());
-            getVDSReturnValue().setExceptionObject(ex);
-            VDSError tempVar = ex.getVdsError();
-            VDSError tempVar2 = new VDSError();
-            tempVar2.setCode(VdcBllErrors.VDS_NETWORK_ERROR);
-            tempVar2.setMessage(ex.getMessage());
-            getVDSReturnValue().setVdsError((tempVar != null) ? tempVar : tempVar2);
+            setVdsNetworkError(ex);
         } catch (IRSErrorException ex) {
             getVDSReturnValue().setSucceeded(false);
             getVDSReturnValue().setExceptionString(ex.toString());
@@ -74,30 +67,45 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
             getVDSReturnValue().setVdsError(ex.getVdsError());
             logException(ex);
         } catch (RuntimeException ex) {
-            getVDSReturnValue().setSucceeded(false);
-            getVDSReturnValue().setExceptionString(ex.toString());
-            getVDSReturnValue().setExceptionObject(ex);
+            setVdsRuntimeError(ex);
+        }
 
-            VDSExceptionBase vdsExp = (VDSExceptionBase) ((ex instanceof VDSExceptionBase) ? ex : null);
-            // todo: consider adding unknown vds error in case of non
-            // VDSExceptionBase exception
-            if (vdsExp != null) {
-                if (vdsExp.getVdsError() != null) {
-                    getVDSReturnValue().setVdsError(((VDSExceptionBase) ex).getVdsError());
-                } else if (vdsExp.getCause() instanceof VDSExceptionBase) {
-                    getVDSReturnValue().setVdsError(((VDSExceptionBase) vdsExp.getCause()).getVdsError());
-                }
-            }
+    }
 
-            if (ex instanceof VDSRecoveringException) {
-                log.errorFormat("Command {0} execution failed. Error: {1}",
-                        getCommandName(),
-                        ExceptionUtils.getMessage(ex));
-            } else {
-                logException(ex);
+    protected void setVdsRuntimeError(RuntimeException ex) {
+        getVDSReturnValue().setSucceeded(false);
+        getVDSReturnValue().setExceptionString(ex.toString());
+        getVDSReturnValue().setExceptionObject(ex);
+
+        VDSExceptionBase vdsExp = (VDSExceptionBase) ((ex instanceof VDSExceptionBase) ? ex : null);
+        // todo: consider adding unknown vds error in case of non
+        // VDSExceptionBase exception
+        if (vdsExp != null) {
+            if (vdsExp.getVdsError() != null) {
+                getVDSReturnValue().setVdsError(((VDSExceptionBase) ex).getVdsError());
+            } else if (vdsExp.getCause() instanceof VDSExceptionBase) {
+                getVDSReturnValue().setVdsError(((VDSExceptionBase) vdsExp.getCause()).getVdsError());
             }
         }
 
+        if (ex instanceof VDSRecoveringException) {
+            log.errorFormat("Command {0} execution failed. Error: {1}",
+                    getCommandName(),
+                    ExceptionUtils.getMessage(ex));
+        } else {
+            logException(ex);
+        }
+    }
+
+    protected void setVdsNetworkError(VDSNetworkException ex) {
+        getVDSReturnValue().setSucceeded(false);
+        getVDSReturnValue().setExceptionString(ex.toString());
+        getVDSReturnValue().setExceptionObject(ex);
+        VDSError tempVar = ex.getVdsError();
+        VDSError tempVar2 = new VDSError();
+        tempVar2.setCode(VdcBllErrors.VDS_NETWORK_ERROR);
+        tempVar2.setMessage(ex.getMessage());
+        getVDSReturnValue().setVdsError((tempVar != null) ? tempVar : tempVar2);
     }
 
     private void logException(RuntimeException ex) {

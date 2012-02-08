@@ -24,9 +24,12 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
+import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -40,6 +43,7 @@ import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
 
 public class ResourceManager implements IVdsEventListener {
     private static Log log = LogFactory.getLog(ResourceManager.class);
@@ -376,6 +380,32 @@ public class ResourceManager implements IVdsEventListener {
         return null;
     }
 
+    private <P extends VdsIdVDSCommandParametersBase> FutureVDSCommand createFutureCommand(FutureVDSCommandType commandType,
+            P parameters) {
+        try {
+            Class<FutureVDSCommand> type =
+                    (Class<FutureVDSCommand>) java.lang.Class.forName(commandType.getFullyQualifiedClassName());
+            Constructor<FutureVDSCommand> constructor =
+                    ReflectionUtils.findConstructor(type,
+                    parameters.getClass());
+
+            if (constructor != null) {
+                return constructor.newInstance(new Object[] { parameters });
+            }
+        } catch (InvocationTargetException e) {
+            if (e.getCause() != null) {
+                log.debug("CreateCommand failed", e.getCause());
+                throw new RuntimeException(e.getCause().getMessage(), e.getCause());
+            }
+            log.debug("CreateCommand failed", e);
+        } catch (java.lang.Exception e) {
+            log.debug("CreateCommand failed", e);
+        }
+
+        return null;
+
+    }
+
     public <P extends VDSParametersBase> VDSReturnValue runVdsCommand(VDSCommandType commandType, P parameters) {
         // try run vds command
         VDSCommandBase<P> command = CreateCommand(commandType, parameters);
@@ -383,6 +413,18 @@ public class ResourceManager implements IVdsEventListener {
         if (command != null) {
             command.Execute();
             return command.getVDSReturnValue();
+        }
+
+        return null;
+    }
+
+    public <P extends VdsIdVDSCommandParametersBase> FutureVDSCall<VDSReturnValue> runFutureVdsCommand(final FutureVDSCommandType commandType,
+            final P parameters) {
+        FutureVDSCommand<P> command = createFutureCommand(commandType, parameters);
+
+        if (command != null) {
+            command.Execute();
+            return command;
         }
 
         return null;

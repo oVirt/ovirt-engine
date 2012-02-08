@@ -26,6 +26,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ssl.AuthSSLProtocolSocketFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureCall;
 
 public class XmlRpcUtils {
 
@@ -140,29 +141,49 @@ public class XmlRpcUtils {
         public Object invoke(Object proxy, final Method m, final Object[] args)
                 throws Throwable {
             Object result;
-            FutureTask<Object> future =
-                    new FutureTask<Object>(new Callable<Object>() {
-                        public Object call() throws Exception {
-                            try {
-                                return m.invoke(obj, args);
-                            } catch (Exception e) {
-                                throw e;
-                            }
-                        }
-                    });
-            ThreadPoolUtil.execute(future);
-
-            try {
-                result = future.get(timeoutInMilisec, TimeUnit.MILLISECONDS);
-            } catch (Exception e) {
-                if (e instanceof TimeoutException) {
-                    future.cancel(true);
+            FutureTask<Object> future;
+            FutureCall annotation = m.getAnnotation(FutureCall.class);
+            if (annotation != null) {
+                future = new FutureTask<Object>(createCallable(getMethod(m, annotation, proxy), args));
+                ThreadPoolUtil.execute(future);
+                return future;
+            } else {
+                future = new FutureTask<Object>(createCallable(m, args));
+                ThreadPoolUtil.execute(future);
+                try {
+                    result = future.get(timeoutInMilisec, TimeUnit.MILLISECONDS);
+                } catch (Exception e) {
+                    if (e instanceof TimeoutException) {
+                        future.cancel(true);
+                    }
+                    throw new UndeclaredThrowableException(e);
                 }
-                throw new UndeclaredThrowableException(e);
-            }
 
-            return result;
+                return result;
+            }
         }
+
+        private Method getMethod(Method m, FutureCall annotation, Object proxy)
+                throws SecurityException, NoSuchMethodException {
+            if (!annotation.delegeteTo().isEmpty()) {
+                return proxy.getClass().getDeclaredMethod(annotation.delegeteTo(), m.getParameterTypes());
+            }
+            return m;
+        }
+
+        private Callable<Object> createCallable(final Method m, final Object[] args) {
+            return new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    try {
+                        return m.invoke(obj, args);
+                    } catch (Exception e) {
+                        throw e;
+                    }
+                }
+            };
+        }
+
     }
 
 }

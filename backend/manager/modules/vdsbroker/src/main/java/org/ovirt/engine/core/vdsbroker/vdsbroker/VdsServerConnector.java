@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
+import java.util.concurrent.FutureTask;
 
 public interface VdsServerConnector {
     public Map<String, Object> create(Map createInfo);
@@ -24,6 +25,9 @@ public interface VdsServerConnector {
     public Map<String, Object> list();
 
     public Map<String, Object> getVdsCapabilities();
+
+    @FutureCall(delegeteTo = "getVdsCapabilities")
+    public FutureTask<Map<String, Object>> futureGetCapabilities();
 
     public Map<String, Object> getVdsStats();
 
@@ -65,7 +69,8 @@ public interface VdsServerConnector {
     public Map<String, Object> editNetwork(String oldBridge, String newBridge, String vlan, String bond, String[] nics,
             Map<String, String> options);
 
-    public Map<String, Object> setupNetworks(Map networks, Map bonding, Map options);
+    @FutureCall
+    public FutureTask<Map<String, Object>> setupNetworks(Map networks, Map bonding, Map options);
 
     public Map<String, Object> setSafeNetworkConfig();
 
