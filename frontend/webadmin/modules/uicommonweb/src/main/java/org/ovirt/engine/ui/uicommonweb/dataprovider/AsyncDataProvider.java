@@ -1708,6 +1708,20 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void IsDiskHotPlugAvailable(AsyncQuery aQuery, String version) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? ((Boolean) source).booleanValue() : true;
+            }
+        };
+        GetConfigurationValueParameters tempVar =
+                new GetConfigurationValueParameters(ConfigurationValues.HotPlugEnabled);
+        tempVar.setVersion(version);
+        GetConfigFromCache(tempVar, aQuery);
+    }
+
     /**
      * method to get an item from config while caching it (config is not supposed to change during a session)
      *

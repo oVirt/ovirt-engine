@@ -28,6 +28,7 @@ public abstract class AbstractActionButton extends Composite implements ActionBu
     @Override
     public void setDisabledHtml(SafeHtml html) {
         button.getUpDisabledFace().setHTML(html);
+        button.getDownDisabledFace().setHTML(html);
     }
 
     @Override

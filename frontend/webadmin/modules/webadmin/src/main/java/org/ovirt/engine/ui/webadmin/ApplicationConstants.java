@@ -705,4 +705,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Resides on a different storage domain")
     String differentStorageDomainWarning();
+
+    @DefaultStringValue("Disk Activate/Deactivate while VM is running, is supported only for Clusters of version 3.1 and above")
+    String diskHotPlugNotSupported();
 }

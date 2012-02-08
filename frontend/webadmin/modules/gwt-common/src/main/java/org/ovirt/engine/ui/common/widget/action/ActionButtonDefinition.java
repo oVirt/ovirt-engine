@@ -97,4 +97,6 @@ public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandl
     *  Indicates whether this action button is visible.
     */
     boolean isVisible(List<T> selectedItems);
+
+    String getCustomToolTip();
 }

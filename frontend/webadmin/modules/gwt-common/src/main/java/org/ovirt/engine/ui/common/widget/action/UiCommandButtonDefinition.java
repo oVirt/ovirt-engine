@@ -39,6 +39,8 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
 
     private final SafeHtml title;
 
+    private String customToolTip;
+
     // Indicates whether the given feature is implemented in WebAdmin
     private final boolean implInWebAdmin;
 
@@ -98,7 +100,6 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
     public UiCommandButtonDefinition(String title, boolean implInWebAdmin, boolean implInUserPortal) {
         this(title, implInWebAdmin, implInUserPortal, false, false, null);
     }
-
 
     /**
      * Assigns the given command with this button definition.
@@ -223,5 +224,10 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
     @Override
     public boolean isVisible(List<T> selectedItems) {
         return true;
+    }
+
+    @Override
+    public String getCustomToolTip() {
+        return customToolTip;
     }
 }

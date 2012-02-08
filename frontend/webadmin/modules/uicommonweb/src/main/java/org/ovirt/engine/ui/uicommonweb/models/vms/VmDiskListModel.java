@@ -1,8 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
 import org.ovirt.engine.core.common.action.RemoveDisksFromVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -23,6 +27,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -34,7 +39,9 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class VmDiskListModel extends SearchableListModel
@@ -76,6 +83,51 @@ public class VmDiskListModel extends SearchableListModel
         privateRemoveCommand = value;
     }
 
+    private UICommand privatePlugCommand;
+
+    public UICommand getPlugCommand()
+    {
+        return privatePlugCommand;
+    }
+
+    private void setPlugCommand(UICommand value)
+    {
+        privatePlugCommand = value;
+    }
+
+    private UICommand privateUnPlugCommand;
+
+    public UICommand getUnPlugCommand()
+    {
+        return privateUnPlugCommand;
+    }
+
+    private void setUnPlugCommand(UICommand value)
+    {
+        privateUnPlugCommand = value;
+    }
+
+    private boolean privateIsDiskHotPlugSupported;
+
+    public boolean getIsDiskHotPlugSupported()
+    {
+        VM vm = (VM) getEntity();
+        boolean isVmStatusApplicableForHotPlug =
+                vm != null && (vm.getstatus() == VMStatus.Up || vm.getstatus() == VMStatus.Down |
+                        vm.getstatus() == VMStatus.Paused || vm.getstatus() == VMStatus.Suspended);
+
+        return privateIsDiskHotPlugSupported && isVmStatusApplicableForHotPlug;
+    }
+
+    private void setIsDiskHotPlugSupported(boolean value)
+    {
+        if (privateIsDiskHotPlugSupported != value)
+        {
+            privateIsDiskHotPlugSupported = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsDiskHotPlugSupported"));
+        }
+    }
+
     public VmDiskListModel()
     {
         setTitle("Virtual Disks");
@@ -83,8 +135,18 @@ public class VmDiskListModel extends SearchableListModel
         setNewCommand(new UICommand("New", this));
         setEditCommand(new UICommand("Edit", this));
         setRemoveCommand(new UICommand("Remove", this));
+        setPlugCommand(new UICommand("Plug", this));
+        setUnPlugCommand(new UICommand("Unplug", this));
 
         UpdateActionAvailability();
+    }
+
+    @Override
+    public void setEntity(Object value)
+    {
+        super.setEntity(value);
+
+        UpdateIsDiskHotPlugAvailable();
     }
 
     @Override
@@ -124,6 +186,17 @@ public class VmDiskListModel extends SearchableListModel
         setItems(getAsyncResult().getData());
     }
 
+    @Override
+    public void setItems(Iterable value)
+    {
+        ArrayList<DiskImage> disks =
+                value != null ? Linq.<DiskImage> Cast(value) : new ArrayList<DiskImage>();
+
+        Collections.sort(disks, new Linq.DiskByNameComparer());
+
+        super.setItems(disks);
+    }
+
     private void New()
     {
         VM vm = (VM) getEntity();
@@ -138,6 +211,7 @@ public class VmDiskListModel extends SearchableListModel
         model.setTitle("New Virtual Disk");
         model.setHashName("new_virtual_disk");
         model.setIsNew(true);
+
         AsyncQuery _asyncQuery1 = new AsyncQuery();
         _asyncQuery1.setModel(this);
         _asyncQuery1.asyncCallback = new INewAsyncCallback() {
@@ -423,6 +497,7 @@ public class VmDiskListModel extends SearchableListModel
         disk.setvolume_format(model.getVolumeFormat());
         disk.setwipe_after_delete((Boolean) model.getWipeAfterDelete().getEntity());
         disk.setboot((Boolean) model.getIsBootable().getEntity());
+        disk.setPlugged((Boolean) model.getIsPlugged().getEntity());
 
         // NOTE: Since we doesn't support partial snapshots in GUI, propagate errors flag always must be set false.
         // disk.propagate_errors = model.PropagateErrors.ValueAsBoolean() ? PropagateErrors.On : PropagateErrors.Off;
@@ -474,6 +549,27 @@ public class VmDiskListModel extends SearchableListModel
         }
     }
 
+    private void Plug(boolean plug) {
+        VM vm = (VM) getEntity();
+
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+        for (Object item : getSelectedItems())
+        {
+            DiskImage disk = (DiskImage) item;
+            disk.setPlugged(plug);
+
+            paramerterList.add(new UpdateVmDiskParameters(vm.getvm_guid(), disk.getId(), disk));
+        }
+
+        Frontend.RunMultipleAction(VdcActionType.UpdateVmDisk, paramerterList,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    }
+                },
+                this);
+    }
+
     private void Cancel()
     {
         setWindow(null);
@@ -507,14 +603,51 @@ public class VmDiskListModel extends SearchableListModel
     private void UpdateActionAvailability()
     {
         VM vm = (VM) getEntity();
-        boolean isDown = vm != null && vm.getstatus() == VMStatus.Down;
+        DiskImage disk = (DiskImage) getSelectedItem();
 
-        getNewCommand().setIsExecutionAllowed(isDown);
+        getNewCommand().setIsExecutionAllowed(isVmDown());
 
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && getSelectedItems() != null
-                && getSelectedItems().size() == 1 && isDown);
+                && getSelectedItems().size() == 1 && isVmDown());
 
-        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0 && isDown);
+        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
+                && isVmDown());
+
+        getPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(true));
+
+        getUnPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(false));
+    }
+
+    public boolean isVmDown() {
+        VM vm = (VM) getEntity();
+        return vm != null && vm.getstatus() == VMStatus.Down;
+    }
+
+    public boolean isHotPlugAvailable() {
+        VM vm = (VM) getEntity();
+        return vm != null && (vm.getstatus() == VMStatus.Up ||
+                vm.getstatus() == VMStatus.Paused || vm.getstatus() == VMStatus.Suspended);
+    }
+
+    private boolean isPlugCommandAvailable(boolean plug) {
+        return getSelectedItems() != null && getSelectedItems().size() > 0
+                && isPlugAvailableByDisks(plug) &&
+                (isVmDown() || (isHotPlugAvailable() && getIsDiskHotPlugSupported()));
+    }
+
+    private boolean isPlugAvailableByDisks(boolean plug) {
+        ArrayList<DiskImage> disks =
+                getSelectedItems() != null ? Linq.<DiskImage> Cast(getSelectedItems()) : new ArrayList<DiskImage>();
+
+        for (DiskImage disk : disks)
+        {
+            if (disk.getPlugged() == plug)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -545,6 +678,14 @@ public class VmDiskListModel extends SearchableListModel
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
         {
             OnRemove();
+        }
+        else if (command == getPlugCommand())
+        {
+            Plug(true);
+        }
+        else if (command == getUnPlugCommand())
+        {
+            Plug(false);
         }
     }
 
@@ -681,6 +822,25 @@ public class VmDiskListModel extends SearchableListModel
                 AsyncDataProvider.GetSANWipeAfterDelete(_asyncQuery);
             }
         }
+    }
+
+    protected void UpdateIsDiskHotPlugAvailable()
+    {
+        if (getEntity() == null)
+        {
+            return;
+        }
+        VM vm = (VM) getEntity();
+        Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version();
+
+        AsyncDataProvider.IsDiskHotPlugAvailable(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        VmDiskListModel model = (VmDiskListModel) target;
+                        model.setIsDiskHotPlugSupported((Boolean) returnValue);
+                    }
+                }), clusterCompatibilityVersion.toString());
     }
 
     @Override

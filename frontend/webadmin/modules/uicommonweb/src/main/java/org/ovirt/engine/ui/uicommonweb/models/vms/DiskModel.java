@@ -181,6 +181,18 @@ public class DiskModel extends Model
         privateIsBootable = value;
     }
 
+    private EntityModel privateIsPlugged;
+
+    public EntityModel getIsPlugged()
+    {
+        return privateIsPlugged;
+    }
+
+    public void setIsPlugged(EntityModel value)
+    {
+        privateIsPlugged = value;
+    }
+
     public DiskModel()
     {
         setSize(new EntityModel());
@@ -202,6 +214,10 @@ public class DiskModel extends Model
 
         setIsBootable(new EntityModel());
         getIsBootable().setEntity(false);
+
+        setIsPlugged(new EntityModel());
+        getIsPlugged().setEntity(true);
+        getIsPlugged().setIsAvailable(false);
 
         AsyncDataProvider.GetDiskMaxSize(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -239,6 +255,7 @@ public class DiskModel extends Model
         DiskImageBase preset = (DiskImageBase) getPreset().getSelectedItem();
         setVolumeFormat(preset.getvolume_format());
         getVolumeType().setSelectedItem(preset.getvolume_type());
+        getIsPlugged().setIsChangable(preset.getdisk_type() != DiskType.System);
     }
 
     private void VolumeType_SelectedItemChanged()

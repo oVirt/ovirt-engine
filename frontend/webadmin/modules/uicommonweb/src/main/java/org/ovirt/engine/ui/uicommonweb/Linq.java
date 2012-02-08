@@ -202,6 +202,15 @@ public final class Linq
         }
     }
 
+    public static class DiskByNameComparer implements java.util.Comparator<DiskImage>
+    {
+        @Override
+        public int compare(DiskImage x, DiskImage y)
+        {
+            return x.getinternal_drive_mapping().compareTo(y.getinternal_drive_mapping());
+        }
+    }
+
     public static class SanTargetModelComparer implements java.util.Comparator<SanTargetModel>
     {
         @Override

@@ -61,6 +61,10 @@ public class VmDiskPopupView extends WebAdminModelBoundPopupView<DiskModel> impl
     @Path("isBootable.entity")
     EntityModelCheckBoxEditor isBootableEditor;
 
+    @UiField(provided = true)
+    @Path("isPlugged.entity")
+    EntityModelCheckBoxEditor isPluggedEditor;
+
     @UiField
     Label message;
 
@@ -82,6 +86,7 @@ public class VmDiskPopupView extends WebAdminModelBoundPopupView<DiskModel> impl
         volumeTypeEditor.setLabel("Format");
         wipeAfterDeleteEditor.setLabel("Wipe after delete");
         isBootableEditor.setLabel("Is bootable");
+        isPluggedEditor.setLabel("Activate");
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -111,6 +116,7 @@ public class VmDiskPopupView extends WebAdminModelBoundPopupView<DiskModel> impl
 
         wipeAfterDeleteEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isBootableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isPluggedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     @Override

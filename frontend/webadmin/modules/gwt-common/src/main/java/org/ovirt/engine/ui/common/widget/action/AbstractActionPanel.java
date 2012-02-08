@@ -102,7 +102,8 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
         // Configure the button according to its definition
         newActionButton.setEnabledHtml(buttonDef.getEnabledHtml());
         newActionButton.setDisabledHtml(buttonDef.getDisabledHtml());
-        newActionButton.setTitle(buttonDef.getTitle());
+        newActionButton.setTitle(buttonDef.getCustomToolTip() != null ? buttonDef.getCustomToolTip()
+                : buttonDef.getTitle());
 
         // Set button element ID for better accessibility
         newActionButton.asWidget().getElement().setId(
@@ -266,6 +267,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
     void updateActionButton(ActionButton button, ActionButtonDefinition<T> buttonDef) {
         button.asWidget().setVisible(buttonDef.isAccessible() && buttonDef.isVisible(getSelectedItems()));
         button.setEnabled(buttonDef.isEnabled(getSelectedItems()));
+        button.setTitle(buttonDef.getCustomToolTip() != null ? buttonDef.getCustomToolTip() : buttonDef.getTitle());
     }
 
     /**

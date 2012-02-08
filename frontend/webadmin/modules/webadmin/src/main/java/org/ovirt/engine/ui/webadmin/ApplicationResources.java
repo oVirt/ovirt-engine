@@ -71,6 +71,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/down.gif")
     ImageResource downImage();
 
+    @Source("images/down_disabled.gif")
+    ImageResource downDisabledImage();
+
     @Source("images/error.gif")
     ImageResource errorImage();
 
@@ -260,6 +263,9 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/up.gif")
     ImageResource upImage();
+
+    @Source("images/up_disabled.gif")
+    ImageResource upDisabledImage();
 
     @Source("images/upalert.png")
     ImageResource upalertImage();
