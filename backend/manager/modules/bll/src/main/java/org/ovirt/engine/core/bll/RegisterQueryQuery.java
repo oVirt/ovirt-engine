@@ -13,7 +13,7 @@ public class RegisterQueryQuery<P extends RegisterQueryParameters> extends Queri
 
     @Override
     protected void executeQueryCommand() {
-        if (SessionDataContainer.getInstance().GetData("VdcUser") != null) {
+        if (SessionDataContainer.getInstance().getUser() != null) {
             BackendCallBacksDirector.getInstance().RegisterQuery(getParameters());
         } else {
             VdcFault fault = new VdcFault();

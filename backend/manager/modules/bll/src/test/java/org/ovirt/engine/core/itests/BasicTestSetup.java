@@ -106,7 +106,8 @@ public class BasicTestSetup {
         this.user = getUserBySessionId(AbstractBackendTest.getSessionId());
         this.backend = backend;
         latestSupportedCompatibilityVersion = findLatestSupportedClusterVersion();
-        cpuForCompatibilityVersion = CpuFlagsManagerHandler.AllServerCpuList(latestSupportedCompatibilityVersion).get(0).getCpuName();
+        cpuForCompatibilityVersion =
+                CpuFlagsManagerHandler.AllServerCpuList(latestSupportedCompatibilityVersion).get(0).getCpuName();
         createDataCenter();
         createCluster();
         createHost();
@@ -136,7 +137,7 @@ public class BasicTestSetup {
      * @return The user that was stored on the session - automatically been set by {@link #generateUserSession()}
      */
     public VdcUser getUserBySessionId(String sessionId) {
-        VdcUser user = (VdcUser) SessionDataContainer.getInstance().GetData(sessionId, "VdcUser");
+        VdcUser user = (VdcUser) SessionDataContainer.getInstance().getUser(sessionId);
         return user;
     }
 
@@ -220,7 +221,8 @@ public class BasicTestSetup {
         addImageParams.setEntityId(ImageId);
         addImageParams.setDestinationImageId(ImageId);
         AddImageFromScratchParameters parameters = addImageParams;
-        VdcReturnValueBase addImageAction = Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch, parameters);
+        VdcReturnValueBase addImageAction =
+                Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch, parameters);
         Assert.assertTrue(addImageAction.getSucceeded());
     }
 

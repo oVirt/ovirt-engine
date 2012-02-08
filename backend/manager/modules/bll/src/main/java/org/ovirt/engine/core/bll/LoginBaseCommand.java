@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
@@ -65,11 +66,11 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             Object tempVar = null;
             Object execResult =
                     adFactory.RunAdAction(
-                                                    AdActionType.GetAdUserByUserName,
-                                                    new LdapSearchByUserNameParameters(getParameters().getSessionId(),
-                                                            getDomain(),
-                                                            getParameters()
-                                                                    .getUserName()));
+                            AdActionType.GetAdUserByUserName,
+                            new LdapSearchByUserNameParameters(getParameters().getSessionId(),
+                                    getDomain(),
+                                    getParameters()
+                                            .getUserName()));
             if (execResult != null) {
                 LdapReturnValueBase adExecResult = (LdapReturnValueBase) execResult;
                 tempVar = adExecResult.getReturnValue();
@@ -122,7 +123,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     }
 
     protected abstract UserAuthenticationResult AuthenticateUser(RefObject<Boolean> isLocalBackend,
-                                                RefObject<Boolean> isAdmin);
+            RefObject<Boolean> isAdmin);
 
     protected AdUser _adUser;
 
@@ -162,7 +163,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     protected boolean isUserCanBeAuthenticated() {
         boolean authenticated = false;
-        VdcUser vdcUser = (VdcUser) SessionDataContainer.getInstance().GetData(VDC_USER);
+        IVdcUser vdcUser = SessionDataContainer.getInstance().getUser();
         if (vdcUser == null) {
             boolean domainFound = false;
             List<String> vdcDomains = LdapBrokerUtils.getDomainsList();

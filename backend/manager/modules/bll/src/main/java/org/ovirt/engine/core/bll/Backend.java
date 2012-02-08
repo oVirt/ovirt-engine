@@ -305,7 +305,7 @@ public class Backend implements BackendInternal, BackendRemote {
         if (isPerformUserCheck) {
             String sessionId = addSessionToContext(parameters);
             if (StringHelper.isNullOrEmpty(sessionId)
-                    || SessionDataContainer.getInstance().GetData(sessionId, "VdcUser", parameters.getRefresh()) == null) {
+                    || SessionDataContainer.getInstance().getUser(sessionId, parameters.getRefresh()) == null) {
                 VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
                 returnValue.setSucceeded(false);
                 returnValue.setExceptionString(VdcBllMessages.USER_IS_NOT_LOGGED_IN.toString());

@@ -33,9 +33,9 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     protected void initCredentials(String domain) {
         IVdcUser curUser;
         if (StringHelper.isNullOrEmpty(getParameters().getSessionId())) {
-            curUser = (IVdcUser) SessionDataContainer.getInstance().GetData("VdcUser");
+            curUser = SessionDataContainer.getInstance().getUser();
         } else {
-            curUser = (IVdcUser) SessionDataContainer.getInstance().GetData(getParameters().getSessionId(), "VdcUser");
+            curUser = SessionDataContainer.getInstance().getUser(getParameters().getSessionId());
         }
         // verify that in auto login mode , user is not taken from session.
         if (curUser != null && !StringHelper.isNullOrEmpty(curUser.getPassword())) {
@@ -102,7 +102,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
             String domain,
             java.util.Map<String, ad_groups> groupsDict,
             String loginName,
-                                 String password) {
+            String password) {
         try {
             GroupsDNQueryGenerator generator = new GroupsDNQueryGenerator();
             List<GroupSearchResult> searchResultCollection =
@@ -125,13 +125,13 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     }
 
     private void ProceedGroupsSearchResult(GroupSearchResult groupsResult,
-                                           java.util.Map<String, ad_groups> groupsDict, GroupsDNQueryGenerator generator) {
+            java.util.Map<String, ad_groups> groupsDict, GroupsDNQueryGenerator generator) {
         List<String> groupsList = groupsResult.getMemberOf();
         proceedGroupsSearchResult(groupsList, groupsDict, generator);
     }
 
     private void proceedGroupsSearchResult(List<String> groupDNList,
-                                           Map<String, ad_groups> groupsDict, GroupsDNQueryGenerator generator) {
+            Map<String, ad_groups> groupsDict, GroupsDNQueryGenerator generator) {
         if (groupDNList == null) {
             return;
         }

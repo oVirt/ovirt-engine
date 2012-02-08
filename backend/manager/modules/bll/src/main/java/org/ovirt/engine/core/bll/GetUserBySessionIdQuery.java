@@ -12,7 +12,7 @@ public class GetUserBySessionIdQuery<P extends VdcQueryParametersBase> extends Q
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                SessionDataContainer.getInstance().GetData(getParameters().getSessionId(), "VdcUser"));
+                SessionDataContainer.getInstance().getUser(getParameters().getSessionId()));
     }
 
 }
