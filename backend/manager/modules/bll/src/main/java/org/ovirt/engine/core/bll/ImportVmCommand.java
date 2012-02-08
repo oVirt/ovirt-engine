@@ -77,8 +77,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         getParameters().setImages(new ArrayList<DiskImage>(getVm().getDiskMap().values()));
         setStoragePoolId(parameters.getStoragePoolId());
         setVdsGroupId(parameters.getVdsGroupId());
-        imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
         imageList = getParameters().getImages();
+        imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
+        ensureDomainMap();
     }
 
     protected ImportVmCommand(Guid commandId) {
@@ -291,6 +292,14 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
         }
         return retVal;
+    }
+
+    private void ensureDomainMap() {
+        for(DiskImage image : imageList) {
+            if(imageToDestinationDomainMap.get(image.getId()) == null) {
+                imageToDestinationDomainMap.put(image.getId(), getParameters().getDestDomainId());
+            }
+        }
     }
 
     protected StorageDomainStaticDAO getStorageDomainStaticDAO() {

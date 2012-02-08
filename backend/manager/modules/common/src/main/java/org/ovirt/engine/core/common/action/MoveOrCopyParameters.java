@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.action;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,6 +97,6 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
     }
 
     public Map<Guid, Guid> getImageToDestinationDomainMap() {
-        return Collections.unmodifiableMap(imageToDestinationDomainMap);
+        return imageToDestinationDomainMap;
     }
 }
