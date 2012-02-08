@@ -144,8 +144,7 @@ public class BackendSnapshotsResourceTest
     public void testAdd() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
-        setUpGetEntityExpectations(1);
-        setUpGetEntityExpectations(1);
+        setUpGetEntityExpectations(2);
         setUpCreationExpectations(VdcActionType.CreateAllSnapshotsFromVm,
                                   CreateAllSnapshotsFromVmParameters.class,
                                   new String[] { "Description", "VmId" },
@@ -209,7 +208,7 @@ public class BackendSnapshotsResourceTest
             collection.add(snapshot);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Snapshot", "add", "description");
+             verifyIncompleteException(wae, "Snapshot", "doAdd", "description");
         }
     }
 

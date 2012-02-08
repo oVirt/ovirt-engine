@@ -84,10 +84,10 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         return getBackendCollection(entityType, query, queryParams);
     }
 
-
     protected Response performCreation(VdcActionType task,
                                        VdcActionParametersBase taskParams,
-                                       EntityIdResolver entityResolver) {
+                                       EntityIdResolver entityResolver,
+                                       boolean block) {
         VdcReturnValueBase createResult;
         try {
             createResult = backend.RunAction(task, sessionize(taskParams));
@@ -103,7 +103,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         R model = resolveCreated(createResult, entityResolver);
         Response response = null;
         if (createResult.getHasAsyncTasks()) {
-            if (expectBlocking()) {
+            if (block) {
                 awaitCompletion(createResult);
                 // refresh model state
                 model = resolveCreated(createResult, entityResolver);
@@ -124,6 +124,12 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             }
         }
         return response;
+    }
+
+    protected Response performCreation(VdcActionType task,
+            VdcActionParametersBase taskParams,
+            EntityIdResolver entityResolver) {
+        return performCreation(task, taskParams, entityResolver, expectBlocking());
     }
 
     protected boolean expectBlocking() {

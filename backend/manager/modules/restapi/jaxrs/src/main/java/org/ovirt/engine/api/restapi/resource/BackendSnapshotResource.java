@@ -37,9 +37,22 @@ public class BackendSnapshotResource extends AbstractBackendActionableResource<S
 
     @Override
     public Response restore(Action action) {
-        return doAction(VdcActionType.RestoreAllSnapshots,
-                        new RestoreAllSnapshotsParameters(parentId, guid),
-                        action);
+        Snapshot snapshot = new Snapshot();
+        snapshot.setDescription(get().getDescription());
+        action.setAsync(false);
+        Response response = doAction(VdcActionType.RestoreAllSnapshots,
+                new RestoreAllSnapshotsParameters(parentId, guid),
+                action);
+        if (response.getStatus()==Response.Status.OK.getStatusCode()) {
+            Response response2 = collection.doAdd(snapshot, true);
+            //if creation failed, return the response to show the failure.
+            //otherwise return the response of the previous request, the
+            //restore request.
+            if (response2.getStatus()!=Response.Status.CREATED.getStatusCode()) {
+                return response2;
+            }
+        }
+        return response;
     }
 
     @Override

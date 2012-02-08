@@ -44,6 +44,10 @@ public class BackendSnapshotsResource
 
     @Override
     public Response add(Snapshot snapshot) {
+        return doAdd(snapshot, expectBlocking());
+    }
+
+    protected Response doAdd(Snapshot snapshot, boolean block) {
         validateParameters(snapshot, "description");
         CreateAllSnapshotsFromVmParameters snapshotParams =
             new CreateAllSnapshotsFromVmParameters(parentId, snapshot.getDescription());
@@ -51,7 +55,8 @@ public class BackendSnapshotsResource
 
         return performCreation(VdcActionType.CreateAllSnapshotsFromVm,
                                snapshotParams,
-                               getEntityIdResolver(snapshot.getDescription()));
+                               getEntityIdResolver(snapshot.getDescription()),
+                               block);
     }
 
     @Override
