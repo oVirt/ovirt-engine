@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
@@ -123,6 +124,7 @@ public class DbFacade {
             put(VmStatic.class, VmStaticDAO.class);
             put(VmStatistics.class, VmStatisticsDAO.class);
             put(image_vm_map.class, ImageVmMapDAO.class);
+            put(Disk.class, DiskDao.class);
             put(DiskImage.class, DiskImageDAO.class);
             put(DiskImageDynamic.class, DiskImageDynamicDAO.class);
             put(DiskImageTemplate.class, DiskImageTemplateDAO.class);
