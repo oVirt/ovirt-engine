@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -220,7 +220,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             return "";
         }
         int fromItemCount = getSearchPageSize() * (getSearchPageNumber() - 1) + 1;
-        int toItemCount = (fromItemCount - 1) + ((ArrayList<Object>) getItems()).size();
+        int toItemCount = (fromItemCount - 1) + ((List) getItems()).size();
 
         if (toItemCount == 0 || fromItemCount > toItemCount) {
             return "";
