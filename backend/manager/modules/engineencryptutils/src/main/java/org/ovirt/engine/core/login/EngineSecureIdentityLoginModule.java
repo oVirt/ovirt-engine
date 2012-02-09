@@ -11,11 +11,10 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.resource.security.AbstractPasswordCredentialLoginModule;
 import org.jboss.security.SimplePrincipal;
-
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
 
 /**
@@ -61,7 +60,7 @@ import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
  */
 public class EngineSecureIdentityLoginModule extends AbstractPasswordCredentialLoginModule {
 
-    private static final LogCompat log = LogFactoryCompat.getLog(EngineSecureIdentityLoginModule.class);
+    private static final Log log = LogFactory.getLog(EngineSecureIdentityLoginModule.class);
 
     private String username;
     private String password;

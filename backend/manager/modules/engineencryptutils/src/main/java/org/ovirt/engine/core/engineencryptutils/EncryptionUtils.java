@@ -17,15 +17,16 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.compat.Encoding;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class EncryptionUtils {
     private static String algo = "RSA";
     private static String certType = "JKS";
+    private static Log log = LogFactory.getLog(EncryptionUtils.class);
 
     /**
      * Encrypts the specified source.
@@ -138,7 +139,7 @@ public class EncryptionUtils {
                 result = decrypt(source, key);
             }
         } catch (Exception e) {
-            log.errorFormat("Failed to decrypt", e.getMessage());
+            log.error("Failed to decrypt" + e.getMessage());
             log.debug("Failed to decrypt", e);
             throw e;
         }
@@ -300,5 +301,4 @@ public class EncryptionUtils {
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(EncryptionUtils.class);
 }
