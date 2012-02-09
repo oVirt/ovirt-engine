@@ -12,6 +12,6 @@ public class GetVmInterfacesByVmIdQuery<P extends GetVmByVmIdParameters> extends
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
                 DbFacade.getInstance().getVmNetworkInterfaceDAO()
-                        .getAllForVm(getParameters().getId()));
+                        .getAllForVm(getParameters().getId(), getUserID(), getParameters().isFiltered()));
     }
 }

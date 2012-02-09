@@ -44,8 +44,13 @@ public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implement
 
     @Override
     public List<VmNetworkInterface> getAllForVm(Guid id) {
+        return getAllForVm(id, null, false);
+    }
+
+    @Override
+    public List<VmNetworkInterface> getAllForVm(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_id", id);
+                .addValue("vm_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
         ParameterizedRowMapper<VmNetworkInterface> mapper = new ParameterizedRowMapper<VmNetworkInterface>() {
             @Override

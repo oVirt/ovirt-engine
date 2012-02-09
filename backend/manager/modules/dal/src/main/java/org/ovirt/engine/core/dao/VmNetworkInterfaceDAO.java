@@ -20,6 +20,20 @@ public interface VmNetworkInterfaceDAO extends GenericDao<VmNetworkInterface, Gu
     List<VmNetworkInterface> getAllForVm(Guid id);
 
     /**
+     * Retrieves all interfaces for the given VM id,
+     * with optional filtering
+     *
+     * @param id
+     *            the Vm id
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the list of interfaces
+     */
+    List<VmNetworkInterface> getAllForVm(Guid id, Guid userID, boolean isFiltered);
+
+    /**
      * Retrieves all interfaces for the given template id.
      *
      * @param id

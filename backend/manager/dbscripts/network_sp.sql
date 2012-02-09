@@ -251,13 +251,16 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getvm_interfaceByvm_id(v_vm_id UUID)
+Create or replace FUNCTION Getvm_interfaceByvm_id(v_vm_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
 RETURNS SETOF vm_interface_view
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
    FROM vm_interface_view
-   WHERE vm_guid = v_vm_id;
+   WHERE vm_guid = v_vm_id
+   AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                     FROM   user_vm_permissions_view
+                                     WHERE  user_id = v_user_id AND entity_id = v_vm_id));
 
 END; $procedure$
 LANGUAGE plpgsql;

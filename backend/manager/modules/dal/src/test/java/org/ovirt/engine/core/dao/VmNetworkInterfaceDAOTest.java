@@ -19,6 +19,9 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
     private static final Guid INTERFACE_ID = new Guid("e2817b12-f873-4046-b0da-0098293c14fd");
     private static final Guid VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
 
+    protected static final Guid PRIVILEGED_USER_ID   = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
+    protected static final Guid UNPRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
+
     private VmNetworkInterfaceDAO dao;
 
     private VmNetworkInterface newVmInterface;
@@ -102,6 +105,45 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllInterfacesForVm() {
         List<VmNetworkInterface> result = dao.getAllForVm(VM_ID);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        for (VmNetworkInterface iface : result) {
+            assertEquals(VM_ID, iface.getVmId());
+        }
+    }
+
+    /**
+     * Ensures that the VMs for a privileged user are returned
+     */
+    @Test
+    public void testGetAllInterfacesForVmFilteredWithPermissions() {
+        List<VmNetworkInterface> result = dao.getAllForVm(VM_ID, PRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        for (VmNetworkInterface iface : result) {
+            assertEquals(VM_ID, iface.getVmId());
+        }
+    }
+
+    /**
+     * Ensures that no VMs are returned for an unprivileged user
+     */
+    @Test
+    public void testGetAllInterfacesForVmFilteredWithoutPermissions() {
+        List<VmNetworkInterface> result = dao.getAllForVm(VM_ID, UNPRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Ensures that the VMs for an unprivileged user are returned if no filtering is requested
+     */
+    @Test
+    public void testGetAllInterfacesForVmFilteredWithoutPermissionsAndWithoutFiltering() {
+        List<VmNetworkInterface> result = dao.getAllForVm(VM_ID, UNPRIVILEGED_USER_ID, false);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
