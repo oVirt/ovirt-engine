@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.adbroker;
 
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 
 public abstract class InternalBrokerCommandBase extends BrokerCommandBase {
     private static LogCompat log = LogFactoryCompat.getLog(InternalBrokerCommandBase.class);

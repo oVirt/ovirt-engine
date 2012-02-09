@@ -1,15 +1,17 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.compat.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.DateTime;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
-import org.ovirt.engine.core.dal.dbbroker.*;
-
-import java.util.Date;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 public class AuditLogCleanupManager {
     private static LogCompat log = LogFactoryCompat.getLog(AuditLogCleanupManager.class);

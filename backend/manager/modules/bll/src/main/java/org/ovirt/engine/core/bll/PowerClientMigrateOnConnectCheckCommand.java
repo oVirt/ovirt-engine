@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.queries.GetPowerClientByClientInfoParameters
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @XmlAccessorType(XmlAccessType.NONE)

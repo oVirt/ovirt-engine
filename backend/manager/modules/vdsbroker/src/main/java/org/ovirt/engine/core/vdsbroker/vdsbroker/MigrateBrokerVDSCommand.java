@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+
+import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 
 public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> extends VdsBrokerCommand<P> {
     private Map<String, String> migrationInfo;

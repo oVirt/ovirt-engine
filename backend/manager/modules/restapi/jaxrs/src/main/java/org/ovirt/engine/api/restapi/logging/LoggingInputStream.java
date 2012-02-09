@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.logging;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.ovirt.engine.core.compat.LogCompat;
+import org.ovirt.engine.core.utils.log.LogCompat;
 
 public class LoggingInputStream extends InputStream {
 

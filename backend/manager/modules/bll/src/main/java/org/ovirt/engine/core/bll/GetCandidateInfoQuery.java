@@ -1,12 +1,23 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import java.util.Map;
+
+import org.ovirt.engine.core.common.queries.CandidateInfoParameters;
+import org.ovirt.engine.core.common.queries.GetImportCandidatesQueryParameters;
+import org.ovirt.engine.core.common.queries.ImportCandidateInfoBase;
+import org.ovirt.engine.core.common.queries.ImportCandidateSourceEnum;
+import org.ovirt.engine.core.common.queries.ImportCandidateTypeEnum;
+import org.ovirt.engine.core.common.queries.TemplateCandidateInfo;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.VmCandidateInfo;
+import org.ovirt.engine.core.common.vdscommands.GetCandidateInfoVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Mapper;
-
-import java.util.Map;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 
 /**
  * Gets info on a specified import candidate.

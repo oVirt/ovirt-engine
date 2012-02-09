@@ -6,8 +6,8 @@ import javax.naming.OperationNotSupportedException;
 import javax.security.sasl.SaslException;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.CommunicationException;

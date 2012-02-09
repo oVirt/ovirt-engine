@@ -1,10 +1,18 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.bll.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.RefreshStoragePoolVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 
 public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
     private java.util.ArrayList<Guid> _vdsIdsToSetNonOperational;

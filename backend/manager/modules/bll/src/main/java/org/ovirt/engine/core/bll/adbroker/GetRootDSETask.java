@@ -6,8 +6,8 @@ import java.util.concurrent.Callable;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 
 public class GetRootDSETask implements Callable<Boolean> {

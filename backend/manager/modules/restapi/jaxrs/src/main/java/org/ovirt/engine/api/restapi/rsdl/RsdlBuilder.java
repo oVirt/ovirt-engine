@@ -52,8 +52,8 @@ import org.ovirt.engine.api.model.Schema;
 import org.ovirt.engine.api.model.Url;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 import org.yaml.snakeyaml.Yaml;
 
 public class RsdlBuilder {

@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.vdscommands.ResumeVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.ResumeBrokerVDSCommand;
 
 public class ResumeVDSCommand<P extends ResumeVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
     public ResumeVDSCommand(P parameters) {

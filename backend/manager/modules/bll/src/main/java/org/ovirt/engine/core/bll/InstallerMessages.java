@@ -1,10 +1,14 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
-import org.ovirt.engine.core.common.*;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.*;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 
 public class InstallerMessages {
     private Guid _vdsId;

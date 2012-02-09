@@ -1,8 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.queries.*;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveParameters;
+import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveQueryReturnValue;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 
 public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDriveParameters>
         extends QueriesCommandBase<P> {

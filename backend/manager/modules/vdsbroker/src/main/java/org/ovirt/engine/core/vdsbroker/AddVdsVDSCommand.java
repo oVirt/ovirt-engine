@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.vdscommands.AddVdsVDSCommandParameters;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ThreadUtils;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.dal.dbbroker.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddVdsVDSCommand<P extends AddVdsVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
     public AddVdsVDSCommand(P parameters) {

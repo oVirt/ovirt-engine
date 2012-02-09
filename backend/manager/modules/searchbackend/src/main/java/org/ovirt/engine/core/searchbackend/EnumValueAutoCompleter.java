@@ -1,6 +1,10 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.*;
+import java.text.MessageFormat;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.ovirt.engine.core.compat.EnumCompat;
 
 public class EnumValueAutoCompleter extends BaseAutoCompleter implements IConditionValueAutoCompleter {
     private final java.util.HashMap<String, Integer> mEnumValues = new java.util.HashMap<String, Integer>();
@@ -13,7 +17,10 @@ public class EnumValueAutoCompleter extends BaseAutoCompleter implements ICondit
                 mEnumValues.put(ValName, val);
                 mVerbs.put(ValName, ValName);
             } catch (RuntimeException e) {
-                log.errorFormat("EnumValueAutoCompleter. Failed to add {0}.Exception :{1} ", ValName, e);
+                log.error(MessageFormat.format("EnumValueAutoCompleter. Failed to add {0}.Exception :{1} ",
+                        ValName,
+                        e.getMessage()),
+                        e);
             }
 
         }
@@ -28,5 +35,5 @@ public class EnumValueAutoCompleter extends BaseAutoCompleter implements ICondit
         return retval;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(EnumValueAutoCompleter.class);
+    private static Log log = LogFactory.getLog(EnumValueAutoCompleter.class);
 }

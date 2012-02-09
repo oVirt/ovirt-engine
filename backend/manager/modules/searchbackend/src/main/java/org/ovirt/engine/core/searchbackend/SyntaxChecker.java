@@ -1,18 +1,19 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.EnumCompat;
 import org.ovirt.engine.core.compat.IntegerCompat;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringFormat;
@@ -87,7 +88,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         try {
             sqlInjectionChecker = getSqlInjectionChecker();
         } catch (Exception e) {
-            log.errorFormat("Failed to load Sql Injection Checker. {0}", e.getMessage());
+            log.error(MessageFormat.format("Failed to load Sql Injection Checker. {0}", e.getMessage()));
         }
     }
 
@@ -882,7 +883,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     throw new SqlInjectionException();
                 }
             }
-            log.traceFormat("Search: {0}", retval);
+            log.trace(MessageFormat.format("Search: {0}", retval));
         }
         return retval;
     }
@@ -1015,5 +1016,6 @@ public class SyntaxChecker implements ISyntaxChecker {
         }
         return condition;
     }
-    private static LogCompat log = LogFactoryCompat.getLog(SyntaxChecker.class);
+
+    private static Log log = LogFactory.getLog(SyntaxChecker.class);
 }
