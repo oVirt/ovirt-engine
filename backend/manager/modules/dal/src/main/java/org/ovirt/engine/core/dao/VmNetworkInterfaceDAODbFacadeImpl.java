@@ -78,7 +78,6 @@ public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implement
         return results;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<VmNetworkInterface> getAllForTemplate(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
