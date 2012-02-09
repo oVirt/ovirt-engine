@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,20 +26,19 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
 import org.ovirt.engine.core.notifier.utils.ConnectionHelper;
 import org.ovirt.engine.core.notifier.utils.ConnectionHelper.NaiveConnectionHelperException;
 import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
-import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
 
 /**
  * Class uses to monitor the oVirt Engineanager service by sampling its health servlet. Upon response other than code 200,
@@ -49,7 +49,7 @@ import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
  */
 public class EngineMonitorService implements Runnable {
 
-    private static final LogCompat log = LogFactoryCompat.getLog(EngineMonitorService.class);
+    private static final Log log = LogFactory.getLog(EngineMonitorService.class);
     private static final String ENGINE_NOT_RESPONDING_ERROR = "Engine server is not responding.";
     private static final String ENGINE_RESPONDING_MESSAGE = "Engine server is up and running.";
     private static final String DEFAULT_SERVER_ADDRESS = "localhost:8080";
@@ -91,8 +91,9 @@ public class EngineMonitorService implements Runnable {
         repeatNonResponsiveNotification =
                 Boolean.valueOf(this.prop.get(NotificationProperties.REPEAT_NON_RESPONSIVE_NOTIFICATION));
         if (log.isDebugEnabled()) {
-            log.debugFormat("Checking server status using {0}, {1}ignoring SSL errors.", isHttpsProtocol ? "HTTPS"
-                    : "HTTP", sslIgnoreCertErrors ? "" : "without ");
+            log.debug(MessageFormat.format("Checking server status using {0}, {1}ignoring SSL errors.",
+                    isHttpsProtocol ? "HTTPS" : "HTTP",
+                    sslIgnoreCertErrors ? "" : "without "));
         }
     }
 
@@ -412,7 +413,7 @@ public class EngineMonitorService implements Runnable {
                 int responseCode = engineConn.getResponseCode();
                 if (responseCode != HttpURLConnection.HTTP_OK) {
                     isResponsive = false;
-                    log.debugFormat("Server is non responsive with response code: {0}", responseCode);
+                    log.debug(MessageFormat.format("Server is non responsive with response code: {0}", responseCode));
                 }
             } catch (Exception e) {
                 errors.add(e.getMessage());
@@ -505,12 +506,12 @@ public class EngineMonitorService implements Runnable {
                 if (rs.next()) {
                     propertyValue = rs.getString(1);
                 }
-                log.warnFormat("Property {0} does not exists on vdc_option with version {1}. Trying to obtain it with default version.",
+                log.warn(MessageFormat.format("Property {0} does not exists on vdc_option with version {1}. Trying to obtain it with default version.",
                         propertyName,
-                        propertyVersion);
+                        propertyVersion));
             }
         } catch (Exception e) {
-            log.errorFormat("Failed to retrieve property {0} from the database", propertyName, e);
+            log.error(MessageFormat.format("Failed to retrieve property {0} from the database", propertyName), e);
         } finally {
             if (rs != null) {
                 try {

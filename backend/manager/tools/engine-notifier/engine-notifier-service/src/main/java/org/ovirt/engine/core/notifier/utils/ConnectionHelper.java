@@ -7,11 +7,9 @@ import java.util.Map;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
-
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.tools.common.db.JbossConnectionFactory;
 import org.ovirt.engine.core.tools.common.db.JbossConnectionFactory.ConnectivityCredentials;
 
@@ -35,7 +33,7 @@ public class ConnectionHelper {
         }
     };
 
-    private static final LogCompat log = LogFactoryCompat.getLog(ConnectionHelper.class);
+    private static final Log log = LogFactory.getLog(ConnectionHelper.class);
     private ConnectivityCredentials credentials = null;
     private Connection connection = null;
 

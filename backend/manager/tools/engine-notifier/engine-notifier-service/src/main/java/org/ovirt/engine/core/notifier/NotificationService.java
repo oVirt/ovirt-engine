@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.event_audit_log_subscriber;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
 import org.ovirt.engine.core.common.businessentities.event_notification_methods;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.notifier.methods.EventMethodFiller;
 import org.ovirt.engine.core.notifier.methods.NotificationMethodMapBuilder;
@@ -36,7 +36,7 @@ import org.ovirt.engine.core.notifier.utils.sender.EventSenderResult;
  */
 public class NotificationService implements Runnable {
 
-    private static final LogCompat log = LogFactoryCompat.getLog(NotificationService.class);
+    private static final Log log = LogFactory.getLog(NotificationService.class);
 
     private ConnectionHelper connectionHelper = null;
     private Map<String, String> prop = null;

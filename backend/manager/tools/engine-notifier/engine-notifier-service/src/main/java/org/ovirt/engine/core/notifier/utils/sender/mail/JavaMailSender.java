@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.notifier.utils.sender.mail;
 
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
@@ -16,8 +17,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 
 /**
@@ -25,7 +26,7 @@ import org.ovirt.engine.core.notifier.utils.NotificationProperties;
  */
 public class JavaMailSender {
 
-    private static final LogCompat log = LogFactoryCompat.getLog(JavaMailSender.class);
+    private static final Log log = LogFactory.getLog(JavaMailSender.class);
     private Session session = null;
     private InternetAddress from = null;
     private InternetAddress replyTo = null;
@@ -104,8 +105,9 @@ public class JavaMailSender {
             try {
                 from = new InternetAddress(aMailProps.get(NotificationProperties.MAIL_FROM));
             } catch (AddressException e) {
-                log.errorFormat("Failed to parse 'from' user {0} provided by property {1}",
-                        aMailProps.get(NotificationProperties.MAIL_FROM), NotificationProperties.MAIL_FROM, e);
+                log.error(MessageFormat.format("Failed to parse 'from' user {0} provided by property {1}",
+                        aMailProps.get(NotificationProperties.MAIL_FROM),
+                        NotificationProperties.MAIL_FROM), e);
             }
         } else {
             try {
@@ -113,10 +115,9 @@ public class JavaMailSender {
                     from = new InternetAddress(emailUser);
                 }
             } catch (AddressException e) {
-                log.errorFormat("Failed to parse 'email user' {0} provided by property {1}",
+                log.error(MessageFormat.format("Failed to parse 'email user' {0} provided by property {1}",
                         emailUser,
-                        NotificationProperties.MAIL_USER,
-                        e);
+                        NotificationProperties.MAIL_USER), e);
             }
         }
 
@@ -124,10 +125,9 @@ public class JavaMailSender {
             try {
                 replyTo = new InternetAddress(aMailProps.get(NotificationProperties.MAIL_REPLY_TO));
             } catch (AddressException e) {
-                log.errorFormat("Failed to parse 'replyTo' email {0} provided by property {1}",
+                log.error(MessageFormat.format("Failed to parse 'replyTo' email {0} provided by property {1}",
                         aMailProps.get(NotificationProperties.MAIL_REPLY_TO),
-                        NotificationProperties.MAIL_REPLY_TO,
-                        e);
+                        NotificationProperties.MAIL_REPLY_TO), e);
             }
         }
 

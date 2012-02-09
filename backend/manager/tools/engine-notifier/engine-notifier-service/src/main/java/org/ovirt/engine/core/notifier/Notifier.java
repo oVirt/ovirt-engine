@@ -7,8 +7,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 
@@ -21,7 +21,7 @@ import sun.misc.SignalHandler;
 @SuppressWarnings("restriction")
 public class Notifier {
 
-    private static final LogCompat log = LogFactoryCompat.getLog(Notifier.class);
+    private static final Log log = LogFactory.getLog(Notifier.class);
     private static ScheduledExecutorService notifyScheduler = Executors.newSingleThreadScheduledExecutor();
     private static ScheduledExecutorService monitorScheduler = Executors.newSingleThreadScheduledExecutor();
     private static final long DEFAULT_NOTIFICATION_INTERVAL_IN_SECONDS = 120;

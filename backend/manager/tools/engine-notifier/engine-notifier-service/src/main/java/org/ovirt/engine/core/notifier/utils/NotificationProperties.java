@@ -8,8 +8,8 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.notifier.NotificationServiceException;
 
 /**
@@ -55,7 +55,7 @@ public class NotificationProperties {
     public static final String keystoreUrlVersion = "keystoreUrlVersion";
     public static final String keystorePassVersion = "keystorePassVersion";
 
-    private static final LogCompat log = LogFactoryCompat.getLog(NotificationProperties.class);
+    private static final Log log = LogFactory.getLog(NotificationProperties.class);
 
     /**
      * Reads a properties file into a Map of <String,String> key-value pairs
