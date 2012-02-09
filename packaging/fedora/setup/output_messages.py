@@ -160,6 +160,7 @@ ERR_EXP_RUN_FUNCTION="Internal error, Please report this issue"
 #MAIN
 ERR_CHECK_LOG_FILE_FOR_MORE_INFO="Please check log file %s for more information"
 ERR_YUM_LOCK="Internal Error: Can't edit versionlock "
+ERR_RPM_QUERY="Internal Error: Can't query rpm versions"
 
 #_createDB
 ERR_DB_CREATE_FAILED="Database creation failed"

@@ -11,7 +11,7 @@
 
 Name: ovirt-engine
 Version: $version
-Release: 0%{?dist}
+Release: 1.8%{?dist}
 Source: %{name}-%{version}.tar.gz
 License: ASL 2.0
 Summary: Management server for Open Virtualization
@@ -46,6 +46,7 @@ Requires: %{name}-dbscripts
 Requires: %{name}-webadmin-portal
 Requires: vdsm-bootstrap
 Requires: openssl
+Requires: yum-plugin-versionlock
 
 %description
 oVirt Engine is a feature-rich
@@ -210,6 +211,11 @@ then
     if [[ -d %{_sysconfdir}/pki/%{name} ]]; then
 	    rm -rf %{_sysconfdir}/pki/%{name}
 	fi
+
+    if [[ -f %{_sysconfdir}/yum/pluginconf.d/versionlock.list ]]
+    then
+        sed -i '/ovirt/d' %{_sysconfdir}/yum/pluginconf.d/versionlock.list
+    fi
 fi
 #end raw
 
@@ -303,7 +309,11 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %attr (755,root,root) %{_datadir}/%{name}/scripts/nfsutils.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/engine-setup.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/engine-cleanup.py*
+%attr (755,root,root) %{_datadir}/%{name}/scripts/engine-upgrade.py*
+%attr (755,root,root) %{_datadir}/%{name}/scripts/post_upgrade.py*
 %attr (750,root,root) %{_bindir}/engine-setup
+%attr (750,root,root) %{_bindir}/engine-upgrade
+%attr (750,root,root) %{_bindir}/engine-check-update
 %attr (750,root,root) %{_bindir}/engine-cleanup
 
 %files dbscripts

@@ -569,6 +569,7 @@ def checkIfRhevmDbIsUp():
     logging.debug("checking if rhevm db is already installed and running..")
     (out, rc) = execSqlCommand(basedefs.DB_ADMIN, basedefs.DB_NAME, "select 1", True)
 
+# TODO: Support SystemD services
 class Service():
     def __init__(self, serviceName):
         self.wasStopped = False
@@ -624,3 +625,13 @@ class Service():
         logging.debug("executing action %s on service %s", serviceName, action)
         cmd = [basedefs.EXEC_SERVICE, serviceName, action]
         return execCmd(cmdList=cmd, usePipeFiles=True)
+
+def getColoredText (text, color):
+    ''' gets text string and color
+        and returns a colored text.
+        the color values are RED/BLUE/GREEN/YELLOW
+        everytime we color a text, we need to disable
+        the color at the end of it, for that
+        we use the NO_COLOR chars.
+    '''
+    return color + text + basedefs.NO_COLOR

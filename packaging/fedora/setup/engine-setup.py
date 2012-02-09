@@ -1632,13 +1632,17 @@ def _handleJbossService(action, infoMsg, errMsg, printToStdout=False):
         print infoMsg
     utils.execCmd(cmdList=cmd,failOnError=True, msg=errMsg, usePipeFiles=True)
 
-#def _lockRpmVersion():
-#    """
-#    Enters RHEVM rpm versions into yum version-lock
-#    """
-#    logging.debug("Locking rpms in yum-version-lock")
-#    cmd = "%s -q %s >> %s"%(basedefs.EXEC_RPM, basedefs.RPM_LOCK_LIST, basedefs.FILE_YUM_VERSION_LOCK)
-#    output, rc = utils.execExternalCmd(cmd, True, output_messages.ERR_YUM_LOCK)
+def _lockRpmVersion():
+    """
+    Enters rpm versions into yum version-lock
+    """
+    logging.debug("Locking rpms in yum-version-lock")
+    cmd = [basedefs.EXEC_RPM, "-q"] + basedefs.RPM_LOCK_LIST.split()
+    output, rc = utils.execCmd(cmd, None, True, output_messages.ERR_YUM_LOCK)
+
+    with open(basedefs.FILE_YUM_VERSION_LOCK, "a") as f:
+        for rpm in output.splitlines():
+            f.write(rpm + "\n")
 
 def editPostgresConf():
     """
@@ -2238,7 +2242,7 @@ def main(configFile=None):
         runSequences()
 
         # Lock rhevm version
-        #_lockRpmVersion()
+        _lockRpmVersion()
 
         # Print info
         _addFinalInfoMsg()

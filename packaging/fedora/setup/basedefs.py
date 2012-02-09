@@ -152,3 +152,7 @@ NO_COLOR="\033[0m"
 
 #space len size for color print
 SPACE_LEN=70
+
+RPM_LOCK_LIST = "ovirt-engine-genericapi ovirt-engine ovirt-engine-backend \
+ovirt-engine-jboss-deps ovirt-engine-webadmin-portal ovirt-engine-userportal \
+ovirt-engine-restapi ovirt-engine-config ovirt-engine-tools-common ovirt-engine-notification-service"

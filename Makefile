@@ -19,7 +19,7 @@ RPM_VERSION:=$(shell echo $(APP_VERSION) | sed "s/-/_/")
 
 # Release Version; used to create y in <x.x.x-y> numbering.
 # Should be used to create releases.
-RELEASE_VERSION=1.4
+RELEASE_VERSION=1.8
 
 SPEC_FILE_IN=packaging/fedora/spec/ovirt-engine.spec.in
 SPEC_FILE=ovirt-engine.spec
@@ -148,6 +148,13 @@ install_setup:
 	cp -f ./packaging/fedora/setup/engine-cleanup.py $(PREFIX)/usr/share/ovirt-engine/scripts
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/engine-cleanup.py
 	ln -s /usr/share/ovirt-engine/scripts/engine-cleanup.py $(PREFIX)/usr/bin/engine-cleanup
+	cp -f ./packaging/fedora/setup/engine-upgrade.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/engine-upgrade.py
+	ln -s /usr/share/ovirt-engine/scripts/engine-upgrade.py $(PREFIX)/usr/bin/engine-upgrade
+	cp -f ./packaging/fedora/setup/post_upgrade.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/post_upgrade.py
+	cp -f ./packaging/fedora/setup/engine-check-update $(PREFIX)/usr/bin/
+	chmod 755 $(PREFIX)/usr/bin/engine-check-update
 	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RELEASE_VERSION)/" $(PREFIX)/usr/share/ovirt-engine/resources/jboss/ROOT.war/engineVersion.js
 
 install_sec:
