@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.compat;
+package org.ovirt.engine.core.utils.log;
 
 import java.text.MessageFormat;
 
@@ -167,85 +167,4 @@ public class LogCompat implements Log {
         return null;
     }
 
-    //
-    // @Override
-    // public void Debug(String msg) {
-    // log.debug(msg) ;
-    //
-    // }
-    //
-    // @Override
-    // public void Debug(Object message, Throwable exception) {
-    // log.debug(message, exception) ;
-    // }
-    //
-    // @Override
-    // public void DebugFormat(String msg) {
-    // log.debug(msg) ;
-    // }
-    //
-    // @Override
-    // public void DebugFormat(String format, Object[] args) {
-    // log.debug(String.format(format, args)) ;
-    // }
-    //
-    // @Override
-    // public void Error(Object message) {
-    // log.error(message) ;
-    // }
-    //
-    // @Override
-    // public void Error(Object message, Throwable exception) {
-    // log.error(message, exception) ;
-    // }
-    //
-    // @Override
-    // public void ErrorFormat(String format, Object[] args) {
-    // log.error(String.format(format, args)) ;
-    // }
-    //
-    // @Override
-    // public void Fatal(Object message) {
-    // log.fatal(message) ;
-    // }
-    //
-    // @Override
-    // public void Fatal(Object message, Throwable exception) {
-    // log.fatal(message, exception) ;
-    // }
-    //
-    // @Override
-    // public void FatalFormat(String format, Object[] args) {
-    // log.fatal(String.format(format, args)) ;
-    // }
-    //
-    // @Override
-    // public void Info(Object message) {
-    // log.info(message) ;
-    // }
-    //
-    // @Override
-    // public void Info(Object message, Throwable exception) {
-    // log.info(message, exception) ;
-    // }
-    //
-    // @Override
-    // public void InfoFormat(String format, Object[] args) {
-    // log.info(String.format(format, args)) ;
-    // }
-    //
-    // @Override
-    // public void Warn(Object message) {
-    // log.warn(message) ;
-    // }
-    //
-    // @Override
-    // public void Warn(Object message, Throwable exception) {
-    // log.warn(message, exception) ;
-    // }
-    //
-    // @Override
-    // public void WarnFormat(String format, Object[] args) {
-    // log.warn(String.format(format, args)) ;
-    // }
 }

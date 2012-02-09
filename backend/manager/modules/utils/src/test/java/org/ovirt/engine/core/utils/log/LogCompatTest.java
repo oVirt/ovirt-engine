@@ -1,7 +1,8 @@
-package org.ovirt.engine.core.compat;
+package org.ovirt.engine.core.utils.log;
+
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 
 public class LogCompatTest {
     LogCompat log = LogFactoryCompat.getLog(LogCompatTest.class);
