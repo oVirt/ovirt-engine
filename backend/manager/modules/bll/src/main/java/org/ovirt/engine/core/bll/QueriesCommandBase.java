@@ -120,7 +120,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     *         <code>false</code> otherwise.
     */
     private final boolean validatePermissions() {
-        if (!isInternalExecution && (type.isAdmin() || !parameters.isRunAsUser())) {
+        if (!isInternalExecution && (type.isAdmin() || !parameters.isFiltered())) {
             if (user == null) {
                 return false;
             }

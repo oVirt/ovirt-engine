@@ -173,9 +173,10 @@ public class VdcQueryParametersBase implements Serializable {
     private boolean refresh = true;
 
     /**
-     * The boolean flag which specifies if the query should be run as a user (as opposed to the default, which is running as admin)
+     * The boolean flag which specifies if the query should be filtered
+     * (e.g., according to user permissions as opposed to the default, which is running as admin)
      */
-    private boolean runAsUser = false;
+    private boolean isFiltered = false;
 
     public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
         return RegisterableQueryReturnDataType.LIST_IQUERYABLE;
@@ -209,11 +210,11 @@ public class VdcQueryParametersBase implements Serializable {
         this.refresh = refresh;
     }
 
-    public boolean isRunAsUser() {
-        return runAsUser;
+    public boolean isFiltered() {
+        return isFiltered;
     }
 
-    public void setRunAsUser(boolean isRunAsUser) {
-        this.runAsUser = isRunAsUser;
+    public void setFiltered(boolean isFiltered) {
+        this.isFiltered = isFiltered;
     }
 }

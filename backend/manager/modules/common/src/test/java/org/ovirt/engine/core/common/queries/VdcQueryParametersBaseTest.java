@@ -17,13 +17,13 @@ public class VdcQueryParametersBaseTest {
     }
 
     @Test
-    public void testRunAsUser() {
-        assertFalse("By default, query should not be run as user", base.isRunAsUser());
+    public void testIsFiltered() {
+        assertFalse("By default, query should not be run as user", base.isFiltered());
 
-        base.setRunAsUser(true);
-        assertTrue("Query should have been set to be run as user", base.isRunAsUser());
+        base.setFiltered(true);
+        assertTrue("Query should have been set to be run as user", base.isFiltered());
 
-        base.setRunAsUser(false);
-        assertFalse("Query should have been set to be NOT run as user", base.isRunAsUser());
+        base.setFiltered(false);
+        assertFalse("Query should have been set to be NOT run as user", base.isFiltered());
     }
 }

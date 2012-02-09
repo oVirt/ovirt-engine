@@ -110,11 +110,11 @@ public class QueriesCommandBaseTest {
     public void testPermissionChecking() throws Exception {
         boolean[] booleans = { true, false };
         for (VdcQueryType queryType : VdcQueryType.values()) {
-            for (boolean isRunAsUser : booleans) {
+            for (boolean isFiltered : booleans) {
                 for (boolean isUserAdmin : booleans) {
                     for (boolean isInternalExecution : booleans) {
                         boolean shouldBeAbleToRunQuery =
-                                isInternalExecution || isUserAdmin || (isRunAsUser && !queryType.isAdmin());
+                                isInternalExecution || isUserAdmin || (isFiltered && !queryType.isAdmin());
 
                         log.debug("Running on query: " + toString());
 
@@ -122,7 +122,7 @@ public class QueriesCommandBaseTest {
 
                         // Mock parameters
                         VdcQueryParametersBase params = mock(VdcQueryParametersBase.class);
-                        when(params.isRunAsUser()).thenReturn(isRunAsUser);
+                        when(params.isFiltered()).thenReturn(isFiltered);
                         when(params.getSessionId()).thenReturn(sessionId);
 
                         Guid guid = mock(Guid.class);
@@ -143,8 +143,8 @@ public class QueriesCommandBaseTest {
 
                         query.setInternalExecution(isInternalExecution);
                         query.ExecuteCommand();
-                        assertEquals("Running with type=" + queryType + " isUserAdmin=" + isUserAdmin + " isRunAsUser="
-                                + isRunAsUser + " isInternalExecution=" + isInternalExecution + "\n " +
+                        assertEquals("Running with type=" + queryType + " isUserAdmin=" + isUserAdmin + " isFiltered="
+                                + isFiltered + " isInternalExecution=" + isInternalExecution + "\n " +
                                 "Query should succeed is: ", shouldBeAbleToRunQuery, query.getQueryReturnValue()
                                 .getSucceeded());
 
