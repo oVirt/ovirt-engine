@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.utils;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 
 public final class ObjectCompareUtils {
     /**

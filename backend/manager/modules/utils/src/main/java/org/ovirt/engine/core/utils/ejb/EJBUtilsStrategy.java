@@ -6,8 +6,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 
 /**
  * EJBUtils strategy to fine tune the lookup process of beans

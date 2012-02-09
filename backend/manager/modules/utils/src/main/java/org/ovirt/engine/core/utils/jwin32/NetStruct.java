@@ -5,8 +5,8 @@ import com.sun.jna.WString;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.PointerByReference;
 
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 
 public abstract class NetStruct extends Structure {
     private static LogCompat log = LogFactoryCompat.getLog(USER_INFO_20.class);

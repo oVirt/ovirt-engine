@@ -10,8 +10,8 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField;
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 
 /**
  * This class assists in OVF log events handling

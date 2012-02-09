@@ -9,8 +9,8 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public final class ErrorTranslatorImpl implements ErrorTranslator {

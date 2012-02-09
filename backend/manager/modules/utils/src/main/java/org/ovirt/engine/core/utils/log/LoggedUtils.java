@@ -3,8 +3,6 @@ package org.ovirt.engine.core.utils.log;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
-
-import org.ovirt.engine.core.compat.LogCompat;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 
 /**
@@ -136,7 +134,7 @@ public class LoggedUtils {
 
     /**
      * Log a message to the log, taking into account the log level (checking if it's active, and using it in the log).
-     * The message may contain parameters as in the {@link MessageFormat} specification, and they will undergo
+     * The message may contain parameters as in the {@code MessageFormat} specification, and they will undergo
      * transformation only if the log level is sufficient for the given log.
      *
      * @param log

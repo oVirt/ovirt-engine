@@ -20,8 +20,8 @@ import javax.naming.directory.DirContext;
 import javax.naming.spi.NamingManager;
 
 
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 
 /**
  * Utility class to query DNS SRV records, and return results according to the priority/weights algorithm as specified

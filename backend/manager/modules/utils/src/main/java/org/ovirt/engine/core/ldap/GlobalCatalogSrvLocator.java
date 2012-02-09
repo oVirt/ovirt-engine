@@ -5,8 +5,8 @@ package org.ovirt.engine.core.ldap;
 
 import javax.naming.NamingException;
 
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.LogFactoryCompat;
 import org.ovirt.engine.core.dns.DnsSRVLocator;
 
 /**
