@@ -141,6 +141,7 @@ VmPoolUserCommandBase<T> {
 
         // Only when using a Vm that is not prestarted do we need to run the vm
         if (!isPrestartedVm) {
+            setVm(getVmDAO().get(vmToAttach));
             RunVmParams runVmParams = new RunVmParams(vmToAttach);
             runVmParams.setSessionId(getParameters().getSessionId());
             runVmParams.setUseVnc(getVm().getvm_type() == VmType.Server);
