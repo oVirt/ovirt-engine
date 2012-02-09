@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -16,6 +17,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvide
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel.ReportCommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -27,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
@@ -65,7 +68,8 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmDesktopNewPopupPresenterWidget> newDesktopVmPopupProvider,
             final Provider<VmServerNewPopupPresenterWidget> newServerVmPopupProvider,
             final Provider<GuidePopupPresenterWidget> guidePopupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<ReportPresenterWidget> reportWindowProvider) {
         return new MainTabModelProvider<VM, VmListModel>(ginjector, VmListModel.class) {
             @Override
             protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
@@ -111,6 +115,15 @@ public class VirtualMachineModule extends AbstractGinModule {
                     return removeConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(lastExecutedCommand);
+                }
+            }
+
+            @Override
+            protected ModelBoundPresenterWidget<? extends Model> getModelBoundWidget(UICommand lastExecutedCommand) {
+                if (lastExecutedCommand instanceof ReportCommand) {
+                    return reportWindowProvider.get();
+                } else {
+                    return super.getModelBoundWidget(lastExecutedCommand);
                 }
             }
         };

@@ -48,13 +48,22 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
     // Indicates whether the given feature is available only from a context menu
     private final boolean availableOnlyFromContext;
 
+    // Indicates whether this action button has a title action
+    private final boolean subTitledAction;
+
+    private final String toolTip;
+
     protected UiCommandButtonDefinition(String title,
-            boolean implInWebAdmin, boolean implInUserPortal,
-            boolean availableOnlyFromContext) {
+            boolean implInWebAdmin,
+            boolean implInUserPortal,
+            boolean availableOnlyFromContext,
+            boolean subTitledAction, String toolTip) {
         this.title = SafeHtmlUtils.fromSafeConstant(title);
         this.implInWebAdmin = implInWebAdmin;
         this.implInUserPortal = implInUserPortal;
         this.availableOnlyFromContext = availableOnlyFromContext;
+        this.subTitledAction = subTitledAction;
+        this.toolTip = toolTip;
         update();
 
         // Add handler to be notified when UiCommon models are (re)initialized
@@ -70,7 +79,7 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
      * Creates a new button with the given title.
      */
     public UiCommandButtonDefinition(String title) {
-        this(title, true, false, false);
+        this(title, true, false, false, false, null);
     }
 
     /**
@@ -80,15 +89,16 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
      * context menu.
      */
     public UiCommandButtonDefinition(String title, boolean availableOnlyFromContext) {
-        this(title, true, false, availableOnlyFromContext);
+        this(title, true, false, availableOnlyFromContext, false, null);
     }
 
     /**
      * TODO This constructor will be removed when all WebAdmin features are implemented.
      */
     public UiCommandButtonDefinition(String title, boolean implInWebAdmin, boolean implInUserPortal) {
-        this(title, implInWebAdmin, implInUserPortal, false);
+        this(title, implInWebAdmin, implInUserPortal, false, false, null);
     }
+
 
     /**
      * Assigns the given command with this button definition.
@@ -200,4 +210,18 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
         getEventBus().fireEvent(event);
     }
 
+    @Override
+    public boolean isSubTitledAction() {
+        return subTitledAction;
+    }
+
+    @Override
+    public String getToolTip() {
+        return toolTip;
+    }
+
+    @Override
+    public boolean isVisible(List<T> selectedItems) {
+        return true;
+    }
 }

@@ -379,6 +379,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Events")
     String eventMainTabLabel();
 
+    @DefaultStringValue("Dashboard")
+    String reportsMainTabLabel();
+
     @DefaultStringValue("Basic View")
     String eventBasicViewLabel();
 
@@ -697,4 +700,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Cluster:")
     String moveHostPopupClusterLabel();
 
+    @DefaultStringValue("Please select reports from the same data center")
+    String reportFromDifferentDCsError();
 }

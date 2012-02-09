@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -16,6 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel.ReportCommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
@@ -27,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.TemplateBackupModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.VmBackupModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
@@ -51,7 +54,8 @@ public class StorageModule extends AbstractGinModule {
     public MainModelProvider<storage_domains, StorageListModel> getStorageListProvider(ClientGinjector ginjector,
             final Provider<StoragePopupPresenterWidget> popupProvider,
             final Provider<StorageRemovePopupPresenterWidget> removePopupProvider,
-            final Provider<StorageDestroyPopupPresenterWidget> destroyConfirmPopupProvider) {
+            final Provider<StorageDestroyPopupPresenterWidget> destroyConfirmPopupProvider,
+            final Provider<ReportPresenterWidget> reportWindowProvider) {
         return new MainTabModelProvider<storage_domains, StorageListModel>(ginjector, StorageListModel.class) {
             @Override
             protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
@@ -72,6 +76,15 @@ public class StorageModule extends AbstractGinModule {
                     return destroyConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(lastExecutedCommand);
+                }
+            }
+
+            @Override
+            protected ModelBoundPresenterWidget<? extends Model> getModelBoundWidget(UICommand lastExecutedCommand) {
+                if (lastExecutedCommand instanceof ReportCommand) {
+                    return reportWindowProvider.get();
+                } else {
+                    return super.getModelBoundWidget(lastExecutedCommand);
                 }
             }
         };

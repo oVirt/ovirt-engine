@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -7,12 +9,15 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
+import org.ovirt.engine.ui.webadmin.uicommon.ReportsHelper;
+import org.ovirt.engine.ui.webadmin.widget.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DiskSizeColumn;
@@ -118,6 +123,12 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
                 return getMainModel().getDestroyCommand();
             }
         });
+        List<ActionButtonDefinition<storage_domains>> resourceSubActions =
+                ReportsHelper.getInstance().getResourceSubActions("Storage", getMainModel());
+        if (resourceSubActions != null && resourceSubActions.size() > 0) {
+            getTable().addActionButton(new WebAdminMenuBarButtonDefinition<storage_domains>("Show Report",
+                    resourceSubActions));
+        }
     }
 
 }

@@ -12,11 +12,14 @@ import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.FeatureNotImplementedYetPopup;
+import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.InitializeEvent;
 import com.google.gwt.event.logical.shared.InitializeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -27,6 +30,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.MenuItemSeparator;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -56,6 +60,8 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
     private final PopupPanel contextPopupPanel;
     private final MenuBar contextMenuBar;
 
+    private final MenuPanelPopup actionPanelPopupPanel;
+
     private String elementId = DOM.createUniqueId();
 
     public AbstractActionPanel(SearchableModelProvider<T, ?> dataProvider,
@@ -65,6 +71,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
         this.constants = constants;
         this.contextPopupPanel = new PopupPanel(true);
         this.contextMenuBar = new MenuBar(true);
+        this.actionPanelPopupPanel = new MenuPanelPopup(true);
     }
 
     protected SearchableModelProvider<T, ?> getDataProvider() {
@@ -108,12 +115,32 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
 
         actionButtonList.add(buttonDef);
 
+        actionPanelPopupPanel.asPopupPanel().addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+                newActionButton.asToggleButton().setDown(false);
+            }
+        });
+
         // Add button widget click handler
         newActionButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 if (buttonDef.isImplemented()) {
-                    buttonDef.onClick(getSelectedItems());
+                    if (buttonDef instanceof UiMenuBarButtonDefinition) {
+                        actionPanelPopupPanel.asPopupPanel().addAutoHidePartner(newActionButton.asToggleButton()
+                                .getElement());
+                        if (newActionButton.asToggleButton().isDown()) {
+                            updateContextMenu(actionPanelPopupPanel.getMenuBar(),
+                                    ((UiMenuBarButtonDefinition<T>) buttonDef).getSubActions(),
+                                    actionPanelPopupPanel.asPopupPanel());
+                            actionPanelPopupPanel.asPopupPanel().showRelativeTo(newActionButton.asWidget());
+                        } else {
+                            actionPanelPopupPanel.asPopupPanel().hide();
+                        }
+                    } else {
+                        buttonDef.onClick(getSelectedItems());
+                    }
                 } else {
                     new FeatureNotImplementedYetPopup((Widget) event.getSource(),
                             buttonDef.isImplInUserPortal(), constants).show();
@@ -175,7 +202,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
                     int eventX = event.getNativeEvent().getClientX();
                     int eventY = event.getNativeEvent().getClientY();
 
-                    updateContextMenu();
+                    updateContextMenu(contextMenuBar, actionButtonList, contextPopupPanel);
                     contextPopupPanel.setPopupPosition(eventX, eventY);
                     contextPopupPanel.show();
                 }
@@ -183,40 +210,74 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
         }, ContextMenuEvent.getType());
     }
 
+    MenuBar updateContextMenu(MenuBar menuBar, List<ActionButtonDefinition<T>> actions, final PopupPanel popupPanel) {
+        return updateContextMenu(menuBar, actions, popupPanel, true);
+    }
+
     /**
      * Rebuilds context menu items to match the action button list.
      */
-    void updateContextMenu() {
-        contextMenuBar.clearItems();
+    MenuBar updateContextMenu(MenuBar menuBar,
+            List<ActionButtonDefinition<T>> actions,
+            final PopupPanel popupPanel,
+            boolean removeOldItems) {
 
-        for (final ActionButtonDefinition<T> buttonDef : actionButtonList) {
-            MenuItem item = new MenuItem(buttonDef.getTitle(), new Command() {
-                @Override
-                public void execute() {
-                    contextPopupPanel.hide();
-                    buttonDef.onClick(getSelectedItems());
-                }
-            });
-
-            updateMenuItem(item, buttonDef);
-            contextMenuBar.addItem(item);
+        if (removeOldItems) {
+            menuBar.clearItems();
         }
+
+        for (final ActionButtonDefinition<T> buttonDef : actions) {
+
+            if (buttonDef instanceof UiMenuBarButtonDefinition) {
+                UiMenuBarButtonDefinition<T> menuBarDef = ((UiMenuBarButtonDefinition<T>) buttonDef);
+                if (menuBarDef.isAsTitle()) {
+                    MenuItemSeparator titleItem = new TitleMenuItemSeparator(buttonDef.getTitle());
+                    menuBar.addSeparator(titleItem);
+                    titleItem.setVisible(buttonDef.isVisible(getSelectedItems()));
+                    updateContextMenu(menuBar, menuBarDef.getSubActions(), popupPanel, false);
+                } else {
+                    MenuItem newMenu = new MenuItem(buttonDef.getTitle(),
+                            updateContextMenu(new MenuBar(true),
+                                    menuBarDef.getSubActions(),
+                                    popupPanel));
+
+                    updateMenuItem(newMenu, buttonDef);
+                    menuBar.addItem(newMenu);
+                }
+            }else {
+                MenuItem item = new MenuItem(buttonDef.getTitle(), new Command() {
+                    @Override
+                    public void execute() {
+                        popupPanel.hide();
+                        buttonDef.onClick(getSelectedItems());
+                    }
+                });
+
+                updateMenuItem(item, buttonDef);
+                menuBar.addItem(item);
+            }
+        }
+        return menuBar;
     }
 
     /**
      * Ensures that the specified action button is visible or hidden and enabled or disabled as it should.
      */
     void updateActionButton(ActionButton button, ActionButtonDefinition<T> buttonDef) {
-        button.asWidget().setVisible(buttonDef.isAccessible());
+        button.asWidget().setVisible(buttonDef.isAccessible() && buttonDef.isVisible(getSelectedItems()));
         button.setEnabled(buttonDef.isEnabled(getSelectedItems()));
     }
 
     /**
      * Ensures that the specified menu item is visible or hidden and enabled or disabled as it should.
      */
-    void updateMenuItem(MenuItem item, ActionButtonDefinition<T> buttonDef) {
-        item.setVisible(buttonDef.isAccessible());
+    protected void updateMenuItem(MenuItem item, ActionButtonDefinition<T> buttonDef) {
+        item.setVisible(buttonDef.isAccessible() && buttonDef.isVisible(getSelectedItems()));
         item.setEnabled(buttonDef.isEnabled(getSelectedItems()));
+
+        if (buttonDef.getToolTip() != null) {
+            item.setTitle(buttonDef.getToolTip());
+        }
     }
 
     /**

@@ -3,60 +3,63 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:r="urn:import:org.ovirt.engine.ui.webadmin.widget.refresh">
 
-	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+	<ui:with field='resources'
+		type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable.Style">
+	<ui:style
+		type="org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable.Style">
 		.panel {
-			overflow: auto;
-			height: 100%;
+		overflow: auto;
+		height: 100%;
 		}
-		
+
 		.bar {
-			padding-top: 7px;
-			height: 24px;
+		padding-top: 7px;
+		height: 24px;
 		}
-		
+
 		.refreshButton {
-			float: right;
-			font-size: 12px;
-			height: 14px;
-			width: 12px;
-			margin-right: 5px;
-			background: transparent;
-			border: 1px solid transparent;
+		float: right;
+		font-size: 12px;
+		height: 14px;
+		width: 12px;
+		margin-right: 5px;
+		background: transparent;
+		border: 1px solid transparent;
 		}
-		
+
 		.refreshPanel {
-			float: right;
-			cursor: hand;
-			cursor: pointer;
-			border: 1px solid transparent;
-			display: table-cell;
+		float: right;
+		cursor: hand;
+		cursor: pointer;
+		border: 1px solid transparent;
+		display: table-cell;
 		}
-		
+
 		.content {
-			overflow-y: scroll;
-			position: absolute !important;
-			top: 59px;
-			bottom: 0px;
-			left: 0px;
-			right: 0px;
+		overflow-y: scroll;
+		position: absolute !important;
+		top: 59px;
+		bottom: 0px;
+		left: 0px;
+		right: 0px;
 		}
-		
+
 		.contentWithDefaultHeader {
-			
+
 		}
-		
+
 		.headerContainer {
-			position: absolute;
-			height: 28px;
-			top: 34px;
-			bottom: 0px;
-			left: 0px;
-			right: 0px;
-			padding-right: 17px;
-			background-color: #F0F2FF;
+		position: absolute;
+		height: 28px;
+		top: 34px;
+		bottom: 0px;
+		left: 0px;
+		right: 0px;
+		padding-right: 17px;
+		background-color: #F0F2FF;
 		}
+
 		.prevButtonStyle {
 			width: 10px;
 			float: right;
@@ -84,6 +87,11 @@
 			font-size: 11px;
 			color: #666
 		}
+
+		.subTitledButton {
+		padding-left: 30px !important;
+		}
+
 	</ui:style>
 
 	<g:FlowPanel addStyleNames="{style.panel}">
@@ -101,7 +109,8 @@
 			<r:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}" />
 			<div style="clear: both;" />
 		</g:HTMLPanel>
-		<g:SimplePanel ui:field="tableHeaderContainer" addStyleNames="{style.headerContainer}" />
+		<g:SimplePanel ui:field="tableHeaderContainer"
+			addStyleNames="{style.headerContainer}" />
 		<g:SimplePanel ui:field="tableContainer" addStyleNames="{style.content}" />
 	</g:FlowPanel>
 

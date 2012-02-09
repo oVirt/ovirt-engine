@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.Date;
+
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -32,6 +34,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.AlertListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
+import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
@@ -409,6 +412,8 @@ public class CommonModel extends ListModel
         templateList.setIsAvailable(!getHasSelectedTags());
         userList.setIsAvailable(true);
         eventList.setIsAvailable(!getHasSelectedTags());
+        // reportsList.setIsAvailable(!getHasSelectedTags());
+
         /*
          * --- JUICOMMENT_BEGIN monitor.setIsAvailable(!getHasSelectedTags()); JUICOMMENT_END ---
          */
@@ -530,39 +535,47 @@ public class CommonModel extends ListModel
                 || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Host
                 || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.System);
 
+        // reportsList.setIsAvailable(model.getType() == SystemTreeItemType.System
+        // || model.getType() == SystemTreeItemType.DataCenter || model.getType() == SystemTreeItemType.Clusters);
+
         // Select a default item depending on system tree selection.
         ListModel oldSelectedItem = getSelectedItem();
 
-        switch (model.getType())
-        {
-        case DataCenter:
-            setSelectedItem(dataCenterList);
-            break;
-        case Clusters:
-        case Cluster:
-            setSelectedItem(clusterList);
-            break;
-        case Hosts:
-        case Host:
-            setSelectedItem(hostList);
-            break;
-        case Storages:
-        case Storage:
-            setSelectedItem(storageList);
-            break;
-        case Templates:
-            setSelectedItem(templateList);
-            break;
-        case VMs:
-            setSelectedItem(vmList);
-            break;
-        default:
-            // webadmin: redirect to default tab in case no tab is selected.
-            if (getSelectedItem() == null)
+        // Do not Change Tab if the Selection is the Reports
+        if (getSelectedItem() != reportsList) {
+            switch (model.getType())
             {
-                setSelectedItem(getDefaultItem());
+            case DataCenter:
+                setSelectedItem(dataCenterList);
+                break;
+            case Clusters:
+            case Cluster:
+                setSelectedItem(clusterList);
+                break;
+            case Hosts:
+            case Host:
+                setSelectedItem(hostList);
+                break;
+            case Storages:
+            case Storage:
+                setSelectedItem(storageList);
+                break;
+            case Templates:
+                setSelectedItem(templateList);
+                break;
+            case VMs:
+                setSelectedItem(vmList);
+                break;
+            default:
+                // webadmin: redirect to default tab in case no tab is selected.
+                if (getSelectedItem() == null)
+                {
+                    setSelectedItem(getDefaultItem());
+                }
+                break;
             }
-            break;
+        } else {
+            reportsList.OnSystemTreeChanged(model);
         }
 
         // Update search string if selected item was not changed. If it is,
@@ -691,6 +704,7 @@ public class CommonModel extends ListModel
     private SearchableListModel templateList;
     private SearchableListModel userList;
     private SearchableListModel eventList;
+    private ReportsListModel reportsList;
     private SearchableListModel monitor;
 
     private void InitItems()
@@ -723,6 +737,15 @@ public class CommonModel extends ListModel
          */
         eventList = new EventListModel();
         list.add(eventList);
+
+        reportsList = new ReportsListModel("10.35.1.139", 8080, "jasperserver-pro");
+        reportsList.setUser("ovirt");
+        reportsList.setPassword("1234");
+        reportsList.setReportStartDate(new Date(2011, 8, 1));
+        reportsList.setReportEndDate(new Date(2011, 8, 31));
+        list.add(reportsList);
+
+        reportsList.setIsAvailable(false);
 
         setItems(list);
 

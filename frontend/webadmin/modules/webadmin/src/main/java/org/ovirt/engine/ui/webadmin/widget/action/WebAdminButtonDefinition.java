@@ -11,6 +11,15 @@ public abstract class WebAdminButtonDefinition<T> extends UiCommandButtonDefinit
         super(title, implInWebAdmin, implInUserPortal);
     }
 
+    public WebAdminButtonDefinition(String title,
+            boolean implInWebAdmin,
+            boolean implInUserPortal,
+            boolean availableOnlyFromContext,
+            boolean subTitledAction,
+            String toolTip) {
+        super(title, implInWebAdmin, implInUserPortal, availableOnlyFromContext, subTitledAction, toolTip);
+    }
+
     public WebAdminButtonDefinition(String title, boolean availableOnlyFromContext) {
         super(title, availableOnlyFromContext);
     }

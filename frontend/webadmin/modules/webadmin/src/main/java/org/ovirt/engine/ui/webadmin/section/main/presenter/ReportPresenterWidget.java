@@ -1,0 +1,74 @@
+package org.ovirt.engine.ui.webadmin.section.main.presenter;
+
+import java.util.List;
+import java.util.Map;
+
+import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
+import org.ovirt.engine.ui.common.system.ErrorPopupManager;
+import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+
+import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
+import com.gwtplatform.mvp.client.PresenterWidget;
+import com.gwtplatform.mvp.client.View;
+
+public class ReportPresenterWidget extends PresenterWidget<ReportPresenterWidget.ViewDef> implements ModelBoundPresenterWidget<ReportModel> {
+
+    public interface ViewDef extends View {
+
+        /**
+         * Set the Frame URL
+         */
+        void setFrameUrl(String url);
+
+        /**
+         * Set the Frame parameters
+         */
+        void setFrameParams(Map<String, List<String>> params);
+
+        /**
+         * POST the Frame Data
+         */
+        void postFrame();
+    }
+
+    private ReportModel model = null;
+    private final ErrorPopupManager errorPopupManager;
+    private final ApplicationConstants applicationConstants;
+
+    @Inject
+    public ReportPresenterWidget(EventBus eventBus,
+            ViewDef view, ErrorPopupManager errorPopupManager, ApplicationConstants applicationConstants) {
+        super(eventBus, view);
+        this.errorPopupManager = errorPopupManager;
+        this.applicationConstants = applicationConstants;
+    }
+
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+        updateReportUrl();
+    }
+
+    private void updateReportUrl() {
+        getView().setFrameParams(getModel().getReportParams());
+        getView().setFrameUrl(getModel().getReportUrl());
+        getView().postFrame();
+    }
+
+    public ReportModel getModel() {
+        return model;
+    }
+
+    @Override
+    public void init(ReportModel model) {
+        this.model = model;
+
+        if (model.isDifferntDcError()) {
+            errorPopupManager.show(applicationConstants.reportFromDifferentDCsError());
+        } else {
+            updateReportUrl();
+        }
+    }
+}

@@ -1,14 +1,19 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
+import org.ovirt.engine.ui.webadmin.uicommon.ReportsHelper;
+import org.ovirt.engine.ui.webadmin.widget.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 
@@ -74,6 +79,12 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             }
         });
 
+        List<ActionButtonDefinition<VDSGroup>> resourceSubActions =
+                ReportsHelper.getInstance().getResourceSubActions("Cluster", getMainModel());
+        if (resourceSubActions != null && resourceSubActions.size() > 0) {
+            getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDSGroup>("Show Report", resourceSubActions));
+        }
+
         getTable().addActionButton(new WebAdminImageButtonDefinition<VDSGroup>("Guide Me",
                 resources.guideSmallImage(), resources.guideSmallDisabledImage(), true) {
             @Override
@@ -82,5 +93,4 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             }
         });
     }
-
 }

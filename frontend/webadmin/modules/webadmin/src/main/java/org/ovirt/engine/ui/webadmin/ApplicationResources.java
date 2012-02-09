@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.resources.client.TextResource;
 
 public interface ApplicationResources extends CommonApplicationResources {
 
@@ -337,7 +338,8 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     // Slider
     /**
-     * An image used for the sliding knob.
+     * An image used for the sliding knob
+     *
      * @return a prototype of this image
      */
     @Source("images/slider.gif")
@@ -399,4 +401,8 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/page_next_disable.png")
     ImageResource pageNextDisable();
+
+    @Source("Reports.xml")
+    TextResource reportsXml();
+
 }

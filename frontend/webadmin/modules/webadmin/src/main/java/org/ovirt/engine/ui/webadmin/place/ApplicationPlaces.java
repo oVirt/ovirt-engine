@@ -65,6 +65,12 @@ public class ApplicationPlaces {
         return eventMainTabPlace;
     }
 
+    public static final String reportsMainTabPlace = "reports";
+
+    public static String getReportsMainTabPlace() {
+        return reportsMainTabPlace;
+    }
+
     // Main section: sub tabs
 
     // DataCenter

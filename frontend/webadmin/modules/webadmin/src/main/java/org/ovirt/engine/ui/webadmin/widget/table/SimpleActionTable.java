@@ -22,6 +22,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleActionTable<T> extends AbstractActionTable<T> {
@@ -110,10 +111,20 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         return new SimpleActionButton();
     }
 
+    @Override
+    protected void updateMenuItem(MenuItem item, ActionButtonDefinition<T> buttonDef) {
+        super.updateMenuItem(item, buttonDef);
+
+        if (buttonDef.isSubTitledAction()) {
+            item.addStyleName(style.subTitledButton());
+        }
+    }
     interface Style extends CssResource {
         String content();
 
         String contentWithDefaultHeader();
+
+        String subTitledButton();
     }
 
 }

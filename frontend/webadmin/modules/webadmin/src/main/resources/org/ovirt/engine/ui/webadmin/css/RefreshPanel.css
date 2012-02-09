@@ -39,7 +39,7 @@
 }
 
 .refreshRateOption-selected {
-	background-color: E1E8F2;
+	background-color: #E1E8F2;
 }
 
 .refreshRateMenu {
@@ -108,6 +108,7 @@
 	height: 6px;
 	overflow: hidden;
 }
+
 
 .refreshButton,.refreshMenuButton {
 	display: table-cell;

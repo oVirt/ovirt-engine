@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -23,9 +26,12 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.RegistrationResult;
+import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.ProvideTickEvent;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
 import org.ovirt.engine.ui.uicompat.IteratorUtils;
 
 /**
@@ -85,6 +91,52 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     private void setForceRefreshCommand(UICommand value)
     {
         privateForceRefreshCommand = value;
+    }
+
+    public static class ReportCommand extends UICommand {
+        private final String idParamName;
+        private final String uriValue;
+        private final boolean isMultiple;
+
+        public ReportCommand(String name, String idParamName, boolean isMultiple, String uriValue, ICommandTarget target) {
+            super(name, target);
+            this.idParamName = idParamName;
+            this.isMultiple = isMultiple;
+            this.uriValue = uriValue;
+        }
+
+        public String getIdParamName() {
+            return idParamName;
+        }
+
+        public boolean isMultiple() {
+            return isMultiple;
+        }
+
+        public String getUriValue() {
+            return uriValue;
+        }
+    }
+
+    private final List<ReportCommand> openReportCommands = new LinkedList<ReportCommand>();
+
+    public ReportCommand addOpenReportCommand(String idParamName, boolean isMultiple, String uriId) {
+        return addOpenReportCommand(new ReportCommand("OpenReport", idParamName, isMultiple, uriId, this));
+    }
+
+    private ReportCommand addOpenReportCommand(ReportCommand reportCommand)
+    {
+        if (openReportCommands.add(reportCommand))
+        {
+            ArrayList<IVdcQueryable> items =
+                    getSelectedItems() != null ? Linq.<IVdcQueryable> Cast(getSelectedItems())
+                            : new ArrayList<IVdcQueryable>();
+            UpdateReportCommandAvailability(reportCommand, items);
+
+            return reportCommand;
+        } else {
+            return null;
+        }
     }
 
     private boolean privateIsQueryFirstTime;
@@ -253,6 +305,8 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         setSearchPageSize(UnknownInteger);
         asyncCallback = new PrivateAsyncCallback(this);
 
+        UpdateActionAvailability();
+
         // Most of SearchableListModels will not have paging. The ones that
         // should have paging will set it explicitly in their constructors.
         getSearchNextPageCommand().setIsAvailable(false);
@@ -402,6 +456,55 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         }
     }
 
+    protected ReportModel createReportModel() {
+        ReportCommand reportCommand = (ReportCommand) getLastExecutedCommand();
+        ReportModel reportModel = new ReportModel("10.35.1.139", 8080, "jasperserver-pro");
+        reportModel.setUser("ovirt");
+        reportModel.setPassword("1234");
+        reportModel.setReportStartDate(new Date(2011, 8, 1));
+        reportModel.setReportEndDate(new Date(2011, 8, 31));
+        reportModel.setViewAsDashboard(false);
+
+        reportModel.setReportUnit(reportCommand.getUriValue());
+
+        setReportModelResourceId(reportModel,
+                reportCommand.getIdParamName(),
+                ((ReportCommand) getLastExecutedCommand()).isMultiple);
+
+        return reportModel;
+    }
+
+    protected void setReportModelResourceId(ReportModel reportModel, String idParamName, boolean isMultiple) {
+        java.util.ArrayList<IVdcQueryable> items =
+                getSelectedItems() != null ? Linq.<IVdcQueryable> Cast(getSelectedItems())
+                        : new java.util.ArrayList<IVdcQueryable>();
+
+        if (idParamName != null) {
+            for (IVdcQueryable item : items) {
+                if (isMultiple) {
+                    reportModel.addResourceId(idParamName, item.getQueryableId().toString());
+                } else {
+                    reportModel.setResourceId(idParamName, item.getQueryableId().toString());
+                }
+            }
+        }
+    }
+
+    protected void OpenReport()
+    {
+        ReportModel reportModel = createReportModel();
+
+        if (reportModel == null) {
+            return;
+        }
+
+        setModelBoundWidget(reportModel);
+    }
+
+    private String dateStr(Date date) {
+        return date.getYear() + "-" + date.getMonth() + "-" + date.getDate();
+    }
+
     private void AsyncResultChanging(RegistrationResult newValue, RegistrationResult oldValue)
     {
         if (oldValue != null)
@@ -479,6 +582,33 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
         ResetIsEmpty();
         UpdatePagingAvailability();
+    }
+
+    @Override
+    protected void OnSelectedItemChanged() {
+        super.OnSelectedItemChanged();
+        UpdateActionAvailability();
+    }
+
+    @Override
+    protected void SelectedItemsChanged() {
+        super.SelectedItemsChanged();
+        UpdateActionAvailability();
+    }
+
+    private void UpdateReportCommandAvailability(ReportCommand reportCommand, ArrayList<IVdcQueryable> selectedItems) {
+        reportCommand.setIsExecutionAllowed((!reportCommand.isMultiple() && (selectedItems.size() == 1))
+                || (reportCommand.isMultiple() && (selectedItems.size() > 1)));
+    }
+    private void UpdateActionAvailability() {
+        java.util.ArrayList<IVdcQueryable> items =
+                getSelectedItems() != null ? Linq.<IVdcQueryable> Cast(getSelectedItems())
+                        : new java.util.ArrayList<IVdcQueryable>();
+
+        for (ReportCommand reportCommand : openReportCommands)
+        {
+            UpdateReportCommandAvailability(reportCommand, items);
+        }
     }
 
     protected void UpdatePagingAvailability()
@@ -722,6 +852,9 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         else if (command == getForceRefreshCommand())
         {
             ForceRefresh();
+        } else if (command instanceof ReportCommand) {
+            ReportCommand reportCommand = (ReportCommand) command;
+            OpenReport();
         }
 
         if (command.isAutoRefresh()) {

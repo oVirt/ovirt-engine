@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.webadmin.gin.uicommon.DataCenterModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.EventModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.HostModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.PoolModule;
+import org.ovirt.engine.ui.webadmin.gin.uicommon.ReportsModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.StorageModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.TemplateModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.UserModule;
@@ -49,6 +50,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         install(new TemplateModule());
         install(new UserModule());
         install(new EventModule());
+        install(new ReportsModule());
 
         // SystemTreeModel
         bind(SystemTreeModelProvider.class).asEagerSingleton();
@@ -85,5 +87,4 @@ public class UiCommonModule extends BaseUiCommonModule {
         bindConfiguratorIntegration(WebAdminConfigurator.class);
         bind(LoginModel.class).in(Singleton.class);
     }
-
 }

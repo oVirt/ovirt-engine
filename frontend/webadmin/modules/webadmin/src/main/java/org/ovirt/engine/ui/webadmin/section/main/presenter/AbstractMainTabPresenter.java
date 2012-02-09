@@ -50,6 +50,10 @@ public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel,
         modelProvider.onMainTabSelected();
     }
 
+    public M getModel() {
+        return modelProvider.getModel();
+    }
+
     @ProxyEvent
     public void onMainModelSelectionChange(MainModelSelectionChangeEvent event) {
         if (event.getMainModel() == modelProvider.getModel()) {

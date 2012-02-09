@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
@@ -62,6 +63,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenter
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabReportsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabUserPresenter;
@@ -126,6 +128,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.HeaderView;
 import org.ovirt.engine.ui.webadmin.section.main.view.MainContentView;
 import org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.MainTabPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.ReportView;
 import org.ovirt.engine.ui.webadmin.section.main.view.SearchPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AssignTagsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.DefaultConfirmationPopupView;
@@ -179,6 +182,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabDataCenterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabHostView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabPoolView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabReportsView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabStorageView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabTemplateView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabUserView;
@@ -325,6 +329,10 @@ public class PresenterModule extends BasePresenterModule {
                 MainTabEventPresenter.ViewDef.class,
                 MainTabEventView.class,
                 MainTabEventPresenter.ProxyDef.class);
+        bindPresenter(MainTabReportsPresenter.class,
+                MainTabReportsPresenter.ViewDef.class,
+                MainTabReportsView.class,
+                MainTabReportsPresenter.ProxyDef.class);
 
         // Main section: sub tabs
 
@@ -746,6 +754,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ManageEventsPopupPresenterWidget.class,
                 ManageEventsPopupPresenterWidget.ViewDef.class,
                 ManageEventsPopupView.class);
+
+        // Reports
+        bindPresenterWidget(ReportPresenterWidget.class,
+                ReportPresenterWidget.ViewDef.class,
+                ReportView.class);
     }
 
 }

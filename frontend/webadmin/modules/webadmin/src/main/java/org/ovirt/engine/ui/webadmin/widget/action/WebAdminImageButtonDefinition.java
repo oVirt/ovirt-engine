@@ -15,7 +15,7 @@ public abstract class WebAdminImageButtonDefinition<T> extends ImageUiCommandBut
 
     public WebAdminImageButtonDefinition(String title, ImageResource enabledImage, ImageResource disabledImage,
             boolean showTitle) {
-        super(title, enabledImage, disabledImage, showTitle);
+        super(title, enabledImage, disabledImage, showTitle, false);
     }
 
     @Override

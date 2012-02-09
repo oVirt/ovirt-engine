@@ -7,6 +7,7 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DefaultConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
@@ -62,17 +63,24 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-
                 // Handle popups that bind to "Window" and "ConfirmWindow" model properties
                 if ("Window".equals(propName)) {
                     handleWindowModelChange(windowPopup, false);
                 } else if ("ConfirmWindow".equals(propName)) {
                     handleWindowModelChange(confirmWindowPopup, true);
+                } else if ("ModelBoundWidget".equals(propName)) {
+                    modelBoundWidgetChange();
                 }
             }
         });
     }
 
+    @SuppressWarnings("unchecked")
+    void modelBoundWidgetChange() {
+        UICommand lastExecutedCommand = getModel().getLastExecutedCommand();
+        ModelBoundPresenterWidget<?> modelBoundPresenterWidget = getModelBoundWidget(lastExecutedCommand);
+        ((ModelBoundPresenterWidget<Model>) modelBoundPresenterWidget).init(getModel().getModelBoundWidget());
+    }
     @SuppressWarnings("unchecked")
     void handleWindowModelChange(AbstractModelBoundPopupPresenterWidget<?, ?> popup, boolean isConfirm) {
         Model windowModel = isConfirm ? getModel().getConfirmWindow() : getModel().getWindow();
@@ -111,6 +119,11 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
     }
 
     protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+        // No-op, override as necessary
+        return null;
+    }
+
+    protected ModelBoundPresenterWidget<? extends Model> getModelBoundWidget(UICommand lastExecutedCommand) {
         // No-op, override as necessary
         return null;
     }

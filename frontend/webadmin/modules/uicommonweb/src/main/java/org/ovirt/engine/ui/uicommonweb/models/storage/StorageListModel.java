@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
@@ -45,6 +48,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
@@ -1699,5 +1703,49 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     @Override
     protected String getListName() {
         return "StorageListModel";
+    }
+
+    @Override
+    protected void OpenReport() {
+
+        final ReportModel reportModel = super.createReportModel();
+
+        List<storage_domains> items =
+                getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems()
+                        : new ArrayList<storage_domains>();
+        storage_domains storage = items.iterator().next();
+
+        AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                List<storage_pool> dataCenters = (List<storage_pool>) returnValue;
+                for (storage_pool dataCenter : dataCenters) {
+                    reportModel.addDataCenterID(dataCenter.getId().toString());
+                }
+
+                if (reportModel == null) {
+                    return;
+                }
+
+                setModelBoundWidget(reportModel);
+            }
+        }), storage.getid());
+    }
+
+    @Override
+    protected void setReportModelResourceId(ReportModel reportModel, String idParamName, boolean isMultiple) {
+        java.util.ArrayList<storage_domains> items =
+                getSelectedItems() != null ? Linq.<storage_domains> Cast(getSelectedItems())
+                        : new java.util.ArrayList<storage_domains>();
+
+        if (idParamName != null) {
+            for (storage_domains item : items) {
+                if (isMultiple) {
+                    reportModel.addResourceId(idParamName, item.getid().toString());
+                } else {
+                    reportModel.setResourceId(idParamName, item.getid().toString());
+                }
+            }
+        }
     }
 }

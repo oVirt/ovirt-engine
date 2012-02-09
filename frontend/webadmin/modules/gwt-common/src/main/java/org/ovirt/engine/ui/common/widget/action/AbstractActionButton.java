@@ -5,7 +5,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.ToggleButton;
 
 /**
  * Base class used to implement action button widgets.
@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.PushButton;
 public abstract class AbstractActionButton extends Composite implements ActionButton {
 
     @UiField
-    public PushButton button;
+    public ToggleButton button;
 
     @Override
     public void setEnabledHtml(SafeHtml html) {
@@ -48,6 +48,11 @@ public abstract class AbstractActionButton extends Composite implements ActionBu
     @Override
     public void setTitle(String title) {
         button.setTitle(title);
+    }
+
+    @Override
+    public ToggleButton asToggleButton() {
+        return button;
     }
 
 }

@@ -43,6 +43,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
@@ -82,6 +83,7 @@ import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginSectionPresente
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
@@ -92,6 +94,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenter
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabReportsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabUserPresenter;
@@ -187,6 +190,8 @@ public interface ManagedComponents {
 
     Provider<GuidePopupPresenterWidget> getGuidePopupPresenterWidget();
 
+    Provider<ReportPresenterWidget> getReportsPresenterWidget();
+
     // Presenters: Login section
 
     Provider<LoginSectionPresenter> getLoginSectionPresenter();
@@ -236,6 +241,10 @@ public interface ManagedComponents {
     AsyncProvider<MainTabEventPresenter> getMainTabEventPresenter();
 
     MainModelProvider<AuditLog, EventListModel> getMainTabEventModelProvider();
+
+    AsyncProvider<MainTabReportsPresenter> getMainTabReportsPresenter();
+
+    MainModelProvider<Void, ReportsListModel> getMainTabReportsModelProvider();
 
     // Presenters & model providers: Main section: sub tabs
 

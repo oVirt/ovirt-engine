@@ -1,10 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -13,6 +16,8 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVirtualMachinePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
+import org.ovirt.engine.ui.webadmin.uicommon.ReportsHelper;
+import org.ovirt.engine.ui.webadmin.widget.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
@@ -248,7 +253,12 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return getMainModel().getAssignTagsCommand();
             }
         });
-
+        List<ActionButtonDefinition<VM>> resourceSubActions =
+                ReportsHelper.getInstance().getResourceSubActions("VM", getMainModel());
+        if (resourceSubActions != null && resourceSubActions.size() > 0) {
+            getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VM>("Show Report",
+                    resourceSubActions));
+        }
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>("Guide Me",
                 resources.guideSmallImage(), resources.guideSmallDisabledImage(), true) {
             @Override
@@ -257,5 +267,4 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         });
     }
-
 }

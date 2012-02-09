@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
+import org.ovirt.engine.ui.webadmin.uicommon.ReportsHelper;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -27,11 +28,11 @@ public class ApplicationInit extends BaseApplicationInit {
     @Override
     protected void beforeUiCommonInitEvent(LoginModel loginModel) {
         CommonModelManager.init(eventBus, user, loginModel);
+        ReportsHelper.getInstance().init();
     }
 
     @Override
     public void onLogout() {
         CommonModelManager.instance().SignOut();
     }
-
 }

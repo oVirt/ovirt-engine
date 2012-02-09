@@ -84,4 +84,17 @@ public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandl
      */
     void update();
 
+    /**
+     *
+     *  Indicates whether this action button has a title action.
+     */
+    boolean isSubTitledAction();
+
+    String getToolTip();
+
+    /**
+    *
+    *  Indicates whether this action button is visible.
+    */
+    boolean isVisible(List<T> selectedItems);
 }
