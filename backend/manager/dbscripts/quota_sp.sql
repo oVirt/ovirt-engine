@@ -24,7 +24,7 @@ Create or replace FUNCTION GetQuotaStorageByStorageGuid(v_storage_id UUID, v_id 
 RETURNS SETOF quota_storage_view
    AS $procedure$
 BEGIN
-   RETURN QUERY SELECT quota_storage_id,
+   RETURN QUERY SELECT COALESCE(q_storage_view.quota_storage_id, q_g_view.quota_id) as quota_storage_id,
    q_g_view.quota_id as quota_id,
    q_storage_view.storage_id,
    q_storage_view.storage_name,
@@ -54,7 +54,8 @@ Create or replace FUNCTION GetQuotaVdsGroupByVdsGroupGuid(v_vds_group_id UUID, v
 RETURNS SETOF quota_vds_group_view
    AS $procedure$
 BEGIN
-   RETURN QUERY SELECT quota_vds_group_id,
+   RETURN QUERY SELECT COALESCE(q_vds_view.quota_vds_group_id, q_g_view.quota_id) as quota_vds_group_id,
+   quota_vds_group_id,
    q_g_view.quota_id as quota_id,
    q_vds_view.vds_group_id as vds_group_id,
    q_vds_view.vds_group_name as vds_group_name,
