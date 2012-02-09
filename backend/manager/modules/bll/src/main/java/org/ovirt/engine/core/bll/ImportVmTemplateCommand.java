@@ -83,6 +83,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
                     }));
             List<DiskImage> list = Arrays.asList(images.getDiskImages());
             getParameters().setImages(list);
+            ensureDomainMap();
             storage_domain_static storageDomain =
                     getStorageDomainStaticDAO().get(getParameters().getDestDomainId());
             Map<String, DiskImage> imageMap = new HashMap<String, DiskImage>();
@@ -413,4 +414,11 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         return super.getAuditLogTypeValue();
     }
 
+     private void ensureDomainMap() {
+        for(DiskImage image : getParameters().getImages()) {
+            if(imageToDestinationDomainMap.get(image.getId()) == null) {
+                imageToDestinationDomainMap.put(image.getId(), getParameters().getDestDomainId());
+            }
+        }
+    }
 }
