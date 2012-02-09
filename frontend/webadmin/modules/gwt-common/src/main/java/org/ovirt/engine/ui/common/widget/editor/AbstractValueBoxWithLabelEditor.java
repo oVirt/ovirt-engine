@@ -14,9 +14,9 @@ import com.google.gwt.editor.ui.client.adapters.ValueBoxEditor;
  *            Text input widget type.
  */
 public abstract class AbstractValueBoxWithLabelEditor<T, W extends EditorWidget<T, ValueBoxEditor<T>>> extends AbstractValidatedWidgetWithLabel<T, W>
-        implements IsEditor<WidgetWithLabelEditor<T, ValueBoxEditor<T>, AbstractValueBoxWithLabelEditor<T, W>>> {
+        implements IsEditor<WidgetWithLabelEditor<T, AbstractValueBoxWithLabelEditor<T, W>>> {
 
-    private final WidgetWithLabelEditor<T, ValueBoxEditor<T>, AbstractValueBoxWithLabelEditor<T, W>> editor;
+    private final WidgetWithLabelEditor<T, AbstractValueBoxWithLabelEditor<T, W>> editor;
 
     public AbstractValueBoxWithLabelEditor(W contentWidget) {
         super(contentWidget);
@@ -28,7 +28,7 @@ public abstract class AbstractValueBoxWithLabelEditor<T, W extends EditorWidget<
     }
 
     @Override
-    public WidgetWithLabelEditor<T, ValueBoxEditor<T>, AbstractValueBoxWithLabelEditor<T, W>> asEditor() {
+    public WidgetWithLabelEditor<T, AbstractValueBoxWithLabelEditor<T, W>> asEditor() {
         return editor;
     }
 

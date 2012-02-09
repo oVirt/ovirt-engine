@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.widget.editor;
 
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.editor.TakesValueWithChangeHandlersEditor;
 import org.ovirt.engine.ui.common.widget.editor.WidgetWithLabelEditor;
 
 import com.google.gwt.editor.client.IsEditor;
@@ -13,9 +12,9 @@ import com.google.gwt.editor.client.IsEditor;
 public class EntityModelSliderWithTextBoxEditor extends
         AbstractValidatedWidgetWithLabel<Object, EntityModelInputWithSlider>
         implements
-        IsEditor<WidgetWithLabelEditor<Object, TakesValueWithChangeHandlersEditor<Object>, EntityModelSliderWithTextBoxEditor>> {
+        IsEditor<WidgetWithLabelEditor<Object, EntityModelSliderWithTextBoxEditor>> {
 
-    private final WidgetWithLabelEditor<Object, TakesValueWithChangeHandlersEditor<Object>, EntityModelSliderWithTextBoxEditor> editor;
+    private final WidgetWithLabelEditor<Object, EntityModelSliderWithTextBoxEditor> editor;
 
     public EntityModelSliderWithTextBoxEditor(int min, int max) {
         this(Align.RIGHT, min, max);
@@ -28,7 +27,7 @@ public class EntityModelSliderWithTextBoxEditor extends
     }
 
     @Override
-    public WidgetWithLabelEditor<Object, TakesValueWithChangeHandlersEditor<Object>, EntityModelSliderWithTextBoxEditor> asEditor() {
+    public WidgetWithLabelEditor<Object, EntityModelSliderWithTextBoxEditor> asEditor() {
         return editor;
     }
 

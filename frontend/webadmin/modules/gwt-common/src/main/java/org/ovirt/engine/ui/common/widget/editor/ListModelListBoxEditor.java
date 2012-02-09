@@ -14,9 +14,9 @@ import com.google.gwt.user.client.ui.ListBox;
  *            List box item type.
  */
 public class ListModelListBoxEditor<T> extends AbstractValidatedWidgetWithLabel<T, ListModelListBox<T>>
-        implements IsEditor<WidgetWithLabelEditor<T, TakesConstrainedValueEditor<T>, ListModelListBoxEditor<T>>> {
+        implements IsEditor<WidgetWithLabelEditor<T, ListModelListBoxEditor<T>>> {
 
-    private final WidgetWithLabelEditor<T, TakesConstrainedValueEditor<T>, ListModelListBoxEditor<T>> editor;
+    private final WidgetWithLabelEditor<T, ListModelListBoxEditor<T>> editor;
 
     public ListModelListBoxEditor() {
         this(new StringRenderer<T>());
@@ -32,7 +32,7 @@ public class ListModelListBoxEditor<T> extends AbstractValidatedWidgetWithLabel<
     }
 
     @Override
-    public WidgetWithLabelEditor<T, TakesConstrainedValueEditor<T>, ListModelListBoxEditor<T>> asEditor() {
+    public WidgetWithLabelEditor<T, ListModelListBoxEditor<T>> asEditor() {
         return editor;
     }
 

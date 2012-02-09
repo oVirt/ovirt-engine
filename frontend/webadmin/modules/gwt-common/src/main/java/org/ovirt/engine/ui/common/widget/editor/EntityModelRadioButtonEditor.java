@@ -16,9 +16,9 @@ import com.google.gwt.user.client.ui.RadioButton;
  * Composite Editor that uses {@link EntityModelRadioButton}.
  */
 public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLabel<Object, EntityModelRadioButton>
-        implements IsEditor<WidgetWithLabelEditor<Object, TakesValueWithChangeHandlersEditor<Object>, EntityModelRadioButtonEditor>> {
+        implements IsEditor<WidgetWithLabelEditor<Object, EntityModelRadioButtonEditor>> {
 
-    private final WidgetWithLabelEditor<Object, TakesValueWithChangeHandlersEditor<Object>, EntityModelRadioButtonEditor> editor;
+    private final WidgetWithLabelEditor<Object, EntityModelRadioButtonEditor> editor;
 
     private final boolean useRadioButtonWidgetLabel;
 
@@ -44,7 +44,7 @@ public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLab
     }
 
     @Override
-    public WidgetWithLabelEditor<Object, TakesValueWithChangeHandlersEditor<Object>, EntityModelRadioButtonEditor> asEditor() {
+    public WidgetWithLabelEditor<Object, EntityModelRadioButtonEditor> asEditor() {
         return editor;
     }
 

@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.CheckBox;
  * Composite Editor that uses {@link EntityModelCheckBox}.
  */
 public class EntityModelCheckBoxEditor extends AbstractValidatedWidgetWithLabel<Object, EntityModelCheckBox>
-        implements IsEditor<WidgetWithLabelEditor<Object, TakesValueWithChangeHandlersEditor<Object>, EntityModelCheckBoxEditor>> {
+        implements IsEditor<WidgetWithLabelEditor<Object, EntityModelCheckBoxEditor>> {
 
-    private final WidgetWithLabelEditor<Object, TakesValueWithChangeHandlersEditor<Object>, EntityModelCheckBoxEditor> editor;
+    private final WidgetWithLabelEditor<Object, EntityModelCheckBoxEditor> editor;
 
     private final boolean useCheckBoxWidgetLabel;
 
@@ -47,7 +47,7 @@ public class EntityModelCheckBoxEditor extends AbstractValidatedWidgetWithLabel<
     }
 
     @Override
-    public WidgetWithLabelEditor<Object, TakesValueWithChangeHandlersEditor<Object>, EntityModelCheckBoxEditor> asEditor() {
+    public WidgetWithLabelEditor<Object, EntityModelCheckBoxEditor> asEditor() {
         return editor;
     }
 

@@ -63,7 +63,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
             });
         }
 
-        final WidgetWithLabelEditor<T, ? extends LeafValueEditor<T>, ?> functionalEditor =
+        final WidgetWithLabelEditor<T, ?> functionalEditor =
                 getFunctionalEditor(currentLeafEditor);
 
         if (functionalEditor != null) {
@@ -150,16 +150,16 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
     @SuppressWarnings("unchecked")
     <T> LeafValueEditor<T> getActualEditor(LeafValueEditor<T> editor) {
         if (editor instanceof WidgetWithLabelEditor) {
-            return ((WidgetWithLabelEditor<T, ? extends LeafValueEditor<T>, ?>) editor).getSubEditor();
+            return ((WidgetWithLabelEditor<T, ?>) editor).getSubEditor();
         } else {
             return editor;
         }
     }
 
     @SuppressWarnings("unchecked")
-    <T> WidgetWithLabelEditor<T, ? extends LeafValueEditor<T>, ?> getFunctionalEditor(LeafValueEditor<T> editor) {
+    <T> WidgetWithLabelEditor<T, ?> getFunctionalEditor(LeafValueEditor<T> editor) {
         if (editor instanceof WidgetWithLabelEditor) {
-            return (WidgetWithLabelEditor<T, ? extends LeafValueEditor<T>, ?>) editor;
+            return (WidgetWithLabelEditor<T, ?>) editor;
         } else {
             return null;
         }

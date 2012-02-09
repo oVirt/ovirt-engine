@@ -28,25 +28,26 @@ import com.google.gwt.user.client.ui.HasEnabled;
  *            Type that exposes validated widget functionality.
  *
  * @see OptionalFieldEditor
+ *
  */
-public class WidgetWithLabelEditor<T, E extends LeafValueEditor<T>, W extends AbstractValidatedWidgetWithLabel<T, ?>>
-        extends OptionalFieldEditor<T, E> implements HasValidation, HasEnabled, HasAccess, HasAllKeyHandlers, Focusable {
+public class WidgetWithLabelEditor<T, W extends AbstractValidatedWidgetWithLabel<T, ?>>
+        extends OptionalFieldEditor<T, LeafValueEditor<T>> implements HasValidation, HasEnabled, HasAccess, HasAllKeyHandlers, Focusable {
 
-    public static <T, E extends LeafValueEditor<T>, W extends AbstractValidatedWidgetWithLabel<T, ?>> WidgetWithLabelEditor<T, E, W> of(
-            E subEditor, W widgetWithLabel) {
-        return new WidgetWithLabelEditor<T, E, W>(subEditor, widgetWithLabel);
+    public static <T, W extends AbstractValidatedWidgetWithLabel<T, ?>> WidgetWithLabelEditor<T, W> of(
+            LeafValueEditor<T> subEditor, W widgetWithLabel) {
+        return new WidgetWithLabelEditor<T, W>(subEditor, widgetWithLabel);
     }
 
-    private final E subEditor;
+    private final LeafValueEditor<T> subEditor;
     private final W widgetWithLabel;
 
-    protected WidgetWithLabelEditor(E subEditor, W widgetWithLabel) {
+    protected WidgetWithLabelEditor(LeafValueEditor<T> subEditor, W widgetWithLabel) {
         super(subEditor);
         this.subEditor = subEditor;
         this.widgetWithLabel = widgetWithLabel;
     }
 
-    public E getSubEditor() {
+    public LeafValueEditor<T> getSubEditor() {
         return subEditor;
     }
 
