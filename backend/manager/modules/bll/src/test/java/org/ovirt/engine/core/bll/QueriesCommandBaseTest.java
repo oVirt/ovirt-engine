@@ -156,6 +156,24 @@ public class QueriesCommandBaseTest {
         }
     }
 
+    @Test
+    public void testGetUserID() {
+        IVdcUser user = mock(IVdcUser.class);
+        when(user.getUserId()).thenReturn(Guid.EVERYONE);
+
+        ThreadLocalParamsContainer.setVdcUser(user);
+        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(new VdcQueryParametersBase());
+
+        assertEquals("wrong guid", Guid.EVERYONE, query.getUserID());
+    }
+
+    @Test
+    public void testGetUserIDWithNoUser() {
+        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(new VdcQueryParametersBase());
+
+        assertEquals("wrong guid", null, query.getUserID());
+    }
+
     /* Test Utilities */
 
     @Before

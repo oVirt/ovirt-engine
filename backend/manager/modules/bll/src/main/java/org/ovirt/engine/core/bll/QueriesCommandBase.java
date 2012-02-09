@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.queries.SearchReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcCommandBase;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
@@ -173,5 +174,16 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
 
     public void setInternalExecution(boolean isInternalExecution) {
         this.isInternalExecution = isInternalExecution;
+    }
+
+    protected IVdcUser getUser() {
+        return user;
+    }
+
+    protected Guid getUserID() {
+        if (user == null) {
+            return null;
+        }
+        return user.getUserId();
     }
 }
