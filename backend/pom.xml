@@ -11,7 +11,7 @@
   <groupId>org.ovirt.engine.core</groupId>
   <packaging>pom</packaging>
 
-  <name>oVirt Modules</name>
+  <name>oVirt Modules - backend</name>
   <description>parent POM for all oVirt modules</description>
 
   <modules>

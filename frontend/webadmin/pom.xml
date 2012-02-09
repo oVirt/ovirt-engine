@@ -11,7 +11,7 @@
   <artifactId>webadmin-all</artifactId>
   <packaging>pom</packaging>
 
-  <name>oVirt Modules</name>
+  <name>oVirt Modules - webadmin</name>
   <description>parent POM for all oVirt modules</description>
 
   <modules>

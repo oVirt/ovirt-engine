@@ -13,7 +13,7 @@
 	<artifactId>webadmin-modules</artifactId>
 	<packaging>pom</packaging>
 
-	<name>oVirt Modules</name>
+	<name>oVirt Modules - ui</name>
 	<description>parent POM for all oVirt modules</description>
 
 	<modules>

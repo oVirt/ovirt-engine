@@ -11,7 +11,7 @@
   <groupId>org.ovirt.engine.ui</groupId>
   <packaging>pom</packaging>
 
-  <name>oVirt Modules</name>
+  <name>oVirt Modules - frontend</name>
   <description>parent POM for all oVirt modules</description>
 
   <modules>

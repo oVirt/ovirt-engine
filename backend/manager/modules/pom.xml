@@ -10,7 +10,7 @@
   <artifactId>manager-modules</artifactId>
   <packaging>pom</packaging>
 
-  <name>oVirt Modules</name>
+  <name>oVirt Modules - manager</name>
   <description>parent POM for all oVirt modules</description>
 
   <modules>
