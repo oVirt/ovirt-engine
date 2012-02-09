@@ -833,6 +833,15 @@ public class VdsBrokerObjectsBuilder {
         version.setSoftwareVersion(AssignStringValue(xmlRpcStruct, "software_version"));
         version.setSoftwareRevision(AssignStringValue(xmlRpcStruct, "software_revision"));
         version.setBuildName(AssignStringValue(xmlRpcStruct, "build_name"));
+        try {
+            version.parseFullVersion();
+        } catch (RuntimeException e) {
+            log.infoFormat("Couldn't parse vds version: {0} , {1} for Host {2}, {3}",
+                    version.getSoftwareVersion(),
+                    version.getSoftwareRevision(),
+                    vds.getvds_id(),
+                    vds.getvds_name());
+        }
         vds.setVersion(version);
     }
 

@@ -2,14 +2,11 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.Version;
 
 public class VdsVersion implements Serializable {
     private static final long serialVersionUID = -3138828435468456070L;
-    private static final LogCompat log = LogFactoryCompat.getLog(VdsVersion.class);
     private String softwareVersion;
     private String softwareRevision;
     private String buildName;
@@ -67,26 +64,28 @@ public class VdsVersion implements Serializable {
         if (mFullVersion == null) {
             // defensive code for prevent incorrect versioning
             try {
-                if (getSoftwareVersion() != null && getSoftwareRevision() != null) {
-                    String stringVersion;
-                    String[] revision = getSoftwareRevision().split("[.]", -1);
-
-                    if (revision.length > 1) {
-                        stringVersion = StringFormat.format("%s.%s", getSoftwareVersion(), getSoftwareRevision());
-                    } else {
-                        stringVersion = StringFormat.format("%s.0.%s", getSoftwareVersion(), getSoftwareRevision());
-                    }
-
-                    mFullVersion = new Version(stringVersion);
-                }
-            } catch (Exception e) {
-                log.info(StringFormat.format("Couldn't parse vds version: %s , %s",
-                        getSoftwareVersion(),
-                        getSoftwareRevision()));
+                parseFullVersion();
+            } catch (RuntimeException e) {
+                // the error was reported when the property was initially parsed.
             }
         }
 
         return mFullVersion;
+    }
+
+    public void parseFullVersion() {
+        if (getSoftwareVersion() != null && getSoftwareRevision() != null) {
+            String stringVersion;
+            String[] revision = getSoftwareRevision().split("[.]", -1);
+
+            if (revision.length > 1) {
+                stringVersion = StringFormat.format("%s.%s", getSoftwareVersion(), getSoftwareRevision());
+            } else {
+                stringVersion = StringFormat.format("%s.0.%s", getSoftwareVersion(), getSoftwareRevision());
+            }
+
+            mFullVersion = new Version(stringVersion);
+        }
     }
 
     public Version getPartialVersion() {
