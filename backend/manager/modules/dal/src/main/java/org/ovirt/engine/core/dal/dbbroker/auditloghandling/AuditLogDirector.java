@@ -41,6 +41,7 @@ public final class AuditLogDirector {
         initVMsPoolSeverities();
         initBookmarkSeverities();
         initVMSeverities();
+        initQuotaSeverities();
         initTagSeverities();
         initClusterSeverities();
         initMLASeverities();
@@ -303,6 +304,21 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.REFRESH_REPOSITORY_FILE_LIST_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.STORAGE_ALERT_VG_METADATA_CRITICALLY_FULL, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.STORAGE_ALERT_SMALL_VG_METADATA, AuditLogSeverity.WARNING);
+    }
+
+    private static void initQuotaSeverities() {
+        mSeverities.put(AuditLogType.USER_ADD_QUOTA, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_FAILED_ADD_QUOTA, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_UPDATE_QUOTA, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_FAILED_UPDATE_QUOTA, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_DELETE_QUOTA, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_FAILED_DELETE_QUOTA, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_GRACE_LIMIT, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_LIMIT, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_THRESHOLD, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_LIMIT, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_THRESHOLD, AuditLogSeverity.WARNING);
     }
 
     private static void initVMSeverities() {
