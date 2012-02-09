@@ -793,3 +793,270 @@ WHERE  q_limit.quota_id = q.id
 AND  q_limit.vds_group_id IS NOT NULL
 AND  q_limit.storage_id IS NULL
 AND  vds_groups.vds_group_id = q_limit.vds_group_id;
+
+
+----------------------------------------------
+-- Query Permissions
+----------------------------------------------
+
+-- Flatten all the objects a user can get permissions on them
+CREATE OR REPLACE VIEW user_flat_groups
+AS
+-- User with all its groups
+SELECT users.user_id AS user_id, ad_groups.id AS granted_id
+FROM   ad_groups, users
+WHERE  ad_groups.id IN (SELECT id FROM fnsplitteruuid(users.group_ids))
+UNION ALL
+-- The user itself
+SELECT user_id, user_id FROM users
+UNION ALL
+-- user is also member of 'Everyone'
+SELECT user_id, 'EEE00000-0000-0000-0000-123456789EEE'
+FROM   users;
+
+-- A view that contains only the user permissions
+CREATE OR REPLACE VIEW user_permissions_view
+AS
+SELECT * FROM permissions_view WHERE role_type = 2;
+
+
+-- Permissions view for Clusters
+-- The user has permissions on a cluster
+CREATE OR REPLACE VIEW user_vds_groups_permissions_view_base (entity_id, granted_id)
+AS
+SELECT       object_id, ad_element_id
+FROM         user_permissions_view
+WHERE        object_type_id = 9
+-- Or the object is a VM in the cluster
+UNION ALL
+SELECT       vds_group_id, ad_element_id
+FROM         vm_static
+INNER JOIN   user_permissions_view ON object_id = vm_guid AND object_type_id = 2
+-- Or the object is the Data Center containing the Cluster
+UNION ALL
+SELECT       vds_group_id, ad_element_id
+FROM         vds_groups
+INNER JOIN   user_permissions_view ON object_id = vds_groups.storage_pool_id AND object_type_id = 14
+-- Or the user has permissions on system;
+UNION ALL
+SELECT       vds_group_id, ad_element_id
+FROM         user_permissions_view
+CROSS JOIN   vds_groups
+WHERE        object_type_id = 1;
+
+CREATE OR REPLACE VIEW user_vds_groups_permissions_view (entity_id, user_id)
+AS
+SELECT       DISTINCT entity_id, user_id
+FROM         user_vds_groups_permissions_view_base
+NATURAL JOIN user_flat_groups;
+
+
+-- Permissions view for Data Center
+-- The user has permissions on a data center
+CREATE OR REPLACE VIEW user_storage_pool_permissions_view_base (entity_id, granted_id)
+AS
+SELECT     object_id, ad_element_id
+FROM       user_permissions_view
+WHERE      object_type_id = 14
+-- Or the object is a cluster in the data center
+UNION ALL
+SELECT     storage_pool_id, ad_element_id
+FROM       vds_groups
+INNER JOIN user_permissions_view ON object_id = vds_groups.vds_group_id AND object_type_id = 9
+-- Or the object is vm pool in the data center
+UNION ALL
+SELECT     storage_pool_id, ad_element_id
+FROM       vds_groups
+INNER JOIN vm_pools ON vds_groups.vds_group_id = vm_pools.vds_group_id
+INNER JOIN user_permissions_view ON object_id = vm_pools.vm_pool_id AND object_type_id = 5
+-- Or the object is a VM in the data center
+UNION ALL
+SELECT     storage_pool_id, ad_element_id
+FROM       vm_static
+INNER JOIN vds_groups ON vds_groups.vds_group_id = vm_static.vds_group_id
+INNER JOIN user_permissions_view ON object_id = vm_guid AND object_type_id = 2
+-- Or the user has permission on system
+UNION ALL
+SELECT     storage_pool.id, ad_element_id
+FROM       user_permissions_view
+CROSS JOIN storage_pool
+WHERE      object_type_id = 1;
+
+CREATE OR REPLACE VIEW user_storage_pool_permissions_view (entity_id, user_id)
+AS
+SELECT       DISTINCT entity_id, user_id
+FROM         user_storage_pool_permissions_view_base
+NATURAL JOIN user_flat_groups;
+
+
+-- Permissions for Storage Domains
+-- The user has permissions on a storage domain
+CREATE OR REPLACE VIEW user_storage_domain_permissions_view_base (entity_id, granted_id)
+AS
+SELECT     object_id, ad_element_id
+FROM       user_permissions_view
+WHERE      object_type_id = 11
+-- Or the user has permissions on a VM in the storage domain
+UNION ALL
+SELECT     storage_domains.id, ad_element_id
+FROM       storage_domains
+INNER JOIN vds_groups ON vds_groups.storage_pool_id = storage_domains.storage_pool_id
+INNER JOIN vm_static ON vds_groups.vds_group_id = vm_static.vds_group_id
+INNER JOIN user_permissions_view ON object_id = vm_static.vm_guid AND object_type_id = 2
+-- Or the user has permissions on a template in the storage domain
+UNION ALL
+SELECT     storage_id, ad_element_id
+FROM       vm_templates_storage_domain
+INNER JOIN user_permissions_view ON vmt_guid = user_permissions_view.object_id AND object_type_id = 4
+-- Or the user has permissions on a VM created from a template in the storage domain
+UNION ALL
+SELECT     storage_id, ad_element_id
+FROM       vm_static
+INNER JOIN vm_templates_storage_domain ON vm_static.vmt_guid = vm_templates_storage_domain.vmt_guid
+INNER JOIN user_permissions_view ON vm_static.vm_guid = object_id AND objecT_type_id = 2
+-- Or the user has permissions on the Data Center containing the storage domain
+UNION ALL
+SELECT     storage_domains.id, ad_element_id
+FROM       storage_domains
+INNER JOIN user_permissions_view ON object_id = storage_domains.storage_pool_id AND object_type_id = 14
+-- Or the user has permissions on System
+UNION ALL
+SELECT     storage_domains.id, ad_element_id
+FROM       user_permissions_view
+CROSS JOIN storage_domains
+WHERE      object_type_id = 1;
+
+CREATE OR REPLACE VIEW user_storage_domain_permissions_view (entity_id, user_id)
+AS
+SELECT       DISTINCT entity_id, user_id
+FROM         user_storage_domain_permissions_view_base
+NATURAL JOIN user_flat_groups;
+
+
+-- Permissions on Hosts
+-- The user has permissions on a host
+CREATE OR REPLACE VIEW user_vds_permissions_view_base (entity_id, granted_id)
+AS
+SELECT     object_id, ad_element_id
+FROM       user_permissions_view
+WHERE      object_type_id = 3
+-- Or the user has permissions on a VM in the cluster or Data Center that contains the host
+UNION ALL
+SELECT     vds_id, ad_element_id
+FROM       vds
+INNER JOIN user_permissions_view ON (object_id = vds_group_id    AND object_type_id = 9) OR
+                                    (object_id = storage_pool_id AND object_type_id = 14)
+-- Or the user has permissions on System
+UNION ALL
+SELECT     vds_id, ad_element_id
+FROM       user_permissions_view
+CROSS JOIN vds
+WHERE      object_type_id = 1;
+
+CREATE OR REPLACE VIEW user_vds_permissions_view (entity_id, user_id)
+AS
+SELECT       DISTINCT entity_id, user_id
+FROM         user_vds_permissions_view_base
+NATURAL JOIN user_flat_groups;
+
+
+-- Permissions on VM Pools
+-- The user has permissions on the pool
+CREATE OR REPLACE VIEW user_vm_pool_permissions_view_base (entity_id, granted_id)
+AS
+SELECT     object_id, ad_element_id
+FROM       user_permissions_view
+WHERE      object_type_id = 5
+-- Or the user has permissions on a VM from the pool
+UNION ALL
+SELECT     vm_pool_id, ad_element_id
+FROM       vm_pool_map
+INNER JOIN user_permissions_view ON object_id = vm_guid AND object_type_id = 2
+-- Or the user has permissions on the cluster containing the pool
+UNION ALL
+SELECT     vm_pool_id, ad_element_id
+FROM       vm_pools
+INNER JOIN user_permissions_view ON object_id = vds_group_id AND object_type_id = 9
+-- Or the user has permission on the data center containing the VM pool
+UNION ALL
+SELECT     vm_pool_id, ad_element_id
+FROM       vm_pools
+INNER JOIN vds_groups ON vm_pools.vds_group_id =  vds_groups.vds_group_id
+INNER JOIN user_permissions_view ON object_id = storage_pool_id AND object_type_id = 14
+-- Or the user has permissions on System
+UNION ALL
+SELECT     vm_pool_id, ad_element_id
+FROM       user_permissions_view
+CROSS JOIN vm_pools
+WHERE      object_type_id = 1;
+
+CREATE OR REPLACE VIEW user_vm_pool_permissions_view (entity_id, user_id)
+AS
+SELECT       DISTINCT entity_id, user_id
+FROM         user_vm_pool_permissions_view_base
+NATURAL JOIN user_flat_groups;
+
+
+-- Permissions on Templates
+-- The user has permissions on the template
+CREATE OR REPLACE VIEW user_vm_template_permissions_view_base (entity_id, granted_id)
+AS
+SELECT     object_id, ad_element_id
+FROM       user_permissions_view
+WHERE      object_type_id = 4
+-- Or the user has permissions on a VM created from the tempalate
+UNION ALL
+SELECT     vmt_guid, ad_element_id
+FROM       vm_static
+INNER JOIN user_permissions_view ON object_id = vm_static.vm_guid AND object_type_id = 2
+-- Or the user has permissions on the data center containing the template
+UNION ALL
+SELECT     vmt_guid, ad_element_id
+FROM       vm_static
+INNER JOIN vds_groups ON vds_groups.vds_group_id = vm_static.vds_group_id
+INNER JOIN user_permissions_view ON object_id = storage_pool_id AND object_type_id = 14
+-- Or the user has permissions on system
+UNION ALL
+SELECT     vmt_guid, ad_element_id
+FROM       user_permissions_view
+CROSS JOIN vm_static
+WHERE      object_type_id = 1 AND vm_static.entity_type::text = 'TEMPLATE'::text;
+
+CREATE OR REPLACE VIEW user_vm_template_permissions_view (entity_id, user_id)
+AS
+SELECT       DISTINCT entity_id, user_id
+FROM         user_vm_template_permissions_view_base
+NATURAL JOIN user_flat_groups;
+
+
+-- Permissions on VMs
+-- The user has permission on the VM
+CREATE OR REPLACE VIEW user_vm_permissions_view_base (entity_id, granted_id)
+AS
+SELECT     object_id, ad_element_id
+FROM       user_permissions_view
+WHERE      object_type_id = 2
+-- Or the user has permissions on the cluster containing the VM
+UNION ALL
+SELECT     vm_guid, ad_element_id
+FROM       vm_static
+INNER JOIN user_permissions_view ON object_id = vds_group_id AND object_type_id = 9
+-- Or the user has permissions on the data center containing the VM
+UNION ALL
+SELECT     vm_guid, ad_element_id
+FROM       vm_static
+INNER JOIN vds_groups ON vds_groups.vds_group_id = vm_static.vds_group_id
+INNER JOIN user_permissions_view ON object_id = storage_pool_id AND object_type_id = 14
+-- Or the user has permissions on system
+UNION ALL
+SELECT     vm_guid, ad_element_id
+FROM       user_permissions_view
+CROSS JOIN vm_static
+WHERE      object_type_id = 1;
+
+CREATE OR REPLACE VIEW user_vm_permissions_view (entity_id, user_id)
+AS
+SELECT       DISTINCT entity_id, user_id
+FROM         user_vm_permissions_view_base
+NATURAL JOIN user_flat_groups;
+
