@@ -271,9 +271,6 @@
 		<include name="core/compat/PipelineState.java" />
 		<include name="core/compat/TimeSpan.java" />
 		
-		<include name="core/compat/LogCompat.java" />
-		<include name="core/compat/LogFactoryCompat.java" />
-		
 		<include name="core/compat/XmlRpcStruct.java"/>
 		
 		<include name="core/compat/DateTime.java"/>

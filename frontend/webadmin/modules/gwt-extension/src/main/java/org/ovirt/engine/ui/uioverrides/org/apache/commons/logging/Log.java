@@ -1,15 +1,17 @@
-package org.ovirt.engine.core.compat;
+package org.apache.commons.logging;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.ovirt.engine.core.compat.StringFormat;
+
 /**
- * GWT Override for LogCompat - uses {@link StringFormat#formatDotNet(String, Object...)}
+ * GWT Override for Log - uses {@link StringFormat#formatDotNet(String, Object...)}
  */
-public class LogCompat {
+public class Log {
     private final Logger log;
 
-    public LogCompat(Logger log) {
+    public Log(Logger log) {
         this.log = log;
     }
 
@@ -149,7 +151,7 @@ public class LogCompat {
                 return (Throwable) arg;
             }
         }
-    
+
         return null;
     }
 

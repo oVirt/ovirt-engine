@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.searchbackend;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,7 +87,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         try {
             sqlInjectionChecker = getSqlInjectionChecker();
         } catch (Exception e) {
-            log.error(MessageFormat.format("Failed to load Sql Injection Checker. {0}", e.getMessage()));
+            log.error("Failed to load Sql Injection Checker. " + e.getMessage());
         }
     }
 
@@ -883,7 +882,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     throw new SqlInjectionException();
                 }
             }
-            log.trace(MessageFormat.format("Search: {0}", retval));
+            log.trace("Search: " + retval);
         }
         return retval;
     }

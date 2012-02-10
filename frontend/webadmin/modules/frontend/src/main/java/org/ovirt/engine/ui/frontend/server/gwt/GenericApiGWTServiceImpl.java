@@ -8,6 +8,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -21,8 +23,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
-import org.ovirt.engine.core.compat.LogCompat;
-import org.ovirt.engine.core.compat.LogFactoryCompat;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
 import org.ovirt.engine.ui.genericapi.GenericApiService;
 
@@ -31,8 +31,7 @@ public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements
     static Random r = new Random();
     boolean noBackend = false;
 
-    private static LogCompat log = LogFactoryCompat
-            .getLog(GenericApiGWTServiceImpl.class);
+    private static Log log = LogFactory.getLog(GenericApiGWTServiceImpl.class);
 
     private BackendLocal backend;
 

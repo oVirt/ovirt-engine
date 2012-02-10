@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.compat;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * GWT Override for StringFormat
  */
 public final class StringFormat {
 
-    private static LogCompat log = LogFactoryCompat.getLog(StringFormat.class);
+    private static Log log = LogFactory.getLog(StringFormat.class);
 
     /**
      * Format string using Java String.format() syntax (see {@link String#format(String, Object...)}) using a port of
