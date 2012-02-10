@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.Data
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindMultiStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindSingleStoragePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.RecoveryStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -43,7 +44,8 @@ public class DataCenterModule extends AbstractGinModule {
     public MainModelProvider<storage_pool, DataCenterListModel> getDataCenterListProvider(ClientGinjector ginjector,
             final Provider<DataCenterPopupPresenterWidget> popupProvider,
             final Provider<GuidePopupPresenterWidget> guidePopupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<RecoveryStoragePopupPresenterWidget> recoveryStorageConfirmPopupProvider) {
         return new MainTabModelProvider<storage_pool, DataCenterListModel>(ginjector, DataCenterListModel.class) {
             @Override
             protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
@@ -63,6 +65,8 @@ public class DataCenterModule extends AbstractGinModule {
                 if (lastExecutedCommand == getModel().getRemoveCommand()
                         || lastExecutedCommand == getModel().getForceRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getRecoveryStorageCommand()) {
+                    return recoveryStorageConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(lastExecutedCommand);
                 }

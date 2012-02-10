@@ -76,6 +76,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Logical Networks")
     String dataCenterNetworkSubTabLabel();
 
+    @DefaultStringValue("This operation is destructive and unrecoverable!")
+    String dataCenterRecoveryStoragePopupWarningLabel();
+
+    @DefaultStringValue("Storage Domain for this Data Center is going to be initialized. <br> All existing objects will be removed.")
+    String dataCenterRecoveryStoragePopupMessageLabel();
+
+    @DefaultStringValue("Select new Data Storage Domain(Master):")
+    String dataCenterRecoveryStoragePopupSelectNewDSDLabel();
+
     @DefaultStringValue("Name")
     String clusterNewNetworkNameLabel();
 

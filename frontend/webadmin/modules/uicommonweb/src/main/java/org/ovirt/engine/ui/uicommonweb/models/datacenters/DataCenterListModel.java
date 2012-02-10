@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.RecoveryStoragePoolParameters;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
@@ -389,131 +392,132 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
     public void RecoveryStorage()
     {
-        ConfirmationModel model = new ConfirmationModel();
-        setWindow(model);
-        model.setTitle("Data Center Re-Initialize");
-        model.setHashName("data_center_re-initialize");
-        model.getLatch().setIsAvailable(true);
-        model.getLatch().setIsChangable(true);
+        final ConfirmationModel windowModel = new ConfirmationModel();
+        setWindow(windowModel);
+        windowModel.setTitle("Data Center Re-Initialize");
+        windowModel.setHashName("data_center_re-initialize");
+        windowModel.getLatch().setIsAvailable(true);
+        windowModel.getLatch().setIsChangable(true);
 
-        // IEnumerable<storage_domains> list = DataProvider.GetStorageDomainList();
-        // List<EntityModel> models = list
-        // .Where(a => (a.storage_domain_type == StorageDomainType.Data && a.storage_type ==
-        // ((storage_pool)SelectedItem).storage_pool_type) &&
-        // (a.storage_domain_shared_status == StorageDomainSharedStatus.Unattached)
-        // )
-        // .Select(a => new EntityModel() { Entity = a })
-        // .ToList();
-        java.util.ArrayList<EntityModel> models = new java.util.ArrayList<EntityModel>();
-        for (storage_domains a : DataProvider.GetStorageDomainList())
-        {
-            if (a.getstorage_domain_type() == StorageDomainType.Data
-                    && a.getstorage_type() == ((storage_pool) getSelectedItem()).getstorage_pool_type()
-                    && (a.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached))
-            {
-                EntityModel tempVar = new EntityModel();
-                tempVar.setEntity(a);
-                models.add(tempVar);
+        windowModel.StartProgress(null);
+
+        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+                windowModel.StopProgress();
+                List<storage_domains> storageDomainList = (List<storage_domains>) returnValue;
+                List<EntityModel> models = new ArrayList<EntityModel>();
+                for (storage_domains a : storageDomainList)
+                {
+                    if (a.getstorage_domain_type() == StorageDomainType.Data
+                            && a.getstorage_type() == ((storage_pool) getSelectedItem()).getstorage_pool_type()
+                            && (a.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached))
+                    {
+                        EntityModel tempVar = new EntityModel();
+                        tempVar.setEntity(a);
+                        models.add(tempVar);
+                    }
+                }
+                windowModel.setItems(models);
+
+                if (models.size() > 0)
+                {
+                    EntityModel entityModel = models.size() != 0 ? models.get(0) : null;
+                    if (entityModel != null)
+                    {
+                        entityModel.setIsSelected(true);
+                    }
+                }
+
+                if (models.isEmpty())
+                {
+                    windowModel.setMessage("There are no compatible Storage Domains to attach to this Data Center. Please add new Storage from the Storage tab.");
+
+                    UICommand tempVar2 = new UICommand("Cancel", DataCenterListModel.this);
+                    tempVar2.setTitle("Close");
+                    tempVar2.setIsDefault(true);
+                    tempVar2.setIsCancel(true);
+                    windowModel.getCommands().add(tempVar2);
+                }
+                else
+                {
+                    UICommand tempVar3 = new UICommand("OnRecover", DataCenterListModel.this);
+                    tempVar3.setTitle("OK");
+                    tempVar3.setIsDefault(true);
+                    windowModel.getCommands().add(tempVar3);
+                    UICommand tempVar4 = new UICommand("Cancel", DataCenterListModel.this);
+                    tempVar4.setTitle("Cancel");
+                    tempVar4.setIsCancel(true);
+                    windowModel.getCommands().add(tempVar4);
+                }
+
             }
-        }
-
-        model.setItems(models);
-
-        if (models.size() > 0)
-        {
-            EntityModel entityModel = models.size() != 0 ? models.get(0) : null;
-            if (entityModel != null)
-            {
-                entityModel.setIsSelected(true);
-            }
-        }
-
-        if (models.isEmpty())
-        {
-            model.setMessage("There are no compatible Storage Domains to attach to this Data Center. Please add new Storage from the Storage tab.");
-
-            UICommand tempVar2 = new UICommand("Cancel", this);
-            tempVar2.setTitle("Close");
-            tempVar2.setIsDefault(true);
-            tempVar2.setIsCancel(true);
-            model.getCommands().add(tempVar2);
-        }
-        else
-        {
-            UICommand tempVar3 = new UICommand("OnRecover", this);
-            tempVar3.setTitle("OK");
-            tempVar3.setIsDefault(true);
-            model.getCommands().add(tempVar3);
-            UICommand tempVar4 = new UICommand("Cancel", this);
-            tempVar4.setTitle("Cancel");
-            tempVar4.setIsCancel(true);
-            model.getCommands().add(tempVar4);
-        }
+        }));
     }
 
     public void OnRecover()
     {
-        ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (!model.Validate())
+        final ConfirmationModel windowModel = (ConfirmationModel) getWindow();
+        if (!windowModel.Validate())
         {
             return;
         }
 
-        // storage_domains master =
-        // DataProvider.GetStorageDomainList(((storage_pool)SelectedItem).id).FirstOrDefault(a=>a.storage_domain_type ==
-        // StorageDomainType.Master);
-        storage_domains master = null;
-        for (storage_domains a : DataProvider.GetStorageDomainList(((storage_pool) getSelectedItem()).getId()))
-        {
-            if (a.getstorage_domain_type() == StorageDomainType.Master)
-            {
-                master = a;
-                break;
+        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+                storage_domains master = null;
+                List<storage_domains> storageDomainList = (List<storage_domains>) returnValue;
+                for (storage_domains a : storageDomainList)
+                {
+                    if (a.getstorage_domain_type() == StorageDomainType.Master)
+                    {
+                        master = a;
+                        break;
+                    }
+                }
+                List<storage_domains> items = new ArrayList<storage_domains>();
+                for (EntityModel a : Linq.<EntityModel> Cast(windowModel.getItems()))
+                {
+                    if (a.getIsSelected())
+                    {
+                        items.add((storage_domains) a.getEntity());
+                    }
+                }
+                if (items.size() > 0)
+                {
+                    if (windowModel.getProgress() != null)
+                    {
+                        return;
+                    }
+                    ArrayList<VdcActionParametersBase> parameters =
+                            new ArrayList<VdcActionParametersBase>();
+                    for (storage_domains a : items)
+                    {
+                        parameters.add(new RecoveryStoragePoolParameters(((storage_pool) getSelectedItem()).getId(),
+                                a.getid()));
+                    }
+                    windowModel.StartProgress(null);
+                    Frontend.RunMultipleAction(VdcActionType.RecoveryStoragePool, parameters,
+                            new IFrontendMultipleActionAsyncCallback() {
+                                @Override
+                                public void Executed(FrontendMultipleActionAsyncResult result) {
+
+                                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                                    localModel.StopProgress();
+                                    Cancel();
+
+                                }
+                            }, windowModel);
+                }
+                else
+                {
+                    Cancel();
+                }
             }
-        }
-
-        java.util.ArrayList<storage_domains> items = new java.util.ArrayList<storage_domains>();
-        for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
-        {
-            if (a.getIsSelected())
-            {
-                items.add((storage_domains) a.getEntity());
-            }
-        }
-
-        if (items.size() > 0)
-        {
-            if (model.getProgress() != null)
-            {
-                return;
-            }
-
-            java.util.ArrayList<VdcActionParametersBase> parameters =
-                    new java.util.ArrayList<VdcActionParametersBase>();
-            for (storage_domains a : items)
-            {
-                parameters.add(new RecoveryStoragePoolParameters(((storage_pool) getSelectedItem()).getId(), a.getid()));
-            }
-
-            model.StartProgress(null);
-
-            Frontend.RunMultipleAction(VdcActionType.RecoveryStoragePool, parameters,
-                    new IFrontendMultipleActionAsyncCallback() {
-                        @Override
-                        public void Executed(FrontendMultipleActionAsyncResult result) {
-
-                            ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                            localModel.StopProgress();
-                            Cancel();
-
-                        }
-                    }, model);
-        }
-        else
-        {
-            Cancel();
-        }
+        }),
+                ((storage_pool) getSelectedItem()).getId());
     }
 
     public void Activate()

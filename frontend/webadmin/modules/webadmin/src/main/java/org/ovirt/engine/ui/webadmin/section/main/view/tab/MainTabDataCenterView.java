@@ -110,6 +110,13 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
                 return getMainModel().getGuideCommand();
             }
         });
+
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>("Re-Initialize Data Center", true) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRecoveryStorageCommand();
+            }
+        });
     }
 
 }
