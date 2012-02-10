@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -16,9 +17,13 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 
 /**
- * Renders HTML host page used to load GWT web applications.
+ * Renders the HTML host page of a GWT application.
  * <p>
- * Allows inclusion of additional data into the host page, such as the information about the currently logged-in user.
+ * Allows to {@linkplain #writeAdditionalJsData include} additional data (JavaScript objects) into the host page. By
+ * default, information about the currently logged-in user is included via {@code userInfo} object.
+ * <p>
+ * In order to prevent browsers from caching the GWT selector script, a dummy URL parameter with unique value is added
+ * to the GWT selector script URL. This makes all GWT selector script requests unique from web resource point of view.
  * <p>
  * Note: this class resides in Frontend servlet package as it's already embedded in a JAR under WEB-INF/lib.
  */
@@ -50,7 +55,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
         writer.append("</head><body>");
         writer.append("<iframe src=\"javascript:''\" id=\"__gwt_historyFrame\" tabIndex='-1' style=\"position:absolute;width:0;height:0;border:0\"></iframe>");
-        writer.append("<script type=\"text/javascript\" src=\"" + getSelectorScriptName() + "\"></script>");
+        writer.append("<script type=\"text/javascript\" src=\"" + getSelectorScriptName() + "?nocache=" + new Date().getTime() + "\"></script>");
         writer.append("</body></html>");
     }
 
