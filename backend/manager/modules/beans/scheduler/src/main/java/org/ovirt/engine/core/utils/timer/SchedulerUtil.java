@@ -29,10 +29,9 @@ public interface SchedulerUtil {
      *            - the unit of time used for initialDelay and taskDelay.
      * @return the scheduled job id
      */
-    @SuppressWarnings("unchecked")
     public String scheduleAFixedDelayJob(Object instance,
                                          String methodName,
-                                         Class[] inputTypes,
+                                         Class<?>[] inputTypes,
                                          Object[] inputParams,
                                          long initialDelay,
                                          long taskDelay,
@@ -55,10 +54,9 @@ public interface SchedulerUtil {
      *            - the unit of time used for initialDelay and taskDelay.
      * @return the scheduled job id
      */
-    @SuppressWarnings("unchecked")
     public String scheduleAOneTimeJob(Object instance,
                                       String methodName,
-                                      Class[] inputTypes,
+                                      Class<?>[] inputTypes,
                                       Object[] inputParams,
                                       long initialDelay,
                                       TimeUnit timeUnit);
@@ -131,10 +129,9 @@ public interface SchedulerUtil {
      *            - cron expression to run this job
      * @return the scheduled job id
      */
-    @SuppressWarnings("unchecked")
     String scheduleACronJob(Object instance,
                             String methodName,
-                            Class[] inputTypes,
+                            Class<?>[] inputTypes,
                             Object[] inputParams,
                             String cronExpression);
 

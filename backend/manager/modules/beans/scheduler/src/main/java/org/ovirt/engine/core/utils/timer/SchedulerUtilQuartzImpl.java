@@ -118,11 +118,10 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
      *            - the unit of time used for initialDelay and taskDelay.
      * @return the scheduled job id
      */
-    @SuppressWarnings("unchecked")
     @Override
     public String scheduleAFixedDelayJob(Object instance,
                                          String methodName,
-                                         Class[] inputTypes,
+                                         Class<?>[] inputTypes,
                                          Object[] inputParams,
                                          long initialDelay,
                                          long taskDelay,
@@ -168,11 +167,10 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
      *            - the unit of time used for initialDelay and taskDelay.
      * @return the scheduled job id
      */
-    @SuppressWarnings("unchecked")
     @Override
     public String scheduleAOneTimeJob(Object instance,
                                       String methodName,
-                                      Class[] inputTypes,
+                                      Class<?>[] inputTypes,
                                       Object[] inputParams,
                                       long initialDelay,
                                       TimeUnit timeUnit) {
@@ -210,11 +208,10 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
      *            - cron expression to run this job
      * @return the scheduled job id
      */
-    @SuppressWarnings("unchecked")
     @Override
     public String scheduleACronJob(Object instance,
                                    String methodName,
-                                   Class[] inputTypes,
+                                   Class<?>[] inputTypes,
                                    Object[] inputParams,
                                    String cronExpression) {
         String jobName = generateUniqueNameForInstance(instance, methodName);
