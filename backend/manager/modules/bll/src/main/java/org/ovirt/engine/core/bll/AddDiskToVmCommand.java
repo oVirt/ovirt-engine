@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
@@ -15,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -270,17 +270,7 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
         getReturnValue().setActionReturnValue(tmpRetValue.getActionReturnValue());
         getReturnValue().setFault(tmpRetValue.getFault());
         if (tmpRetValue.getSucceeded()) {
-            VmDevice disk =
-                    new VmDevice(new VmDeviceId((Guid)getActionReturnValue(), getVmId()),
-                            VmDeviceType.getName(VmDeviceType.DISK),
-                            VmDeviceType.getName(VmDeviceType.DISK),
-                            "",
-                            0,
-                            "",
-                            true,
-                            true,
-                            false);
-            DbFacade.getInstance().getVmDeviceDAO().save(disk);
+            VmDeviceUtils.addManagedDevice(new VmDeviceId((Guid)getActionReturnValue(), getVmId()),  VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
         }
 
         setSucceeded(tmpRetValue.getSucceeded());

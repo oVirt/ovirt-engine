@@ -2,12 +2,12 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
@@ -70,17 +70,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
         dbFacade
                 .getVmNetworkStatisticsDAO()
                 .save(getParameters().getInterface().getStatistics());
-        VmDevice iface =
-                new VmDevice(new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmId()),
-                        VmDeviceType.getName(VmDeviceType.INTERFACE),
-                        VmDeviceType.getName(VmDeviceType.BRIDGE),
-                        "",
-                        0,
-                        "",
-                        true,
-                        true,
-                        false);
-        dbFacade.getVmDeviceDAO().save(iface);
+        VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmId()),  VmDeviceType.INTERFACE, VmDeviceType.BRIDGE, "", true, false);
         setSucceeded(true);
     }
 

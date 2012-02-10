@@ -2,22 +2,25 @@ package org.ovirt.engine.core.bll.utils;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 public class VmDeviceUtils {
     private final static String LOW_VIDEO_MEM = "32768";
     private final static String HIGH_VIDEO_MEM = "65536";
     private static VM vm;
-
     /**
      * Update the vm devices according to changes made in vm static for existing VM
      */
@@ -49,6 +52,67 @@ public class VmDeviceUtils {
         updateNumOfMonitorsInVmDevice(newVmStatic);
     }
 
+    /**
+     * Copies relevamt entries on Vm from Template or Tempalte from VM creation.
+     * @param srcId
+     * @param dstId
+     */
+    public static  void copyVmDevices(Guid srcId, Guid dstId) {
+        Guid id;
+        VmStatic vmStatic = DbFacade.getInstance().getVmStaticDAO().get(dstId);
+        List<image_vm_map> disks = DbFacade.getInstance().getImageVmMapDAO().getByVmId(dstId);
+        List<VmNetworkInterface> ifaces;
+        int diskCount=0;
+        int ifaceCount=0;
+        boolean isVm = (vmStatic != null);
+        if (isVm) {
+            ifaces = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(dstId);
+        }
+        else {
+            ifaces = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(dstId);
+        }
+        VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDAO();
+        List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
+        for (VmDevice device : devices) {
+            id = Guid.NewGuid();
+            if (device.getType().equalsIgnoreCase(VmDeviceType.DISK.name()) && device.getDevice().equalsIgnoreCase(VmDeviceType.DISK.name())) {
+                if (diskCount < disks.size()) {
+                    id = disks.get(diskCount++).getimage_id();
+                }
+            }
+            else if (device.getType().equalsIgnoreCase(VmDeviceType.INTERFACE.name())) {
+                if (ifaceCount < ifaces.size()) {
+                    id = ifaces.get(ifaceCount++).getId();
+                }
+            }
+            device.setId(new VmDeviceId(id, dstId));
+            dao.save(device);
+        }
+        // if destination is a VM , update devices boot order
+        if (isVm) {
+            updateBootOrderInVmDevice(vmStatic);
+        }
+    }
+
+    /**
+     * adds managed device to vm_device
+     * @param id
+     * @param type
+     * @param device
+     */
+    public static void addManagedDevice(VmDeviceId id, VmDeviceType type, VmDeviceType device, String specParams, boolean is_plugged, boolean isReadOnly) {
+        VmDevice managedDevice =
+            new VmDevice(id,
+                    VmDeviceType.getName(type),
+                    VmDeviceType.getName(device),
+                    "",
+                    0,
+                    specParams,
+                    true,
+                    is_plugged,
+                    isReadOnly);
+        DbFacade.getInstance().getVmDeviceDAO().save(managedDevice);
+    }
     /**
      * updates existing VM CD ROM in vm_device
      * @param oldVmStatic
@@ -96,12 +160,14 @@ public class VmDeviceUtils {
      */
 
     private static void updateCdInVmDevice(VmStatic newVmStatic) {
-        // new CD was added
-        VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
-                newVmStatic.getId()), VmDeviceType.getName(VmDeviceType.DISK),
-                VmDeviceType.getName(VmDeviceType.CDROM), "", 0,
-                newVmStatic.getiso_path(), true, false, false);
-        DbFacade.getInstance().getVmDeviceDAO().save(cd);
+        if (!StringUtils.isEmpty(newVmStatic.getiso_path())) {
+            // new CD was added
+            VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
+                    newVmStatic.getId()), VmDeviceType.getName(VmDeviceType.DISK),
+                    VmDeviceType.getName(VmDeviceType.CDROM), "", 0,
+                    newVmStatic.getiso_path(), true, false, false);
+            DbFacade.getInstance().getVmDeviceDAO().save(cd);
+        }
     }
 
     /**
@@ -109,6 +175,7 @@ public class VmDeviceUtils {
      * @param newStatic
      */
     private static void updateBootOrderInVmDevice(VmStatic newStatic) {
+        vm = DbFacade.getInstance().getVmDAO().get(newStatic.getId());
         List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDAO()
                 .getVmDeviceByVmId(newStatic.getId());
         int bootOrder = 1;

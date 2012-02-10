@@ -378,7 +378,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     AddVmDynamic();
                     AddVmNetwork();
                     AddVmStatistics();
-                    VmDeviceUtils.updateVmDevices(getVmId());
                     getCompensationContext().stateChanged();
                     return null;
                 }
@@ -386,6 +385,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
             addVmPermission();
             if (AddVmImages()) {
+                VmDeviceUtils.copyVmDevices(getVmTemplateId(), getVmId());
                 setActionReturnValue(getVm().getvm_guid());
                 setSucceeded(true);
             }
