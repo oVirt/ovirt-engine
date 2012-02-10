@@ -25,6 +25,6 @@
 		}
 	</ui:style>
 
-	<g:PushButton ui:field="button" addStyleNames="{style.actionButton}" />
+	<g:ToggleButton ui:field="button" addStyleNames="{style.actionButton}" />
 
 </ui:UiBinder>
