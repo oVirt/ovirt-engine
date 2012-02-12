@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -58,6 +59,8 @@ import org.yaml.snakeyaml.Yaml;
 
 public class RsdlBuilder {
 
+    private static final String COLLECTION_PARAMETER_RSDL = "collection";
+    private static final String COLLECTION_PARAMETER_YAML = "--COLLECTION";
     private RSDL rsdl;
     private String entryPoint;
     private BackendApiResource apiResource;
@@ -314,61 +317,89 @@ public class RsdlBuilder {
         if (this.parametersMetaData.containsKey(link_name)) {
             Action action = this.parametersMetaData.get(link_name);
             if (action.getRequest() != null) {
-                if (action.getRequest().getUrlparams() != null && !action.getRequest().getUrlparams().isEmpty()) {
-                    link.getRequest().setUrl(new Url());
-                    ParametersSet ps = new ParametersSet();
-                    for (Object key :  action.getRequest().getUrlparams().keySet()) {
-                        Parameter param = new Parameter();
-                        param.setName(key.toString());
-                        Object value = action.getRequest().getUrlparams().get(key);
-                        if (value != null) {
-                            UrlParamData urlParamData = (UrlParamData)value;
-                            param.setType(urlParamData.getType());
-                            param.setContext(urlParamData.getContext());
-                            param.setValue(urlParamData.getValue());
-                            param.setRequired(urlParamData.getRequired()==null ? false : urlParamData.getRequired());
-                        }
-                        ps.getParameters().add(param);
-                    }
-                    link.getRequest().getUrl().getParametersSets().add(ps);
-                }
-                if (action.getRequest().getHeaders() != null && !action.getRequest().getHeaders().isEmpty()) {
-                    link.getRequest().setHeaders(new Headers());
-                    for (Object key :  action.getRequest().getHeaders().keySet()) {
-                        Header header = new Header();
-                        header.setName(key.toString());
-                        Object value = action.getRequest().getHeaders().get(key);
-                        if (value != null) {
-                            header.setValue(value.toString());
-                        }
-                        link.getRequest().getHeaders().getHeaders().add(header);
-                    }
-                }
-                if (action.getRequest().getBody() != null) {
-                    if (action.getRequest().getBody().getSignatures() != null) {
-                        for (Signature signature : action.getRequest().getBody().getSignatures()) {
-                            ParametersSet ps = new ParametersSet();
-                            for (Entry<Object, Object> mandatoryKeyValuePair : signature.getMandatoryArguments().entrySet()) {
-                                Parameter mandatory_param = new Parameter();
-                                mandatory_param.setName(mandatoryKeyValuePair.getKey().toString());
-                                mandatory_param.setType(mandatoryKeyValuePair.getValue().toString());
-                                mandatory_param.setRequired(true);
-                                ps.getParameters().add(mandatory_param);
-                            }
-                            for (Entry<Object, Object> optionalKeyValuePair : signature.getOptionalArguments().entrySet()) {
-                                Parameter optional_param = new Parameter();
-                                optional_param.setName(optionalKeyValuePair.getKey().toString());
-                                optional_param.setType(optionalKeyValuePair.getValue().toString());
-                                optional_param.setRequired(false);
-                                ps.getParameters().add(optional_param);
-                            }
-                            link.getRequest().getBody().getParametersSets().add(ps);
-                        }
-                    }
-                }
+                addUrlParams(link, action);
+                addHeaderParams(link, action);
+                addBodyParams(link, action);
             }
         }
         return link;
+    }
+
+    private void addBodyParams(DetailedLink link, Action action) {
+        if (action.getRequest().getBody() != null) {
+            if (action.getRequest().getBody().getSignatures() != null) {
+                for (Signature signature : action.getRequest().getBody().getSignatures()) {
+                    ParametersSet ps = new ParametersSet();
+                    addBodyParams(ps, signature.getMandatoryArguments().entrySet(), true);
+                    addBodyParams(ps, signature.getOptionalArguments().entrySet(), false);
+                    link.getRequest().getBody().getParametersSets().add(ps);
+                }
+            }
+        }
+    }
+
+    private void addBodyParams(ParametersSet ps, Set<Entry<Object, Object>> entrySet, boolean required) {
+        for (Entry<Object, Object> paramData : entrySet) {
+            Parameter param = createBodyParam(paramData, required);
+            ps.getParameters().add(param);
+        }
+    }
+
+    private Parameter createBodyParam(Entry<Object, Object> mandatoryKeyValuePair, boolean required) {
+        Parameter param = new Parameter();
+        param.setRequired(required);
+        String paramName = mandatoryKeyValuePair.getKey().toString();
+        if (paramName.endsWith(COLLECTION_PARAMETER_YAML)) {
+            param.setName(paramName.substring(0, paramName.length()-(COLLECTION_PARAMETER_YAML.length())));
+            param.setType(COLLECTION_PARAMETER_RSDL);
+            @SuppressWarnings("unchecked")
+            Map<Object, Object> listParams = (Map<Object, Object>)mandatoryKeyValuePair.getValue();
+            param.setParametersSet(new ParametersSet());
+            for (Entry<Object, Object> listParamData : listParams.entrySet()) {
+                Parameter listParam = createBodyParam(listParamData, required);
+                param.getParametersSet().getParameters().add(listParam);
+            }
+        } else {
+            param.setName(paramName);
+            param.setType(mandatoryKeyValuePair.getValue().toString());
+        }
+        return param;
+    }
+
+    private void addHeaderParams(DetailedLink link, Action action) {
+        if (action.getRequest().getHeaders() != null && !action.getRequest().getHeaders().isEmpty()) {
+            link.getRequest().setHeaders(new Headers());
+            for (Object key :  action.getRequest().getHeaders().keySet()) {
+                Header header = new Header();
+                header.setName(key.toString());
+                Object value = action.getRequest().getHeaders().get(key);
+                if (value != null) {
+                    header.setValue(value.toString());
+                }
+                link.getRequest().getHeaders().getHeaders().add(header);
+            }
+        }
+    }
+
+    private void addUrlParams(DetailedLink link, Action action) {
+        if (action.getRequest().getUrlparams() != null && !action.getRequest().getUrlparams().isEmpty()) {
+            link.getRequest().setUrl(new Url());
+            ParametersSet ps = new ParametersSet();
+        for (Object key :  action.getRequest().getUrlparams().keySet()) {
+                Parameter param = new Parameter();
+                param.setName(key.toString());
+                Object value = action.getRequest().getUrlparams().get(key);
+                if (value != null) {
+                    UrlParamData urlParamData = (UrlParamData)value;
+                    param.setType(urlParamData.getType());
+                    param.setContext(urlParamData.getContext());
+                    param.setValue(urlParamData.getValue());
+                    param.setRequired(urlParamData.getRequired()==null ? false : urlParamData.getRequired());
+                }
+                ps.getParameters().add(param);
+            }
+            link.getRequest().getUrl().getParametersSets().add(ps);
+        }
     }
 
     private void handleAdd(String prefix, Collection<DetailedLink> results, Method m) {
