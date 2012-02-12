@@ -26,7 +26,7 @@ public class LoggedUtilsTest {
      * Interface used for DRY testing of {@link LoggedUtils#log}.
      */
     private static interface LogSetup {
-        public void setup(LogCompat mock, String message, Object args);
+        public void setup(Log mock, String message, Object args);
     }
 
     @Logged(executionLevel = LogLevel.OFF, errorLevel = LogLevel.OFF)
@@ -102,7 +102,7 @@ public class LoggedUtilsTest {
     @Test
     public void testDetermineMessageReturnsObjectForParameterExpansion() throws Exception {
         Object obj = new Object();
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
         expect(log.isDebugEnabled()).andReturn(true);
         replay(log);
 
@@ -111,7 +111,7 @@ public class LoggedUtilsTest {
 
     @Test
     public void testDetermineMessageReturnsClassNameForNoParameterExpansion() throws Exception {
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
         expect(log.isDebugEnabled()).andReturn(false).anyTimes();
         replay(log);
 
@@ -129,7 +129,7 @@ public class LoggedUtilsTest {
 
     @Test
     public void testLogOffDoesntLog() {
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
         replay(log);
 
         LoggedUtils.log(log, LogLevel.OFF, "{0}", new Object());
@@ -140,7 +140,7 @@ public class LoggedUtilsTest {
     public void testLogTrace() throws Exception {
         helpTestLog(LogLevel.TRACE, new LogSetup() {
             @Override
-            public void setup(LogCompat mock, String message, Object args) {
+            public void setup(Log mock, String message, Object args) {
                 expect(mock.isTraceEnabled()).andReturn(true);
                 mock.traceFormat(message, args);
             }
@@ -151,7 +151,7 @@ public class LoggedUtilsTest {
     public void testLogDebug() throws Exception {
         helpTestLog(LogLevel.DEBUG, new LogSetup() {
             @Override
-            public void setup(LogCompat mock, String message, Object args) {
+            public void setup(Log mock, String message, Object args) {
                 expect(mock.isDebugEnabled()).andReturn(true);
                 mock.debugFormat(message, args);
             }
@@ -162,7 +162,7 @@ public class LoggedUtilsTest {
     public void testLogInfo() throws Exception {
         helpTestLog(LogLevel.INFO, new LogSetup() {
             @Override
-            public void setup(LogCompat mock, String message, Object args) {
+            public void setup(Log mock, String message, Object args) {
                 expect(mock.isInfoEnabled()).andReturn(true);
                 mock.infoFormat(message, args);
             }
@@ -173,7 +173,7 @@ public class LoggedUtilsTest {
     public void testLogWarn() throws Exception {
         helpTestLog(LogLevel.WARN, new LogSetup() {
             @Override
-            public void setup(LogCompat mock, String message, Object args) {
+            public void setup(Log mock, String message, Object args) {
                 expect(mock.isWarnEnabled()).andReturn(true);
                 mock.warnFormat(message, args);
             }
@@ -184,7 +184,7 @@ public class LoggedUtilsTest {
     public void testLogError() throws Exception {
         helpTestLog(LogLevel.ERROR, new LogSetup() {
             @Override
-            public void setup(LogCompat mock, String message, Object args) {
+            public void setup(Log mock, String message, Object args) {
                 expect(mock.isErrorEnabled()).andReturn(true);
                 mock.errorFormat(message, args);
             }
@@ -195,7 +195,7 @@ public class LoggedUtilsTest {
     public void testLogFatal() throws Exception {
         helpTestLog(LogLevel.FATAL, new LogSetup() {
             @Override
-            public void setup(LogCompat mock, String message, Object args) {
+            public void setup(Log mock, String message, Object args) {
                 expect(mock.isFatalEnabled()).andReturn(true);
                 mock.fatalFormat(message, args);
             }
@@ -207,14 +207,14 @@ public class LoggedUtilsTest {
 
     @Test
     public void testLogEntryDoesntLogWhenNoAnnotation() throws Exception {
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
         replay(log);
         LoggedUtils.logEntry(log, "", new Object());
     }
 
     @Test
     public void testLogEntryDoesntLogWhenLogLevelInactive() throws Exception {
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
         expect(log.isDebugEnabled()).andReturn(false);
         replay(log);
 
@@ -224,7 +224,7 @@ public class LoggedUtilsTest {
     @Test
     public void testLogEntryLogsWhenLogLevelActive() throws Exception {
         String id = "";
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
         expect(log.isDebugEnabled()).andReturn(true).anyTimes();
         log.debugFormat(eq(LoggedUtils.ENTRY_LOG), anyObject(), eq(id));
         replay(log);
@@ -237,14 +237,14 @@ public class LoggedUtilsTest {
 
     @Test
     public void testLogReturnDoesntLogWhenNoAnnotation() throws Exception {
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
         replay(log);
         LoggedUtils.logReturn(log, "", new Object(), new Object());
     }
 
     @Test
     public void testLogReturnDoesntLogWhenLogLevelInactive() throws Exception {
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
         expect(log.isDebugEnabled()).andReturn(false);
         replay(log);
 
@@ -254,7 +254,7 @@ public class LoggedUtilsTest {
     @Test
     public void testLogReturnLogsWhenLogLevelActiveAndNoExpandReturn() throws Exception {
         String id = "";
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
         expect(log.isInfoEnabled()).andReturn(true).anyTimes();
         expect(log.isDebugEnabled()).andReturn(false);
         log.infoFormat(eq(LoggedUtils.EXIT_LOG_VOID), anyObject(), eq(id));
@@ -266,7 +266,7 @@ public class LoggedUtilsTest {
     @Test
     public void testLogReturnLogsWhenLogLevelActiveAndExpandReturn() throws Exception {
         String id = "";
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
         expect(log.isDebugEnabled()).andReturn(true).anyTimes();
         log.debugFormat(eq(LoggedUtils.EXIT_LOG_RETURN_VALUE), anyObject(), anyObject(), eq(id));
         replay(log);
@@ -277,7 +277,7 @@ public class LoggedUtilsTest {
     @Test
     public void testLogReturnLogsWhenLogLevelActiveAndExpandReturnButNullReturn() throws Exception {
         String id = "";
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
         expect(log.isDebugEnabled()).andReturn(true).anyTimes();
         log.debugFormat(eq(LoggedUtils.EXIT_LOG_VOID), anyObject(), eq(id));
         replay(log);
@@ -290,14 +290,14 @@ public class LoggedUtilsTest {
 
     @Test
     public void testLogErrorDoesntLogWhenNoAnnotation() throws Exception {
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
         replay(log);
         LoggedUtils.logError(log, "", new Object(), new Exception());
     }
 
     @Test
     public void testLogErrorDoesntLogWhenLogLevelInactive() throws Exception {
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
         expect(log.isWarnEnabled()).andReturn(false);
         replay(log);
 
@@ -307,7 +307,7 @@ public class LoggedUtilsTest {
     @Test
     public void testLogErrorLogsWhenLogLevelActive() throws Exception {
         String id = "";
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
 
         // Expect the call to determine whether to log the parameters or not.
         expect(log.isDebugEnabled()).andReturn(true);
@@ -327,7 +327,7 @@ public class LoggedUtilsTest {
      * @param logSetup Setup the mocks using an anonymous inner class of this interface.
      */
     private void helpTestLog(LogLevel logLevel, LogSetup logSetup) {
-        LogCompat log = createMock(LogCompat.class);
+        Log log = createMock(Log.class);
         String message = "{0}";
         Object args = new Object();
         logSetup.setup(log, message, args);

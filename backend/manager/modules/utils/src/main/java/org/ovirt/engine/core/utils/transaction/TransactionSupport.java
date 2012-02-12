@@ -2,8 +2,8 @@ package org.ovirt.engine.core.utils.transaction;
 
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
 import javax.transaction.*;
@@ -11,7 +11,7 @@ import javax.ejb.TransactionRolledbackLocalException;
 
 public class TransactionSupport {
 
-    private static LogCompat log = LogFactoryCompat.getLog(TransactionSupport.class);
+    private static Log log = LogFactory.getLog(TransactionSupport.class);
 
     /**
      * JBoss specific location of TransactionManager

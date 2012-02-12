@@ -5,8 +5,8 @@ package org.ovirt.engine.core.ldap;
 
 import javax.naming.NamingException;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dns.DnsSRVLocator;
 
 /**
@@ -30,6 +30,6 @@ public class GlobalCatalogSrvLocator extends DnsSRVLocator {
 
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(GlobalCatalogSrvLocator.class);
+    private static Log log = LogFactory.getLog(GlobalCatalogSrvLocator.class);
 
 }

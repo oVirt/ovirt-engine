@@ -6,8 +6,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * EJBUtils strategy to fine tune the lookup process of beans
@@ -16,7 +16,7 @@ import org.ovirt.engine.core.utils.log.LogFactoryCompat;
  */
 public abstract class EJBUtilsStrategy {
 
-    private static LogCompat log = LogFactoryCompat.getLog(EJBUtilsStrategy.class);
+    private static Log log = LogFactory.getLog(EJBUtilsStrategy.class);
 
     // Map from resource types (for example ResourceTypeEnum.DATA_SOURCE ) to
     // their JNDI names

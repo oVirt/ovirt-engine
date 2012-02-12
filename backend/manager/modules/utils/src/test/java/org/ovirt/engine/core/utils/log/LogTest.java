@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class LogCompatTest {
-    LogCompat log = LogFactoryCompat.getLog(LogCompatTest.class);
+public class LogTest {
+    Log log = LogFactory.getLog(LogTest.class);
 
     @Test
     public void testSimple() {

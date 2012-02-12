@@ -8,8 +8,8 @@ import java.util.Calendar;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.FileUtil;
 
 public class OpenSslCAWrapper implements ICAWrapper {
@@ -165,5 +165,5 @@ public class OpenSslCAWrapper implements ICAWrapper {
         return Runtime.getRuntime();
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(OpenSslCAWrapper.class);
+    private static Log log = LogFactory.getLog(OpenSslCAWrapper.class);
 }

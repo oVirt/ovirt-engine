@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.config.DefaultValueAttribute;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
 import org.ovirt.engine.core.common.config.TypeConverterAttribute;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.compat.Version;
@@ -223,7 +223,7 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
         return succeeded;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(ConfigUtilsBase.class);
+    private static Log log = LogFactory.getLog(ConfigUtilsBase.class);
 
     @SuppressWarnings("unchecked")
     @Override

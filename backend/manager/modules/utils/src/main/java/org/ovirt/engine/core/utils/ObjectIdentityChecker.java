@@ -5,8 +5,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.IObjectDescriptorContainer;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
 
@@ -212,5 +212,5 @@ public class ObjectIdentityChecker {
         log.errorFormat("Field {0} can not be updated when status is {1}", name, status);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(ObjectIdentityChecker.class);
+    private static Log log = LogFactory.getLog(ObjectIdentityChecker.class);
 }

@@ -9,13 +9,13 @@ import java.util.concurrent.TimeUnit;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
 public class ThreadPoolUtil {
 
-    private static LogCompat log = LogFactoryCompat.getLog(ThreadPoolUtil.class);
+    private static Log log = LogFactory.getLog(ThreadPoolUtil.class);
 
     private static class InternalThreadExecutor extends ThreadPoolExecutor {
 

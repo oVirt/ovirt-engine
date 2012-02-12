@@ -10,8 +10,8 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField;
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * This class assists in OVF log events handling
@@ -200,6 +200,6 @@ public abstract class OvfLogEventHandler<T> {
         return aliases;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(OvfLogEventHandler.class);
+    private static Log log = LogFactory.getLog(OvfLogEventHandler.class);
 
 }

@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.DoubleCompat;
 import org.ovirt.engine.core.compat.IntegerCompat;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.LongCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -32,7 +32,7 @@ public class VdsFencingOptions implements Serializable {
     private static final String AGENT_ERROR = "Cannot find fencing agent named {0} in fencing option mapping";
     private static final String MAPPING_FORMAT_ERROR = "Illegal fencing mapping format {0}";
 
-    private static LogCompat log = LogFactoryCompat.getLog(VdsFencingOptions.class);
+    private static Log log = LogFactory.getLog(VdsFencingOptions.class);
     private static HashMap<String, HashMap<String, String>> fencingOptionMapping;
     private static HashMap<String, String> fencingOptionTypes;
 

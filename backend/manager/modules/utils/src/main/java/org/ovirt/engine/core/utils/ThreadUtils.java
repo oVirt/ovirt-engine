@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.utils;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class ThreadUtils {
 
-    private static LogCompat log = LogFactoryCompat.getLog(ThreadUtils.class);
+    private static Log log = LogFactory.getLog(ThreadUtils.class);
 
     public static void sleep(int milliseconds) {
         try {

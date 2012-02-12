@@ -6,8 +6,8 @@ import org.ovirt.engine.core.common.businessentities.VdcOption;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.DataType;
 import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.ConfigUtilsBase;
@@ -120,5 +120,5 @@ public class DefaultValuesConfigUtil extends ConfigUtilsBase {
     }
 
     // Set log for the class.
-    private static LogCompat log = LogFactoryCompat.getLog(DefaultValuesConfigUtil.class);
+    private static Log log = LogFactory.getLog(DefaultValuesConfigUtil.class);
 }

@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * Provides utilities for handling resource files.
  */
 public class ResourceUtils {
-    private static LogCompat log = LogFactoryCompat.getLog(ResourceUtils.class);
+    private static Log log = LogFactory.getLog(ResourceUtils.class);
 
     /**
      * Loads a collection of {@link Properties} from a resource file.

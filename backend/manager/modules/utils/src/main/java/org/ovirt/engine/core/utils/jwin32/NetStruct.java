@@ -5,11 +5,11 @@ import com.sun.jna.WString;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.PointerByReference;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public abstract class NetStruct extends Structure {
-    private static LogCompat log = LogFactoryCompat.getLog(USER_INFO_20.class);
+    private static Log log = LogFactory.getLog(USER_INFO_20.class);
 
     protected String getSID(WString strAccountName) throws ConvertSidException {
         log.debug("getSID entry");

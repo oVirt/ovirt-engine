@@ -9,15 +9,15 @@ import javax.xml.ws.handler.MessageContext;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class CXFContextInterceptor {
 
     @Resource
     WebServiceContext wsContext;
 
-    private static LogCompat log = LogFactoryCompat.getLog(CXFContextInterceptor.class);
+    private static Log log = LogFactory.getLog(CXFContextInterceptor.class);
 
     @AroundInvoke
     public Object injectWebContextToThreadLocal(InvocationContext ic) throws Exception {

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.ldap;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dns.DnsSRVLocator;
 
 /**
@@ -27,6 +27,6 @@ public class LdapSRVLocator extends DnsSRVLocator {
 
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(LdapSRVLocator.class);
+    private static Log log = LogFactory.getLog(LdapSRVLocator.class);
 
 }

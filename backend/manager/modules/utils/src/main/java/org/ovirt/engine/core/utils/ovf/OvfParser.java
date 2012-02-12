@@ -6,8 +6,8 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -118,5 +118,5 @@ public class OvfParser {
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(OvfParser.class);
+    private static Log log = LogFactory.getLog(OvfParser.class);
 }

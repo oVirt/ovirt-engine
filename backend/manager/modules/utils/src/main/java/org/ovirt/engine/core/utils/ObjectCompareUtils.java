@@ -3,8 +3,8 @@ package org.ovirt.engine.core.utils;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public final class ObjectCompareUtils {
     /**
@@ -146,5 +146,5 @@ public final class ObjectCompareUtils {
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(ObjectCompareUtils.class);
+    private static Log log = LogFactory.getLog(ObjectCompareUtils.class);
 }

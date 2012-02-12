@@ -20,8 +20,8 @@ import javax.naming.directory.DirContext;
 import javax.naming.spi.NamingManager;
 
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * Utility class to query DNS SRV records, and return results according to the priority/weights algorithm as specified
@@ -343,6 +343,6 @@ public class DnsSRVLocator {
         return new URI(uriSB.toString());
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(DnsSRVLocator.class);
+    private static Log log = LogFactory.getLog(DnsSRVLocator.class);
 
 }
