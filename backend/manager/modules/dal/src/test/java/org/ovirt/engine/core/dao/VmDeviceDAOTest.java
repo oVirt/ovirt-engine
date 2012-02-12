@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.dao;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -61,5 +64,46 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     @Test
     public void existsForNonExistingVmDevice() throws Exception {
         assertFalse(dao.exists(new VmDeviceId(Guid.NewGuid(), Guid.NewGuid())));
+    }
+
+    @Test
+    public void testGetVmDeviceByVmIdTypeAndDeviceNoFiltering() {
+        List<VmDevice> devices = dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID, "disk", "disk");
+        assertGetVMDeviceByIdTypeAndDeviceFullResult(devices);
+    }
+
+    @Test
+    public void testGetVmDeviceByVmIdTypeAndDeviceFilteringSetToFlase() {
+        List<VmDevice> devices = dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID, "disk", "disk", null, false);
+        assertGetVMDeviceByIdTypeAndDeviceFullResult(devices);
+    }
+
+    @Test
+    public void testGetVmDeviceByVmIdTypeAndDeviceFilteringWithPermissions() {
+        List<VmDevice> devices =
+                dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID, "disk", "disk", PRIVILEGED_USER_ID, true);
+        assertGetVMDeviceByIdTypeAndDeviceFullResult(devices);
+    }
+
+    @Test
+    public void testGetVmDeviceByVmIdTypeAndDeviceFilteringWithoutPermissions() {
+        List<VmDevice> devices =
+                dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID, "disk", "disk", UNPRIVILEGED_USER_ID, true);
+        assertTrue("A user without any permissions should not see any devices", devices.isEmpty());
+    }
+
+    /**
+     * Asserts all the devices are present in a result of {@link VmDeviceDAO#getVmDeviceByVmIdTypeAndDevice(Guid, String, String)
+     * @param devices The result to check
+     */
+    private static void assertGetVMDeviceByIdTypeAndDeviceFullResult(List<VmDevice> devices) {
+        assertEquals("there should only be " + TOTAL_DEVICES + " disks", TOTAL_DEVICES, devices.size());
+    }
+
+    @Test
+    public void testGetVmDeviceByVmIdTypeAndDeviceFilteringWithPermissionsNoFiltering() {
+        List<VmDevice> devices =
+                dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID, "disk", "disk", PRIVILEGED_USER_ID, false);
+        assertGetVMDeviceByIdTypeAndDeviceFullResult(devices);
     }
 }

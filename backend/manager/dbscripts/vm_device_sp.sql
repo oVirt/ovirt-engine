@@ -120,14 +120,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetVmDeviceByVmIdTypeAndDevice(v_vm_id UUID, v_type varchar(30), v_device varchar(30))
+Create or replace FUNCTION GetVmDeviceByVmIdTypeAndDevice(v_vm_id UUID, v_type varchar(30), v_device varchar(30), v_user_id UUID, v_is_filtered BOOLEAN)
 RETURNS SETOF vm_device
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
     FROM   vm_device
-    WHERE  vm_id = v_vm_id and type = v_type and device = v_device;
+    WHERE  vm_id = v_vm_id and type = v_type and device = v_device
+    AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                      FROM   user_vm_permissions_view
+                                      WHERE  user_id = v_user_id AND entity_id = v_vm_id));
+
 END; $procedure$
 LANGUAGE plpgsql;
 

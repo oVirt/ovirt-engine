@@ -20,5 +20,6 @@ public interface VmDeviceDAO extends GenericDao<VmDevice, VmDeviceId> {
 
     List<VmDevice> getVmDeviceByVmIdAndType(Guid vmId, String type);
 
-    List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmId, String type, String Device);
+    List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmId, String type, String device);
+    List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmId, String type, String device, Guid userID, boolean isFiltered);
 }

@@ -108,10 +108,18 @@ public class VmDeviceDAODbFacadeImpl extends
 
     @Override
     public List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmId, String type, String device) {
+        return getVmDeviceByVmIdTypeAndDevice(vmId, type, device, null, false);
+    }
+
+    @Override
+    public List<VmDevice> getVmDeviceByVmIdTypeAndDevice
+        (Guid vmId, String type, String device, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmId)
                 .addValue("type", type)
-                .addValue("device", device);
+                .addValue("device", device)
+                .addValue("user_id", userID)
+                .addValue("is_filtered", isFiltered);
 
         return getCallsHandler().executeReadList("GetVmDeviceByVmIdTypeAndDevice",
                 createEntityRowMapper(), parameterSource);
