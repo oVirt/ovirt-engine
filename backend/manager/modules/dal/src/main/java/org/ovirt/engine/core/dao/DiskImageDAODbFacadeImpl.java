@@ -25,8 +25,6 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 /**
  * <code>DiskImageDAODbFacadeImpl</code> provides an implementation of {@link DiskImageDAO} that uses previously
  * developed code from {@link DbFacade}.
- *
- *
  */
 public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskImageDAO {
 
@@ -147,7 +145,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         return getCallsHandler().executeRead("GetSnapshotByGuid", mapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<DiskImage> getAllForVm(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -208,7 +205,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         return getCallsHandler().executeReadList("GetImagesByVmGuid", mapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<DiskImage> getAllSnapshotsForParent(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -266,7 +262,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         return getCallsHandler().executeReadList("GetSnapshotByParentGuid", mapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<DiskImage> getAllSnapshotsForStorageDomain(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -324,7 +319,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         return getCallsHandler().executeReadList("GetSnapshotsByStorageDomainId", mapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<DiskImage> getAllSnapshotsForVmSnapshot(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -382,7 +376,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         return getCallsHandler().executeReadList("GetSnapshotsByVmSnapshotId", mapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<DiskImage> getAllSnapshotsForImageGroup(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -440,7 +433,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         return getCallsHandler().executeReadList("GetSnapshotsByImageGroupId", mapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<DiskImage> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
@@ -613,7 +605,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         getCallsHandler().executeModification("Deleteimage_vm_pool_map", parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<image_vm_pool_map> getImageVmPoolMapByVmId(Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_guid", vmId);
@@ -666,7 +657,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         getCallsHandler().executeModification("Deletestateless_vm_image_map", parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<stateless_vm_image_map> getAllStatelessVmImageMapsForVm(Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_guid", vmId);
