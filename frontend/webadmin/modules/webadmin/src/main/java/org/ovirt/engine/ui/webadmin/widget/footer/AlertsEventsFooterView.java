@@ -3,9 +3,12 @@ package org.ovirt.engine.ui.webadmin.widget.footer;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
@@ -14,15 +17,22 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider.AlertCountChangeHandler;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.TaskFirstRowModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider.TaskCountChangeHandler;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.FullDateTimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.ImageResourceColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TaskStatusColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -31,12 +41,13 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AlertsEventsFooterView extends Composite implements AlertCountChangeHandler {
+public class AlertsEventsFooterView extends Composite implements AlertCountChangeHandler, TaskCountChangeHandler {
 
     interface WidgetUiBinder extends UiBinder<Widget, AlertsEventsFooterView> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -61,12 +72,23 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     ToggleButton eventButton;
 
     @UiField
+    ToggleButton taskButton;
+
+    @UiField
     PushButton expandButton;
+
+    @UiField
+    PushButton collapseButton;
+
+    @UiField
+    Label message;
 
     SimpleActionTable<AuditLog> alertsTable;
     SimpleActionTable<AuditLog> eventsTable;
+    TasksTree tasksTree;
     SimpleActionTable<AuditLog> _alertsTable;
     SimpleActionTable<AuditLog> _eventsTable;
+    SimpleActionTable<Job> _tasksTable;
 
     String buttonUpStart;
     String buttonUpStretch;
@@ -83,13 +105,18 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
             AlertFirstRowModelProvider alertFirstRowModelProvider,
             EventModelProvider eventModelProvider,
             EventFirstRowModelProvider eventFirstRowModelProvider,
+            TaskModelProvider taskModelProvider,
+            TaskFirstRowModelProvider taskFirstRowModelProvider,
             ApplicationResources resources,
-            ApplicationTemplates templates) {
+            ApplicationTemplates templates,
+            EventBus eventBus,
+            ClientStorage clientStorage) {
         this.resources = resources;
         this.templates = templates;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         initButtonHandlers();
         alertModelProvider.setAlertCountChangeHandler(this);
+        taskModelProvider.setTaskCountChangeHandler(this);
 
         alertsTable = createActionTable(alertModelProvider);
         alertsTable.setBarStyle(style.barStyle());
@@ -109,8 +136,21 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         _eventsTable.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
         initTable(_eventsTable);
 
+        tasksTree = new TasksTree();
+        tasksTree.updateTree(taskModelProvider.getModel());
+
+        _tasksTable =
+                new SimpleActionTable<Job>(taskFirstRowModelProvider, getTableResources(), eventBus, clientStorage);
+        _tasksTable.setBarStyle(style.barStyle());
+        _tasksTable.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
+        initTaskTable(_tasksTable);
+
+        taskButton.setValue(false);
         alertButton.setValue(false);
         eventButton.setValue(true);
+        message.setText("Last Message:");
+        collapseButton.setVisible(false);
+
         tablePanel.clear();
         firstRowTablePanel.clear();
         tablePanel.add(eventsTable);
@@ -122,8 +162,12 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         // no body is invoking the alert search (timer)
         alertModelProvider.getModel().Search();
 
+        // no body is invoking the alert search (timer)
+        taskModelProvider.getModel().Search();
+
         updateButtonResources();
         updateEventsButton();
+        updateTaskButton(0);
         setAlertCount(0);
     }
 
@@ -142,6 +186,11 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         setAlertCount(count);
     }
 
+    @Override
+    public void onRunningTasksCountChange(int count) {
+        updateTaskButton(count);
+    }
+
     void setAlertCount(int count) {
 
         String countStr = count + " " + "Alerts";
@@ -153,6 +202,19 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
 
         alertButton.getUpFace().setHTML(up);
         alertButton.getDownFace().setHTML(down);
+    }
+
+    private void updateTaskButton(int count) {
+        String tasksGrayImageSrc = AbstractImagePrototype.create(resources.iconTask()).getHTML();
+        SafeHtml tasksGrayImage = SafeHtmlUtils.fromTrustedString(tasksGrayImageSrc);
+
+        SafeHtml up = templates.alertEventButton(tasksGrayImage, "Tasks (" + count + ")",
+                buttonUpStart, buttonUpStretch, buttonUpEnd, style.taskButtonUpStyle());
+        SafeHtml down = templates.alertEventButton(tasksGrayImage, "Tasks (" + count + ")",
+                buttonDownStart, buttonDownStretch, buttonDownEnd, style.taskButtonDownStyle());
+
+        taskButton.getUpFace().setHTML(up);
+        taskButton.getDownFace().setHTML(down);
     }
 
     void updateEventsButton() {
@@ -183,11 +245,15 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
             public void onClick(ClickEvent event) {
                 if (alertButton.getValue()) {
                     eventButton.setValue(false);
+                    taskButton.setValue(false);
                     tablePanel.clear();
                     tablePanel.add(alertsTable);
 
                     firstRowTablePanel.clear();
                     firstRowTablePanel.add(_alertsTable);
+
+                    message.setText("Last Message:");
+                    collapseButton.setVisible(false);
                 }
                 else {
                     alertButton.setValue(true);
@@ -200,14 +266,39 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
             public void onClick(ClickEvent event) {
                 if (eventButton.getValue()) {
                     alertButton.setValue(false);
+                    taskButton.setValue(false);
                     tablePanel.clear();
                     tablePanel.add(eventsTable);
 
                     firstRowTablePanel.clear();
                     firstRowTablePanel.add(_eventsTable);
+
+                    message.setText("Last Message:");
+                    collapseButton.setVisible(false);
                 }
                 else {
                     eventButton.setValue(true);
+                }
+            }
+        });
+
+        taskButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (taskButton.getValue()) {
+                    alertButton.setValue(false);
+                    eventButton.setValue(false);
+                    tablePanel.clear();
+                    tablePanel.add(tasksTree);
+
+                    firstRowTablePanel.clear();
+                    firstRowTablePanel.add(_tasksTable);
+
+                    message.setText("Last Task:");
+                    collapseButton.setVisible(true);
+                }
+                else {
+                    taskButton.setValue(true);
                 }
             }
         });
@@ -238,6 +329,14 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
                 e.getStyle().setBottom(offset + 2, Unit.PX);
             }
         });
+
+        collapseButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                tasksTree.collapseAllTasks();
+            }
+        });
     }
 
     void initTable(SimpleActionTable<AuditLog> table) {
@@ -260,12 +359,43 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         table.addColumn(messageColumn, "Message");
     }
 
+    void initTaskTable(SimpleActionTable<Job> taskTable) {
+
+        ImageResourceColumn<Job> taskStatusColumn = new ImageResourceColumn<Job>() {
+
+            @Override
+            public ImageResource getValue(Job object) {
+                EntityModel entityModel = new EntityModel();
+                entityModel.setEntity(object);
+                return new TaskStatusColumn().getValue(entityModel);
+            }
+        };
+
+        taskTable.addColumn(taskStatusColumn, "Status", "30px");
+
+        FullDateTimeColumn<Job> timeColumn = new FullDateTimeColumn<Job>() {
+            @Override
+            protected Date getRawValue(Job object) {
+                return object.getEndTime() == null ? object.getStartTime() : object.getEndTime();
+            }
+        };
+        taskTable.addColumn(timeColumn, "Time", "160px");
+
+        TextColumnWithTooltip<Job> descriptionColumn = new TextColumnWithTooltip<Job>() {
+            @Override
+            public String getValue(Job object) {
+                return object.getDescription();
+            }
+        };
+        taskTable.addColumn(descriptionColumn, "Description");
+    }
+
     public interface AlertsEventsFooterResources extends CellTable.Resources {
         interface TableStyle extends CellTable.Style {
         }
 
         @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/FotterHeaderlessTable.css" })
+        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/FooterHeaderlessTable.css" })
         TableStyle cellTableStyle();
     }
 
@@ -280,6 +410,14 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         String eventButtonUpStyle();
 
         String eventButtonDownStyle();
+
+        String taskButtonUpStyle();
+
+        String taskButtonDownStyle();
     }
 
+    @Override
+    public void onTaskCountChange(int count) {
+        return;
+    }
 }

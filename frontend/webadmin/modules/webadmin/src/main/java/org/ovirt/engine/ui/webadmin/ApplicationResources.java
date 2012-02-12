@@ -299,4 +299,7 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("Reports.xml")
     TextResource reportsXml();
 
+    @Source("images/icon_task.png")
+    ImageResource iconTask();
+
 }

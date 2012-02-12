@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
@@ -19,6 +20,8 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.TaskFirstRowModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.bookmark.BookmarkList;
 import org.ovirt.engine.ui.webadmin.widget.footer.AlertsEventsFooterView;
 import org.ovirt.engine.ui.webadmin.widget.tags.TagList;
@@ -27,6 +30,7 @@ import org.ovirt.engine.ui.webadmin.widget.tree.SystemTree;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -90,11 +94,15 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             AlertFirstRowModelProvider alertFirstRowModelProvider,
             EventModelProvider eventModelProvider,
             EventFirstRowModelProvider eventFirstRowModelProvider,
+            TaskModelProvider taskModelProvider,
+            TaskFirstRowModelProvider taskFirstRowModelProvider,
             InternalConfiguration intConf,
             ApplicationConstants constants,
             ApplicationMessages messages,
             ApplicationResources resources,
-            ApplicationTemplates templates) {
+            ApplicationTemplates templates,
+            EventBus eventBus,
+            ClientStorage clientStorage) {
         westStackPanel = createWestStackPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider);
 
         verticalSplitLayoutPanel = new SplitLayoutPanel(2);
@@ -106,8 +114,16 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
 
         addContentToWestPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider, westStackPanel, constants);
 
-        initAlertEventFooterPanel(alertModelProvider, alertFirstRowModelProvider,
-                eventModelProvider, eventFirstRowModelProvider, resources, templates);
+        initAlertEventFooterPanel(alertModelProvider,
+                alertFirstRowModelProvider,
+                eventModelProvider,
+                eventFirstRowModelProvider,
+                taskModelProvider,
+                taskFirstRowModelProvider,
+                resources,
+                templates,
+                eventBus,
+                clientStorage);
         headerPanel.getElement().getParentElement().getStyle().setOverflow(Overflow.VISIBLE);
 
         if (!intConf.isCurrentBrowserSupported()) {
@@ -156,12 +172,18 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             AlertFirstRowModelProvider alertFirstRowModelProvider,
             EventModelProvider eventModelProvider,
             EventFirstRowModelProvider eventFirstRowModelProvider,
+            TaskModelProvider taskModelProvider,
+            TaskFirstRowModelProvider taskFirstRowModelProvider,
             ApplicationResources resources,
-            ApplicationTemplates templates) {
+            ApplicationTemplates templates,
+            EventBus eventBus,
+            ClientStorage clientStorage
+            ) {
         alertEventFooterPanel.add(new AlertsEventsFooterView(
                 alertModelProvider, alertFirstRowModelProvider,
                 eventModelProvider, eventFirstRowModelProvider,
-                resources, templates));
+                taskModelProvider, taskFirstRowModelProvider,
+                resources, templates, eventBus, clientStorage));
     }
 
     @Override

@@ -24,6 +24,8 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.TaskFirstRowModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 
 import com.google.inject.Singleton;
 
@@ -64,6 +66,10 @@ public class UiCommonModule extends BaseUiCommonModule {
         // AlertListModel
         bind(AlertModelProvider.class).asEagerSingleton();
         bind(AlertFirstRowModelProvider.class).asEagerSingleton();
+
+        // TaskListModel
+        bind(TaskModelProvider.class).asEagerSingleton();
+        bind(TaskFirstRowModelProvider.class).asEagerSingleton();
 
         // EventListModel
         bind(EventModelProvider.class).asEagerSingleton();

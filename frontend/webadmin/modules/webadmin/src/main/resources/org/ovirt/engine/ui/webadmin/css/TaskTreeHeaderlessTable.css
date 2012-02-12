@@ -1,0 +1,71 @@
+.cellTableWidget {
+	
+}
+
+.cellTableFirstColumn {
+	padding: 2px 15px;
+}
+
+.cellTableLastColumn {
+	
+}
+
+.cellTableFooter {
+	
+}
+
+.cellTableHeader {
+	display: none;
+}
+
+.cellTableCell {
+	padding: 0px 3px;
+	height: 26px !important;
+	border-top: 0px;
+	border-right: 0px;
+	border-left: 0px;
+	white-space: nowrap;
+	cursor: pointer;
+	color: white;
+}
+
+.cellTableEvenRow {
+	background: #666666;
+}
+
+.cellTableEvenRowCell {
+	border: 0px;
+}
+
+.cellTableOddRow {
+	background: #666666;
+}
+
+.cellTableOddRowCell {
+	border: 0px;
+}
+
+.cellTableHoveredRow {
+	background-color: #666666;
+}
+
+.cellTableHoveredRowCell {
+	background: #666666;
+	border: 0px;
+}
+
+.cellTableSelectedRow {
+	background: #666666;
+	color: white;
+	overflow: auto;
+}
+
+.cellTableSelectedRowCell {
+	border: 0px;
+}
+
+@
+sprite .cellTableLoading {
+	gwt-image: 'cellTableLoading';
+	margin: 3px;
+}

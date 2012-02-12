@@ -6,7 +6,7 @@
 		<!--======================COMMON======================-->
 		<!-- Config -->
 		<include name="core/common/config/**"/>
-		
+
 		<!-- Business entities -->
 		<include name="core/common/businessentities/HasStoragePool.java" />
 		<include name="core/common/businessentities/BusinessEntity.java" />
@@ -135,9 +135,9 @@
 		<include name="core/common/businessentities/FileRepoMetaData.java"/>
 		<include name="core/common/businessentities/RepoFileMetaData.java"/>
 		<include name="core/common/businessentities/FileTypeExtension.java"/>
-		
-		
-		
+
+		<include name="core/common/job/*.java"/>
+
 		<!-- Misc -->
 		<include name="core/common/AuditLogType.java"/>
 		<include name="core/common/AuditLogTimeInterval.java"/>
@@ -150,7 +150,7 @@
 
 		<!-- Actions -->
 		<include name="core/common/action/VdcActionType.java"/>
-		
+
 		<!-- Queries -->
 		<include name="core/common/queries/ValueObjectMap.java"/>
 		<include name="core/common/queries/ValueObject.java"/>
@@ -159,11 +159,7 @@
 		<include name="core/common/queries/ValueObjectSingle.java"/>
 		<include name="core/common/queries/GetVmsMessagesParameters.java"/>
 		<include name="core/common/queries/GetUserMessagesParameters.java"/>
-		
-		
-		
-		
-		
+
 		<!-- Required by frontend -->
 		<include name="core/common/queries/VdcQueryReturnValue.java"/>
 		<include name="core/common/queries/VdcQueryReturnValue_CustomFieldSerializer.java"/>
@@ -185,15 +181,14 @@
 		<include name="core/common/businessentities/AsyncTaskResultEnum.java"/>
 		<include name="core/common/queries/ImportCandidateInfoBase.java"/>
 
-
 		<!-- Sadly because VdcQueryParametersBase / VdcActionParametersBase :/ -->
 		<include name="core/common/queries/*.java"/>
 		<include name="core/common/action/*.java"/>
-		
+
 		<!-- Most custom field serializers match the two previous rules, but some
 		     dont, we need to include them explicitly: -->
 		<include name="**/*_CustomFieldSerializer.java"/>
-		
+
 		<include name="core/common/businessentities/VdcRole.java"/>
 		<include name="core/common/action/AddVdsActionParameters.java"/>
 		<include name="core/common/action/VdsActionParameters.java"/>
@@ -201,7 +196,7 @@
 		<include name="core/common/action/VdsOperationActionParameters.java"/>
 		<include name="core/common/businessentities/AsyncTaskResultEnum.java"/>
 		<include name="core/common/queries/VdcQueryParametersBase.java"/>
-		
+
 		<include name="core/common/businessentities/FenceActionType.java"/>
 		<include name="core/common/businessentities/CopyVolumeType.java"/>
 		<include name="core/common/businessentities/ImageOperation.java"/>
@@ -211,7 +206,7 @@
 		<include name="core/common/errors/SqlInjectionException.java" />
 		<include name="core/common/errors/SearchEngineIllegalCharacterException.java" />
 		<include name="core/common/businessentities/VdsMovedToNonOperationalType.java"/>
-		
+
 		<!--required by action/VdcActionParametersBase.java-->
 		<include name="core/common/asynctasks/EndedTaskInfo.java"/>
 		<include name="core/common/asynctasks/IEndedTaskVisitor.java"/>
@@ -220,8 +215,7 @@
 		<include name="core/common/businessentities/RoleGroupMapId.java" />
 		<include name="core/common/asynctasks/AsyncTaskCreationInfo.java"/>
 		<include name="core/common/asynctasks/AsyncTaskType.java"/>
-		
-		
+
 		<!-- SearchBackend -->
 		<include name="core/common/VdcEventNotificationUtils.java"/>
 		<include name="core/common/EventNotificationEntity.java"/>
@@ -232,9 +226,7 @@
 
 		<!-- Validations -->
 		<include name="core/common/utils/VmValidationUtils.java"/>
-		
-				
-				
+
 		<!--======================COMPAT======================-->
 		<include name="core/compat/Encoding.java" />
 		<include name="core/compat/Environment.java" />
@@ -255,8 +247,7 @@
 		<!-- Required by common's utils -->
 		<include name="core/compat/PropertyInfo.java" />
 		<include name="core/compat/TypeCompat.java" />
-		
-		
+
 		<!-- Referenced directly by UICommon -->
 		<include name="core/compat/CompatException.java" />
 		<include name="core/compat/CultureInfo.java" />
@@ -270,18 +261,18 @@
 		<include name="core/compat/PipelineReason.java" />
 		<include name="core/compat/PipelineState.java" />
 		<include name="core/compat/TimeSpan.java" />
-		
+
 		<include name="core/compat/XmlRpcStruct.java"/>
-		
+
 		<include name="core/compat/DateTime.java"/>
 		<include name="core/compat/DayOfWeek.java"/>
 		<include name="core/compat/DateTimeStyles.java"/>
 		<include name="core/compat/RegEx.java"/>
-		
+
 		<!-- Required by SearchBackend's SyntaxContainer.java -->
 		<include name="core/compat/StringBuilderCompat.java"/>
 		<include name="core/compat/StringTokenizerCompat.java"/>
-		
+
 		<!-- Required by common->action->VdcActionParametersBase.java  -->
 		<include name="core/compat/TransactionScopeOption.java"/>
 		<include name="core/compat/EnumCompat.java"/>
@@ -296,11 +287,7 @@
 		<include name="core/compat/ProvideCollectionChangedEvent.java"/>
 		<include name="core/compat/IProvidePropertyChangedEvent.java"/>
 		<include name="core/compat/ProvidePropertyChangedEvent.java"/>
-		
-		
-		
-		
-        
+
         <!--  Backend V<include name="core/searchbackend/SqlInjectionChecker.java" />
 		<include name="core/searchbackend/PostgresSqlInjectionChecker.java" />alidation framework -->
         <include name="core/common/utils/EnumUtils.java" />
@@ -308,10 +295,8 @@
         <include name="core/common/validation/annotation/HostnameOrIp.java" />
 		<include name="core/common/validation/group/**" />
 
-
-		
 		<!--======================SEARCHBACKEND======================-->
-		
+
 		<include name="core/searchbackend/ISyntaxChecker.java" />
     	<include name="core/searchbackend/SyntaxContainer.java" />
     	<include name="core/searchbackend/SearchBackend.java" />
@@ -363,6 +348,6 @@
 		<include name="core/searchbackend/SqlInjectionChecker.java" />
 		<include name="core/searchbackend/PostgresSqlInjectionChecker.java" />
 	</source>
-    	
+
 	<super-source path="ui/uioverrides" />
 </module>

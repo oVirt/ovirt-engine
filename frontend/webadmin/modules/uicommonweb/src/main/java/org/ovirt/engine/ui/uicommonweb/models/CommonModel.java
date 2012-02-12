@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.AlertListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
@@ -187,6 +188,16 @@ public class CommonModel extends ListModel
     private void setEventList(SearchableListModel value)
     {
         privateEventList = value;
+    }
+
+    private TaskListModel privateTaskList;
+
+    public TaskListModel getTaskList() {
+        return privateTaskList;
+    }
+
+    public void setTaskList(TaskListModel taskList) {
+        this.privateTaskList = taskList;
     }
 
     private AlertListModel privateAlertList;
@@ -373,6 +384,9 @@ public class CommonModel extends ListModel
 
         setAlertList(new AlertListModel());
         getAlertList().getSearchCommand().Execute();
+
+        setTaskList(new TaskListModel());
+        getTaskList().getSearchCommand().Execute();
 
         InitItems();
 
@@ -650,6 +664,7 @@ public class CommonModel extends ListModel
 
         getEventList().EnsureAsyncSearchStopped();
         getAlertList().EnsureAsyncSearchStopped();
+        getTaskList().EnsureAsyncSearchStopped();
 
         if (Frontend.getIsUserLoggedIn())
         {
