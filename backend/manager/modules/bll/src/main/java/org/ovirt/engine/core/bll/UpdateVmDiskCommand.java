@@ -202,7 +202,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
                                 oldVmDevice));
         oldVmDevice.setIsPlugged(!oldVmDevice.getIsPlugged());
         getVmDeviceDao().update(oldVmDevice);
-
+        setSucceeded(true);
     }
 
     @Override
