@@ -286,6 +286,10 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_FAILED_COPY_TEMPLATE, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_UPDATE_VM_DISK, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_FAILED_UPDATE_VM_DISK, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_HOTPLUG_DISK, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_FAILED_HOTPLUG_DISK, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_HOTUNPLUG_DISK, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_FAILED_HOTUNPLUG_DISK, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.IRS_FAILURE, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.IRS_DISK_SPACE_LOW_ERROR, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.IRS_DISK_SPACE_LOW, AuditLogSeverity.WARNING);
