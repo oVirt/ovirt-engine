@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
@@ -31,7 +31,7 @@ import org.ovirt.engine.api.restapi.util.SessionHelper;
 
 public class BaseBackendResource {
 
-    protected static final LogCompat LOG = LogFactoryCompat.getLog(AbstractBackendResource.class);
+    protected static final Log LOG = LogFactory.getLog(AbstractBackendResource.class);
 
     protected BackendLocal backend;
     protected SessionHelper sessionHelper;

@@ -1,10 +1,10 @@
 package org.ovirt.engine.api.restapi.logging;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class MessageLogger {
 
-    protected static final LogCompat LOG = LogFactoryCompat.getLog(MessageLogger.class);
+    protected static final Log LOG = LogFactory.getLog(MessageLogger.class);
 
 }

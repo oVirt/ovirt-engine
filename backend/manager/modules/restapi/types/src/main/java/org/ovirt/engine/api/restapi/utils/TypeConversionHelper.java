@@ -7,14 +7,14 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.api.restapi.types.SnapshotMapper;
 
 public class TypeConversionHelper {
 
     private static DatatypeFactory datatypeFactory;
-    protected static final LogCompat LOG = LogFactoryCompat.getLog(SnapshotMapper.class);
+    protected static final Log LOG = LogFactory.getLog(SnapshotMapper.class);
     protected static final String DATATYPE_FACTORY_CREATION_FAILED = "DatatypeFactory creation failed";
 
     /**

@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public abstract class AbstractBackendCollectionResource<R extends BaseResource, Q /* extends IVdcQueryable */>
         extends AbstractBackendResource<R, Q> {
@@ -31,7 +31,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     private static final String CREATION_STATUS_REL = "creation_status";
     public static final String FROM_CONSTRAINT_PARAMETER = "from";
     public static final String CASE_SENSITIVE_CONSTRAINT_PARAMETER = "case-sensitive";
-    protected static final LogCompat LOG = LogFactoryCompat.getLog(AbstractBackendCollectionResource.class);
+    protected static final Log LOG = LogFactory.getLog(AbstractBackendCollectionResource.class);
 
     protected AbstractBackendCollectionResource(Class<R> modelType, Class<Q> entityType, String... subCollections) {
         super(modelType, entityType, subCollections);

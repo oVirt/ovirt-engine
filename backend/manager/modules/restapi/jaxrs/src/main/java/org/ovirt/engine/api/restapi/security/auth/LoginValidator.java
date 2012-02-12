@@ -21,15 +21,15 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.users.VdcUser;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 @Provider
 @ServerInterceptor
 @Precedence("SECURITY")
 public class LoginValidator implements Validator, PostProcessInterceptor {
 
-    protected static final LogCompat LOG = LogFactoryCompat.getLog(LoginValidator.class);
+    protected static final Log LOG = LogFactory.getLog(LoginValidator.class);
     // do not log passwords
     protected static final String LOGIN_SUCCESS = "Login success, user: {0} domain: {1}";
     protected static final String LOGIN_FAILURE = "Login failure, user: {0} domain: {1} reason: {2}";

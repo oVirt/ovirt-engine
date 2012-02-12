@@ -3,15 +3,15 @@ package org.ovirt.engine.api.restapi.logging;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.Log;
 
 public class LoggingInputStream extends InputStream {
 
     protected InputStream wrapped;
-    protected LogCompat log;
+    protected Log log;
     protected StringBuilder line;
 
-    protected LoggingInputStream(InputStream wrapped, LogCompat log) {
+    protected LoggingInputStream(InputStream wrapped, Log log) {
         this.wrapped = wrapped;
         this.log = log;
         line = new StringBuilder();

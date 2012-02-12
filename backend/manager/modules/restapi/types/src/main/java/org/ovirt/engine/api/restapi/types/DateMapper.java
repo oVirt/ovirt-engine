@@ -9,12 +9,12 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class DateMapper {
 
-    protected static final LogCompat LOG = LogFactoryCompat.getLog(DateMapper.class);
+    protected static final Log LOG = LogFactory.getLog(DateMapper.class);
     protected static final String DATATYPE_FACTORY_CREATION_FAILED = "DatatypeFactory creation failed";
 
     private static DatatypeFactory datatypeFactory;

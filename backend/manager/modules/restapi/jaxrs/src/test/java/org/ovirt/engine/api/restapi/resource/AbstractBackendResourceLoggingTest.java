@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -18,7 +18,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { LogFactoryCompat.class })
+@PrepareForTest( { LogFactory.class })
 public abstract class AbstractBackendResourceLoggingTest extends Assert {
 
     @After
@@ -27,9 +27,9 @@ public abstract class AbstractBackendResourceLoggingTest extends Assert {
     }
 
     protected void setUpLogExpectations(boolean debug) {
-        mockStatic(LogFactoryCompat.class);
-        LogCompat log = createMock(LogCompat.class);
-        expect(LogFactoryCompat.getLog(AbstractBackendResource.class)).andReturn(log);
+        mockStatic(LogFactory.class);
+        Log log = createMock(Log.class);
+        expect(LogFactory.getLog(AbstractBackendResource.class)).andReturn(log);
         expect(log.isDebugEnabled()).andReturn(debug).anyTimes();
 
         replayAll();

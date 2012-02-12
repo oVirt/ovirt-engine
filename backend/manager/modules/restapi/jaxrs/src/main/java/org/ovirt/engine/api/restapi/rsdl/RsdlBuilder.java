@@ -52,8 +52,8 @@ import org.ovirt.engine.api.model.Schema;
 import org.ovirt.engine.api.model.Url;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.yaml.snakeyaml.Yaml;
 
 public class RsdlBuilder {
@@ -73,7 +73,7 @@ public class RsdlBuilder {
     private static final String GET = "get";
     private static final String ADD = "add";
 
-    protected static final LogCompat LOG = LogFactoryCompat.getLog(RsdlBuilder.class);
+    protected static final Log LOG = LogFactory.getLog(RsdlBuilder.class);
 
     private static final String RESOURCES_PACKAGE = "org.ovirt.engine.api.resource";
     private static final String PARAMS_METADATA = "rsdl_metadata_v-3.1.yaml";
