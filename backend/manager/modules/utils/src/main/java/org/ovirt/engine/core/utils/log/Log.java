@@ -2,12 +2,10 @@ package org.ovirt.engine.core.utils.log;
 
 import java.text.MessageFormat;
 
-import org.apache.commons.logging.Log;
+public class Log implements org.apache.commons.logging.Log {
+    private final org.apache.commons.logging.Log log;
 
-public class LogCompat implements Log {
-    private final Log log;
-
-    public LogCompat(Log log) {
+    public Log(org.apache.commons.logging.Log log) {
         this.log = log;
     }
 

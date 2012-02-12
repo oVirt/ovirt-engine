@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.utils.log;
 
-
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.commons.logging.Log;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 
 /**
@@ -76,7 +74,7 @@ public class LoggedUtils {
      * @param obj
      *            The object to log for.
      */
-    public static void logEntry(LogCompat log, String id, Object obj) {
+    public static void logEntry(Log log, String id, Object obj) {
         Logged logged = getAnnotation(obj);
         if (logged != null && isLogLevelOn(log, logged.executionLevel())) {
             log(log, logged.executionLevel(), ENTRY_LOG, determineMessage(log, logged, obj), id);
@@ -95,7 +93,7 @@ public class LoggedUtils {
      * @param obj
      *            The object to log for.
      */
-    public static void logReturn(LogCompat log, String id, Object obj, Object returnValue) {
+    public static void logReturn(Log log, String id, Object obj, Object returnValue) {
         Logged logged = getAnnotation(obj);
         if (logged != null) {
             LogLevel logLevel = logged.executionLevel();
@@ -122,7 +120,7 @@ public class LoggedUtils {
      * @param obj
      *            The object to log for.
      */
-    public static void logError(LogCompat log, String id, Object obj, Throwable t) {
+    public static void logError(Log log, String id, Object obj, Throwable t) {
         Logged logged = getAnnotation(obj);
         if (logged != null && isLogLevelOn(log, logged.errorLevel())) {
             log(log, logged.errorLevel(), ERROR_LOG, determineMessage(log, logged, obj),
@@ -147,7 +145,7 @@ public class LoggedUtils {
      *            Optional parameters for the message.
      * @see MessageFormat#format(Object[], StringBuffer, java.text.FieldPosition)
      */
-    protected static void log(LogCompat log, Logged.LogLevel logLevel, String message, Object... parameters) {
+    protected static void log(Log log, Logged.LogLevel logLevel, String message, Object... parameters) {
         try {
             if (isLogLevelOn(log, logLevel)) {
                 switch (logLevel) {
