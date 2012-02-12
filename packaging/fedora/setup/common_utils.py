@@ -17,6 +17,57 @@ import shutil
 import time
 import tempfile
 
+"""
+ENUM implementation for python (from the vdsm team)
+usage:
+    #define
+    enum = Enum(Key1=1, Key2=2)
+
+    #use
+    type = enum.Key1
+    print type => (prints 1)
+    # reverse lookup
+    print enum[2] => (prints Key2)
+    # value lookup
+    print enum.parse("Key1") => (prints 1)
+"""
+class Enum(object):
+    """
+    A nice class to handle Enums gracefullly.
+    """
+    def __init__(self, **pairs):
+        #Generate reverse dict
+        self._reverse = dict([(b, a) for a, b in pairs.iteritems()])
+
+
+
+        #Generate attributes
+        for key, value in pairs.iteritems():
+            setattr(self, key, value)
+
+    def __getitem__(self, index):
+        return self._reverse[index]
+
+    def __iter__(self):
+        return self._reverse.itervalues()
+
+    def parse(self, value):
+        #If value is enum name convert to value
+        if isinstance(value, str):
+            if hasattr(self, value):
+                return getattr(self, value)
+            #If value is a number assume parsing meant converting the value to int
+            #if you can think of a more generic way feel free to change
+            if value.isdigit():
+                value = int(value)
+
+        #If not check if value is a value of the enum
+        if value in self._reverse:
+            return value
+
+        #Enum doesn't know this value
+        raise ValueError(output_messages.ERR_EXP_VALUE_ERR%(value))
+
 class ConfigFileHandler:
     def __init__(self, filepath):
         self.filepath = filepath

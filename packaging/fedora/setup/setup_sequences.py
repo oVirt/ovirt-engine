@@ -9,8 +9,8 @@ import common_utils as utils
 
 class Step(object):
     def __init__(self, title=None, functions=[]):
-        self._TITLE = None
-        self._FUNCTIONS = []
+        self.__TITLE = None
+        self.__FUNCTIONS = []
         if title:
             if not isinstance(title, str):
                 raise TypeError("step's title should be of string type instead of %s" % type(title))
@@ -25,19 +25,19 @@ class Step(object):
             self.addFunction(function)
 
     def setTitle(self, title):
-        self._TITLE = title
+        self.__TITLE = title
 
     def getTitle(self):
-        return self._TITLE
+        return self.__TITLE
 
     def addFunction(self, function):
-        self._FUNCTIONS.append(function)
+        self.__FUNCTIONS.append(function)
 
     def removeFunction(self, function):
-        self._FUNCTIONS.remove(function)
+        self.__FUNCTIONS.remove(function)
 
     def getFunctions(self):
-        return self._FUNCTIONS
+        return self.__FUNCTIONS
 
     def run(self):
         #keep relative space
@@ -64,28 +64,32 @@ class Sequence(object):
         'functions' : [ func4, func6 ] } ]
     """
     def __init__(self, desc=None, cond=[], cond_match=[], steps=[]):
+        self.__DESCRIPTION = None
+        self.__CONDITION = None
+        self.__COND_MATCH = None
+        self.__STEPS = []
+
         self.setDescription(desc)
         self.setCondition(cond, cond_match)
-        self._STEPS = []
         for step in steps:
             if not isinstance(step, dict):
                 raise TypeError("step should be of dictionary type instead of %s" % type(step))
             self.addStep(step['title'], step['functions'])
 
     def addStep(self, title, functions):
-        self._STEPS.append(Step(title, functions))
+        self.__STEPS.append(Step(title, functions))
 
     def setDescription(self, desc):
-        self._DESCRIPTION = desc
+        self.__DESCRIPTION = desc
 
     def getDescription(self):
-        return self._DESCRIPTION
+        return self.__DESCRIPTION
 
     def getSteps(self):
-        return self._STEPS
+        return self.__STEPS
 
     def getStepByTitle(self, stepTitle):
-        for step in self._STEPS:
+        for step in self.__STEPS:
             if step.getTitle == stepTitle:
                 return step
         return None
@@ -95,10 +99,10 @@ class Sequence(object):
             if not isinstance(item, list):
                 raise TypeError("supplied parameter should be of list type instead of %s" % type(item))
 
-        self._CONDITION = cond
-        self._COND_MATCH = cond_match
+        self.__CONDITION = cond
+        self.__COND_MATCH = cond_match
 
-    def validateCondition(self):
+    def __validateCondition(self):
         """
         Both _CONDITION & _COND_MATCH are lists.
         if any of them is a function that needs to be run, the first member
@@ -109,21 +113,21 @@ class Sequence(object):
         if the first member of the list is not a function. we handle it
         as anything else (i.e. string/bool etc)
         """
-        if len(self._CONDITION) < 1 and len(self._COND_MATCH) < 1:
+        if len(self.__CONDITION) < 1 and len(self.__COND_MATCH) < 1:
             return True
 
         condResult = None
         condMatchResult = None
 
-        if callable(self._CONDITION[0]):
-            condResult = self._CONDITION[0](*self._CONDITION[1:])
+        if callable(self.__CONDITION[0]):
+            condResult = self.__CONDITION[0](*self.__CONDITION[1:])
         else:
-            condResult = self._CONDITION[0]
+            condResult = self.__CONDITION[0]
 
-        if callable(self._COND_MATCH[0]):
-            condMatchResult = self._COND_MATCH[0](*self._COND_MATCH[1:])
+        if callable(self.__COND_MATCH[0]):
+            condMatchResult = self.__COND_MATCH[0](*self.__COND_MATCH[1:])
         else:
-            condMatchResult = self._COND_MATCH[0]
+            condMatchResult = self.__COND_MATCH[0]
 
         if condResult == condMatchResult:
             return True
@@ -131,11 +135,12 @@ class Sequence(object):
         return False
 
     def removeStepByTitle(self, stepTitle):
-        self._STEPS.remove(stepTitle)
+        self.__STEPS.remove(stepTitle)
 
     def run(self):
-        for step in self._STEPS:
-            step.run()
+        if self.__validateCondition():
+            for step in self.__STEPS:
+                step.run()
 
     def runStepByTitle(self, stepTitle):
         step = self.getStepByTitle(stepTitle)
@@ -143,6 +148,6 @@ class Sequence(object):
 
     def listStepsByTitle(self):
         output = []
-        for step in self._STEPS:
+        for step in self.__STEPS:
             output.append(step.getTitle())
         return output

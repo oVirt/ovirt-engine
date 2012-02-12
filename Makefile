@@ -85,6 +85,7 @@ create_dirs:
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/iso-uploader/schemas
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/image-uploader/schemas
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/image-uploader/ovf
+	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/scripts/plugins
 	@mkdir -p $(PREFIX)/usr/share/java
 	@mkdir -p $(PREFIX)/usr/bin
 	@mkdir -p $(PREFIX)/usr/share/man/man8
@@ -131,10 +132,12 @@ install_setup:
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/basedefs.py
 	cp -f ./packaging/fedora/setup/engine_validators.py $(PREFIX)/usr/share/ovirt-engine/scripts
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/engine_validators.py
-	cp -f ./packaging/fedora/setup/engine_params.py $(PREFIX)/usr/share/ovirt-engine/scripts
-	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/engine_params.py
+	cp -f ./packaging/fedora/setup/setup_params.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/setup_params.py
 	cp -f ./packaging/fedora/setup/setup_sequences.py $(PREFIX)/usr/share/ovirt-engine/scripts
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/setup_sequences.py
+	cp -f ./packaging/fedora/setup/setup_controller.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/setup_controller.py
 	cp -f ./packaging/fedora/setup/common_utils.py $(PREFIX)/usr/share/ovirt-engine/scripts
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/common_utils.py
 	cp -f ./packaging/fedora/setup/resources/jboss/web-conf.js $(PREFIX)/etc/ovirt-engine
@@ -147,6 +150,8 @@ install_setup:
 	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)/usr/share/ovirt-engine/resources/jboss/modules/org/postgresql/main/
 	cp -f ./packaging/fedora/setup/engine-cleanup.py $(PREFIX)/usr/share/ovirt-engine/scripts
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/engine-cleanup.py
+	cp -f ./packaging/fedora/setup/plugins/* $(PREFIX)/usr/share/ovirt-engine/scripts/plugins/
+	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/plugins/*
 	ln -s /usr/share/ovirt-engine/scripts/engine-cleanup.py $(PREFIX)/usr/bin/engine-cleanup
 	cp -f ./packaging/fedora/setup/engine-upgrade.py $(PREFIX)/usr/share/ovirt-engine/scripts
 	chmod 755 $(PREFIX)/usr/share/ovirt-engine/scripts/engine-upgrade.py

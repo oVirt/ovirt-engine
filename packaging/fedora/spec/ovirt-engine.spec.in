@@ -302,8 +302,9 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %files setup
 %attr (755,root,root) %{_datadir}/%{name}/scripts/basedefs.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/engine_validators.py*
-%attr (755,root,root) %{_datadir}/%{name}/scripts/engine_params.py*
+%attr (755,root,root) %{_datadir}/%{name}/scripts/setup_params.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/setup_sequences.py*
+%attr (755,root,root) %{_datadir}/%{name}/scripts/setup_controller.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/common_utils.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/output_messages.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/nfsutils.py*
@@ -311,6 +312,7 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %attr (755,root,root) %{_datadir}/%{name}/scripts/engine-cleanup.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/engine-upgrade.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/post_upgrade.py*
+%attr (755,root,root) %{_datadir}/%{name}/scripts/plugins
 %attr (750,root,root) %{_bindir}/engine-setup
 %attr (750,root,root) %{_bindir}/engine-upgrade
 %attr (750,root,root) %{_bindir}/engine-check-update

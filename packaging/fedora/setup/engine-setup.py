@@ -24,22 +24,17 @@ import engine_validators as validate
 import random
 import tempfile
 from optparse import OptionParser, OptionGroup
-from engine_params import Group
-from setup_sequences import Sequence
+from setup_controller import Controller
 
 # Globals
+controller = Controller()
 logFile = os.path.join(basedefs.DIR_LOG,basedefs.FILE_INSTALLER_LOG)
-conf_params = ()
-conf_groups = ()
-conf = {}
-messages = []
-GROUPS=[]
 commandLineValues = {}
-SEQUENCES = []
 
 # Required by stopRhevmDbRelatedServices & startRhevmDbRelatedServices
 etlService = utils.Service("rhevm-etl")
 notificationService = utils.Service("rhevm-notifierd")
+
 
 # List to hold all values to be masked in logging (i.e. passwords and sensitive data)
 #TODO: read default values from conf_param?
@@ -84,57 +79,6 @@ NFS_IPTABLES_PORTS = [ {"port"     : "111",
                         "protocol" : ["udp"]},
 ]
 
-"""
-ENUM implementation for python (from the vdsm team)
-usage:
-    #define
-    enum = Enum(Key1=1, Key2=2)
-    
-    #use
-    type = enum.Key1
-    print type => (prints 1)
-    # reverse lookup
-    print enum[2] => (prints Key2)
-    # value lookup
-    print enum.parse("Key1") => (prints 1)
-"""
-class Enum(object):
-    """
-    A nice class to handle Enums gracefullly.
-    """
-    def __init__(self, **pairs):
-        #Generate reverse dict
-        self._reverse = dict([(b, a) for a, b in pairs.iteritems()])
-
-
-
-        #Generate attributes
-        for key, value in pairs.iteritems():
-            setattr(self, key, value)
-
-    def __getitem__(self, index):
-        return self._reverse[index]
-
-    def __iter__(self):
-        return self._reverse.itervalues()
-
-    def parse(self, value):
-        #If value is enum name convert to value
-        if isinstance(value, str):
-            if hasattr(self, value):
-                return getattr(self, value)
-            #If value is a number assume parsing meant converting the value to int
-            #if you can think of a more generic way feel free to change
-            if value.isdigit():
-                value = int(value)
-
-        #If not check if value is a value of the enum
-        if value in self._reverse:
-            return value
-
-        #Enum doesn't know this value
-        raise ValueError(output_messages.ERR_EXP_VALUE_ERR%(value))
-
 def generateMacRange():
     ipSet = utils.getConfiguredIps()
     if len(ipSet) > 0:
@@ -158,6 +102,12 @@ def initSequences():
                                               { 'title'     : output_messages.INFO_UPD_JBOSS_CONF,
                                                 'functions' : [configJbossXml, deployJbossModules, _editRootWar]} ]
                        },
+                      { 'description'     : 'Update DB',
+                        'condition'       : [_isDbAlreadyInstalled],
+                        'condition_match' : [True],
+                        'steps'           : [ { 'title'     : output_messages.INFO_UPGRADE_DB,
+                                                'functions' : [stopRhevmDbRelatedServices, restartPostgresql, _upgradeDB, startRhevmDbRelatedServices]} ]
+                       },
                       { 'description'     : 'Create DB',
                         'condition'       : [_isDbAlreadyInstalled],
                         'condition_match' : [False],
@@ -168,12 +118,6 @@ def initSequences():
                                               { 'title'     : output_messages.INFO_UPD_DC_TYPE,
                                                 'functions' : [_updateDefaultDCType]} ]
                        },
-                      { 'description'     : 'Update DB',
-                        'condition'       : [_isDbAlreadyInstalled],
-                        'condition_match' : [True],
-                        'steps'           : [ { 'title'     : output_messages.INFO_UPGRADE_DB,
-                                                'functions' : [stopRhevmDbRelatedServices, restartPostgresql, _upgradeDB, startRhevmDbRelatedServices]} ]
-                       },
                       { 'description'     : 'Edit Configuration',
                         'condition'       : [],
                         'condition_match' : [],
@@ -181,7 +125,7 @@ def initSequences():
                                                 'functions' : [_editToolsConfFile, editPostgresConf, updateFileDescriptors] } ]
                        },
                       { 'description'     : 'Config NFS',
-                        'condition'       : [utils.compareStrIgnoreCase, conf["CONFIG_NFS"], "yes"],
+                        'condition'       : [utils.compareStrIgnoreCase, controller.CONF["CONFIG_NFS"], "yes"],
                         'condition_match' : [True],
                         'steps'           : [ { 'title'     : output_messages.INFO_CFG_NFS,
                                                 'functions' : [_configNfsShare] } ]
@@ -197,15 +141,13 @@ def initSequences():
                      ]
 
     for item in sequences_conf:
-        SEQUENCES.append(Sequence(item['description'], item['condition'], item['condition_match'], item['steps']))
+        controller.addSequence(item['description'], item['condition'], item['condition_match'], item['steps'])
 
 def initConfig():
     """
     Initialization of configuration
     """
-    global conf_params
-    global conf_groups
-    global GROUPS
+
     """
     Param Fields:
     CMD_OPTION       - the command line flag to use for this option
@@ -411,10 +353,10 @@ def initConfig():
     )
     for group in conf_groups:
         paramList = conf_params[group["GROUP_NAME"]]
-        GROUPS.append(Group(group, paramList))
+        controller.addGroup(group, paramList)
 
 #data center types enum
-DC_TYPE = Enum(NFS=1, FC=2, ISCSI=3)
+controller.CONF["DC_TYPE_ENUM"] = utils.Enum(NFS=1, FC=2, ISCSI=3)
 
 def _getColoredText (text, color):
     ''' gets text string and color
@@ -426,33 +368,18 @@ def _getColoredText (text, color):
     '''
     return color + text + basedefs.NO_COLOR
 
-def _getParamKeyValue(paramName, keyName):
-    param = _getParamByName(paramName)
-    if param:
-        return param.getKey(keyName)
-    else:
-        return None
-
-def _getParamByName(paramName):
-    for group in GROUPS:
-        param = group.getParamByName(paramName)
-        if param:
-            return param
-    return None
-
 def _getInputFromUser(param):
     """
     this private func reads the data from the user
     for the given param
     """
-    global conf
     loop = True
     userInput = None
 
     try:
         if param.getKey("USE_DEFAULT"):
             logging.debug("setting default value (%s) for key (%s)" % (mask(param.getKey("DEFAULT_VALUE")), param.getKey("CONF_NAME")))
-            conf[param.getKey("CONF_NAME")] = param.getKey("DEFAULT_VALUE")
+            controller.CONF[param.getKey("CONF_NAME")] = param.getKey("DEFAULT_VALUE")
         else:
             while loop:
                 # If the value was not supplied by the command line flags
@@ -482,14 +409,14 @@ def _getInputFromUser(param):
 
                 # If param requires validation
                 if param.getKey("VALIDATION_FUNC")(userInput, param.getKey("OPTION_LIST")):
-                    conf[param.getKey("CONF_NAME")] = userInput
+                    controller.CONF[param.getKey("CONF_NAME")] = userInput
                     loop = False
                 # If validation failed but LOOSE_VALIDATION is true, ask user
                 elif param.getKey("LOOSE_VALIDATION"):
                     answer = _askYesNo("User input failed validation, do you still wish to use it")
                     if answer:
                         loop = False
-                        conf[param.getKey("CONF_NAME")] = userInput
+                        controller.CONF[param.getKey("CONF_NAME")] = userInput
                     else:
                         if commandLineValues.has_key(param.getKey("CONF_NAME")):
                             del commandLineValues[param.getKey("CONF_NAME")]
@@ -525,7 +452,7 @@ def input_param(param):
         while True:
             _getInputFromUser(param)
             _getInputFromUser(confirmedParam)
-            if conf[param.getKey("CONF_NAME")] == conf[confirmedParamName]:
+            if controller.CONF[param.getKey("CONF_NAME")] == controller.CONF[confirmedParamName]:
                 logging.debug("Param confirmation passed, value for both questions is identical")
                 break
             else:
@@ -736,12 +663,12 @@ def _editRootWar():
         # Update rhevm_index.html file with consts
         logging.debug("update %s with http & ssl urls"%(basedefs.FILE_JBOSS_HTTP_PARAMS))
 
-        conf["HTTP_URL"] = "http://" + conf["HOST_FQDN"] + ":" + conf["HTTP_PORT"]
-        conf["HTTPS_URL"] = "https://" + conf["HOST_FQDN"] + ":" + conf["HTTPS_PORT"]
+        controller.CONF["HTTP_URL"] = "http://" + controller.CONF["HOST_FQDN"] + ":" + controller.CONF["HTTP_PORT"]
+        controller.CONF["HTTPS_URL"] = "https://" + controller.CONF["HOST_FQDN"] + ":" + controller.CONF["HTTPS_PORT"]
 
-        utils.findAndReplace(basedefs.FILE_JBOSS_HTTP_PARAMS, "var host_fqdn.*", 'var host_fqdn = "%s";'%(conf["HOST_FQDN"]))
-        utils.findAndReplace(basedefs.FILE_JBOSS_HTTP_PARAMS, "var http_port.*", 'var http_port = "%s";'%(conf["HTTP_PORT"]))
-        utils.findAndReplace(basedefs.FILE_JBOSS_HTTP_PARAMS, "var https_port.*", 'var https_port = "%s";'%(conf["HTTPS_PORT"]))
+        utils.findAndReplace(basedefs.FILE_JBOSS_HTTP_PARAMS, "var host_fqdn.*", 'var host_fqdn = "%s";'%(controller.CONF["HOST_FQDN"]))
+        utils.findAndReplace(basedefs.FILE_JBOSS_HTTP_PARAMS, "var http_port.*", 'var http_port = "%s";'%(controller.CONF["HTTP_PORT"]))
+        utils.findAndReplace(basedefs.FILE_JBOSS_HTTP_PARAMS, "var https_port.*", 'var https_port = "%s";'%(controller.CONF["HTTPS_PORT"]))
 
         # Handle ca.crt
         _handleJbossCertFile()
@@ -756,7 +683,7 @@ def _editExternalConfig():
         exConfigHandler.open()
 
         node = utils.getXmlNode(exConfigHandler, "//add[@key='BackendPort']")
-        node.setProp("value", conf["HTTPS_PORT"])
+        node.setProp("value", controller.CONF["HTTPS_PORT"])
         
         exConfigHandler.close()
     except:
@@ -765,15 +692,14 @@ def _editExternalConfig():
 
 def _editDefaultHtml():
     try:
-        utils.findAndReplace(basedefs.FILE_SERVER_PARAMS_JS, "var httpPort.*", 'var httpPort = "%s";'%(conf["HTTP_PORT"]))
-        utils.findAndReplace(basedefs.FILE_SERVER_PARAMS_JS, "var httpsPort.*", 'var httpsPort = "%s";'%(conf["HTTPS_PORT"]))
-        utils.findAndReplace(basedefs.FILE_SERVER_PARAMS_JS, "var hostName.*", 'var hostName = "%s";'%(conf["HOST_FQDN"]))
+        utils.findAndReplace(basedefs.FILE_SERVER_PARAMS_JS, "var httpPort.*", 'var httpPort = "%s";'%(controller.CONF["HTTP_PORT"]))
+        utils.findAndReplace(basedefs.FILE_SERVER_PARAMS_JS, "var httpsPort.*", 'var httpsPort = "%s";'%(controller.CONF["HTTPS_PORT"]))
+        utils.findAndReplace(basedefs.FILE_SERVER_PARAMS_JS, "var hostName.*", 'var hostName = "%s";'%(controller.CONF["HOST_FQDN"]))
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_UPD_HTML_FILE%(basedefs.FILE_DEFAULT_HTML))
 
 def _createCA():
-    global messages
 
     try:
         # Create new CA only if none available
@@ -803,14 +729,14 @@ def _createCA():
             randInt = random.randint(10000,99999)
 
 	    # Truncating host fqdn to max allowed in certificate CN field
-	    truncatedFqdn = conf["HOST_FQDN"][0:basedefs.CONST_MAX_HOST_FQDN_LEN]
-	    logging.debug("truncated HOST_FQDN '%s' to '%s'. sized reduced to %d.."%(conf["HOST_FQDN"],truncatedFqdn,len(truncatedFqdn)))
+	    truncatedFqdn = controller.CONF["HOST_FQDN"][0:basedefs.CONST_MAX_HOST_FQDN_LEN]
+	    logging.debug("truncated HOST_FQDN '%s' to '%s'. sized reduced to %d.."%(controller.CONF["HOST_FQDN"],truncatedFqdn,len(truncatedFqdn)))
             uniqueCN = truncatedFqdn + "." + str(randInt)
 	    logging.debug("using unique CN: '%s' for CA certificate"%uniqueCN)
 
             # Create the CA
-            cmd = [os.path.join(basedefs.DIR_OVIRT_PKI, "installCA.sh"), conf["HOST_FQDN"],
-                   basedefs.CONST_CA_COUNTRY, conf["ORG_NAME"], basedefs.CONST_CA_ALIAS, basedefs.CONST_CA_PASS, date,
+            cmd = [os.path.join(basedefs.DIR_OVIRT_PKI, "installCA.sh"), controller.CONF["HOST_FQDN"],
+                   basedefs.CONST_CA_COUNTRY, controller.CONF["ORG_NAME"], basedefs.CONST_CA_ALIAS, basedefs.CONST_CA_PASS, date,
                    basedefs.DIR_OVIRT_PKI, uniqueCN]
 
             out, rc = utils.execCmd(cmd, None, True, output_messages.ERR_RC_CODE, [basedefs.CONST_CA_PASS])
@@ -830,20 +756,20 @@ def _createCA():
 
             finger, rc = utils.execCmd(cmd, None, True)
             msg = output_messages.INFO_CA_SSL_FINGERPRINT%(finger.rstrip().split("=")[1])
-            messages.append(msg)
+            controller.MESSAGES.append(msg)
 
             # ExtractSSH fingerprint
             cmd = [basedefs.EXEC_SSH_KEYGEN, "-lf", basedefs.FILE_PUBLIC_SSH_KEY]
             finger, rc = utils.execCmd(cmd, None, True)
             msg = output_messages.INFO_CA_SSH_FINGERPRINT%(finger.split()[1])
-            messages.append(msg)
+            controller.MESSAGES.append(msg)
 
             # Set right permissions
             _changeCaPermissions(basedefs.DIR_OVIRT_PKI)
         else:
             msg = output_messages.INFO_CA_KEYSTORE_EXISTS
             logging.warn(msg)
-            messages.append(msg)
+            controller.MESSAGES.append(msg)
 
         # Always Copy publich ssh key to ROOT site
         utils.copyFile(basedefs.FILE_PUBLIC_SSH_KEY, basedefs.DIR_JBOSS_ROOT_WAR)
@@ -873,11 +799,10 @@ def _updateCaCrtTemplate():
         logging.debug("updating %s" % (file))
         fileHandler = utils.TextConfigFileHandler(file)
         fileHandler.open()
-        fileHandler.editParam("authorityInfoAccess", " caIssuers;URI:http://%s:%s/ca.crt" % (conf["HOST_FQDN"], conf["HTTP_PORT"]))
+        fileHandler.editParam("authorityInfoAccess", " caIssuers;URI:http://%s:%s/ca.crt" % (controller.CONF["HOST_FQDN"], controller.CONF["HTTP_PORT"]))
         fileHandler.close()
 
 def _configIptables():
-    global messages
     logging.debug("configuring iptables")
     try:
         file = open(basedefs.FILE_IPTABLES_DEFAULT, "r")
@@ -900,11 +825,11 @@ def _configIptables():
 
         insertLocation = location - len(list)
 
-        for port in [conf["HTTP_PORT"], conf["HTTPS_PORT"]]:
+        for port in [controller.CONF["HTTP_PORT"], controller.CONF["HTTPS_PORT"]]:
             lineToAdd = "-A RH-Firewall-1-INPUT -m state --state NEW -p tcp --dport %s -j ACCEPT" % port
             list.insert(insertLocation, lineToAdd)
 
-        if utils.compareStrIgnoreCase(conf["CONFIG_NFS"], "yes"):
+        if utils.compareStrIgnoreCase(controller.CONF["CONFIG_NFS"], "yes"):
             PORTS_LIST = PORTS_LIST + NFS_IPTABLES_PORTS
 
         for portCfg in PORTS_LIST:
@@ -919,11 +844,11 @@ def _configIptables():
         exampleFile.write(outputText)
         exampleFile.close()
 
-        if conf["OVERRIDE_IPTABLES"] == "yes":
+        if controller.CONF["OVERRIDE_IPTABLES"] == "yes":
             if os.path.isfile("%s/iptables"%(basedefs.DIR_ETC_SYSCONFIG)):
                 backupFile = "%s.%s_%s"%(basedefs.FILE_IPTABLES_BACKUP, time.strftime("%H%M%S-%m%d%Y"), os.getpid())
                 utils.copyFile("%s/iptables"%(basedefs.DIR_ETC_SYSCONFIG), backupFile)
-                messages.append(output_messages.INFO_IPTABLES_BACKUP_FILE%(backupFile))
+                controller.MESSAGES.append(output_messages.INFO_IPTABLES_BACKUP_FILE%(backupFile))
 
             utils.copyFile(basedefs.FILE_IPTABLES_EXAMPLE, "%s/iptables"%(basedefs.DIR_ETC_SYSCONFIG))
 
@@ -935,8 +860,8 @@ def _configIptables():
             iptables.start(True)
 
         else:
-            messages.append(output_messages.INFO_IPTABLES_PORTS%(conf["HTTP_PORT"], conf["HTTPS_PORT"]))
-            messages.append(output_messages.INFO_IPTABLES_FILE%(basedefs.FILE_IPTABLES_EXAMPLE))
+            controller.MESSAGES.append(output_messages.INFO_IPTABLES_PORTS%(controller.CONF["HTTP_PORT"], controller.CONF["HTTPS_PORT"]))
+            controller.MESSAGES.append(output_messages.INFO_IPTABLES_FILE%(basedefs.FILE_IPTABLES_EXAMPLE))
 
     except:
         logging.error(traceback.format_exc())
@@ -981,7 +906,7 @@ def _createDB():
 
     # Set rhevm-db-install.sh args - logfile and db password
     scriptHome = os.path.join(basedefs.DIR_DB_SCRIPTS, basedefs.FILE_DB_INSTALL_SCRIPT)
-    cmd = [scriptHome, dbLogFilename, conf["DB_PASS"]]
+    cmd = [scriptHome, dbLogFilename, controller.CONF["DB_PASS"]]
 
     # Create db using shell command
     output, rc = utils.execCmd(cmd, None, True, output_messages.ERR_DB_CREATE_FAILED, masked_value_set)
@@ -1015,7 +940,7 @@ def _upgradeDB():
         # Go back to previous dir
         os.chdir(currentDir)
         logging.debug('Successfully upgraded %s db'%(basedefs.DB_NAME))
-        messages.append("DB was upgraded to latest version. previous DB backup can be found at %s"%(dbBackupFile))
+        controller.MESSAGES.append("DB was upgraded to latest version. previous DB backup can be found at %s"%(dbBackupFile))
 
         # Update rpm version in vdc options
         utils.updateVDCOption("ProductRPMVersion", utils.getRpmVersion(basedefs.ENGINE_RPM_NAME))
@@ -1027,7 +952,7 @@ def _upgradeDB():
 
 def _updateDefaultDCType():
     logging.debug("updating default data center storage type")
-    newDcTypeNum = DC_TYPE.parse(str.upper(conf["DC_TYPE"]))
+    newDcTypeNum = controller.CONF["DC_TYPE_ENUM"].parse(str.upper(controller.CONF["DC_TYPE"]))
     sqlQuery = "select inst_update_default_storage_pool_type (%s)"%(newDcTypeNum)
     utils.execSqlCommand(basedefs.DB_ADMIN, basedefs.DB_NAME, sqlQuery, True, output_messages.ERR_EXP_UPD_DC_TYPE%(basedefs.DB_NAME)) 
 
@@ -1052,11 +977,11 @@ def _updateVDCOptions():
             "TruststorePass":basedefs.CONST_CA_PASS,
             "keystorePass":basedefs.CONST_CA_PASS,
             "CertificatePassword":basedefs.CONST_CA_PASS,
-            "LocalAdminPassword":conf["AUTH_PASS"],
+            "LocalAdminPassword":controller.CONF["AUTH_PASS"],
             "SSLEnabled": "true",
             "UseSecureConnectionWithServers": "true",
             "ScriptsPath":"/usr/share/ovirt-engine",
-            "VdcBootStrapUrl":"http://" + conf["HOST_FQDN"] + ":" + conf["HTTP_PORT"] + "/Components/vds/",
+            "VdcBootStrapUrl":"http://" + controller.CONF["HOST_FQDN"] + ":" + controller.CONF["HTTP_PORT"] + "/Components/vds/",
             "AsyncPollingCyclesBeforeCallbackCleanup":"30",
             "SysPrepXPPath":"/usr/share/ovirt-engine/sysprep/sysprep.xp",
             "SysPrep2K3Path":"/usr/share/ovirt-engine/sysprep/sysprep.2k3",
@@ -1065,17 +990,17 @@ def _updateVDCOptions():
             "SysPrep2K8R2Path":"/usr/share/ovirt-engine/sysprep/sysprep.2k8",
             "SysPrepWindows7Path":"/usr/share/ovirt-engine/sysprep/sysprep.w7",
             "SysPrepWindows7x64Path":"/usr/share/ovirt-engine/sysprep/sysprep.w7x64",
-            "MacPoolRanges":conf["MAC_RANGE"],
+            "MacPoolRanges":controller.CONF["MAC_RANGE"],
             "InstallVds":"true",
             "ConfigDir":"/etc/ovirt-engine",
             "DataDir":"/usr/share/ovirt-engine",
             "SignScriptName":"SignReq.sh",
             "BootstrapInstallerFileName":"/usr/share/ovirt-engine/scripts/vds_installer.py",
-            "PublicURLPort":conf["HTTP_PORT"],
-            "VirtualMachineDomainName":conf["HOST_FQDN"],
-            "OrganizationName":conf["ORG_NAME"],
+            "PublicURLPort":controller.CONF["HTTP_PORT"],
+            "VirtualMachineDomainName":controller.CONF["HOST_FQDN"],
+            "OrganizationName":controller.CONF["ORG_NAME"],
             "ProductRPMVersion":utils.getRpmVersion(basedefs.ENGINE_RPM_NAME),
-            "AdminPassword":conf["AUTH_PASS"]
+            "AdminPassword":controller.CONF["AUTH_PASS"]
         }
     )
               
@@ -1125,11 +1050,11 @@ def _updatePgPassFile():
 
         #insert line for postgres - db admin
         #(very important for maintance and upgrades in case user rhevm is not created yet).
-        line = _updatePgPassLine(basedefs.DB_HOST, basedefs.DB_PORT, "*", basedefs.DB_ADMIN, conf["DB_PASS"])
+        line = _updatePgPassLine(basedefs.DB_HOST, basedefs.DB_PORT, "*", basedefs.DB_ADMIN, controller.CONF["DB_PASS"])
         pgPassFile.write(line + "\n")
 
         #insert line for user rhevm
-        line = _updatePgPassLine(basedefs.DB_HOST, basedefs.DB_PORT, basedefs.DB_NAME, basedefs.DB_USER, conf["DB_PASS"])
+        line = _updatePgPassLine(basedefs.DB_HOST, basedefs.DB_PORT, basedefs.DB_NAME, basedefs.DB_USER, controller.CONF["DB_PASS"])
         pgPassFile.write(line + "\n")
 
         pgPassFile.close()
@@ -1159,7 +1084,7 @@ def _encryptDBPass():
     """
     #run encrypt tool on user give password
     if (os.path.exists(basedefs.EXEC_ENCRYPT_PASS)):
-        cmd = [basedefs.EXEC_ENCRYPT_PASS, conf["DB_PASS"]]
+        cmd = [basedefs.EXEC_ENCRYPT_PASS, controller.CONF["DB_PASS"]]
 
         # The encrypt tool needs the jboss home env set
         # Since we cant use the bash way, we need to set it as environ
@@ -1167,7 +1092,7 @@ def _encryptDBPass():
         output, rc = utils.execCmd(cmd, None, True, output_messages.ERR_EXP_ENCRYPT_PASS, masked_value_set)
 
         #parse the encrypted password from the tool
-        conf["ENCRYPTED_DB_PASS"] = utils.parseStrRegex(output, "Encoded password:\s*(.+)", output_messages.ERR_EXP_PARSING_ENCRYPT_PASS)
+        controller.CONF["ENCRYPTED_DB_PASS"] = utils.parseStrRegex(output, "Encoded password:\s*(.+)", output_messages.ERR_EXP_PARSING_ENCRYPT_PASS)
     else:
         raise Exception(output_messages.ERR_ENCRYPT_TOOL_NOT_FOUND)
 
@@ -1183,7 +1108,7 @@ def _addDefaultsToMaskedValueSet():
     in the 'masked_value_set'
     """
     global masked_value_set
-    for group in GROUPS:
+    for group in controller.getAllGroups():
         for param in group.getAllParams():
             # Keep default password values masked, but ignore default empty values
             if ((param.getKey("MASK_INPUT") == True) and param.getKey("DEFAULT_VALUE") != ""):
@@ -1200,10 +1125,10 @@ def _updateMaskedValueSet():
     in the 'masked_value_set'
     """
     global masked_value_set
-    for confName in conf:
+    for confName in controller.CONF:
         # Add all needed values to masked_value_set
-        if (_getParamKeyValue(confName, "MASK_INPUT") == True):
-            masked_value_set.add(conf[confName])
+        if (controller.getParamKeyValue(confName, "MASK_INPUT") == True):
+            masked_value_set.add(controller.CONF[confName])
 
 def mask(input):
     """
@@ -1268,12 +1193,11 @@ def _handleGroupCondition(config, conditionName, conditionValue):
     checks if a group has a pre/post condition
     and validates the params related to the group
     """
-    global conf
 
     # If the post condtition is a function
     if type(conditionName) == types.FunctionType:
         # Call the function conditionName with conf as the arg
-        conditionValue = conditionName(conf)
+        conditionValue = conditionName(controller.CONF)
 
     # If the condition is a string - just read it to global conf
     # We assume that if we get a string as a member it is the name of a member of conf_params
@@ -1291,17 +1215,16 @@ def _loadParamFromFile(config, section, paramName):
     validate it
     and load to to global conf dict
     """
-    global conf
 
     # Get paramName from answer file
     value = config.get(section, paramName)
 
     # Validate param value using its validation func
-    param = _getParamByName("CONF_NAME")
+    param = controller.getParamByName(paramName)
     _validateParamValue(param, value)
 
     # Keep param value in our never ending global conf
-    conf[param.getKey("CONF_NAME")] = value
+    controller.CONF[param.getKey("CONF_NAME")] = value
 
     return value
 
@@ -1311,7 +1234,6 @@ def _handleAnswerFileParams(answerFile):
     params from answer file
     supports reading single or group params
     """
-    global conf
     try:
         logging.debug("Starting to handle config file")
 
@@ -1320,7 +1242,7 @@ def _handleAnswerFileParams(answerFile):
         fconf.read(answerFile)
 
         # Iterate all the groups and check the pre/post conditions
-        for group in GROUPS:
+        for group in controller.getAllGroups():
             # Get all params per group
 
             # Handle pre conditions for group
@@ -1352,12 +1274,12 @@ def _handleAnswerFileParams(answerFile):
                 logging.debug("skipping params group %s since value of group validation is %s" % (group.getKey("GROUP_NAME"), preConditionValue))
 
     except Exception as e:
+        logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_HANDLE_ANSWER_FILE%(e))
 
 def _handleInteractiveParams():
-    global conf
     try:
-        for group in GROUPS:
+        for group in controller.getAllGroups():
             preConditionValue = True
             logging.debug("going over group %s" % group.getKey("GROUP_NAME"))
 
@@ -1389,8 +1311,8 @@ def _handleInteractiveParams():
                             #we clear the value of all params in the group
                             #in order to re-input them by the user
                             for param in group.getAllParams():
-                                if conf.has_key(param.getKey("CONF_NAME")):
-                                    del conf[param.getKey("CONF_NAME")]
+                                if controller.CONF.has_key(param.getKey("CONF_NAME")):
+                                    del controller.CONF[param.getKey("CONF_NAME")]
                                 if commandLineValues.has_key(param.getKey("CONF_NAME")):
                                     del commandLineValues[param.getKey("CONF_NAME")]
                     else:
@@ -1419,54 +1341,52 @@ def _handleParams(configFile):
 
 def _getConditionValue(matchMember):
     returnValue = False
-    global conf
     if type(matchMember) == types.FunctionType:
-        returnValue = matchMember(conf)
+        returnValue = matchMember(controller.CONF)
     elif type(matchMember) == types.StringType:
         #we assume that if we get a string as a member it is the name
         #of a member of conf_params
-        if not conf.has_key(matchMember):
-            param = _getParamByName(matchMember)
+        if not controller.CONF.has_key(matchMember):
+            param = controller.getParamByName(matchMember)
             input_param(param)
-        returnValue = conf[matchMember]
+        returnValue = controller.CONF[matchMember]
     else:
         raise TypeError("%s type (%s) is not supported"%(matchMember, type(matchMember)))
 
     return returnValue
 
 def _displaySummary():
-    global conf
 
     print output_messages.INFO_DSPLY_PARAMS
     print  "=" * (len(output_messages.INFO_DSPLY_PARAMS) - 1)
     logging.info("*** User input summary ***")
-    for group in GROUPS:
+    for group in controller.getAllGroups():
         for param in group.getAllParams():
-            if not param.getKey("USE_DEFAULT") and conf.has_key(param.getKey("CONF_NAME")):
+            if not param.getKey("USE_DEFAULT") and controller.CONF.has_key(param.getKey("CONF_NAME")):
                 cmdOption = param.getKey("CMD_OPTION")
                 l = 30 - len(cmdOption)
                 maskParam = param.getKey("MASK_INPUT")
                 # Only call mask on a value if the param has MASK_INPUT set to True
                 if maskParam:
-                    logging.info("%s: %s" % (cmdOption, mask(conf[param.getKey("CONF_NAME")])))
-                    print "%s:" % (cmdOption) + " " * l + mask(conf[param.getKey("CONF_NAME")])
+                    logging.info("%s: %s" % (cmdOption, mask(controller.CONF[param.getKey("CONF_NAME")])))
+                    print "%s:" % (cmdOption) + " " * l + mask(controller.CONF[param.getKey("CONF_NAME")])
                 else:
                     # Otherwise, log & display it as it is
-                    logging.info("%s: %s" % (cmdOption, conf[param.getKey("CONF_NAME")]))
-                    print "%s:" % (cmdOption) + " " * l + conf[param.getKey("CONF_NAME")]
+                    logging.info("%s: %s" % (cmdOption, controller.CONF[param.getKey("CONF_NAME")]))
+                    print "%s:" % (cmdOption) + " " * l + controller.CONF[param.getKey("CONF_NAME")]
     logging.info("*** User input summary ***")
     answer = _askYesNo(output_messages.INFO_USE_PARAMS)
     if not answer:
         logging.debug("user chose to re-enter the user parameters")
-        for group in GROUPS:
+        for group in controller.getAllGroups():
             for param in group.getAllParams():
-                if conf.has_key(param.getKey("CONF_NAME")):
+                if controller.CONF.has_key(param.getKey("CONF_NAME")):
                     if not param.getKey("MASK_INPUT"):
-                        param.setKey("DEFAULT_VALUE", conf[param.getKey("CONF_NAME")])
+                        param.setKey("DEFAULT_VALUE", controller.CONF[param.getKey("CONF_NAME")])
                     # Remove the string from mask_value_set in order
                     # to remove values that might be over overwritten. 
-                    removeMaskString(conf[param.getKey("CONF_NAME")])
-                    del conf[param.getKey("CONF_NAME")]
+                    removeMaskString(controller.CONF[param.getKey("CONF_NAME")])
+                    del controller.CONF[param.getKey("CONF_NAME")]
                 if commandLineValues.has_key(param.getKey("CONF_NAME")):
                     del commandLineValues[param.getKey("CONF_NAME")]
             print ""
@@ -1487,17 +1407,17 @@ def _configNfsShare():
         logging.debug("configuring NFS share")
 
         # If path does not exist, create it
-        if not os.path.exists(conf["NFS_MP"]):
-            logging.debug("creating directory %s " % (conf["NFS_MP"]))
-            os.makedirs(conf["NFS_MP"])
+        if not os.path.exists(controller.CONF["NFS_MP"]):
+            logging.debug("creating directory %s " % (controller.CONF["NFS_MP"]))
+            os.makedirs(controller.CONF["NFS_MP"])
         # Add export to exportfs
-        nfsutils.addNfsExport(conf["NFS_MP"], (("0.0.0.0", "0.0.0.0", ("rw",)),), "rhev installer")
+        nfsutils.addNfsExport(controller.CONF["NFS_MP"], (("0.0.0.0", "0.0.0.0", ("rw",)),), "rhev installer")
 
         # Add warning to user about nfs export permissions
-        messages.append(output_messages.WARN_ISO_DOMAIN_SECURITY % (conf["NFS_MP"]))
+        controller.MESSAGES.append(output_messages.WARN_ISO_DOMAIN_SECURITY % (controller.CONF["NFS_MP"]))
 
         # Set selinux configuration
-        nfsutils.setSELinuxContextForDir(conf["NFS_MP"], nfsutils.SELINUX_RW_LABEL)
+        nfsutils.setSELinuxContextForDir(controller.CONF["NFS_MP"], nfsutils.SELINUX_RW_LABEL)
 
         #set NFS/portmap ports by overriding /etc/sysconfig/nfs
         backupFile = "%s.%s_%s"%(basedefs.FILE_NFS_BACKUP, time.strftime("%H%M%S-%m%d%Y"), os.getpid())
@@ -1508,13 +1428,13 @@ def _configNfsShare():
         _startNfsServices()
 
         # Generate the UUID for the isodomain
-        conf["sd_uuid"] = nfsutils.generateUUID()
+        controller.CONF["sd_uuid"] = nfsutils.generateUUID()
 
         # Create ISO domain
-        nfsutils.createISODomain(conf["NFS_MP"], conf["ISO_DOMAIN_NAME"], conf["sd_uuid"])
+        nfsutils.createISODomain(controller.CONF["NFS_MP"], controller.CONF["ISO_DOMAIN_NAME"], controller.CONF["sd_uuid"])
 
         # Add iso domain to DB
-        _addIsoDomaintoDB(conf["sd_uuid"], conf["ISO_DOMAIN_NAME"])
+        _addIsoDomaintoDB(controller.CONF["sd_uuid"], controller.CONF["ISO_DOMAIN_NAME"])
 
         # Refresh nfs exports
         nfsutils.refreshNfsExports()
@@ -1547,7 +1467,7 @@ def setMaxSharedMemory():
 
 def _addIsoDomaintoDB(uuid, description):
     logging.debug("Adding iso domain into DB")
-    sqlQuery = "select inst_add_iso_storage_domain ('%s', '%s', '%s:%s', %s, %s)" % (uuid, description, conf["HOST_FQDN"], conf["NFS_MP"], 0, 0)
+    sqlQuery = "select inst_add_iso_storage_domain ('%s', '%s', '%s:%s', %s, %s)" % (uuid, description, controller.CONF["HOST_FQDN"], controller.CONF["NFS_MP"], 0, 0)
     utils.execSqlCommand(basedefs.DB_ADMIN, basedefs.DB_NAME, sqlQuery, True, output_messages.ERR_FAILED_INSERT_ISO_DOMAIN%(basedefs.DB_NAME)) 
 
 def _startNfsServices():
@@ -1573,7 +1493,7 @@ def _loadFilesToIsoDomain():
     fileList = [basedefs.FILE_VIRTIO_WIN_VFD, basedefs.FILE_VIRTIO_WIN_ISO, basedefs.FILE_RHEV_GUEST_TOOLS_ISO]
 
     # Prepare the full path for the iso files
-    targetPath = os.path.join(conf["NFS_MP"], conf["sd_uuid"], "images", "11111111-1111-1111-1111-111111111111")
+    targetPath = os.path.join(controller.CONF["NFS_MP"], controller.CONF["sd_uuid"], "images", "11111111-1111-1111-1111-111111111111")
 
     try:
         # Iterate the list and copy all the files
@@ -1586,7 +1506,7 @@ def _loadFilesToIsoDomain():
 
 def _printAdditionalMessages():
     print "\n",output_messages.INFO_ADDTIONAL_MSG
-    for msg in messages:
+    for msg in controller.MESSAGES:
         logging.info(output_messages.INFO_ADDTIONAL_MSG_BULLET%(msg))
         print output_messages.INFO_ADDTIONAL_MSG_BULLET%(msg)
 
@@ -1595,10 +1515,10 @@ def _addFinalInfoMsg():
     add info msg to the user finalizing the 
     successfull install of rhemv
     """
-    messages.append(output_messages.INFO_LOG_FILE_PATH%(logFile))
-    messages.append(output_messages.INFO_LOGIN_USER)
-    messages.append(output_messages.INFO_ADD_USERS)
-    messages.append(output_messages.INFO_RHEVM_URL % conf["HTTP_URL"])
+    controller.MESSAGES.append(output_messages.INFO_LOG_FILE_PATH%(logFile))
+    controller.MESSAGES.append(output_messages.INFO_LOGIN_USER)
+    controller.MESSAGES.append(output_messages.INFO_ADD_USERS)
+    controller.MESSAGES.append(output_messages.INFO_RHEVM_URL % controller.CONF["HTTP_URL"])
 
 def _checkJbossService(configFile):
     logging.debug("checking the status of jboss")
@@ -1685,7 +1605,7 @@ def _editToolsConfFile():
             fileHandler.open()
 
             logging.debug("Adding host & secure port")
-            fileHandler.editParam("engine", "%s:%s" % (conf["HOST_FQDN"], conf["HTTPS_PORT"]))
+            fileHandler.editParam("engine", "%s:%s" % (controller.CONF["HOST_FQDN"], controller.CONF["HTTPS_PORT"]))
 
             logging.debug("Adding username")
             fileHandler.editParam("user", "%s@%s" % (basedefs.INTERNAL_ADMIN, basedefs.INTERNAL_DOMAIN))
@@ -1755,12 +1675,12 @@ def updateFileDescriptors():
         os.remove(tempFile)
 
 def _summaryParamsToLog():
-    if len(conf) > 0:
+    if len(controller.CONF) > 0:
         logging.debug("*** The following params were used as user input:")
-        for group in GROUPS:
+        for group in controller.getAllGroups():
             for param in group.getAllParams():
-                if conf.has_key(param.getKey("CONF_NAME")):
-                    maskedValue = mask(conf[param.getKey("CONF_NAME")])
+                if controller.CONF.has_key(param.getKey("CONF_NAME")):
+                    maskedValue = mask(controller.CONF[param.getKey("CONF_NAME")])
                     logging.debug("%s: %s" % (param.getKey("CMD_OPTION"), maskedValue ))
 
 def restartPostgresql():
@@ -1798,7 +1718,7 @@ def stopRhevmDbRelatedServices():
         except:
             logging.warn("Failed to stop rhevm-etl")
             logging.warn(traceback.format_exc())
-            messages.append(output_messages.ERR_FAILED_STOP_SERVICE % "rhevm-etl")
+            controller.MESSAGES.append(output_messages.ERR_FAILED_STOP_SERVICE % "rhevm-etl")
 
     # If the rhevm-notifierd service is up, then try and stop it.
     if notificationService.isServiceAvailable():
@@ -1810,17 +1730,17 @@ def stopRhevmDbRelatedServices():
         except:
             logging.warn("Failed to stop rhevm-notifierd service")
             logging.warn(traceback.format_exc())
-            messages.append(output_messages.ERR_FAILED_STOP_SERVICE % "rhevm-notiferd")
+            controller.MESSAGES.append(output_messages.ERR_FAILED_STOP_SERVICE % "rhevm-notiferd")
 
     (output, rc) = etlService.conditionalStart()
     if rc != 0:
         logging.warn("Failed to start rhevm-etl")
-        messages.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-etl")
+        controller.MESSAGES.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-etl")
 
     (output, rc) = notificationService.conditionalStart()
     if rc != 0:
         logging.warn("Failed to start rhevm-notifierd")
-        messages.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-notifierd")
+        controller.MESSAGES.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-notifierd")
 
 
 def deployJbossModules():
@@ -2108,7 +2028,7 @@ def configJbossSecurity(xmlObj):
             <authentication>
                 <login-module code="org.picketbox.datasource.security.SecureIdentityLoginModule" flag="required">
                     <module-option name="username" value="engine"/>
-                    <module-option name="password" value="'''+ conf["ENCRYPTED_DB_PASS"] +'''"/>
+                    <module-option name="password" value="'''+ controller.CONF["ENCRYPTED_DB_PASS"] +'''"/>
                     <module-option name="managedConnectionFactoryName" value="jboss.jca:name=ENGINEDataSource,service=LocalTxCM"/>
                 </login-module>
             </authentication>
@@ -2117,7 +2037,7 @@ def configJbossSecurity(xmlObj):
     xmlObj.addNodes("//security:subsystem/security:security-domains", securityPassStr)
 
 #    node = xmlObj.xpathEval("//security:subsystem/security:security-domains/security:security-domain[@name='EncryptDBPassword']/security:authentication/security:login-module/security:module-option[@name='password']")[0]
-#    node.setProp('value', conf["ENCRYPTED_DB_PASS"])
+#    node.setProp('value', controller.CONF["ENCRYPTED_DB_PASS"])
 
     logging.debug("Security has been configured for jboss")
 
@@ -2136,10 +2056,10 @@ def configJbossNetwork(xmlObj):
 
     logging.debug("Setting ports")
     httpNode = xmlObj.xpathEval("//domain:server/domain:socket-binding-group[@name='standard-sockets']/domain:socket-binding[@name='http']")[0]
-    httpNode.setProp("port", conf["HTTP_PORT"])
+    httpNode.setProp("port", controller.CONF["HTTP_PORT"])
 
     httpsNode = xmlObj.xpathEval("//domain:server/domain:socket-binding-group[@name='standard-sockets']/domain:socket-binding[@name='https']")[0]
-    httpsNode.setProp("port", conf["HTTPS_PORT"])
+    httpsNode.setProp("port", controller.CONF["HTTPS_PORT"])
 
     logging.debug("Network has been configured for jboss")
 
@@ -2174,12 +2094,12 @@ def startRhevmDbRelatedServices():
     (output, rc) = etlService.conditionalStart()
     if rc != 0:
         logging.warn("Failed to start rhevm-etl")
-        messages.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-etl")
+        controller.MESSAGES.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-etl")
 
     (output, rc) = notificationService.conditionalStart()
     if rc != 0:
         logging.warn("Failed to start rhevm-notifierd")
-        messages.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-notifierd")
+        controller.MESSAGES.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-notifierd")
 
 def isSecondRun():
     keystore = os.path.join(basedefs.DIR_OVIRT_PKI, ".keystore")
@@ -2195,12 +2115,9 @@ def isSecondRun():
         return False
 
 def runSequences():
-    for sequence in SEQUENCES:
-        if sequence.validateCondition():
-            sequence.run()
+    controller.runAllSequences()
 
 def main(configFile=None):
-    global conf
     try:
         logging.debug("Entered main(configFile='%s')"%(configFile))
         print output_messages.INFO_HEADER
@@ -2228,7 +2145,7 @@ def main(configFile=None):
         _updateMaskedValueSet()
 
         # Print masked conf
-        logging.debug(mask(conf))
+        logging.debug(mask(controller.CONF))
 
         # Start configuration stage
         logging.debug("Entered Configuration stage")
@@ -2237,8 +2154,9 @@ def main(configFile=None):
         # Initialize Sequences
         initSequences()
 
+        initPluginsSequences()
+
         # Run main setup logic
-        #runMainFunctions(conf)
         runSequences()
 
         # Lock rhevm version
@@ -2257,7 +2175,7 @@ def generateAnswerFile(outputFile):
     content = StringIO()
     fd = open(outputFile,"w")
     content.write("[general]%s"%(os.linesep))
-    for group in GROUPS:
+    for group in controller.getAllGroups():
         for param in group.getAllParams():
             content.write("%s=%s%s" % (param.getKey("CONF_NAME"), param.getKey("DEFAULT_VALUE"), os.linesep))
     content.seek(0)
@@ -2290,7 +2208,7 @@ def _checkAvailableMemory():
 
     if availableMemory < basedefs.CONST_WARN_MEMORY_GB:
         logging.warn("There is less then %s available memory " % basedefs.CONST_WARN_MEMORY_GB)
-        messages.append(output_messages.WARN_LOW_MEMORY)
+        controller.MESSAGES.append(output_messages.WARN_LOW_MEMORY)
 
 def initCmdLineParser():
     """
@@ -2307,7 +2225,7 @@ def initCmdLineParser():
                                             configuration file. using this option excludes all other option")
 
     # For each group, create a group option
-    for group in GROUPS:
+    for group in controller.getAllGroups():
         groupParser = OptionGroup(parser, group.getKey("DESCRIPTION"))
 
         for param in group.getAllParams():
@@ -2325,6 +2243,45 @@ def initCmdLineParser():
         parser.add_option_group(groupParser)
 
     return parser
+
+def plugin_compare(x, y):
+    """
+    Used to sort the plugin file list
+    according to the number at the end of the plugin module
+    """
+    x_match = re.search(".+\_(\d\d\d)", x)
+    x_cmp = x_match.group(1)
+    y_match = re.search(".+\_(\d\d\d)", y)
+    y_cmp = y_match.group(1)
+    return int(x_cmp) - int(y_cmp)
+
+def loadPlugins():
+    """
+    Load All plugins from ./plugins
+    """
+    sys.path.append(basedefs.DIR_PLUGINS)
+    fileList = sorted(os.listdir(basedefs.DIR_PLUGINS), cmp=plugin_compare)
+    for item in fileList:
+        # Looking for files that end with ###.py, example: a_plugin_100.py
+        match = re.search("^(.+\_\d\d\d)\.py$", item)
+        if match:
+            try:
+                moduleToLoad = match.group(1)
+                logging.debug("importing module %s, from file %s", moduleToLoad, item)
+                moduleobj = __import__(moduleToLoad)
+                moduleobj.__file__ = os.path.join(basedefs.DIR_PLUGINS, item)
+                globals()[moduleToLoad] = moduleobj
+                checkPlugin(moduleobj)
+                controller.addPlugin(moduleobj)
+            except:
+                 logging.error("Failed to load plugin from file %s", item)
+                 logging.error(traceback.format_exc())
+                 raise Exception("Failed to load plugin from file %s" % item)
+
+def checkPlugin(plugin):
+    for funcName in ['initConfig','initSequences']:
+        if not hasattr(plugin, funcName):
+            raise ImportError("Plugin %s does not contain the %s function" % (plugin.__class__, funcName))
 
 def countCmdLineFlags(options, flag):
     """
@@ -2349,6 +2306,14 @@ def validateSingleFlag(options, flag):
         #replace _ with - for printing's sake
         raise Exception(output_messages.ERR_ONLY_1_FLAG % "--%s" % flag.replace("_","-"))
 
+def initPluginsConfig():
+    for plugin in controller.getAllPlugins():
+        plugin.initConfig(controller)
+
+def initPluginsSequences():
+    for plugin in controller.getAllPlugins():
+        plugin.initSequences(controller)
+
 def initMain():
     #verify that root is the user executing the script - only supported user for now.
     #TODO: check how we can change this to user rhevm
@@ -2357,8 +2322,13 @@ def initMain():
     # Initialize logging
     initLogging() 
 
+    # Load Plugins
+    loadPlugins()
+
     # Initialize configuration
     initConfig()
+
+    initPluginsConfig()
 
     # Validate host has enough memory 
     _checkAvailableMemory()
@@ -2391,7 +2361,7 @@ if __name__ == "__main__":
             else:
                 for key, value in options.__dict__.items():
                     # Replace the _ with - in the string since optparse replace _ with -
-                    for group in GROUPS:
+                    for group in controller.getAllGroups():
                         param = group.getParams("CMD_OPTION", key.replace("_","-"))
                         if len(param) > 0 and value:
                             commandLineValues[param[0].getKey("CONF_NAME")] = value

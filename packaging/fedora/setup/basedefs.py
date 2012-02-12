@@ -31,6 +31,7 @@ DIR_CONFIG="%s/ovirt-engine/conf" % DIR_USR_SHARE
 DIR_JBOSS_RESOURCES="%s/ovirt-engine/resources/jboss" % DIR_USR_SHARE
 DIR_KERBEROS="%s/ovirt-engine/kerberos" % DIR_USR_SHARE
 DIR_JBOSS="/usr/share/jboss-as"
+DIR_PLUGINS="%s/ovirt-engine/scripts/plugins" % DIR_USR_SHARE
 
 DIR_JBOSS_ROOT_WAR_IMAGES_SRC="%s/%s" % (DIR_JBOSS_RESOURCES, "images/")
 DIR_JBOSS_ROOT_WAR="%s/standalone/deployments/ROOT.war" % DIR_JBOSS
@@ -41,7 +42,7 @@ DIR_DB_BACKUPS="%s/ovirt-engine/db-backups" % DIR_USR_SHARE
 DIR_ENGINE_CONFIG="%s/ovirt-engine/engine-config/" % DIR_USR_SHARE
 DIR_RHEVM_CONFIG_CONF="/etc/ovirt-engine/engine-config/"
 DIR_OVIRT_PKI="/etc/pki/ovirt-engine"
-DIR_MODULES_SRC="%s/ovirt-engine/resources/jboss/modules"  % DIR_USR_SHARE
+DIR_MODULES_SRC="%s/ovirt-engine/resources/jboss/modules" % DIR_USR_SHARE
 DIR_MODULES_DEST="%s/modules" % DIR_JBOSS
 
 
