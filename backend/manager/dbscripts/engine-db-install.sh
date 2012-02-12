@@ -36,6 +36,7 @@ TABLE_NAME=vdc_options
 DB_NAME=engine
 SYSTEMCTL=/bin/systemctl
 PGSQL_SERVICE="/etc/init.d/postgresql"
+SYSTEMD_PGSQL_SERVICE=postgresql.service
 
 #Figure out if we're support systemd
 SYSTEMD_SUPPORT=0
@@ -182,18 +183,30 @@ startPgsqlService()
 	USER=$1
 	DB=$2
 	echo "[$SCRIPT_NAME] stop postgres service." >> $LOG_FILE
-	$PGSQL_SERVICE stop >> $LOG_FILE 2>&1
+	if [ $SYSTEMD_SUPPORT -eq 1 ]
+	then
+		$SYSTEMCTL stop $SYSTEMD_PGSQL_SERVICE >> $LOG_FILE 2>&1
+	else 
+		$PGSQL_SERVICE stop >> $LOG_FILE 2>&1
+	fi
 
     echo "[$SCRIPT_NAME] starting postgres service." >> $LOG_FILE
-    $PGSQL_SERVICE start >> $LOG_FILE 2>&1
-	_verifyRC $? "failed starting postgresql service"
+	if [ $SYSTEMD_SUPPORT -eq 1 ]
+	then
+		$SYSTEMCTL start $SYSTEMD_PGSQL_SERVICE >> $LOG_FILE 2>&1
+		rc=$?
+	else
+	    $PGSQL_SERVICE start >> $LOG_FILE 2>&1
+		rc=$?
+	fi
+	_verifyRC $rc "failed starting postgresql service"
 
     #verify that the postgres service is up before continuing
     SERVICE_UP=0
     for i in {1..20}
     do
        echo "[$SCRIPT_NAME] validating that postgres service is running...retry $i" >> $LOG_FILE
-       $PSQL -U $USER -d $DB -c "select 1">> $LOG_FILE 2>&1
+      $PSQL -U $USER -d $DB -c "select 1">> $LOG_FILE 2>&1
        if [[ $? == 0 ]]
        then
             SERVICE_UP=1
