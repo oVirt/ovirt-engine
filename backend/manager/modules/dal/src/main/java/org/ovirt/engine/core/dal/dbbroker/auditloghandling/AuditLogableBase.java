@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -444,5 +444,5 @@ public class AuditLogableBase extends TimeoutBase {
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(AuditLogableBase.class);
+    private static Log log = LogFactory.getLog(AuditLogableBase.class);
 }

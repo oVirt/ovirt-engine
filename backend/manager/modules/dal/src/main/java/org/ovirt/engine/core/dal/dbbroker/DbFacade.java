@@ -37,8 +37,8 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.ActionGroupDAO;
 import org.ovirt.engine.core.dao.AdGroupDAO;
@@ -104,7 +104,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 public class DbFacade {
 
     @SuppressWarnings("unused")
-    private static final LogCompat log = LogFactoryCompat.getLog(DbFacade.class);
+    private static final Log log = LogFactory.getLog(DbFacade.class);
 
     @SuppressWarnings("serial")
     private final static Map<Class<?>, Class<?>> mapEntityToDao = new HashMap<Class<?>, Class<?>>()

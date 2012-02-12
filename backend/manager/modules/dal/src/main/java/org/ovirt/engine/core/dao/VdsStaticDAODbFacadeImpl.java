@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -320,6 +320,6 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
         return result;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(VdsStaticDAODbFacadeImpl.class);
+    private static Log log = LogFactory.getLog(VdsStaticDAODbFacadeImpl.class);
 
 }

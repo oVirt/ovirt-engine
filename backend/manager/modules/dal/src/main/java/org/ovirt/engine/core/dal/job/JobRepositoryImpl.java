@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
@@ -27,7 +27,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  */
 public class JobRepositoryImpl implements JobRepository {
 
-    private static LogCompat log = LogFactoryCompat.getLog(JobRepositoryImpl.class);
+    private static Log log = LogFactory.getLog(JobRepositoryImpl.class);
 
     private JobDao jobDao;
     private JobSubjectEntityDao jobSubjectEntityDao;

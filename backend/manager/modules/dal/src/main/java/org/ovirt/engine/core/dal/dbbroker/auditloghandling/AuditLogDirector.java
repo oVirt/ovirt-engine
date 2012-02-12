@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DictionaryEntry;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.ResXResourceReader;
@@ -23,7 +23,7 @@ import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public final class AuditLogDirector {
-    private static LogCompat log = LogFactoryCompat.getLog(AuditLogDirector.class);
+    private static Log log = LogFactory.getLog(AuditLogDirector.class);
     private static Map<AuditLogType, String> mMessages = new EnumMap<AuditLogType, String>(AuditLogType.class);
     private static Map<AuditLogType, AuditLogSeverity> mSeverities = new EnumMap<AuditLogType, AuditLogSeverity>(AuditLogType.class);
     private static final Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match ${<alphanumeric>...}

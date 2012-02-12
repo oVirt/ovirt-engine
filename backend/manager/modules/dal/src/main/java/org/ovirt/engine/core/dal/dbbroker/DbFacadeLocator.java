@@ -8,8 +8,8 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.ResourceUtils;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
@@ -23,7 +23,7 @@ import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 public class DbFacadeLocator {
 
     private static DbFacade dbFacade;
-    private static final LogCompat log = LogFactoryCompat.getLog(DbFacadeLocator.class);
+    private static final Log log = LogFactory.getLog(DbFacadeLocator.class);
 
     static {
         try {

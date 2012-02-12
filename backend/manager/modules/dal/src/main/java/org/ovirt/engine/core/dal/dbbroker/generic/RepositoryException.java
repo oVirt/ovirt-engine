@@ -26,6 +26,6 @@ public class RepositoryException extends ApplicationException implements java.io
     // {
     // super(info, context);
     // }
-    // private static LogCompat log =
-    // LogFactoryCompat.getLog(RepositoryException.class);
+    // private static Log log =
+    // LogFactory.getLog(RepositoryException.class);
 }

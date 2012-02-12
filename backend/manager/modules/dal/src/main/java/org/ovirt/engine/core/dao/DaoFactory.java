@@ -4,12 +4,12 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ResourceUtils;
 
 public class DaoFactory {
-    private static LogCompat log = LogFactoryCompat.getLog(DaoFactory.class);
+    private static Log log = LogFactory.getLog(DaoFactory.class);
 
     private static final String ENGINE_DAOS_CONFIGURATION_FILE = "engine-daos.properties";
 

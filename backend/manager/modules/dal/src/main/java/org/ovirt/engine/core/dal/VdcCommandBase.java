@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.dal;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
@@ -66,5 +66,5 @@ public abstract class VdcCommandBase implements RollbackHandler {
         log.errorFormat("Command {1} Rollbacked", getCommandName());
     }
 
-    protected LogCompat log = LogFactoryCompat.getLog(getClass());
+    protected Log log = LogFactory.getLog(getClass());
 }

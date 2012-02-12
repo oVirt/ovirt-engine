@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.utils.ReflectionUtils;
@@ -26,7 +26,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  *
  */
 public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTaskDAO {
-    private static LogCompat log = LogFactoryCompat
+    private static Log log = LogFactory
                                             .getLog(AsyncTaskDAODbFacadeImpl.class);
 
     private static class AsyncTaskRowMapper implements ParameterizedRowMapper<async_tasks> {
