@@ -5,8 +5,8 @@ import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveParameters;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDriveParameters>
         extends QueriesCommandBase<P> {
@@ -41,5 +41,5 @@ public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDrivePar
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(GetAllVmSnapshotsByDriveQuery.class);
+    private static Log log = LogFactory.getLog(GetAllVmSnapshotsByDriveQuery.class);
 }

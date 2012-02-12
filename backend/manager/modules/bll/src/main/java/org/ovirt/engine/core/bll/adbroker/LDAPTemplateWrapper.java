@@ -8,8 +8,8 @@ import javax.naming.directory.SearchControls;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.springframework.ldap.control.PagedResultsCookie;
 import org.springframework.ldap.control.PagedResultsDirContextProcessor;
 import org.springframework.ldap.core.LdapTemplate;
@@ -20,7 +20,7 @@ import org.springframework.ldap.core.support.SingleContextSource;
 
 public abstract class LDAPTemplateWrapper {
 
-    private static LogCompat log = LogFactoryCompat.getLog(LDAPTemplateWrapper.class);
+    private static Log log = LogFactory.getLog(LDAPTemplateWrapper.class);
 
     protected LdapTemplate ldapTemplate;
     protected LdapContextSource contextSource;

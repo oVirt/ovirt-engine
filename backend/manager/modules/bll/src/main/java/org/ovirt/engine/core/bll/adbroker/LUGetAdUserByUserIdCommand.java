@@ -3,13 +3,13 @@ package org.ovirt.engine.core.bll.adbroker;
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.compat.*;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 import org.ovirt.engine.core.utils.jwin32.*;
 
 public class LUGetAdUserByUserIdCommand extends LUBrokerCommandBase {
-    private static LogCompat log = LogFactoryCompat.getLog(LUGetAdUserByUserIdCommand.class);
+    private static Log log = LogFactory.getLog(LUGetAdUserByUserIdCommand.class);
 
     private Guid getUserId() {
         return ((LdapSearchByIdParameters) getParameters()).getId();

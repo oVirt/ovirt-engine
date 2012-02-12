@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.queries.GetAdGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -29,7 +29,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
  * This class handle desktop pool of time leased typ
  */
 public final class TimeLeasedVmPoolManager {
-    private static LogCompat log = LogFactoryCompat.getLog(TimeLeasedVmPoolManager.class);
+    private static Log log = LogFactory.getLog(TimeLeasedVmPoolManager.class);
 
     private static final TimeLeasedVmPoolManager _instance = new TimeLeasedVmPoolManager();
 

@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.vdscommands.RefreshStoragePoolVDSCommandPara
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class RefreshStoragePoolAndDisconnectAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
     public RefreshStoragePoolAndDisconnectAsyncOperation(java.util.ArrayList<VDS> vdss, storage_domains domain,
@@ -40,5 +40,5 @@ public class RefreshStoragePoolAndDisconnectAsyncOperation extends ActivateDeact
 
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(RefreshStoragePoolAndDisconnectAsyncOperation.class);
+    private static Log log = LogFactory.getLog(RefreshStoragePoolAndDisconnectAsyncOperation.class);
 }

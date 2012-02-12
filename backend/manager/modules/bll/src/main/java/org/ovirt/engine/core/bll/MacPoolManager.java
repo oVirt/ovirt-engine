@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.LongCompat;
 import org.ovirt.engine.core.compat.NumberStyles;
 import org.ovirt.engine.core.compat.RefObject;
@@ -205,5 +205,5 @@ public class MacPoolManager {
         return mAllocatedMacs.contains(mac) || mAllocatedCustomMacs.contains(mac);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(MacPoolManager.class);
+    private static Log log = LogFactory.getLog(MacPoolManager.class);
 }

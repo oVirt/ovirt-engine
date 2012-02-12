@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -36,7 +36,7 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
     private static Pattern isoPattern = Pattern.compile(OVIRT_ISO_PATTERN);
     private static final String OVIRT_ISO_VERSION_PATTERN = "version-.*.txt";
     private static Pattern isoVersionPattern = Pattern.compile(OVIRT_ISO_VERSION_PATTERN);
-    private static LogCompat log = LogFactoryCompat.getLog(GetoVirtISOsQuery.class);
+    private static Log log = LogFactory.getLog(GetoVirtISOsQuery.class);
 
     public GetoVirtISOsQuery(P parameters) {
         super(parameters);

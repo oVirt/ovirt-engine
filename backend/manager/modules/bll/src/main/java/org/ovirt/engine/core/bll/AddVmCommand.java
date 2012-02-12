@@ -41,8 +41,8 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.GetImageDomainsListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -576,5 +576,5 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(AddVmCommand.class);
+    private static Log log = LogFactory.getLog(AddVmCommand.class);
 }

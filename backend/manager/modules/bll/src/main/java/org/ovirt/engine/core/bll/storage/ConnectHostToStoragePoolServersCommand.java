@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 /**
@@ -23,7 +23,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 public class ConnectHostToStoragePoolServersCommand<T extends StoragePoolParametersBase> extends
         ConnectHostToStoragePooServerCommandBase<T> {
 
-    private static LogCompat log = LogFactoryCompat.getLog(ConnectHostToStoragePoolServersCommand.class);
+    private static Log log = LogFactory.getLog(ConnectHostToStoragePoolServersCommand.class);
 
     public ConnectHostToStoragePoolServersCommand(T parameters) {
         super(parameters);

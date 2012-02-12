@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParamet
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class SPMAsyncTask {
@@ -518,5 +518,5 @@ public class SPMAsyncTask {
         log.errorFormat("SPMAsyncTask::ClearAsyncTask: Clearing task '{0}' failed.", getTaskID());
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(SPMAsyncTask.class);
+    private static Log log = LogFactory.getLog(SPMAsyncTask.class);
 }

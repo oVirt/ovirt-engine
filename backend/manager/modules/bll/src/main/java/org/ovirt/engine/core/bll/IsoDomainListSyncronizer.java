@@ -27,8 +27,8 @@ import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -699,5 +699,5 @@ public class IsoDomainListSyncronizer {
         AuditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_FILE_LIST_SUCCEEDED);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(IsoDomainListSyncronizer.class);
+    private static Log log = LogFactory.getLog(IsoDomainListSyncronizer.class);
 }

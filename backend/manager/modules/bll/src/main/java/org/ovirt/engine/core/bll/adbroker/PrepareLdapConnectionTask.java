@@ -5,8 +5,8 @@ import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.springframework.ldap.core.support.LdapContextSource;
 
@@ -28,7 +28,7 @@ public class PrepareLdapConnectionTask implements Callable<LDAPTemplateWrapper> 
     private final String domain;
     private final URI ldapURI;
 
-    private static final LogCompat log = LogFactoryCompat.getLog(PrepareLdapConnectionTask.class);
+    private static final Log log = LogFactory.getLog(PrepareLdapConnectionTask.class);
 
     @Override
     public LDAPTemplateWrapper call() throws Exception {

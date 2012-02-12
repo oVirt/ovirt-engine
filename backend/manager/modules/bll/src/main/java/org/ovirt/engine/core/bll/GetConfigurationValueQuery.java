@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 //CanUpdateFieldVds
 
@@ -32,5 +32,5 @@ public class GetConfigurationValueQuery<P extends GetConfigurationValueParameter
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(GetConfigurationValueQuery.class);
+    private static Log log = LogFactory.getLog(GetConfigurationValueQuery.class);
 }

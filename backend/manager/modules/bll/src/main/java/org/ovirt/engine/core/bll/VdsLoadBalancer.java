@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -18,7 +18,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
  * activated only if load balancing enabled by configuration.
  */
 public final class VdsLoadBalancer {
-    private static LogCompat log = LogFactoryCompat.getLog(VdsLoadBalancer.class);
+    private static Log log = LogFactory.getLog(VdsLoadBalancer.class);
 
     private static VdsLoadBalancer instance = new VdsLoadBalancer();
 

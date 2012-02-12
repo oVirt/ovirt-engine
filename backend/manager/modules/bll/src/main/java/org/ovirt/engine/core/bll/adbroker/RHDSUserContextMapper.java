@@ -19,14 +19,14 @@ import javax.naming.directory.Attributes;
 
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 
 public class RHDSUserContextMapper implements ContextMapper {
 
-    private static LogCompat log = LogFactoryCompat.getLog(LdapBrokerImpl.class);
+    private static Log log = LogFactory.getLog(LdapBrokerImpl.class);
 
     public final static String[] USERS_ATTRIBUTE_FILTER = { nsUniqueId.name(), uid.name(),
             givenname.name(), departmentnumber.name(), title.name(), mail.name(), memberof.name(),

@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.utils.EnumUtils;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class GetDiskConfigurationListQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     public GetDiskConfigurationListQuery(P parameters) {
@@ -43,5 +43,5 @@ public class GetDiskConfigurationListQuery<P extends VdcQueryParametersBase> ext
         getQueryReturnValue().setReturnValue(result);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(GetDiskConfigurationListQuery.class);
+    private static Log log = LogFactory.getLog(GetDiskConfigurationListQuery.class);
 }

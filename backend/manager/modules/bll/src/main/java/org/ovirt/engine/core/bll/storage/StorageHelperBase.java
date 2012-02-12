@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
+import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -120,7 +120,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
         return connectionField;
     }
 
-    protected void printLog(LogCompat logger, String connectionField, String errorCode) {
+    protected void printLog(Log logger, String connectionField, String errorCode) {
         String translatedError = getTranslatedStorageError(errorCode);
         logger.errorFormat(
                  "The connection with details {0} failed because of error code {1} and error message is: {2}",

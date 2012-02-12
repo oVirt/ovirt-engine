@@ -7,8 +7,8 @@ import java.util.concurrent.CountDownLatch;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class MultipleActionsRunner {
@@ -142,5 +142,5 @@ public class MultipleActionsRunner {
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(MultipleActionsRunner.class);
+    private static Log log = LogFactory.getLog(MultipleActionsRunner.class);
 }

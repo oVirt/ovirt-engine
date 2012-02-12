@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.storage;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class ConnectSingleAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
 
@@ -23,5 +23,5 @@ public class ConnectSingleAsyncOperation extends ActivateDeactivateSingleAsyncOp
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(ConnectSingleAsyncOperation.class);
+    private static Log log = LogFactory.getLog(ConnectSingleAsyncOperation.class);
 }

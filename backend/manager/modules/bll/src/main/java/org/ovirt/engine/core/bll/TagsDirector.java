@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.TagDAO;
@@ -25,7 +25,7 @@ enum TagReturnValueIndicator {
 public class TagsDirector {
 
 
-    private static LogCompat log = LogFactoryCompat.getLog(TagsDirector.class);
+    private static Log log = LogFactory.getLog(TagsDirector.class);
 
     protected static final Guid ROOT_TAG_ID = Guid.Empty;
 

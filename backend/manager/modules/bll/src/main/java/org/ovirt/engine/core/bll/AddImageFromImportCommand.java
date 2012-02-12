@@ -5,8 +5,8 @@ import org.ovirt.engine.core.common.vdscommands.ImportCandidateVDSCommandParamet
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 @InternalCommandAttribute
 public class AddImageFromImportCommand<T extends AddImageFromImportParameters> extends AddImageFromScratchCommand<T> {
@@ -42,5 +42,5 @@ public class AddImageFromImportCommand<T extends AddImageFromImportParameters> e
         return ret.getSucceeded();
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(AddImageFromImportCommand.class);
+    private static Log log = LogFactory.getLog(AddImageFromImportCommand.class);
 }

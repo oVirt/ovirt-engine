@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -302,5 +302,5 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         : AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_FAILED;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(DeactivateStorageDomainCommand.class);
+    private static Log log = LogFactory.getLog(DeactivateStorageDomainCommand.class);
 }

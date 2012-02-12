@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class GetVdsByVdsIdQuery<P extends GetVdsByVdsIdParameters> extends QueriesCommandBase<P> {
     public GetVdsByVdsIdQuery(P parameters) {
@@ -23,5 +23,5 @@ public class GetVdsByVdsIdQuery<P extends GetVdsByVdsIdParameters> extends Queri
         getQueryReturnValue().setReturnValue(vds);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(GetVdsByVdsIdQuery.class);
+    private static Log log = LogFactory.getLog(GetVdsByVdsIdQuery.class);
 }

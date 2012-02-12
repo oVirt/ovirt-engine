@@ -28,8 +28,8 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -292,7 +292,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(MaintananceNumberOfVdssCommand.class);
+    private static Log log = LogFactory.getLog(MaintananceNumberOfVdssCommand.class);
 
     @Override
     public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {

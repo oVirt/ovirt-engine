@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 
 public abstract class VmOperationCommandBase<T extends VmOperationParameterBase> extends VmCommand<T> {
@@ -13,7 +13,7 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
     private static final long serialVersionUID = -5440497411332483108L;
 
     // The log:
-    private static final LogCompat log = LogFactoryCompat.getLog(VmOperationCommandBase.class);
+    private static final Log log = LogFactory.getLog(VmOperationCommandBase.class);
 
     /**
      * Constructor for command creation when compensation is applied on startup

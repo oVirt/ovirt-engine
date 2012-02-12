@@ -49,8 +49,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -487,5 +487,5 @@ public class AddVmCommandTest {
         spy.setVmTemplateId(Guid.NewGuid());
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(AddVmCommandTest.class);
+    private static Log log = LogFactory.getLog(AddVmCommandTest.class);
 }

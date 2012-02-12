@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.GetDevicesVisibilityVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -210,5 +210,5 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         return AuditLogType.USER_CONNECT_HOSTS_TO_LUN_FAILED;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(ConnectAllHostsToLunCommand.class);
+    private static Log log = LogFactory.getLog(ConnectAllHostsToLunCommand.class);
 }

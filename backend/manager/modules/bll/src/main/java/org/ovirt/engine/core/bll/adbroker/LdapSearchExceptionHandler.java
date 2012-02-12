@@ -6,15 +6,15 @@ import javax.naming.OperationNotSupportedException;
 import javax.security.sasl.SaslException;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.CommunicationException;
 
 public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchExceptionHandlingResponse> {
 
-    private static final LogCompat log = LogFactoryCompat.getLog(LdapSearchExceptionHandler.class);
+    private static final Log log = LogFactory.getLog(LdapSearchExceptionHandler.class);
 
     @Override
     public LdapSearchExceptionHandlingResponse handle(Exception e) {

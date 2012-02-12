@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.vdscommands.SpmStopVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -153,5 +153,5 @@ public class FencingExecutor {
                                     managementOptions, actionType));
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(FencingExecutor.class);
+    private static Log log = LogFactory.getLog(FencingExecutor.class);
 }

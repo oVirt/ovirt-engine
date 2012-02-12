@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class VmPoolHandler {
@@ -48,5 +48,5 @@ public class VmPoolHandler {
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(VmPoolHandler.class);
+    private static Log log = LogFactory.getLog(VmPoolHandler.class);
 }

@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.adbroker;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.springframework.ldap.core.support.LdapContextSource;
 
 /**
@@ -16,7 +16,7 @@ public class LDAPTemplateWrapperFactory {
 
     private static HashMap<LDAPSecurityAuthentication, Class<? extends LDAPTemplateWrapper>> classesOfLDAPTemplateWrappers =
             new HashMap<LDAPSecurityAuthentication, Class<? extends LDAPTemplateWrapper>>();
-    private static LogCompat log = LogFactoryCompat.getLog(LDAPTemplateWrapperFactory.class);
+    private static Log log = LogFactory.getLog(LDAPTemplateWrapperFactory.class);
 
     static {
         registerClass(LDAPSecurityAuthentication.GSSAPI, GSSAPILdapTemplateWrapper.class);

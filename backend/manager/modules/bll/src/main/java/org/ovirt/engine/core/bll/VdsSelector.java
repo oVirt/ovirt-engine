@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.businessentities.VdsVersion;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Version;
@@ -348,5 +348,5 @@ public class VdsSelector {
         return bestVDS.getvds_id();
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(VdsSelector.class);
+    private static Log log = LogFactory.getLog(VdsSelector.class);
 }

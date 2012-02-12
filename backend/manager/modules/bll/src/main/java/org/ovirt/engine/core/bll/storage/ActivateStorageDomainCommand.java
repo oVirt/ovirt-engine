@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.vdscommands.ActivateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -26,7 +26,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
 
-    private static LogCompat log = LogFactoryCompat.getLog(ActivateStorageDomainCommand.class);
+    private static Log log = LogFactory.getLog(ActivateStorageDomainCommand.class);
 
     public ActivateStorageDomainCommand(T parameters) {
         super(parameters);

@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.Path;
@@ -23,7 +23,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 @NonTransactiveCommandAttribute
 public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsCommand<T> {
 
-    private static LogCompat log = LogFactoryCompat.getLog(InstallVdsCommand.class);
+    private static Log log = LogFactory.getLog(InstallVdsCommand.class);
     protected VdsInstaller _vdsInstaller;
     private static final String GENERIC_ERROR = "Please refer to log files for further details.";
 

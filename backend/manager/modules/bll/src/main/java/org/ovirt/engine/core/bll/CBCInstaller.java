@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class CBCInstaller extends VdsInstaller {
     private String createCertReqCommand = Config.<String> GetValue(ConfigValues.CBCCertificateScriptName)
@@ -75,5 +75,5 @@ public class CBCInstaller extends VdsInstaller {
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(CBCInstaller.class);
+    private static Log log = LogFactory.getLog(CBCInstaller.class);
 }

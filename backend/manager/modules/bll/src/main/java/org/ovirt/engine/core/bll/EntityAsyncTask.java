@@ -6,8 +6,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.asynctasks.SetTaskGroupStatusVisitor;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 /**
@@ -227,5 +227,5 @@ public class EntityAsyncTask extends SPMAsyncTask {
     protected void OnCurrentTaskDoesNotExist() {
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(EntityAsyncTask.class);
+    private static Log log = LogFactory.getLog(EntityAsyncTask.class);
 }

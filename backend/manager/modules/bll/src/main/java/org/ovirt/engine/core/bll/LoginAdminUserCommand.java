@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.LoginUserParameters;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class LoginAdminUserCommand<T extends LoginUserParameters> extends LoginUserCommand<T> {
 
-    private static LogCompat log = LogFactoryCompat.getLog(LoginAdminUserCommand.class);
+    private static Log log = LogFactory.getLog(LoginAdminUserCommand.class);
 
     public LoginAdminUserCommand(T parameters) {
         super(parameters);

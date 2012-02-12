@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -304,5 +304,5 @@ public class DbUserCacheManager {
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(DbUserCacheManager.class);
+    private static Log log = LogFactory.getLog(DbUserCacheManager.class);
 }

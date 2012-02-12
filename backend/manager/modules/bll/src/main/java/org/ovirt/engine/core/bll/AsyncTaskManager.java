@@ -33,8 +33,8 @@ import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -48,7 +48,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
  * AsyncTaskManager: Singleton, manages all tasks in the system.
  */
 public final class AsyncTaskManager {
-    private static LogCompat log = LogFactoryCompat.getLog(AsyncTaskManager.class);
+    private static Log log = LogFactory.getLog(AsyncTaskManager.class);
 
     /** Map which consist all tasks that currently are monitored **/
     private Map<Guid, SPMAsyncTask> _tasks;

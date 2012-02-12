@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmMonitorCommandVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -357,5 +357,5 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(RunVmCommandBase.class);
+    private static Log log = LogFactory.getLog(RunVmCommandBase.class);
 }

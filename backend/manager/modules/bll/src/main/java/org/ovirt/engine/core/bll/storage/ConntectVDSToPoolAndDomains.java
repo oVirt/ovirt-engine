@@ -7,13 +7,13 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class ConntectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOperation {
 
-    private static LogCompat log = LogFactoryCompat.getLog(ConntectVDSToPoolAndDomains.class);
+    private static Log log = LogFactory.getLog(ConntectVDSToPoolAndDomains.class);
 
     public ConntectVDSToPoolAndDomains(ArrayList<VDS> vdss, storage_domains domain, storage_pool storagePool) {
         super(vdss, domain, storagePool);

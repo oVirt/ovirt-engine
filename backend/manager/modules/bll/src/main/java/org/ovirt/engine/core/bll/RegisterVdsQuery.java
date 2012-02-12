@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.RegisterVdsParameters;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -683,6 +683,6 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         return getQueryReturnValue().getSucceeded() ? AuditLogType.VDS_REGISTER_SUCCEEDED : _error;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(RegisterVdsQuery.class);
+    private static Log log = LogFactory.getLog(RegisterVdsQuery.class);
 
 }

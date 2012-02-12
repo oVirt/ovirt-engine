@@ -31,8 +31,8 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -398,6 +398,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return super.getValidationGroups();
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(AddVdsCommand.class);
+    private static Log log = LogFactory.getLog(AddVdsCommand.class);
 
 }

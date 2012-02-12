@@ -45,8 +45,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -96,7 +96,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private CompensationContext compensationContext;
     private Guid commandId = Guid.NewGuid();
 
-    protected LogCompat log = LogFactoryCompat.getLog(getClass());
+    protected Log log = LogFactory.getLog(getClass());
 
     protected CommandActionState getActionState() {
         return _actionState;

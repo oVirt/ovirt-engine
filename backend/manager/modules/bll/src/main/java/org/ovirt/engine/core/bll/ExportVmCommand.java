@@ -28,8 +28,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -483,5 +483,5 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         setSucceeded(true);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(ExportVmCommand.class);
+    private static Log log = LogFactory.getLog(ExportVmCommand.class);
 }

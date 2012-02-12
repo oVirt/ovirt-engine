@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
     private java.util.ArrayList<Guid> _vdsIdsToSetNonOperational;
@@ -65,5 +65,5 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(RefreshPoolSingleAsyncOperation.class);
+    private static Log log = LogFactory.getLog(RefreshPoolSingleAsyncOperation.class);
 }

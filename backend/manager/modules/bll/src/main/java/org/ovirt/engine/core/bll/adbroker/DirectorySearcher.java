@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class DirectorySearcher {
 
@@ -16,7 +16,7 @@ public class DirectorySearcher {
     private boolean explicitAuth = false;
     private String explicitBaseDN;
 
-    private static final LogCompat log = LogFactoryCompat.getLog(DirectorySearcher.class);
+    private static final Log log = LogFactory.getLog(DirectorySearcher.class);
 
     private final LdapCredentials ldapCredentials;
     private Exception ex;

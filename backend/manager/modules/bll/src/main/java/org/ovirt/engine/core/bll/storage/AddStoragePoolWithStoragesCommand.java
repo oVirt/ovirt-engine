@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.vdscommands.CreateStoragePoolVDSCommandParam
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -302,5 +302,5 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(AddStoragePoolWithStoragesCommand.class);
+    private static Log log = LogFactory.getLog(AddStoragePoolWithStoragesCommand.class);
 }

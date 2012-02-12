@@ -18,8 +18,8 @@ import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -187,5 +187,5 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         return Collections.singletonMap(getVdsId(), VdcObjectType.VDS);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(VdsCommand.class);
+    private static Log log = LogFactory.getLog(VdsCommand.class);
 }

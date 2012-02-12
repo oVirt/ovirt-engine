@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 
 public class OVirtInstaller extends VdsInstaller {
@@ -62,5 +62,5 @@ public class OVirtInstaller extends VdsInstaller {
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(OVirtInstaller.class);
+    private static Log log = LogFactory.getLog(OVirtInstaller.class);
 }

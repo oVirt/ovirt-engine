@@ -14,12 +14,12 @@ import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class IPAGroupContextMapper implements ContextMapper {
 
-    private static LogCompat log = LogFactoryCompat.getLog(LdapBrokerImpl.class);
+    private static Log log = LogFactory.getLog(LdapBrokerImpl.class);
 
     public final static String[] GROUP_ATTRIBUTE_FILTER = { memberof.name(), ipaUniqueId.name() };
 

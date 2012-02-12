@@ -13,8 +13,8 @@ import org.apache.commons.configuration.ConfigurationUtils;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 
@@ -33,7 +33,7 @@ public class LdapTestsSetup {
     private Map<String, Group> groups = new HashMap<String, Group>();
     private Map<String, String> ldapConfiguration = new HashMap<String, String>();
 
-    private static LogCompat log = LogFactoryCompat.getLog(LdapTestsSetup.class);
+    private static Log log = LogFactory.getLog(LdapTestsSetup.class);
 
     public LdapTestsSetup() {
         String confFile = System.getenv("LDAP_TESTER_PROPERTIES_FILE");

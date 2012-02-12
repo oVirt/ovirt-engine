@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
@@ -40,7 +40,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
 
-    private static LogCompat log = LogFactoryCompat.getLog(RemoveStoragePoolCommand.class);
+    private static Log log = LogFactory.getLog(RemoveStoragePoolCommand.class);
 
     public RemoveStoragePoolCommand(T parameters) {
         super(parameters);

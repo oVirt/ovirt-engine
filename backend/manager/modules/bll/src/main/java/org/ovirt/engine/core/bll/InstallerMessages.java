@@ -7,8 +7,8 @@ import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class InstallerMessages {
     private Guid _vdsId;
@@ -84,5 +84,5 @@ public class InstallerMessages {
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(InstallerMessages.class);
+    private static Log log = LogFactory.getLog(InstallerMessages.class);
 }

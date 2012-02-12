@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.adbroker;
 import java.io.File;
 
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 import sun.security.krb5.Config;
 import sun.security.krb5.KrbException;
@@ -34,7 +34,7 @@ import javax.ejb.ConcurrencyManagementType;
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class KerberosManager implements KerberosManagerSericeManagmentMBean {
 
-    private static LogCompat log = LogFactoryCompat.getLog(KerberosManager.class);
+    private static Log log = LogFactory.getLog(KerberosManager.class);
 
     private boolean isKerberosAuth() {
         boolean isKerberosAuth = false;

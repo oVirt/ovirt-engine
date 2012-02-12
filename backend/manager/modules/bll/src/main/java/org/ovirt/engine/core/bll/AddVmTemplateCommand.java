@@ -30,8 +30,8 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -351,7 +351,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         setSucceeded(true);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(AddVmTemplateCommand.class);
+    private static Log log = LogFactory.getLog(AddVmTemplateCommand.class);
 
     /**
      * in case of non-existing cluster the backend query will return a null

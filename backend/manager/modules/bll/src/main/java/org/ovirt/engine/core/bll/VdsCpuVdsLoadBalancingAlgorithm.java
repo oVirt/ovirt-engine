@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.linq.DefaultMapper;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -185,7 +185,7 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
         return result;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(VdsCpuVdsLoadBalancingAlgorithm.class);
+    private static Log log = LogFactory.getLog(VdsCpuVdsLoadBalancingAlgorithm.class);
 
     /**
      * Comparator that compares the CPU usage of two hosts, with regard to the number of CPUs each host has and it's

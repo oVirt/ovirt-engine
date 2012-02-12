@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.queries.GetPowerClientByClientInfoParameters
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @XmlAccessorType(XmlAccessType.NONE)
@@ -133,5 +133,5 @@ public class PowerClientMigrateOnConnectCheckCommand<T extends PowerClientMigrat
                 : AuditLogType.VM_MIGRATION_ON_CONNECT_CHECK_FAILED;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(PowerClientMigrateOnConnectCheckCommand.class);
+    private static Log log = LogFactory.getLog(PowerClientMigrateOnConnectCheckCommand.class);
 }

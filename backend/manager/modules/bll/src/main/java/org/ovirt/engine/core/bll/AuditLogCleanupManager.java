@@ -8,13 +8,13 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 public class AuditLogCleanupManager {
-    private static LogCompat log = LogFactoryCompat.getLog(AuditLogCleanupManager.class);
+    private static Log log = LogFactory.getLog(AuditLogCleanupManager.class);
 
     private static final AuditLogCleanupManager _instance = new AuditLogCleanupManager();
 

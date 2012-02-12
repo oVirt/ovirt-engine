@@ -46,8 +46,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -534,7 +534,7 @@ public class Backend implements BackendInternal, BackendRemote {
         return BackendCallBacksDirector.getInstance().GetAsyncQueryResults();
     }
 
-    private static final LogCompat log = LogFactoryCompat.getLog(Backend.class);
+    private static final Log log = LogFactory.getLog(Backend.class);
 
     @Override
     @ExcludeClassInterceptors

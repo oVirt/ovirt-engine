@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.Helper;
@@ -233,5 +233,5 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         return VdcActionType.MoveMultipleImageGroups;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(MoveVmCommand.class);
+    private static Log log = LogFactory.getLog(MoveVmCommand.class);
 }

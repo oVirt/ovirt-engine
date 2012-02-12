@@ -2,15 +2,15 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import org.ovirt.engine.core.common.businessentities.*;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.jwin32.*;
 
 import com.sun.jna.ptr.*;
 import com.sun.jna.WString;
 
 public class LUGetAdUserByUserNameCommand extends LUBrokerCommandBase {
-    private static LogCompat log = LogFactoryCompat.getLog(LUGetAdUserByUserNameCommand.class);
+    private static Log log = LogFactory.getLog(LUGetAdUserByUserNameCommand.class);
 
     private String getUserName() {
         return ((LdapSearchByUserNameParameters) getParameters()).getUserName();

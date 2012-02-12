@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -95,5 +95,5 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
         return returnValue;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(ForceRemoveStorageDomainCommand.class);
+    private static Log log = LogFactory.getLog(ForceRemoveStorageDomainCommand.class);
 }

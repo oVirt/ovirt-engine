@@ -14,8 +14,8 @@ import javax.naming.directory.SearchResult;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * Anonymous query an LDAP server to get the rootDSE object. rootDSE provides data on the directory server. This query
@@ -26,7 +26,7 @@ public class GetRootDSE {
 
     private Attributes attributes;
 
-    private final static LogCompat log = LogFactoryCompat.getLog(GetRootDSE.class);
+    private final static Log log = LogFactory.getLog(GetRootDSE.class);
 
     public GetRootDSE(URI ldapURI) {
         this.ldapURI = ldapURI;

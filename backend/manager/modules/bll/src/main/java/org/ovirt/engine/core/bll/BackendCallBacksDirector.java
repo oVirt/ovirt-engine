@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.interfaces.IBackendCallBackServer;
 import org.ovirt.engine.core.common.queries.AsyncQueryResults;
 import org.ovirt.engine.core.common.queries.RegisterQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -275,5 +275,5 @@ public final class BackendCallBacksDirector {
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(BackendCallBacksDirector.class);
+    private static Log log = LogFactory.getLog(BackendCallBacksDirector.class);
 }

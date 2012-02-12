@@ -22,8 +22,8 @@ import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -32,7 +32,7 @@ import org.ovirt.engine.core.utils.ThreadUtils;
 
 public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
     private final int SLEEP_BEFORE_FIRST_ATTEMPT=5000;
-    private static LogCompat log = LogFactoryCompat.getLog(FenceVdsBaseCommand.class);
+    private static Log log = LogFactory.getLog(FenceVdsBaseCommand.class);
     protected FencingExecutor _executor;
     protected List<VM> mVmList = null;
     private boolean privateFencingSucceeded;

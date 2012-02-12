@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.ovirt.engine.core.common.interfaces.IBackendCallBackServer;
 import org.ovirt.engine.core.common.queries.IRegisterQueryUpdatedData;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 
 /**
@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.RefObject;
  */
 public class CallBackData {
 
-    private static LogCompat log = LogFactoryCompat.getLog(CallBackData.class);
+    private static Log log = LogFactory.getLog(CallBackData.class);
     private static final String QUERY_TYPE_UNKNOWN = "Unknown";
 
     private String privateSessionId;

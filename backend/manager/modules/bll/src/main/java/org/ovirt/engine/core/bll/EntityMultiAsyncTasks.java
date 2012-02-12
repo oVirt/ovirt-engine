@@ -6,8 +6,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.asynctasks.EndedTasksInfo;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class EntityMultiAsyncTasks {
     private VdcActionType privateActionType = VdcActionType.forValue(0);
@@ -251,5 +251,5 @@ public class EntityMultiAsyncTasks {
         return taskState == AsyncTaskState.Cleared || taskState == AsyncTaskState.ClearFailed;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(EntityMultiAsyncTasks.class);
+    private static Log log = LogFactory.getLog(EntityMultiAsyncTasks.class);
 }

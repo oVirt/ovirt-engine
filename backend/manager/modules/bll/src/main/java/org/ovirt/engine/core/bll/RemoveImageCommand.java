@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParame
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
@@ -143,5 +143,5 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         setSucceeded(true);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(RemoveImageCommand.class);
+    private static Log log = LogFactory.getLog(RemoveImageCommand.class);
 }

@@ -7,15 +7,15 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class VersionSupport implements Serializable {
 
     private static final long serialVersionUID = 8368679686604395114L;
-    private static LogCompat log = LogFactoryCompat.getLog(VersionSupport.class);
+    private static Log log = LogFactory.getLog(VersionSupport.class);
 
     private VersionSupport() {
     }

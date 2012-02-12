@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -115,5 +115,5 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(AttachUserToVmFromPoolAndRunCommand.class);
+    private static Log log = LogFactory.getLog(AttachUserToVmFromPoolAndRunCommand.class);
 }

@@ -6,8 +6,8 @@ import java.util.concurrent.Callable;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 
 public class GetRootDSETask implements Callable<Boolean> {
@@ -16,7 +16,7 @@ public class GetRootDSETask implements Callable<Boolean> {
     private final String domainName;
     private final URI ldapURI;
 
-    private static final LogCompat log = LogFactoryCompat.getLog(GetRootDSETask.class);
+    private static final Log log = LogFactory.getLog(GetRootDSETask.class);
 
     public GetRootDSETask(DirectorySearcher searcher, String domainName, URI ldapURI) {
         super();

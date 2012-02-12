@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.queries.ValueObjectPair;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NotImplementedException;
 
 public class CallbackServer implements IBackendCallBackServer {
@@ -78,7 +78,7 @@ public class CallbackServer implements IBackendCallBackServer {
     private java.util.HashMap<Guid, java.util.ArrayList<ListIVdcQueryableUpdatedData>> queries =
             new java.util.HashMap<Guid, java.util.ArrayList<ListIVdcQueryableUpdatedData>>();
 
-    private static LogCompat log = LogFactoryCompat.getLog(CallbackServer.class);
+    private static Log log = LogFactory.getLog(CallbackServer.class);
 
     // need to remove old queries from queue of registeres searches
     public void ClearQuery(Guid QueryId) {

@@ -42,8 +42,8 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -781,5 +781,5 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         return super.getAuditLogTypeValue();
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(ImportVmCommand.class);
+    private static Log log = LogFactory.getLog(ImportVmCommand.class);
 }

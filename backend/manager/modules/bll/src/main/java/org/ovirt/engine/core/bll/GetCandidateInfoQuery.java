@@ -16,8 +16,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Mapper;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * Gets info on a specified import candidate.
@@ -135,5 +135,5 @@ public class GetCandidateInfoQuery<P extends CandidateInfoParameters> extends Ge
         getQueryReturnValue().setReturnValue(returnVal);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(GetCandidateInfoQuery.class);
+    private static Log log = LogFactory.getLog(GetCandidateInfoQuery.class);
 }

@@ -6,8 +6,8 @@ import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
 public class HandleFailedStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
@@ -53,5 +53,5 @@ public class HandleFailedStorageDomainCommand<T extends StorageDomainPoolParamet
         }
     }
 
-    private LogCompat log = LogFactoryCompat.getLog(getClass());
+    private Log log = LogFactory.getLog(getClass());
 }

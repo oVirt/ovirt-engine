@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public final class AsyncTaskFactory {
     /**
@@ -92,6 +92,6 @@ public final class AsyncTaskFactory {
     // AsyncTaskClassContainerAssemblyName, (taskType == AsyncTaskType.unknown ?
     // SpmAsyncTaskPrefix : EntityAsyncTaskPrefix), AsyncTaskClassPostfix);
     // }
-    private static LogCompat log = LogFactoryCompat.getLog(AsyncTaskFactory.class);
+    private static Log log = LogFactory.getLog(AsyncTaskFactory.class);
 
 }

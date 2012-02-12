@@ -22,12 +22,12 @@ import org.springframework.ldap.core.DirContextAdapter;
 
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class IPAUserContextMapper implements ContextMapper {
 
-    private static LogCompat log = LogFactoryCompat.getLog(LdapBrokerImpl.class);
+    private static Log log = LogFactory.getLog(LdapBrokerImpl.class);
 
     public final static String[] USERS_ATTRIBUTE_FILTER = { ipaUniqueId.name(), krbPrincipalname.name(),
         givenname.name(), department.name(), title.name(), mail.name(), memberof.name(),

@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandPa
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -28,7 +28,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class ISCSIStorageHelper extends StorageHelperBase {
 
-    protected static final LogCompat log = LogFactoryCompat.getLog(ISCSIStorageHelper.class);
+    protected static final Log log = LogFactory.getLog(ISCSIStorageHelper.class);
 
     @Override
     protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {

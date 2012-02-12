@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
 import org.ovirt.engine.core.utils.jwin32.ConvertSidException;
@@ -21,7 +21,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 public abstract class LUBrokerCommandBase extends BrokerCommandBase {
-    private static LogCompat log = LogFactoryCompat.getLog(LUBrokerCommandBase.class);
+    private static Log log = LogFactory.getLog(LUBrokerCommandBase.class);
 
     @Override
     protected String getPROTOCOL() {

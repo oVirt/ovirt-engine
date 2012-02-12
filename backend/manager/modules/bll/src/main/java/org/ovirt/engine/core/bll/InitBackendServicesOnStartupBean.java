@@ -4,8 +4,8 @@ import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.backendinterfaces.IResourceManager;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
@@ -24,7 +24,7 @@ import javax.ejb.Startup;
 @DependsOn({ "Backend", "VdsBroker" })
 public class InitBackendServicesOnStartupBean implements InitBackendServicesOnStartup{
 
-    private static LogCompat log = LogFactoryCompat.getLog(InitBackendServicesOnStartupBean.class);
+    private static Log log = LogFactory.getLog(InitBackendServicesOnStartupBean.class);
 
     /**
      * This method is called upon the bean creation as part

@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 /**
@@ -24,7 +24,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
  */
 public abstract class AdminOperationCommandBase<T extends VdcActionParametersBase> extends CommandBase<T> {
 
-    private static LogCompat log = LogFactoryCompat.getLog(AdminOperationCommandBase.class);
+    private static Log log = LogFactory.getLog(AdminOperationCommandBase.class);
 
     protected AdminOperationCommandBase(T parameters) {
         super(parameters);

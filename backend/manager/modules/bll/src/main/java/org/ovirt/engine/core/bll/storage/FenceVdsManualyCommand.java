@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SpmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
@@ -218,7 +218,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(FenceVdsManualyCommand.class);
+    private static Log log = LogFactory.getLog(FenceVdsManualyCommand.class);
 
     @Override
     public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {

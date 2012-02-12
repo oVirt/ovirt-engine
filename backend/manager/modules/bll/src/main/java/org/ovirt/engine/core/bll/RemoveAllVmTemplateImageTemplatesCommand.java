@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.image_group_storage_domain_map;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -102,5 +102,5 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
         setSucceeded(true);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(RemoveAllVmTemplateImageTemplatesCommand.class);
+    private static Log log = LogFactory.getLog(RemoveAllVmTemplateImageTemplatesCommand.class);
 }

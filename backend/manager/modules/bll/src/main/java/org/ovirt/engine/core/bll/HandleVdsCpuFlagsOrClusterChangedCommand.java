@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -99,5 +99,5 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
         return (!_hasFlags) ? AuditLogType.VDS_CPU_RETRIEVE_FAILED : AuditLogType.VDS_CPU_LOWER_THAN_CLUSTER;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(HandleVdsCpuFlagsOrClusterChangedCommand.class);
+    private static Log log = LogFactory.getLog(HandleVdsCpuFlagsOrClusterChangedCommand.class);
 }

@@ -5,11 +5,11 @@ import java.util.regex.Matcher;
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
 import org.ovirt.engine.core.utils.jwin32.*;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class LUSearchUserByQueryCommand extends LUSearchGroupsByQueryCommand {
-    private static LogCompat log = LogFactoryCompat.getLog(LUSearchUserByQueryCommand.class);
+    private static Log log = LogFactory.getLog(LUSearchUserByQueryCommand.class);
 
     public LUSearchUserByQueryCommand(LdapSearchByQueryParameters parameters) {
         super(parameters);

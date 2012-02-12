@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.dao.PermissionDAO;
@@ -22,7 +22,7 @@ public class MultiLevelAdministrationHandler {
 
     public static final Guid SYSTEM_OBJECT_ID = new Guid("AAA00000-0000-0000-0000-123456789AAA");
     public static final Guid EVERYONE_OBJECT_ID = new Guid("EEE00000-0000-0000-0000-123456789EEE");
-    private static LogCompat log = LogFactoryCompat.getLog(MultiLevelAdministrationHandler.class);
+    private static Log log = LogFactory.getLog(MultiLevelAdministrationHandler.class);
 
     public static PermissionDAO getPermissionDAO() {
         return DbFacade.getInstance().getPermissionDAO();

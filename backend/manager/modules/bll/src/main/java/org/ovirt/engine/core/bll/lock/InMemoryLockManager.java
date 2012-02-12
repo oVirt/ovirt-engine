@@ -23,8 +23,8 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
@@ -47,7 +47,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
 
     private MBeanServer platformMBeanServer;
     private ObjectName objectName = null;
-    private static LogCompat log = LogFactoryCompat.getLog(InMemoryLockManager.class);
+    private static Log log = LogFactory.getLog(InMemoryLockManager.class);
 
     @PostConstruct
     public void registerInJMX() {

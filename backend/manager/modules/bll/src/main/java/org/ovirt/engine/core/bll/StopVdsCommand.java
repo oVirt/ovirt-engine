@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @NonTransactiveCommandAttribute
@@ -72,7 +72,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(StopVdsCommand.class);
+    private static Log log = LogFactory.getLog(StopVdsCommand.class);
 
     @Override
     protected int getRerties() {

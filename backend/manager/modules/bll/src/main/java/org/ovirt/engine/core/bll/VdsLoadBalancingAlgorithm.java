@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -315,5 +315,5 @@ public abstract class VdsLoadBalancingAlgorithm {
 
     protected abstract VM getBestVmToMigrate(List<VM> vms, Guid vdsId);
 
-    private static LogCompat log = LogFactoryCompat.getLog(VdsLoadBalancingAlgorithm.class);
+    private static Log log = LogFactory.getLog(VdsLoadBalancingAlgorithm.class);
 }

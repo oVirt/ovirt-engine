@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.UpdateSpmHostNameVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -42,7 +42,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
         initializer.AddParameter(VdsStatic.class, "mVds");
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(UpdateVdsCommand.class);
+    private static Log log = LogFactory.getLog(UpdateVdsCommand.class);
     private VDS _oldVds;
 
     public UpdateVdsCommand(T parameters) {

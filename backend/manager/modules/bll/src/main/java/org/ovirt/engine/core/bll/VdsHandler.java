@@ -11,15 +11,15 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 
 public class VdsHandler extends BaseHandler {
-    private static LogCompat log = LogFactoryCompat.getLog(VdsHandler.class);
+    private static Log log = LogFactory.getLog(VdsHandler.class);
     public static ObjectIdentityChecker mUpdateVdsStatic;
 
     /**

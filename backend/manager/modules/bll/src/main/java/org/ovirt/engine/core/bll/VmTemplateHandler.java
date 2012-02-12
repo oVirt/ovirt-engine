@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -137,5 +137,5 @@ public class VmTemplateHandler {
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(VmTemplateHandler.class);
+    private static Log log = LogFactory.getLog(VmTemplateHandler.class);
 }

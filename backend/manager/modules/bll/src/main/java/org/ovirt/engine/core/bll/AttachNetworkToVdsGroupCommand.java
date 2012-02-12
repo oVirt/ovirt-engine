@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -30,7 +30,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupParameter> extends
         VdsGroupCommandBase<T> {
 
-    private static LogCompat log = LogFactoryCompat.getLog(RunVmCommand.class);
+    private static Log log = LogFactory.getLog(RunVmCommand.class);
 
     public AttachNetworkToVdsGroupCommand(T parameters) {
         super(parameters);

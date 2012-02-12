@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
@@ -150,5 +150,5 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(VdsNotRespondingTreatmentCommand.class);
+    private static Log log = LogFactory.getLog(VdsNotRespondingTreatmentCommand.class);
 }

@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -22,7 +22,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 @InternalCommandAttribute
 public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
-    private static LogCompat log = LogFactoryCompat.getLog(HandleVdsVersionCommand.class);
+    private static Log log = LogFactory.getLog(HandleVdsVersionCommand.class);
 
     public HandleVdsVersionCommand(T parameters) {
         super(parameters);

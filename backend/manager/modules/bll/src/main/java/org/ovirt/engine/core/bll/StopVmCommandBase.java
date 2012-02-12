@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -143,5 +143,5 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         setSucceeded(true);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(StopVmCommandBase.class);
+    private static Log log = LogFactory.getLog(StopVmCommandBase.class);
 }

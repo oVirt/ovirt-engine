@@ -30,8 +30,8 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.SearchReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.DateTime;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -371,6 +371,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return query.toLowerCase().contains(MATCH_IN_TAG_ID_CLAUSE);
     }
 
-    private static final LogCompat log = LogFactoryCompat.getLog(SearchQuery.class);
+    private static final Log log = LogFactory.getLog(SearchQuery.class);
 
 }

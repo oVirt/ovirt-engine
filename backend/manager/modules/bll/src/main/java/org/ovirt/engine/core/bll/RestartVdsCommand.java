@@ -18,8 +18,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -122,7 +122,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(RestartVdsCommand.class);
+    private static Log log = LogFactory.getLog(RestartVdsCommand.class);
 
     @Override
     protected int getRerties() {

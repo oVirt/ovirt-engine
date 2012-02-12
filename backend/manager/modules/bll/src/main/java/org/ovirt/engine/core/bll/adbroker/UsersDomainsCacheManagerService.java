@@ -22,8 +22,8 @@ import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.generic.DomainsPasswordMap;
 import org.ovirt.engine.core.dns.DnsSRVLocator.DnsSRVResult;
 import org.ovirt.engine.core.ldap.LdapSRVLocator;
@@ -49,7 +49,7 @@ import org.ovirt.engine.core.utils.kerberos.KerberosUtils;
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager {
 
-    private static LogCompat log = LogFactoryCompat.getLog(UsersDomainsCacheManagerService.class);
+    private static Log log = LogFactory.getLog(UsersDomainsCacheManagerService.class);
     private Map<String, Domain> domainsByName = new HashMap<String, Domain>();
     private Map<String, ConcurrentHashMap<String, UserDomainInfo>> domainsUsersInfoByUserNameAndDomainName =
             new HashMap<String, ConcurrentHashMap<String, UserDomainInfo>>();

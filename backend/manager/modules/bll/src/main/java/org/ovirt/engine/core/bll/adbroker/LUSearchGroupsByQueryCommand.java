@@ -4,11 +4,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.ovirt.engine.core.common.businessentities.ad_groups;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class LUSearchGroupsByQueryCommand extends LUBrokerCommandBase {
-    private static LogCompat log = LogFactoryCompat.getLog(LUSearchGroupsByQueryCommand.class);
+    private static Log log = LogFactory.getLog(LUSearchGroupsByQueryCommand.class);
 
     protected String getQuery() {
         // TODO:rgolan

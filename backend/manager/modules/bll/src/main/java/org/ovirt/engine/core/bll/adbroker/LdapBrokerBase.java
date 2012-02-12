@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll.adbroker;
 
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 
 public abstract class LdapBrokerBase implements LdapBroker {
     private static final String CommandsContainerAssemblyName = LdapBrokerBase.class.getPackage().getName();
     private static final String CommandPrefix = "Command";
 
-    private static LogCompat log = LogFactoryCompat.getLog(LdapBrokerBase.class);
+    private static Log log = LogFactory.getLog(LdapBrokerBase.class);
 
     protected abstract String getBrokerType();
 

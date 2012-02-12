@@ -18,8 +18,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.FileUtil;
@@ -501,6 +501,6 @@ public class VdsInstaller implements IVdsInstallCallBack {
         return TimeUnit.MILLISECONDS.toSeconds(parsedDate.getTime());
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(VdsInstaller.class);
+    private static Log log = LogFactory.getLog(VdsInstaller.class);
 
 }

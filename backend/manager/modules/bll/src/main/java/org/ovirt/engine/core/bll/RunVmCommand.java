@@ -39,8 +39,8 @@ import org.ovirt.engine.core.common.vdscommands.ResumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
@@ -910,5 +910,5 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         return vm.getis_stateless();
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(RunVmCommand.class);
+    private static Log log = LogFactory.getLog(RunVmCommand.class);
 }

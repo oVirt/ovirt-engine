@@ -9,8 +9,8 @@ import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -159,5 +159,5 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         return generator;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(LdapBrokerCommandBase.class);
+    private static Log log = LogFactory.getLog(LdapBrokerCommandBase.class);
 }
