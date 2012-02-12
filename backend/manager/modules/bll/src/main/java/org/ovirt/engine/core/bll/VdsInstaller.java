@@ -58,7 +58,7 @@ public class VdsInstaller implements IVdsInstallCallBack {
     private final VDS _vds;
     private String serverInstallationTime;
     private String _bootStrapInitialCommand =
-            "chmod +x {vdsInstaller}; {vdsInstaller} -c 'ssl={server_SSL_enabled};management_port={management_port}' -O '{OrganizationName}' -t {utc_time} -u False {OverrideFirewall} {EnginePort} -b {URL1} {URL1} {vds-server} {GUID} {RunFlag}";
+            "chmod +x {vdsInstaller}; {vdsInstaller} -c 'ssl={server_SSL_enabled};management_port={management_port}' -O '{OrganizationName}' -t {utc_time} {OverrideFirewall} {EnginePort} -b {URL1} {URL1} {vds-server} {GUID} {RunFlag}";
 
     protected String _finishCommand = "";
 
