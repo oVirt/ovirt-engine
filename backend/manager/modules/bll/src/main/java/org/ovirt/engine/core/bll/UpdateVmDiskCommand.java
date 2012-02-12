@@ -159,7 +159,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
             }
         }
         if (returnValue) {
-            plugAction = oldVmDevice.getIsPlugged() ? VDSCommandType.HotUnPlugDisk : VDSCommandType.HotUnPlugDisk;
+            plugAction = oldVmDevice.getIsPlugged() ? VDSCommandType.HotUnPlugDisk : VDSCommandType.HotPlugDisk;
         }
         return returnValue;
     }
