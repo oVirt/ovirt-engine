@@ -228,4 +228,39 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         assertNotNull(result);
         assertEquals(ANCESTOR_IMAGE_ID, result.getId());
     }
+
+    @Test
+    public void testGetAllForVM() {
+        List<DiskImage> disks = dao.getAllForVm(EXISTING_VM_ID);
+        assertFullGetAllForVMResult(disks);
+    }
+
+    @Test
+    public void testGetAllForVMFilteredWithPermissions() {
+        // test user 3 - has permissions
+        List<DiskImage> disks = dao.getAllForVm(EXISTING_VM_ID, PRIVILEGED_USER_ID, true);
+        assertFullGetAllForVMResult(disks);
+    }
+
+    @Test
+    public void testGetAllForVMFilteredWithPermissionsNoPermissions() {
+        // test user 2 - hasn't got permissions
+        List<DiskImage> disks = dao.getAllForVm(EXISTING_VM_ID, UNPRIVILEGED_USER_ID, true);
+        assertTrue("VM should have no disks viewable to the user", disks.isEmpty());
+    }
+
+    @Test
+    public void testGetAllForVMFilteredWithPermissionsNoPermissionsAndNoFilter() {
+        // test user 2 - hasn't got permissions, but no filtering was requested
+        List<DiskImage> disks = dao.getAllForVm(EXISTING_VM_ID, UNPRIVILEGED_USER_ID, false);
+        assertFullGetAllForVMResult(disks);
+    }
+
+    /**
+     * Asserts the result of {@link DiskImageDAO#getAllForVm(Guid)} contains the correct disks.
+     * @param disks The result to check
+     */
+    private static void assertFullGetAllForVMResult(List<DiskImage> disks) {
+        assertEquals("VM should have two disks", 2, disks.size());
+    }
 }

@@ -147,8 +147,13 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
 
     @Override
     public List<DiskImage> getAllForVm(Guid id) {
+        return getAllForVm(id, null, false);
+    }
+
+    @Override
+    public List<DiskImage> getAllForVm(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_guid", id);
+                .addValue("vm_guid", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
         ParameterizedRowMapper<DiskImage> mapper = new ParameterizedRowMapper<DiskImage>() {
             @Override

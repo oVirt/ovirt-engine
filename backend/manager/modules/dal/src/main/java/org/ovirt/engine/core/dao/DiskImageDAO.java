@@ -33,6 +33,21 @@ public interface DiskImageDAO extends GenericDao<DiskImage, Guid> {
     List<DiskImage> getAllForVm(Guid id);
 
     /**
+     * Retrieves all disk images for the specified virtual machine id,
+     * with optional filtering
+     *
+     * @param id
+     *            the VM id
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+
+     * @return the list of disk images
+     */
+    List<DiskImage> getAllForVm(Guid id, Guid userID, boolean isFiltered);
+
+    /**
      * Retrieves all snapshots with the given parent id.
      *
      * @param id

@@ -10,8 +10,12 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.compat.Guid;
 
 public abstract class BaseGenericDaoTestCase<ID extends Serializable, T extends BusinessEntity<ID>, D extends GenericDao<T, ID>> extends BaseDAOTestCase {
+
+    protected static final Guid PRIVILEGED_USER_ID   = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
+    protected static final Guid UNPRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
 
     protected D dao;
 

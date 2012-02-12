@@ -22,12 +22,13 @@ import org.ovirt.engine.core.dao.images.StatelessImageVmMapDAOHibernateImpl;
  *
  */
 public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskImageDAO {
-    private DiskImageDAOHibernateImpl imageDAO = new DiskImageDAOHibernateImpl();
-    private DiskImageDynamicDAOHibernateImpl dynamicDAO = new DiskImageDynamicDAOHibernateImpl();
-    private DiskImageTemplateDAOHibernateImpl templateDAO = new DiskImageTemplateDAOHibernateImpl();
-    private ImageVmMapDAOHibernateImpl imageVmMapDAO = new ImageVmMapDAOHibernateImpl();
-    private ImageVmPoolMapDAOHibernateImpl imageVmPoolMapDAO = new ImageVmPoolMapDAOHibernateImpl();
-    private StatelessImageVmMapDAOHibernateImpl statelessImageVmMapDAO = new StatelessImageVmMapDAOHibernateImpl();
+    private final DiskImageDAOHibernateImpl imageDAO = new DiskImageDAOHibernateImpl();
+    private final DiskImageDynamicDAOHibernateImpl dynamicDAO = new DiskImageDynamicDAOHibernateImpl();
+    private final DiskImageTemplateDAOHibernateImpl templateDAO = new DiskImageTemplateDAOHibernateImpl();
+    private final ImageVmMapDAOHibernateImpl imageVmMapDAO = new ImageVmMapDAOHibernateImpl();
+    private final ImageVmPoolMapDAOHibernateImpl imageVmPoolMapDAO = new ImageVmPoolMapDAOHibernateImpl();
+    private final StatelessImageVmMapDAOHibernateImpl statelessImageVmMapDAO =
+            new StatelessImageVmMapDAOHibernateImpl();
 
     @Override
     public void setSession(Session session) {
@@ -52,6 +53,11 @@ public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskI
     @Override
     public List<DiskImage> getAllForVm(Guid id) {
         return imageDAO.getAllForVm(id);
+    }
+
+    @Override
+    public List<DiskImage> getAllForVm(Guid id, Guid userID, boolean isFiltered) {
+        throw new NotImplementedException("This method is not implemented for Hibernate yet");
     }
 
     @Override
