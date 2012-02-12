@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network;
@@ -23,15 +24,17 @@ import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeZoneInfo;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.comparators.DiskImageByBootComparator;
 import org.ovirt.engine.core.dal.comparators.DiskImageByDriveMappingComparator;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
@@ -144,7 +147,6 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
 
     private void buildVmDrives() {
         int[] ideIndexSlots = new int[] { 0, 1, 3 };
-        Map[] drives = new Map[vm.getDiskMap().size()];
         int ideCount = 0, pciCount = 0;
         int i = 0;
 
@@ -162,10 +164,21 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         Collections.sort(diskImages, new DiskImageByDriveMappingComparator());
         Collections.sort(diskImages,
                 Collections.reverseOrder(new DiskImageByBootComparator()));
+        List<VmDevice> diskVmDevices =
+                DbFacade.getInstance()
+                        .getVmDeviceDAO()
+                        .getVmDeviceByVmIdTypeAndDevice(vm.getvm_guid(),
+                                VmDeviceType.getName(VmDeviceType.DISK),
+                                VmDeviceType.getName(VmDeviceType.DISK));
+        Set<Guid> pluggedDiskIds = new HashSet<Guid>();
+        for (VmDevice diskVmDevice : diskVmDevices) {
+            if (diskVmDevice.getIsPlugged()) {
+                pluggedDiskIds.add(diskVmDevice.getDeviceId());
+            }
+        }
+        Map[] drives = new Map[pluggedDiskIds.size()];
         for (DiskImage disk : diskImages) {
-            VmDevice vmDevice =
-                    DbFacade.getInstance().getVmDeviceDAO().get(new VmDeviceId(disk.getId(), vm.getvm_guid()));
-            if (vmDevice.getIsPlugged()) {
+            if (pluggedDiskIds.contains(disk.getId())) {
                 Map drive = new HashMap();
                 drive.put("domainID", disk.getstorage_id().toString());
                 drive.put("poolID", disk.getstorage_pool_id().toString());
@@ -199,6 +212,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         }
         createInfo.add("drives", drives);
     }
+
     private void buildVmNetworkInterfaces() {
         StringBuilder macs = new StringBuilder();
         StringBuilder nics = new StringBuilder();
