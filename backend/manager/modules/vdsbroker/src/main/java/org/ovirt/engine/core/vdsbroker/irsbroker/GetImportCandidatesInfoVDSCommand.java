@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.queries.TemplateCandidateInfo;
 import org.ovirt.engine.core.common.queries.VmCandidateInfo;
 import org.ovirt.engine.core.common.vdscommands.GetImportCandidatesVDSCommandParameters;
 import org.ovirt.engine.core.compat.Encoding;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -205,5 +205,5 @@ public class GetImportCandidatesInfoVDSCommand<P extends GetImportCandidatesVDSC
         return _candidatesInfoRetVal.mStatus;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(GetImportCandidatesInfoVDSCommand.class);
+    private static Log log = LogFactory.getLog(GetImportCandidatesInfoVDSCommand.class);
 }

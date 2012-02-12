@@ -3,8 +3,8 @@ package org.ovirt.engine.core.vdsbroker;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.ResumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ResumeBrokerVDSCommand;
 
 public class ResumeVDSCommand<P extends ResumeVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
@@ -43,5 +43,5 @@ public class ResumeVDSCommand<P extends ResumeVDSCommandParameters> extends VdsI
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(ResumeVDSCommand.class);
+    private static Log log = LogFactory.getLog(ResumeVDSCommand.class);
 }

@@ -2,8 +2,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.HSMTaskGuidBaseVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class HSMRevertTaskVDSCommand<P extends HSMTaskGuidBaseVDSCommandParameters> extends VdsBrokerCommand<P> {
     public HSMRevertTaskVDSCommand(P parameters) {
@@ -28,5 +28,5 @@ public class HSMRevertTaskVDSCommand<P extends HSMTaskGuidBaseVDSCommandParamete
         super.ProceedProxyReturnValue();
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(HSMRevertTaskVDSCommand.class);
+    private static Log log = LogFactory.getLog(HSMRevertTaskVDSCommand.class);
 }

@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
@@ -89,5 +89,5 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
         return _result;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(GetStorageDomainStatsVDSCommand.class);
+    private static Log log = LogFactory.getLog(GetStorageDomainStatsVDSCommand.class);
 }

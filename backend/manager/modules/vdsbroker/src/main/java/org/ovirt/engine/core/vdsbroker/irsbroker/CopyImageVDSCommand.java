@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class CopyImageVDSCommand<P extends CopyImageVDSCommandParameters> extends IrsCreateCommand<P> {
     public CopyImageVDSCommand(P parameters) {
@@ -58,5 +58,5 @@ public class CopyImageVDSCommand<P extends CopyImageVDSCommandParameters> extend
                 new AsyncTaskCreationInfo(taskID, AsyncTaskType.copyImage, getParameters().getStoragePoolId()));
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(CopyImageVDSCommand.class);
+    private static Log log = LogFactory.getLog(CopyImageVDSCommand.class);
 }

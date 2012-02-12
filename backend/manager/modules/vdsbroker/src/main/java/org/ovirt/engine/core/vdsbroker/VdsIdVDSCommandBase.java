@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
@@ -94,5 +94,5 @@ public abstract class VdsIdVDSCommandBase<P extends VdsIdVDSCommandParametersBas
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(VdsIdVDSCommandBase.class);
+    private static Log log = LogFactory.getLog(VdsIdVDSCommandBase.class);
 }

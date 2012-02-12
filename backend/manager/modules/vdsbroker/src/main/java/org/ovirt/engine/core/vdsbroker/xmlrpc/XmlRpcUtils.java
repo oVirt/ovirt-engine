@@ -22,8 +22,8 @@ import org.apache.xmlrpc.client.util.ClientFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ssl.AuthSSLProtocolSocketFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
@@ -31,7 +31,7 @@ public class XmlRpcUtils {
 
     private static final String HTTP = "http://";
     private static final String HTTPS = "https://";
-    private static LogCompat log = LogFactoryCompat.getLog(XmlRpcUtils.class);
+    private static Log log = LogFactory.getLog(XmlRpcUtils.class);
     static {
         if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)) {
             URL keystoreUrl;

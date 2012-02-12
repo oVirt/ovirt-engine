@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.vdscommands.AddVdsVDSCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ThreadUtils;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -38,5 +38,5 @@ public class AddVdsVDSCommand<P extends AddVdsVDSCommandParameters> extends VdsI
         ResourceManager.getInstance().AddVds(vds, false);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(AddVdsVDSCommand.class);
+    private static Log log = LogFactory.getLog(AddVdsVDSCommand.class);
 }

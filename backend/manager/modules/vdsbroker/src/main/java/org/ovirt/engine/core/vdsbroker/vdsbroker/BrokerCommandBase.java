@@ -3,8 +3,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.vdsbroker.VDSCommandBase;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
@@ -243,5 +243,5 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(BrokerCommandBase.class);
+    private static Log log = LogFactory.getLog(BrokerCommandBase.class);
 }

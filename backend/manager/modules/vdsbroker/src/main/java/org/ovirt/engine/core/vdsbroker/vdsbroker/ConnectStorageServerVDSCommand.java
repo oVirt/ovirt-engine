@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandPa
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
@@ -106,5 +106,5 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
         return _result;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(ConnectStorageServerVDSCommand.class);
+    private static Log log = LogFactory.getLog(ConnectStorageServerVDSCommand.class);
 }

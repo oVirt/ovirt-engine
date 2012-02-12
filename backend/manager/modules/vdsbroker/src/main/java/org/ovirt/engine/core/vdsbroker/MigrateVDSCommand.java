@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -130,5 +130,5 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(MigrateVDSCommand.class);
+    private static Log log = LogFactory.getLog(MigrateVDSCommand.class);
 }

@@ -33,8 +33,8 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.BooleanCompat;
 import org.ovirt.engine.core.compat.FormatException;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.LongCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -1184,6 +1184,6 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(VdsBrokerObjectsBuilder.class);
+    private static Log log = LogFactory.getLog(VdsBrokerObjectsBuilder.class);
 
 }

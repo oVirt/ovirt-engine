@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> extends IrsCreateCommand<P> {
     public CreateImageVDSCommand(P parameters) {
@@ -58,5 +58,5 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
                         .getStoragePoolId()));
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(CreateImageVDSCommand.class);
+    private static Log log = LogFactory.getLog(CreateImageVDSCommand.class);
 }

@@ -6,8 +6,8 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBase> extends VdsBrokerCommand<P> {
     private TaskInfoListReturnForXmlRpc _result;
@@ -86,5 +86,5 @@ public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBas
         return _result;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(HSMGetAllTasksInfoVDSCommand.class);
+    private static Log log = LogFactory.getLog(HSMGetAllTasksInfoVDSCommand.class);
 }

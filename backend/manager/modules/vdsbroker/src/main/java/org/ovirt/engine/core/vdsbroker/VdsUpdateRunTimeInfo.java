@@ -38,8 +38,8 @@ import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVmStatsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -1381,5 +1381,5 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(VdsUpdateRunTimeInfo.class);
+    private static Log log = LogFactory.getLog(VdsUpdateRunTimeInfo.class);
 }

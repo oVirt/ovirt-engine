@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeZoneInfo;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
@@ -357,5 +357,5 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(CreateVDSCommand.class);
+    private static Log log = LogFactory.getLog(CreateVDSCommand.class);
 }

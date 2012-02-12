@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.MarkPoolInReconstructModeVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class MarkPoolInReconstructModeVDSCommand<P extends MarkPoolInReconstructModeVDSCommandParameters>
         extends IrsBrokerCommand<P> {
@@ -31,5 +31,5 @@ public class MarkPoolInReconstructModeVDSCommand<P extends MarkPoolInReconstruct
         getVDSReturnValue().setSucceeded(true);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(MarkPoolInReconstructModeVDSCommand.class);
+    private static Log log = LogFactory.getLog(MarkPoolInReconstructModeVDSCommand.class);
 }

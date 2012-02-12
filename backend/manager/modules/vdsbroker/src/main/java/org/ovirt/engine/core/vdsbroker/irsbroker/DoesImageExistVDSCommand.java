@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class DoesImageExistVDSCommand<P extends GetImageInfoVDSCommandParameters> extends GetImageInfoVDSCommand<P> {
     public DoesImageExistVDSCommand(P parameters) {
@@ -34,5 +34,5 @@ public class DoesImageExistVDSCommand<P extends GetImageInfoVDSCommandParameters
         setReturnValue(true);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(DoesImageExistVDSCommand.class);
+    private static Log log = LogFactory.getLog(DoesImageExistVDSCommand.class);
 }

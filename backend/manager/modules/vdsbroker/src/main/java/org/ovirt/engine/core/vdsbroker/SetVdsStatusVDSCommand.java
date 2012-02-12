@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
     public SetVdsStatusVDSCommand(P parameters) {
@@ -51,5 +51,5 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
         vds.getDynamicData().setNonOperationalReason(parameters.getNonOperationalReason());
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(SetVdsStatusVDSCommand.class);
+    private static Log log = LogFactory.getLog(SetVdsStatusVDSCommand.class);
 }

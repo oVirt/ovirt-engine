@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ThreadUtils;
@@ -177,5 +177,5 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                 .getVm().getvm_name(), getVds().getvds_id(), getVds().getvds_name());
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(CreateVmVDSCommand.class);
+    private static Log log = LogFactory.getLog(CreateVmVDSCommand.class);
 }

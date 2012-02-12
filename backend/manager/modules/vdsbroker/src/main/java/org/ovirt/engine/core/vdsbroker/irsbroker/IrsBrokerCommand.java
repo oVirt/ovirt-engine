@@ -51,8 +51,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -1722,5 +1722,5 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         return returnValue;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(IrsBrokerCommand.class);
+    private static Log log = LogFactory.getLog(IrsBrokerCommand.class);
 }

@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.generic.RepositoryException;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -102,5 +102,5 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(DestroyVmVDSCommand.class);
+    private static Log log = LogFactory.getLog(DestroyVmVDSCommand.class);
 }

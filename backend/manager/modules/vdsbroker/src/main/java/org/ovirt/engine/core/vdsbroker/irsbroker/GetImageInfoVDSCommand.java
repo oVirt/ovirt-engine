@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
@@ -125,5 +125,5 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
         return new Date(ctime * 1000L);
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(GetImageInfoVDSCommand.class);
+    private static Log log = LogFactory.getLog(GetImageInfoVDSCommand.class);
 }

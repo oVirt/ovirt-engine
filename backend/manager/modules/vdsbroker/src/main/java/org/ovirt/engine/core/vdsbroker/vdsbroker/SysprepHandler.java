@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigUtil;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringBuilderCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeZoneInfo;
@@ -28,7 +28,7 @@ public final class SysprepHandler {
     // in this sample we get -430
     public static String TimzeZoneExtractTimePattern = ".*(GMT[+,-]\\d{2}:\\d{2}).*";
 
-    private static LogCompat log = LogFactoryCompat.getLog(SysprepHandler.class);
+    private static Log log = LogFactory.getLog(SysprepHandler.class);
 
     static {
         initTimeZones();

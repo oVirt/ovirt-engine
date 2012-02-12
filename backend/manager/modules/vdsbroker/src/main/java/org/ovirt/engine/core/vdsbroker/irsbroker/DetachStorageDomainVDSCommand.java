@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class DetachStorageDomainVDSCommand<P extends DetachStorageDomainVDSCommandParameters>
         extends IrsBrokerCommand<P> {
@@ -32,5 +32,5 @@ public class DetachStorageDomainVDSCommand<P extends DetachStorageDomainVDSComma
         }
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(DetachStorageDomainVDSCommand.class);
+    private static Log log = LogFactory.getLog(DetachStorageDomainVDSCommand.class);
 }

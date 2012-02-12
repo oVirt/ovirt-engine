@@ -5,8 +5,8 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
@@ -74,5 +74,5 @@ public class GetVGListVDSCommand<P extends VdsIdVDSCommandParametersBase> extend
         return _result;
     }
 
-    private static LogCompat log = LogFactoryCompat.getLog(GetVGListVDSCommand.class);
+    private static Log log = LogFactory.getLog(GetVGListVDSCommand.class);
 }
