@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.queries.RegisterVdsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
@@ -37,7 +37,7 @@ public class RegisterServlet extends HttpServlet {
     public static final String OTP = "ticket";
 
     private SimpleDateFormat m_sdfFormatter;
-    private static LogCompat log = LogFactoryCompat.getLog(RegisterServlet.class);
+    private static Log log = LogFactory.getLog(RegisterServlet.class);
 
     @Override
     public void init() throws ServletException {

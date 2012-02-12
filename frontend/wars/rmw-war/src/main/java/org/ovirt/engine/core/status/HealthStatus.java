@@ -13,8 +13,8 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.utils.log.LogCompat;
-import org.ovirt.engine.core.utils.log.LogFactoryCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
@@ -31,7 +31,7 @@ import org.ovirt.engine.core.utils.ejb.EjbUtils;
  */
 public class HealthStatus extends HttpServlet {
 
-	private static LogCompat log = LogFactoryCompat.getLog(HealthStatus.class);
+	private static Log log = LogFactory.getLog(HealthStatus.class);
 
 	private boolean runQuery(HttpServletRequest request, PrintWriter out) {
 		boolean fReturn = false;
