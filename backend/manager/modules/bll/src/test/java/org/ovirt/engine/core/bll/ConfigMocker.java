@@ -44,4 +44,8 @@ public class ConfigMocker {
         when(Config.GetValue(ConfigValues.OvirtInitialSupportedIsoVersion)).thenReturn(oVirtIsoVersion);
     }
 
+    public void mockManagementNetwork(final String network) {
+        when(Config.GetValue(ConfigValues.ManagementNetwork)).thenReturn(network);
+    }
+
 }

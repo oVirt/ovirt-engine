@@ -90,9 +90,11 @@ public class SetupNetworksHelperTest {
         List<VdsNetworkInterface> vdsNics = new ArrayList<VdsNetworkInterface>();
         VdsNetworkInterface nic1 = new VdsNetworkInterface();
         nic1.setNetworkName("vmnet");
+        nic1.setName("nic1");
         vdsNics.add(nic1);
         VdsNetworkInterface nic2 = new VdsNetworkInterface();
         nic2.setNetworkName("mgmtnet");
+        nic2.setName("nic2");
         vdsNics.add(nic2);
 
         List<network> clusterNetworks = new ArrayList<network>();
@@ -104,9 +106,10 @@ public class SetupNetworksHelperTest {
         clusterNetworks.add(net2);
 
         List<VdsNetworkInterface> nics = new ArrayList<VdsNetworkInterface>();
-        VdsNetworkInterface nicWithUknownNetowrk = new VdsNetworkInterface();
-        nicWithUknownNetowrk.setNetworkName("nonExisitigNetworkName");
-        nics.add(nicWithUknownNetowrk);
+        VdsNetworkInterface nicWithUnknownNetwork = new VdsNetworkInterface();
+        nicWithUnknownNetwork.setNetworkName("nonExisitigNetworkName");
+        nicWithUnknownNetwork.setName("nic3");
+        nics.add(nicWithUnknownNetwork);
 
         initMocks(vdsNics, clusterNetworks);
         SetupNetworksParameters params = new SetupNetworksParameters();
@@ -229,7 +232,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     /**
-     * test setup: 2 existing cluster networks, red and blue
+     * test setup: 2 existing cluster networks, red and blue, only blue is currently attached to the host
      * test case: sending "red" as the network to add
      * expected: network blue should return from the function
      */
@@ -244,7 +247,7 @@ public class SetupNetworksHelperTest {
         List<network> removeNetworks =
                 helper.extractRemoveNetworks(new HashSet<String>(asList(networkNames)),
                         clusterNetworksMap,
-                        Arrays.asList("nonAttachedNetwork"));
+                        Arrays.asList("blue"));
         assertTrue(removeNetworks.get(0).getname().equals("blue"));
     }
 
