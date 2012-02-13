@@ -29,10 +29,14 @@ public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends 
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CANCEL_MIGRATE);
+    }
+
+    @Override
     protected boolean canDoAction() {
         if (getVm() == null) {
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CANCEL_MIGRATE);
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
             return false;
         }
