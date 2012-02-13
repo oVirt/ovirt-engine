@@ -44,7 +44,7 @@ public enum VdcQueryType implements Serializable {
     GetNonOperationalVds,
 
     // Vm Network
-    GetVmInterfacesByVmId (VdcQueryAuthType.User),
+    GetVmInterfacesByVmId(VdcQueryAuthType.User),
 
     // Template Network
     GetTemplateInterfacesByTemplateId,
@@ -74,7 +74,7 @@ public enum VdcQueryType implements Serializable {
     GetAllVmSnapshotsByDrive,
     GetAllIsoImagesList,
     GetAllFloppyImagesList,
-    GetAllDisksByVmId,
+    GetAllDisksByVmId(VdcQueryAuthType.User),
     GetImageByImageId,
 
     // Users queries

@@ -20,12 +20,10 @@ public class GetAllDisksByVmIdQuery<P extends GetAllDisksByVmIdParameters> exten
 
     @Override
     protected void executeQueryCommand() {
-        // LINQ
-        // DbFacade.Instance.GetImagesByVmGuid(GetParameters.VmId).Where(image=>image.active
-        // == true).ToList();
         List<DiskImage> disks =
                 LinqUtils.filter(
-                        DbFacade.getInstance().getDiskImageDAO().getAllForVm(getParameters().getVmId()),
+                        DbFacade.getInstance().getDiskImageDAO().getAllForVm
+                                (getParameters().getVmId(), getUserID(), getParameters().isFiltered()),
                         new Predicate<DiskImage>() {
                             @Override
                             public boolean eval(DiskImage diskImage) {
@@ -43,8 +41,13 @@ public class GetAllDisksByVmIdQuery<P extends GetAllDisksByVmIdParameters> exten
 
     private Set<Guid> getPluggedDiskIds() {
         List<VmDevice> disksVmDevices =
-                DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(getParameters().getVmId(),
-                        VmDeviceType.getName(VmDeviceType.DISK), VmDeviceType.getName(VmDeviceType.DISK));
+                DbFacade.getInstance()
+                        .getVmDeviceDAO()
+                        .getVmDeviceByVmIdTypeAndDevice(getParameters().getVmId(),
+                                VmDeviceType.getName(VmDeviceType.DISK),
+                                VmDeviceType.getName(VmDeviceType.DISK),
+                                getUserID(),
+                                getParameters().isFiltered());
         Set<Guid> pluggedDiskIds = new HashSet<Guid>();
         for (VmDevice diskVmDevice : disksVmDevices) {
             if (diskVmDevice.getIsPlugged()) {
