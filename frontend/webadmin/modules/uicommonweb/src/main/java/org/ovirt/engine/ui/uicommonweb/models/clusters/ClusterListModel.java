@@ -272,8 +272,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
 
         ClusterModel model = new ClusterModel();
-        model.Init(true);
         model.setEntity(cluster);
+        model.Init(true);
         setWindow(model);
         model.setTitle("Edit Cluster");
         model.setHashName("edit_cluster");
@@ -284,7 +284,6 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         {
             model.getName().setIsChangable(false);
             model.getName().setInfo("Cannot edit Cluster's Name in tree context");
-            ;
         }
 
         UICommand tempVar = new UICommand("OnSave", this);
