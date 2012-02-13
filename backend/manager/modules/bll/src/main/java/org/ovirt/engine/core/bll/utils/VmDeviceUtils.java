@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.utils;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -75,6 +76,9 @@ public class VmDeviceUtils {
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
         for (VmDevice device : devices) {
             id = Guid.NewGuid();
+            if (srcId.equals(Guid.Empty)) {
+                continue; // skip Blank template devices
+            }
             if (device.getType().equalsIgnoreCase(VmDeviceType.DISK.name()) && device.getDevice().equalsIgnoreCase(VmDeviceType.DISK.name())) {
                 if (diskCount < disks.size()) {
                     id = disks.get(diskCount++).getimage_id();
@@ -90,6 +94,7 @@ public class VmDeviceUtils {
         }
         // if destination is a VM , update devices boot order
         if (isVm) {
+            updateNumOfMonitorsInVmDevice(null, vmStatic);
             updateBootOrderInVmDevice(vmStatic);
         }
     }
@@ -300,16 +305,18 @@ public class VmDeviceUtils {
                     .equals(VmDeviceType.getName(VmDeviceType.DISK))
                     && device.getDevice().equals(
                             VmDeviceType.getName(VmDeviceType.DISK))) {
-                if (isOldCluster) { // Only one system disk can be bootable in
-                                    // old version.
-                    if (DbFacade.getInstance().getDiskDao()
-                            .get(device.getDeviceId()).getDiskType()
-                            .equals(DiskType.System)) {
+                Guid id = device.getDeviceId();
+                Disk disk = DbFacade.getInstance().getDiskDao().get(id);
+                if (id != null && !id.equals(Guid.Empty)) {
+                    if (isOldCluster) { // Only one system disk can be bootable in
+                                        // old version.
+                        if (disk != null && disk.getDiskType().equals(DiskType.System)) {
+                            device.setBootOrder(bootOrder++);
+                            break;
+                        }
+                    } else { // supporting more than 1 bootable disk in 3.1 and up.
                         device.setBootOrder(bootOrder++);
-                        break;
                     }
-                } else { // supporting more than 1 bootable disk in 3.1 and up.
-                    device.setBootOrder(bootOrder++);
                 }
             }
         }
@@ -323,11 +330,15 @@ public class VmDeviceUtils {
      */
     private static void updateNumOfMonitorsInVmDevice(VmStatic oldVmStatic,
             VmStatic newStatic) {
-        if (newStatic.getnum_of_monitors() > oldVmStatic.getnum_of_monitors()) {
+        int prevNumOfMonitors=0;
+        if (oldVmStatic != null) {
+            prevNumOfMonitors = oldVmStatic.getnum_of_monitors();
+        }
+        if (newStatic.getnum_of_monitors() > prevNumOfMonitors) {
             String mem = (newStatic.getnum_of_monitors() > 2 ? LOW_VIDEO_MEM
                     : HIGH_VIDEO_MEM);
             // monitors were added
-            for (int i = oldVmStatic.getnum_of_monitors(); i <= newStatic
+            for (int i = prevNumOfMonitors; i < newStatic
                     .getnum_of_monitors(); i++) {
                 VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
                         newStatic.getId()),
@@ -341,7 +352,7 @@ public class VmDeviceUtils {
                     .getVmDeviceDAO()
                     .getVmDeviceByVmIdAndType(newStatic.getId(),
                             VmDeviceType.getName(VmDeviceType.VIDEO));
-            for (int i = 1; i <= (oldVmStatic.getnum_of_monitors() - newStatic
+            for (int i = 0; i < (prevNumOfMonitors - newStatic
                     .getnum_of_monitors()); i++) {
                 DbFacade.getInstance().getVmDeviceDAO()
                         .remove(list.get(i).getId());
