@@ -7,14 +7,14 @@ Create or replace FUNCTION InsertVm_pools(v_vm_pool_description VARCHAR(4000),
  INOUT v_vm_pool_id UUID ,  
  v_vm_pool_name VARCHAR(255),  
  v_vm_pool_type INTEGER,  
- v_parameters VARCHAR(200),  
+ v_parameters VARCHAR(200),
+ v_prestarted_vms INTEGER,
  v_vds_group_id UUID)
    AS $procedure$
 BEGIN
       v_vm_pool_id := uuid_generate_v1();
-      INSERT INTO vm_pools(vm_pool_id,vm_pool_description, vm_pool_name,
-								  vm_pool_type,parameters,vds_group_id)
-	VALUES(v_vm_pool_id,v_vm_pool_description, v_vm_pool_name,v_vm_pool_type,v_parameters,v_vds_group_id);
+      INSERT INTO vm_pools(vm_pool_id,vm_pool_description, vm_pool_name, vm_pool_type,parameters, prestarted_vms, vds_group_id)
+      VALUES(v_vm_pool_id,v_vm_pool_description, v_vm_pool_name,v_vm_pool_type,v_parameters, v_prestarted_vms, v_vds_group_id);
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -26,7 +26,8 @@ Create or replace FUNCTION UpdateVm_pools(v_vm_pool_description VARCHAR(4000),
  v_vm_pool_id UUID,  
  v_vm_pool_name VARCHAR(255),  
  v_vm_pool_type INTEGER,  
- v_parameters VARCHAR(200),  
+ v_parameters VARCHAR(200),
+ v_prestarted_vms INTEGER,
  v_vds_group_id UUID)
 RETURNS VOID
 
@@ -35,7 +36,7 @@ RETURNS VOID
 BEGIN
       UPDATE vm_pools
       SET vm_pool_description = v_vm_pool_description,vm_pool_name = v_vm_pool_name,
-      vm_pool_type = v_vm_pool_type,parameters = v_parameters,vds_group_id = v_vds_group_id
+      vm_pool_type = v_vm_pool_type,parameters = v_parameters, prestarted_vms = v_prestarted_vms, vds_group_id = v_vds_group_id
       WHERE vm_pool_id = v_vm_pool_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -65,7 +66,7 @@ LANGUAGE plpgsql;
 
 
 DROP TYPE IF EXISTS GetAllFromVm_pools_rs CASCADE;
-Create type GetAllFromVm_pools_rs AS (vm_pool_id UUID, assigned_vm_count INTEGER, vm_running_count INTEGER, vm_pool_description VARCHAR(4000), vm_pool_name VARCHAR(255), vm_pool_type INTEGER, parameters VARCHAR(200), vds_group_id UUID, vds_group_name VARCHAR(40));
+Create type GetAllFromVm_pools_rs AS (vm_pool_id UUID, assigned_vm_count INTEGER, vm_running_count INTEGER, vm_pool_description VARCHAR(4000), vm_pool_name VARCHAR(255), vm_pool_type INTEGER, parameters VARCHAR(200), prestarted_vms INTEGER, vds_group_id UUID, vds_group_name VARCHAR(40));
 Create or replace FUNCTION GetAllFromVm_pools() RETURNS SETOF GetAllFromVm_pools_rs
    AS $procedure$
 BEGIN
@@ -133,6 +134,7 @@ BEGIN
             vm_pool_name VARCHAR(255),
             vm_pool_type INTEGER,
             parameters VARCHAR(200),
+            prestarted_vms INTEGER,
             vds_group_id UUID,
             vds_group_name VARCHAR(40)
          ) WITH OIDS;
@@ -140,16 +142,17 @@ BEGIN
             truncate table tt_VM_POOL_RESULT;
       END;
       insert INTO tt_VM_POOL_RESULT(vm_pool_id,
-					assigned_vm_count,
-					vm_running_count,
-					vm_pool_description,
-					vm_pool_name,
-				vm_pool_type,
-				parameters,
-				vds_group_id,
-				vds_group_name)
+            assigned_vm_count,
+            vm_running_count,
+            vm_pool_description,
+            vm_pool_name,
+            vm_pool_type,
+            parameters,
+            prestarted_vms,
+            vds_group_id,
+            vds_group_name)
       select ppr.vm_pool_id, ppr.assigned_vm_count, ppr.vm_running_count,
-  				 p.vm_pool_description, p.vm_pool_name, p.vm_pool_type, p.parameters,
+  				 p.vm_pool_description, p.vm_pool_name, p.vm_pool_type, p.parameters, p.prestarted_vms,
 					 p.vds_group_id, p.vds_group_name
       from tt_VM_POOL_PRERESULT ppr
       inner join vm_pools_view p on ppr.vm_pool_id = p.vm_pool_id;

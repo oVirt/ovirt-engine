@@ -5,9 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map;
@@ -16,6 +13,9 @@ import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * <code>VmPoolDAODbFacadeImpl</code> provides an implementation of {@link VmPoolDAO} based on implementation code from
@@ -23,6 +23,10 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
  *
  */
 public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO {
+
+    private final static VmPoolFullRowMapper vmPoolFullRowMapper = new VmPoolFullRowMapper();
+    private final static VmPoolNonFullRowMapper vmPoolNonFullRowMapper = new VmPoolNonFullRowMapper();
+
     private class TimeLeaseVmPoolRowMapper implements ParameterizedRowMapper<time_lease_vm_pool_map> {
         @Override
         public time_lease_vm_pool_map mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -48,88 +52,21 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     public vm_pools get(NGuid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_id", id);
-
-        ParameterizedRowMapper<vm_pools> mapper = new ParameterizedRowMapper<vm_pools>() {
-            @Override
-            public vm_pools mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                vm_pools entity = new vm_pools();
-                entity.setvm_pool_description(rs
-                        .getString("vm_pool_description"));
-                entity.setvm_pool_id(Guid.createGuidFromString(rs
-                        .getString("vm_pool_id")));
-                entity.setvm_pool_name(rs.getString("vm_pool_name"));
-                entity.setvm_pool_type(VmPoolType.forValue(rs
-                        .getInt("vm_pool_type")));
-                entity.setparameters(rs.getString("parameters"));
-                entity.setvds_group_id(Guid.createGuidFromString(rs
-                        .getString("vds_group_id")));
-                entity.setvds_group_name(rs.getString("vds_group_name"));
-                entity.setvm_assigned_count(rs.getInt("assigned_vm_count"));
-                entity.setvm_running_count(rs.getInt("vm_running_count"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeRead("GetVm_poolsByvm_pool_id", mapper, parameterSource);
+        return getCallsHandler().executeRead("GetVm_poolsByvm_pool_id", vmPoolFullRowMapper , parameterSource);
     }
 
     @Override
     public vm_pools getByName(String name) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_name", name);
-
-        ParameterizedRowMapper<vm_pools> mapper = new ParameterizedRowMapper<vm_pools>() {
-            @Override
-            public vm_pools mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                vm_pools entity = new vm_pools();
-                entity.setvm_pool_description(rs
-                        .getString("vm_pool_description"));
-                entity.setvm_pool_id(Guid.createGuidFromString(rs
-                        .getString("vm_pool_id")));
-                entity.setvm_pool_name(rs.getString("vm_pool_name"));
-                entity.setvm_pool_type(VmPoolType.forValue(rs
-                        .getInt("vm_pool_type")));
-                entity.setparameters(rs.getString("parameters"));
-                entity.setvds_group_id(Guid.createGuidFromString(rs
-                        .getString("vds_group_id")));
-                entity.setvds_group_name(rs.getString("vds_group_name"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeRead("GetVm_poolsByvm_pool_name", mapper, parameterSource);
+        return getCallsHandler().executeRead("GetVm_poolsByvm_pool_name", vmPoolNonFullRowMapper, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<vm_pools> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
-        ParameterizedRowMapper<vm_pools> mapper = new ParameterizedRowMapper<vm_pools>() {
-            @Override
-            public vm_pools mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                vm_pools entity = new vm_pools();
-                entity.setvm_pool_description(rs
-                        .getString("vm_pool_description"));
-                entity.setvm_pool_id(Guid.createGuidFromString(rs
-                        .getString("vm_pool_id")));
-                entity.setvm_pool_name(rs.getString("vm_pool_name"));
-                entity.setvm_pool_type(VmPoolType.forValue(rs
-                        .getInt("vm_pool_type")));
-                entity.setparameters(rs.getString("parameters"));
-                entity.setvm_assigned_count(rs.getInt("assigned_vm_count"));
-                entity.setvm_running_count(rs.getInt("vm_running_count"));
-                entity.setvds_group_id(Guid.createGuidFromString(rs
-                        .getString("vds_group_id")));
-                entity.setvds_group_name(rs.getString("vds_group_name"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("GetAllFromVm_pools", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromVm_pools", vmPoolFullRowMapper, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -137,29 +74,8 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     public List<vm_pools> getAllForUser(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("user_id", id);
-
-        ParameterizedRowMapper<vm_pools> mapper = new ParameterizedRowMapper<vm_pools>() {
-            @Override
-            public vm_pools mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                vm_pools entity = new vm_pools();
-                entity.setvm_pool_id(Guid.createGuidFromString(rs
-                        .getString("vm_pool_id")));
-                entity.setvm_pool_name(rs.getString("vm_pool_name"));
-                entity.setvm_pool_description(rs
-                        .getString("vm_pool_description"));
-                entity.setvm_pool_type(VmPoolType.forValue(rs
-                        .getInt("vm_pool_type")));
-                entity.setparameters(rs.getString("parameters"));
-                entity.setvds_group_id(Guid.createGuidFromString(rs
-                        .getString("vds_group_id")));
-                entity.setvds_group_name(rs.getString("vds_group_name"));
-                return entity;
-            }
-        };
-
         return getCallsHandler().executeReadList("GetAllVm_poolsByUser_id_with_groups_and_UserRoles",
-                mapper, parameterSource);
+                vmPoolNonFullRowMapper, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -167,55 +83,12 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     public List<vm_pools> getAllForAdGroup(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("ad_group_id", id);
-
-        ParameterizedRowMapper<vm_pools> mapper = new ParameterizedRowMapper<vm_pools>() {
-            @Override
-            public vm_pools mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                vm_pools entity = new vm_pools();
-                entity.setvm_pool_id(Guid.createGuidFromString(rs
-                        .getString("vm_pool_id")));
-                entity.setvm_pool_name(rs.getString("vm_pool_name"));
-                entity.setvm_pool_description(rs
-                        .getString("vm_pool_description"));
-                entity.setvm_pool_type(VmPoolType.forValue(rs
-                        .getInt("vm_pool_type")));
-                entity.setparameters(rs.getString("parameters"));
-                entity.setvds_group_id(Guid.createGuidFromString(rs
-                        .getString("vds_group_id")));
-                entity.setvds_group_name(rs.getString("vds_group_name"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("GetVm_poolsByAdGroup_id", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetVm_poolsByAdGroup_id", vmPoolNonFullRowMapper, parameterSource);
     }
 
     @Override
     public List<vm_pools> getAllWithQuery(String query) {
-        ParameterizedRowMapper<vm_pools> mapper = new ParameterizedRowMapper<vm_pools>() {
-            @Override
-            public vm_pools mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                vm_pools entity = new vm_pools();
-                entity.setvm_pool_description(rs
-                        .getString("vm_pool_description"));
-                entity.setvm_pool_id(Guid.createGuidFromString(rs
-                        .getString("vm_pool_id")));
-                entity.setvm_pool_name(rs.getString("vm_pool_name"));
-                entity.setvm_pool_type(VmPoolType.forValue(rs
-                        .getInt("vm_pool_type")));
-                entity.setparameters(rs.getString("parameters"));
-                entity.setvm_assigned_count(rs.getInt("assigned_vm_count"));
-                entity.setvm_running_count(rs.getInt("vm_running_count"));
-                entity.setvds_group_id(Guid.createGuidFromString(rs
-                        .getString("vds_group_id")));
-                entity.setvds_group_name(rs.getString("vds_group_name"));
-                return entity;
-            }
-        };
-
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, mapper);
+        return new SimpleJdbcTemplate(jdbcTemplate).query(query, vmPoolFullRowMapper);
     }
 
     @Override
@@ -226,6 +99,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
                 .addValue("vm_pool_name", pool.getvm_pool_name())
                 .addValue("vm_pool_type", pool.getvm_pool_type())
                 .addValue("parameters", pool.getparameters())
+                .addValue("prestarted_vms", pool.getPrestartedVms())
                 .addValue("vds_group_id", pool.getvds_group_id());
 
         Map<String, Object> result = getCallsHandler().executeModification("InsertVm_pools", parameterSource);
@@ -240,6 +114,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
                 .addValue("vm_pool_name", pool.getvm_pool_name())
                 .addValue("vm_pool_type", pool.getvm_pool_type())
                 .addValue("parameters", pool.getparameters())
+                .addValue("prestarted_vms", pool.getPrestartedVms())
                 .addValue("vds_group_id", pool.getvds_group_id());
 
         getCallsHandler().executeModification("UpdateVm_pools", parameterSource);
@@ -361,5 +236,47 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
 
         return getCallsHandler().executeReadList("getVmMapsInVmPoolByVmPoolIdAndStatus", mapper,
                 parameterSource);
+    }
+
+    static final class VmPoolFullRowMapper implements ParameterizedRowMapper<vm_pools> {
+        @Override
+        public vm_pools mapRow(final ResultSet rs, final int rowNum) throws SQLException {
+            final vm_pools entity = new vm_pools();
+            entity.setvm_pool_description(rs
+                    .getString("vm_pool_description"));
+            entity.setvm_pool_id(Guid.createGuidFromString(rs
+                    .getString("vm_pool_id")));
+            entity.setvm_pool_name(rs.getString("vm_pool_name"));
+            entity.setvm_pool_type(VmPoolType.forValue(rs
+                    .getInt("vm_pool_type")));
+            entity.setparameters(rs.getString("parameters"));
+            entity.setPrestartedVms(rs.getInt("prestarted_vms"));
+            entity.setvds_group_id(Guid.createGuidFromString(rs
+                    .getString("vds_group_id")));
+            entity.setvds_group_name(rs.getString("vds_group_name"));
+            entity.setvm_assigned_count(rs.getInt("assigned_vm_count"));
+            entity.setvm_running_count(rs.getInt("vm_running_count"));
+            return entity;
+        }
+    }
+
+    static final class VmPoolNonFullRowMapper implements ParameterizedRowMapper<vm_pools> {
+        @Override
+        public vm_pools mapRow(final ResultSet rs, final int rowNum) throws SQLException {
+            final vm_pools entity = new vm_pools();
+            entity.setvm_pool_description(rs
+                    .getString("vm_pool_description"));
+            entity.setvm_pool_id(Guid.createGuidFromString(rs
+                    .getString("vm_pool_id")));
+            entity.setvm_pool_name(rs.getString("vm_pool_name"));
+            entity.setvm_pool_type(VmPoolType.forValue(rs
+                    .getInt("vm_pool_type")));
+            entity.setparameters(rs.getString("parameters"));
+            entity.setPrestartedVms(rs.getInt("prestarted_vms"));
+            entity.setvds_group_id(Guid.createGuidFromString(rs
+                    .getString("vds_group_id")));
+            entity.setvds_group_name(rs.getString("vds_group_name"));
+            return entity;
+        }
     }
 }

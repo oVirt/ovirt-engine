@@ -528,7 +528,7 @@ WHERE     (users_2.user_group = 'group');
 CREATE OR REPLACE VIEW vm_pools_view
 AS
 SELECT     vm_pools.vm_pool_id as vm_pool_id, vm_pools.vm_pool_name as vm_pool_name, vm_pools.vm_pool_description as vm_pool_description, vm_pools.vm_pool_type as vm_pool_type,
-                      vm_pools.parameters as parameters, vm_pools.vds_group_id as vds_group_id, vds_groups.name as vds_group_name
+                      vm_pools.parameters as parameters, vm_pools.prestarted_vms as prestarted_vms, vm_pools.vds_group_id as vds_group_id, vds_groups.name as vds_group_name
 FROM         vm_pools INNER JOIN
 vds_groups ON vm_pools.vds_group_id = vds_groups.vds_group_id;
 
@@ -537,7 +537,7 @@ vds_groups ON vm_pools.vds_group_id = vds_groups.vds_group_id;
 CREATE OR REPLACE VIEW vm_pools_full_view
 AS
 
-SELECT     vm_pool_id as vm_pool_id, vm_pool_name as vm_pool_name, vm_pool_description as vm_pool_description, vm_pool_type as vm_pool_type, parameters as parameters, vds_group_id as vds_group_id, vds_group_name as vds_group_name,
+SELECT     vm_pool_id as vm_pool_id, vm_pool_name as vm_pool_name, vm_pool_description as vm_pool_description, vm_pool_type as vm_pool_type, parameters as parameters, prestarted_vms as prestarted_vms, vds_group_id as vds_group_id, vds_group_name as vds_group_name,
               (SELECT     COUNT(vm_pool_map.vm_pool_id) as Expr1
    FROM	vm_pools_view AS v1 LEFT OUTER JOIN
    vm_pool_map ON v1.vm_pool_id = vm_pool_map.vm_pool_id AND v1.vm_pool_id = vmp.vm_pool_id) as assigned_vm_count,

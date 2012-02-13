@@ -550,6 +550,7 @@
         <column>vm_pool_description</column>
         <column>vm_pool_type</column>
         <column>parameters</column>
+        <column>prestarted_vms</column>
         <column>vds_group_id</column>
         <row>
             <value>103cfd1d-18b1-4790-8a0c-1e52621b0076</value>
@@ -557,6 +558,7 @@
             <value></value>
             <value>0</value>
             <value></value>
+            <value>0</value>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
         </row>
         <row>
@@ -565,6 +567,7 @@
             <value></value>
             <value>0</value>
             <value></value>
+            <value>0</value>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
         </row>
         <row>
@@ -573,6 +576,7 @@
             <value></value>
             <value>0</value>
             <value></value>
+            <value>0</value>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
         </row>
     </table>
@@ -2545,17 +2549,6 @@
             <value>1000</value>
             <value>0</value>
             <null />
-        </row>
-    </table>
-
-    <table name="image_vm_pool_map">
-        <column>vm_guid</column>
-        <column>image_guid</column>
-        <column>internal_drive_mapping</column>
-        <row>
-            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
-            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
-            <value>c</value>
         </row>
     </table>
 

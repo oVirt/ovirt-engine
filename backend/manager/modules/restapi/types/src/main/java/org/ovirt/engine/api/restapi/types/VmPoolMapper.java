@@ -30,6 +30,9 @@ public class VmPoolMapper {
                 entity.setvds_group_name(model.getCluster().getName());
             }
         }
+        if (model.isSetPrestartedVms()) {
+            entity.setPrestartedVms(model.getPrestartedVms());
+        }
         return entity;
     }
 
@@ -56,6 +59,7 @@ public class VmPoolMapper {
         model.setName(entity.getvm_pool_name());
         model.setDescription(entity.getvm_pool_description());
         model.setSize(entity.getvm_assigned_count());
+        model.setPrestartedVms(entity.getPrestartedVms());
         if (entity.getvds_group_id() != null ||
             entity.getvds_group_name() != null) {
             model.setCluster(new Cluster());
