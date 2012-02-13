@@ -51,9 +51,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class RemoveStorageDomainTest extends BaseMockitoTest {
 
-    private Guid STORAGE_DOMAIN_ID = GUIDS[0];
-    private Guid STORAGE_POOL_ID = GUIDS[1];
-    private Guid VDS_ID = GUIDS[2];
+    private final Guid STORAGE_DOMAIN_ID = GUIDS[0];
+    private final Guid STORAGE_POOL_ID = GUIDS[1];
+    private final Guid VDS_ID = GUIDS[2];
 
     @Test
     public void testCanDoAction() {
@@ -291,7 +291,7 @@ public class RemoveStorageDomainTest extends BaseMockitoTest {
                                                StorageDomainType type,
                                                StorageType storageType) {
         storage_domains dom = new storage_domains();
-        dom.setid(id);
+        dom.setId(id);
         dom.setstorage_pool_id(poolId);
         dom.setstorage_domain_type(type);
         dom.setstorage_type(storageType);
@@ -313,7 +313,7 @@ public class RemoveStorageDomainTest extends BaseMockitoTest {
 
     protected VDS getVds(Guid id) {
         VDS vds = new VDS();
-        vds.setvds_id(id);
+        vds.setId(id);
         vds.setvds_group_compatibility_version(new Version(2, 2));
         return vds;
     }

@@ -19,7 +19,7 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.VmLogon,
-                        new VmLogonVDSCommandParameters(getVdsId(), getVm().getvm_guid(), domainController,
+                        new VmLogonVDSCommandParameters(getVdsId(), getVm().getId(), domainController,
                                 getUserName(), password)).getSucceeded());
     }
 }

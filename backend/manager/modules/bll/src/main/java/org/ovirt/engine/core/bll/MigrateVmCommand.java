@@ -68,6 +68,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return _destinationVds;
     }
 
+    @Override
     protected void FailedToRunVm() {
         if (getVm().getstatus() != VMStatus.Up) {
             super.FailedToRunVm();
@@ -102,7 +103,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     private void ProcessVm() {
         if (getVm().getstatus() != VMStatus.Up) {
-            DecreasePendingVms(getVds().getvds_id());
+            DecreasePendingVms(getVds().getId());
         }
     }
 
@@ -211,7 +212,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             /**
              * vm went down on the destination and source, migration failed.
              */
-            DecreasePendingVms(getDestinationVds().getvds_id());
+            DecreasePendingVms(getDestinationVds().getId());
             _isRerun = true;
             setSucceeded(false);
             log();

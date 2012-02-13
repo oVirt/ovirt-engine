@@ -14,9 +14,9 @@ import org.ovirt.engine.core.common.queries.GetPowerClientByClientInfoParameters
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "PowerClientMigrateOnConnectCheckParameters")
@@ -26,7 +26,7 @@ public class PowerClientMigrateOnConnectCheckCommand<T extends PowerClientMigrat
         super(parameters);
         super.setVdsId(parameters.getVdsId());
         if (getPowerClient() != null) {
-            getVdsSelector().setDestinationVdsId(getPowerClient().getvds_id());
+            getVdsSelector().setDestinationVdsId(getPowerClient().getId());
             getVdsSelector().setCheckDestinationFirst(true);
         }
     }
@@ -74,7 +74,7 @@ public class PowerClientMigrateOnConnectCheckCommand<T extends PowerClientMigrat
             returnValue = false;
         } else if (getPowerClient() != null
                 && Config.<Boolean> GetValue(ConfigValues.PowerClientAutoMigrateToPowerClientOnConnect)
-                && getPowerClient().getvds_id().equals(getVdsId())) {
+                && getPowerClient().getId().equals(getVdsId())) {
             getReturnValue().getCanDoActionMessages()
                     .add(VdcBllMessages.AUTO_MIGRATE_ALREADY_ON_POWERCLIENT.toString());
             returnValue = false;
@@ -84,7 +84,7 @@ public class PowerClientMigrateOnConnectCheckCommand<T extends PowerClientMigrat
             if (getVds().getvds_type() != VDSType.PowerClient) {
                 addCanDoActionMessage(VdcBllMessages.AUTO_MIGRATE_ALREADY_RUNNING_ON_VDS);
                 returnValue = false;
-            } else if (getPowerClient() != null && getVdsId().equals(getPowerClient().getvds_id())) {
+            } else if (getPowerClient() != null && getVdsId().equals(getPowerClient().getId())) {
                 // check if not a case that already running locally, but
                 // PowerClientAutoMigrateToPowerClientOnConnect was false, so we
                 // still got here
@@ -103,13 +103,13 @@ public class PowerClientMigrateOnConnectCheckCommand<T extends PowerClientMigrat
             // check if we can run (migrate) the vm to the power client.
 
             Guid checkVds_id = getVdsSelector().GetVdsToRunOn();
-            if (!(checkVds_id).equals(getPowerClient().getvds_id())) {
+            if (!(checkVds_id).equals(getPowerClient().getId())) {
                 log.infoFormat("VdcBll.PowerClientMigrateOnConnectCheck - Can't migrate to power client, since getVdsToRunOn rejected the run");
                 // return; // no return, so we can continue and migrate from a
                 // power client to a VDS if needed in next section
             } else {
                 log.infoFormat("VdcBll.PowerClientMigrateOnConnectCheck - Migrating the VM to the power client");
-                setVdsDestinationId(getPowerClient().getvds_id());
+                setVdsDestinationId(getPowerClient().getId());
                 _destinationVds = getPowerClient();
                 super.ExecuteVmCommand();
                 return;

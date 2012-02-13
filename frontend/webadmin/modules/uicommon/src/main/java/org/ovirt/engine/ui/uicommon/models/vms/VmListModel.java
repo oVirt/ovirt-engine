@@ -284,7 +284,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		Object[] keys = new Object[getSelectedItems().size()];
 		for (int i = 0; i < getSelectedItems().size(); i++)
 		{
-			keys[i] = ((VM)getSelectedItems().get(i)).getvm_guid();
+			keys[i] = ((VM)getSelectedItems().get(i)).getId();
 		}
 
 		return keys;
@@ -416,7 +416,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		for (Object item : getSelectedItems())
 		{
 			VM vm = (VM)item;
-			vmIds.add(vm.getvm_guid());
+			vmIds.add(vm.getId());
 		}
 
 
@@ -462,7 +462,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		for (Object item : getSelectedItems())
 		{
 			VM vm = (VM)item;
-			vmIds.add(vm.getvm_guid());
+			vmIds.add(vm.getId());
 		}
 
 		java.util.Map<Guid, Boolean> attachedTags = GetAttachedTagsToSelectedVMs();
@@ -597,18 +597,18 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		}
 		else
 		{
-			if (!cachedConsoleModels.containsKey(vm.getvm_guid()))
+			if (!cachedConsoleModels.containsKey(vm.getId()))
 			{
 				SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
 				spiceConsoleModel.getErrorEvent().addListener(this);
 				VncConsoleModel vncConsoleModel = new VncConsoleModel();
 				RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
 
-				cachedConsoleModels.put(vm.getvm_guid(), new java.util.ArrayList<ConsoleModel>(java.util.Arrays.asList(new ConsoleModel[] { spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
+				cachedConsoleModels.put(vm.getId(), new java.util.ArrayList<ConsoleModel>(java.util.Arrays.asList(new ConsoleModel[] { spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
 			}
 
 
-			java.util.ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getvm_guid());
+			java.util.ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
 			for (ConsoleModel a : cachedModels)
 			{
 				a.setEntity(null);
@@ -834,7 +834,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		storageDomains = list;
 
 
-		java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(vm.getvm_guid());
+		java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(vm.getId());
 		if (disks.size() > 0)
 		{
 			//storageDomains = storageDomains.Where(a => a.id != disks[0].storage_id);
@@ -929,7 +929,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
 		for (storage_domains a : items)
 		{
-			parameters.add(new MoveVmParameters(vm.getvm_guid(), a.getid()));
+			parameters.add(new MoveVmParameters(vm.getId(), a.getid()));
 		}
 
 
@@ -1071,7 +1071,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 					VM foundVm = null;
 					for (VM a : (java.util.ArrayList<VM>)returnValue.getReturnValue())
 					{
-						if (a.getvm_guid().equals(vm.getvm_guid()))
+						if (a.getId().equals(vm.getId()))
 						{
 							foundVm = a;
 							break;
@@ -1198,7 +1198,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		for (Object a : getSelectedItems())
 		{
 			VM vm = (VM)a;
-			MoveVmParameters parameter = new MoveVmParameters(vm.getvm_guid(), storageDomainId);
+			MoveVmParameters parameter = new MoveVmParameters(vm.getId(), storageDomainId);
 			parameter.setForceOverride((Boolean)model.getForceOverride().getEntity());
 			parameter.setCopyCollapse((Boolean)model.getCollapseSnapshots().getEntity());
 			parameter.setTemplateMustExists(true);
@@ -1294,7 +1294,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		for (Object item : getSelectedItems())
 		{
 			VM a = (VM)item;
-			MoveVmParameters parameters = new MoveVmParameters(a.getvm_guid(), storageDomainId);
+			MoveVmParameters parameters = new MoveVmParameters(a.getId(), storageDomainId);
 			parameters.setForceOverride((Boolean)model.getForceOverride().getEntity());
 			parameters.setCopyCollapse((Boolean)model.getCollapseSnapshots().getEntity());
 			parameters.setTemplateMustExists(false);
@@ -1359,7 +1359,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		model.setHwAcceleration(true);
 
 		//Boot sequence.
-		VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getvm_guid()));
+		VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getId()));
 
 		boolean hasNics = returnValue != null && returnValue.getSucceeded() && ((java.util.ArrayList<VmNetworkInterface>)returnValue.getReturnValue()).size() > 0;
 
@@ -1447,7 +1447,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		BootSequenceModel bootSequenceModel = model.getBootSequence();
 
 		RunVmOnceParams tempVar = new RunVmOnceParams();
-		tempVar.setVmId(vm.getvm_guid());
+		tempVar.setVmId(vm.getId());
 		tempVar.setBootSequence(bootSequenceModel.getSequence());
 		tempVar.setDiskPath((Boolean)model.getAttachIso().getEntity() ? (String)model.getIsoImage().getSelectedItem() : "");
 		tempVar.setFloppyPath(model.getFloppyImagePath());
@@ -1576,7 +1576,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		}
 
 		VM tempVar = new VM();
-		tempVar.setvm_guid(vm.getvm_guid());
+		tempVar.setId(vm.getId());
 		tempVar.setvm_type(model.getVmType());
 		tempVar.setvm_os((VmOsType)model.getOSType().getSelectedItem());
 		tempVar.setnum_of_monitors((Integer)model.getNumOfMonitors().getSelectedItem());
@@ -1731,7 +1731,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 			for (Object item : getSelectedItems())
 			{
 				VM a = (VM)item;
-				list.add(new MigrateVmParameters(true, a.getvm_guid()));
+				list.add(new MigrateVmParameters(true, a.getId()));
 			}
 
 			Frontend.RunMultipleAction(VdcActionType.MigrateVm, list,
@@ -1758,7 +1758,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 					continue;
 				}
 
-				list.add(new MigrateVmToServerParameters(true, a.getvm_guid(), ((VDS)model.getHosts().getSelectedItem()).getvds_id()));
+				list.add(new MigrateVmToServerParameters(true, a.getId(), ((VDS)model.getHosts().getSelectedItem()).getvds_id()));
 			}
 
 			Frontend.RunMultipleAction(VdcActionType.MigrateVmToServer, list,
@@ -1815,7 +1815,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		for (Object item : getSelectedItems())
 		{
 			VM a = (VM)item;
-			list.add(new ShutdownVmParameters(a.getvm_guid(), true));
+			list.add(new ShutdownVmParameters(a.getId(), true));
 		}
 
 
@@ -1874,7 +1874,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		for (Object item : getSelectedItems())
 		{
 			VM a = (VM)item;
-			list.add(new StopVmParameters(a.getvm_guid(), StopVmTypeEnum.NORMAL));
+			list.add(new StopVmParameters(a.getId(), StopVmTypeEnum.NORMAL));
 		}
 
 
@@ -1899,7 +1899,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		for (Object item : getSelectedItems())
 		{
 			VM a = (VM)item;
-			list.add(new HibernateVmParameters(a.getvm_guid()));
+			list.add(new HibernateVmParameters(a.getId()));
 		}
 
 		Frontend.RunMultipleAction(VdcActionType.HibernateVm, list,
@@ -1920,7 +1920,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 			VM a = (VM)item;
 			//use sysprep iff the vm is not initialized and vm has Win OS
 			boolean reinitialize = !a.getis_initialized() && DataProvider.IsWindowsOsType(a.getvm_os());
-			RunVmParams tempVar = new RunVmParams(a.getvm_guid());
+			RunVmParams tempVar = new RunVmParams(a.getId());
 			tempVar.setReinitialize(reinitialize);
 			list.add(tempVar);
 		}
@@ -1948,7 +1948,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		for (Object item : getSelectedItems())
 		{
 			VM a = (VM)item;
-			list.add(new RemoveVmParameters(a.getvm_guid(), false));
+			list.add(new RemoveVmParameters(a.getId(), false));
 		}
 
 
@@ -2179,7 +2179,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 			Guid oldClusterID = selectedItem.getvds_group_id();
 			if (oldClusterID.equals(newClusterID) == false)
 			{
-				ChangeVMClusterParameters parameters = new ChangeVMClusterParameters(newClusterID, getcurrentVm().getvm_guid());
+				ChangeVMClusterParameters parameters = new ChangeVMClusterParameters(newClusterID, getcurrentVm().getId());
 
 				model.StartProgress(null);
 
@@ -2307,7 +2307,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		}
 
 
-		Frontend.RunMultipleAction(VdcActionType.ChangeDisk, new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(vm.getvm_guid(), StringHelper.stringsEqual(isoName, ConsoleModel.EjectLabel) ? "" : isoName) })),
+		Frontend.RunMultipleAction(VdcActionType.ChangeDisk, new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(vm.getId(), StringHelper.stringsEqual(isoName, ConsoleModel.EjectLabel) ? "" : isoName) })),
 		new IFrontendMultipleActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendMultipleActionAsyncResult  result) {

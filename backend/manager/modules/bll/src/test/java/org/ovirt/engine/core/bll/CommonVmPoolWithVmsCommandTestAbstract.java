@@ -188,7 +188,7 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
     private void mockStorageDomainDAO(List<storage_domains> storageDomains) {
         when(dbFacada.getStorageDomainDAO()).thenReturn(storageDomainDAO);
         for (storage_domains storageDomain : storageDomains) {
-            when(storageDomainDAO.getForStoragePool(storageDomain.getid(), storagePoolId)).thenReturn(storageDomain);
+            when(storageDomainDAO.getForStoragePool(storageDomain.getId(), storagePoolId)).thenReturn(storageDomain);
         }
     }
 
@@ -207,7 +207,7 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         storage_domains storageDomain = new storage_domains();
         storageDomain.setavailable_disk_size(availabeDiskSize);
         storageDomain.setstatus(StorageDomainStatus.Active);
-        storageDomain.setid(firstStorageDomainId);
+        storageDomain.setId(firstStorageDomainId);
         return storageDomain;
     }
 
@@ -215,14 +215,14 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         storage_domains storageDomain = new storage_domains();
         storageDomain.setavailable_disk_size(availabeDiskSize);
         storageDomain.setstatus(StorageDomainStatus.Active);
-        storageDomain.setid(secondStorageDomainId);
+        storageDomain.setId(secondStorageDomainId);
         return storageDomain;
     }
 
     private List<Guid> mockStorageGuidList(List<storage_domains> storageDomains) {
         List<Guid> storageGuidList = new ArrayList<Guid>();
         for (storage_domains storageDomain : storageDomains) {
-            storageGuidList.add(storageDomain.getid());
+            storageGuidList.add(storageDomain.getId());
         }
         return storageGuidList;
     }

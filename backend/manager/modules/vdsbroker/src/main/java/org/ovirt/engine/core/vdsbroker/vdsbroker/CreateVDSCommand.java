@@ -43,7 +43,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     protected XmlRpcStruct createInfo = new XmlRpcStruct();
 
     public CreateVDSCommand(P parameters) {
-        super(parameters, parameters.getVm().getvm_guid());
+        super(parameters, parameters.getVm().getId());
         vm = parameters.getVm();
     }
 
@@ -87,7 +87,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     }
 
     private void buildVmProperties() {
-        createInfo.add(VdsProperties.vm_guid, vm.getvm_guid().toString());
+        createInfo.add(VdsProperties.vm_guid, vm.getId().toString());
         createInfo.add(VdsProperties.vm_name, vm.getvm_name());
         createInfo.add(VdsProperties.mem_size_mb, vm.getvm_mem_size_mb());
         createInfo.add(VdsProperties.num_of_monitors,
@@ -167,7 +167,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         List<VmDevice> diskVmDevices =
                 DbFacade.getInstance()
                         .getVmDeviceDAO()
-                        .getVmDeviceByVmIdTypeAndDevice(vm.getvm_guid(),
+                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
                                 VmDeviceType.getName(VmDeviceType.DISK),
                                 VmDeviceType.getName(VmDeviceType.DISK));
         Set<Guid> pluggedDiskIds = new HashSet<Guid>();
@@ -293,7 +293,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
 
     private void buildVmBootSequence() {
         // get device list for the VM
-        List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmId(vm.getvm_guid());
+        List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmId(vm.getId());
         String bootSeqInDB = VmDeviceCommonUtils.getBootSequence(devices).toString().toLowerCase();
         String bootSeqInBE = vm.getboot_sequence().toString().toLowerCase();
         // TODO : find another way to distinguish run vs. run-once

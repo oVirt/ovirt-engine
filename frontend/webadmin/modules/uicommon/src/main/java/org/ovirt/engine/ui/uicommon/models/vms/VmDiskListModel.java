@@ -98,7 +98,7 @@ public class VmDiskListModel extends SearchableListModel
 	{
 		VM vm = (VM)getEntity();
 
-		super.SyncSearch(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getvm_guid()));
+		super.SyncSearch(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getId()));
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class VmDiskListModel extends SearchableListModel
 
 		VM vm = (VM)getEntity();
 
-		setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getvm_guid())));
+		setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getId())));
 		setItems(getAsyncResult().getData());
 	}
 
@@ -365,7 +365,7 @@ public class VmDiskListModel extends SearchableListModel
 			images.add(a.getId());
 		}
 
-		Frontend.RunAction(VdcActionType.RemoveDisksFromVm, new RemoveDisksFromVmParameters(vm.getvm_guid(), images),
+		Frontend.RunAction(VdcActionType.RemoveDisksFromVm, new RemoveDisksFromVmParameters(vm.getId(), images),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {
@@ -413,7 +413,7 @@ public class VmDiskListModel extends SearchableListModel
 
 		if (model.getIsNew())
 		{
-			AddDiskToVmParameters tempVar = new AddDiskToVmParameters(vm.getvm_guid(), disk);
+			AddDiskToVmParameters tempVar = new AddDiskToVmParameters(vm.getId(), disk);
 			tempVar.setStorageDomainId(storageDomain.getid());
 			Frontend.RunAction(VdcActionType.AddDiskToVm, tempVar,
 		new IFrontendActionAsyncCallback() {
@@ -428,7 +428,7 @@ public class VmDiskListModel extends SearchableListModel
 		}
 		else
 		{
-			Frontend.RunAction(VdcActionType.UpdateVmDisk, new UpdateVmDiskParameters(vm.getvm_guid(), disk.getId(), disk),
+			Frontend.RunAction(VdcActionType.UpdateVmDisk, new UpdateVmDiskParameters(vm.getId(), disk.getId(), disk),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {

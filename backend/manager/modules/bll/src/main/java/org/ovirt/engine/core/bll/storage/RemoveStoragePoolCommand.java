@@ -27,14 +27,14 @@ import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -157,7 +157,9 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         for (storage_domains storageDomain : storageDomains) {
             if (storageDomain.getstorage_domain_type() != StorageDomainType.Master) {
                 if (!removeDomainFromPool(storageDomain, vdss.get(0))) {
-                    log.errorFormat("Unable to detach storage domain {0} {1}", storageDomain.getstorage_name(), storageDomain.getid());
+                    log.errorFormat("Unable to detach storage domain {0} {1}",
+                            storageDomain.getstorage_name(),
+                            storageDomain.getId());
                     retVal = false;
                 }
             }
@@ -200,7 +202,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         if (getStoragePool().getstorage_pool_type() != StorageType.LOCALFS) {
             for (VDS vds : vdss) {
                 StorageHelperDirector.getInstance().getItem(getStoragePool().getstorage_pool_type())
-                        .DisconnectStorageFromDomainByVdsId(masterDomain, vds.getvds_id());
+                        .DisconnectStorageFromDomainByVdsId(masterDomain, vds.getId());
             }
         } else {
             try {
@@ -208,13 +210,13 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                         .getInstance()
                         .getResourceManager()
                         .RunVdsCommand(VDSCommandType.FormatStorageDomain,
-                                new FormatStorageDomainVDSCommandParameters(vdss.get(0).getvds_id(),
-                                        masterDomain.getid()));
+                                new FormatStorageDomainVDSCommandParameters(vdss.get(0).getId(),
+                                        masterDomain.getId()));
             } catch (VdcBLLException e) {
                 // Do nothing, exception already printed at logs
             }
             StorageHelperDirector.getInstance().getItem(getStoragePool().getstorage_pool_type())
-                    .DisconnectStorageFromDomainByVdsId(masterDomain, vdss.get(0).getvds_id());
+                    .DisconnectStorageFromDomainByVdsId(masterDomain, vdss.get(0).getId());
             removeDomainFromDb(masterDomain);
         }
 
@@ -260,7 +262,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 // as it will be impossible to remove it.
                 StorageHelperDirector.getInstance().getItem(domain.getstorage_type())
                         .StorageDomainRemoved(domain.getStorageStaticData());
-                DbFacade.getInstance().getStorageDomainDAO().remove(domain.getid());
+                DbFacade.getInstance().getStorageDomainDAO().remove(domain.getId());
                 return null;
             }
         });
@@ -270,7 +272,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     protected boolean removeDomainFromPool(storage_domains storageDomain, VDS vds) {
         if (storageDomain.getstorage_type() != StorageType.LOCALFS) {
             DetachStorageDomainFromPoolParameters tempVar = new DetachStorageDomainFromPoolParameters(
-                    storageDomain.getid(), getStoragePool().getId());
+                    storageDomain.getId(), getStoragePool().getId());
             tempVar.setRemoveLast(true);
             tempVar.setDestroyingPool(true);
             // Compensation context is not passed, as we do not want to compensate in case of failure
@@ -281,10 +283,10 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 return false;
             }
         } else {
-            RemoveStorageDomainParameters tempVar = new RemoveStorageDomainParameters(storageDomain.getid());
+            RemoveStorageDomainParameters tempVar = new RemoveStorageDomainParameters(storageDomain.getId());
             tempVar.setDestroyingPool(true);
             tempVar.setDoFormat(true);
-            tempVar.setVdsId(vds.getvds_id());
+            tempVar.setVdsId(vds.getId());
             if (!Backend.getInstance()
                     .runInternalAction(VdcActionType.RemoveStorageDomain,
                             tempVar,
@@ -324,7 +326,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                     if ((domain.getstorage_domain_type() == StorageDomainType.Data || domain.getstorage_domain_type() == StorageDomainType.Master)
                             && DbFacade.getInstance()
                                     .getDiskImageDAO()
-                                    .getAllSnapshotsForStorageDomain(domain.getid())
+                                    .getAllSnapshotsForStorageDomain(domain.getId())
                                     .size() != 0) {
                         returnValue = false;
                         addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_IMAGES);

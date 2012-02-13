@@ -24,7 +24,7 @@ public class DisconnectStoragePoolAsyncOperation extends ActivateDeactivateSingl
                         .getResourceManager()
                         .RunVdsCommand(
                                 VDSCommandType.DisconnectStoragePool,
-                                new DisconnectStoragePoolVDSCommandParameters(getVdss().get(iterationId).getvds_id(),
+                                new DisconnectStoragePoolVDSCommandParameters(getVdss().get(iterationId).getId(),
                                         getStoragePool().getId(), getVdss().get(iterationId).getvds_spm_id()));
             }
         } catch (RuntimeException e) {

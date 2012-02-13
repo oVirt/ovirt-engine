@@ -657,7 +657,7 @@ public class BackendVmsResourceTest
 
     static org.ovirt.engine.core.common.businessentities.VM setUpEntityExpectations(
             org.ovirt.engine.core.common.businessentities.VM entity, VmStatistics statistics, int index) {
-        expect(entity.getvm_guid()).andReturn(GUIDS[index]).anyTimes();
+        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getvds_group_id()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getvm_name()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getvm_description()).andReturn(DESCRIPTIONS[index]).anyTimes();

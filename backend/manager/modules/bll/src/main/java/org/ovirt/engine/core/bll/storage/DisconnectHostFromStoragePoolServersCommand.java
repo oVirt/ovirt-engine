@@ -28,7 +28,7 @@ public class DisconnectHostFromStoragePoolServersCommand<T extends StoragePoolPa
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.DisconnectStorageServer,
-                        new ConnectStorageServerVDSCommandParameters(getVds().getvds_id(), getStoragePool().getId(),
+                        new ConnectStorageServerVDSCommandParameters(getVds().getId(), getStoragePool().getId(),
                                 getStoragePool().getstorage_pool_type(), getConnections()));
         setSucceeded(vdsReturnValue.getSucceeded());
         if (!vdsReturnValue.getSucceeded()) {
@@ -41,7 +41,7 @@ public class DisconnectHostFromStoragePoolServersCommand<T extends StoragePoolPa
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.DisconnectStorageServer,
-                            new ConnectStorageServerVDSCommandParameters(getVds().getvds_id(),
+                            new ConnectStorageServerVDSCommandParameters(getVds().getId(),
                                     getStoragePool().getId(), getIsoType(), getIsoConnections()));
             setSucceeded(vdsReturnValue.getSucceeded());
             if (!vdsReturnValue.getSucceeded()) {
@@ -57,7 +57,7 @@ public class DisconnectHostFromStoragePoolServersCommand<T extends StoragePoolPa
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.DisconnectStorageServer,
-                            new ConnectStorageServerVDSCommandParameters(getVds().getvds_id(),
+                            new ConnectStorageServerVDSCommandParameters(getVds().getId(),
                                     getStoragePool().getId(), getExportType(), getExportConnections()));
             setSucceeded(vdsReturnValue.getSucceeded());
             if (!vdsReturnValue.getSucceeded()) {

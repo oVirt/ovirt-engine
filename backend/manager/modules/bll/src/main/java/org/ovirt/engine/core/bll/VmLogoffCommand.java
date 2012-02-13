@@ -19,6 +19,6 @@ public class VmLogoffCommand<T extends LogoffVmParameters> extends VmOperationCo
                 .getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.VmLogoff,
-                        new VmLogoffVDSCommandParameters(getVdsId(), getVm().getvm_guid(), mForce)).getSucceeded());
+                        new VmLogoffVDSCommandParameters(getVdsId(), getVm().getId(), mForce)).getSucceeded());
     }
 }

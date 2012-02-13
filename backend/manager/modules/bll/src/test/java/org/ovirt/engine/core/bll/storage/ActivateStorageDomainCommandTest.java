@@ -128,7 +128,7 @@ public class ActivateStorageDomainCommandTest {
     private void createStorageDomain(StorageDomainStatus status) {
        storage_domains domain = new storage_domains();
         domain.setstatus(status);
-        domain.setid(Guid.NewGuid());
+        domain.setId(Guid.NewGuid());
         when(storageDomainDAO.get(any(Guid.class))).thenReturn(domain);
         when(storageDomainDAO.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(domain);
     }

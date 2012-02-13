@@ -84,7 +84,7 @@ public class BackendStorageDomainVmsResourceTest
         setUpQueryExpectations("", null, StorageDomainType.ImportExport, false);
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
         org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
-        vm.setvm_guid(GUIDS[0]);
+        vm.setId(GUIDS[0]);
         String[] names = new String[]{"Vm", "StorageDomainId", "StoragePoolId"};
         Object[] values = new Object[]{vm, GUIDS[3], DATA_CENTER_ID};
         setUpActionExpectations(VdcActionType.RemoveVmFromImportExport, RemoveVmFromImportExportParamenters.class, names, values, true, true);

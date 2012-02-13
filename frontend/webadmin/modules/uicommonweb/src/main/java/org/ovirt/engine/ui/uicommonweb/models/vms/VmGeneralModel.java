@@ -682,7 +682,7 @@ public class VmGeneralModel extends EntityModel
 
         VM vm = (VM) getEntity();
 
-        GetAllDisksByVmIdParameters params = new GetAllDisksByVmIdParameters(vm.getvm_guid());
+        GetAllDisksByVmIdParameters params = new GetAllDisksByVmIdParameters(vm.getId());
         params.setRefresh(false);
         Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, params, _asyncQuery);
     }

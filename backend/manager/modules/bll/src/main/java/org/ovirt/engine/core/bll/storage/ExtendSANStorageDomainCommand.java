@@ -33,7 +33,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
                 .RunVdsCommand(
                         VDSCommandType.ExtendStorageDomain,
                         new ExtendStorageDomainVDSCommandParameters(getStoragePoolId().getValue(), getStorageDomain()
-                                .getid(), getParameters().getLunIds())).getSucceeded()) {
+                                .getId(), getParameters().getLunIds())).getSucceeded()) {
             SetStorageDomainStatus(StorageDomainStatus.Active);
             setSucceeded(true);
         }

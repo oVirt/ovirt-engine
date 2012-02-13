@@ -876,7 +876,7 @@ public final class Linq
 
 		public boolean Match(VM source)
 		{
-			return source.getvm_guid().equals(id);
+			return source.getId().equals(id);
 		}
 	}
 

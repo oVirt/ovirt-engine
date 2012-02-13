@@ -215,7 +215,7 @@ public class UpdateStoragePoolCommandTest {
     private void addDefaultClusterToPool() {
         VDSGroup defaultCluster = new VDSGroup();
         defaultCluster.setcompatibility_version(VERSION_1_1);
-        defaultCluster.setID(VDSGroup.DEFAULT_VDS_GROUP_ID);
+        defaultCluster.setId(VDSGroup.DEFAULT_VDS_GROUP_ID);
         List<VDSGroup> clusters = new ArrayList<VDSGroup>();
         clusters.add(defaultCluster);
         when(vdsDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusters);

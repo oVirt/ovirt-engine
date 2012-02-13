@@ -53,7 +53,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     public HibernateVmCommand(T parameters) {
         super(parameters);
         super.setStoragePoolId(getVm().getstorage_pool_id());
-        parameters.setEntityId(getVm().getvm_guid());
+        parameters.setEntityId(getVm().getId());
     }
 
     private Guid _storageDomainId = Guid.Empty;

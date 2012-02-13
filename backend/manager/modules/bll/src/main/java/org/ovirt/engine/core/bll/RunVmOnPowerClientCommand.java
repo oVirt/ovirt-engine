@@ -13,7 +13,7 @@ public class RunVmOnPowerClientCommand<T extends RunVmParams> extends RunVmOnDed
     @Override
     public Guid getAutoStartVdsId() {
         if (getDestinationVds() != null) {
-            return getDestinationVds().getvds_id();
+            return getDestinationVds().getId();
         } else {
             return null;
         }
@@ -27,7 +27,7 @@ public class RunVmOnPowerClientCommand<T extends RunVmParams> extends RunVmOnDed
         int oldMemory = getVm().getStaticData().getmem_size_mb();
         // this chould be from a power client, but where a rerun occured and
         // current vds is not a power client
-        if (getDestinationVds() != null && getDestinationVds().getvds_id().equals(getVdsId())) {
+        if (getDestinationVds() != null && getDestinationVds().getId().equals(getVdsId())) {
             AutoMemoryAdjust(getDestinationVds(), getVm());
         }
         getVm().getDynamicData().setguest_requested_memory(getVm().getStaticData().getmem_size_mb());

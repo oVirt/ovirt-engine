@@ -6,9 +6,9 @@ import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 
 public class HandleFailedStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
@@ -33,10 +33,10 @@ public class HandleFailedStorageDomainCommand<T extends StorageDomainPoolParamet
         // accessing the DB is less painful.
         if (!checkStorageDomainInDb()) {
             setSucceeded(false);
-            log.error(String.format(STORAGE_DOMAIN_DOES_NOT_EXIST_MSG, getStorageDomain().getid()));
+            log.error(String.format(STORAGE_DOMAIN_DOES_NOT_EXIST_MSG, getStorageDomain().getId()));
             return;
         }
-        StorageDomainParametersBase localParameters = (StorageDomainParametersBase) getParameters();
+        StorageDomainParametersBase localParameters = getParameters();
         if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
             // send required new and set succeeded to true
             // in order not to fail calling commands in case this failed
@@ -53,5 +53,5 @@ public class HandleFailedStorageDomainCommand<T extends StorageDomainPoolParamet
         }
     }
 
-    private Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 }

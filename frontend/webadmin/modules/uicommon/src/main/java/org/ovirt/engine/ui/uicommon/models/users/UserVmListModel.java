@@ -117,7 +117,7 @@ public class UserVmListModel extends VmListModel
 		{
 			for (VM a : items)
 			{
-				prms.add(new VmToAdGroupParameters(a.getvm_guid(), new ad_groups(getEntity().getuser_id(), getEntity().getname(), getEntity().getdomain())));
+				prms.add(new VmToAdGroupParameters(a.getId(), new ad_groups(getEntity().getuser_id(), getEntity().getname(), getEntity().getdomain())));
 			}
 			// TODO: Remove Model! VmUserListModel should be removed!
 			//Frontend.RunMultipleActions(VdcActionType.AttachVmToAdGroup, prms);
@@ -126,7 +126,7 @@ public class UserVmListModel extends VmListModel
 		{
 			for (VM a : items)
 			{
-				prms.add(new VmToUserParameters(new VdcUser(getEntity().getuser_id(), getEntity().getusername(), getEntity().getdomain()), a.getvm_guid()));
+				prms.add(new VmToUserParameters(new VdcUser(getEntity().getuser_id(), getEntity().getusername(), getEntity().getdomain()), a.getId()));
 			}
 			//Attach vm to users
 			// TODO: Remove Model! VmUserListModel should be removed!
@@ -197,7 +197,7 @@ public class UserVmListModel extends VmListModel
 		//
 		for (VM a : items)
 		{
-			parameters.add((VdcActionParametersBase)new VmToAdElementParameters(getEntity().getuser_id(), a.getvm_guid()));
+			parameters.add((VdcActionParametersBase)new VmToAdElementParameters(getEntity().getuser_id(), a.getId()));
 		}
 
 		//			var parameters = items

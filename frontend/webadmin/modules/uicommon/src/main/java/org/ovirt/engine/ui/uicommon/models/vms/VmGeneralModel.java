@@ -599,7 +599,7 @@ public class VmGeneralModel extends EntityModel
 		}};
 
 		VM vm = (VM)getEntity();
-		Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getvm_guid()), _asyncQuery);
+		Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getId()), _asyncQuery);
 	}
 
 	//TODO: Find a better place for this code. It must be something common,

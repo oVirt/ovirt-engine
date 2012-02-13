@@ -41,7 +41,7 @@ public class PoolDiskListModel extends SearchableListModel
 												if (vm != null)
 												{
 													PoolDiskListModel poolDiskListModel = (PoolDiskListModel)model;
-													poolDiskListModel.SyncSearch(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getvm_guid()));
+													poolDiskListModel.SyncSearch(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getId()));
 												}
 											}};
 			AsyncDataProvider.GetAnyVm(_asyncQuery, pool.getvm_pool_name());

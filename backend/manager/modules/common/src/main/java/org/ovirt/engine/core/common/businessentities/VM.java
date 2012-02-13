@@ -20,7 +20,7 @@ import org.ovirt.engine.core.compat.Version;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VM")
-public class VM extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
+public class VM extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid> {
     private static final long serialVersionUID = -4078140531074414263L;
     @Valid
     private VmStatic mVmStatic;
@@ -111,7 +111,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mRunAndPause = false;
         _diskSize = 0;
 
-        this.setvm_guid(vm_guid);
+        this.setId(vm_guid);
         this.setvm_name(vm_name);
         this.setvm_mem_size_mb(vm_mem_size_mb);
         this.setvmt_guid(vmt_guid);
@@ -182,11 +182,13 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     @XmlElement(name = "vm_guid")
-    public Guid getvm_guid() {
+    @Override
+    public Guid getId() {
         return this.mVmStatic.getId();
     }
 
-    public void setvm_guid(Guid value) {
+    @Override
+    public void setId(Guid value) {
         this.mVmStatic.setId(value);
         this.mVmDynamic.setId(value);
         this.mVmStatistics.setId(value);
@@ -1118,7 +1120,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     private java.util.Map<String, DiskImage> mDiskMap = new java.util.HashMap<String, DiskImage>();
 
     @XmlElement(name = "DiskList")
-    private java.util.ArrayList<DiskImage> _diskList = new java.util.ArrayList<DiskImage>();
+    private final java.util.ArrayList<DiskImage> _diskList = new java.util.ArrayList<DiskImage>();
     private String mCdPath = "";
     private String mFloppyPath = "";
     private boolean mRunAndPause = false;
@@ -1439,7 +1441,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         }
         VM eq = (VM) ((obj instanceof VM) ? obj : null);
         if (eq != null) {
-            if (eq.getvm_guid().equals(this.getvm_guid())) {
+            if (eq.getId().equals(this.getId())) {
                 return true;
             }
         }
@@ -1558,7 +1560,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     @Override
     public Object getQueryableId() {
-        return getvm_guid();
+        return getId();
     }
 
     private static final java.util.ArrayList<String> _vmProperties = new java.util.ArrayList<String>(

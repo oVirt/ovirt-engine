@@ -110,7 +110,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             if (getParameters().isRemoveTemplateFromDb()) {
                 problematicVmNames.add(vm.getvm_name());
             } else {
-                List<DiskImage> vmDIsks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getvm_guid());
+                List<DiskImage> vmDIsks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
                 if (vmDIsks != null && !vmDIsks.isEmpty()
                         && storageDomainsList.contains(vmDIsks.get(0).getstorage_id())) {
                     problematicVmNames.add(vm.getvm_name());

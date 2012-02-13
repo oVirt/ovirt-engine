@@ -67,7 +67,7 @@ public class VmGuideModel extends GuideModel
 			//Add NIC action.
 			UICommand addNicAction = new UICommand("AddNetwork", this);
 
-			java.util.ArrayList<VmNetworkInterface> nics = DataProvider.GetVmNicList(getEntity().getvm_guid());
+			java.util.ArrayList<VmNetworkInterface> nics = DataProvider.GetVmNicList(getEntity().getId());
 			if (nics.isEmpty())
 			{
 				addNicAction.setTitle(VmConfigureNetworkInterfacesAction);
@@ -83,7 +83,7 @@ public class VmGuideModel extends GuideModel
 			//Add disk action.
 			UICommand addDiskAction = new UICommand("AddDisk", this);
 
-			java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(getEntity().getvm_guid());
+			java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(getEntity().getId());
 			if (disks.isEmpty())
 			{
 				addDiskAction.setTitle(VmConfigureVirtualDisksAction);
@@ -114,7 +114,7 @@ public class VmGuideModel extends GuideModel
 	{
 		if (getEntity() != null)
 		{
-			java.util.ArrayList<VmNetworkInterface> nics = DataProvider.GetVmNicList(getEntity().getvm_guid());
+			java.util.ArrayList<VmNetworkInterface> nics = DataProvider.GetVmNicList(getEntity().getId());
 			int nicCount = nics.size();
 			String newNicName = DataProvider.GetNewNicName(nics);
 
@@ -187,7 +187,7 @@ public class VmGuideModel extends GuideModel
 			vmNetworkInterface.setType(_type);
 			vmNetworkInterface.setMacAddress(model.getMAC().getIsChangable() ? (model.getMAC().getEntity() == null ? null : ((String)(model.getMAC().getEntity())).toLowerCase()) : "");
 
-			AddVmInterfaceParameters parameters = new AddVmInterfaceParameters(getEntity().getvm_guid(), vmNetworkInterface);
+			AddVmInterfaceParameters parameters = new AddVmInterfaceParameters(getEntity().getId(), vmNetworkInterface);
 
 			model.StartProgress(null);
 
@@ -218,7 +218,7 @@ public class VmGuideModel extends GuideModel
 	{
 		if (getEntity() != null)
 		{
-			java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(getEntity().getvm_guid());
+			java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(getEntity().getId());
 			boolean hasDisks = disks.size() > 0;
 
 			DiskModel model = new DiskModel();
@@ -373,7 +373,7 @@ public class VmGuideModel extends GuideModel
 
 			model.StartProgress(null);
 
-			AddDiskToVmParameters tempVar2 = new AddDiskToVmParameters(getEntity().getvm_guid(), disk);
+			AddDiskToVmParameters tempVar2 = new AddDiskToVmParameters(getEntity().getId(), disk);
 			tempVar2.setStorageDomainId(storageDomain.getid());
 			Frontend.RunAction(VdcActionType.AddDiskToVm, tempVar2,
 		new IFrontendActionAsyncCallback() {

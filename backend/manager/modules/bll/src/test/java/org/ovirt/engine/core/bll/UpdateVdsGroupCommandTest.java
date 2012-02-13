@@ -263,7 +263,7 @@ public class UpdateVdsGroupCommandTest {
     private VDSGroup createDefaultVdsGroup() {
         VDSGroup group = new VDSGroup();
         group.setname("Default");
-        group.setID(VDSGroup.DEFAULT_VDS_GROUP_ID);
+        group.setId(VDSGroup.DEFAULT_VDS_GROUP_ID);
         group.setcpu_name("Intel Conroe");
         group.setcompatibility_version(VERSION_1_1);
         group.setstorage_pool_id(STORAGE_POOL_ID);
@@ -273,7 +273,7 @@ public class UpdateVdsGroupCommandTest {
     private VDSGroup createVdsGroupWithNoCpuName() {
         VDSGroup group = new VDSGroup();
         group.setname("Default");
-        group.setID(VDSGroup.DEFAULT_VDS_GROUP_ID);
+        group.setId(VDSGroup.DEFAULT_VDS_GROUP_ID);
         group.setcompatibility_version(VERSION_1_1);
         group.setstorage_pool_id(STORAGE_POOL_ID);
         return group;

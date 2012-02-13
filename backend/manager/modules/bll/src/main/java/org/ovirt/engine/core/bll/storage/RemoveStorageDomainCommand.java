@@ -54,8 +54,8 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         }
 
         getStorageHelper(dom).StorageDomainRemoved(dom.getStorageStaticData());
-        getDb().getStorageDomainDynamicDAO().remove(dom.getid());
-        getDb().getStorageDomainStaticDAO().remove(dom.getid());
+        getDb().getStorageDomainDynamicDAO().remove(dom.getId());
+        getDb().getStorageDomainStaticDAO().remove(dom.getId());
 
         setSucceeded(true);
     }
@@ -112,12 +112,12 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
     private boolean ConnectStorage() {
         return getStorageHelper(getStorageDomain()).ConnectStorageToDomainByVdsId(getStorageDomain(),
-                getVds().getvds_id());
+                getVds().getId());
     }
 
     private void DisconnectStorage() {
         getStorageHelper(getStorageDomain()).DisconnectStorageFromDomainByVdsId(getStorageDomain(),
-                getVds().getvds_id());
+                getVds().getId());
     }
 
     protected DbFacade getDb() {
@@ -165,7 +165,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             return false;
         }
 
-        Guid storageDomainId = storageDomain.getid();
+        Guid storageDomainId = storageDomain.getId();
         Guid storagePoolId = storageDomain.getstorage_pool_id().getValue();
 
         return getDb().getStoragePoolIsoMapDAO()
@@ -173,7 +173,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
     }
 
     protected boolean detachStorage(storage_domains dom) {
-        Guid domId = dom.getid();
+        Guid domId = dom.getId();
         Guid poolId = dom.getstorage_pool_id().getValue();
         DetachStorageDomainFromPoolParameters params = new DetachStorageDomainFromPoolParameters(domId, poolId);
         params.setDestroyingPool(getParameters().getDestroyingPool());
@@ -186,7 +186,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
     protected boolean formatStorage(storage_domains dom, VDS vds) {
         return getVdsBroker()
                 .RunVdsCommand(VDSCommandType.FormatStorageDomain,
-                           new FormatStorageDomainVDSCommandParameters(vds.getvds_id(), dom.getid())).getSucceeded();
+                        new FormatStorageDomainVDSCommandParameters(vds.getId(), dom.getId())).getSucceeded();
     }
 
     @SuppressWarnings("deprecation")
@@ -195,7 +195,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
                 vds.getvds_group_compatibility_version().getValue()) && (isFCP(dom) || isISCSI(dom))) {
             return getVdsBroker()
                     .RunVdsCommand(VDSCommandType.RemoveVG,
-                            new RemoveVGVDSCommandParameters(vds.getvds_id(), dom.getstorage())).getSucceeded();
+                            new RemoveVGVDSCommandParameters(vds.getId(), dom.getstorage())).getSucceeded();
         }
         return true;
     }

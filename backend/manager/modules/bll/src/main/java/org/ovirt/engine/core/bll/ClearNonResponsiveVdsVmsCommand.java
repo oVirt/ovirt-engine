@@ -49,18 +49,18 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
                 new java.util.ArrayList<VdcActionParametersBase>();
         for (VM vm : vms) {
             if (vm.getauto_startup()) {
-                runVmParamsList.add(new RunVmParams(vm.getvm_guid()));
+                runVmParamsList.add(new RunVmParams(vm.getId()));
             }
             VDSReturnValue returnValue = Backend
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.SetVmStatus,
-                            new SetVmStatusVDSCommandParameters(vm.getvm_guid(), VMStatus.Down));
+                            new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down));
             // Write that this VM was shut down by host rebbot or manual fence
             if (returnValue != null && returnValue.getSucceeded()) {
-                LogSettingVmToDown(getVds().getvds_id(), vm.getvm_guid());
+                LogSettingVmToDown(getVds().getId(), vm.getId());
             }
-            VmPoolHandler.ProcessVmPoolOnStopVm(vm.getvm_guid(),
+            VmPoolHandler.ProcessVmPoolOnStopVm(vm.getId(),
                     ExecutionHandler.createDefaultContexForTasks(executionContext));
         }
 

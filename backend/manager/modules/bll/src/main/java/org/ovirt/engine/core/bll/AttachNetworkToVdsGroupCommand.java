@@ -16,8 +16,6 @@ import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -25,6 +23,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 @CustomLogFields({ @CustomLogField("NetworkName") })
 public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupParameter> extends
@@ -79,7 +79,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             List<VdsNetworkInterface> interfaces = (List<VdsNetworkInterface>) Backend
                     .getInstance()
                     .runInternalQuery(VdcQueryType.GetVdsInterfacesByVdsId,
-                            new GetVdsByVdsIdParameters(vds.getvds_id())).getReturnValue();
+                            new GetVdsByVdsIdParameters(vds.getId())).getReturnValue();
             // Interface iface = null; //LINQ 31899 interfaces.FirstOrDefault(i
             // => i.network_name == net.name);
             VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {

@@ -36,7 +36,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
         boolean returnValue = true;
 
         if (getConnection().getstorage_type() == StorageType.LOCALFS) {
-            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().getForVds(getVds().getvds_id());
+            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().getForVds(getVds().getId());
             if (storagePool == null || storagePool.getstorage_pool_type() != StorageType.LOCALFS) {
                 returnValue = false;
                 getReturnValue().getCanDoActionMessages().add(

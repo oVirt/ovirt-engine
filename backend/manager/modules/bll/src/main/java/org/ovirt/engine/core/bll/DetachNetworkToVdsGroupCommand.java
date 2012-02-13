@@ -91,7 +91,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             for (IVdcQueryable vm_helper : vmList) {
                 VM vm = (VM) vm_helper;
                 List<VmNetworkInterface> interfaces = DbFacade.getInstance()
-                        .getVmNetworkInterfaceDAO().getAllForVm(vm.getvm_guid());
+                        .getVmNetworkInterfaceDAO().getAllForVm(vm.getId());
                 // Interface iface = null; //LINQ interfaces.FirstOrDefault(i =>
                 // i.network_name ==
                 // AttachNetworkToClusterParameter.Network.name);

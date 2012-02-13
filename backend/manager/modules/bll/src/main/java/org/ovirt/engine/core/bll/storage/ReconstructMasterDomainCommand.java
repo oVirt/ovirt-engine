@@ -28,11 +28,11 @@ import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -106,7 +106,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                                                         .RunVdsCommand(
                                                                 VDSCommandType.DisconnectStoragePool,
                                                                 new DisconnectStoragePoolVDSCommandParameters(getVds()
-                                                                        .getvds_id(),
+                                                                        .getId(),
                                                                         getStoragePool().getId(),
                                                                         getVds().getvds_spm_id()))
                                                         .getSucceeded();
@@ -130,7 +130,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                                             .getResourceManager()
                                             .RunVdsCommand(
                                                     VDSCommandType.ReconstructMaster,
-                                                    new ReconstructMasterVDSCommandParameters(getVds().getvds_id(),
+                                                    new ReconstructMasterVDSCommandParameters(getVds().getId(),
                                                             getStoragePool().getId(), getStoragePool().getname(),
                                                             _newMasterStorageDomainId, domains, getStoragePool()
                                                                     .getmaster_domain_version())).getSucceeded();
@@ -172,7 +172,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             // if spm host id is different from selected host get the spm
             // in order to try and perform stop spm
             VDS spm = null;
-            if (getStoragePool().getspm_vds_id().equals(getVds().getvds_id())) {
+            if (getStoragePool().getspm_vds_id().equals(getVds().getId())) {
                 spm = getVds();
             } else {
                 spm = DbFacade.getInstance()
@@ -181,14 +181,14 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             }
             if (spm != null) {
                 ResetIrsVDSCommandParameters tempVar2 = new ResetIrsVDSCommandParameters(
-                            getStoragePool().getId(), spm.gethost_name(), spm.getvds_id());
+                        getStoragePool().getId(), spm.gethost_name(), spm.getId());
                 tempVar2.setIgnoreStopFailed(true);
                 commandSucceeded = Backend.getInstance().getResourceManager()
                             .RunVdsCommand(VDSCommandType.ResetIrs, tempVar2).getSucceeded();
 
                 // if spm host is up switch to use it in the following logic
                 if (spm.getstatus() == VDSStatus.Up) {
-                    setVdsId(spm.getvds_id());
+                    setVdsId(spm.getId());
                     setVds(spm);
                 }
             }
@@ -209,7 +209,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                                                 .getResourceManager()
                                                 .RunVdsCommand(
                                                         VDSCommandType.ConnectStoragePool,
-                                                        new ConnectStoragePoolVDSCommandParameters(vds.getvds_id(),
+                                                        new ConnectStoragePoolVDSCommandParameters(vds.getId(),
                                                                 getStoragePool().getId(), vds.getvds_spm_id(),
                                                                 getMasterDomainIdFromDb(), getStoragePool()
                                                                         .getmaster_domain_version()));
@@ -218,13 +218,13 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                                                     .getResourceManager()
                                                     .RunVdsCommand(
                                                             VDSCommandType.RefreshStoragePool,
-                                                            new RefreshStoragePoolVDSCommandParameters(vds.getvds_id(),
+                                                            new RefreshStoragePoolVDSCommandParameters(vds.getId(),
                                                                     getStoragePool().getId(),
                                                                     _newMasterStorageDomainId,
                                                                     getStoragePool().getmaster_domain_version()));
                                         } else {
                                             log.errorFormat("Post reconstruct actions (connectPool) did not complete on host {0} in the pool. error {1}",
-                                                    vds.getvds_id(),
+                                                    vds.getId(),
                                                     returnValue.getVdsError().getMessage());
                                         }
                                     }
@@ -232,13 +232,13 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                                     if (getParameters().getIsDeactivate()) {
                                         StorageHelperDirector.getInstance()
                                                 .getItem(getStorageDomain().getstorage_type())
-                                                .DisconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getvds_id());
+                                                .DisconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId());
                                     }
 
                                 } catch (Exception e) {
                                     log.errorFormat("Post reconstruct actions (connectPool,refreshPool,disconnect storage)"
                                             + " did not complete on host {0} in the pool. error {1}",
-                                            vds.getvds_id(),
+                                            vds.getId(),
                                             e.getMessage());
                                 }
                             }

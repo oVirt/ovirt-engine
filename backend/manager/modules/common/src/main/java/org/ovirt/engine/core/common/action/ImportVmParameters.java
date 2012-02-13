@@ -38,7 +38,7 @@ public class ImportVmParameters extends MoveVmParameters implements java.io.Seri
 
     public ImportVmParameters(VM vm, Guid sourceStorageDomainId, Guid destStorageDomainId, Guid storagePoolId,
             Guid vdsGroupId) {
-        super(vm.getvm_guid(), destStorageDomainId);
+        super(vm.getId(), destStorageDomainId);
         _vm = vm;
         _sourceDomainId = sourceStorageDomainId;
         _destDomainId = destStorageDomainId;

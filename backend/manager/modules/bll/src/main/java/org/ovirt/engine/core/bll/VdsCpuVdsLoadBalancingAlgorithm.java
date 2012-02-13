@@ -14,11 +14,11 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.linq.DefaultMapper;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
 
@@ -54,7 +54,7 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
         setOverUtilizedServers(LinqUtils.toMap(relevantVdss, new DefaultMapper<VDS, Guid>() {
             @Override
             public Guid createKey(VDS vds) {
-                return vds.getvds_id();
+                return vds.getId();
             }
         }));
 
@@ -94,7 +94,7 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
         setReadyToMigrationServers(LinqUtils.toMap(relevantVdses, new DefaultMapper<VDS, Guid>() {
             @Override
             public Guid createKey(VDS i) {
-                return i.getvds_id();
+                return i.getId();
             }
         }));
 
@@ -149,7 +149,7 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
             setUnderUtilizedServers(LinqUtils.toMap(vdses, new DefaultMapper<VDS, Guid>() {
                 @Override
                 public Guid createKey(VDS vds) {
-                    return vds.getvds_id();
+                    return vds.getId();
                 }
             }));
 

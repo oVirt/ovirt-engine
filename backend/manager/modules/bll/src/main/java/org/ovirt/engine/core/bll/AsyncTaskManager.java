@@ -33,13 +33,13 @@ import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -364,7 +364,7 @@ public final class AsyncTaskManager {
                     log.infoFormat(
                             "AsyncTaskManager::RemoveOldAndCleanedTasks: vds {0} is spm and non-operational, calling SetNonOperationalVds",
                             vds.getvds_name());
-                    SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(vds.getvds_id(),
+                    SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(vds.getId(),
                             NonOperationalReason.GENERAL);
                     tempVar.setSaveToDb(true);
                     tempVar.setShouldBeLogged(false);

@@ -49,7 +49,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     }
 
     protected void InitializeStorageDomain() {
-        getStorageDomain().setid(Guid.NewGuid());
+        getStorageDomain().setId(Guid.NewGuid());
     }
 
     protected boolean AddStorageDomainInIrs() {
@@ -59,7 +59,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.CreateStorageDomain,
-                        new CreateStorageDomainVDSCommandParameters(getVds().getvds_id(), getStorageDomain()
+                        new CreateStorageDomainVDSCommandParameters(getVds().getId(), getStorageDomain()
                                 .getStorageStaticData(), getStorageArgs())).getSucceeded();
     }
 
@@ -70,8 +70,8 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                 DbFacade.getInstance().getStorageDomainStaticDAO().save(getStorageDomain().getStorageStaticData());
                 getCompensationContext().snapshotNewEntity(getStorageDomain().getStorageStaticData());
                 storage_domain_dynamic newStorageDynamic =
-                        new storage_domain_dynamic(null, getStorageDomain().getid(), null);
-                getReturnValue().setActionReturnValue(getStorageDomain().getid());
+                        new storage_domain_dynamic(null, getStorageDomain().getId(), null);
+                getReturnValue().setActionReturnValue(getStorageDomain().getId());
                 DbFacade.getInstance().getStorageDomainDynamicDAO().save(newStorageDynamic);
                 getCompensationContext().snapshotNewEntity(newStorageDynamic);
                 getCompensationContext().stateChanged();
@@ -86,8 +86,8 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                         .getInstance()
                         .getResourceManager()
                         .RunVdsCommand(VDSCommandType.GetStorageDomainStats,
-                                new GetStorageDomainStatsVDSCommandParameters(getVds().getvds_id(),
-                                        getStorageDomain().getid()))
+                                new GetStorageDomainStatsVDSCommandParameters(getVds().getId(),
+                                        getStorageDomain().getId()))
                         .getReturnValue();
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
@@ -165,7 +165,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DATA_DOMAIN_PROHIBITED);
             return false;
         }
-        if (DbFacade.getInstance().getStorageDomainStaticDAO().get(getStorageDomain().getid()) != null) {
+        if (DbFacade.getInstance().getStorageDomainStaticDAO().get(getStorageDomain().getId()) != null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
             returnValue = false;
         }
@@ -178,7 +178,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                             new HSMGetStorageDomainsListVDSCommandParameters(getVdsId(), Guid.Empty, getStorageDomain()
                                     .getstorage_type(), getStorageDomain().getstorage_domain_type(), ""))
                     .getReturnValue();
-            if (!storageIds.contains(getStorageDomain().getid())) {
+            if (!storageIds.contains(getStorageDomain().getId())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
                 returnValue = false;
             } else {
@@ -188,7 +188,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                                 .getResourceManager()
                                 .RunVdsCommand(VDSCommandType.HSMGetStorageDomainInfo,
                                         new HSMGetStorageDomainInfoVDSCommandParameters(getVdsId(),
-                                                getStorageDomain().getid()))
+                                                getStorageDomain().getId()))
                                 .getReturnValue();
                 if (domainFromIrs != null
                         && domainFromIrs.getFirst().getstorage_domain_type() != getStorageDomain().getstorage_domain_type()) {

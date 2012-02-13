@@ -318,7 +318,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new AuditLogableBase();
         b.setVmId(null);
         final VM v = new VM();
-        v.setvm_guid(GUID);
+        v.setId(GUID);
         b.setVm(v);
         final NGuid g = b.getVmIdRef();
         assertEquals(GUID, g);

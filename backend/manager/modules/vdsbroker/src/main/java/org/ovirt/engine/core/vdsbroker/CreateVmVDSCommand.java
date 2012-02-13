@@ -35,7 +35,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                     boolean canExecute = true;
                     if (ResourceManager.getInstance().getBackendCallback() != null) {
                         canExecute = ResourceManager.getInstance().AddAsyncRunningVm(
-                                vm.getvm_guid(),
+                                vm.getId(),
                                 ResourceManager.getInstance().getBackendCallback());
                     }
                     if (canExecute) {
@@ -107,10 +107,10 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
 
     private boolean CanExecute() {
 
-        Guid guid = getParameters().getVm().getvm_guid();
+        Guid guid = getParameters().getVm().getId();
         String vmName = getParameters().getVm().getvm_name();
 
-        if (ResourceManager.getInstance().IsVmDuringInitiating(getParameters().getVm().getvm_guid())) {
+        if (ResourceManager.getInstance().IsVmDuringInitiating(getParameters().getVm().getId())) {
             log.infoFormat("Vm Running failed - vm {0}:{1} already running", guid, vmName);
             getVDSReturnValue().setReturnValue(VMStatus.Up);
             return false;

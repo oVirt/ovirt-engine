@@ -13,15 +13,15 @@ import org.ovirt.engine.core.common.vdscommands.SpmStopVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.pm.VdsFencingOptions;
 
 public class FencingExecutor {
-    private VDS _vds;
+    private final VDS _vds;
     private FenceActionType _action = FenceActionType.forValue(0);
     private Guid _vdsToRunId;
     private String _vdsToRunName;
@@ -42,7 +42,7 @@ public class FencingExecutor {
         VDS vdsToRun = null;
         // check if this is a new host, no need to retry , only status is
         // available on new host.
-        if (_vds.getvds_id().equals(NO_VDS)) {
+        if (_vds.getId().equals(NO_VDS)) {
             vdsToRun = LinqUtils.firstOrNull(DbFacade.getInstance().getVdsDAO().getAll(), new Predicate<VDS>() {
                 @Override
                 public boolean eval(VDS vds) {
@@ -52,7 +52,7 @@ public class FencingExecutor {
                 }
             });
             if (vdsToRun != null) {
-                _vdsToRunId = vdsToRun.getvds_id();
+                _vdsToRunId = vdsToRun.getId();
                 _vdsToRunName = vdsToRun.getvds_name();
             }
         } else {
@@ -63,13 +63,13 @@ public class FencingExecutor {
                 vdsToRun = LinqUtils.firstOrNull(DbFacade.getInstance().getVdsDAO().getAll(), new Predicate<VDS>() {
                     @Override
                     public boolean eval(VDS vds) {
-                        return !vds.getvds_id().equals(_vds.getvds_id())
+                        return !vds.getId().equals(_vds.getId())
                                 && vds.getstorage_pool_id().equals(_vds.getstorage_pool_id())
                                 && vds.getstatus() == VDSStatus.Up;
                     }
                 });
                 if (vdsToRun != null) {
-                    _vdsToRunId = vdsToRun.getvds_id();
+                    _vdsToRunId = vdsToRun.getId();
                     _vdsToRunName = vdsToRun.getvds_name();
                     break;
                 }
@@ -96,16 +96,16 @@ public class FencingExecutor {
         VDSReturnValue retValue = null;
         try {
             // skip following code in case of testing a new host status
-            if (_vds.getvds_id() != null && !_vds.getvds_id().equals(Guid.Empty)) {
+            if (_vds.getId() != null && !_vds.getId().equals(Guid.Empty)) {
                 // get the host spm status again from the database in order to test it's current state.
-                _vds.setspm_status((DbFacade.getInstance().getVdsDAO().get(_vds.getvds_id()).getspm_status()));
+                _vds.setspm_status((DbFacade.getInstance().getVdsDAO().get(_vds.getId()).getspm_status()));
                 // try to stop SPM if action is Restart or Stop and the vds is SPM
                 if ((_action == FenceActionType.Restart || _action == FenceActionType.Stop)
                         && (_vds.getspm_status() != VdsSpmStatus.None)) {
                     Backend.getInstance()
                             .getResourceManager()
                             .RunVdsCommand(VDSCommandType.SpmStop,
-                                    new SpmStopVDSCommandParameters(_vds.getvds_id(), _vds.getstorage_pool_id()));
+                                    new SpmStopVDSCommandParameters(_vds.getId(), _vds.getstorage_pool_id()));
                 }
             }
             retValue = runFencingAction(_action);
@@ -148,7 +148,7 @@ public class FencingExecutor {
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.FenceVds,
-                            new FenceVdsVDSCommandParameters(_vdsToRunId, _vds.getvds_id(), _vds.getManagmentIp(),
+                        new FenceVdsVDSCommandParameters(_vdsToRunId, _vds.getId(), _vds.getManagmentIp(),
                                     managementPort, agent, _vds.getpm_user(), _vds.getpm_password(),
                                     managementOptions, actionType));
     }

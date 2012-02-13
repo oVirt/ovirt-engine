@@ -14,10 +14,10 @@ import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.vdscommands.ActivateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -70,7 +70,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                 .RunVdsCommand(
                         VDSCommandType.ActivateStorageDomain,
                         new ActivateStorageDomainVDSCommandParameters(getStoragePool().getId(), getStorageDomain()
-                                .getid())).getSucceeded());
+                                .getId())).getSucceeded());
         log.infoFormat("ActivateStorage Domain. After Activate storage domain in vds. Time:{0}", new java.util.Date());
         if (getSucceeded()) {
             RefreshAllVdssInPool(false);
@@ -93,7 +93,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
             log.infoFormat("ActivateStorage Domain. After change storage pool status in vds. Time:{0}",
                     new java.util.Date());
             if (getStorageDomain().getstorage_domain_type() == StorageDomainType.ISO) {
-                IsoDomainListSyncronizer.getInstance().refresheIsoDomainWhenActivateDomain(getStorageDomain().getid(),
+                IsoDomainListSyncronizer.getInstance().refresheIsoDomainWhenActivateDomain(getStorageDomain().getId(),
                         getStoragePool().getId());
             }
         } else {

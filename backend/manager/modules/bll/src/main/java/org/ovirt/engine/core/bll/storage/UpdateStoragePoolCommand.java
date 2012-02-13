@@ -126,7 +126,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId());
         boolean hasDefaultCluster = false;
         for(VDSGroup cluster : clusters) {
-            if(cluster.getID().equals(VDSGroup.DEFAULT_VDS_GROUP_ID)) {
+            if(cluster.getId().equals(VDSGroup.DEFAULT_VDS_GROUP_ID)) {
                 hasDefaultCluster = true;
                 break;
             }

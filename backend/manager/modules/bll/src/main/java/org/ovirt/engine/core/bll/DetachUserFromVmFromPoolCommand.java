@@ -52,7 +52,7 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
                         .getPermissionDAO()
                         .getForRoleAndAdElementAndObject(
                                 PredefinedRoles.ENGINE_USER.getId(),
-                                getAdUserId(), vm.getvm_guid());
+                                getAdUserId(), vm.getId());
                 if (perm != null) {
                     DbFacade.getInstance().getPermissionDAO().remove(perm.getId());
                     RestoreVmFromBaseSnapshot(vm);
@@ -63,7 +63,7 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
     }
 
     private void RestoreVmFromBaseSnapshot(VM vm) {
-        List<image_vm_pool_map> list = DbFacade.getInstance().getDiskImageDAO().getImageVmPoolMapByVmId(vm.getvm_guid());
+        List<image_vm_pool_map> list = DbFacade.getInstance().getDiskImageDAO().getImageVmPoolMapByVmId(vm.getId());
         // java.util.ArrayList<DiskImage> imagesList = null; // LINQ 32934
         // list.Select(a =>
         // DbFacade.Instance.GetSnapshotById(a.image_guid)).ToList();
@@ -77,7 +77,7 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
             /**
              * restore all snapshots
              */
-            RestoreAllSnapshotsParameters tempVar = new RestoreAllSnapshotsParameters(vm.getvm_guid(), Guid.Empty);
+            RestoreAllSnapshotsParameters tempVar = new RestoreAllSnapshotsParameters(vm.getId(), Guid.Empty);
             tempVar.setShouldBeLogged(false);
             tempVar.setImagesList(imagesList);
             Backend.getInstance().runInternalAction(VdcActionType.RestoreAllSnapshots,

@@ -11,14 +11,14 @@ import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParameters> extends VdsCommand<T> {
     public HandleVdsCpuFlagsOrClusterChangedCommand(T parameters) {
@@ -77,7 +77,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
             if (missingFlags != null) {
                 AddCustomValue("CpuFlags", StringUtils.join(missingFlags, ", "));
                 if (missingFlags.contains("nx")) {
-                    AuditLogableBase logable = new AuditLogableBase(getVds().getvds_id());
+                    AuditLogableBase logable = new AuditLogableBase(getVds().getId());
                     AuditLogDirector.log(logable, AuditLogType.CPU_FLAGS_NX_IS_MISSING);
                 }
             }

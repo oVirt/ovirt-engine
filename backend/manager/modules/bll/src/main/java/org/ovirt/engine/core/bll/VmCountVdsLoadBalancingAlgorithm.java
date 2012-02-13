@@ -1,16 +1,18 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.linq.DefaultMapper;
-
-import java.util.List;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.linq.DefaultMapper;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
     public VmCountVdsLoadBalancingAlgorithm(VDSGroup group) {
@@ -52,7 +54,7 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
         setOverUtilizedServers(LinqUtils.toMap(vdses, new DefaultMapper<VDS, Guid>() {
             @Override
             public Guid createKey(VDS vds) {
-                return vds.getvds_id();
+                return vds.getId();
             }
         }));
     }
@@ -92,7 +94,7 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
         setUnderUtilizedServers(LinqUtils.toMap(vdses, new DefaultMapper<VDS, Guid>() {
             @Override
             public Guid createKey(VDS vds) {
-                return vds.getvds_id();
+                return vds.getId();
             }
         }));
     }
@@ -138,7 +140,7 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
         setReadyToMigrationServers(LinqUtils.toMap(vdses, new DefaultMapper<VDS, Guid>() {
             @Override
             public Guid createKey(VDS vds) {
-                return vds.getvds_id();
+                return vds.getId();
             }
         }));
     }

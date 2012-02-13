@@ -29,10 +29,10 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.GetImageDomainsListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -116,7 +116,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             retValue = false;
         }
         retValue = retValue
-                && VmTemplateCommand.isVmTemplateImagesReady(getVmTemplateId(), getSourceDomain().getid(),
+                && VmTemplateCommand.isVmTemplateImagesReady(getVmTemplateId(), getSourceDomain().getId(),
                         getReturnValue().getCanDoActionMessages(), true, true, true, false);
         if (retValue) {
             setStoragePoolId(getVmTemplate().getstorage_pool_id());
@@ -128,7 +128,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         if (retValue
                 && DbFacade.getInstance()
                         .getStoragePoolIsoMapDAO()
-                        .get(new StoragePoolIsoMapId(getStorageDomain().getid(),
+                        .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                                 getVmTemplate().getstorage_pool_id().getValue())) == null) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
@@ -181,7 +181,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     MoveOrCopyImageGroupParameters p = tempVar;
                     // if copying template then AddImageDomainMapping should be true
                     if (getSourceDomain() != null) {
-                        p.setSourceDomainId(getSourceDomain().getid());
+                        p.setSourceDomainId(getSourceDomain().getId());
                     }
                     p.setParentParemeters(getParameters());
                     VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(

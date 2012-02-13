@@ -177,7 +177,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             returnValue =
                     DbFacade.getInstance()
                             .getStoragePoolIsoMapDAO()
-                            .getAllForStorage(storageDomain.getid())
+                            .getAllForStorage(storageDomain.getId())
                             .size() == 0;
             if (!returnValue) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);

@@ -18,7 +18,7 @@ public class RemoveVdsGroupCommand<T extends VdsGroupParametersBase> extends Vds
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getVdsGroupDAO().remove(getVdsGroup().getID());
+        DbFacade.getInstance().getVdsGroupDAO().remove(getVdsGroup().getId());
         setSucceeded(true);
     }
 
@@ -32,29 +32,29 @@ public class RemoveVdsGroupCommand<T extends VdsGroupParametersBase> extends Vds
             addCanDoActionMessage(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);
             returnValue = false;
         } else {
-            if (getVdsGroup().getID().equals(VDSGroup.DEFAULT_VDS_GROUP_ID)) {
+            if (getVdsGroup().getId().equals(VDSGroup.DEFAULT_VDS_GROUP_ID)) {
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_REMOVE_DEFAULT_VDS_GROUP);
                 returnValue = false;
             }
 
             if (DbFacade.getInstance().getVdsStaticDAO()
-                    .getAllForVdsGroup(getVdsGroup().getID()).size() != 0) {
+                    .getAllForVdsGroup(getVdsGroup().getId()).size() != 0) {
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_REMOVE_VDS_GROUP_VDS_DETECTED);
                 returnValue = false;
             }
             if (DbFacade.getInstance().getVmStaticDAO()
-                    .getAllByVdsGroup(getVdsGroup().getID()).size() != 0) {
+                    .getAllByVdsGroup(getVdsGroup().getId()).size() != 0) {
                 addCanDoActionMessage(VdcBllMessages.VM_CANNOT_REMOVE_VDS_GROUP_VMS_DETECTED);
                 returnValue = false;
             }
             if (DbFacade.getInstance().getVmTemplateDAO()
-                    .getAllForVdsGroup(getVdsGroup().getID()).size() != 0) {
+                    .getAllForVdsGroup(getVdsGroup().getId()).size() != 0) {
                 addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_REMOVE_VDS_GROUP_VMTS_DETECTED);
                 returnValue = false;
             }
             if ((list = DbFacade.getInstance().getVmPoolDAO().getAll()).size() > 0) {
                 for (vm_pools pool : list) {
-                    if (pool.getvds_group_id().equals(getVdsGroup().getID())) {
+                    if (pool.getvds_group_id().equals(getVdsGroup().getId())) {
                         addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_REMOVE_HAS_VM_POOLS);
                         returnValue = false;
                         break;

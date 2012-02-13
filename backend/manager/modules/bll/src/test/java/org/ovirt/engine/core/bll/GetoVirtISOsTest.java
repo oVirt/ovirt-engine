@@ -55,12 +55,12 @@ public class GetoVirtISOsTest extends BaseMockitoTest {
     public void testQueryWithHostId() {
         Guid vdsId = Guid.NewGuid();
         VDS vds = new VDS();
-        vds.setvds_id(vdsId);
+        vds.setId(vdsId);
         vds.setvds_type(VDSType.oVirtNode);
         vds.sethost_os(AVAILABLE_OVIRT_ISO_VERSION);
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
 
-        VdsIdParametersBase params = new VdsIdParametersBase(vds.getvds_id());
+        VdsIdParametersBase params = new VdsIdParametersBase(vds.getId());
         GetoVirtISOsQuery<VdsIdParametersBase> query = new GetoVirtISOsQuery<VdsIdParametersBase>(params);
         query.setInternalExecution(true);
         query.ExecuteCommand();

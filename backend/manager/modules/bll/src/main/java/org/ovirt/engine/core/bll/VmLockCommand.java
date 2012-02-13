@@ -13,7 +13,7 @@ public class VmLockCommand<T extends VmOperationParameterBase> extends VmOperati
     @Override
     protected void Perform() {
         setSucceeded(Backend.getInstance().getResourceManager()
-                .RunVdsCommand(VDSCommandType.VmLock, new VmLockVDSCommandParameters(getVdsId(), getVm().getvm_guid()))
+                .RunVdsCommand(VDSCommandType.VmLock, new VmLockVDSCommandParameters(getVdsId(), getVm().getId()))
                 .getSucceeded());
     }
 }

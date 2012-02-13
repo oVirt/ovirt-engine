@@ -39,8 +39,6 @@ import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StartSpiceVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -49,6 +47,8 @@ import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.Ticketing;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 @Stateless(name = "VdsEventListener")
@@ -101,10 +101,10 @@ public class VdsEventListener implements IVdsEventListener {
             @Override
             public void run() {
                 log.infoFormat("ResourceManager::vdsNotResponding entered for Host {0}, {1}",
-                        vds.getvds_id(),
+                        vds.getId(),
                         vds.gethost_name());
                 Backend.getInstance().runInternalAction(VdcActionType.VdsNotRespondingTreatment,
-                        new FenceVdsActionParameters(vds.getvds_id(), FenceActionType.Restart));
+                        new FenceVdsActionParameters(vds.getId(), FenceActionType.Restart));
             }
         });
     }
@@ -157,11 +157,11 @@ public class VdsEventListener implements IVdsEventListener {
                             if (Config
                                     .<Boolean> GetValue(ConfigValues.PowerClientDedicatedVmLaunchOnVdsWhilePowerClientStarts)) {
                                 Backend.getInstance().runInternalAction(VdcActionType.RunVmOnDedicatedVds,
-                                        new RunVmParams(vms.get(0).getvm_guid(), vdsId));
+                                        new RunVmParams(vms.get(0).getId(), vdsId));
                             } else {
                                 ThreadUtils.sleep(10000);
                                 Backend.getInstance().runInternalAction(VdcActionType.RunVmOnPowerClient,
-                                        new RunVmParams(vms.get(0).getvm_guid(), vdsId));
+                                        new RunVmParams(vms.get(0).getId(), vdsId));
                             }
                         }
                     } catch (RuntimeException e) {
@@ -194,7 +194,7 @@ public class VdsEventListener implements IVdsEventListener {
                                                                                              vmDynamic.getId(),
                                                                                              vmDynamic
                                                                                                      .getclient_ip(),
-                                                      vds.getvds_id()));
+                                        vds.getId()));
                     }
                 }
             });

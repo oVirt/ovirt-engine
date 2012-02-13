@@ -58,7 +58,7 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
         // Find the id of the host where the machine is running:
         NGuid hostId = vm.getrun_on_vds();
         if (hostId == null) {
-            log.warnFormat("Strange, according to the status \"{0}\" virtual machine \"{1}\" should be running in a host but it isn't.", status, vm.getvm_guid());
+            log.warnFormat("Strange, according to the status \"{0}\" virtual machine \"{1}\" should be running in a host but it isn't.", status, vm.getId());
             return false;
         }
 
@@ -68,7 +68,7 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
         setVdsId(new Guid(hostId.toString()));
         setVds(null);
         if (getVds() == null) {
-            log.warnFormat("Strange, virtual machine \"{0}\" is is running in host \"{1}\" but that host can't be found.", vm.getvm_guid(), hostId);
+            log.warnFormat("Strange, virtual machine \"{0}\" is is running in host \"{1}\" but that host can't be found.", vm.getId(), hostId);
             return false;
         }
 

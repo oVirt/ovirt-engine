@@ -8,9 +8,9 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @NonTransactiveCommandAttribute
 public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
@@ -68,7 +68,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
             Backend.getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.UpdateVdsVMsCleared,
-                            new UpdateVdsVMsClearedVDSCommandParameters(getVds().getvds_id()));
+                            new UpdateVdsVMsClearedVDSCommandParameters(getVds().getId()));
         }
     }
 

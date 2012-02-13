@@ -15,7 +15,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
-    private java.util.ArrayList<Guid> _vdsIdsToSetNonOperational;
+    private final java.util.ArrayList<Guid> _vdsIdsToSetNonOperational;
 
     public RefreshPoolSingleAsyncOperation(java.util.ArrayList<VDS> vdss, storage_domains domain,
             storage_pool storagePool, RefObject<java.util.ArrayList<Guid>> vdssIdsToSetNonoperational) {
@@ -37,14 +37,14 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
                             .getResourceManager()
                             .RunVdsCommand(
                                     VDSCommandType.ConnectStoragePool,
-                                    new ConnectStoragePoolVDSCommandParameters(getVdss().get(iterationId).getvds_id(),
+                                    new ConnectStoragePoolVDSCommandParameters(getVdss().get(iterationId).getId(),
                                             getStoragePool().getId(), getVdss().get(iterationId).getvds_spm_id(),
                                             masterDomainIdFromDb, getStoragePool().getmaster_domain_version()));
                 } catch (java.lang.Exception e) {
                     log.errorFormat("Could not connect vds {0} to pool {1} - moving host to non-operational", getVdss()
                             .get(iterationId).getvds_name(), getStoragePool().getname());
                     synchronized (_vdsIdsToSetNonOperational) {
-                        _vdsIdsToSetNonOperational.add(getVdss().get(iterationId).getvds_id());
+                        _vdsIdsToSetNonOperational.add(getVdss().get(iterationId).getId());
                     }
                 }
             } else {
@@ -52,7 +52,7 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
                         .getResourceManager()
                         .RunVdsCommand(
                                 VDSCommandType.RefreshStoragePool,
-                                new RefreshStoragePoolVDSCommandParameters(getVdss().get(iterationId).getvds_id(),
+                                new RefreshStoragePoolVDSCommandParameters(getVdss().get(iterationId).getId(),
                                         getStoragePool().getId(), masterDomainIdFromDb, getStoragePool()
                                                 .getmaster_domain_version()));
                 log.infoFormat("Refreshed vds {0} in pool {1}", getVdss().get(iterationId).getvds_name(),

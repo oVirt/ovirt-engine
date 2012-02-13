@@ -75,7 +75,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         setVmId(parameters.getContainerId());
         parameters.setEntityId(getVmId());
         setVm(parameters.getVm());
-        parameters.setEntityId(getVm().getvm_guid());
+        parameters.setEntityId(getVm().getId());
         // we save the images for the EndAction
         getParameters().setImages(new ArrayList<DiskImage>(getVm().getDiskMap().values()));
         setStoragePoolId(parameters.getStoragePoolId());
@@ -109,7 +109,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             VM vm = LinqUtils.firstOrNull(vms, new Predicate<VM>() {
                 @Override
                 public boolean eval(VM vm) {
-                    return vm.getvm_guid().equals(getParameters().getVm().getvm_guid());
+                    return vm.getId().equals(getParameters().getVm().getId());
                 }
             });
 
@@ -187,7 +187,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
         // check that the imported vm guid is not in engine
         if (retVal) {
-            VmStatic duplicateVm = getVmStaticDAO().get(getParameters().getVm().getvm_guid());
+            VmStatic duplicateVm = getVmStaticDAO().get(getParameters().getVm().getId());
             if (duplicateVm != null) {
                 addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS);
                 getReturnValue().getCanDoActionMessages().add(String.format("$VmName %1$s", duplicateVm.getvm_name()));
@@ -255,7 +255,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             List<VDSGroup> groups = getVdsGroupDAO().getAllForStoragePool(
                     getParameters().getStoragePoolId());
             for (VDSGroup group : groups) {
-                if (group.getID().equals(getParameters().getVdsGroupId())) {
+                if (group.getId().equals(getParameters().getVdsGroupId())) {
                     inCluster = true;
                     break;
                 }
@@ -347,7 +347,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             List<Guid> domainsId = LinqUtils.foreach(domains, new Function<storage_domains, Guid>() {
                 @Override
                 public Guid eval(storage_domains storageDomainStatic) {
-                    return storageDomainStatic.getid();
+                    return storageDomainStatic.getId();
                 }
             });
 
@@ -434,7 +434,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                     public Void runInTransaction() {
                         AddVmImages();
                         MoveOrCopyAllImageGroups();
-                        VmHandler.LockVm(getVm().getvm_guid());
+                        VmHandler.LockVm(getVm().getId());
                         return null;
 
                     }
@@ -443,7 +443,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     @Override
     protected void MoveOrCopyAllImageGroups() {
-        MoveOrCopyAllImageGroups(getVm().getvm_guid(), getVm().getDiskMap().values());
+        MoveOrCopyAllImageGroups(getVm().getId(), getVm().getDiskMap().values());
     }
 
     @Override
@@ -508,7 +508,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
                 DbFacade.getInstance()
                         .getImageVmMapDAO()
-                        .save(new image_vm_map(true, disk.getId(), getVm().getvm_guid()));
+                        .save(new image_vm_map(true, disk.getId(), getVm().getId()));
             }
         } else {
             for (DiskImage disk : getVm().getImages()) {
@@ -524,7 +524,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 List<DiskImage> list = images.get(drive);
                 DiskImage disk = list.get(list.size() - 1);
                 DbFacade.getInstance().getImageVmMapDAO().save(
-                        new image_vm_map(true, disk.getId(), getVm().getvm_guid()));
+                        new image_vm_map(true, disk.getId(), getVm().getId()));
                 DbFacade.getInstance().getDiskDao().save(disk.getDisk());
             }
         }
@@ -712,7 +712,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         //it form DB
         VM vmFromParams = getParameters().getVm();
         if (getVm() != null) {
-            VmHandler.UnLockVm(getVm().getvm_guid());
+            VmHandler.UnLockVm(getVm().getId());
             for (DiskImage disk : imageList) {
                 DbFacade.getInstance().getDiskImageDynamicDAO().remove(disk.getId());
                 DbFacade.getInstance().getDiskImageDAO().remove(disk.getId());
@@ -753,7 +753,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         setVm(null);
 
         if (getVm() != null) {
-            VmHandler.UnLockVm(getVm().getvm_guid());
+            VmHandler.UnLockVm(getVm().getId());
 
             UpdateVmImSpm();
         }

@@ -21,11 +21,11 @@ import org.ovirt.engine.core.common.vdscommands.CreateStoragePoolVDSCommandParam
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -93,7 +93,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                                                     StorageHelperDirector.getInstance()
                                                             .getItem(storageDomain.getstorage_type())
                                                             .ConnectStorageToDomainByVdsId(storageDomain,
-                                                                    getVds().getvds_id());
+                                                                    getVds().getId());
                                                 }
                                                 retVal = AddStoragePoolInIrs();
                                                 if (!retVal.getSucceeded()
@@ -154,7 +154,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                         storage_pool_iso_map mapFromDB =
                             DbFacade.getInstance()
                             .getStoragePoolIsoMapDAO()
-                            .get(new StoragePoolIsoMapId(storageDomain.getid(), getStoragePool().getId()));
+                                        .get(new StoragePoolIsoMapId(storageDomain.getId(), getStoragePool().getId()));
                         boolean existingInDb = mapFromDB != null;
                         if (existingInDb) {
                             getCompensationContext().snapshotEntity(mapFromDB);
@@ -205,9 +205,9 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.CreateStoragePool,
-                        new CreateStoragePoolVDSCommandParameters(getVds().getvds_id(), getStoragePool()
+                        new CreateStoragePoolVDSCommandParameters(getVds().getId(), getStoragePool()
                                 .getstorage_pool_type(), getStoragePool().getId(), getStoragePool().getname(),
-                                masterStorageDomain.getid(), getParameters().getStorages(), getStoragePool()
+                                masterStorageDomain.getId(), getParameters().getStorages(), getStoragePool()
                                         .getmaster_domain_version()));
     }
 

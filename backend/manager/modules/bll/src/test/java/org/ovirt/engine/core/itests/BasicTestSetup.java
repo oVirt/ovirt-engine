@@ -149,7 +149,7 @@ public class BasicTestSetup {
         VmStatic vm = new VmStatic();
 
         Date now = new Date(System.currentTimeMillis());
-        vm.setvds_group_id(cluster.getID());
+        vm.setvds_group_id(cluster.getId());
         vm.setId(new Guid(""));
         vm.setmem_size_mb(256);
         vm.setvm_type(VmType.Desktop);
@@ -164,7 +164,7 @@ public class BasicTestSetup {
         ArrayList<DiskImageBase> diskInfoList = new ArrayList<DiskImageBase>();
 
         VmManagementParametersBase addVmFromScratchParams = new AddVmFromScratchParameters(vm, diskInfoList,
-                getStorage().getid());
+                getStorage().getId());
 
         //
         // diskInfoList.add(disk);
@@ -215,7 +215,7 @@ public class BasicTestSetup {
         image.setcreation_date(now);
 
         AddImageFromScratchParameters addImageParams = new AddImageFromScratchParameters(ImageId, vmId, disk);
-        addImageParams.setStorageDomainId(storage.getid());
+        addImageParams.setStorageDomainId(storage.getId());
         addImageParams.setVmSnapshotId(Guid.NewGuid());
         addImageParams.setParentCommand(VdcActionType.AddDiskToVm);
         addImageParams.setEntityId(ImageId);
@@ -231,7 +231,7 @@ public class BasicTestSetup {
         connection.setconnection("1.1.1.1/common");
         connection.setstorage_type(StorageType.NFS);
         StorageServerConnectionParametersBase addStorgeConnectionParams = new StorageServerConnectionParametersBase(
-                connection, host.getvds_id());
+                connection, host.getId());
         addStorgeConnectionParams.setStoragePoolId(dataCenter.getId());
 
         VdcReturnValueBase runInternalAction = backend.runInternalAction(VdcActionType.AddStorageServerConnection,
@@ -277,7 +277,7 @@ public class BasicTestSetup {
         Guid hostId = Guid.NewGuid();
         String hostName = "host" + testSequence;
 
-        VdsStatic vdsStatic = new VdsStatic(hostName, "1.1.1.1", hostName, 22, cluster.getID(), hostId, hostName,
+        VdsStatic vdsStatic = new VdsStatic(hostName, "1.1.1.1", hostName, 22, cluster.getId(), hostId, hostName,
                 false, VDSType.VDS);
         AddVdsActionParameters addHostParams = new AddVdsActionParameters(vdsStatic, "root");
         // Hack certificate path check
@@ -394,20 +394,20 @@ public class BasicTestSetup {
 
     private void removeCluster() {
         // DbFacade.getInstance().RemoveVDSGroups(cluster.getID());
-        backend.RunAction(VdcActionType.RemoveVdsGroup, new VdsGroupParametersBase(cluster.getID()));
+        backend.RunAction(VdcActionType.RemoveVdsGroup, new VdsGroupParametersBase(cluster.getId()));
         System.out.println("-- removed cluster " + cluster.getname() + " -- ");
     }
 
     private void removeHost() {
-        DB_FACADE.getVdsDynamicDAO().remove(host.getvds_id());
-        DB_FACADE.getVdsStatisticsDAO().remove(host.getvds_id());
-        DB_FACADE.getVdsStaticDAO().remove(host.getvds_id());
+        DB_FACADE.getVdsDynamicDAO().remove(host.getId());
+        DB_FACADE.getVdsStatisticsDAO().remove(host.getId());
+        DB_FACADE.getVdsStaticDAO().remove(host.getId());
         System.out.println("-- removed Host " + host.gethost_name() + " -- ");
     }
 
     private void removeStorage() {
 
-        Guid id = storage.getid();
+        Guid id = storage.getId();
         DB_FACADE.getStorageDomainDynamicDAO().remove(id);
         List<DiskImage> snapshots = DB_FACADE.getDiskImageDAO().getAllSnapshotsForStorageDomain(id);
         for (DiskImage i : snapshots) {
@@ -418,8 +418,8 @@ public class BasicTestSetup {
     }
 
     private void removeVM() {
-        DB_FACADE.getDiskImageDAO().removeAllForVmId(vm.getvm_guid());
-        DB_FACADE.getVmDAO().remove(vm.getvm_guid());
+        DB_FACADE.getDiskImageDAO().removeAllForVmId(vm.getId());
+        DB_FACADE.getVmDAO().remove(vm.getId());
         System.out.println("-- removed VM " + vm.getvm_name() + " and its images -- ");
 
     }

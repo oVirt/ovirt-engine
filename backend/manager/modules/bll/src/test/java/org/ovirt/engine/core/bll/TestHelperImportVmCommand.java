@@ -1,5 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -22,14 +30,6 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.VmStatisticsDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 public class TestHelperImportVmCommand extends ImportVmCommand {
 
@@ -85,7 +85,7 @@ public class TestHelperImportVmCommand extends ImportVmCommand {
         VdsGroupDAO d = mock(VdsGroupDAO.class);
         List<VDSGroup> list = new ArrayList<VDSGroup>();
         VDSGroup g = new VDSGroup();
-        g.setID(getParameters().getVdsGroupId());
+        g.setId(getParameters().getVdsGroupId());
         Version v = new Version("2.2");
         g.setcompatibility_version(v);
         list.add(g);
@@ -149,7 +149,7 @@ public class TestHelperImportVmCommand extends ImportVmCommand {
 
     protected VM createVM() {
         final VM v = new VM();
-        v.setvm_guid(getParameters().getVm().getvm_guid());
+        v.setId(getParameters().getVm().getId());
         v.setDiskSize(2);
         return v;
     }

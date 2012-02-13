@@ -128,7 +128,7 @@ public class PoolVmListModel extends VmListModel
 		for (Object item : getSelectedItems())
 		{
 			VM vm = (VM)item;
-			list.add(new RemoveVmFromPoolParameters(vm.getvm_guid()));
+			list.add(new RemoveVmFromPoolParameters(vm.getId()));
 		}
 
 

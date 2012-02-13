@@ -15,7 +15,7 @@ public class RemoveVmFromImportExportParamenters extends RemoveVmParameters impl
     private VM _vm;
 
     public RemoveVmFromImportExportParamenters(VM vm, Guid storageDomainId, Guid storagePoolId) {
-        super(vm.getvm_guid(), false);
+        super(vm.getId(), false);
         _vm = vm;
         this.setStorageDomainId(storageDomainId);
         this.setStoragePoolId(storagePoolId);

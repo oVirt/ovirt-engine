@@ -535,7 +535,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 		VM vm = (VM)selectedItem.getEntity();
 
 		VM tempVar = new VM();
-		tempVar.setvm_guid(vm.getvm_guid());
+		tempVar.setId(vm.getId());
 		tempVar.setvm_type(model.getVmType());
 		tempVar.setvm_os((VmOsType)model.getOSType().getSelectedItem());
 		tempVar.setnum_of_monitors((Integer)model.getNumOfMonitors().getSelectedItem());
@@ -737,7 +737,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 			}
 		}};
 
-		Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getvm_guid()), _asyncQuery2);
+		Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getId()), _asyncQuery2);
 
 		UICommand tempVar3 = new UICommand("OnRunOnce", this);
 		tempVar3.setTitle("OK");
@@ -770,7 +770,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 		BootSequenceModel bootSequenceModel = model.getBootSequence();
 
 		RunVmOnceParams tempVar = new RunVmOnceParams();
-		tempVar.setVmId(vm.getvm_guid());
+		tempVar.setVmId(vm.getId());
 		tempVar.setBootSequence(bootSequenceModel.getSequence());
 		tempVar.setDiskPath((Boolean)model.getAttachIso().getEntity() ? (String)model.getIsoImage().getSelectedItem() : "");
 		tempVar.setFloppyPath(model.getFloppyImagePath());
@@ -927,7 +927,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 		UserPortalItemModel selectedItem = (UserPortalItemModel)getSelectedItem();
 		VM vm = (VM)selectedItem.getEntity();
 
-		Frontend.RunAction(VdcActionType.RemoveVm, new RemoveVmParameters(vm.getvm_guid(), false),
+		Frontend.RunAction(VdcActionType.RemoveVm, new RemoveVmParameters(vm.getId(), false),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {
@@ -1015,7 +1015,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 		AttachCdModel model = getAttachCdModel();
 		String isoName = (StringHelper.stringsEqual(model.getIsoImage().getSelectedItem().toString(), ConsoleModel.EjectLabel)) ? "" : model.getIsoImage().getSelectedItem().toString();
 
-		Frontend.RunAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getvm_guid(), isoName),
+		Frontend.RunAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {
@@ -1221,7 +1221,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 			Guid oldClusterID = ((VM)selectedItem.getEntity()).getvds_group_id();
 			if (oldClusterID.equals(newClusterID) == false)
 			{
-				Frontend.RunAction(VdcActionType.ChangeVMCluster, new ChangeVMClusterParameters(newClusterID, gettempVm().getvm_guid()),
+				Frontend.RunAction(VdcActionType.ChangeVMCluster, new ChangeVMClusterParameters(newClusterID, gettempVm().getId()),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {
@@ -1533,18 +1533,18 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 			}
 
 			// Caching console model if needed
-			if (!cachedConsoleModels.containsKey(vm.getvm_guid()))
+			if (!cachedConsoleModels.containsKey(vm.getId()))
 			{
 				SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
 				spiceConsoleModel.getErrorEvent().addListener(this);
 				VncConsoleModel vncConsoleModel = new VncConsoleModel();
 				RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
 
-				cachedConsoleModels.put(vm.getvm_guid(), new java.util.ArrayList<ConsoleModel>(java.util.Arrays.asList(new ConsoleModel[] { spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
+				cachedConsoleModels.put(vm.getId(), new java.util.ArrayList<ConsoleModel>(java.util.Arrays.asList(new ConsoleModel[] { spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
 			}
 
 			// Getting cached console model
-			java.util.ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getvm_guid());
+			java.util.ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
 			for (ConsoleModel cachedModel : cachedModels)
 			{
 				cachedModel.setEntity(null);

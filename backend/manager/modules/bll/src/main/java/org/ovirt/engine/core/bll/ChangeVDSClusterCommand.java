@@ -57,7 +57,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             return false;
         }
 
-        targetStoragePool = DbFacade.getInstance().getStoragePoolDAO().getForVdsGroup(targetCluster.getID());
+        targetStoragePool = DbFacade.getInstance().getStoragePoolDAO().getForVdsGroup(targetCluster.getId());
         if (targetStoragePool != null && targetStoragePool.getstorage_pool_type() == StorageType.LOCALFS) {
             if (!DbFacade.getInstance().getVdsStaticDAO().getAllForVdsGroup(getParameters().getClusterId()).isEmpty()) {
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
@@ -73,7 +73,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         VDSGroup sourceCluster = getVdsGroup();
 
         final Guid targetClusterId = getParameters().getClusterId();
-        if (sourceCluster.getID().equals(targetClusterId)) {
+        if (sourceCluster.getId().equals(targetClusterId)) {
             setSucceeded(true);
             return;
         }

@@ -46,7 +46,7 @@ public class RdpConsoleModel extends ConsoleModel
 			getLogger().Debug("Connecting to RDP console...");
 
 			getrdp().setAddress(getEntity().getvm_host().split("[ ]", -1)[0]);
-			getrdp().setGuestID(getEntity().getvm_guid().toString());
+			getrdp().setGuestID(getEntity().getId().toString());
 
 			//Subscribe to disconnect event
 			if (getrdp().getDisconnectedEvent() != null)

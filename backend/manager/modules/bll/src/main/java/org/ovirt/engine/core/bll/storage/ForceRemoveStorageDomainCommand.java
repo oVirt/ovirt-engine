@@ -12,11 +12,11 @@ import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
     public ForceRemoveStorageDomainCommand(T parameters) {
@@ -31,13 +31,13 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                 // if master try to reconstruct
                 if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
                     ReconstructMasterParameters tempVar = new ReconstructMasterParameters(getStoragePool().getId(),
-                            getStorageDomain().getid(), true);
+                            getStorageDomain().getId(), true);
                     tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                     Backend.getInstance().runInternalAction(VdcActionType.ReconstructMasterDomain, tempVar);
                 }
                 // try to force detach first
                 DetachStorageDomainVDSCommandParameters tempVar2 = new DetachStorageDomainVDSCommandParameters(
-                        getStoragePool().getId(), getStorageDomain().getid(), Guid.Empty, -1);
+                        getStoragePool().getId(), getStorageDomain().getId(), Guid.Empty, -1);
                 tempVar2.setForce(true);
                 Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.DetachStorageDomain, tempVar2);
             } catch (RuntimeException ex) {
@@ -49,7 +49,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
         StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
                 .StorageDomainRemoved(getStorageDomain().getStorageStaticData());
 
-        DbFacade.getInstance().getStorageDomainDAO().remove(getStorageDomain().getid());
+        DbFacade.getInstance().getStorageDomainDAO().remove(getStorageDomain().getId());
 
         if (getStoragePool() != null) {
             // if iso reset path for pool

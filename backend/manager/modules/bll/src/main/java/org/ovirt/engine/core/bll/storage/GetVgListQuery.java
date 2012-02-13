@@ -47,7 +47,7 @@ public class GetVgListQuery<P extends VdsIdParametersBase> extends QueriesComman
         java.util.ArrayList<storage_domains> returnValue = new java.util.ArrayList<storage_domains>();
 
         for (storage_domains domain : vgsFromVds) {
-            if (domain.getid().equals(Guid.Empty) && !vgIdsFromDb.contains(domain.getstorage())) {
+            if (domain.getId().equals(Guid.Empty) && !vgIdsFromDb.contains(domain.getstorage())) {
                 returnValue.add(domain);
             }
         }

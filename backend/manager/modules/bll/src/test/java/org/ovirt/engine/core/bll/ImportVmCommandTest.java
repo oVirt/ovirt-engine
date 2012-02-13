@@ -55,7 +55,7 @@ public class ImportVmCommandTest {
 
     protected VM createVM() {
         final VM v = new VM();
-        v.setvm_guid(Guid.NewGuid());
+        v.setId(Guid.NewGuid());
         v.setDiskSize(2);
         return v;
     }

@@ -387,7 +387,7 @@ public class PoolListModel extends ListWithDetailsModel
 
                                                             }
                                                         }),
-                                                        vm.getvm_guid(),
+                                                        vm.getId(),
                                                         false);
 
                                             }

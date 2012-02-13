@@ -25,13 +25,13 @@ import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SpmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 @LockIdNameAttribute(fieldName = "ProblematicVdsId")
 public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends StorageHandlingCommandBase<T> {
@@ -52,7 +52,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     }
 
     public Guid getProblematicVdsId() {
-        return _problematicVds.getvds_id();
+        return _problematicVds.getId();
     }
 
     @Override
@@ -94,7 +94,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
             result = ActivateDataCenter();
         }
         if ((getParameters()).getClearVMs() && result) {
-            VdsActionParameters tempVar = new VdsActionParameters(_problematicVds.getvds_id());
+            VdsActionParameters tempVar = new VdsActionParameters(_problematicVds.getId());
             tempVar.setSessionId(getParameters().getSessionId());
             Backend.getInstance().runInternalAction(VdcActionType.ClearNonResponsiveVdsVms,
                     tempVar,
@@ -103,7 +103,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         setSucceeded(result);
         if (getSucceeded()) {
             // Remove all alerts except NOT CONFIG alert
-            AlertDirector.RemoveAllVdsAlerts(_problematicVds.getvds_id(), false);
+            AlertDirector.RemoveAllVdsAlerts(_problematicVds.getId(), false);
         }
     }
 
@@ -172,7 +172,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                                 .getInstance()
                                 .getResourceManager()
                                 .RunVdsCommand(VDSCommandType.SpmStatus,
-                                        new SpmStatusVDSCommandParameters(vds.getvds_id(), getStoragePool().getId()))
+                                        new SpmStatusVDSCommandParameters(vds.getId(), getStoragePool().getId()))
                                 .getReturnValue();
                         log.infoFormat("Trying to fence spm {0} via vds {1}",
                                 _problematicVds.getvds_name(),
@@ -182,7 +182,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                                 .getResourceManager()
                                 .RunVdsCommand(
                                         VDSCommandType.FenceSpmStorage,
-                                        new FenceSpmStorageVDSCommandParameters(vds.getvds_id(),
+                                        new FenceSpmStorageVDSCommandParameters(vds.getId(),
                                                 getStoragePool().getId(),
                                                 statusResult.getSpmId(),
                                                 statusResult.getSpmLVER()))
@@ -212,7 +212,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                     DbFacade.getInstance().getVdsDAO().get(getStoragePool().getspm_vds_id());
             ResetIrsVDSCommandParameters tempVar =
                     new ResetIrsVDSCommandParameters(getStoragePool()
-                            .getId(), currentSPMVds.gethost_name(), currentSPMVds.getvds_id());
+                            .getId(), currentSPMVds.gethost_name(), currentSPMVds.getId());
             tempVar.setIgnoreStopFailed(true);
             Backend.getInstance()
                     .getResourceManager()

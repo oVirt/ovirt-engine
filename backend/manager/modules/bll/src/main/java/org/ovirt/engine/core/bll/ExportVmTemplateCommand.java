@@ -50,7 +50,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                     tempVar.setForceOverride(getParameters().getForceOverride());
                     MoveOrCopyImageGroupParameters p = tempVar;
                     if (getSourceDomain() != null) {
-                        p.setSourceDomainId(getSourceDomain().getid());
+                        p.setSourceDomainId(getSourceDomain().getId());
                     }
                     VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
                                     VdcActionType.MoveOrCopyImageGroup,
@@ -87,7 +87,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
         // check destination storage
         if (retVal) {
-            retVal = IsDomainActive(getStorageDomain().getid(), getVmTemplate().getstorage_pool_id().getValue());
+            retVal = IsDomainActive(getStorageDomain().getId(), getVmTemplate().getstorage_pool_id().getValue());
         }
 
         if (retVal) {
@@ -125,7 +125,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
         }
         // check that source domain is leagal
         if (retVal) {
-            retVal = IsDomainActive(getSourceDomain().getid(), getVmTemplate().getstorage_pool_id());
+            retVal = IsDomainActive(getSourceDomain().getId(), getVmTemplate().getstorage_pool_id());
         }
         // check that source domain is not ISO or Export domain
         if (retVal) {

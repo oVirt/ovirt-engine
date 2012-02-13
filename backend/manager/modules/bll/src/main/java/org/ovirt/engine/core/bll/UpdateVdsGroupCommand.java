@@ -43,7 +43,7 @@ VdsGroupOperationCommandBase<T> {
     protected void executeCommand() {
         // YAIRPOSTGRES - this code should be split to several blocks of run in new transaction + set states
         VDSGroup oldGroup = DbFacade.getInstance().getVdsGroupDAO().get(
-                getParameters().getVdsGroup().getID());
+                getParameters().getVdsGroup().getId());
         CheckMaxMemoryOverCommitValue();
         DbFacade.getInstance().getVdsGroupDAO().update(getParameters().getVdsGroup());
 
@@ -51,7 +51,7 @@ VdsGroupOperationCommandBase<T> {
                 && !oldGroup.getstorage_pool_id().equals(getVdsGroup().getstorage_pool_id())
                 || oldGroup.getstorage_pool_id() == null
                 && getVdsGroup().getstorage_pool_id() != null) {
-            for (VdsStatic vds : DbFacade.getInstance().getVdsStaticDAO().getAllForVdsGroup(oldGroup.getID())) {
+            for (VdsStatic vds : DbFacade.getInstance().getVdsStaticDAO().getAllForVdsGroup(oldGroup.getId())) {
                 VdsActionParameters parameters = new VdsActionParameters(vds.getId());
                 if (oldGroup.getstorage_pool_id() != null) {
                     VdcReturnValueBase removeVdsSpmIdReturn =
@@ -78,7 +78,7 @@ VdsGroupOperationCommandBase<T> {
         // when changing data center we check that default networks exists in
         // cluster
         List<network> networks = DbFacade.getInstance().getNetworkDAO()
-                .getAllForCluster(getVdsGroup().getID());
+                .getAllForCluster(getVdsGroup().getId());
         boolean exists = false;
         String managementNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
         for (network net : networks) {
@@ -97,7 +97,7 @@ VdsGroupOperationCommandBase<T> {
                 for (network net : storagePoolNets) {
                     if (StringHelper.EqOp(net.getname(), managementNetwork)) {
                         DbFacade.getInstance().getNetworkClusterDAO().save(
-                                    new network_cluster(getVdsGroup().getID(), net.getId(),
+                                new network_cluster(getVdsGroup().getId(), net.getId(),
                                             NetworkStatus.Operational.getValue(), true));
                     }
                 }
@@ -123,12 +123,12 @@ VdsGroupOperationCommandBase<T> {
         boolean result = super.canDoAction();
         getReturnValue().getCanDoActionMessages()
                 .add(VdcBllMessages.VAR__ACTION__UPDATE.toString());
-        VDSGroup oldGroup = DbFacade.getInstance().getVdsGroupDAO().get(getVdsGroup().getID());
+        VDSGroup oldGroup = DbFacade.getInstance().getVdsGroupDAO().get(getVdsGroup().getId());
         // check that if name was changed, it was done to the same cluster
         VDSGroup groupWithName = DbFacade.getInstance().getVdsGroupDAO().getByName(
                 getVdsGroup().getname());
         if (oldGroup != null && !StringHelper.EqOp(oldGroup.getname(), getVdsGroup().getname())) {
-            if (groupWithName != null && !groupWithName.getID().equals(getVdsGroup().getID())) {
+            if (groupWithName != null && !groupWithName.getId().equals(getVdsGroup().getId())) {
                 addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE);
                 result = false;
             }
@@ -153,7 +153,7 @@ VdsGroupOperationCommandBase<T> {
                         && !CpuFlagsManagerHandler.CheckIfCpusSameManufacture(oldGroup
                                 .getcpu_name(), getVdsGroup().getcpu_name(), getVdsGroup()
                                 .getcompatibility_version())
-                        && DbFacade.getInstance().getVdsStaticDAO().getAllForVdsGroup(getVdsGroup().getID())
+                        && DbFacade.getInstance().getVdsStaticDAO().getAllForVdsGroup(getVdsGroup().getId())
                                 .size() > 0) {
                     addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_ILLEGAL);
                     result = false;
@@ -220,7 +220,7 @@ VdsGroupOperationCommandBase<T> {
                 // the search can return vm from cluster with similar name
                 // so it's critical to check that
                 // the vm cluster id is the same as the cluster.id
-                if (!vm.getvds_group_id().equals(oldGroup.getID())) {
+                if (!vm.getvds_group_id().equals(oldGroup.getId())) {
                     continue;
                 }
                 VMStatus vmStatus = vm.getstatus();
@@ -283,7 +283,7 @@ VdsGroupOperationCommandBase<T> {
                             .toString());
                     result = false;
                 }
-                else if(VDSGroup.DEFAULT_VDS_GROUP_ID.equals(getVdsGroup().getID())) {
+                else if (VDSGroup.DEFAULT_VDS_GROUP_ID.equals(getVdsGroup().getId())) {
                     addCanDoActionMessage(VdcBllMessages.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
                     result = false;
                 }

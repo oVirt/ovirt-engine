@@ -23,12 +23,12 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -103,7 +103,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (!getParameters().getIsInternal()
                 && !DbFacade.getInstance()
                         .getVmDAO()
-                        .getAllRunningForStorageDomain(getStorageDomain().getid())
+                        .getAllRunningForStorageDomain(getStorageDomain().getId())
                         .isEmpty()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_RUNNING_VMS);
             return false;
@@ -146,7 +146,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         List<storage_domains> activeDomains = LinqUtils.filter(domains, new Predicate<storage_domains>() {
             @Override
             public boolean eval(storage_domains a) {
-                return a.getstatus() == domainStatus && !a.getid().equals(getStorageDomain().getid());
+                return a.getstatus() == domainStatus && !a.getId().equals(getStorageDomain().getId());
             }
         });
         return activeDomains;
@@ -191,7 +191,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         VDSCommandType.DeactivateStorageDomain,
                         new DeactivateStorageDomainVDSCommandParameters(getStoragePool().getId(),
                                 getStorageDomain()
-                                        .getid(),
+                                        .getId(),
                                 _newMasterStorageDomainId,
                                 getStoragePool().getmaster_domain_version()))
                 .getSucceeded();
@@ -217,12 +217,12 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         .getResourceManager()
                         .RunVdsCommand(
                                 VDSCommandType.DisconnectStoragePool,
-                                new DisconnectStoragePoolVDSCommandParameters(spm.getvds_id(),
+                                new DisconnectStoragePoolVDSCommandParameters(spm.getId(),
                                         getStoragePool().getId(), spm.getvds_spm_id()));
             }
 
             StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
-                .DisconnectStorageFromDomainByVdsId(getStorageDomain(), spm.getvds_id());
+                    .DisconnectStorageFromDomainByVdsId(getStorageDomain(), spm.getId());
 
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
 
@@ -267,7 +267,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         getStoragePool().setmaster_domain_version(getStoragePool().getmaster_domain_version() + 1);
                         getCompensationContext().snapshotEntity(getNewMaster().getStorageStaticData());
                         getNewMaster().setstorage_domain_type(StorageDomainType.Master);
-                        _newMasterStorageDomainId = getNewMaster().getid();
+                        _newMasterStorageDomainId = getNewMaster().getId();
                         if (!duringReconstruct) {
                             getCompensationContext().snapshotEntityStatus(newMasterMap, newMasterMap.getstatus());
                             getNewMaster().setstatus(StorageDomainStatus.Locked);

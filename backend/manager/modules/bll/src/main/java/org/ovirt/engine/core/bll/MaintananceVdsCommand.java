@@ -20,11 +20,11 @@ import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 
 public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends VdsCommand<T> {
@@ -76,7 +76,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
             // if HAOnly is true check that vm is HA (auto_startup should be
             // true)
             if (vm.getstatus() != VMStatus.MigratingFrom && (!HAOnly || (HAOnly && vm.getauto_startup()))) {
-                MigrateVmParameters tempVar = new MigrateVmParameters(false, vm.getvm_guid());
+                MigrateVmParameters tempVar = new MigrateVmParameters(false, vm.getId());
                 tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                 VdcReturnValueBase result = Backend.getInstance().runInternalAction(VdcActionType.InternalMigrateVm,
                         tempVar);
@@ -140,7 +140,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
 
         // Clear the problematic timers since the VDS is in maintenance so it doesn't make sense to check it
         // anymore.
-        IrsBrokerCommand.clearVdsFromCache(vds.getstorage_pool_id(), vds.getvds_id(), vds.getvds_name());
+        IrsBrokerCommand.clearVdsFromCache(vds.getstorage_pool_id(), vds.getId(), vds.getvds_name());
 
         if (!vds.getstorage_pool_id().equals(Guid.Empty)
                 && StoragePoolStatus.Uninitialized != DbFacade.getInstance()
@@ -152,10 +152,10 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
                         .getResourceManager()
                         .RunVdsCommand(
                                 VDSCommandType.DisconnectStoragePool,
-                                new DisconnectStoragePoolVDSCommandParameters(vds.getvds_id(),
+                                new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
                                         vds.getstorage_pool_id(), vds.getvds_spm_id())).getSucceeded()) {
             StoragePoolParametersBase tempVar = new StoragePoolParametersBase(vds.getstorage_pool_id());
-            tempVar.setVdsId(vds.getvds_id());
+            tempVar.setVdsId(vds.getId());
             tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
             Backend.getInstance().runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, tempVar);
         }

@@ -15,13 +15,13 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * Initialize Vds on its loading. For storages: First connect all storage
@@ -66,7 +66,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
                 }
             }
         } else {
-            SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVds().getvds_id(),
+            SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVds().getId(),
                     NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE);
             tempVar.setSaveToDb(true);
             Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar);
@@ -91,7 +91,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
             boolean suppressCheck = getAllRunningVdssInPool().size() == 0;
             StoragePoolParametersBase tempStorageBaseParams =
                     new StoragePoolParametersBase(getVds().getstorage_pool_id());
-            tempStorageBaseParams.setVdsId(getVds().getvds_id());
+            tempStorageBaseParams.setVdsId(getVds().getId());
             tempStorageBaseParams.setSuppressCheck(suppressCheck);
             tempStorageBaseParams.setTransactionScopeOption(TransactionScopeOption.Suppress);
             if (Backend.getInstance()
@@ -106,7 +106,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
                             .getResourceManager()
                             .RunVdsCommand(
                                     VDSCommandType.ConnectStoragePool,
-                                    new ConnectStoragePoolVDSCommandParameters(getVds().getvds_id(), getVds()
+                                    new ConnectStoragePoolVDSCommandParameters(getVds().getId(), getVds()
                                             .getstorage_pool_id(), getVds().getvds_spm_id(), getMasterDomainIdFromDb(),
                                             getStoragePool().getmaster_domain_version())).getSucceeded();
                 } catch (RuntimeException exp) {
@@ -140,7 +140,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
         }
 
         // PM alerts
-        AuditLogableBase logable = new AuditLogableBase(getVds().getvds_id());
+        AuditLogableBase logable = new AuditLogableBase(getVds().getId());
         if (getVds().getpm_enabled()) {
             if (!_vdsProxyFound) {
                 logable.AddCustomValue("Reason",

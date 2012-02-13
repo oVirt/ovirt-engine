@@ -10,9 +10,9 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 /**
  * Connect host to all Storage server connections in Storage pool. We
@@ -93,7 +93,7 @@ public class ConnectHostToStoragePoolServersCommand<T extends StoragePoolParamet
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.ConnectStorageServer,
-                            new ConnectStorageServerVDSCommandParameters(getVds().getvds_id(),
+                            new ConnectStorageServerVDSCommandParameters(getVds().getId(),
                                     getStoragePool().getId(), type, connections)).getReturnValue();
             connectSucceeded =
                     StorageHelperDirector.getInstance().getItem(type).IsConnectSucceeded(retValues, connections);

@@ -36,7 +36,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
 
     @Override
     protected void executeCommand() {
-        Pair<Boolean, Integer> result = Connect(getVds().getvds_id());
+        Pair<Boolean, Integer> result = Connect(getVds().getId());
         setSucceeded(result.getFirst());
         if (!result.getFirst()) {
             setErrorMessageAtReturn(result);

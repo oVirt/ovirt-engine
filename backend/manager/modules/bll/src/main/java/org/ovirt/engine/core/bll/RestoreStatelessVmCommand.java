@@ -50,7 +50,7 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
             /**
              * restore all snapshots
              */
-            RestoreAllSnapshotsParameters tempVar = new RestoreAllSnapshotsParameters(getVm().getvm_guid(), Guid.Empty);
+            RestoreAllSnapshotsParameters tempVar = new RestoreAllSnapshotsParameters(getVm().getId(), Guid.Empty);
             tempVar.setShouldBeLogged(false);
             tempVar.setImagesList(imagesList);
             VdcReturnValueBase vdcReturn =

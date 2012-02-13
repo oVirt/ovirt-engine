@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.*;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends FencingQueryBase<P> {
 
@@ -17,7 +20,7 @@ public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends Fenci
     protected void executeQueryCommand() {
         String msg = "";
         VDS vds = DbFacade.getInstance().getVdsDAO().get(getParameters().getVdsId());
-        setVdsId(vds.getvds_id());
+        setVdsId(vds.getId());
         setVdsName(vds.getvds_name());
         FencingExecutor executor = new FencingExecutor(vds, FenceActionType.Status);
         VDSReturnValue returnValue = null;

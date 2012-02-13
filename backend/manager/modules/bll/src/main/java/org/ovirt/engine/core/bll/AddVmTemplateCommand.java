@@ -316,7 +316,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             UpdateTemplateInSpm(getVmTemplate().getstorage_pool_id().getValue(), new java.util.ArrayList<VmTemplate>(
                     java.util.Arrays.asList(new VmTemplate[] { getVmTemplate() })));
             if (getVm() != null) {
-                VmHandler.UnLockVm(getVm().getvm_guid());
+                VmHandler.UnLockVm(getVm().getId());
             } else {
                 log.warn("AddVmTemplateCommand::EndSuccessfully: Vm is null, cannot unlock Vm");
             }

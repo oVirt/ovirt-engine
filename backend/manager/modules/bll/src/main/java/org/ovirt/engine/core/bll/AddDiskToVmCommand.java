@@ -250,7 +250,7 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
     @Override
     protected void ExecuteVmCommand() {
         // NOTE: Assuming that we need to lock the vm before adding a disk!
-        VmHandler.checkStatusAndLockVm(getVm().getvm_guid(), getCompensationContext());
+        VmHandler.checkStatusAndLockVm(getVm().getId(), getCompensationContext());
 
         // create from blank template, create new vm snapshot id
         AddImageFromScratchParameters parameters = new AddImageFromScratchParameters(Guid.Empty, getVmId(),

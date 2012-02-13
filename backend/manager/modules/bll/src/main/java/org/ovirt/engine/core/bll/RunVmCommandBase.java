@@ -141,22 +141,22 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         if (curVds.getvds_type() == VDSType.PowerClient) {
             log.infoFormat(
                     "Checking capacity for a power client - id:{0}, name:{1}, host_name(ip):{2}, vds.vm_count:{3}, PowerClientMaxNumberOfConcurrentVMs:{4}",
-                    curVds.getvds_id(),
+                    curVds.getId(),
                     curVds.getvds_name(),
                     curVds.gethost_name(),
                     curVds.getvm_count(),
                     Config.<Integer> GetValue(ConfigValues.PowerClientMaxNumberOfConcurrentVMs));
             int pending_vm_count = 0;
             if (Config.<Boolean> GetValue(ConfigValues.PowerClientRunVmShouldVerifyPendingVMsAsWell)
-                    && _vds_pending_vm_count.containsKey(curVds.getvds_id())) {
-                pending_vm_count = _vds_pending_vm_count.get(curVds.getvds_id());
+                    && _vds_pending_vm_count.containsKey(curVds.getId())) {
+                pending_vm_count = _vds_pending_vm_count.get(curVds.getId());
             }
 
             if ((curVds.getvm_count() + pending_vm_count + 1) > Config
                     .<Integer> GetValue(ConfigValues.PowerClientMaxNumberOfConcurrentVMs)) {
                 log.infoFormat(
                         "No capacity for a power client - id:{0}, name:{1}, host_name(ip):{2}, vds.vm_count:{3}, PowerClientMaxNumberOfConcurrentVMs:{4}",
-                        curVds.getvds_id(),
+                        curVds.getId(),
                         curVds.getvds_name(),
                         curVds.gethost_name(),
                         curVds.getvm_count(),
@@ -185,13 +185,13 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                         .getResourceManager()
                         .RunVdsCommand(
                                 VDSCommandType.VmMonitorCommand,
-                                new VmMonitorCommandVDSCommandParameters(vds.getvds_id(), vm.getId(),
+                                new VmMonitorCommandVDSCommandParameters(vds.getId(), vm.getId(),
                                         "set_red_image_compression " + compression_enabled));
                 Backend.getInstance()
                         .getResourceManager()
                         .RunVdsCommand(
                                 VDSCommandType.VmMonitorCommand,
-                                new VmMonitorCommandVDSCommandParameters(vds.getvds_id(), vm.getId(),
+                                new VmMonitorCommandVDSCommandParameters(vds.getId(), vm.getId(),
                                         "set_red_streaming_video " + compression_enabled));
             }
         }
@@ -212,7 +212,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     protected void rerunInternal() {
-        Guid vdsId = getDestinationVds() != null ? getDestinationVds().getvds_id() : getCurrentVdsId();
+        Guid vdsId = getDestinationVds() != null ? getDestinationVds().getId() : getCurrentVdsId();
         DecreasePendingVms(vdsId);
 
         setSucceeded(false);
@@ -253,7 +253,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     private void processVmPoolOnStopVm() {
-        VmPoolHandler.ProcessVmPoolOnStopVm(getVm().getvm_guid(),
+        VmPoolHandler.ProcessVmPoolOnStopVm(getVm().getId(),
                 ExecutionHandler.createDefaultContexForTasks(executionContext));
     }
 
@@ -316,7 +316,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     protected Guid getCurrentVdsId() {
-        return getVds().getvds_id();
+        return getVds().getId();
     }
 
     @Override

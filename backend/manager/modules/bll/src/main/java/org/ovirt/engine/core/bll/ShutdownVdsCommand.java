@@ -22,7 +22,7 @@ public class ShutdownVdsCommand<T extends VdsShutdownParameters> extends VdsComm
                 .getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.ShutdownVds,
-                        new ShutdownVdsVDSCommandParameters(getVds().getvds_id(), getParameters().getReboot()));
+                        new ShutdownVdsVDSCommandParameters(getVds().getId(), getParameters().getReboot()));
         if (result == null || (VDSStatus) result.getReturnValue() != VDSStatus.Down) {
             throw new VdcBLLException(VdcBllErrors.VDS_SHUTDOWN_ERROR);
         }

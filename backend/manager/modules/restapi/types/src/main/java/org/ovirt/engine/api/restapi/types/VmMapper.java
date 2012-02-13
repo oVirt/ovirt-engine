@@ -238,7 +238,7 @@ public class VmMapper {
     @Mapping(from = org.ovirt.engine.core.common.businessentities.VM.class, to = org.ovirt.engine.api.model.VM.class)
     public static VM map(org.ovirt.engine.core.common.businessentities.VM entity, VM template) {
         VM model = template != null ? template : new VM();
-        model.setId(entity.getvm_guid().toString());
+        model.setId(entity.getId().toString());
         model.setName(entity.getvm_name());
         model.setDescription(entity.getvm_description());
         model.setMemory((long) entity.getmem_size_mb() * BYTES_PER_MB);

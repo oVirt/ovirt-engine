@@ -167,7 +167,7 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
 			}
 
 			}
-		}, getModel().getHash()), vm.getvm_guid());
+		}, getModel().getHash()), vm.getId());
 
 
 		//Select display protocol.

@@ -54,13 +54,13 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters>
             // so we won't get a log-deadlock because of the transaction.
             vm_pools vmPool = getVmPool();
 
-            if (DbFacade.getInstance().getDiskImageDAO().getImageVmPoolMapByVmId(getVm().getvm_guid()).size() > 0) {
+            if (DbFacade.getInstance().getDiskImageDAO().getImageVmPoolMapByVmId(getVm().getId()).size() > 0) {
                 super.EndSuccessfully();
 
                 if (getSucceeded()) {
                     // ParametersCurrentUser =
                     // PoolUserParameters.ParametersCurrentUser,
-                    RunVmParams tempVar = new RunVmParams(getVm().getvm_guid());
+                    RunVmParams tempVar = new RunVmParams(getVm().getId());
                     tempVar.setSessionId(getParameters().getSessionId());
                     tempVar.setUseVnc(getVm().getvm_type() == VmType.Server);
                     VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,

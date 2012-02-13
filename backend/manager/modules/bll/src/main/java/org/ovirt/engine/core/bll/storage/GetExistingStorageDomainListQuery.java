@@ -43,7 +43,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
             if (guidsFromIrs.size() > 0) {
                 List<storage_domains> domainsInDb = DbFacade.getInstance().getStorageDomainDAO().getAll();
                 for (storage_domains domain : domainsInDb) {
-                    guidsFromDb.add(domain.getid());
+                    guidsFromDb.add(domain.getId());
                 }
                 for (Guid domainId : guidsFromIrs) {
                     if (!guidsFromDb.contains(domainId)) {

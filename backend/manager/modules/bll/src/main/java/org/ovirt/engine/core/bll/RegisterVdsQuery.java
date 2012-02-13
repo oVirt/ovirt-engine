@@ -19,8 +19,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.RegisterVdsParameters;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -30,6 +28,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -181,7 +181,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     && getParameters().getVdsType() == VDSType.oVirtNode
                     && getParameters().getOtp() != null) {
 
-                getQueryReturnValue().setSucceeded(dispatchOvirtApprovalCommand(vdsByUniqueId.getvds_id()));
+                getQueryReturnValue().setSucceeded(dispatchOvirtApprovalCommand(vdsByUniqueId.getId()));
                 return;
             }
 
@@ -214,7 +214,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             if (Config.<Boolean> GetValue(ConfigValues.LogVdsRegistration) && vdsByUniqueId != null) {
                 log.infoFormat(
                         "RegisterVdsQuery::ExecuteCommand - found vds {0} with existing Unique Id {1}.  Will try to update existing vds",
-                        vdsByUniqueId.getvds_id(),
+                        vdsByUniqueId.getId(),
                         vdsByUniqueId.getUniqueId());
             }
 
@@ -453,7 +453,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                  * to each one to available hostname
                  */
                 if (vdsByUniqueId == null
-                        || (vdsByUniqueId != null && !vds_byHostName.getvds_id().equals(vdsByUniqueId.getvds_id()))) {
+                        || (vdsByUniqueId != null && !vds_byHostName.getId().equals(vdsByUniqueId.getId()))) {
                         boolean unique = false;
                         String try_host_name = "";
                         for (int i = lastIteratedIndex; i <= 100; i++, lastIteratedIndex = i) {
@@ -491,7 +491,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         } else {
                             log.errorFormat(
                                     "VdcBLL::HandleOldVdssWithSameHostName - Could not change the IP for an existing VDS. All available hostnames are taken (ID = {0}, name = {1}, management IP = {2} , host name = {3})",
-                                    vds_byHostName.getvds_id(),
+                                vds_byHostName.getId(),
                                     vds_byHostName.getvds_name(),
                                     vds_byHostName.getManagmentIp(),
                                     vds_byHostName.gethost_name());
@@ -502,7 +502,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 if (Config.<Boolean> GetValue(ConfigValues.LogVdsRegistration)) {
                     log.infoFormat(
                             "RegisterVdsQuery::HandleOldVdssWithSameHostName - No Change required for VDS {0}. Since it has the same unique Id",
-                            vds_byHostName.getvds_id());
+                            vds_byHostName.getId());
                 }
             }
         }
@@ -578,7 +578,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             if (logRegistration) {
                 log.infoFormat(
                         "No Change required for VDS {0}. Since it has the same unique Id",
-                        hostToRegister.getvds_id());
+                        hostToRegister.getId());
             }
         }
         if (logRegistration) {

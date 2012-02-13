@@ -13,7 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
 @XmlType(name = "CreateVmVDSCommandParameters")
 public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     public CreateVmVDSCommandParameters(Guid vdsId, VM vm) {
-        super(vdsId, vm.getvm_guid());
+        super(vdsId, vm.getId());
         _vm = vm;
     }
 

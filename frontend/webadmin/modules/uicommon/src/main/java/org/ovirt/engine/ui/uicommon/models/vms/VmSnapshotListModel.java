@@ -231,7 +231,7 @@ public class VmSnapshotListModel extends ListModel
 				Guid srcSnapshotId = (srcSnapshot.getvm_snapshot_id() != null) ? srcSnapshot.getvm_snapshot_id().getValue() : Guid.Empty;
 				Guid dstSnapshotId = (dstSnapshot.getvm_snapshot_id() != null) ? dstSnapshot.getvm_snapshot_id().getValue() : Guid.Empty;
 
-				Frontend.RunAction(VdcActionType.RemoveSnapshot, new RemoveSnapshotParameters(srcSnapshotId, vm.getvm_guid()),
+				Frontend.RunAction(VdcActionType.RemoveSnapshot, new RemoveSnapshotParameters(srcSnapshotId, vm.getId()),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {
@@ -273,7 +273,7 @@ public class VmSnapshotListModel extends ListModel
 
 			if (!snapshotId.equals(Guid.Empty))
 			{
-				Frontend.RunAction(VdcActionType.RestoreAllSnapshots, new RestoreAllSnapshotsParameters(vm.getvm_guid(), snapshotId),
+				Frontend.RunAction(VdcActionType.RestoreAllSnapshots, new RestoreAllSnapshotsParameters(vm.getId(), snapshotId),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {
@@ -315,7 +315,7 @@ public class VmSnapshotListModel extends ListModel
 
 			if (!snapshotId.equals(Guid.Empty))
 			{
-				Frontend.RunAction(VdcActionType.RestoreAllSnapshots, new RestoreAllSnapshotsParameters(vm.getvm_guid(), snapshotId),
+				Frontend.RunAction(VdcActionType.RestoreAllSnapshots, new RestoreAllSnapshotsParameters(vm.getId(), snapshotId),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {
@@ -332,7 +332,7 @@ public class VmSnapshotListModel extends ListModel
 		VM vm = (VM)getEntity();
 		if (vm != null)
 		{
-			Frontend.RunAction(VdcActionType.TryBackToAllSnapshotsOfVm, new TryBackToAllSnapshotsOfVmParameters(vm.getvm_guid(), getSelectedItem().getSnapshotId()),
+			Frontend.RunAction(VdcActionType.TryBackToAllSnapshotsOfVm, new TryBackToAllSnapshotsOfVmParameters(vm.getId(), getSelectedItem().getSnapshotId()),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {
@@ -442,7 +442,7 @@ public class VmSnapshotListModel extends ListModel
 
 		model.StartProgress(null);
 
-		CreateAllSnapshotsFromVmParameters tempVar = new CreateAllSnapshotsFromVmParameters(vm.getvm_guid(), (String)model.getDescription().getEntity());
+		CreateAllSnapshotsFromVmParameters tempVar = new CreateAllSnapshotsFromVmParameters(vm.getId(), (String)model.getDescription().getEntity());
 		tempVar.setDisksList(disks);
 		Frontend.RunAction(VdcActionType.CreateAllSnapshotsFromVm, tempVar,
 		new IFrontendActionAsyncCallback() {
@@ -512,7 +512,7 @@ public class VmSnapshotListModel extends ListModel
 		}
 
 
-		new GetAllVmSnapshotsExecutor(vm.getvm_guid(), new AsyncQuery(this,
+		new GetAllVmSnapshotsExecutor(vm.getId(), new AsyncQuery(this,
 		new INewAsyncCallback() {
 			@Override
 			public void OnSuccess(Object target1, Object returnValue1) {
@@ -535,7 +535,7 @@ public class VmSnapshotListModel extends ListModel
 		//Check that we get a return value corresponding to a current VM.
 		for (AsyncDataProvider.GetSnapshotListQueryResult result : (java.util.List<AsyncDataProvider.GetSnapshotListQueryResult>)returnValue)
 		{
-			if (!result.getVmId().equals(vm.getvm_guid()))
+			if (!result.getVmId().equals(vm.getId()))
 			{
 				return;
 			}

@@ -31,7 +31,7 @@ public class UserPortalItemsGrid extends GridController<UserPortalItemModel> {
 
 	@Override
 	public Object getId(UserPortalItemModel item) {
-		return item.getIsPool() ? ((vm_pools)item.getEntity()).getvm_pool_id() : ((VM)item.getEntity()).getvm_guid();
+		return item.getIsPool() ? ((vm_pools)item.getEntity()).getvm_pool_id() : ((VM)item.getEntity()).getId();
 	}
 
 	@Override

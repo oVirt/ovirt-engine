@@ -15,10 +15,10 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.log.Log;
 
 public abstract class StorageHelperBase implements IStorageHelper {
     @Override
@@ -50,7 +50,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
                     .getStorageServerConnectionDAO().getAllForStoragePool(vds.getstorage_pool_id());
             for (storage_server_connections connection : connections) {
                 Backend.getInstance().runInternalAction(type,
-                        new StorageServerConnectionParametersBase(connection, vds.getvds_id()));
+                        new StorageServerConnectionParametersBase(connection, vds.getId()));
             }
         }
     }

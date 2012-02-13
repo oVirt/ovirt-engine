@@ -96,14 +96,14 @@ public class VmItemBehavior extends ItemBehavior
 			return;
 		}
 
-		Frontend.RunAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(entity.getvm_guid(), StringHelper.stringsEqual(imageName, ConsoleModel.EjectLabel) ? "" : imageName));
+		Frontend.RunAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(entity.getId(), StringHelper.stringsEqual(imageName, ConsoleModel.EjectLabel) ? "" : imageName));
 	}
 
 	private void ReturnVm()
 	{
 		VM entity = (VM)getItem().getEntity();
 
-		Frontend.RunAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getvm_guid(), false),
+		Frontend.RunAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), false),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {
@@ -168,19 +168,19 @@ public class VmItemBehavior extends ItemBehavior
 	private void Shutdown()
 	{
 		VM entity = (VM)getItem().getEntity();
-		Frontend.RunAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getvm_guid(), true));
+		Frontend.RunAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), true));
 	}
 
 	private void stop()
 	{
 		VM entity = (VM)getItem().getEntity();
-		Frontend.RunAction(VdcActionType.StopVm, new StopVmParameters(entity.getvm_guid(), StopVmTypeEnum.NORMAL));
+		Frontend.RunAction(VdcActionType.StopVm, new StopVmParameters(entity.getId(), StopVmTypeEnum.NORMAL));
 	}
 
 	private void Pause()
 	{
 		VM entity = (VM)getItem().getEntity();
-		Frontend.RunAction(VdcActionType.HibernateVm, new HibernateVmParameters(entity.getvm_guid()));
+		Frontend.RunAction(VdcActionType.HibernateVm, new HibernateVmParameters(entity.getId()));
 	}
 
 	private void Run()
@@ -188,7 +188,7 @@ public class VmItemBehavior extends ItemBehavior
 		VM entity = (VM)getItem().getEntity();
 		//use sysprep iff the vm is not initialized and vm has Win OS
 		boolean reinitialize = !entity.getis_initialized() && DataProvider.IsWindowsOsType(entity.getvm_os());
-		RunVmParams tempVar = new RunVmParams(entity.getvm_guid());
+		RunVmParams tempVar = new RunVmParams(entity.getId());
 		tempVar.setReinitialize(reinitialize);
 		Frontend.RunAction(VdcActionType.RunVm, tempVar);
 	}

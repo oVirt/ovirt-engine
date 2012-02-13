@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.*;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.queries.GetNewVdsFenceStatusParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters> extends FencingQueryBase<P> {
 
@@ -18,7 +20,7 @@ public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters>
         final String UNKNOWN = "unknown";
         Guid id = getParameters().getVdsId();
         VDS tempVar = new VDS();
-        tempVar.setvds_id((Guid) ((id != null) ? id : Guid.Empty));
+        tempVar.setId((Guid) ((id != null) ? id : Guid.Empty));
         tempVar.setstorage_pool_id(getParameters().getStoragePoolId());
         tempVar.setManagmentIp(getParameters().getManagementIp());
         tempVar.setPmOptionsMap(getParameters().getFencingOptions());

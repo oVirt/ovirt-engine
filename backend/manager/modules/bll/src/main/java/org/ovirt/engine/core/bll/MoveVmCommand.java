@@ -24,13 +24,13 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.Helper;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplateCommand<T> {
@@ -80,7 +80,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         if (retValue
                 && DbFacade.getInstance()
                         .getStoragePoolIsoMapDAO()
-                        .get(new StoragePoolIsoMapId(getStorageDomain().getid(),
+                        .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                                 getVm().getstorage_pool_id())) == null) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
@@ -128,7 +128,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
             List<Guid> list = LinqUtils.foreach(domains, new Function<storage_domains, Guid>() {
                 @Override
                 public Guid eval(storage_domains a) {
-                    return a.getid();
+                    return a.getId();
                 }
             });
             if (!list.contains(getParameters().getStorageDomainId())) {
@@ -141,7 +141,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     @Override
     protected void executeCommand() {
-        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(getVm().getvm_guid());
+        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(getVm().getId());
         if (vmDynamic.getstatus() != VMStatus.Down) {
             throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
         }
@@ -153,7 +153,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                 .getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
-                        new IsVmDuringInitiatingVDSCommandParameters(vm.getvm_guid())).getReturnValue()).booleanValue();
+                        new IsVmDuringInitiatingVDSCommandParameters(vm.getId())).getReturnValue()).booleanValue();
 
         if (isVmDuringInit) {
             log.errorFormat("VM {0} must be down for Move VM to be successfuly executed", vm.getvm_name());
@@ -176,7 +176,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     @Override
     protected void MoveOrCopyAllImageGroups() {
-        MoveMultipleImageGroupsParameters tempVar = new MoveMultipleImageGroupsParameters(getVm().getvm_guid(),
+        MoveMultipleImageGroupsParameters tempVar = new MoveMultipleImageGroupsParameters(getVm().getId(),
                 Helper.ToList(getVm().getDiskMap().values()), getParameters().getStorageDomainId());
         tempVar.setParentCommand(getActionType());
         tempVar.setEntityId(getParameters().getEntityId());
@@ -207,7 +207,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         EndActionOnAllImageGroups();
 
         if (getVm() != null) {
-            VmHandler.UnLockVm(getVm().getvm_guid());
+            VmHandler.UnLockVm(getVm().getId());
 
             VmHandler.updateDisksFromDb(getVm());
             UpdateVmImSpm();

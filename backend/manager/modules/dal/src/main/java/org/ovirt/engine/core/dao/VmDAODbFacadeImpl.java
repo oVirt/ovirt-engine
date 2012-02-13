@@ -47,7 +47,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     public VM getById(Guid id) {
         VM vm = get(id);
         if (vm != null) {
-            vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getvm_guid()));
+            vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
         }
         return vm;
     }
@@ -120,7 +120,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
         HashMap<Guid, VM> map = new HashMap<Guid, VM>();
 
         for (VM vm : getAllRunningForVds(id)) {
-            map.put(vm.getvm_guid(), vm);
+            map.put(vm.getId(), vm);
         }
 
         return map;
@@ -159,7 +159,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                 .addValue("mem_size_mb", vm.getmem_size_mb())
                 .addValue("os", vm.getos())
                 .addValue("vds_group_id", vm.getvds_group_id())
-                .addValue("vm_guid", vm.getvm_guid())
+                .addValue("vm_guid", vm.getId())
                 .addValue("vm_name", vm.getvm_name())
                 .addValue("vmt_guid", vm.getvmt_guid())
                 .addValue("num_of_monitors", vm.getnum_of_monitors())
@@ -206,7 +206,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
         public VM mapRow(ResultSet rs, int rowNum) throws SQLException {
 
             VM entity = new VM();
-            entity.setvm_guid(Guid.createGuidFromString(rs.getString("vm_guid")));
+            entity.setId(Guid.createGuidFromString(rs.getString("vm_guid")));
             entity.setvm_name(rs.getString("vm_name"));
             entity.setvm_mem_size_mb(rs.getInt("vm_mem_size_mb"));
             entity.setvmt_guid(Guid.createGuidFromString(rs.getString("vmt_guid")));

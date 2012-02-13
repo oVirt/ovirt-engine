@@ -11,12 +11,12 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class VdsHandler extends BaseHandler {
     private static Log log = LogFactory.getLog(VdsHandler.class);
@@ -137,7 +137,7 @@ public class VdsHandler extends BaseHandler {
         if (!exists) {
             List<VDS> vdsList = DbFacade.getInstance().getVdsDAO().getAllForHostname(vdsStatic.gethost_name());
             for (VDS vds : vdsList) {
-                if (!isPendingOvirt(vds) || (!oVirtId.equals(vds.getvds_id()))) {
+                if (!isPendingOvirt(vds) || (!oVirtId.equals(vds.getId()))) {
                     messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST.toString());
                     exists = true;
                     break;
@@ -169,7 +169,7 @@ public class VdsHandler extends BaseHandler {
             vdsOsVersion = new RpmVersion(vds.gethost_os(), "RHEV Hypervisor -", true);
         } catch (RuntimeException e) {
             log.errorFormat("Failed to parse version of Host {0},{1} and Host OS '{2}' with error {3}",
-                    vds.getvds_id(),
+                    vds.getId(),
                     vds.getvds_name(),
                     vds.gethost_os(),
                     ExceptionUtils.getMessage(e));

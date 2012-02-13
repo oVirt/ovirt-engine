@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameter
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmCommand<T> {
     public RunVmOnDedicatedVdsCommand(T runVmParams) {
@@ -31,7 +31,7 @@ public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmComm
                 if (powerclient != null && powerclient.getvds_type() == VDSType.PowerClient) {
                     if (Config.<Boolean> GetValue(ConfigValues.PowerClientLogDetection)) {
                         log.infoFormat("VdcBLL::RunVmCommand - Powerclient id= {0}, name = {1} evaluated",
-                                powerclient.getvds_id(), powerclient.getvds_name());
+                                powerclient.getId(), powerclient.getvds_name());
                     }
                     _destinationVds = powerclient;
                 } else {

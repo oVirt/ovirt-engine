@@ -46,7 +46,7 @@ public class VmDAOTest extends BaseDAOTestCase {
                 new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
 
         newVm = new VM();
-        newVm.setvm_guid(Guid.NewGuid());
+        newVm.setId(Guid.NewGuid());
         newVm.setvds_group_id(VDS_GROUP_ID);
         newVm.setvmt_guid(vmtemplate.getId());
 
@@ -73,7 +73,7 @@ public class VmDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGet() {
-        VM result = dao.get(existingVm.getvm_guid());
+        VM result = dao.get(existingVm.getId());
 
         assertNotNull(result);
         assertEquals(result, existingVm);
@@ -233,14 +233,14 @@ public class VmDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testRemove() {
-        VM before = dao.get(existingVm.getvm_guid());
+        VM before = dao.get(existingVm.getId());
 
         // ensure we're actually doing a real test
         assertNotNull(before);
 
-        dao.remove(existingVm.getvm_guid());
+        dao.remove(existingVm.getId());
 
-        VM after = dao.get(existingVm.getvm_guid());
+        VM after = dao.get(existingVm.getId());
 
         assertNull(after);
     }

@@ -227,7 +227,7 @@ public class RestoreAllSnapshotCommandTest {
      */
     private VM mockVm(RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters> restoreAllSnapshotsCommand) {
         VM vm = new VM();
-        vm.setvm_guid(vmId);
+        vm.setId(vmId);
         vm.setstatus(VMStatus.Down);
         AuditLogableBaseMockUtils.mockVmDao(restoreAllSnapshotsCommand, vmDAO);
         when(vmDAO.getById(vmId)).thenReturn(vm);

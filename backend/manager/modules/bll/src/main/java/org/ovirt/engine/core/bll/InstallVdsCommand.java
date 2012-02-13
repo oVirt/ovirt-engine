@@ -11,13 +11,13 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.FileUtil;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 @NonTransactiveCommandAttribute
@@ -109,7 +109,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 installResult = _vdsInstaller.Install();
             } catch (Exception e) {
                 log.errorFormat("Host installation failed for host {0}, {1}.",
-                        getVds().getvds_id(),
+                        getVds().getId(),
                         getVds().getvds_name(),
                         e);
             }

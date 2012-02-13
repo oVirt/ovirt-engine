@@ -56,7 +56,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
                 .getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.GetVGInfo,
-                        new GetVGInfoVDSCommandParameters(getVds().getvds_id(), getStorageDomain().getstorage()))
+                        new GetVGInfoVDSCommandParameters(getVds().getId(), getStorageDomain().getstorage()))
                 .getReturnValue();
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -77,7 +77,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.CreateVG,
-                        new CreateVGVDSCommandParameters(getVds().getvds_id(), getStorageDomain().getid(),
+                        new CreateVGVDSCommandParameters(getVds().getId(), getStorageDomain().getId(),
                                 getParameters().getLunIds()));
         String volumeGroupId = (String) ((returnValue.getReturnValue() instanceof String) ? returnValue
                 .getReturnValue() : null);

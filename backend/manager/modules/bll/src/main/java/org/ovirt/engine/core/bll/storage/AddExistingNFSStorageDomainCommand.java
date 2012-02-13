@@ -41,7 +41,7 @@ public class AddExistingNFSStorageDomainCommand<T extends StorageDomainManagemen
                             .runInternalAction(
                                     VdcActionType.AddStorageServerConnection,
                                     new StorageServerConnectionParametersBase(getStorageDomain().getStorageStaticData()
-                                            .getConnection(), getVds().getvds_id())).getActionReturnValue());
+                                            .getConnection(), getVds().getId())).getActionReturnValue());
         }
         AddStorageDomainInDb();
         UpdateStorageDomainDynamicFromIrs();

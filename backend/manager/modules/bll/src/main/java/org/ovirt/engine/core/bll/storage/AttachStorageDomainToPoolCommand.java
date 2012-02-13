@@ -47,7 +47,8 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
             if (getStoragePool().getstatus() == StoragePoolStatus.Uninitialized) {
                 StoragePoolWithStoragesParameter parameters = new StoragePoolWithStoragesParameter(getStoragePool(),
                         new java.util.ArrayList<Guid>(
-                                java.util.Arrays.asList(new Guid[] { getStorageDomain().getid() })), getParameters().getSessionId());
+                                        java.util.Arrays.asList(new Guid[] { getStorageDomain().getId() })),
+                                getParameters().getSessionId());
                 parameters.setIsInternal(true);
                 parameters.setTransactionScopeOption(TransactionScopeOption.Suppress);
                 setSucceeded(Backend.getInstance()
@@ -58,14 +59,14 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
 
             } else {
                 map = DbFacade.getInstance()
-                        .getStoragePoolIsoMapDAO().get(new StoragePoolIsoMapId(getStorageDomain().getid(),
+                        .getStoragePoolIsoMapDAO().get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                                 getParameters().getStoragePoolId()));
                 if (map == null) {
                     TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
 
                         @Override
                         public Object runInTransaction() {
-                            map = new storage_pool_iso_map(getStorageDomain().getid(), getParameters()
+                            map = new storage_pool_iso_map(getStorageDomain().getId(), getParameters()
                                             .getStoragePoolId(), StorageDomainStatus.Locked);
                             DbFacade.getInstance().getStoragePoolIsoMapDAO().save(map);
                             getCompensationContext().snapshotNewEntity(map);

@@ -6,9 +6,9 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
     public StartVdsCommand(T parameters) {
@@ -28,7 +28,7 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
             } else if (!legalStatusForStartingVds(vdsStatus)) {
                 addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_START);
                 retValue = false;
-                log.errorFormat("VDS status for vds {0}:{1} is {2}", vds.getvds_id(), vds.getvds_name(), vdsStatus);
+                log.errorFormat("VDS status for vds {0}:{1} is {2}", vds.getId(), vds.getvds_name(), vdsStatus);
             }
         }
         return retValue;

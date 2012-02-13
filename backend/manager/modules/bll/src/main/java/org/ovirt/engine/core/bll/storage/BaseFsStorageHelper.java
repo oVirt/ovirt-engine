@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
 
 public abstract class BaseFsStorageHelper extends StorageHelperBase {
 
@@ -46,7 +46,7 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.ValidateStorageServerConnection,
-                        new ConnectStorageServerVDSCommandParameters(vds.getvds_id(), storagePoolId, this.storageType,
+                        new ConnectStorageServerVDSCommandParameters(vds.getId(), storagePoolId, this.storageType,
                                 connections)).getReturnValue();
         return IsConnectSucceeded(validateConnections, connections);
     }

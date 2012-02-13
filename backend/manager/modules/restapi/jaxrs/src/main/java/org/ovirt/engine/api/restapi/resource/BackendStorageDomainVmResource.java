@@ -54,7 +54,7 @@ public class BackendStorageDomainVmResource
 
     protected org.ovirt.engine.core.common.businessentities.VM getEntity() {
         for (org.ovirt.engine.core.common.businessentities.VM entity : parent.getEntitiesFromExportDomain()) {
-            if (guid.equals(entity.getvm_guid())) {
+            if (guid.equals(entity.getId())) {
                 return entity;
             }
         }

@@ -142,10 +142,10 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             Backend.getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.SetVmStatus,
-                            new SetVmStatusVDSCommandParameters(vm.getvm_guid(), VMStatus.Unknown));
+                            new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Unknown));
             // log VM transition to unknown status
             AuditLogableBase logable = new AuditLogableBase();
-            logable.setVmId(vm.getvm_guid());
+            logable.setVmId(vm.getId());
             AuditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
         }
     }

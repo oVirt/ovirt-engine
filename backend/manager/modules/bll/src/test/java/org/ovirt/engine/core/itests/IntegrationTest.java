@@ -8,14 +8,13 @@ import javax.naming.InitialContext;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
+import org.ovirt.engine.core.bll.BackendRemote;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.bll.BackendRemote;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class IntegrationTest extends AbstractBackendTest {
@@ -30,7 +29,7 @@ public class IntegrationTest extends AbstractBackendTest {
         storage_domains domain = storageDomain.get(0);
 
         GetAllFromExportDomainQueryParamenters params = new GetAllFromExportDomainQueryParamenters(pool.getId(),
-                domain.getid());
+                domain.getId());
         VdcQueryReturnValue queryReturnValue = backend.runInternalQuery(VdcQueryType.GetVmsFromExportDomain, params);
         System.out.println("after");
     }
@@ -53,7 +52,7 @@ public class IntegrationTest extends AbstractBackendTest {
             storage_domains domain = storageDomain.get(0);
 
             GetAllFromExportDomainQueryParamenters params = new GetAllFromExportDomainQueryParamenters(pool.getId(),
-                    domain.getid());
+                    domain.getId());
             VdcQueryReturnValue queryReturnValue = backendRemote.RunQuery(VdcQueryType.GetVmsFromExportDomain,
                     params);
             System.out.println("after");

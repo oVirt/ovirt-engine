@@ -100,7 +100,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
                 });
         getStoragePool().setstatus(StoragePoolStatus.Problematic);
         if (StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
-                .ConnectStorageToDomainByVdsId(getNewMaster(), getVds().getvds_id())) {
+                .ConnectStorageToDomainByVdsId(getNewMaster(), getVds().getId())) {
             super.executeCommand();
         } else {
             getReturnValue().setFault(new VdcFault(new VdcBLLException(VdcBllErrors.StorageServerConnectionError,

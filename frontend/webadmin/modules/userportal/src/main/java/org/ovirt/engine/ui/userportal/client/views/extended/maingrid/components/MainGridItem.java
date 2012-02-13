@@ -95,7 +95,7 @@ public class MainGridItem extends HLayout implements GridElement<UserPortalItemM
 		setStyleName("mainGrid-row");
 		setLayoutLeftMargin(7);
 		
-		entityGuid = item.getIsPool() ? ((vm_pools)item.getEntity()).getvm_pool_id() : ((VM)item.getEntity()).getvm_guid();
+		entityGuid = item.getIsPool() ? ((vm_pools)item.getEntity()).getvm_pool_id() : ((VM)item.getEntity()).getId();
 		itemID = UserPortalTools.getSafeId(entityGuid.toString());
 		currentItem = item;
 		

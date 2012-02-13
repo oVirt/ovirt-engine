@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-//import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.config.Config;
@@ -80,7 +79,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
             VdcReturnValueBase returnValue = Backend.getInstance()
                     .runInternalAction(
                             VdcActionType.AttachStorageDomainToPool,
-                            new StorageDomainPoolParametersBase(getStorageDomain().getid(), getStoragePool().getId()));
+                            new StorageDomainPoolParametersBase(getStorageDomain().getId(), getStoragePool().getId()));
             if(!returnValue.getSucceeded()) {
                 getReturnValue().setSucceeded(false);
                 getReturnValue().setFault(returnValue.getFault());

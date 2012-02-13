@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -19,12 +18,12 @@ import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandPa
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class ISCSIStorageHelper extends StorageHelperBase {
 
@@ -122,7 +121,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.ValidateStorageServerConnection,
-                            new ConnectStorageServerVDSCommandParameters(vds.getvds_id(), storagePoolId,
+                            new ConnectStorageServerVDSCommandParameters(vds.getId(), storagePoolId,
                                     StorageType.ISCSI, connections)).getReturnValue();
 
             return IsConnectSucceeded(validateConnections, connections);

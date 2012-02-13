@@ -342,7 +342,7 @@ public class BackendTemplatesResourceTest
     protected org.ovirt.engine.core.common.businessentities.VM setUpVm(Guid id) {
         org.ovirt.engine.core.common.businessentities.VM vm =
             control.createMock(org.ovirt.engine.core.common.businessentities.VM.class);
-        expect(vm.getvm_guid()).andReturn(id).anyTimes();
+        expect(vm.getId()).andReturn(id).anyTimes();
         return vm;
     }
 

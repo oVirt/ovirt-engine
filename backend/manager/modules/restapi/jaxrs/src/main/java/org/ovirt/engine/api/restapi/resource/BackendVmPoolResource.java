@@ -108,8 +108,8 @@ public class BackendVmPoolResource
             if (vm.getvmt_guid() != null) {
                 VmTemplate template = getEntity(VmTemplate.class,
                                                 VdcQueryType.GetVmTemplate,
-                                                new GetVmTemplateParameters(vm.getvm_guid()),
-                                                vm.getvm_guid().toString());
+                                                new GetVmTemplateParameters(vm.getId()),
+                                                vm.getId().toString());
                 vm.getStaticData().setmem_size_mb(template.getmem_size_mb());
             }
 

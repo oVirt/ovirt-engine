@@ -205,7 +205,7 @@ public class VmBackupModel extends ManageBackupModel implements ITaskTarget
 			//If no collapse snapshots specified drop problematic VMs.
 			if (!collapseSnapshots && model.getProblematicItems() != null)
 			{
-				if (Linq.FirstOrDefault(model.getProblematicItems(), new Linq.VmPredicate(vm.getvm_guid())) != null)
+				if (Linq.FirstOrDefault(model.getProblematicItems(), new Linq.VmPredicate(vm.getId())) != null)
 			{
 					continue;
 				}

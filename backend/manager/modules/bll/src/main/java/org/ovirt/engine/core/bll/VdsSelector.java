@@ -10,13 +10,13 @@ import org.ovirt.engine.core.common.businessentities.VdsVersion;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class VdsSelector {
     private java.util.ArrayList<Guid> privateRunVdssList;
@@ -120,7 +120,7 @@ public class VdsSelector {
                     && getVm() != null && getVm().getHasAgent()) {
                 log.infoFormat(
                         "VdcBLL.RunVmCommandBase.getVdsToRunOn - VM {0} has no tools - skipping power client check",
-                        getVm().getvm_guid());
+                        getVm().getId());
             } else {
                 result = getVdsToRunOn(new java.util.ArrayList<VDS>(java.util.Arrays.asList(new VDS[] { target_vds })));
             }
@@ -169,7 +169,7 @@ public class VdsSelector {
         VdsVersion vdsVersion = null;
         boolean noVDSs = true;
         for (VDS curVds : vdss) {
-            if (isMigrate && getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(curVds.getvds_id())) {
+            if (isMigrate && getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(curVds.getId())) {
                 continue;
             }
 
@@ -219,7 +219,7 @@ public class VdsSelector {
     private boolean isReadyToRun(VDS vds, RefObject<VdcBllMessages> message) {
         boolean returnValue = true;
         if ((!vds.getvds_group_id().equals(getVm().getvds_group_id())) || (vds.getstatus() != VDSStatus.Up)
-                || isVdsFailedToRunVm(vds.getvds_id())) {
+                || isVdsFailedToRunVm(vds.getId())) {
             returnValue = false;
             message.argvalue = VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CLUSTER;
         }
@@ -309,8 +309,8 @@ public class VdsSelector {
 
             // In case we are using this function in migration we make sure we
             // don't allocate the same VDS
-            if ((getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(curVds.getvds_id()))
-                    || isVdsFailedToRunVm(curVds.getvds_id()) ||
+            if ((getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(curVds.getId()))
+                    || isVdsFailedToRunVm(curVds.getId()) ||
                     // RunVmCommandBase.isVdsVersionOld(curVds, getVm()) ||
                     !RunVmCommandBase.hasCapacityToRunVM(curVds))
                 continue;
@@ -344,8 +344,8 @@ public class VdsSelector {
          * add chosen vds to running vdss list.
          */
         comparer.BestVdsProcedure(bestVDS);
-        getRunVdssList().add(bestVDS.getvds_id());
-        return bestVDS.getvds_id();
+        getRunVdssList().add(bestVDS.getId());
+        return bestVDS.getId();
     }
 
     private static Log log = LogFactory.getLog(VdsSelector.class);

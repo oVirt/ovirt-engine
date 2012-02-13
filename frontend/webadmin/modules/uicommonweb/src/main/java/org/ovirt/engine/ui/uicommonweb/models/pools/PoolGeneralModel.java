@@ -578,7 +578,7 @@ public class PoolGeneralModel extends EntityModel
         };
 
         Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId,
-                new GetAllDisksByVmIdParameters(getvm().getvm_guid()),
+                new GetAllDisksByVmIdParameters(getvm().getId()),
                 _asyncQuery);
     }
 

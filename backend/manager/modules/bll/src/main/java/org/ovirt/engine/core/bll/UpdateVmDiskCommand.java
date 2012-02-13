@@ -186,7 +186,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
                 .RunVdsCommand(
                         commandType,
                         new HotPlugDiskVDSParameters(getVm().getrun_on_vds().getValue(),
-                                getVm().getvm_guid(),
+                                getVm().getId(),
                                 _oldDisk,
                                 oldVmDevice));
         oldVmDevice.setIsPlugged(!oldVmDevice.getIsPlugged());

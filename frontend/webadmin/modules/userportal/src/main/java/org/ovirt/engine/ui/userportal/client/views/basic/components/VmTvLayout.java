@@ -60,7 +60,7 @@ public class VmTvLayout extends VLayout implements GridElement<UserPortalItemMod
 		
 	public VmTvLayout(final UserPortalItemModel item) {	    
 	    currentItem = item;
-		entityGuid = item.getIsPool() ? ((vm_pools)item.getEntity()).getvm_pool_id() : ((VM)item.getEntity()).getvm_guid();
+		entityGuid = item.getIsPool() ? ((vm_pools)item.getEntity()).getvm_pool_id() : ((VM)item.getEntity()).getId();
 		setMembersMargin(3);
 
 		String vmID = UserPortalTools.getSafeId(entityGuid.toString());

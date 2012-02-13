@@ -50,7 +50,7 @@ public class MacPoolManager {
             }
             for (VM vm : vms) {
                 List<VmNetworkInterface> interfaces = DbFacade.getInstance()
-                        .getVmNetworkInterfaceDAO().getAllForVm(vm.getvm_guid());
+                        .getVmNetworkInterfaceDAO().getAllForVm(vm.getId());
                 for (VmNetworkInterface iface : interfaces) {
                     AddMac(iface.getMacAddress());
                 }

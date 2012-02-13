@@ -22,13 +22,13 @@ import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ThreadUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
     private final int SLEEP_BEFORE_FIRST_ATTEMPT=5000;
@@ -200,7 +200,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                             .RunVdsCommand(
                                     VDSCommandType.DestroyVm,
                                     new DestroyVmVDSCommandParameters(new Guid(vm.getmigrating_to_vds().toString()), vm
-                                            .getvm_guid(), true, false, 0));
+                                            .getId(), true, false, 0));
                     log.infoFormat("Stopped migrating vm: {0} on vds: {1}", vm.getvm_name(), vm.getmigrating_to_vds());
                 }
             } catch (RuntimeException ex) {
@@ -221,13 +221,13 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.SetVmStatus,
-                            new SetVmStatusVDSCommandParameters(vm.getvm_guid(), VMStatus.Down));
+                            new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down));
             // Write that this VM was shut down by host rebbot or manual fence
             if (returnValue != null && returnValue.getSucceeded()) {
-                LogSettingVmToDown(getVds().getvds_id(), vm.getvm_guid());
+                LogSettingVmToDown(getVds().getId(), vm.getId());
             }
             // ResourceManager.Instance.removeRunningVm(vm.vm_guid, VdsId);
-            setVmId(vm.getvm_guid());
+            setVmId(vm.getId());
             setVmName(vm.getvm_name());
             setVm(vm);
             // EINAV: TODO: The next commented line of code is performing an
@@ -238,7 +238,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
             //Handle highly available VMs
             if (vm.getauto_startup()) {
-                runVmParamsList.add(new RunVmParams(vm.getvm_guid(), true));
+                runVmParamsList.add(new RunVmParams(vm.getId(), true));
             }
         }
         if (runVmParamsList.size() > 0) {
@@ -316,7 +316,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             Backend.getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.SetVdsStatus,
-                            new SetVdsStatusVDSCommandParameters(getVds().getvds_id(), status));
+                            new SetVdsStatusVDSCommandParameters(getVds().getId(), status));
         }
     }
 

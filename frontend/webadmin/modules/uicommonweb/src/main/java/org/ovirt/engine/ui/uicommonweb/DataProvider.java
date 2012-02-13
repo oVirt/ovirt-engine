@@ -2769,7 +2769,7 @@ public final class DataProvider
     {
         if (entity instanceof VM)
         {
-            return ((VM) entity).getvm_guid();
+            return ((VM) entity).getId();
         }
         else if (entity instanceof storage_pool)
         {

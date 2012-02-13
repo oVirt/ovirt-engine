@@ -30,7 +30,7 @@ public class BackendCdRomResource extends BackendDeviceResource<CdRom, CdRoms, V
         if (QueryHelper.hasConstraint(getUriInfo().getQueryParameters(), CURRENT_CONSTRAINT_PARAMETER)) {
             validateParameters(resource, requiredUpdateFields);
             performAction(VdcActionType.ChangeDisk,
-                          new ChangeDiskCommandParameters(getEntity(entityResolver, true).getvm_guid(),
+                          new ChangeDiskCommandParameters(getEntity(entityResolver, true).getId(),
                                                           resource.getFile().getId()));
             return resource;
         } else {

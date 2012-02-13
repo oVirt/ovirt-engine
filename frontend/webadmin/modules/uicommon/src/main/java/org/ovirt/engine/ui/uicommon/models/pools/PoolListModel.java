@@ -318,7 +318,7 @@ public class PoolListModel extends ListWithDetailsModel
 			model.getInitrd_path().setEntity(vm.getinitrd_url());
 
 			//feature for filling storage domain in case of datacenter list empty
-			java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(vm.getvm_guid());
+			java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(vm.getId());
 			NGuid storageId = disks.get(0).getstorage_id();
 			if (disks.size() > 0 && storageId != null)
 			{

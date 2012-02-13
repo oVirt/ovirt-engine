@@ -18,8 +18,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.FileUtil;
@@ -28,6 +26,8 @@ import org.ovirt.engine.core.utils.hostinstall.ICAWrapper;
 import org.ovirt.engine.core.utils.hostinstall.IVdsInstallCallBack;
 import org.ovirt.engine.core.utils.hostinstall.IVdsInstallWrapper;
 import org.ovirt.engine.core.utils.hostinstall.VdsInstallerFactory;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -94,7 +94,7 @@ public class VdsInstaller implements IVdsInstallCallBack {
         super();
         _vds = vds;
         this.overrideFirewall = overrideFirewall;
-        _messages = new InstallerMessages(vds.getvds_id());
+        _messages = new InstallerMessages(vds.getId());
 
         _fileGuid = Guid.NewGuid();
 
@@ -410,7 +410,7 @@ public class VdsInstaller implements IVdsInstallCallBack {
         String uniqueId = message.trim();
         UpdateUniqueId(uniqueId);
 
-        if (VdsInstallHelper.isVdsUnique(_vds.getvds_id(), uniqueId)) {
+        if (VdsInstallHelper.isVdsUnique(_vds.getId(), uniqueId)) {
             log.infoFormat("Installation of {0}. Assigning unique id {1} to Host. (Stage: {2})", _serverName, uniqueId,
                     getCurrentInstallStage());
             _vds.setUniqueId(uniqueId);

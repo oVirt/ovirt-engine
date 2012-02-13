@@ -46,7 +46,7 @@ public class VdsInstallHelper{
         return LinqUtils.filter(list, new Predicate<VDS>() {
             @Override
             public boolean eval(VDS vds) {
-                return !vds.getvds_id().equals(vdsId);
+                return !vds.getId().equals(vdsId);
             }
         });
     }

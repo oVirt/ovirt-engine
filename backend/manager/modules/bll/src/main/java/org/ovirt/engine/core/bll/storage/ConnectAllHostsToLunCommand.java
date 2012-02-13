@@ -20,11 +20,11 @@ import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.GetDevicesVisibilityVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 @SuppressWarnings("serial")
 public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParameters> extends
@@ -55,6 +55,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         }
     }
 
+    @Override
     protected VdcReturnValueBase CreateReturnValue() {
         return new ConnectAllHostsToLunCommandReturnValue();
     }
@@ -67,7 +68,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
 
         // VDS spmVds = null; // LINQ AllRunningVdssInPool.Where(vds =>
         // vds.spm_status == VdsSpmStatus.SPM).First();
-        VDS spmVds = (VDS) LinqUtils.filter(getAllRunningVdssInPool(), new Predicate<VDS>() {
+        VDS spmVds = LinqUtils.filter(getAllRunningVdssInPool(), new Predicate<VDS>() {
             @Override
             public boolean eval(VDS vds) {
                 return vds.getspm_status() == VdsSpmStatus.SPM;
@@ -81,7 +82,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                             .getResourceManager()
                             .RunVdsCommand(
                                     VDSCommandType.GetDeviceList,
-                                    new GetDeviceListVDSCommandParameters(spmVds.getvds_id(),
+                                new GetDeviceListVDSCommandParameters(spmVds.getId(),
                                             getStorageDomain().getstorage_type()))
                             .getReturnValue();
         Map<String, LUNs> lunsMap = new HashMap<String, LUNs>();
@@ -137,7 +138,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             // try to connect vds to luns and getDeviceList in order to refresh them
             for (LUNs lun : luns) {
                 if (!StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
-                        .ConnectStorageToLunByVdsId(getStorageDomain(), vds.getvds_id(), lun)) {
+                        .ConnectStorageToLunByVdsId(getStorageDomain(), vds.getId(), lun)) {
                     log.errorFormat("Could not connect host {0} to lun {1}", vds.getvds_name(), lun.getLUN_id());
                     setVds(vds);
                     ((ConnectAllHostsToLunCommandReturnValue)getReturnValue()).setFailedVds(vds);
@@ -149,7 +150,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                         hosts = new ArrayList<Guid>();
                         resultMap.put(lun.getLUN_id(), hosts);
                     }
-                    hosts.add(vds.getvds_id());
+                    hosts.add(vds.getId());
                 }
             }
             // Refresh all connected luns to host
@@ -162,7 +163,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                         .getResourceManager()
                         .RunVdsCommand(
                                 VDSCommandType.GetDeviceList,
-                                new GetDeviceListVDSCommandParameters(vds.getvds_id(),
+                                new GetDeviceListVDSCommandParameters(vds.getId(),
                                         getStorageDomain().getstorage_type())).getReturnValue();
                 for (LUNs lun : hostLuns) {
                     hostsLunsIds.add(lun.getLUN_id());
@@ -193,7 +194,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         Map<String, Boolean> returnValue = (Map<String, Boolean>) Backend.getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.GetDevicesVisibility,
-                        new GetDevicesVisibilityVDSCommandParameters(vds.getvds_id(),
+                        new GetDevicesVisibilityVDSCommandParameters(vds.getId(),
                                 processedLunIds.toArray(new String[processedLunIds.size()]))).getReturnValue();
         for (Map.Entry<String, Boolean> returnValueEntry : returnValue.entrySet()) {
             if (!Boolean.TRUE.equals(returnValueEntry.getValue())) {

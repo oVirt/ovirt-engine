@@ -43,8 +43,6 @@ import org.ovirt.engine.core.common.vdscommands.ResumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
@@ -53,6 +51,8 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
@@ -104,7 +104,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         }
 
         if (getVm() != null) {
-            Guid destVdsId = (getDestinationVds() != null) ? (Guid) getDestinationVds().getvds_id() : null;
+            Guid destVdsId = (getDestinationVds() != null) ? (Guid) getDestinationVds().getId() : null;
             setVdsSelector(new VdsSelector(getVm(), destVdsId, true));
 
             refreshBootParameters(runVmParameters);
@@ -180,7 +180,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                         .getInstance()
                         .getResourceManager()
                         .RunAsyncVdsCommand(VDSCommandType.Resume,
-                                new ResumeVDSCommandParameters(getVdsId(), getVm().getvm_guid()), this);
+                                new ResumeVDSCommandParameters(getVdsId(), getVm().getId()), this);
                 setActionReturnValue(result.getReturnValue());
                 setSucceeded(result.getSucceeded());
                 ExecutionHandler.setAsyncJob(executionContext, true);
@@ -240,7 +240,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                         && getVm().getstatus() != VMStatus.Suspended
                         && DbFacade.getInstance()
                                 .getDiskImageDAO()
-                                .getAllStatelessVmImageMapsForVm(getVm().getvm_guid())
+                                .getAllStatelessVmImageMapsForVm(getVm().getId())
                                 .size() > 0) {
                     removeVmStatlessImages();
                 } else {
@@ -283,12 +283,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         /**
          * if one of vm's images is in the DB dont do anything.
          */
-        if (DbFacade.getInstance().getDiskImageDAO().getAllStatelessVmImageMapsForVm(getVm().getvm_guid()).size() == 0) {
+        if (DbFacade.getInstance().getDiskImageDAO().getAllStatelessVmImageMapsForVm(getVm().getId()).size() == 0) {
             log.infoFormat("VdcBll.RunVmCommand.RunVmAsStateless - Creating snapshot for stateless vm {0} - {1}",
-                    getVm().getvm_name(), getVm().getvm_guid());
+                    getVm().getvm_name(), getVm().getId());
             lockVmWithCompensationIfNeeded();
 
-            CreateAllSnapshotsFromVmParameters tempVar = new CreateAllSnapshotsFromVmParameters(getVm().getvm_guid(),
+            CreateAllSnapshotsFromVmParameters tempVar = new CreateAllSnapshotsFromVmParameters(getVm().getId(),
                     "stateless snapshot");
             tempVar.setShouldBeLogged(false);
             tempVar.setParentCommand(VdcActionType.RunVm);
@@ -310,7 +310,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                      */
                     DbFacade.getInstance().getDiskImageDAO().addStatelessVmImageMap(
                             new stateless_vm_image_map(disk.getId(), disk.getinternal_drive_mapping(), getVm()
-                                    .getvm_guid()));
+                                    .getId()));
                 }
 
                 getParameters().getImagesParameters().add(p);
@@ -338,7 +338,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
     private void removeVmStatlessImages() {
         isFailedStatlessSnapshot = true;
-        VmPoolHandler.removeVmStatelessImages(getVm().getvm_guid(), new CommandContext(executionContext));
+        VmPoolHandler.removeVmStatelessImages(getVm().getId(), new CommandContext(executionContext));
         setSucceeded(true);
     }
 
@@ -533,7 +533,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
             // Fetch cached Iso files from active Iso domain.
             List<RepoFileMetaData> repoFilesMap =
-                    IsoDomainListSyncronizer.getInstance().getCachedIsoListByDomainId(isoDomain.getid(),
+                    IsoDomainListSyncronizer.getInstance().getCachedIsoListByDomainId(isoDomain.getId(),
                             FileTypeExtension.ISO);
             Version bestClusterVer = null;
             int bestToolVer = 0;
@@ -623,7 +623,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             // Block from running a VM with no HDD when its first boot device is
             // HD
             // and no other boot devices are configured
-            List<DiskImage> vmImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getvm_guid());
+            List<DiskImage> vmImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
             if (boot_sequence == BootSequence.C && !checkVmHasPluggedDisk(vm)) {
                 String messageStr = !vmImages.isEmpty() ?
                             VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_PLUGGED_DISK.toString() :
@@ -654,7 +654,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                     // vm has network,
                     // otherwise the vm cannot be run in vdsm
                     if (boot_sequence.toString().indexOf(NETWORK_BOOT_SEQUENCE_CHAR) > -1
-                            && DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getvm_guid()).size() == 0) {
+                            && DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()).size() == 0) {
                         message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK.toString());
                         retValue = false;
                     } else if (vmImages.size() > 0) {
@@ -662,7 +662,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                         // check isValid, storageDomain and diskSpace only
                         // if VM is not HA VM
                         if (!ImagesHandler
-                                    .PerformImagesChecks(vm.getvm_guid(), message, vm.getstorage_pool_id(),
+                                    .PerformImagesChecks(vm.getId(), message, vm.getstorage_pool_id(),
                                             storageDomainId, !vm.getauto_startup(), true, false, false, false, false,
                                             !vm.getauto_startup() && !storageDomainId.equals(Guid.Empty)
                                                     || !runParams.getIsInternal() && vm.getauto_startup(),
@@ -680,7 +680,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                                         .getInstance()
                                         .getResourceManager()
                                         .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
-                                                new IsVmDuringInitiatingVDSCommandParameters(vm.getvm_guid()))
+                                                new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
                                         .getReturnValue()).booleanValue();
                             if (vm.isStatusUp() || (vm.getstatus() == VMStatus.NotResponding) || isVmDuringInit) {
                                 retValue = false;
@@ -904,10 +904,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 storagePoolId);
         for (storage_domains domain : domains) {
             if (domain.getstorage_domain_type() == StorageDomainType.ISO) {
-                storage_domains sd = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(domain.getid(),
+                storage_domains sd = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(domain.getId(),
                         storagePoolId);
                 if (sd != null && sd.getstatus() == StorageDomainStatus.Active) {
-                    isoGuid = sd.getid();
+                    isoGuid = sd.getId();
                     break;
                 }
             }

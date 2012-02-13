@@ -28,10 +28,10 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -57,7 +57,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                         .getResourceManager()
                         .RunVdsCommand(
                                 VDSCommandType.SetVdsStatus,
-                                new SetVdsStatusVDSCommandParameters(vds.getvds_id(), VDSStatus.PreparingForMaintenance));
+                                new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.PreparingForMaintenance));
             }
         }
     }
@@ -205,7 +205,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                 if (!vdsForMigrationExists) {
                     List<String> candidateHostsWithRunningVms = new ArrayList<String>();
                     for (VDS vdsInCluster : vdsList) {
-                        if (vdsWithRunningVMs.contains(vdsInCluster.getvds_id())) {
+                        if (vdsWithRunningVMs.contains(vdsInCluster.getId())) {
                             candidateHostsWithRunningVms.add(vdsInCluster.getvds_name());
                         }
                     }
@@ -257,7 +257,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
         Set<Guid> upVdsIDsInCluster = new HashSet<Guid>();
         for (VDS vds : vdsInCluster) {
             if (vds.getstatus() == VDSStatus.Up) {
-                upVdsIDsInCluster.add(vds.getvds_id());
+                upVdsIDsInCluster.add(vds.getId());
             }
         }
         int numOfUpVDSInClusterAndParams = 0;

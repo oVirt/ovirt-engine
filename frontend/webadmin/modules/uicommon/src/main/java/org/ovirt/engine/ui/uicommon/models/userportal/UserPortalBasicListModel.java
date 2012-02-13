@@ -310,18 +310,18 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
 			}
 
 			// Caching console model if needed
-			if (!cachedConsoleModels.containsKey(vm.getvm_guid()))
+			if (!cachedConsoleModels.containsKey(vm.getId()))
 			{
 				SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
 				spiceConsoleModel.getErrorEvent().addListener(this);
 				VncConsoleModel vncConsoleModel = new VncConsoleModel();
 				RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
 
-				cachedConsoleModels.put(vm.getvm_guid(), new java.util.ArrayList<ConsoleModel>(java.util.Arrays.asList(new ConsoleModel[] { spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
+				cachedConsoleModels.put(vm.getId(), new java.util.ArrayList<ConsoleModel>(java.util.Arrays.asList(new ConsoleModel[] { spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
 			}
 
 			// Getting cached console model
-			java.util.ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getvm_guid());
+			java.util.ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
 			for (ConsoleModel cachedModel : cachedModels)
 			{
 				cachedModel.setEntity(null);

@@ -98,7 +98,7 @@ public class VmInterfaceListModel extends SearchableListModel
 	protected void SyncSearch()
 	{
 		VM vm = (VM)getEntity();
-		super.SyncSearch(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getvm_guid()));
+		super.SyncSearch(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getId()));
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class VmInterfaceListModel extends SearchableListModel
 
 		VM vm = (VM)getEntity();
 
-		setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getvm_guid())));
+		setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getId())));
 		setItems(getAsyncResult().getData());
 	}
 
@@ -299,7 +299,7 @@ public class VmInterfaceListModel extends SearchableListModel
 
 		model.StartProgress(null);
 
-		Frontend.RunAction(model.getIsNew() ? VdcActionType.AddVmInterface : VdcActionType.UpdateVmInterface, new AddVmInterfaceParameters(vm.getvm_guid(), nic),
+		Frontend.RunAction(model.getIsNew() ? VdcActionType.AddVmInterface : VdcActionType.UpdateVmInterface, new AddVmInterfaceParameters(vm.getId(), nic),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {
@@ -368,7 +368,7 @@ public class VmInterfaceListModel extends SearchableListModel
 		for (Object item : getSelectedItems())
 		{
 			VmNetworkInterface a = (VmNetworkInterface)item;
-			RemoveVmInterfaceParameters parameters = new RemoveVmInterfaceParameters(vm.getvm_guid(), a.getId());
+			RemoveVmInterfaceParameters parameters = new RemoveVmInterfaceParameters(vm.getId(), a.getId());
 			list.add(parameters);
 
 		}

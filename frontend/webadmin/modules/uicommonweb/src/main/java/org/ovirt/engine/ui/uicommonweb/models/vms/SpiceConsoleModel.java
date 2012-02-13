@@ -158,7 +158,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                     // use sysprep iff the vm is not initialized and vm has Win OS
                     boolean reinitialize =
                             !getEntity().getis_initialized() && DataProvider.IsWindowsOsType(getEntity().getvm_os());
-                    RunVmParams tempVar = new RunVmParams(getEntity().getvm_guid());
+                    RunVmParams tempVar = new RunVmParams(getEntity().getId());
                     tempVar.setRunAsStateless(getEntity().getis_stateless());
                     tempVar.setReinitialize(reinitialize);
                     Frontend.RunMultipleAction(VdcActionType.RunVm,
@@ -169,14 +169,14 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 else if (StringHelper.stringsEqual(item.getCommandName(), CommandSuspend))
                 {
                     Frontend.RunMultipleAction(VdcActionType.HibernateVm,
-                            new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new HibernateVmParameters(getEntity().getvm_guid()) })));
+                            new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new HibernateVmParameters(getEntity().getId()) })));
 
                 }
                 // ORIGINAL LINE: case CommandStop:
                 else if (StringHelper.stringsEqual(item.getCommandName(), CommandStop))
                 {
                     Frontend.RunMultipleAction(VdcActionType.ShutdownVm,
-                            new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new ShutdownVmParameters(getEntity().getvm_guid(),
+                            new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new ShutdownVmParameters(getEntity().getId(),
                                     true) })));
 
                 }
@@ -184,7 +184,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 else if (StringHelper.stringsEqual(item.getCommandName(), CommandChangeCD))
                 {
                     Frontend.RunMultipleAction(VdcActionType.ChangeDisk,
-                            new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(getEntity().getvm_guid(),
+                            new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(getEntity().getId(),
                                     StringHelper.stringsEqual(item.getText(), EjectLabel) ? "" : item.getText()) })));
                 }
             }
@@ -482,7 +482,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         getspice().setMenu(menu.toString());
 
-        getspice().setGuestID(getEntity().getvm_guid().toString());
+        getspice().setGuestID(getEntity().getId().toString());
 
         // Subscribe to events.
         getspice().getDisconnectedEvent().addListener(this);
@@ -538,7 +538,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     private void SendVmTicket()
     {
         // Create ticket for single sign on.
-        Frontend.RunAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getvm_guid(), null, 120),
+        Frontend.RunAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(), null, 120),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
@@ -567,7 +567,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             getLogger().Info("SpiceConsoleManager::Connect: Attempting to perform SSO on Desktop "
                     + getEntity().getvm_name());
 
-            Frontend.RunAction(VdcActionType.VmLogon, new VmOperationParameterBase(getEntity().getvm_guid()),
+            Frontend.RunAction(VdcActionType.VmLogon, new VmOperationParameterBase(getEntity().getId()),
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void Executed(FrontendActionAsyncResult result) {

@@ -41,7 +41,7 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
          * In case we failed to migrate to that specific server, the VM should no longer be pending, and we
          * report failure, without an attempt to rerun
          */
-        DecreasePendingVms(getDestinationVds().getvds_id());
+        DecreasePendingVms(getDestinationVds().getId());
         _isRerun = false;
         setSucceeded(false);
 

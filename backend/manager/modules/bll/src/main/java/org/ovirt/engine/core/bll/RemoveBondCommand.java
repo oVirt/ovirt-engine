@@ -149,7 +149,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
                 VM vm = (VM) vm_helper;
                 if (vm.getstatus() != VMStatus.Down) {
                     List<VmNetworkInterface> vmInterfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
-                            .getAllForVm(vm.getvm_guid());
+                            .getAllForVm(vm.getId());
                     // Interface iface = null; //LINQ 31899
                     // interfaces.FirstOrDefault(i => i.network_name ==
                     // bond.network_name);

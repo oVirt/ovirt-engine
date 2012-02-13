@@ -89,7 +89,7 @@ public class ResourceManager implements IVdsEventListener {
                         if (!((vmsList = _vdsAndVmsList.get(vm.getrun_on_vds())) != null)) {
                             vmsList = new java.util.HashSet<Guid>();
                         }
-                        vmsList.add(vm.getvm_guid());
+                        vmsList.add(vm.getId());
                         _vdsAndVmsList.put(new Guid(vm.getrun_on_vds().toString()), vmsList);
                     }
                     if (vm.getrun_on_vds() != null && nonResponsiveVdss.contains(vm.getrun_on_vds())) {
@@ -243,11 +243,11 @@ public class ResourceManager implements IVdsEventListener {
      * @param vm
      */
     public void SetVmUnknown(VM vm) {
-        RemoveAsyncRunningVm(vm.getvm_guid());
+        RemoveAsyncRunningVm(vm.getId());
         InternalSetVmStatus(vm, VMStatus.Unknown);
         // log VM transition to unknown status
         AuditLogableBase logable = new AuditLogableBase();
-        logable.setVmId(vm.getvm_guid());
+        logable.setVmId(vm.getId());
         AuditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
 
         storeVm(vm);
@@ -267,7 +267,7 @@ public class ResourceManager implements IVdsEventListener {
     }
 
     public void SetVmDown(VM vm) {
-        RemoveAsyncRunningVm(vm.getvm_guid());
+        RemoveAsyncRunningVm(vm.getId());
         InternalSetVmStatus(vm, VMStatus.Down);
         storeVm(vm);
 

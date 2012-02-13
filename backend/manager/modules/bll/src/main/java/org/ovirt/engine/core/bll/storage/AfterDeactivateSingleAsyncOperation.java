@@ -13,7 +13,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
-    private boolean _isLastMaster;
+    private final boolean _isLastMaster;
     private Guid _newMasterStorageDomainId = new Guid();
 
     public AfterDeactivateSingleAsyncOperation(java.util.ArrayList<VDS> vdss, storage_domains domain,
@@ -33,7 +33,7 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
                         .getResourceManager()
                         .RunVdsCommand(
                                 VDSCommandType.RefreshStoragePool,
-                                new RefreshStoragePoolVDSCommandParameters(getVdss().get(iterationId).getvds_id(),
+                                new RefreshStoragePoolVDSCommandParameters(getVdss().get(iterationId).getId(),
                                         getStoragePool().getId(),
                                         !_newMasterStorageDomainId.equals(Guid.Empty) ? _newMasterStorageDomainId
                                                 : DbFacade.getInstance()
@@ -45,7 +45,7 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
 
             if (getVdss().get(iterationId).getspm_status() == VdsSpmStatus.None) {
                 StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
-                        .DisconnectStorageFromDomainByVdsId(getStorageDomain(), getVdss().get(iterationId).getvds_id());
+                        .DisconnectStorageFromDomainByVdsId(getStorageDomain(), getVdss().get(iterationId).getId());
             }
         } catch (RuntimeException e) {
             log.errorFormat("Failed to refresh storagePool. Host {0} to storage pool {1}. Exception: {3}", getVdss()

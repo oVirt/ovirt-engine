@@ -120,7 +120,7 @@ public class UserVmListModel extends VmListModel
         {
             for (VM a : items)
             {
-                prms.add(new VmToAdGroupParameters(a.getvm_guid(), new ad_groups(getEntity().getuser_id(),
+                prms.add(new VmToAdGroupParameters(a.getId(), new ad_groups(getEntity().getuser_id(),
                         getEntity().getname(),
                         getEntity().getdomain())));
             }
@@ -133,7 +133,7 @@ public class UserVmListModel extends VmListModel
             {
                 prms.add(new VmToUserParameters(new VdcUser(getEntity().getuser_id(),
                         getEntity().getusername(),
-                        getEntity().getdomain()), a.getvm_guid()));
+                        getEntity().getdomain()), a.getId()));
             }
             // Attach vm to users
             // TODO: Remove Model! VmUserListModel should be removed!
@@ -202,7 +202,7 @@ public class UserVmListModel extends VmListModel
         //
         for (VM a : items)
         {
-            parameters.add(new VmToAdElementParameters(getEntity().getuser_id(), a.getvm_guid()));
+            parameters.add(new VmToAdElementParameters(getEntity().getuser_id(), a.getId()));
         }
 
         // var parameters = items

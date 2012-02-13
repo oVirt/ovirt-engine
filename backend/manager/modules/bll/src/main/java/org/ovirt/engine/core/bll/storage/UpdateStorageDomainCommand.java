@@ -30,7 +30,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         boolean returnValue = super.canDoAction() && CheckStorageDomain()
                 && checkStorageDomainStatus(StorageDomainStatus.Active) && CheckStorageDomainNameLengthValid();
         storage_domain_static oldDomain =
-                DbFacade.getInstance().getStorageDomainStaticDAO().get(getStorageDomain().getid());
+                DbFacade.getInstance().getStorageDomainStaticDAO().get(getStorageDomain().getId());
 
         java.util.ArrayList<String> props = ObjectIdentityChecker.GetChangedFields(oldDomain, getStorageDomain()
                 .getStorageStaticData());
@@ -78,7 +78,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
                     .RunVdsCommand(
                             VDSCommandType.SetStorageDomainDescription,
                             new SetStorageDomainDescriptionVDSCommandParameters(getStoragePool().getId(),
-                                    getStorageDomain().getid(), getStorageDomain().getstorage_name()));
+                                    getStorageDomain().getId(), getStorageDomain().getstorage_name()));
         }
         setSucceeded(true);
     }

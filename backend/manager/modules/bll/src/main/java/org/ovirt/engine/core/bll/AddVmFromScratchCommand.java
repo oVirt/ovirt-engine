@@ -19,13 +19,13 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> extends AddVmCommand<T> {
     public AddVmFromScratchCommand(T parameters) {
@@ -58,7 +58,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
             // LINQ ).ToList();
 
             getParameters()
-                    .setStorageDomainId((storagesInPool.size() > 0) ? storagesInPool.get(0).getid() : Guid.Empty);
+                    .setStorageDomainId((storagesInPool.size() > 0) ? storagesInPool.get(0).getId() : Guid.Empty);
             // LINQ 32934 VmManagementParameters.StorageDomainId =
             // (storagesInPool.Count > 0) ? storagesInPool[0].id : Guid.Empty;
         }

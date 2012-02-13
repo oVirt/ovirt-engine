@@ -387,7 +387,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             addVmPermission();
             if (AddVmImages()) {
                 VmDeviceUtils.copyVmDevices(getVmTemplateId(), getVmId());
-                setActionReturnValue(getVm().getvm_guid());
+                setActionReturnValue(getVm().getId());
                 setSucceeded(true);
             }
             // TODO not in use - all default tag attaching should be removed

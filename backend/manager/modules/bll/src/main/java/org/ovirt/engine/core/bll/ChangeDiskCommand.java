@@ -54,7 +54,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
                 .getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.ChangeDisk,
-                        new ChangeDiskVDSCommandParameters(getVdsId(), getVm().getvm_guid(), mCdImagePath))
+                        new ChangeDiskVDSCommandParameters(getVdsId(), getVm().getId(), mCdImagePath))
                 .getReturnValue());
         setSucceeded(true);
 

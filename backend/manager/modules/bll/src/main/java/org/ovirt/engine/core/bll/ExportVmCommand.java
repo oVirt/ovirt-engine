@@ -29,8 +29,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -38,6 +36,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -93,7 +93,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         // check that the target and source domain are in the same storage_pool
         if (DbFacade.getInstance()
                 .getStoragePoolIsoMapDAO()
-                .get(new StoragePoolIsoMapId(getStorageDomain().getid(),
+                .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getVm().getstorage_pool_id())) == null) {
             retVal = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
@@ -144,7 +144,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         // check destination storage is active
         if (retVal) {
-            retVal = IsDomainActive(getStorageDomain().getid(), getVm().getstorage_pool_id());
+            retVal = IsDomainActive(getStorageDomain().getId(), getVm().getstorage_pool_id());
         }
         // check destination storage is Export domain
         if (retVal) {
@@ -179,7 +179,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         }
         // check soource domain is active
         if (retVal) {
-            retVal = IsDomainActive(getSourceDomain().getid(), getVm().getstorage_pool_id());
+            retVal = IsDomainActive(getSourceDomain().getId(), getVm().getstorage_pool_id());
         }
         // check that source domain is not ISO or Export domain
         if (retVal) {
@@ -212,7 +212,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     @Override
     protected void executeCommand() {
-        VmHandler.checkStatusAndLockVm(getVm().getvm_guid(), getCompensationContext());
+        VmHandler.checkStatusAndLockVm(getVm().getId(), getCompensationContext());
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
@@ -240,7 +240,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 // TODO remove this when the API changes
                vm.getInterfaces().clear();
                 for(VmNetworkInterface iface: DbFacade.getInstance().getVmNetworkInterfaceDAO()
-                        .getAllForVm(vm.getvm_guid())) {
+                        .getAllForVm(vm.getId())) {
                     vm.getInterfaces().add(iface);
                 }
             }
@@ -287,7 +287,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 }
             });
             vmsAndMetaDictionary
-                    .put(vm.getvm_guid(), new KeyValuePairCompat<String, List<Guid>>(vmMeta, imageGroupIds));
+                    .put(vm.getId(), new KeyValuePairCompat<String, List<Guid>>(vmMeta, imageGroupIds));
         }
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, vmsAndMetaDictionary);
         tempVar.setStorageDomainId(storageDomainId);
@@ -297,7 +297,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     @Override
     protected void MoveOrCopyAllImageGroups() {
-        MoveOrCopyAllImageGroups(getVm().getvm_guid(), getVm().getDiskMap().values());
+        MoveOrCopyAllImageGroups(getVm().getId(), getVm().getDiskMap().values());
     }
 
     @Override
@@ -362,7 +362,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             java.util.ArrayList<VM> vms = (java.util.ArrayList<VM>) qretVal.getReturnValue();
             for (VM vm : vms) {
                 // check the same id when not overriding
-                if (vm.getvm_guid().equals(getVm().getvm_guid()) && !getParameters().getForceOverride()) {
+                if (vm.getId().equals(getVm().getId()) && !getParameters().getForceOverride()) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_GUID_ALREADY_EXIST);
                     retVal = false;
                     break;
@@ -372,14 +372,14 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                     retVal = false;
                     break;
                 // check if we have vm with the same name and overriding
-                } else if (!vm.getvm_guid().equals(getVm().getvm_guid()) &&
+                } else if (!vm.getId().equals(getVm().getId()) &&
                         vm.getvm_name().equals(getVm().getvm_name())) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_ALREADY_EXIST);
                     retVal = false;
                     break;
                 }
                 // check if we have vm with the same id and overriding
-                else if (vm.getvm_guid().equals(getVm().getvm_guid()) &&
+                else if (vm.getId().equals(getVm().getId()) &&
                         !vm.getvm_name().equals(getVm().getvm_name())) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_GUID_ALREADY_EXIST);
                     retVal = false;
@@ -446,7 +446,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         EndActionOnAllImageGroups();
 
         if (getVm() != null) {
-            VmHandler.UnLockVm(getVm().getvm_guid());
+            VmHandler.UnLockVm(getVm().getId());
 
             VmHandler.updateDisksFromDb(getVm());
             if (getParameters().getCopyCollapse()) {
@@ -474,7 +474,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         EndActionOnAllImageGroups();
 
         if (getVm() != null) {
-            VmHandler.UnLockVm(getVm().getvm_guid());
+            VmHandler.UnLockVm(getVm().getId());
             VmHandler.updateDisksFromDb(getVm());
         }
 

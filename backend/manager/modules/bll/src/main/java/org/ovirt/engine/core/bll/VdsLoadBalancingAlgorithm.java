@@ -14,12 +14,12 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * Base class for load balancing algorithms. Load balance flow is the same for
@@ -107,7 +107,7 @@ public abstract class VdsLoadBalancingAlgorithm {
     }
 
     public void LoadBalance() {
-        setAllRelevantVdss(DbFacade.getInstance().getVdsDAO().getAllForVdsGroupWithoutMigrating(getVdsGroup().getID()));
+        setAllRelevantVdss(DbFacade.getInstance().getVdsDAO().getAllForVdsGroupWithoutMigrating(getVdsGroup().getId()));
         log.infoFormat("VdsLoadBalancer: number of relevant vdss (no migration, no pending): {0}.",
                 getAllRelevantVdss().size());
         InitOverUtilizedList();
@@ -137,7 +137,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                 new Function<VDS, Guid>() {
                     @Override
                     public Guid eval(VDS vds) {
-                        return vds.getvds_id();
+                        return vds.getId();
                     }
                 });
         // LINQ 29456
@@ -177,12 +177,12 @@ public abstract class VdsLoadBalancingAlgorithm {
                             "VdsLoadBalancer: Server {0} detected as overutilized. Failed to found another server to migrate its vms",
                             vds.getvds_name());
                 } else {
-                    Guid destinationVdsId = destinationVds.getvds_id();
+                    Guid destinationVdsId = destinationVds.getId();
                     /**
                      * Migrate vm from OverUtilezed server
                      */
                     MigrateVmToServerParameters parameters =
-                        new MigrateVmToServerParameters(false, vm.getvm_guid(), destinationVdsId);
+                        new MigrateVmToServerParameters(false, vm.getId(), destinationVdsId);
                     parameters.setShouldBeLogged(false);
                     Backend.getInstance().runInternalAction(VdcActionType.MigrateVmToServer,
                             parameters);
@@ -208,7 +208,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                 new Function<VDS, Guid>() {
                     @Override
                     public Guid eval(VDS vds) {
-                        return vds.getvds_id();
+                        return vds.getId();
                     }
                 });
         Set<Guid> processed = new HashSet<Guid>();
@@ -241,7 +241,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                         candidates = LinqUtils.filter(GetMigrationCandidates(currentList, vm), new Predicate<VDS>() {
                             @Override
                             public boolean eval(VDS a) {
-                                return !a.getvds_id().equals(vdsId1);
+                                return !a.getId().equals(vdsId1);
                             }
                         });
                         if (!candidates.isEmpty()) {
@@ -260,9 +260,9 @@ public abstract class VdsLoadBalancingAlgorithm {
                                 "Server {0} detected as underutilized. Failed to found another server to migrate its vms",
                                 vds.getvds_name());
                     } else {
-                        Guid destinationVdsId = destinationVds.getvds_id();
+                        Guid destinationVdsId = destinationVds.getId();
                         MigrateVmToServerParameters parameters =
-                            new MigrateVmToServerParameters(false, vm.getvm_guid(), destinationVdsId);
+                            new MigrateVmToServerParameters(false, vm.getId(), destinationVdsId);
                         parameters.setShouldBeLogged(false);
                         Backend.getInstance().runInternalAction(VdcActionType.MigrateVmToServer,
                                 parameters);

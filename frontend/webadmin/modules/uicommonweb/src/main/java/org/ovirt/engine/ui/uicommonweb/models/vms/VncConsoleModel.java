@@ -52,7 +52,7 @@ public class VncConsoleModel extends ConsoleModel
 
             String otp64 = null;
             VdcReturnValueBase ticketReturnValue =
-                    Frontend.RunAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getvm_guid(),
+                    Frontend.RunAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(),
                             null,
                             120));
 

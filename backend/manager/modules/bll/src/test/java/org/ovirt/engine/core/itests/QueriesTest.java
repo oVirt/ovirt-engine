@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import junit.framework.Assert;
 
 import org.junit.Test;
-
+import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
+import org.ovirt.engine.core.bll.PredefinedRoles;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -17,8 +18,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
-import org.ovirt.engine.core.bll.PredefinedRoles;
 
 /**
  * Test class for Queries
@@ -54,7 +53,7 @@ public class QueriesTest extends AbstractBackendTest {
     public void getPermissionsByEntityId() {
         // use basic setup to fetch permission on VM through cluster
         runAsSuperAdmin();
-        Guid clusterId = getBasicSetup().getCluster().getID();
+        Guid clusterId = getBasicSetup().getCluster().getId();
         GetPermissionsForObjectParameters parameters = new GetPermissionsForObjectParameters(clusterId);
         parameters.setDirectOnly(false);
         parameters.setObjectId(clusterId);

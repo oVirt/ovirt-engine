@@ -82,7 +82,7 @@ public class VmGuideModel extends GuideModel
                         vmGuideModel.nics = nics;
                         vmGuideModel.UpdateOptionsPostData();
                     }
-                }), getEntity().getvm_guid());
+                }), getEntity().getId());
 
         AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -93,7 +93,7 @@ public class VmGuideModel extends GuideModel
                         vmGuideModel.disks = disks;
                         vmGuideModel.UpdateOptionsPostData();
                     }
-                }), getEntity().getvm_guid());
+                }), getEntity().getId());
     }
 
     private void UpdateOptionsPostData() {
@@ -178,7 +178,7 @@ public class VmGuideModel extends GuideModel
                         vmGuideModel.nics = nics;
                         vmGuideModel.AddNetworkPostData();
                     }
-                }), getEntity().getvm_guid());
+                }), getEntity().getId());
 
         AsyncDataProvider.GetClusterNetworkList(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -279,7 +279,7 @@ public class VmGuideModel extends GuideModel
                     : "");
 
             AddVmInterfaceParameters parameters =
-                    new AddVmInterfaceParameters(getEntity().getvm_guid(), vmNetworkInterface);
+                    new AddVmInterfaceParameters(getEntity().getId(), vmNetworkInterface);
 
             model.StartProgress(null);
 
@@ -332,7 +332,7 @@ public class VmGuideModel extends GuideModel
                             vmGuideModel.AddDiskPostData();
                         }
                     }
-                }), getEntity().getvm_guid());
+                }), getEntity().getId());
 
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -538,7 +538,7 @@ public class VmGuideModel extends GuideModel
 
             model.StartProgress(null);
 
-            AddDiskToVmParameters tempVar2 = new AddDiskToVmParameters(getEntity().getvm_guid(), disk);
+            AddDiskToVmParameters tempVar2 = new AddDiskToVmParameters(getEntity().getId(), disk);
             tempVar2.setStorageDomainId(storageDomain.getid());
             Frontend.RunAction(VdcActionType.AddDiskToVm, tempVar2,
                     new IFrontendActionAsyncCallback() {

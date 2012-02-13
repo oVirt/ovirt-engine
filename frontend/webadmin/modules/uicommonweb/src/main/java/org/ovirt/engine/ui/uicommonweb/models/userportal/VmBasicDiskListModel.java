@@ -57,7 +57,7 @@ public class VmBasicDiskListModel extends SearchableListModel
             };
 
             Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId,
-                    new GetAllDisksByVmIdParameters(vm.getvm_guid()),
+                    new GetAllDisksByVmIdParameters(vm.getId()),
                     _asyncQuery);
         }
         else if (getEntity() instanceof vm_pools)
@@ -90,7 +90,7 @@ public class VmBasicDiskListModel extends SearchableListModel
                             }
                         };
                         Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId,
-                                new GetAllDisksByVmIdParameters(vm.getvm_guid()),
+                                new GetAllDisksByVmIdParameters(vm.getId()),
                                 _asyncQuery1);
                     }
                 }

@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import junit.framework.Assert;
 
 import org.junit.Test;
-
+import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -15,8 +16,6 @@ import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 
 public class VMTemplateTest extends AbstractBackendTest {
 
@@ -50,7 +49,7 @@ public class VMTemplateTest extends AbstractBackendTest {
         runAsSuperAdmin(); // run as admin so we can erase the template
         VmTemplateParametersBase removeImagesParams = new VmTemplateParametersBase(vmtGuid);
         ArrayList<Guid> storages = new ArrayList<Guid>();
-        storages.add(basicSetup.getStorage().getid());
+        storages.add(basicSetup.getStorage().getId());
         removeImagesParams.setStorageDomainsList(storages);
         Backend.getInstance().runInternalAction(
                 VdcActionType.RemoveAllVmTemplateImageTemplates, removeImagesParams);

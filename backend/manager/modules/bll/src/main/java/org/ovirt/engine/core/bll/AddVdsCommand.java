@@ -37,14 +37,14 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.CommandParametersInitializer;
 import org.ovirt.engine.core.utils.FileUtil;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -174,7 +174,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         String vdsName = getParameters().getVdsStaticData().getvds_name();
         log.infoFormat("Host {0}, id {1} of type {2} is being re-registered as Host {3}",
                 vds.getvds_name(),
-                vds.getvds_id(),
+                vds.getId(),
                 vds.getvds_type().name(),
                 vdsName);
         VdcReturnValueBase result =
@@ -192,7 +192,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                             : StringUtils.join(result.getCanDoActionMessages(), ",");
             log.warnFormat("Failed to remove Host {0}, id {1}, re-registering it as Host {2} fails with errors {3}",
                     vds.getvds_name(),
-                    vds.getvds_id(),
+                    vds.getId(),
                     vdsName,
                     errors);
         } else {
@@ -365,7 +365,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
      */
     private boolean validateHostUniqueId(VDS vds, String serverUniqueId) {
         boolean retrunValue = true;
-        List<VDS> vdssByUniqueId = VdsInstallHelper.getVdssByUniqueId(vds.getvds_id(), serverUniqueId);
+        List<VDS> vdssByUniqueId = VdsInstallHelper.getVdssByUniqueId(vds.getId(), serverUniqueId);
 
         if (!vdssByUniqueId.isEmpty()) {
             if (vdssByUniqueId.size() > 1) {
@@ -382,7 +382,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 if (vds.getvds_type() == VDSType.VDS
                         && existedVds.getvds_type() == VDSType.oVirtNode
                         && (existedVds.getstatus() == VDSStatus.PendingApproval)) {
-                    getParameters().setVdsForUniqueId(existedVds.getvds_id());
+                    getParameters().setVdsForUniqueId(existedVds.getId());
                 } else {
                     addCanDoActionMessage(VdcBllMessages.VDS_REGISTER_UNIQUE_ID_AMBIGUOUS);
                     addCanDoActionMessage(String.format("$HostNameList %1$s", existedVds.getvds_name()));

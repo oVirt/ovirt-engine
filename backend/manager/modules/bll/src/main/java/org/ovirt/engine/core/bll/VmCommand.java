@@ -190,7 +190,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             java.util.ArrayList<DiskImage> AllVmImages = new java.util.ArrayList<DiskImage>();
             VmHandler.updateDisksFromDb(vm);
             if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
-                vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getvm_guid()));
+                vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
             }
             for (DiskImage disk : vm.getDiskMap().values()) {
                 AllVmImages.addAll(ImagesHandler.getAllImageSnapshots(disk.getId(), disk.getit_guid()));
@@ -212,7 +212,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             // (vmMeta, vm.DiskMap.Values.Select(a =>
             // a.image_group_id.Value).ToList()));
             vmsAndMetaDictionary.put(
-                    vm.getvm_guid(),
+                    vm.getId(),
                     new KeyValuePairCompat<String, List<Guid>>(vmMeta, LinqUtils.foreach(vm.getDiskMap().values(),
                             new Function<DiskImage, Guid>() {
                                 @Override
@@ -323,7 +323,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             // DbFacade.Instance.GetImagesByVmGuid(Vm.vm_guid).Exists(a =>
             // a.wipe_after_delete);
             boolean postZero =
-                    LinqUtils.filter(DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVm().getvm_guid()),
+                    LinqUtils.filter(DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVm().getId()),
                             new Predicate<DiskImage>() {
                                 @Override
                                 public boolean eval(DiskImage diskImage) {

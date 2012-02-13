@@ -45,7 +45,7 @@ public class FindDesktopModel extends SearchableListModel
 			for (Object item : getExcludeItems())
 			{
 				VM vm = (VM)item;
-				exludeGuids.add(vm.getvm_guid());
+				exludeGuids.add(vm.getId());
 			}
 		}
 
@@ -62,7 +62,7 @@ public class FindDesktopModel extends SearchableListModel
 			for (IVdcQueryable item : (java.util.ArrayList<IVdcQueryable>)returnValue.getReturnValue())
 			{
 				VM vm = (VM)item;
-				if (!exludeGuids.contains(vm.getvm_guid()))
+				if (!exludeGuids.contains(vm.getId()))
 				{
 					EntityModel tempVar = new EntityModel();
 					tempVar.setEntity(vm);

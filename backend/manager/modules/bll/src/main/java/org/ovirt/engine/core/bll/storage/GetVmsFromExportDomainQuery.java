@@ -70,7 +70,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
         List<VM> existsVms = DbFacade.getInstance().getVmDAO().getAll();
         java.util.HashMap<Guid, VM> existsVmDictionary = new java.util.HashMap<Guid, VM>();
         for (VM vm : existsVms) {
-            existsVmDictionary.put(vm.getvm_guid(), vm);
+            existsVmDictionary.put(vm.getId(), vm);
         }
 
         if (IsValidExportDomain()) {
@@ -88,7 +88,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
                         vm = tempRefObject.argvalue;
                         diskImages = tempRefObject2.argvalue;
                         shouldAdd = getParameters().getGetAll() ? shouldAdd : !existsVmDictionary
-                                .containsKey(vm.getvm_guid());
+                                .containsKey(vm.getId());
 
                         if (shouldAdd) {
                             // add images

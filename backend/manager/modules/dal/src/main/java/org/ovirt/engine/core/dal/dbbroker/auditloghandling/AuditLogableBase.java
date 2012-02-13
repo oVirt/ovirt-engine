@@ -139,7 +139,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public NGuid getVmIdRef() {
         if (mVmId == null && getVm() != null) {
-            mVmId = getVm().getvm_guid();
+            mVmId = getVm().getId();
         }
         return mVmId;
     }

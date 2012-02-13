@@ -105,7 +105,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                             new Predicate<storage_domains>() {
                                 @Override
                                 public boolean eval(storage_domains a) {
-                                    return a.getid().equals(getStorageDomain().getid())
+                                    return a.getId().equals(getStorageDomain().getId())
                                             && a.getstatus() == StorageDomainStatus.Active;
                                 }
                             });
@@ -131,18 +131,18 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     private boolean hasImages() {
         return DbFacade.getInstance()
                 .getDiskImageDAO()
-                .getAllSnapshotsForStorageDomain(getStorageDomain().getid())
+                .getAllSnapshotsForStorageDomain(getStorageDomain().getId())
                 .size() != 0
                 || DbFacade.getInstance()
                         .getStorageDomainDAO()
-                        .getAllImageGroupStorageDomainMapsForStorageDomain(getStorageDomain().getid())
+                        .getAllImageGroupStorageDomainMapsForStorageDomain(getStorageDomain().getId())
                         .size() != 0;
     }
 
     private storage_pool_iso_map getStoragePoolIsoMap() {
         return DbFacade.getInstance()
                 .getStoragePoolIsoMapDAO()
-                .get(new StoragePoolIsoMapId(getStorageDomain().getid(),
+                .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getStoragePoolId()));
     }
 
@@ -182,7 +182,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean checkStorageDomainInDb() {
         boolean returnValue;
-        returnValue = DbFacade.getInstance().getStorageDomainStaticDAO().get(getStorageDomain().getid()) != null;
+        returnValue = DbFacade.getInstance().getStorageDomainStaticDAO().get(getStorageDomain().getId()) != null;
         return returnValue;
     }
 
@@ -257,7 +257,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(vdsId,
                     NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE);
             tempVar.setSaveToDb(true);
-            tempVar.setStorageDomainId(getStorageDomain().getid());
+            tempVar.setStorageDomainId(getStorageDomain().getId());
             tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
             Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar);
         }
@@ -308,11 +308,11 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             if (storageDomains.size() > 0) {
                 storage_domains storageDomain = getStorageDomain();
                 for (storage_domains dbStorageDomain : storageDomains) {
-                    if ((storageDomain == null || !dbStorageDomain.getid().equals(storageDomain.getid()))
+                    if ((storageDomain == null || !dbStorageDomain.getId().equals(storageDomain.getId()))
                             && (dbStorageDomain.getstatus() == StorageDomainStatus.Active || dbStorageDomain.getstatus() == StorageDomainStatus.Unknown)
                             && dbStorageDomain.getstorage_domain_type() == StorageDomainType.Data) {
                         if (!ResourceManager.getInstance().isDomainReportedInProblem(getStoragePool().getId(),
-                                dbStorageDomain.getid())) {
+                                dbStorageDomain.getId())) {
                             newMaster = dbStorageDomain;
                             break;
                         } else if (newMaster == null) {

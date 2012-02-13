@@ -41,7 +41,7 @@ public class PoolInterfaceListModel extends SearchableListModel
 												if (vm != null)
 												{
 													PoolInterfaceListModel poolInterfaceListModel = (PoolInterfaceListModel) model;
-													poolInterfaceListModel.SyncSearch(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getvm_guid()));
+													poolInterfaceListModel.SyncSearch(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getId()));
 												}
 											}};
 			AsyncDataProvider.GetAnyVm(_asyncQuery, pool.getvm_pool_name());
