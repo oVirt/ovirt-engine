@@ -16,6 +16,7 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
     private boolean removeTemplateFromDb;
     @XmlElement
     private Guid _vmTemplateId = new Guid();
+    private Guid quotaId;
     @XmlElement(name = "CheckDisksExists")
     private boolean privateCheckDisksExists;
 
@@ -55,5 +56,13 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
 
     public boolean isRemoveTemplateFromDb() {
         return removeTemplateFromDb;
+    }
+
+    public Guid getQuotaId() {
+        return quotaId;
+    }
+
+    public void setQuotaId(Guid value) {
+        quotaId = value;
     }
 }

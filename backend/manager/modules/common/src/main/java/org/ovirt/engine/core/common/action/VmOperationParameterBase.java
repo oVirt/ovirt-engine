@@ -1,15 +1,17 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.ovirt.engine.core.compat.Guid;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VmOperationParameterBase")
 public class VmOperationParameterBase extends VdcActionParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = -6248335374537898949L;
+    private Guid quotaId;
 
     public VmOperationParameterBase() {
     }
@@ -29,4 +31,11 @@ public class VmOperationParameterBase extends VdcActionParametersBase implements
         _vmId = value;
     }
 
+    public Guid getQuotaId() {
+        return quotaId;
+    }
+
+    public void setQuotaId(Guid value) {
+        quotaId = value;
+    }
 }
