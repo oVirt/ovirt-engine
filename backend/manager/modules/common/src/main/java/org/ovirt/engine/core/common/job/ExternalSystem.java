@@ -1,11 +1,18 @@
 package org.ovirt.engine.core.common.job;
 
+import java.io.Serializable;
+
 import org.ovirt.engine.core.compat.NGuid;
 
 /**
  * Represents an external system task associated with a Step.
  */
-public class ExternalSystem {
+public class ExternalSystem implements Serializable{
+
+    /**
+     * Automatic generated serial version ID
+     */
+    private static final long serialVersionUID = -4875960108024526122L;
 
     /**
      * An external Id which associated with the step (e.g. VDSM Task Id)
