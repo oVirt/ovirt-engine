@@ -158,6 +158,10 @@
       <xs:element name="exclusive" type="xs:boolean" minOccurs="0"/>
       <!-- For VM start -->
       <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
+      <!-- For Setup Networks -->
+      <xs:element ref="host_nics" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="check_connectivity" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="connectivity_timeout" type="xs:int" minOccurs="0"/>
       <!-- A VM can be started paused -->
       <xs:element name="pause" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <!-- should migration be forced if VM is pinned to host? -->

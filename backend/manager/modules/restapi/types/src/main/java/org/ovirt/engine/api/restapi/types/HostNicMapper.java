@@ -51,12 +51,15 @@ public class HostNicMapper {
         if (model.isSetMac() && model.getMac().isSetAddress()) {
             entity.setMacAddress(model.getMac().getAddress());
         }
-        if(model.isSetBonding() && model.getBonding().isSetOptions()){
+        if (model.isSetBonding()) {
+            entity.setBonded(true);
+            if (model.getBonding().isSetOptions()) {
                 StringBuffer buf = new StringBuffer();
                 for(Option opt : model.getBonding().getOptions().getOptions()){
                     buf.append(opt.getName() + "=" + opt.getValue() + " ");
                 }
                 entity.setBondOptions(buf.toString().substring(0, buf.length() - 1));
+            }
         }
         if(model.isSetBootProtocol()){
             NetworkBootProtocol networkBootProtocol = map(BootProtocol.fromValue(model.getBootProtocol()), null);
@@ -168,6 +171,8 @@ public class HostNicMapper {
                 return BootProtocol.DHCP;
             case StaticIp:
                 return BootProtocol.STATIC;
+            case None:
+                return BootProtocol.NONE;
             default:
                 return null;
             }
@@ -183,6 +188,8 @@ public class HostNicMapper {
                 return NetworkBootProtocol.Dhcp;
             case STATIC:
                 return NetworkBootProtocol.StaticIp;
+            case NONE:
+                return NetworkBootProtocol.None;
             default:
                 return null;
             }

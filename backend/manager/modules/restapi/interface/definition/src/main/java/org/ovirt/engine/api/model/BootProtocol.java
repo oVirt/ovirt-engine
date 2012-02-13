@@ -17,7 +17,9 @@
 package org.ovirt.engine.api.model;
 
 public enum BootProtocol {
-    DHCP, STATIC;
+    DHCP,
+    STATIC,
+    NONE;
 
     public String value() {
         return name().toLowerCase();

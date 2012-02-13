@@ -26,12 +26,17 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 
+import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.HostNics;
 
 
 @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
 public interface HostNicsResource {
+
+    @Path("{action: (setupnetworks)}")
+    public ActionResource getActionSubresource(@PathParam("action") String action);
 
     @GET
     @Formatted
@@ -55,5 +60,12 @@ public interface HostNicsResource {
      */
     @Path("{id}")
     public HostNicResource getHostNicSubResource(@PathParam("id") String id);
+
+    @POST
+    @Formatted
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("setupnetworks")
+    public Response setupNetworks(Action action);
 
 }

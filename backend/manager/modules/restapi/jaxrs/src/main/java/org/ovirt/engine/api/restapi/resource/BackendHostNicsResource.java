@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.core.common.action.VdcActionType.SetupNetworks;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.LinkHelper;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostNIC;
@@ -20,10 +23,12 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Slaves;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
+import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.action.RemoveBondParameters;
+import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
@@ -36,7 +41,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicsResource
     extends AbstractBackendCollectionResource<HostNIC, VdsNetworkInterface>
-    implements HostNicsResource {
+        implements HostNicsResource {
 
     static final String SUB_COLLECTIONS = "statistics";
 
@@ -51,6 +56,7 @@ public class BackendHostNicsResource
         return hostId;
     }
 
+    @Override
     public HostNics list() {
         HostNics ret = new HostNics();
         List<VdsNetworkInterface> ifaces = getCollection();
@@ -171,7 +177,12 @@ public class BackendHostNicsResource
 
     @Override
     protected VdsNetworkInterface map(HostNIC entity, VdsNetworkInterface template) {
-        return super.map(entity, template);
+        VdsNetworkInterface iface = super.map(entity, template);
+        if (entity.isSetNetwork() && entity.getNetwork() != null) {
+            network net = lookupNetwork(entity.getNetwork());
+            iface.setNetworkName(net.getname());
+        }
+        return iface;
     }
 
     protected HostNIC addSlaveLinks(HostNIC nic, List<VdsNetworkInterface> ifaces) {
@@ -314,4 +325,46 @@ public class BackendHostNicsResource
         }
         return notFound(network.class);
     }
+
+    @Override
+    public Response setupNetworks(Action action) {
+        validateParameters(action, "hostNics");
+        SetupNetworksParameters parameters = toParameters(action);
+        return performAction(SetupNetworks, parameters);
+    }
+
+    private SetupNetworksParameters toParameters(Action action) {
+        SetupNetworksParameters parameters = new SetupNetworksParameters();
+        parameters.setInterfaces(nicsToInterfaces(action.getHostNics().getHostNics()));
+        parameters.setVdsId(Guid.createGuidFromString(getHostId()));
+        parameters.setForce(action.isSetForce() ? action.isForce() : false);
+        parameters.setCheckConnectivity(action.isSetCheckConnectivity() ? action.isCheckConnectivity() : false);
+        if (action.isSetConnectivityTimeout()) {
+            parameters.setConectivityTimeout(action.getConnectivityTimeout());
+        }
+        return parameters;
+    }
+
+    private List<VdsNetworkInterface> nicsToInterfaces(List<HostNIC> hostNics) {
+        List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>(hostNics.size());
+        for (HostNIC nic : hostNics) {
+            VdsNetworkInterface iface = map(nic, null);
+            ifaces.add(iface);
+            if (nic.isSetBonding() && nic.getBonding().isSetSlaves()) {
+                for (HostNIC slave : nic.getBonding().getSlaves().getSlaves()) {
+                    VdsNetworkInterface slaveIface = map(slave, null);
+                    slaveIface.setBondName(nic.getName());
+                    ifaces.add(slaveIface);
+                }
+            }
+        }
+        return ifaces;
+    }
+
+
+    @Override
+    public ActionResource getActionSubresource(String action) {
+        return inject(new BackendActionResource(action, ""));
+    }
+
 }
