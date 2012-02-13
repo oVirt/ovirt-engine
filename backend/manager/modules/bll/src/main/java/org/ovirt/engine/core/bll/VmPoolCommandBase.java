@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
 import org.ovirt.engine.core.common.businessentities.tags;
@@ -57,7 +58,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
      * @param commandId
      */
     protected VmPoolCommandBase(Guid commandId) {
@@ -80,7 +80,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     protected static Guid getNonPrestartedVmToAttach(NGuid vmPoolId) {
         List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDAO()
-        .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
+                .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
         if (vmPoolMaps != null) {
             for (vm_pool_map map : vmPoolMaps) {
                 if (CanAttachNonPrestartedVmToUser(map.getvm_guid())) {
@@ -93,7 +93,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     protected static Guid getPrestartedVmToAttach(NGuid vmPoolId) {
         List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDAO()
-        .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
+                .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
         if (vmPoolMaps != null) {
             for (vm_pool_map map : vmPoolMaps) {
                 if (CanAttachPrestartedVmToUser(map.getvm_guid())) {
@@ -106,7 +106,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     protected static int getNumOfPrestartedVmsInPool(NGuid poolId) {
         List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDAO()
-        .getVmMapsInVmPoolByVmPoolIdAndStatus(poolId, VMStatus.Up);
+                .getVmMapsInVmPoolByVmPoolIdAndStatus(poolId, VMStatus.Up);
         int prestartedVmsInPool = 0;
         if (vmPoolMaps != null) {
             for (vm_pool_map map : vmPoolMaps) {
@@ -124,7 +124,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     /**
      * Checks if a VM can be attached to a user.
-     *
      * @param vm_guid
      *            the VM GUID to check.
      * @return True if can be attached, false otherwise.
@@ -134,8 +133,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     /**
-     * Checks if a Prestarted Vm can be attached to a user.
-     *
+     * Checks if a running Vm can be attached to a user.
      * @param vmId
      *            the VM GUID to check.
      * @return True if can be attached, false otherwise.
@@ -161,24 +159,21 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     private static boolean vmIsRunningStateless(Guid vmId, ArrayList<String> messages) {
         List<stateless_vm_image_map> list = DbFacade.getInstance().getDiskImageDAO()
-        .getAllStatelessVmImageMapsForVm(vmId);
+                .getAllStatelessVmImageMapsForVm(vmId);
         if (list != null && list.size() > 0) {
-            return false;
-        } else {
             return true;
+        } else {
+            return false;
         }
     }
 
     /**
-     * Check if specific vm free. Vm considered free if it not attached to user
-     * and not during trieng
-     *
+     * Check if specific vm free. Vm considered free if it not attached to user and not during trieng
      * @param vmId
      *            The vm id.
      * @param messages
      *            The messages.
-     * @return <c>true</c> if [is vm free] [the specified vm id]; otherwise,
-     *         <c>false</c>.
+     * @return <c>true</c> if [is vm free] [the specified vm id]; otherwise, <c>false</c>.
      */
     protected static boolean IsVmFree(Guid vmId, java.util.ArrayList<String> messages) {
         boolean returnValue;
@@ -203,9 +198,18 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
             } else {
                 List<DiskImage> vmImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId);
                 Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_ids().get(0) : Guid.Empty;
-                returnValue = ImagesHandler.PerformImagesChecks(vmId, messages,
-                        DbFacade.getInstance().getVmDAO().getById(vmId).getstorage_pool_id(), storageDomainId, false, true,
-                        false, false, true, false, !storageDomainId.equals(Guid.Empty));
+                returnValue =
+                        ImagesHandler.PerformImagesChecks(vmId,
+                                messages,
+                                DbFacade.getInstance().getVmDAO().getById(vmId).getstorage_pool_id(),
+                                storageDomainId,
+                                false,
+                                true,
+                                false,
+                                false,
+                                true,
+                                false,
+                                !storageDomainId.equals(Guid.Empty));
             }
 
             if (!returnValue) {
@@ -253,5 +257,15 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 VdcObjectType.VmPool,
                 getActionType().getActionGroup()));
         return permissionList;
+    }
+
+    public static boolean isPrestartedVmForAssignment(Guid vm_guid) {
+        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(vm_guid);
+        if (vmDynamic != null && vmDynamic.getstatus() == VMStatus.Up && CanAttachPrestartedVmToUser(vm_guid)) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }

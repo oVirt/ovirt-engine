@@ -19,17 +19,16 @@ public class VmPoolHandler {
 
     /**
      * VM should be return to pool after it stopped unless Manual Return VM To Pool chosen.
-     *
      * @param vmId
      *            The VM's id.
      */
     public static void ProcessVmPoolOnStopVm(Guid vmId, CommandContext context) {
         vm_pool_map map = DbFacade.getInstance().getVmPoolDAO().getVmPoolMapByVmGuid(vmId);
-        if (map != null) {
+        // Check if this is a Vm from a Vm pool, and not a prestarted Vm
+        if (map != null && !VmPoolCommandBase.isPrestartedVmForAssignment(map.getvm_guid())) {
             vm_pools pool = DbFacade.getInstance().getVmPoolDAO().get(map.getvm_pool_id());
+            List<DbUser> users = DbFacade.getInstance().getDbUserDAO().getAllForVm(vmId);
             if (pool != null && pool.getvm_pool_type() == VmPoolType.Automatic) {
-                List<DbUser> users = DbFacade.getInstance().getDbUserDAO()
-                        .getAllForVm(vmId);
                 // should be only one user in the collection
                 for (DbUser dbUser : users) {
                     Backend.getInstance().runInternalAction(VdcActionType.DetachUserFromVmFromPool,
@@ -37,9 +36,11 @@ public class VmPoolHandler {
                             context);
                 }
             }
+        } else {
+            // If we are dealing with a prestarted Vm or a regular Vm - clean stateless images
+            // Otherwise this was already done in DetachUserFromVmFromPoolCommand
+            removeVmStatelessImages(vmId, context);
         }
-
-        removeVmStatelessImages(vmId, context);
     }
 
     public static void removeVmStatelessImages(Guid vmId, CommandContext context) {

@@ -1080,6 +1080,14 @@ public enum ConfigValues {
     @DefaultValueAttribute("50")
     MaxCorrelationIdLength(345),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("5")
+    VmPoolMonitorIntervalInMinutes(344),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("5")
+    VmPoolMonitorBatchSize(345),
+
     Invalid(65535);
 
     private int intValue;

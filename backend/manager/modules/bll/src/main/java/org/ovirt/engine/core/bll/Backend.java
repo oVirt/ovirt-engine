@@ -112,8 +112,7 @@ public class Backend implements BackendInternal, BackendRemote {
     }
 
     /**
-     * This method is called upon the bean creation as part
-     * of the management Service bean lifecycle.
+     * This method is called upon the bean creation as part of the management Service bean lifecycle.
      */
     @PostConstruct
     public void create() {
@@ -155,7 +154,6 @@ public class Backend implements BackendInternal, BackendRemote {
 
     /**
      * Initializes internal data
-     *
      * <exception>VdcBLL.VdcBLLException
      */
     @Override
@@ -218,6 +216,12 @@ public class Backend implements BackendInternal, BackendRemote {
         }
         // Set start-up time
         _startedAt = DateTime.getNow();
+
+        int vmPoolMonitorIntervalInMinutes = Config.<Integer> GetValue(ConfigValues.VmPoolMonitorIntervalInMinutes);
+        SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(new VmPoolMonitor(),
+                "managePrestartedVmsInAllVmPools", new Class[] {}, new Object[] {},
+                vmPoolMonitorIntervalInMinutes,
+                vmPoolMonitorIntervalInMinutes, TimeUnit.MINUTES);
 
         try {
             File fLock = new File(Config.<String> GetValue(ConfigValues.SignLockFile));
@@ -283,7 +287,6 @@ public class Backend implements BackendInternal, BackendRemote {
 
     /**
      * Executes an action according to the provided arguments.
-     *
      * @param actionType
      *            The type which define the action. Correlated to a concrete {@code CommandBase} instance.
      * @param parameters
@@ -454,7 +457,6 @@ public class Backend implements BackendInternal, BackendRemote {
 
     /**
      * Login in to the system
-     *
      * @param parameters
      *            The parameters.
      * @return user if success, else null // //

@@ -32,6 +32,7 @@ import org.ovirt.engine.core.compat.TimeSpan;
 public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
 
     private static final long serialVersionUID = -2176168998321713354L;
+    private final int DEFAULT_PRESTARTED_VMS = 0;
 
     @Id
     @GeneratedValue(generator = "system-uuid")
@@ -60,6 +61,9 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
     @Type(type = "guid")
     private Guid vdsGroupId;
 
+    @Column(name = "prestarted_vms")
+    private int prestartedVms;
+
     @Transient
     private int defaultTimeInDays;
 
@@ -87,6 +91,7 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         this.defaultTimeInDays = defaultTimeInDays;
         this.defaultStartTime = defaultStartTime;
         this.defaultEndTime = defaultEndTime;
+        this.prestartedVms = DEFAULT_PRESTARTED_VMS;
     }
 
     @Override
@@ -155,9 +160,9 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         } else if (!name.equals(other.name))
             return false;
         if (type == null) {
-            if(other.type != null)
+            if (other.type != null)
                 return false;
-        } else if(!type.equals(other.type))
+        } else if (!type.equals(other.type))
             return false;
         return true;
     }
@@ -246,6 +251,15 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         this.name = vm_pool_name;
         this.type = vmPoolType;
         this.vdsGroupId = vds_group_id;
+        this.prestartedVms = DEFAULT_PRESTARTED_VMS;
+    }
+
+    public int getPrestartedVms() {
+        return prestartedVms;
+    }
+
+    public void setPrestartedVms(int prestartedVms) {
+        this.prestartedVms = prestartedVms;
     }
 
     @XmlElement
