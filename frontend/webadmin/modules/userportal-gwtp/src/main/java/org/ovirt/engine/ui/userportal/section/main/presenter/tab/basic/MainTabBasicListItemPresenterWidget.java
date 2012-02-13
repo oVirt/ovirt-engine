@@ -100,8 +100,10 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (listModel.getSelectedItem() != model) {
+                if (!sameEntity((UserPortalItemModel) listModel.getSelectedItem(), model)) {
                     getView().setNotSelected(model.IsVmUp());
+                } else {
+                    getView().setSelected();
                 }
             }
         });
@@ -217,7 +219,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         return isSpiceAvailable || isRdpAvailable;
     }
 
-    private boolean isSelected() {
+    boolean isSelected() {
         return sameEntity((UserPortalItemModel) listModel.getSelectedItem(), model);
     }
 
