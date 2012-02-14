@@ -127,6 +127,8 @@ public class PermitMapper {
             return PermitType.CONFIGURE_RHEVM;
         case CONFIGURE_QUOTA:
             return PermitType.CONFIGURE_QUOTA;
+        case CONSUME_QUOTA:
+            return PermitType.CONSUME_QUOTA;
         default:
             return null;
         }

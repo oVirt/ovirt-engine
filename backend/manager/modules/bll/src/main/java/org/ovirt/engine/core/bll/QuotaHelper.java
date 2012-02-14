@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
@@ -66,6 +69,14 @@ public class QuotaHelper {
             quota.setIsDefaultQuota(false);
             getQuotaDAO().update(quota);
         }
+    }
+
+    public List<PermissionSubject> addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList, storage_pool storagePool, Guid quotaId) {
+        if (storagePool != null && storagePool.getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED) {
+            log.debug("Adding validation for consume quota to permission subjects list");
+            quotaPermissionList.add(new PermissionSubject(quotaId, VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
+        }
+        return quotaPermissionList;
     }
 
     /**

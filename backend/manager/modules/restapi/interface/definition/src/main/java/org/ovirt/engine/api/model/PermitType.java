@@ -70,7 +70,8 @@ public enum PermitType {
     CONFIGURE_RHEVM(800, RoleType.ADMIN),
 
     // Quota
-    CONFIGURE_QUOTA(900, RoleType.ADMIN);
+    CONFIGURE_QUOTA(900, RoleType.ADMIN),
+    CONSUME_QUOTA(901, RoleType.USER);
 
     private int id;
     private RoleType role;

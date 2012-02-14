@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
@@ -463,82 +464,113 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-     * Check if current user is authorized to run current action. skip check if
-     * MLA is off or command is internal
+     * Checks if the current user is authorized to run the given action on the given object.
      *
-     * @return
+     * @param action
+     *            the action to check
+     * @param object
+     *            the object to check
+     * @param type
+     *            the type of the object to check
+     * @return <code>true</code> if the current user is authorized to run the action, <code>false</code> otherwise
+     */
+    protected boolean checkUserAuthorization(final ActionGroup actionGroup, final Guid object, final VdcObjectType type) {
+        // Grant if there is matching permission in the database:
+        final NGuid permId =
+                DbFacade.getInstance().getEntityPermissions(getCurrentUser().getUserId(), actionGroup, object, type);
+        if (permId != null) {
+            if (log.isDebugEnabled()) {
+                log.debugFormat("Found permission {0} for user when running {1}, on {2} with id {3}",
+                        permId,
+                        getActionType(),
+                        type.getVdcObjectTranslation(),
+                        object);
+            }
+            return true;
+        }
+
+        // Deny otherwise:
+        if (log.isDebugEnabled()) {
+            log.debugFormat("No permission found for user when running action {0}, on object {1} for action group {2} with id {3}.",
+                    getActionType(),
+                    type.getVdcObjectTranslation(),
+                    actionGroup,
+                    object);
+        }
+        return false;
+    }
+
+    /**
+     * Check if current user is authorized to run current action. Skip check if
+     * MLA is off or command is internal.
+     *
+     * @return <code>true</code> if the user is authorized to run the given action,
+     *   <code>false</code> otherwise
      */
     protected boolean IsUserAutorizedToRunAction() {
-        boolean returnValue = true;
-        // skip internal actions and MLA is off
-        if (isInternalExecution || !Config.<Boolean> GetValue(ConfigValues.IsMultilevelAdministrationOn)) {
+        // Skip check if this is an internal action:
+        if (isInternalExecution) {
             if (log.isDebugEnabled()) {
-                log.debugFormat(
-                        "IsUserAutorizedToRunAction: Internal action or MLA is off - permission check skipped for action {0}",
-                        getActionType());
+                log.debugFormat("Permission check skipped for internal action {0}.", getActionType());
             }
-        } // check ActionGroup defined for this action
-        else if (getActionType().getActionGroup() == null) {
+            return true;
+        }
+
+        // Skip check if multilevel administration is disabled:
+        if (!Config.<Boolean> GetValue(ConfigValues.IsMultilevelAdministrationOn)) {
             if (log.isDebugEnabled()) {
-                returnValue = false;
-                log.debugFormat(
-                        "IsUserAutorizedToRunAction: No ActionGroup defiend for action {0} - check cannot proceed",
-                        getActionType().toString());
+                log.debugFormat("Permission check for action {0} skipped because multilevel administration is disabled.", getActionType());
             }
-        } else if (getCurrentUser() != null) {
-            // get subjects to check permissions on
-            List<PermissionSubject> permSubjects = getPermissionCheckSubjects();
-            if (permSubjects == null || permSubjects.isEmpty()) {
-                returnValue = false;
-                if (log.isDebugEnabled()) {
-                    log.debugFormat(
-                            "IsUserAutorizedToRunAction: PermissionCheckSubjects is null or empty for action {0}",
-                            getActionType());
-                }
-            } else {
-                for (PermissionSubject permSubject : permSubjects) {
-                    // if objectId is null we can't check permission
-                    if (permSubject.getObjectId() == null) {
-                        returnValue = false;
-                        if (log.isDebugEnabled()) {
-                            log.debugFormat(
-                                    "IsUserAutorizedToRunAction: Object from PermissionCheckSubjects is null for action {0} permission check failed.",
-                                    getActionType());
-                        }
-                        break;
-                    }
-                    NGuid permId = DbFacade.getInstance().getEntityPermissions(getCurrentUser().getUserId(),
-                            permSubject.getActionGroup(), permSubject.getObjectId(), permSubject.getObjectType());
-                    if (permId != null) {
-                        if (log.isDebugEnabled()) {
-                            log.debugFormat(
-                                    "IsUserAutorizedToRunAction: found permission {0} for user when running {1}, on {2} with id {3}",
-                                    permId,
-                                    getActionType(),
-                                    permSubject.getObjectType().getVdcObjectTranslation(),
-                                    permSubject.getObjectId());
-                        }
-                    } else {
-                        returnValue = false;
-                        if (log.isDebugEnabled()) {
-                            log.debugFormat(
-                                    "IsUserAutorizedToRunAction: no permission found for user when running {0}, on {1} with id {2}",
-                                    getActionType(),
-                                    permSubject.getObjectType().getVdcObjectTranslation(),
-                                    permSubject.getObjectId());
-                        }
-                        break;
-                    }
-                }
-            }
-        } else {
+            return true;
+        }
+
+        // Deny the permissions if there is no logged in user:
+        if (getCurrentUser() == null) {
             addCanDoActionMessage(VdcBllMessages.USER_IS_NOT_LOGGED_IN);
             return false;
         }
-        if (returnValue == false) {
+
+        // Get identifiers and types of the objects whose permissions have to be
+        // checked:
+        final List<PermissionSubject> permSubjects = getPermissionCheckSubjects();
+        if (permSubjects == null || permSubjects.isEmpty()) {
+            if (log.isDebugEnabled()) {
+                log.debugFormat("The set of objects to check is null or empty for action {0}.", getActionType());
+            }
             addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            return false;
         }
-        return returnValue;
+
+        for (PermissionSubject permSubject : permSubjects) {
+            final Guid objectId = permSubject.getObjectId();
+            final VdcObjectType objectType = permSubject.getObjectType();
+            final ActionGroup objectActionGroup = permSubject.getActionGroup();
+
+            // if objectId is null we can't check permission
+            if (objectId == null) {
+                if (log.isDebugEnabled()) {
+                    log.debugFormat("The object to check is null for action {0}.", getActionType());
+                }
+                addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+                return false;
+            }
+            // Check that an action group is defined for this action;
+            if (objectActionGroup == null) {
+                if (log.isDebugEnabled()) {
+                    log.debugFormat("No action group is defined for action {0}.", getActionType());
+                }
+                return false;
+            }
+
+            // Check the authorization:
+            if (!checkUserAuthorization(objectActionGroup, objectId, objectType)) {
+                addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+                return false;
+            }
+        }
+
+        // If we are here then we should grant the permission:
+        return true;
     }
 
     protected List<tags> GetTagsAttachedToObject() {

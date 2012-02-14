@@ -64,8 +64,8 @@ public enum ActionGroup {
     CONFIGURE_ENGINE(800, RoleType.ADMIN, VdcObjectType.System),
 
     // Quota
-    CONFIGURE_QUOTA(900, RoleType.ADMIN, VdcObjectType.Quota);
-
+    CONFIGURE_QUOTA(900, RoleType.ADMIN, VdcObjectType.Quota),
+    CONSUME_QUOTA(901, RoleType.USER, VdcObjectType.Quota);
 
     private int id;
     private RoleType roleType;
