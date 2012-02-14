@@ -2,202 +2,101 @@ package org.ovirt.engine.ui.webadmin.widget.storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageVmListModel;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.webadmin.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
-import org.ovirt.engine.ui.webadmin.widget.table.column.DiskSizeColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.ImageResourceColumn;
+import org.ovirt.engine.ui.webadmin.widget.label.DiskSizeLabel;
+import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class VMsTree extends AbstractSubTabTree<StorageVmListModel> {
+public class VMsTree extends AbstractSubTabTree<StorageVmListModel, VM, DiskImage> {
 
     @Override
-    public void updateTree(final StorageVmListModel listModel) {
-        listModel.getItemsChangedEvent().addListener(new IEventListener() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                StorageVmListModel model = (StorageVmListModel) sender;
-                List<VM> vms = (List<VM>) model.getItems();
-                tree.clear();
+    protected TreeItem getRootItem(VM vm) {
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.setSpacing(1);
+        panel.setWidth("100%");
 
-                if (vms == null)
-                    return;
+        addItemToPanel(panel, new Image(resources.vmImage()), "25px");
+        addTextBoxToPanel(panel, new TextBoxLabel(), vm.getvm_name(), "");
+        addTextBoxToPanel(panel, new TextBoxLabel(), String.valueOf(vm.getDiskMap().size()), "80px");
+        addTextBoxToPanel(panel, new TextBoxLabel(), vm.getvmt_name(), "160px");
+        addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), vm.getDiskSize(), "110px");
+        addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), vm.getActualDiskWithSnapshotsSize(), "110px");
+        addValueLabelToPanel(panel, new FullDateTimeLabel(), vm.getvm_creation_date(), "140px");
 
-                for (VM vm : vms) {
-                    TreeItem vmItem = getVMNode(vm);
-
-                    for (DiskImage disk : vm.getDiskList()) {
-                        TreeItem diskItem = getDiskNode(disk);
-
-                        ArrayList<DiskImage> snapshots = disk.getSnapshots();
-                        if (!snapshots.isEmpty()) {
-                            TreeItem snapshotItem = getSnapshotsNode(snapshots);
-                            diskItem.addItem(snapshotItem);
-                            styleItem(snapshotItem);
-                        }
-
-                        vmItem.addItem(diskItem);
-                        styleItem(diskItem);
-                    }
-
-                    tree.addItem(vmItem);
-                    styleItem(vmItem);
-                }
-            }
-        });
+        return new TreeItem(panel);
     }
 
-    private void styleItem(TreeItem item) {
-        Element tableElm = DOM.getFirstChild(item.getElement());
-        tableElm.setAttribute("width", "100%");
-
-        Element col = (Element) tableElm.getElementsByTagName("td").getItem(0);
-        col.setAttribute("width", "20px");
+    @Override
+    protected TreeItem getNodeItem(DiskImage disk) {
+        return getDiskOrSnapshotNode(new ArrayList<DiskImage>(Arrays.asList(disk)), true);
     }
 
-    private TreeItem getVMNode(VM vm) {
-        EntityModelCellTable<ListModel> table =
-                new EntityModelCellTable<ListModel>(false,
-                        (Resources) GWT.create(TreeHeaderlessTableResources.class),
-                        true);
-
-        table.addColumn(new ImageResourceColumn<EntityModel>() {
-            @Override
-            public ImageResource getValue(EntityModel object) {
-                return resources.vmImage();
-            }
-        }, "", "30px");
-
-        TextColumnWithTooltip<EntityModel> nameColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                return ((VM) object.getEntity()).getvm_name();
-            }
-        };
-        table.addColumn(nameColumn, "Name");
-
-        TextColumnWithTooltip<EntityModel> diskColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                return String.valueOf(((VM) object.getEntity()).getDiskMap().size());
-            }
-        };
-        table.addColumn(diskColumn, "Disks", "80px");
-
-        TextColumnWithTooltip<EntityModel> templateColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                return ((VM) object.getEntity()).getvmt_name();
-            }
-        };
-        table.addColumn(templateColumn, "Template", "160px");
-
-        DiskSizeColumn<EntityModel> vSizeColumn = new DiskSizeColumn<EntityModel>(DiskSizeUnit.GIGABYTE) {
-            @Override
-            protected Long getRawValue(EntityModel object) {
-                return (long) ((VM) object.getEntity()).getDiskSize();
-            }
-        };
-        table.addColumn(vSizeColumn, "V-Size", "110px");
-
-        DiskSizeColumn<EntityModel> actualSizeColumn = new DiskSizeColumn<EntityModel>(DiskSizeUnit.GIGABYTE) {
-            @Override
-            protected Long getRawValue(EntityModel object) {
-                return (long) ((VM) object.getEntity()).getActualDiskWithSnapshotsSize();
-            }
-        };
-        table.addColumn(actualSizeColumn, "Actual Size", "110px");
-
-        TextColumnWithTooltip<EntityModel> creationDateColumn = new GeneralDateTimeColumn<EntityModel>() {
-            @Override
-            protected Date getRawValue(EntityModel object) {
-                return ((VM) object.getEntity()).getvm_creation_date();
-            }
-        };
-        table.addColumn(creationDateColumn, "Creation Date", "140px");
-
-        ArrayList<EntityModel> entityModelList = toEntityModelList(new ArrayList<VM>(Arrays.asList(vm)));
-        return createTreeItem(table, entityModelList);
+    @Override
+    protected TreeItem getLeafItem(DiskImage disk) {
+        return getDiskOrSnapshotNode(disk.getSnapshots(), false);
     }
 
-    private TreeItem getDiskOrSnapshotNode(ArrayList<EntityModel> entityModelList, final boolean isDisk) {
-        EntityModelCellTable<ListModel> table = new EntityModelCellTable<ListModel>(false,
-                (Resources) GWT.create(TreeHeaderlessTableResources.class),
-                true);
+    @Override
+    protected ArrayList<DiskImage> getNodeObjects(VM vm) {
+        return vm.getDiskList();
+    }
 
-        table.addColumn(new ImageResourceColumn<EntityModel>() {
-            @Override
-            public ImageResource getValue(EntityModel object) {
-                return isDisk ? resources.diskImage() : resources.snapshotImage();
-            }
-        }, "", "30px");
+    @Override
+    protected boolean getIsNodeEnabled(DiskImage disk) {
+        return disk.getstorage_id().equals(listModel.getEntity().getid());
+    }
 
-        TextColumnWithTooltip<EntityModel> nameColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                return isDisk ? "Disk " + ((DiskImage) object.getEntity()).getinternal_drive_mapping()
-                        : ((DiskImage) object.getEntity()).getdescription();
-            }
-        };
-        table.addColumn(nameColumn, "Name");
+    @Override
+    protected String getNodeDisabledTooltip() {
+        return constants.differentStorageDomainWarning();
+    }
 
-        table.addColumn(new EmptyColumn(), "Disks", "80px");
-        table.addColumn(new EmptyColumn(), "Template", "160px");
+    private TreeItem getDiskOrSnapshotNode(ArrayList<DiskImage> disks, final boolean isDisk) {
+        if (disks.isEmpty()) {
+            return null;
+        }
 
-        DiskSizeColumn<EntityModel> vSizeColumn = new DiskSizeColumn<EntityModel>(DiskSizeUnit.GIGABYTE) {
-            @Override
-            protected Long getRawValue(EntityModel object) {
-                return (long) ((DiskImage) object.getEntity()).getSizeInGigabytes();
-            }
-        };
-        table.addColumn(vSizeColumn, "V-Size", "110px");
+        VerticalPanel vPanel = new VerticalPanel();
+        vPanel.setWidth("100%");
 
-        DiskSizeColumn<EntityModel> actualSizeColumn = new DiskSizeColumn<EntityModel>(DiskSizeUnit.GIGABYTE) {
-            @Override
-            protected Long getRawValue(EntityModel object) {
-                return (long) ((DiskImage) object.getEntity()).getActualDiskWithSnapshotsSize();
-            }
-        };
-        table.addColumn(actualSizeColumn, "Actual Size", "110px");
+        for (DiskImage disk : disks) {
+            HorizontalPanel panel = new HorizontalPanel();
 
-        TextColumnWithTooltip<EntityModel> creationDateColumn = new GeneralDateTimeColumn<EntityModel>() {
-            @Override
-            protected Date getRawValue(EntityModel object) {
-                return ((DiskImage) object.getEntity()).getcreation_date();
-            }
-        };
-        table.addColumn(creationDateColumn, "Creation Date", "140px");
+            ImageResource image = isDisk ? resources.diskImage() : resources.snapshotImage();
+            String name = isDisk ? "Disk " + disk.getinternal_drive_mapping() : disk.getdescription();
 
-        return createTreeItem(table, entityModelList);
+            addItemToPanel(panel, new Image(image), "25px");
+            addTextBoxToPanel(panel, new TextBoxLabel(), name, "");
+            addTextBoxToPanel(panel, new TextBoxLabel(), "", "80px");
+            addTextBoxToPanel(panel, new TextBoxLabel(), "", "160px");
+            addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "110px");
+            addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), disk.getActualDiskWithSnapshotsSize(), "110px");
+            addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getcreation_date(), "140px");
+
+            panel.setSpacing(1);
+            panel.setWidth("100%");
+
+            vPanel.add(panel);
+        }
+
+        return new TreeItem(vPanel);
     }
 
     private TreeItem getDiskNode(DiskImage disk) {
-        ArrayList<EntityModel> entityModelList = toEntityModelList(new ArrayList<DiskImage>(Arrays.asList(disk)));
-        return getDiskOrSnapshotNode(entityModelList, true);
+        return getDiskOrSnapshotNode(new ArrayList<DiskImage>(Arrays.asList(disk)), true);
     }
 
     private TreeItem getSnapshotsNode(ArrayList<DiskImage> disks) {
-        ArrayList<EntityModel> entityModelList = toEntityModelList(disks);
-        return getDiskOrSnapshotNode(entityModelList, false);
+        return getDiskOrSnapshotNode(disks, false);
     }
 
 }

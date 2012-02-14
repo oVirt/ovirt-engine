@@ -702,4 +702,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Please select reports from the same data center")
     String reportFromDifferentDCsError();
+
+    @DefaultStringValue("Resides on a different storage domain")
+    String differentStorageDomainWarning();
 }

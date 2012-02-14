@@ -15,7 +15,7 @@
 			position: absolute;
 		}
 
-		.vmTreeContainer {
+		.treeContainer {
 			width: 100%;
 			position: absolute;
 			overflow-y: scroll;
@@ -28,7 +28,7 @@
 
 	<g:VerticalPanel ui:field="mainContainer" addStyleNames="{style.mainContainer}">
 		<g:SimplePanel ui:field="headerTableContainer" addStyleNames="{style.headerTableContainer}"></g:SimplePanel>
-		<g:SimplePanel ui:field="vmTreeContainer" addStyleNames="{style.vmTreeContainer}"></g:SimplePanel>
+		<g:SimplePanel ui:field="treeContainer" addStyleNames="{style.treeContainer}"></g:SimplePanel>
 	</g:VerticalPanel>
 
 </ui:UiBinder>
