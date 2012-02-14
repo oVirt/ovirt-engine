@@ -20,7 +20,7 @@ import org.ovirt.engine.core.compat.Version;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VM")
-public class VM extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid> {
+public class VM extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
     private static final long serialVersionUID = -4078140531074414263L;
     @Valid
     private VmStatic mVmStatic;
@@ -1060,11 +1060,13 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private Guid storage_pool_idField = new Guid();
 
+    @Override
     @XmlElement(name = "storage_pool_id")
     public Guid getstorage_pool_id() {
         return storage_pool_idField;
     }
 
+    @Override
     public void setstorage_pool_id(Guid value) {
         storage_pool_idField = value;
     }

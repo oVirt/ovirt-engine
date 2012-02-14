@@ -19,7 +19,7 @@ import org.ovirt.engine.core.compat.Version;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VDS")
-public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid> {
+public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
     private static final long serialVersionUID = -7893976203379789926L;
     private VdsStatic mVdsStatic;
     private VdsDynamic mVdsDynamic;
@@ -882,11 +882,13 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private Guid storage_pool_idField = new Guid();
 
+    @Override
     @XmlElement
     public Guid getstorage_pool_id() {
         return this.storage_pool_idField;
     }
 
+    @Override
     public void setstorage_pool_id(Guid value) {
         this.storage_pool_idField = value;
     }

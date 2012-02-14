@@ -40,7 +40,7 @@ import org.ovirt.engine.core.compat.Version;
                                   name = "vdsgroup_with_running_vms",
                                   query = "from VDSGroup g where g.id = :vds_group_id and :vds_group_id in (select s.vds_group_id from VmStatic s, VmDynamic d where d.status not in (0, 13, 14) and d.id = s.id)")
               })
-public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid> {
+public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, HasStoragePool<NGuid> {
 
 
     private static final long serialVersionUID = 5659359762655478095L;
@@ -214,10 +214,12 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
         this.hypervisor_type = value;
     }
 
+    @Override
     public NGuid getstorage_pool_id() {
         return storagePool;
     }
 
+    @Override
     public void setstorage_pool_id(NGuid storagePool) {
         this.storagePool = storagePool;
     }

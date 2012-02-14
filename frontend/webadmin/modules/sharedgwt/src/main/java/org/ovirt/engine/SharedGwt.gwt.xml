@@ -8,6 +8,7 @@
 		<include name="core/common/config/**"/>
 		
 		<!-- Business entities -->
+		<include name="core/common/businessentities/HasStoragePool.java" />
 		<include name="core/common/businessentities/BusinessEntity.java" />
 		<include name="core/common/businessentities/ad_groups.java" />
 		<include name="core/common/businessentities/AdRefStatus.java" />
