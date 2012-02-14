@@ -11,7 +11,7 @@ Create or replace FUNCTION InsertJob(
     v_start_time TIMESTAMP WITH TIME ZONE,
     v_end_time TIMESTAMP WITH TIME ZONE,
     v_last_update_time TIMESTAMP WITH TIME ZONE,
-    v_correlation_id VARCHAR(100))
+    v_correlation_id VARCHAR(50))
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -78,6 +78,19 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+-----------------------------------------------
+-- Retrieves All Job entities by Correlation-ID
+-----------------------------------------------
+Create or replace FUNCTION GetJobsByCorrelationId(v_correlation_id VARCHAR(50))
+RETURNS SETOF job
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT job.*
+    FROM JOB
+    WHERE correlation_id = v_correlation_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
 ----------------------------------
 -- Updates Job entity in Job table
 ----------------------------------
@@ -91,7 +104,7 @@ Create or replace FUNCTION UpdateJob(
     v_start_time TIMESTAMP WITH TIME ZONE,
     v_end_time TIMESTAMP WITH TIME ZONE,
     v_last_update_time TIMESTAMP WITH TIME ZONE,
-    v_correlation_id VARCHAR(100))
+    v_correlation_id VARCHAR(50))
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -214,7 +227,7 @@ Create or replace FUNCTION InsertStep(
     v_status VARCHAR(32),
     v_start_time TIMESTAMP WITH TIME ZONE,
     v_end_time TIMESTAMP WITH TIME ZONE,
-    v_correlation_id VARCHAR(100),
+    v_correlation_id VARCHAR(50),
     v_external_id UUID,
     v_external_system_type VARCHAR(32))
 RETURNS VOID
@@ -262,7 +275,7 @@ Create or replace FUNCTION UpdateStep(
     v_status VARCHAR(32),
     v_start_time TIMESTAMP WITH TIME ZONE,
     v_end_time TIMESTAMP WITH TIME ZONE,
-    v_correlation_id VARCHAR(100),
+    v_correlation_id VARCHAR(50),
     v_external_id UUID,
     v_external_system_type VARCHAR(32))
 RETURNS VOID

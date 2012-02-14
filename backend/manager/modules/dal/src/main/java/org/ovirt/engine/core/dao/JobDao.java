@@ -3,8 +3,8 @@ package org.ovirt.engine.core.dao;
 import java.util.Date;
 import java.util.List;
 
-import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface JobDao extends GenericDao<Job, Guid> {
@@ -28,6 +28,15 @@ public interface JobDao extends GenericDao<Job, Guid> {
      * @return a collection of jobs
      */
     List<Job> getJobsByOffsetAndPageSize(int offset, int pageSize);
+
+    /**
+     * Retrieves a list of Jobs by a given correlation-ID
+     *
+     * @param correlationId
+     *            the correlation-ID to fetch Jobs by
+     * @return a collection of jobs
+     */
+    List<Job> getJobsByCorrelationId(String correlationId);
 
     /**
      * Updates {@link Job} entity with the last update time of a given instance

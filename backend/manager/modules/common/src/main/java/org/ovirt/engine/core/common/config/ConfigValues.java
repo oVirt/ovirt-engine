@@ -1078,6 +1078,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("60")
     FailedJobCleanupTimeInMinutes(343),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("100")
+    JobPageSize(344),
+
     Invalid(65535);
 
     private int intValue;

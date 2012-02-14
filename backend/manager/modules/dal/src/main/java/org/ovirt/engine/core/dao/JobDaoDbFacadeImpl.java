@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -98,6 +98,14 @@ public class JobDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Job, Guid> imp
                 .addValue("page_size", pageSize);
 
         return getCallsHandler().executeReadList("GetJobsByOffsetAndPageSize", createEntityRowMapper(), parameterSource);
+    }
+
+    @Override
+    public List<Job> getJobsByCorrelationId(String correlationId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("correlation_id", correlationId);
+
+        return getCallsHandler().executeReadList("GetJobsByCorrelationId", createEntityRowMapper(), parameterSource);
     }
 
     @Override

@@ -14,13 +14,15 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
 
     private static final Guid EXISTING_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5889");
+    private static final String EXISTING_CORRELATION_ID = "54947df8-job1";
+    private static final int NUMBER_OF_JOBS_FOR_EXISTING_CORRELATION_ID = 1;
     private static final int TOTAL_JOBS = 4;
 
     @Override
@@ -84,6 +86,19 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     public void getJobsByOffsetAndPageSize() {
         List<Job> jobsList = dao.getJobsByOffsetAndPageSize(0, 20);
         assertTrue(!jobsList.isEmpty());
+    }
+
+    @Test
+    public void getJobsByNonExistsCorrelationID() {
+        List<Job> jobsList = dao.getJobsByCorrelationId("NO_CORRELATION_ID");
+        assertTrue("Verify no jobs associate with non existed correlation ID", jobsList.isEmpty());
+    }
+
+    @Test
+    public void getJobsByCorrelationID() {
+        List<Job> jobsList = dao.getJobsByCorrelationId(EXISTING_CORRELATION_ID);
+        assertTrue("Verify a job is associated with the correlation-ID",
+                jobsList.size() == NUMBER_OF_JOBS_FOR_EXISTING_CORRELATION_ID);
     }
 
     @Test

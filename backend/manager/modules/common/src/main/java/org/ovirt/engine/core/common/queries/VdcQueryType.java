@@ -229,6 +229,11 @@ public enum VdcQueryType implements Serializable {
     // Async Tasks
     GetTasksStatusesByTasksIDs,
 
+    // Jobs
+    GetJobByJobId,
+    GetJobsByCorrelationId,
+    GetJobsByOffset,
+
     // Default type instead of having to null check
     Unknown(VdcQueryAuthType.User);
 
