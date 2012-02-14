@@ -18,6 +18,9 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements JobSubjectEntityDao {
 
+    private static JobSubjectEntityRowMapper jobSubjectEntityRowMapper = new JobSubjectEntityRowMapper();
+    private static JobIdRowMapper jobIdRowMapper = new JobIdRowMapper();
+
     @Override
     public void save(Guid jobId, Guid entityId, VdcObjectType entityType) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -33,18 +36,10 @@ public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements Jo
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("job_id", jobId);
 
-        ParameterizedRowMapper<JobSubjectEntity> mapper = new ParameterizedRowMapper<JobSubjectEntity>() {
-
-            @Override
-            public JobSubjectEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-                JobSubjectEntity entity = new JobSubjectEntity();
-                entity.setEntityId(Guid.createGuidFromString(rs.getString("entity_id")));
-                entity.setEntityType(VdcObjectType.valueOf(rs.getString("entity_type")));
-                return entity;
-            }
-        };
         List<JobSubjectEntity> list =
-                getCallsHandler().executeReadList("GetJobSubjectEntityByJobId", mapper, parameterSource);
+                getCallsHandler().executeReadList("GetJobSubjectEntityByJobId",
+                        jobSubjectEntityRowMapper,
+                        parameterSource);
 
         Map<Guid, VdcObjectType> entityMap = new HashMap<Guid, VdcObjectType>();
         for (JobSubjectEntity jobSubjectEntity : list) {
@@ -58,15 +53,7 @@ public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements Jo
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("entity_id", entityId);
 
-        ParameterizedRowMapper<Guid> mapper = new ParameterizedRowMapper<Guid>() {
-
-            @Override
-            public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return Guid.createGuidFromString(rs.getString(1));
-            }
-        };
-
-        return getCallsHandler().executeReadList("GetAllJobIdsByEntityIdAndEntityType", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllJobIdsByEntityIdAndEntityType", jobIdRowMapper, parameterSource);
     }
 
     private static class JobSubjectEntity {
@@ -87,6 +74,25 @@ public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements Jo
 
         public VdcObjectType getEntityType() {
             return entityType;
+        }
+    }
+
+    private static class JobSubjectEntityRowMapper implements ParameterizedRowMapper<JobSubjectEntity> {
+
+        @Override
+        public JobSubjectEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+            JobSubjectEntity entity = new JobSubjectEntity();
+            entity.setEntityId(Guid.createGuidFromString(rs.getString("entity_id")));
+            entity.setEntityType(VdcObjectType.valueOf(rs.getString("entity_type")));
+            return entity;
+        }
+    }
+
+    private static class JobIdRowMapper implements ParameterizedRowMapper<Guid> {
+
+        @Override
+        public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return Guid.createGuidFromString(rs.getString(1));
         }
     }
 
