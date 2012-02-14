@@ -18,6 +18,8 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> implements StepDao {
 
+    private static StepRowMapper stepRowMapper = new StepRowMapper();
+
     @Override
     public boolean exists(Guid id) {
         return get(id) != null;
@@ -71,26 +73,7 @@ public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> i
 
     @Override
     protected ParameterizedRowMapper<Step> createEntityRowMapper() {
-        return new ParameterizedRowMapper<Step>() {
-
-            @Override
-            public Step mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Step step = new Step();
-                step.setId(Guid.createGuidFromString(rs.getString("step_id")));
-                step.setParentStepId(NGuid.createGuidFromString(rs.getString("parent_step_id")));
-                step.setJobId(Guid.createGuidFromString(rs.getString("job_id")));
-                step.setStepType(StepEnum.valueOf(rs.getString("step_type")));
-                step.setDescription(rs.getString("description"));
-                step.setStepNumber(rs.getInt("step_number"));
-                step.setStatus(JobExecutionStatus.valueOf(rs.getString("status")));
-                step.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
-                step.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
-                step.setCorrelationId(rs.getString("correlation_id"));
-                step.getExternalSystem().setId(NGuid.createGuidFromString(rs.getString("external_id")));
-                step.getExternalSystem().setType(ExternalSystemType.safeValueOf(rs.getString("external_system_type")));
-                return step;
-            }
-        };
+        return stepRowMapper;
     }
 
     @Override
@@ -116,4 +99,24 @@ public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> i
 
     }
 
+    private static class StepRowMapper implements ParameterizedRowMapper<Step> {
+
+        @Override
+        public Step mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Step step = new Step();
+            step.setId(Guid.createGuidFromString(rs.getString("step_id")));
+            step.setParentStepId(NGuid.createGuidFromString(rs.getString("parent_step_id")));
+            step.setJobId(Guid.createGuidFromString(rs.getString("job_id")));
+            step.setStepType(StepEnum.valueOf(rs.getString("step_type")));
+            step.setDescription(rs.getString("description"));
+            step.setStepNumber(rs.getInt("step_number"));
+            step.setStatus(JobExecutionStatus.valueOf(rs.getString("status")));
+            step.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
+            step.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
+            step.setCorrelationId(rs.getString("correlation_id"));
+            step.getExternalSystem().setId(NGuid.createGuidFromString(rs.getString("external_id")));
+            step.getExternalSystem().setType(ExternalSystemType.safeValueOf(rs.getString("external_system_type")));
+            return step;
+        }
+    }
 }
