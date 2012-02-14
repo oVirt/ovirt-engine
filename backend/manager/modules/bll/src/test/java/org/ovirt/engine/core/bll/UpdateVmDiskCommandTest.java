@@ -139,16 +139,6 @@ public class UpdateVmDiskCommandTest {
         assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
     }
 
-    @Test
-    public void canDoActionFailedUnPluggSystemDisk() throws Exception {
-        initializeCommand(false, true);
-        mockVmWithOutVirtIODataDisk();
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.HOT_UNPLUG_SYSTEM_DISK.toString()));
-    }
-
     protected void initializeCommand() {
         initializeCommand(true, false);
     }
@@ -192,13 +182,6 @@ public class UpdateVmDiskCommandTest {
         when(vmDAO.getById(command.getParameters().getVmId())).thenReturn(vm);
 
         return vm;
-    }
-
-    /**
-     * Mock a VM that has not a data disk.
-     */
-    private void mockVmWithOutVirtIODataDisk() {
-        mockVmStatusUp().addDriveToImageMap(RandomUtils.instance().nextNumericString(1), createVirtIOSystemDisk());
     }
 
     /**

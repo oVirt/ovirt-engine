@@ -521,8 +521,7 @@ public enum VdcBllMessages {
     ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED,
     HOT_PLUG_DISK_IS_NOT_VIRTIO,
     HOT_PLUG_DISK_IS_NOT_UNPLUGGED,
-    HOT_UNPLUG_DISK_IS_NOT_PLUGGED,
-    HOT_UNPLUG_SYSTEM_DISK;
+    HOT_UNPLUG_DISK_IS_NOT_PLUGGED;
 
     public int getValue() {
         return this.ordinal();

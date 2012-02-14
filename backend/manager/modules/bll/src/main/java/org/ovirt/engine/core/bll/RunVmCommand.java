@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
@@ -59,7 +61,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     // this const represent the character for network in the boot sequence
     // options
     private static final char NETWORK_BOOT_SEQUENCE_CHAR = 'N';
-    private static final char cd = (BootSequence.D).toString().charAt(0);
     private String _cdImagePath = "";
     private String _floppyImagePath = "";
     private boolean mResume;
@@ -265,9 +266,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             if (StringHelper.isNullOrEmpty(getVm().getCdPath())) {
                 getVm().setCdPath(getVm().getiso_path());
                 GuestToolsVersionTreatment();
-                // LINQ Vm.boot_sequence.toString().Contains(cd))
                 refreshBootSequenceParameter(getParameters());
-                if (getVm().getboot_sequence().toString().indexOf(cd) > -1) {
+                if (getVm().getboot_sequence() == BootSequence.CD) {
                     getVm().setCdPath(getVm().getiso_path());
                 }
                 getVm().setCdPath(ImagesHandler.cdPathWindowsToLinux(getVm().getCdPath(), getVm().getstorage_pool_id()));
@@ -617,24 +617,38 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             handleCustomPropertiesError(validationErrors, message);
             retValue = false;
         } else {
-
             BootSequence boot_sequence = ((runParams.getBootSequence()) != null) ? runParams.getBootSequence() : vm
                     .getdefault_boot_sequence();
-            List<DiskImage> vmImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getvm_guid());
             Guid storagePoolId = vm.getstorage_pool_id();
             // Block from running a VM with no HDD when its first boot device is
             // HD
             // and no other boot devices are configured
-            if (vmImages.isEmpty() && StringHelper.EqOp(boot_sequence.toString(), BootSequence.C.toString())) {
-                message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK.toString());
-                retValue = false;
+            List<DiskImage> vmImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getvm_guid());
+            if (boot_sequence == BootSequence.C) {
+                List<VmDevice> diskVmDevices =
+                        DbFacade.getInstance()
+                                .getVmDeviceDAO()
+                                .getVmDeviceByVmIdTypeAndDevice(vm.getvm_guid(),
+                                        VmDeviceType.getName(VmDeviceType.DISK),
+                                        VmDeviceType.getName(VmDeviceType.DISK));
+                boolean existPlugged = false;
+                for (VmDevice diskVmDevice : diskVmDevices) {
+                    if (diskVmDevice.getIsPlugged()) {
+                        existPlugged = true;
+                        break;
+                    }
+                }
+                if (!existPlugged) {
+                    message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK.toString());
+                    retValue = false;
+                }
             } else {
                 // If CD appears as first and there is no ISO in storage
                 // pool/ISO inactive -
                 // you cannot run this VM
 
-                if ((findActiveISODomain(storagePoolId) == null) && boot_sequence.toString().length() > 0
-                        && (boot_sequence.toString().charAt(0) == cd)) {
+                if ((findActiveISODomain(storagePoolId) == null)
+                        && boot_sequence == BootSequence.CD) {
                     message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO.toString());
                     retValue = false;
                 }

@@ -1097,7 +1097,5 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String HOT_PLUG_DISK_IS_NOT_UNPLUGGED();
 
-    String HOT_UNPLUG_SYSTEM_DISK();
-
     String HOT_UNPLUG_DISK_IS_NOT_PLUGGED();
 }

@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -124,11 +123,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
                 }
             }
         }
-        if (retValue && Boolean.FALSE.equals(getParameters().getDiskInfo().getPlugged())
-                && _oldDisk.getdisk_type() == DiskType.System) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.HOT_UNPLUG_SYSTEM_DISK);
-        }
         return retValue;
     }
 
@@ -144,18 +138,13 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
         } else if (!DiskInterface.VirtIO.equals(_oldDisk.getdisk_interface())) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_VIRTIO);
-        } else {
-            if (oldVmDevice.getIsPlugged() == getParameters().getDiskInfo().getPlugged()) {
-                if (oldVmDevice.getIsPlugged()) {
-                    returnValue = false;
-                    addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
-                } else {
-                    returnValue = false;
-                    addCanDoActionMessage(VdcBllMessages.HOT_UNPLUG_DISK_IS_NOT_PLUGGED);
-                }
-            } else if (oldVmDevice.getIsPlugged() && _oldDisk.getdisk_type() == DiskType.System) {
+        } else if (oldVmDevice.getIsPlugged() == getParameters().getDiskInfo().getPlugged()) {
+            if (oldVmDevice.getIsPlugged()) {
                 returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.HOT_UNPLUG_SYSTEM_DISK);
+                addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
+            } else {
+                returnValue = false;
+                addCanDoActionMessage(VdcBllMessages.HOT_UNPLUG_DISK_IS_NOT_PLUGGED);
             }
         }
         if (returnValue) {
