@@ -2,9 +2,15 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.asynctasks.IEndedTaskVisitor;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.validation.group.PreRun;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -43,6 +49,9 @@ public class VdcActionParametersBase implements java.io.Serializable {
     /**
      * A cross system identifier of the executed action
      */
+    @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS, message = "VALIDATION_INVALID_CORRELATION_ID",
+            groups = PreRun.class)
+    @Size(min = 1, max = BusinessEntitiesDefinitions.CORRELATION_ID_SIZE, groups = PreRun.class)
     private String correlationId;
 
     public VdcActionParametersBase() {

@@ -14,13 +14,13 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DictionaryEntry;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.ResXResourceReader;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public final class AuditLogDirector {
     private static Log log = LogFactory.getLog(AuditLogDirector.class);
@@ -656,6 +656,8 @@ public final class AuditLogDirector {
                     tempVar.setstorage_pool_name(auditLogable.getStoragePoolName());
                     tempVar.setvds_group_id(auditLogable.getVdsGroupId());
                     tempVar.setvds_group_name(auditLogable.getVdsGroupName());
+                    tempVar.setCorrelationId(auditLogable.getCorrelationId());
+                    tempVar.setJobId(auditLogable.getJobId());
                     auditLog = tempVar;
                 } else {
                     auditLog = new AuditLog(logType, severity, resolvedMessage, null, null, null, null, null, null,

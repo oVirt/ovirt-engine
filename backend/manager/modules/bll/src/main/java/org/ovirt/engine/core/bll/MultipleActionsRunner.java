@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -50,13 +51,19 @@ public class MultipleActionsRunner {
 
         java.util.ArrayList<VdcReturnValueBase> returnValues = new java.util.ArrayList<VdcReturnValueBase>();
         try {
-
+            VdcReturnValueBase returnValue;
             for (VdcActionParametersBase parameter : getParameters()) {
                 parameter.setMultipleAction(true);
-                CommandBase<?> command = CommandsFactory.CreateCommand(_actionType, parameter);
-                command.setInternalExecution(isInternal);
-                getCommands().add(command);
+                returnValue = ExecutionHandler.evaluateCorrelationId(parameter);
+                if (returnValue == null) {
+                    CommandBase<?> command = CommandsFactory.CreateCommand(_actionType, parameter);
+                    command.setInternalExecution(isInternal);
+                    getCommands().add(command);
+                } else {
+                    returnValues.add(returnValue);
+                }
             }
+
             if (getCommands().size() == 1) {
                 returnValues.add(getCommands().get(0).CanDoActionOnly());
             } else {
@@ -155,11 +162,13 @@ public class MultipleActionsRunner {
      */
     final protected void executeValidatedCommands(CommandBase<?> command) {
         if (command.getReturnValue().getCanDoAction()) {
+
             if (executionContext == null || executionContext.isMonitored()) {
                 ExecutionHandler.prepareCommandForMonitoring(command,
                         command.getActionType(),
                         command.isInternalExecution());
             }
+            ThreadLocalParamsContainer.setCorrelationId(command.getCorrelationId());
             command.ExecuteAction();
         }
     }

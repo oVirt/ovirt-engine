@@ -24,6 +24,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
@@ -294,9 +295,7 @@ public class Backend implements BackendInternal, BackendRemote {
      * @param runAsInternal
      *            Indicates if the command should be executed as an internal action or not.
      * @param context
-     *            The required information for compensating the failed command.
-     * @param executionContext
-     *            The context of the Step/Job execution.
+     *            The required information for running the command.
      * @return The result of executing the action
      */
     private VdcReturnValueBase runActionImpl(VdcActionType actionType,
@@ -304,14 +303,21 @@ public class Backend implements BackendInternal, BackendRemote {
             boolean runAsInternal,
             CommandContext context) {
 
+        VdcReturnValueBase returnValue = null;
         switch (actionType) {
         case AutoLogin:
-            VdcReturnValueBase returnValue = new VdcReturnValueBase();
+            returnValue = new VdcReturnValueBase();
             returnValue.setCanDoAction(false);
             returnValue.getCanDoActionMessages().add(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION.toString());
             return returnValue;
 
         default: {
+            // Evaluate and set the correlationId on the parameters, fails on invalid correlation id
+            returnValue = ExecutionHandler.evaluateCorrelationId(parameters);
+            if (returnValue != null) {
+                return returnValue;
+            }
+
             CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
             command.setInternalExecution(runAsInternal);
 
@@ -325,6 +331,11 @@ public class Backend implements BackendInternal, BackendRemote {
 
             if (executionContext != null) {
                 command.setExecutionContext(executionContext);
+                if (executionContext.getExecutionMethod() == ExecutionMethod.AsJob && executionContext.getJob() != null) {
+                    command.setJobId(executionContext.getJob().getId());
+                } else if (executionContext.getStep() != null) {
+                    command.setJobId(executionContext.getStep().getJobId());
+                }
             } else {
                 ExecutionHandler.prepareCommandForMonitoring(command, actionType, runAsInternal);
             }
@@ -332,7 +343,9 @@ public class Backend implements BackendInternal, BackendRemote {
             if (compensationContext != null) {
                 command.setCompensationContext(compensationContext);
             }
-            return command.ExecuteAction();
+            returnValue = command.ExecuteAction();
+            returnValue.setCorrelationId(parameters.getCorrelationId());
+            return returnValue;
         }
 
         }

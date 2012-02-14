@@ -1,23 +1,32 @@
 package org.ovirt.engine.core.bll.job;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.validation.group.PreRun;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.log.LoggedUtils;
 
 /**
  * Provides methods for managing the flow objects the of the command, by the given execution context o the command.
@@ -33,6 +42,8 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class ExecutionHandler {
 
     private static Log log = LogFactory.getLog(ExecutionHandler.class);
+
+    private static final List<Class<?>> validationGroups = Arrays.asList(new Class<?>[] { PreRun.class });
 
     /**
      * Creates and returns an instance of {@link Job} entity.
@@ -53,9 +64,7 @@ public class ExecutionHandler {
         job.setOwnerId(command.getUserId());
         job.setStatus(JobExecutionStatus.STARTED);
         job.setStartTime(new Date());
-
-        // TODO: set actual value of correlation-ID
-        job.setCorrelationId(Guid.NewGuid().toString());
+        job.setCorrelationId(command.getCorrelationId());
 
         return job;
     }
@@ -165,6 +174,7 @@ public class ExecutionHandler {
                 JobRepositoryFactory.getJobRepository().saveJob(job);
                 context.setExecutionMethod(ExecutionMethod.AsJob);
                 context.setJob(job);
+                command.setJobId(job.getId());
                 command.setExecutionContext(context);
                 context.setMonitored(isMonitored);
             }
@@ -510,4 +520,32 @@ public class ExecutionHandler {
         }
     }
 
+    /**
+     * Evaluates if a given correlation-ID as part of the parameters is set correctly. If the correlation-ID is null or
+     * empty, a valid correlation-ID will be set. If the correlation-ID exceeds its permitted length, an error return
+     * value will be created and returned.
+     *
+     * @param parameters
+     *            The parameters input of the command
+     * @return A {@code null} object emphasis correlation-ID is valid or {@code VdcReturnValueBase} contains the
+     *         correlation-ID violation message
+     */
+    public static VdcReturnValueBase evaluateCorrelationId(VdcActionParametersBase parameters) {
+        VdcReturnValueBase returnValue = null;
+        if (parameters != null) {
+            String correlationId = parameters.getCorrelationId();
+            if (StringUtils.isEmpty(correlationId)) {
+                parameters.setCorrelationId(LoggedUtils.getObjectId(parameters));
+            } else {
+                ArrayList<String> messages = ValidationUtils.validateInputs(validationGroups, parameters);
+                if (messages != null) {
+                    VdcReturnValueBase returnErrorValue = new VdcReturnValueBase();
+                    returnErrorValue.setCanDoAction(false);
+                    returnErrorValue.getCanDoActionMessages().addAll(messages);
+                    return returnErrorValue;
+                }
+            }
+        }
+        return returnValue;
+    }
 }

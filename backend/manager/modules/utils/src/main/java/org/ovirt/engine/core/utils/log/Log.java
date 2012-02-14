@@ -2,7 +2,10 @@ package org.ovirt.engine.core.utils.log;
 
 import java.text.MessageFormat;
 
+import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
+
 public class Log implements org.apache.commons.logging.Log {
+    private static final String CORRELATION_ID_MESSAGE_FORMAT = "[%s] %s";
     private final org.apache.commons.logging.Log log;
 
     public Log(org.apache.commons.logging.Log log) {
@@ -11,42 +14,42 @@ public class Log implements org.apache.commons.logging.Log {
 
     @Override
     public void debug(Object arg0) {
-        log.debug(arg0);
+        log.debug(addPrefixToLogMessage(arg0));
     }
 
     @Override
     public void debug(Object arg0, Throwable arg1) {
-        log.debug(arg0, arg1);
+        log.debug(addPrefixToLogMessage(arg0), arg1);
     }
 
     @Override
     public void error(Object arg0) {
-        log.error(arg0);
+        log.error(addPrefixToLogMessage(arg0));
     }
 
     @Override
     public void error(Object arg0, Throwable arg1) {
-        log.error(arg0, arg1);
+        log.error(addPrefixToLogMessage(arg0), arg1);
     }
 
     @Override
     public void fatal(Object arg0) {
-        log.fatal(arg0);
+        log.fatal(addPrefixToLogMessage(arg0));
     }
 
     @Override
     public void fatal(Object arg0, Throwable arg1) {
-        log.fatal(arg0, arg1);
+        log.fatal(addPrefixToLogMessage(arg0), arg1);
     }
 
     @Override
     public void info(Object arg0) {
-        log.info(arg0);
+        log.info(addPrefixToLogMessage(arg0));
     }
 
     @Override
     public void info(Object arg0, Throwable arg1) {
-        log.info(arg0, arg1);
+        log.info(addPrefixToLogMessage(arg0), arg1);
     }
 
     @Override
@@ -86,17 +89,17 @@ public class Log implements org.apache.commons.logging.Log {
 
     @Override
     public void trace(Object arg0, Throwable arg1) {
-        log.trace(arg0, arg1);
+        log.trace(addPrefixToLogMessage(arg0), arg1);
     }
 
     @Override
     public void warn(Object arg0) {
-        log.warn(arg0);
+        log.warn(addPrefixToLogMessage(arg0));
     }
 
     @Override
     public void warn(Object arg0, Throwable arg1) {
-        log.warn(arg0, arg1);
+        log.warn(addPrefixToLogMessage(arg0), arg1);
     }
 
     public void traceFormat(String formatString, Object... args) {
@@ -163,6 +166,14 @@ public class Log implements org.apache.commons.logging.Log {
         }
 
         return null;
+    }
+
+    private Object addPrefixToLogMessage(Object logMessage) {
+        String correlationId = ThreadLocalParamsContainer.getCorrelationId();
+        if (correlationId == null) {
+            return logMessage;
+        }
+        return String.format(CORRELATION_ID_MESSAGE_FORMAT, correlationId, logMessage);
     }
 
 }

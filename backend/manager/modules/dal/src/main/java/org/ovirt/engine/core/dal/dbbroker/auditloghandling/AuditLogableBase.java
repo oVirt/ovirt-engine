@@ -14,8 +14,6 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -27,6 +25,8 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.VmStatisticsDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AuditLogableBase extends TimeoutBase {
@@ -48,6 +48,8 @@ public class AuditLogableBase extends TimeoutBase {
     private NGuid _storagePoolId;
     private Guid mVdsGroupId;
     private VDSGroup mVdsGroup;
+    private String correlationId;
+    private NGuid jobId;
 
     public AuditLogableBase() {
     }
@@ -442,6 +444,22 @@ public class AuditLogableBase extends TimeoutBase {
         } else {
             return "";
         }
+    }
+
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public void setJobId(NGuid jobId) {
+        this.jobId = jobId;
+    }
+
+    public NGuid getJobId() {
+        return jobId;
     }
 
     private static Log log = LogFactory.getLog(AuditLogableBase.class);

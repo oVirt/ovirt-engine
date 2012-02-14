@@ -67,6 +67,7 @@ import org.ovirt.engine.core.dao.StatusAwareDao;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
+import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.log.Log;
@@ -117,6 +118,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected CommandBase(T parameters) {
         _parameters = parameters;
         setCurrentUser(SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId()));
+        ThreadLocalParamsContainer.setCorrelationId(parameters.getCorrelationId());
+        setCorrelationId(parameters.getCorrelationId());
     }
 
     /**

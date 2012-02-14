@@ -1082,6 +1082,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("100")
     JobPageSize(344),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("50")
+    MaxCorrelationIdLength(345),
+
     Invalid(65535);
 
     private int intValue;
