@@ -544,7 +544,7 @@ public class VmGeneralModel extends EntityModel
 				java.util.ArrayList<VDS> hosts = (java.util.ArrayList<VDS>)((VdcQueryReturnValue)returnValue).getReturnValue();
 				for (VDS host : hosts)
 				{
-					if (localVm.getdedicated_vm_for_vds() != null && host.getvds_id().equals(localVm.getdedicated_vm_for_vds()))
+					if (localVm.getdedicated_vm_for_vds() != null && host.getId().equals(localVm.getdedicated_vm_for_vds()))
 					{
 						model.setDefaultHost(host.getvds_name());
 						break;

@@ -117,7 +117,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
                         } else {
                             log.fatalFormat(
                                     "VDS::migrate:: Could not update destination vds commited memory to db. vds {0} : {1}, error: {2}, {3}",
-                                    vds.getvds_id(),
+                                    vds.getId(),
                                     vds.getvds_name(),
                                     ex.toString(),
                                     ex.getStackTrace()[0]);

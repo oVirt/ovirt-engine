@@ -44,7 +44,7 @@ public class AddStorageDomainRM extends BaseRM
 		ConfigureLocalStorageModel model = (ConfigureLocalStorageModel)getModel().getWindow();
 
 		//Activate host.
-		VdcReturnValueBase returnValue = Frontend.RunAction(VdcActionType.ActivateVds, new VdsActionParameters(host.getvds_id()));
+		VdcReturnValueBase returnValue = Frontend.RunAction(VdcActionType.ActivateVds, new VdsActionParameters(host.getId()));
 
 		if (returnValue == null || !returnValue.getSucceeded())
 		{
@@ -61,7 +61,7 @@ public class AddStorageDomainRM extends BaseRM
 				return;
 			}
 
-			VDS tmpHost = DataProvider.GetHostById(host.getvds_id());
+			VDS tmpHost = DataProvider.GetHostById(host.getId());
 			if (tmpHost.getstatus() != VDSStatus.Up)
 			{
 				//Wrap Thread.Sleep with try/catch to pass conversion to Java.
@@ -90,7 +90,7 @@ public class AddStorageDomainRM extends BaseRM
 		storageDomain.setstorage_domain_type(StorageDomainType.Data);
 		storageDomain.setstorage_name((String)model.getFormattedStorageName().getEntity());
 
-		returnValue = Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+		returnValue = Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getId()));
 
 		if (returnValue == null || !returnValue.getSucceeded())
 		{
@@ -101,13 +101,13 @@ public class AddStorageDomainRM extends BaseRM
 		storageDomain.setstorage((String)returnValue.getActionReturnValue());
 
 		StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
-		tempVar2.setVdsId(host.getvds_id());
+		tempVar2.setVdsId(host.getId());
 		returnValue = Frontend.RunAction(VdcActionType.AddLocalStorageDomain, tempVar2);
 
 		//Clean up connection.
 		if (returnValue == null || !returnValue.getSucceeded())
 		{
-			Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+			Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getId()));
 
 			throw new TransactionAbortedException();
 		}

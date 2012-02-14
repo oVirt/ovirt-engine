@@ -1527,7 +1527,7 @@ public class VmModel extends Model
             NGuid vds_id = null;
             if ((Boolean) getIsAutoAssign().getEntity() == false && (getDefaultHost().getSelectedItem() != null))
             {
-                vds_id = ((VDS) getDefaultHost().getSelectedItem()).getvds_id();
+                vds_id = ((VDS) getDefaultHost().getSelectedItem()).getId();
                 vds_id = vds_id.equals(NGuid.Empty) ? null : vds_id;
             }
 

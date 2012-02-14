@@ -43,7 +43,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGet() {
-        VDS result = dao.get(existingVds.getvds_id());
+        VDS result = dao.get(existingVds.getId());
 
         assertNotNull(result);
         assertEquals(existingVds, result);

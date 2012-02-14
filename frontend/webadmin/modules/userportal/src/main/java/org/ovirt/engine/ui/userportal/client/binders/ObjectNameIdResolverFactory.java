@@ -107,7 +107,7 @@ public class ObjectNameIdResolverFactory {
 				public String getItemId(Object o) {
 					if (o == null)
 						return null;
-					return ((VDS)o).getvds_id().toString();
+					return ((VDS)o).getId().toString();
 				}
 				
 				@Override

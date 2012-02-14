@@ -88,7 +88,7 @@ public class MoveHost extends ListModel
 					EntityModel entity = (EntityModel)item;
 					if (entity.getIsSelected())
 					{
-						previouslySelectedHostIDs.add(((VDS)entity.getEntity()).getvds_id());
+						previouslySelectedHostIDs.add(((VDS)entity.getEntity()).getId());
 					}
 				}
 			}
@@ -96,7 +96,7 @@ public class MoveHost extends ListModel
 			//items.Each(a => Selector.SetIsSelected(a, previouslySelectedHostIDs.Contains((a.Entity as VDS).vds_id)));
 			for (EntityModel entity : items)
 			{
-				entity.setIsSelected(previouslySelectedHostIDs.contains(((VDS)entity.getEntity()).getvds_id()));
+				entity.setIsSelected(previouslySelectedHostIDs.contains(((VDS)entity.getEntity()).getId()));
 			}
 		}
 	}

@@ -30,7 +30,7 @@ public class ResumeVDSCommand<P extends ResumeVDSCommandParameters> extends VdsI
                 }
             } else if (command.getVDSReturnValue().getExceptionObject() != null) {
                 log.errorFormat("VDS::pause Failed resume vm '{0}' in vds = {1} : {2}, error = {3}", parameters
-                        .getVmId(), getVds().getvds_id(), getVds().getvds_name(), command.getVDSReturnValue()
+                        .getVmId(), getVds().getId(), getVds().getvds_name(), command.getVDSReturnValue()
                         .getExceptionString());
                 getVDSReturnValue().setSucceeded(false);
                 getVDSReturnValue().setExceptionString(command.getVDSReturnValue().getExceptionString());

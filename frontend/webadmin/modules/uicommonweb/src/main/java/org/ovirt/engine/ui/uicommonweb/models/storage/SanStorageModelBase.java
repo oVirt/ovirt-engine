@@ -285,7 +285,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             connection.setport(String.valueOf(model.getPort()));
 
             actionTypes.add(VdcActionType.ConnectStorageToVds);
-            paramerters.add(new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+            paramerters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
             callbacks.add(loginCallback);
         }
 
@@ -342,7 +342,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         tempVar.setuser_name((Boolean) getUseUserAuth().getEntity() ? (String) getUserName().getEntity() : "");
         tempVar.setpassword((Boolean) getUseUserAuth().getEntity() ? (String) getPassword().getEntity() : "");
         DiscoverSendTargetsQueryParameters parameters =
-                new DiscoverSendTargetsQueryParameters(host.getvds_id(), tempVar);
+                new DiscoverSendTargetsQueryParameters(host.getId(), tempVar);
 
         setMessage(null);
         getContainer().StartProgress(null);

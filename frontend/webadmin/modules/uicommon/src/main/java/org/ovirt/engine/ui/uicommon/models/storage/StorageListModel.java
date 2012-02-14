@@ -453,11 +453,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 			NfsStorageModel nfsModel = (NfsStorageModel)model.getSelectedItem();
 			nfsModel.setMessage(null);
 
-			Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "ImportNfs", host.getvds_id(), nfsModel.getPath().getEntity(), nfsModel.getRole() }))).Run();
+			Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "ImportNfs", host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole() }))).Run();
 		}
 		else
 		{
-			Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "ImportSan", host.getvds_id() }))).Run();
+			Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "ImportSan", host.getId() }))).Run();
 		}
 	}
 
@@ -534,7 +534,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 			VDS host = (VDS)model.getHostList().getSelectedItem();
 
 			RemoveStorageDomainParameters tempVar = new RemoveStorageDomainParameters(storage.getid());
-			tempVar.setVdsId(host.getvds_id());
+			tempVar.setVdsId(host.getId());
 			tempVar.setDoFormat((storage.getstorage_domain_type() == StorageDomainType.Data || storage.getstorage_domain_type() == StorageDomainType.Master) ? true : (Boolean)model.getFormat().getEntity());
 			Frontend.RunActionAsyncroniousely(VdcActionType.RemoveStorageDomain, tempVar);
 		}
@@ -835,7 +835,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 		{
 			boolean attach = false;
 
-			returnValue = Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+			returnValue = Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getId()));
 
 			if (returnValue != null && returnValue.getSucceeded())
 			{
@@ -843,14 +843,14 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
 				//Add storage domain.
 				StorageDomainManagementParameter tempVar3 = new StorageDomainManagementParameter(storageDomain);
-				tempVar3.setVdsId(host.getvds_id());
+				tempVar3.setVdsId(host.getId());
 				returnValue = Frontend.RunAction(VdcActionType.AddNFSStorageDomain, tempVar3);
 
 				attach = returnValue != null && returnValue.getSucceeded();
 			}
 
 			//Clean up connection.
-			Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+			Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getId()));
 
 			if (attach)
 			{
@@ -914,7 +914,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
 		if (isNew)
 		{
-			returnValue = Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+			returnValue = Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getId()));
 
 			if (returnValue != null && returnValue.getSucceeded())
 			{
@@ -922,7 +922,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
 				//Add storage domain.
 				StorageDomainManagementParameter tempVar3 = new StorageDomainManagementParameter(storageDomain);
-				tempVar3.setVdsId(host.getvds_id());
+				tempVar3.setVdsId(host.getId());
 				returnValue = Frontend.RunAction(VdcActionType.AddLocalStorageDomain, tempVar3);
 
 				if (returnValue == null || !returnValue.getSucceeded())
@@ -934,7 +934,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 			//Clean up connection in case of storage creation failure.
 			if (removeConnection)
 			{
-				Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+				Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getId()));
 			}
 		}
 		else
@@ -978,7 +978,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 		if (isNew)
 		{
 			AddSANStorageDomainParameters tempVar = new AddSANStorageDomainParameters(storageDomain);
-			tempVar.setVdsId(host.getvds_id());
+			tempVar.setVdsId(host.getId());
 			tempVar.setLunIds(lunIds);
 			returnValue = Frontend.RunAction(VdcActionType.AddSANStorageDomain, tempVar);
 

@@ -616,7 +616,7 @@ public class VmGeneralModel extends EntityModel
                             for (VDS host : hosts)
                             {
                                 if (localVm.getdedicated_vm_for_vds() != null
-                                        && host.getvds_id().equals(localVm.getdedicated_vm_for_vds()))
+                                        && host.getId().equals(localVm.getdedicated_vm_for_vds()))
                                 {
                                     model.setDefaultHost(host.getvds_name());
                                     break;

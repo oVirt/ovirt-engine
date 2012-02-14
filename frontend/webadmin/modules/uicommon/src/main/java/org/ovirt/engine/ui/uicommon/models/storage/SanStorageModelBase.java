@@ -193,7 +193,7 @@ public abstract class SanStorageModelBase extends ListModel implements IStorageM
 		tempVar.setport(String.valueOf(model.getPort()));
 		storage_server_connections connection = tempVar;
 
-		VdcReturnValueBase returnValue = Frontend.RunAction(VdcActionType.ConnectStorageToVds, new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+		VdcReturnValueBase returnValue = Frontend.RunAction(VdcActionType.ConnectStorageToVds, new StorageServerConnectionParametersBase(connection, host.getId()));
 
 		if (returnValue != null && returnValue.getSucceeded())
 		{
@@ -254,7 +254,7 @@ public abstract class SanStorageModelBase extends ListModel implements IStorageM
 		tempVar.setstorage_type(StorageType.ISCSI);
 		tempVar.setuser_name((Boolean)getUseUserAuth().getEntity() ? (String)getUserName().getEntity() : "");
 		tempVar.setpassword((Boolean)getUseUserAuth().getEntity() ? (String)getPassword().getEntity() : "");
-		DiscoverSendTargetsQueryParameters parameters = new DiscoverSendTargetsQueryParameters(host.getvds_id(), tempVar);
+		DiscoverSendTargetsQueryParameters parameters = new DiscoverSendTargetsQueryParameters(host.getId(), tempVar);
 
 		setMessage(null);
 		getContainer().StartProgress(null);

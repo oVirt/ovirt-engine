@@ -565,7 +565,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         // Try to select previously selected host.
         if (oldSelectedItem != null)
         {
-            getHost().setSelectedItem(Linq.FirstOrDefault(hosts, new Linq.HostPredicate(oldSelectedItem.getvds_id())));
+            getHost().setSelectedItem(Linq.FirstOrDefault(hosts, new Linq.HostPredicate(oldSelectedItem.getId())));
         }
 
         // Try to select an SPM host when edit storage.

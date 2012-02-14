@@ -170,7 +170,7 @@ public class BackendVmResourceTest
 
     private VDS getHost() {
         VDS vds = new VDS();
-        vds.setvds_id(GUIDS[2]);
+        vds.setId(GUIDS[2]);
         return vds;
     }
 

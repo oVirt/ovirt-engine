@@ -293,7 +293,7 @@ public class ClusterGuideModel extends GuideModel
             // Try to change host's cluster as neccessary.
             if (host.getvds_group_id() != null && !host.getvds_group_id().equals(cluster.getId()))
             {
-                paramerterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getvds_id()));
+                paramerterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getId()));
 
             }
         }
@@ -316,7 +316,7 @@ public class ClusterGuideModel extends GuideModel
                                         && retVals.get(i).getSucceeded())
                                 {
                                     Frontend.RunAction(VdcActionType.ApproveVds,
-                                            new ApproveVdsParameters(selectedHost.getvds_id()));
+                                            new ApproveVdsParameters(selectedHost.getId()));
                                 }
                             }
                             i++;
@@ -436,7 +436,7 @@ public class ClusterGuideModel extends GuideModel
 
         AddVdsActionParameters vdsActionParams = new AddVdsActionParameters();
         vdsActionParams.setvds(host);
-        vdsActionParams.setVdsId(host.getvds_id());
+        vdsActionParams.setVdsId(host.getId());
         vdsActionParams.setRootPassword((String) model.getRootPassword().getEntity());
 
         model.StartProgress(null);

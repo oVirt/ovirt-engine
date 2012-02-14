@@ -542,7 +542,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
 		boolean removeConnection = false;
 
-		VdcReturnValueBase returnValue = Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+		VdcReturnValueBase returnValue = Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getId()));
 
 		if (returnValue != null && returnValue.getSucceeded())
 		{
@@ -550,7 +550,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
 			//Add storage domain.
 			StorageDomainManagementParameter tempVar4 = new StorageDomainManagementParameter(storageDomain);
-			tempVar4.setVdsId(host.getvds_id());
+			tempVar4.setVdsId(host.getId());
 			returnValue = Frontend.RunAction(VdcActionType.AddLocalStorageDomain, tempVar4);
 
 			if (returnValue == null || !returnValue.getSucceeded())
@@ -562,7 +562,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 		//Clean up connection in case of storage creation failure.
 		if (removeConnection)
 		{
-			Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+			Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getId()));
 		}
 
 
@@ -616,7 +616,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
 		boolean attach = false;
 
-		VdcReturnValueBase returnValue = Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+		VdcReturnValueBase returnValue = Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getId()));
 
 		if (returnValue != null && returnValue.getSucceeded())
 		{
@@ -624,14 +624,14 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
 			//Add storage domain.
 			StorageDomainManagementParameter tempVar4 = new StorageDomainManagementParameter(storageDomain);
-			tempVar4.setVdsId(host.getvds_id());
+			tempVar4.setVdsId(host.getId());
 			returnValue = Frontend.RunAction(VdcActionType.AddNFSStorageDomain, tempVar4);
 
 			attach = returnValue != null && returnValue.getSucceeded();
 		}
 
 		//Clean up connection.
-		Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+		Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, host.getId()));
 
 		if (attach)
 		{
@@ -680,7 +680,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 		storage_domain_static storageDomain = tempVar;
 
 		AddSANStorageDomainParameters tempVar2 = new AddSANStorageDomainParameters(storageDomain);
-		tempVar2.setVdsId(host.getvds_id());
+		tempVar2.setVdsId(host.getId());
 		tempVar2.setLunIds(lunIds);
 		VdcReturnValueBase returnValue = Frontend.RunAction(VdcActionType.AddSANStorageDomain, tempVar2);
 
@@ -955,7 +955,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 			//Try to change host's cluster as neccessary.
 			if (host.getvds_group_id() != null && !host.getvds_group_id().equals(cluster.getId()))
 			{
-				paramerterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getvds_id()));
+				paramerterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getId()));
 
 			}
 		}
@@ -977,7 +977,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 				{
 					if (selectedHost.getstatus() == VDSStatus.PendingApproval && retVals.get(i) != null && retVals.get(i).getSucceeded())
 					{
-						Frontend.RunAction(VdcActionType.ApproveVds, new ApproveVdsParameters(selectedHost.getvds_id()));
+						Frontend.RunAction(VdcActionType.ApproveVds, new ApproveVdsParameters(selectedHost.getId()));
 					}
 				}
 				i++;
@@ -1071,7 +1071,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 		host.setPmOptionsMap((Boolean)model.getIsPm().getEntity() ? new ValueObjectMap(model.getPmOptionsMap(), false) : null);
 
 		AddVdsActionParameters addVdsParams = new AddVdsActionParameters();
-		addVdsParams.setVdsId(host.getvds_id());
+		addVdsParams.setVdsId(host.getId());
 		addVdsParams.setvds(host);
 		addVdsParams.setRootPassword((String)model.getRootPassword().getEntity());
 

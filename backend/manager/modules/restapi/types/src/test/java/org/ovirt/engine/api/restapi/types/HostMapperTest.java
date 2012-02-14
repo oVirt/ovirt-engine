@@ -28,7 +28,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     @Override
     protected VDS getInverse(VdsStatic to) {
         VDS inverse = new VDS();
-        inverse.setvds_id(to.getId());
+        inverse.setId(to.getId());
         inverse.setvds_name(to.getvds_name());
         inverse.sethost_name(to.gethost_name());
         inverse.setvds_group_id(to.getvds_group_id());
@@ -52,7 +52,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     @Test
     public void testCpuMapping() {
         VDS vds = new VDS();
-        vds.setvds_id(Guid.Empty);
+        vds.setId(Guid.Empty);
         vds.setcpu_cores(2);
         vds.setcpu_sockets(3);
         vds.setcpu_model("some cpu model");
@@ -68,7 +68,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     @Test
     public void testVmSummaryMapping() {
         VDS vds = new VDS();
-        vds.setvds_id(Guid.Empty);
+        vds.setId(Guid.Empty);
         vds.setvm_count(2);
         vds.setvm_active(1);
         vds.setvm_migrating(1);
@@ -81,7 +81,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     @Test
     public void testMemoryMapping() {
         VDS vds = new VDS();
-        vds.setvds_id(Guid.Empty);
+        vds.setId(Guid.Empty);
         vds.setphysical_mem_mb(4000);
         Host host = HostMapper.map(vds, (Host)null);
         assertNotNull(host.getMemory());

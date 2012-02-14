@@ -861,7 +861,7 @@ public final class Linq
 
 		public boolean Match(VDS source)
 		{
-			return source.getvds_id().equals(id);
+			return source.getId().equals(id);
 		}
 	}
 

@@ -1290,7 +1290,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
         else
         {
-            gettempVm().setdedicated_vm_for_vds(defaultHost.getvds_id());
+            gettempVm().setdedicated_vm_for_vds(defaultHost.getId());
         }
 
         gettempVm().setMigrationSupport(MigrationSupport.MIGRATABLE);
@@ -1529,7 +1529,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             for (Object item : getVmModel().getDefaultHost().getItems())
             {
                 VDS a = (VDS) item;
-                if (a.getvds_id().equals(((vm.getdedicated_vm_for_vds() != null) ? vm.getdedicated_vm_for_vds()
+                if (a.getId().equals(((vm.getdedicated_vm_for_vds() != null) ? vm.getdedicated_vm_for_vds()
                         : NGuid.Empty)))
                 {
                     host = a;

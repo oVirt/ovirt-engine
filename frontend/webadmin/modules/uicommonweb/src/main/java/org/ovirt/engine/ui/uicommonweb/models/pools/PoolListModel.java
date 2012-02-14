@@ -282,7 +282,7 @@ public class PoolListModel extends ListWithDetailsModel
                                                 for (Object item : model.getDefaultHost().getItems())
                                                 {
                                                     VDS a = (VDS) item;
-                                                    if (a.getvds_id()
+                                                    if (a.getId()
                                                             .equals(((vm.getdedicated_vm_for_vds()) != null) ? vm.getdedicated_vm_for_vds()
                                                                     : Guid.Empty))
                                                     {
@@ -586,7 +586,7 @@ public class PoolListModel extends ListWithDetailsModel
                         }
                         else
                         {
-                            default_host = defaultHost.getvds_id();
+                            default_host = defaultHost.getId();
                         }
 
                         MigrationSupport migrationSupport = MigrationSupport.MIGRATABLE;

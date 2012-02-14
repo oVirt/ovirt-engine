@@ -525,7 +525,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             };
 
             Frontend.RunQuery(VdcQueryType.GetVdsInterfacesByVdsId,
-                    new GetVdsByVdsIdParameters(host.getvds_id()),
+                    new GetVdsByVdsIdParameters(host.getId()),
                     _asyncQuery);
         }
         else

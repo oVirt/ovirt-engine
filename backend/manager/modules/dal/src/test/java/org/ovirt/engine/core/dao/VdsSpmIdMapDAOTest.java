@@ -27,7 +27,7 @@ public class VdsSpmIdMapDAOTest extends BaseDAOTestCase {
         dao = prepareDAO(dbFacade.getVdsSpmIdMapDAO());
         vdsDao = prepareDAO(dbFacade.getVdsDAO());
         existingVds = vdsDao.get(EXISTING_VDS_ID);
-        existingVdsSpmIdMap = dao.get(existingVds.getvds_id());
+        existingVdsSpmIdMap = dao.get(existingVds.getId());
         newVdsSpmIdMap = new vds_spm_id_map(FREE_STORAGE_POOL_ID, FREE_VDS_ID, 1);
     }
 

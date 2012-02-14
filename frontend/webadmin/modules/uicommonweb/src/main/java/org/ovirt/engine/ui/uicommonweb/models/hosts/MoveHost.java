@@ -92,14 +92,14 @@ public class MoveHost extends ListModel
                 EntityModel entity = (EntityModel) item;
                 if (entity.getIsSelected())
                 {
-                    previouslySelectedHostIDs.add(((VDS) entity.getEntity()).getvds_id());
+                    previouslySelectedHostIDs.add(((VDS) entity.getEntity()).getId());
                 }
             }
         }
         setItems(items);
         for (EntityModel entity : items)
         {
-            entity.setIsSelected(previouslySelectedHostIDs.contains(((VDS) entity.getEntity()).getvds_id()));
+            entity.setIsSelected(previouslySelectedHostIDs.contains(((VDS) entity.getEntity()).getId()));
         }
     }
 

@@ -136,7 +136,7 @@ public class VdsManager {
 
     private VdsManager(VDS vds) {
         _vds = vds;
-        _vdsId = vds.getvds_id();
+        _vdsId = vds.getId();
         mUnrespondedAttempts = new AtomicInteger();
         mFailedToRunVmAttempts = new AtomicInteger();
         log.info("Eneterd VdsManager:constructor");
@@ -248,7 +248,7 @@ public class VdsManager {
                                 if (!getInitialized() && getVds().getstatus() != VDSStatus.NonResponsive
                                         && getVds().getstatus() != VDSStatus.PendingApproval) {
                                     log.info("Initializing Host: " + getVds().getvds_name());
-                                    ResourceManager.getInstance().HandleVdsFinishedInit(_vds.getvds_id());
+                                    ResourceManager.getInstance().HandleVdsFinishedInit(_vds.getId());
                                     setInitialized(true);
                                 }
                             } catch (VDSNetworkException e) {
@@ -272,7 +272,7 @@ public class VdsManager {
                     private void logFailureMessage(RuntimeException ex) {
                         log.warnFormat(
                                 "ResourceManager::refreshVdsRunTimeInfo::Failed to refresh VDS , vds = {0} : {1}, error = '{2}', continuing.",
-                                _vds.getvds_id(),
+                                _vds.getId(),
                                 _vds.getvds_name(),
                                 ExceptionUtils.getMessage(ex));
                     }
@@ -284,7 +284,7 @@ public class VdsManager {
                         // Get vds data for updating domains list, ignoring vds which is down, since it's not connected to
                         // the storage anymore (so there is no sense in updating the domains list in that case).
                         if (_vds != null && _vds.getstatus() != VDSStatus.Maintenance) {
-                            vdsId = _vds.getvds_id();
+                            vdsId = _vds.getId();
                             vdsName = _vds.getvds_name();
                             storagePoolId = _vds.getstorage_pool_id();
                             domainsList = _vds.getDomains();
@@ -329,18 +329,18 @@ public class VdsManager {
         if (_vds.getstatus() != VDSStatus.Initializing && _vds.getstatus() != VDSStatus.NonOperational) {
             setStatus(VDSStatus.Initializing, _vds);
             UpdateDynamicData(_vds.getDynamicData());
-            AuditLogableBase logable = new AuditLogableBase(_vds.getvds_id());
+            AuditLogableBase logable = new AuditLogableBase(_vds.getId());
             logable.AddCustomValue("ErrorMessage", ex.getMessage());
             AuditLogDirector.log(logable, AuditLogType.VDS_INITIALIZING);
             log.warnFormat(
                     "ResourceManager::refreshVdsRunTimeInfo::Failed to refresh VDS , vds = {0} : {1}, error = {2}, continuing.",
-                    _vds.getvds_id(),
+                    _vds.getId(),
                     _vds.getvds_name(),
                     ex.getMessage());
 
             String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "onTimerHandleVdsRecovering", new Class[0],
                     new Object[0], VDS_RECOVERY_TIMEOUT_IN_MINUTES, TimeUnit.MINUTES);
-            recoveringJobIdMap.put(_vds.getvds_id(), jobId);
+            recoveringJobIdMap.put(_vds.getId(), jobId);
         }
     }
 
@@ -353,7 +353,7 @@ public class VdsManager {
                 ResourceManager
                             .getInstance()
                             .getEventListener()
-                            .VdsNonOperational(vds.getvds_id(),
+                            .VdsNonOperational(vds.getId(),
                                     NonOperationalReason.TIMEOUT_RECOVERING_FROM_CRASH,
                                     true,
                                     true,
@@ -362,7 +362,7 @@ public class VdsManager {
             } catch (RuntimeException exp) {
                 log.errorFormat(
                             "HandleVdsRecoveringException::Error in recovery timer treatment, vds = {0} : {1}, error = {2}.",
-                            vds.getvds_id(),
+                            vds.getId(),
                             vds.getvds_name(),
                             exp.getMessage());
             }
@@ -421,7 +421,7 @@ public class VdsManager {
             if (vds != null) {
                 UpdateDynamicData(vds.getDynamicData());
                 // always check flags in case host cluster changed
-                ResourceManager.getInstance().getEventListener().ProcessOnCpuFlagsChange(vds.getvds_id());
+                ResourceManager.getInstance().getEventListener().ProcessOnCpuFlagsChange(vds.getId());
             }
         }
     }
@@ -509,10 +509,10 @@ public class VdsManager {
                 && mFailedToRunVmAttempts.incrementAndGet() >= Config
                         .<Integer> GetValue(ConfigValues.NumberOfFailedRunsOnVds)) {
             ResourceManager.getInstance().runVdsCommand(VDSCommandType.SetVdsStatus,
-                    new SetVdsStatusVDSCommandParameters(vds.getvds_id(), VDSStatus.Error));
+                    new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.Error));
 
             SchedulerUtilQuartzImpl.getInstance().resumeJob(duringFailureJobId);
-            AuditLogableBase logable = new AuditLogableBase(vds.getvds_id());
+            AuditLogableBase logable = new AuditLogableBase(vds.getId());
             logable.AddCustomValue("Time", Config.<Integer> GetValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes)
                     .toString());
             AuditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_RUN_VMS);
@@ -531,7 +531,7 @@ public class VdsManager {
      */
     public void SuccededToRunVm(Guid vmId) {
         mUnrespondedAttempts.set(0);
-        ResourceManager.getInstance().SuccededToRunVm(vmId, _vds.getvds_id());
+        ResourceManager.getInstance().SuccededToRunVm(vmId, _vds.getId());
     }
 
     public VDSStatus refreshCapabilities(RefObject<Boolean> cpuFlagsHasChanged, VDS vds) {
@@ -569,7 +569,7 @@ public class VdsManager {
                 ResourceManager
                         .getInstance()
                         .getEventListener()
-                        .VdsNonOperational(vds.getvds_id(), NonOperationalReason.KVM_NOT_RUNNING, true, true,
+                        .VdsNonOperational(vds.getId(), NonOperationalReason.KVM_NOT_RUNNING, true, true,
                                 Guid.Empty);
                 vds.setstatus(VDSStatus.NonOperational);
                 returnStatus = vds.getstatus();
@@ -623,9 +623,9 @@ public class VdsManager {
             setStatus(VDSStatus.NonResponsive, vds);
             log.errorFormat(
                     "VDS::handleNetworkException Server failed to respond,  vds_id = {0}, vds_name = {1}, error = {2}",
-                    vds.getvds_id(), vds.getvds_name(), ex.getMessage());
+                    vds.getId(), vds.getvds_name(), ex.getMessage());
 
-            AuditLogableBase logable = new AuditLogableBase(vds.getvds_id());
+            AuditLogableBase logable = new AuditLogableBase(vds.getId());
             AuditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
             if (ResourceManager.getInstance().getEventListener() != null) {
                 ResourceManager.getInstance().getEventListener().VdsNotResponding(vds);
@@ -653,14 +653,14 @@ public class VdsManager {
         case NonResponsive:
             log.debugFormat(
                     "ResourceManager::refreshVdsRunTimeInfo::Failed to refresh VDS , vds = {0} : {1}, VDS Network Error, continuing.\n{2}",
-                    _vds.getvds_id(),
+                    _vds.getId(),
                     _vds.getvds_name(),
                     e.getMessage());
             break;
         default:
             log.warnFormat(
                     "ResourceManager::refreshVdsRunTimeInfo::Failed to refresh VDS , vds = {0} : {1}, VDS Network Error, continuing.\n{2}",
-                    _vds.getvds_id(),
+                    _vds.getId(),
                     _vds.getvds_name(),
                     e.getMessage());
         }

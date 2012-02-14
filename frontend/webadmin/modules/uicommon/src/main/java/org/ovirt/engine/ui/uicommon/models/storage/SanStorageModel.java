@@ -126,7 +126,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
 		getContainer().StartProgress(null);
 
-		Frontend.RunQuery(VdcQueryType.GetDeviceList, new GetDeviceListQueryParameters(host.getvds_id(), getType()), new AsyncQuery(this,
+		Frontend.RunQuery(VdcQueryType.GetDeviceList, new GetDeviceListQueryParameters(host.getId(), getType()), new AsyncQuery(this,
 		new INewAsyncCallback() {
 			@Override
 			public void OnSuccess(Object target, Object returnValue) {

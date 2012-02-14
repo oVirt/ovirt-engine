@@ -2781,7 +2781,7 @@ public final class DataProvider
         }
         else if (entity instanceof VDS)
         {
-            return ((VDS) entity).getvds_id();
+            return ((VDS) entity).getId();
         }
         else if (entity instanceof storage_domains)
         {

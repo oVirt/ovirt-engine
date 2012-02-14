@@ -27,7 +27,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                     VDSReturnValue vdsReturnValue = ResourceManager
                             .getInstance()
                             .runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
-                                    new VdsIdVDSCommandParametersBase(getVds().getvds_id()));
+                                    new VdsIdVDSCommandParametersBase(getVds().getId()));
                     performSpmStop =
                             vdsReturnValue.getReturnValue() != null ? ((java.util.HashMap<Guid, AsyncTaskStatus>) vdsReturnValue.getReturnValue()).isEmpty()
                                     : true;

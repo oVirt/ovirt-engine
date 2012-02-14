@@ -122,7 +122,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
         @Override
         public VDS mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             final VDS entity = new VDS();
-            entity.setvds_id(Guid.createGuidFromString(rs
+            entity.setId(Guid.createGuidFromString(rs
                     .getString("vds_id")));
             entity.setvds_group_id(Guid.createGuidFromString(rs
                     .getString("vds_group_id")));

@@ -67,7 +67,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                         } catch (RepositoryException ex) {
                             log.errorFormat(
                                     "VDS::destroy Failed to update vds status in database,  vds = {1} : {2}, error = {3}",
-                                    getVds().getvds_id(),
+                                    getVds().getId(),
                                     getVds().getvds_name(),
                                     ex.getMessage());
                             log.error("Exception: ", ex);
@@ -86,7 +86,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
             } else if (vdsBrokerCommand.getVDSReturnValue().getExceptionObject() != null) {
                 log.errorFormat("VDS::destroy Failed destroying vm '{0}' in vds = {1} : {2}, error = {3}",
                         parameters.getVmId(),
-                        getVds().getvds_id(),
+                        getVds().getId(),
                         getVds().getvds_name(),
                         vdsBrokerCommand
                         .getVDSReturnValue().getExceptionString());

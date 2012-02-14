@@ -311,7 +311,7 @@ public class HostGeneralModel extends EntityModel
 
 	public void SaveNICsConfig()
 	{
-		Frontend.RunMultipleAction(VdcActionType.CommitNetworkChanges, new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new VdsActionParameters(getEntity().getvds_id()) })),
+		Frontend.RunMultipleAction(VdcActionType.CommitNetworkChanges, new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new VdsActionParameters(getEntity().getId()) })),
 		new IFrontendMultipleActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendMultipleActionAsyncResult  result) {
@@ -380,7 +380,7 @@ public class HostGeneralModel extends EntityModel
 
 		UpdateVdsActionParameters param = new UpdateVdsActionParameters();
 		param.setvds(getEntity());
-		param.setVdsId(getEntity().getvds_id());
+		param.setVdsId(getEntity().getId());
 		param.setRootPassword((String)model.getRootPassword().getEntity());
 		param.setIsReinstallOrUpgrade(true);
 		param.setInstallVds(true);

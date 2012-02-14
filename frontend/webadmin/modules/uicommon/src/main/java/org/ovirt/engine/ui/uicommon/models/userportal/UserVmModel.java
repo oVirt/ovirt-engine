@@ -1505,7 +1505,7 @@ public class UserVmModel extends Model
 			NGuid vds_id = null;
 			if (getDefaultHost().getSelectedItem() != null)
 			{
-				vds_id = ((VDS)getDefaultHost().getSelectedItem()).getvds_id();
+				vds_id = ((VDS)getDefaultHost().getSelectedItem()).getId();
 				vds_id = vds_id.equals(Guid.Empty) ? null : vds_id;
 			}
 						AsyncQuery _asyncQuery = new AsyncQuery();

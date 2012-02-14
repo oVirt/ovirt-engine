@@ -87,7 +87,7 @@ public abstract class VdsIdVDSCommandBase<P extends VdsIdVDSCommandParametersBas
             log.errorFormat(
                     "ResourceManager::Failed save vds dynamic to DB. vm: {0} in vds = {1} : {2} error = {3}. command name: {3}.",
                     vm.getvm_name(),
-                    vds.getvds_id(),
+                    vds.getId(),
                     vds.getvds_name(),
                     ex.getMessage(),
                     getCommandName());

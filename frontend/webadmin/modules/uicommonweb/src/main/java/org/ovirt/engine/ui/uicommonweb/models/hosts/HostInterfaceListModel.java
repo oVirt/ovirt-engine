@@ -150,8 +150,8 @@ public class HostInterfaceListModel extends SearchableListModel
             VDS currentItem = ((VDS) super.getEntity());
             VDS newItem = value;
 
-            Guid currentItemId = currentItem.getvds_id().getValue();
-            Guid newItemId = newItem.getvds_id().getValue();
+            Guid currentItemId = currentItem.getId().getValue();
+            Guid newItemId = newItem.getId().getValue();
 
             if (currentItemId.equals(newItemId))
             {
@@ -371,7 +371,7 @@ public class HostInterfaceListModel extends SearchableListModel
             }
         };
 
-        GetVdsByVdsIdParameters tempVar = new GetVdsByVdsIdParameters(getEntity().getvds_id());
+        GetVdsByVdsIdParameters tempVar = new GetVdsByVdsIdParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetVdsInterfacesByVdsId, tempVar, _asyncQuery);
 
@@ -980,7 +980,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         DataProvider.GetInterfaceOptionsForEditNetwork(getOriginalItems(),
                                 item,
                                 networkToEdit,
-                                getEntity().getvds_id(),
+                                getEntity().getId(),
                                 tempRef_defaultInterfaceName);
                 defaultInterfaceName = tempRef_defaultInterfaceName.argvalue;
                 managementModel.getInterface().setItems(interfaces);
@@ -1134,7 +1134,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         VdcActionType actionType = VdcActionType.UpdateNetworkToVdsInterface;
         UpdateNetworkToVdsParameters parameters =
-                new UpdateNetworkToVdsParameters(getEntity().getvds_id(),
+                new UpdateNetworkToVdsParameters(getEntity().getId(),
                         network,
                         new java.util.ArrayList<VdsNetworkInterface>(java.util.Arrays.asList(new VdsNetworkInterface[] { nic })));
 
@@ -1193,7 +1193,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                     ((HostManagementNetworkModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                             if ((Boolean) commitChanges.getEntity())
                             {
-                                SaveNetworkConfig(hostInterfaceListModel.getEntity().getvds_id(),
+                                SaveNetworkConfig(hostInterfaceListModel.getEntity().getId(),
                                         hostInterfaceListModel);
                             }
                             else
@@ -1440,7 +1440,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         }
                     };
                     Frontend.RunQuery(VdcQueryType.GetVdsFreeBondsByVdsId,
-                            new GetVdsByVdsIdParameters(host.getvds_id()),
+                            new GetVdsByVdsIdParameters(host.getId()),
                             _asyncQuery1);
                 }
             }
@@ -1554,7 +1554,7 @@ public class HostInterfaceListModel extends SearchableListModel
         if (interfaceWithNetwork != null)
         {
             UpdateNetworkToVdsParameters parameters =
-                    new UpdateNetworkToVdsParameters(host.getvds_id(), net, selectedItems);
+                    new UpdateNetworkToVdsParameters(host.getId(), net, selectedItems);
             parameters.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
             parameters.setOldNetworkName(interfaceWithNetwork.getNetworkName());
 
@@ -1607,7 +1607,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                         ((HostBondInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                 if ((Boolean) commitChanges.getEntity())
                                 {
-                                    SaveNetworkConfig(hostInterfaceListModel.getEntity().getvds_id(),
+                                    SaveNetworkConfig(hostInterfaceListModel.getEntity().getId(),
                                             hostInterfaceListModel);
                                 }
                                 else
@@ -1643,7 +1643,7 @@ public class HostInterfaceListModel extends SearchableListModel
             // BootProtocol = model.BootProtocol
             // };
             AddBondParameters parameters =
-                    new AddBondParameters(host.getvds_id(),
+                    new AddBondParameters(host.getId(),
                             ((VdsNetworkInterface) model.getBond().getSelectedItem()).getName(),
                             net,
                             nics);
@@ -1691,7 +1691,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                         ((HostBondInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                 if ((Boolean) commitChanges.getEntity())
                                 {
-                                    SaveNetworkConfig(hostInterfaceListModel.getEntity().getvds_id(),
+                                    SaveNetworkConfig(hostInterfaceListModel.getEntity().getId(),
                                             hostInterfaceListModel);
                                 }
                                 else
@@ -1758,7 +1758,7 @@ public class HostInterfaceListModel extends SearchableListModel
         setcurrentModel(model);
 
         Frontend.RunAction(VdcActionType.DetachNetworkFromVdsInterface,
-                new AttachNetworkToVdsParameters(getEntity().getvds_id(), net, nic),
+                new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
@@ -1771,7 +1771,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                     ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                             if ((Boolean) commitChanges.getEntity())
                             {
-                                SaveNetworkConfig(hostInterfaceListModel.getEntity().getvds_id(),
+                                SaveNetworkConfig(hostInterfaceListModel.getEntity().getId(),
                                         hostInterfaceListModel);
                             }
                             else
@@ -1854,7 +1854,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 setcurrentModel(model);
 
                 Frontend.RunAction(VdcActionType.DetachNetworkFromVdsInterface,
-                        new AttachNetworkToVdsParameters(getEntity().getvds_id(), net, nic),
+                        new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void Executed(FrontendActionAsyncResult result) {
@@ -1868,7 +1868,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                             ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                     if ((Boolean) commitChanges.getEntity())
                                     {
-                                        SaveNetworkConfig(hostInterfaceListModel.getEntity().getvds_id(),
+                                        SaveNetworkConfig(hostInterfaceListModel.getEntity().getId(),
                                                 hostInterfaceListModel);
                                     }
                                     else
@@ -1939,13 +1939,13 @@ public class HostInterfaceListModel extends SearchableListModel
             if (((StringHelper.isNullOrEmpty(nic.getNetworkName()) && (nic.getBonded() == null || !nic.getBonded())) && !isUpdateVlan)
                     || (bondWithVlans && (!vLanAttached && network.getvlan_id() != null)))
             {
-                parameters = new AttachNetworkToVdsParameters(getEntity().getvds_id(), network, nic);
+                parameters = new AttachNetworkToVdsParameters(getEntity().getId(), network, nic);
                 actionType = VdcActionType.AttachNetworkToVdsInterface;
             }
             else
             {
                 parameters =
-                        new UpdateNetworkToVdsParameters(getEntity().getvds_id(),
+                        new UpdateNetworkToVdsParameters(getEntity().getId(),
                                 network,
                                 new java.util.ArrayList<VdsNetworkInterface>(java.util.Arrays.asList(new VdsNetworkInterface[] { nic })));
                 parameters.setOldNetworkName((nic.getNetworkName() != null ? nic.getNetworkName() : network.getname()));
@@ -1997,7 +1997,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                         ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                 if ((Boolean) commitChanges.getEntity())
                                 {
-                                    SaveNetworkConfig(hostInterfaceListModel.getEntity().getvds_id(),
+                                    SaveNetworkConfig(hostInterfaceListModel.getEntity().getId(),
                                             hostInterfaceListModel);
                                 }
                                 else
@@ -2065,7 +2065,7 @@ public class HostInterfaceListModel extends SearchableListModel
         setcurrentModel(model);
 
         Frontend.RunAction(VdcActionType.DetachNetworkFromVdsInterface,
-                new AttachNetworkToVdsParameters(getEntity().getvds_id(), net, nic),
+                new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
@@ -2078,7 +2078,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                     ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                             if ((Boolean) commitChanges.getEntity())
                             {
-                                SaveNetworkConfig(hostInterfaceListModel.getEntity().getvds_id(),
+                                SaveNetworkConfig(hostInterfaceListModel.getEntity().getId(),
                                         hostInterfaceListModel);
                             }
                             else
@@ -2191,7 +2191,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
         else if (command == getSaveNetworkConfigCommand())
         {
-            SaveNetworkConfig(getEntity().getvds_id(), this);
+            SaveNetworkConfig(getEntity().getId(), this);
         }
 
         else if (StringHelper.stringsEqual(command.getName(), "OnSave"))

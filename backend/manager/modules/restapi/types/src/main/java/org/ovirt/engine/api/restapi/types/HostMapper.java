@@ -116,7 +116,7 @@ public class HostMapper {
     @Mapping(from = VDS.class, to = Host.class)
     public static Host map(VDS entity, Host template) {
         Host model = template != null ? template : new Host();
-        model.setId(entity.getvds_id().toString());
+        model.setId(entity.getId().toString());
         model.setName(entity.getvds_name());
         if (entity.getvds_group_id() != null) {
             Cluster cluster = new Cluster();

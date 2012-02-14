@@ -267,7 +267,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
             Object[] keys = new Object[getSelectedItems().size()];
             for (int i = 0; i < getSelectedItems().size(); i++)
             {
-                keys[i] = ((VDS) getSelectedItems().get(i)).getvds_id();
+                keys[i] = ((VDS) getSelectedItems().get(i)).getId();
             }
             return keys;
         }
@@ -337,7 +337,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            hostIds.add(vds.getvds_id());
+            hostIds.add(vds.getId());
         }
 
         attachedTagsToEntities = new java.util.HashMap<Guid, Boolean>();
@@ -410,7 +410,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            hostIds.add(vds.getvds_id());
+            hostIds.add(vds.getId());
         }
 
         // prepare attach/detach lists
@@ -484,7 +484,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
             VDS vds = (VDS) item;
             FenceVdsManualyParameters parameters = new FenceVdsManualyParameters(true);
             parameters.setStoragePoolId(vds.getstorage_pool_id());
-            parameters.setVdsId(vds.getvds_id());
+            parameters.setVdsId(vds.getId());
             list.add(parameters);
         }
 
@@ -738,7 +738,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         if (model.getIsNew())
         {
             AddVdsActionParameters parameters = new AddVdsActionParameters();
-            parameters.setVdsId(host.getvds_id());
+            parameters.setVdsId(host.getId());
             parameters.setvds(host);
             parameters.setRootPassword((String) model.getRootPassword().getEntity());
             parameters.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
@@ -760,14 +760,14 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         {
             UpdateVdsActionParameters parameters = new UpdateVdsActionParameters();
             parameters.setvds(host);
-            parameters.setVdsId(host.getvds_id());
+            parameters.setVdsId(host.getId());
             parameters.setRootPassword("");
             parameters.setInstallVds(false);
 
             if (!oldClusterId.equals(newClusterId))
             {
                 Frontend.RunAction(VdcActionType.ChangeVDSCluster,
-                        new ChangeVDSClusterParameters(newClusterId, host.getvds_id()),
+                        new ChangeVDSClusterParameters(newClusterId, host.getId()),
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void Executed(FrontendActionAsyncResult result) {
@@ -834,7 +834,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         VDS vds = (VDS) getSelectedItem();
 
         Frontend.RunMultipleAction(VdcActionType.ApproveVds,
-                new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new ApproveVdsParameters(vds.getvds_id()) })),
+                new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new ApproveVdsParameters(vds.getId()) })),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendMultipleActionAsyncResult result) {
@@ -887,7 +887,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            list.add(new VdsActionParameters(vds.getvds_id()));
+            list.add(new VdsActionParameters(vds.getId()));
         }
 
         model.StartProgress(null);
@@ -911,7 +911,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            list.add(new VdsActionParameters(vds.getvds_id()));
+            list.add(new VdsActionParameters(vds.getId()));
         }
 
         Frontend.RunMultipleAction(VdcActionType.ActivateVds, list,
@@ -969,7 +969,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            vdss.add(vds.getvds_id());
+            vdss.add(vds.getId());
         }
         list.add(new MaintananceNumberOfVdssParameters(vdss, false));
 
@@ -1025,7 +1025,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
             java.util.ArrayList<storage_pool> dataCenters,
             boolean isEditWithPMemphasis)
     {
-        model.setHostId(vds.getvds_id());
+        model.setHostId(vds.getId());
         model.getRootPassword().setIsAvailable(false);
         model.getOverrideIpTables().setIsAvailable(false);
         model.setOriginalName(vds.getvds_name());
@@ -1162,7 +1162,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            list.add(new FenceVdsActionParameters(vds.getvds_id(), FenceActionType.Restart));
+            list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.Restart));
         }
 
         model.StartProgress(null);
@@ -1186,7 +1186,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            list.add(new FenceVdsActionParameters(vds.getvds_id(), FenceActionType.Start));
+            list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.Start));
         }
 
         Frontend.RunMultipleAction(VdcActionType.StartVds, list,
@@ -1237,7 +1237,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            list.add(new FenceVdsActionParameters(vds.getvds_id(), FenceActionType.Stop));
+            list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.Stop));
         }
 
         model.StartProgress(null);
@@ -1434,7 +1434,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         {
             VDS host = (VDS) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.FirstOrDefault(Linq.<VDS> Cast(getItems()), new Linq.HostPredicate(host.getvds_id())));
+            setSelectedItem(Linq.FirstOrDefault(Linq.<VDS> Cast(getItems()), new Linq.HostPredicate(host.getId())));
         }
     }
 

@@ -114,7 +114,7 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
         getContainer().StartProgress(null);
 
         Frontend.RunQuery(VdcQueryType.GetExistingStorageDomainList,
-                new GetExistingStorageDomainListParameters(host.getvds_id(), getType(), getRole(), ""),
+                new GetExistingStorageDomainListParameters(host.getId(), getType(), getRole(), ""),
                 new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override

@@ -294,7 +294,7 @@ public class BackendStorageDomainsResource
                : storageDomain.getHost().isSetName()
                  ? getEntity(VDS.class,
                              SearchType.VDS,
-                             "Hosts: name=" + storageDomain.getHost().getName()).getvds_id()
+                             "Hosts: name=" + storageDomain.getHost().getName()).getId()
                  : null;
     }
 

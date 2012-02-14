@@ -100,7 +100,7 @@ public class BackendVmsResource extends
     }
 
     private String getHostId(String hostName) {
-        return getEntity(VDS.class, SearchType.VDS, "Hosts: name=" + hostName).getvds_id().toString();
+        return getEntity(VDS.class, SearchType.VDS, "Hosts: name=" + hostName).getId().toString();
     }
 
     private Response cloneVmFromTemplate(VmStatic staticVm, Disks disks, Guid templateId) {

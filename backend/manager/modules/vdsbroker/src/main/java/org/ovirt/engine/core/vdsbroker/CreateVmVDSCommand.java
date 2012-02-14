@@ -141,7 +141,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         if (!command.getVDSReturnValue().getSucceeded() && command.getVDSReturnValue().getExceptionObject() != null) {
             if (command.getVDSReturnValue().getExceptionObject() instanceof VDSGenericException) {
                 log.errorFormat("VDS::create Failed creating vm '{0}' in vds = {1} : {2} error = {3}",
-                        getParameters().getVm().getvm_name(), getVds().getvds_id(), getVds().getvds_name(),
+                        getParameters().getVm().getvm_name(), getVds().getId(), getVds().getvds_name(),
                         command.getVDSReturnValue().getExceptionString());
                 getVDSReturnValue().setReturnValue(VMStatus.Down);
                 getVDSReturnValue().setSucceeded(false);
@@ -168,13 +168,13 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
             } catch (RuntimeException ex) {
                 log.infoFormat(
                         "VDS::Failed save vm static to DB, try number {4}. vm: {0} in vds = {1} : {2} error = {3}",
-                        getParameters().getVm().getvm_name(), getVds().getvds_id(), getVds().getvds_name(),
+                        getParameters().getVm().getvm_name(), getVds().getId(), getVds().getvds_name(),
                         ex.getMessage(), i);
                 ThreadUtils.sleep(1000);
             }
         }
         log.errorFormat("VDS::Failed save vm static to DB. vm: {0} in vds = {1} : {2}.", getParameters()
-                .getVm().getvm_name(), getVds().getvds_id(), getVds().getvds_name());
+                .getVm().getvm_name(), getVds().getId(), getVds().getvds_name());
     }
 
     private static Log log = LogFactory.getLog(CreateVmVDSCommand.class);

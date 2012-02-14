@@ -69,7 +69,7 @@ public class ResourceManager implements IVdsEventListener {
             if (helper_vds.getstatus() == VDSStatus.NonResponsive) // LINQ 29456
                                                                    // fix
             {
-                nonResponsiveVdss.add(helper_vds.getvds_id()); // LINQ 29456 fix
+                nonResponsiveVdss.add(helper_vds.getId()); // LINQ 29456 fix
             }
         } // LINQ 29456 fix
 
@@ -104,7 +104,7 @@ public class ResourceManager implements IVdsEventListener {
             // Populate the VDS dictionary
             for (VDS curVds : allVdsList) {
                 log.debugFormat("Putting thread to sleep for {0} milliseconds before adding VDS {1}, with name {2}",
-                        sleepTimout, curVds.getvds_id(), curVds.getvds_name());
+                        sleepTimout, curVds.getId(), curVds.getvds_name());
                 ThreadUtils.sleep(sleepTimout);
                 AddVds(curVds, true);
             }
@@ -215,8 +215,8 @@ public class ResourceManager implements IVdsEventListener {
             vds.setpending_vcpus_count(0);
             vdsManager.UpdateDynamicData(vds.getDynamicData());
         }
-        _vdsManagersDict.put(vds.getvds_id(), vdsManager);
-        log.infoFormat("ResourceManager::AddVds - VDS {0} was added to the Resource Manager", vds.getvds_id());
+        _vdsManagersDict.put(vds.getId(), vdsManager);
+        log.infoFormat("ResourceManager::AddVds - VDS {0} was added to the Resource Manager", vds.getId());
 
     }
 

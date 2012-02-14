@@ -51,7 +51,7 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
             taskStatus = (AsyncTaskStatus) ResourceManager
                     .getInstance()
                     .runVdsCommand(VDSCommandType.HSMGetTaskStatus,
-                            new HSMTaskGuidBaseVDSCommandParameters(getVds().getvds_id(), taskId)).getReturnValue();
+                            new HSMTaskGuidBaseVDSCommandParameters(getVds().getId(), taskId)).getReturnValue();
             log.debugFormat("spmStart polling - task status: {0}", taskStatus.getStatus().toString());
         } while (taskStatus.getStatus() != AsyncTaskStatusEnum.finished
                 && taskStatus.getStatus() != AsyncTaskStatusEnum.unknown);
@@ -65,12 +65,12 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
         SpmStatusResult spmStatus = (SpmStatusResult) ResourceManager
                 .getInstance()
                 .runVdsCommand(VDSCommandType.SpmStatus,
-                        new SpmStatusVDSCommandParameters(getVds().getvds_id(), getParameters().getStoragePoolId()))
+                        new SpmStatusVDSCommandParameters(getVds().getId(), getParameters().getStoragePoolId()))
                 .getReturnValue();
         log.infoFormat("spmStart polling ended. spm status: {0}", spmStatus.getSpmStatus().toString());
         try {
             ResourceManager.getInstance().runVdsCommand(VDSCommandType.HSMClearTask,
-                    new HSMTaskGuidBaseVDSCommandParameters(getVds().getvds_id(), taskId));
+                    new HSMTaskGuidBaseVDSCommandParameters(getVds().getId(), taskId));
         } catch (java.lang.Exception e) {
             log.errorFormat("Could not clear spmStart task (id - {0}), continuing with SPM selection.", taskId);
         }

@@ -83,7 +83,7 @@ public class BackendHostsResourceTest
 
     private void setUpGetEntityExpectations() throws Exception {
         VDS vds = new VDS();
-        vds.setvds_id(GUIDS[0]);
+        vds.setId(GUIDS[0]);
         setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
                 GetVdsByVdsIdParameters.class,
                 new String[] { "VdsId" },
@@ -253,7 +253,7 @@ public class BackendHostsResourceTest
     }
 
     static VDS setUpEntityExpectations(VDS entity, VdsStatistics statistics, int index) {
-        expect(entity.getvds_id()).andReturn(GUIDS[index]).anyTimes();
+        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getvds_name()).andReturn(NAMES[index]).anyTimes();
         expect(entity.gethost_name()).andReturn(ADDRESSES[index]).anyTimes();
         expect(entity.getstatus()).andReturn(VDS_STATUS[index]).anyTimes();

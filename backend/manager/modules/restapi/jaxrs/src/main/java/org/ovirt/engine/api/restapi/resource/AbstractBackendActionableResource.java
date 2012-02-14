@@ -95,7 +95,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
                : getEntity(VDS.class,
                            VdcQueryType.GetVdsByName,
                            new GetVdsByNameParameters(host.getName()),
-                           host.getName()).getvds_id();
+                           host.getName()).getId();
     }
 
     protected Guid getHostId(Action action) {

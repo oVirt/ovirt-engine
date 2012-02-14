@@ -513,13 +513,13 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             Task.Create(this,
                     new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "ImportNfs",
-                            host.getvds_id(), nfsModel.getPath().getEntity(), nfsModel.getRole() }))).Run();
+                            host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole() }))).Run();
         }
         else
         {
             Task.Create(this,
                     new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "ImportSan",
-                            host.getvds_id() }))).Run();
+                            host.getId() }))).Run();
         }
     }
 
@@ -661,7 +661,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             VDS host = (VDS) model.getHostList().getSelectedItem();
 
             RemoveStorageDomainParameters tempVar = new RemoveStorageDomainParameters(storage.getid());
-            tempVar.setVdsId(host.getvds_id());
+            tempVar.setVdsId(host.getId());
             tempVar.setDoFormat((storage.getstorage_domain_type() == StorageDomainType.Data || storage.getstorage_domain_type() == StorageDomainType.Master) ? true
                     : (Boolean) model.getFormat().getEntity());
             Frontend.RunAction(VdcActionType.RemoveStorageDomain, tempVar,
@@ -1008,7 +1008,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         StorageModel model = (StorageModel) getWindow();
         NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
         VDS host = (VDS) model.getHost().getSelectedItem();
-        hostId = host.getvds_id();
+        hostId = host.getId();
 
         // Create storage connection.
         storage_server_connections tempVar = new storage_server_connections();
@@ -1023,11 +1023,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         actionTypes.add(VdcActionType.AddNFSStorageDomain);
         actionTypes.add(VdcActionType.RemoveStorageServerConnection);
 
-        parameters.add(new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
         StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
-        tempVar2.setVdsId(host.getvds_id());
+        tempVar2.setVdsId(host.getId());
         parameters.add(tempVar2);
-        parameters.add(new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
 
         IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
             @Override
@@ -1098,7 +1098,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
 
         AddSANStorageDomainParameters tempVar = new AddSANStorageDomainParameters(storageDomain);
-        tempVar.setVdsId(host.getvds_id());
+        tempVar.setVdsId(host.getId());
         tempVar.setLunIds(lunIds);
         Frontend.RunAction(VdcActionType.AddSANStorageDomain, tempVar,
                 new IFrontendActionAsyncCallback() {
@@ -1191,7 +1191,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         StorageModel model = (StorageModel) getWindow();
         LocalStorageModel localModel = (LocalStorageModel) model.getSelectedItem();
         VDS host = (VDS) model.getHost().getSelectedItem();
-        hostId = host.getvds_id();
+        hostId = host.getId();
 
         // Create storage connection.
         storage_server_connections tempVar = new storage_server_connections();
@@ -1205,9 +1205,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(VdcActionType.AddLocalStorageDomain);
 
-        parameters.add(new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+        parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
         StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
-        tempVar2.setVdsId(host.getvds_id());
+        tempVar2.setVdsId(host.getId());
         parameters.add(tempVar2);
 
         IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {

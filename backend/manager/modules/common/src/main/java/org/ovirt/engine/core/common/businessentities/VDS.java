@@ -19,7 +19,7 @@ import org.ovirt.engine.core.compat.Version;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VDS")
-public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
+public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid> {
     private static final long serialVersionUID = -7893976203379789926L;
     private VdsStatic mVdsStatic;
     private VdsDynamic mVdsDynamic;
@@ -190,7 +190,7 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.setvds_group_id(vds_group_id);
         this.vds_group_nameField = vds_group_name;
         this.vds_group_descriptionField = vds_group_description;
-        this.setvds_id(vds_id);
+        this.setId(vds_id);
         this.setvds_name(vds_name);
         this.setManagmentIp(ip);
         this.sethost_name(host_name);
@@ -320,11 +320,13 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
     }
 
     @XmlElement(name = "vds_id")
-    public Guid getvds_id() {
+    @Override
+    public Guid getId() {
         return this.mVdsStatic.getId();
     }
 
-    public void setvds_id(Guid value) {
+    @Override
+    public void setId(Guid value) {
         this.mVdsStatic.setId(value);
         this.mVdsDynamic.setId(value);
         this.mVdsStatistics.setId(value);
@@ -1196,7 +1198,7 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     @Override
     public Object getQueryableId() {
-        return getvds_id();
+        return getId();
     }
 
     private static final java.util.ArrayList<String> _vdsProperties = new java.util.ArrayList<String>(

@@ -205,7 +205,7 @@ public final class Cloner
 		obj.setport(instance.getport());
 		obj.setserver_SSL_enabled(instance.getserver_SSL_enabled());
 		obj.setvds_group_id(instance.getvds_group_id());
-		obj.setvds_id(instance.getvds_id());
+		obj.setId(instance.getId());
 		obj.setvds_name(instance.getvds_name());
 		obj.setvds_strength(instance.getvds_strength());
 		obj.setvds_type(instance.getvds_type());

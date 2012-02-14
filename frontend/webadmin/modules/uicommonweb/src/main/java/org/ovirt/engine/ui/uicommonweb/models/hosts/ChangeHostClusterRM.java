@@ -33,7 +33,7 @@ public class ChangeHostClusterRM extends BaseRM
             VDS host = (VDS) getModel().getSelectedItem();
             VdcReturnValueBase returnValue =
                     Frontend.RunAction(VdcActionType.ChangeVDSCluster,
-                            new ChangeVDSClusterParameters(getData().getClusterId(), host.getvds_id()));
+                            new ChangeVDSClusterParameters(getData().getClusterId(), host.getId()));
 
             if (returnValue != null && returnValue.getSucceeded())
             {

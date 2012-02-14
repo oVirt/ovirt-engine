@@ -1676,7 +1676,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 			VDS runOnSameVDS = null;
 			for (VDS host : hosts)
 			{
-				if(host.getvds_id().equals(run_on_vds))
+				if(host.getId().equals(run_on_vds))
 				{
 					runOnSameVDS = host;
 				}
@@ -1753,12 +1753,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 			{
 				VM a = (VM)item;
 
-				if (a.getrun_on_vds().getValue().equals(((VDS)model.getHosts().getSelectedItem()).getvds_id()))
+				if (a.getrun_on_vds().getValue().equals(((VDS)model.getHosts().getSelectedItem()).getId()))
 				{
 					continue;
 				}
 
-				list.add(new MigrateVmToServerParameters(true, a.getId(), ((VDS)model.getHosts().getSelectedItem()).getvds_id()));
+				list.add(new MigrateVmToServerParameters(true, a.getId(), ((VDS)model.getHosts().getSelectedItem()).getId()));
 			}
 
 			Frontend.RunMultipleAction(VdcActionType.MigrateVmToServer, list,
@@ -2039,7 +2039,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		}
 		else
 		{
-			getcurrentVm().setdedicated_vm_for_vds(defaultHost.getvds_id());
+			getcurrentVm().setdedicated_vm_for_vds(defaultHost.getId());
 		}
 
 		getcurrentVm().setMigrationSupport(MigrationSupport.MIGRATABLE);

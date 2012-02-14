@@ -456,7 +456,7 @@ public class VdsBrokerObjectsBuilder {
                 }
                 // LINQ 29456
                 if (iface != null) {
-                    iface.setVdsId(vds.getvds_id());
+                    iface.setVdsId(vds.getId());
                     java.util.Map<String, Object> dictTemp =
                             (java.util.Map<String, Object>) ((interfaces.get(name) instanceof java.util.Map) ? interfaces
                                     .get(name)
@@ -839,7 +839,7 @@ public class VdsBrokerObjectsBuilder {
             log.infoFormat("Couldn't parse vds version: {0} , {1} for Host {2}, {3}",
                     version.getSoftwareVersion(),
                     version.getSoftwareRevision(),
-                    vds.getvds_id(),
+                    vds.getId(),
                     vds.getvds_name());
         }
         vds.setVersion(version);
@@ -871,7 +871,7 @@ public class VdsBrokerObjectsBuilder {
     @SuppressWarnings("unchecked")
     public static void updateNetworkData(VDS vds, XmlRpcStruct xmlRpcStruct) {
         List<VdsNetworkInterface> oldInterfaces =
-                DbFacade.getInstance().getInterfaceDAO().getAllInterfacesForVds(vds.getvds_id());
+                DbFacade.getInstance().getInterfaceDAO().getAllInterfacesForVds(vds.getId());
         vds.getInterfaces().clear();
 
         // Interfaces list
@@ -889,7 +889,7 @@ public class VdsBrokerObjectsBuilder {
                 iface.setId(iStats.getId());
 
                 iface.setName(key);
-                iface.setVdsId(vds.getvds_id());
+                iface.setVdsId(vds.getId());
 
                 // name value of nic property, i.e.: speed = 1000
                 java.util.Map<String, Object> dataAsMap =
@@ -919,7 +919,7 @@ public class VdsBrokerObjectsBuilder {
                     }
                 }
 
-                iStats.setVdsId(vds.getvds_id());
+                iStats.setVdsId(vds.getId());
 
                 vds.getInterfaces().add(iface);
             }
@@ -941,7 +941,7 @@ public class VdsBrokerObjectsBuilder {
                 iface.setId(iStats.getId());
 
                 iface.setName(key);
-                iface.setVdsId(vds.getvds_id());
+                iface.setVdsId(vds.getId());
 
                 if (key.contains(".")) {
                     String[] names = key.split("[.]", -1);
@@ -960,7 +960,7 @@ public class VdsBrokerObjectsBuilder {
                     iface.setSubnet((String) ((data.getItem("netmask") instanceof String) ? data.getItem("netmask")
                             : null));
                 }
-                iStats.setVdsId(vds.getvds_id());
+                iStats.setVdsId(vds.getId());
 
                 vds.getInterfaces().add(iface);
             }
@@ -980,7 +980,7 @@ public class VdsBrokerObjectsBuilder {
                 iface.setId(iStats.getId());
 
                 iface.setName(key);
-                iface.setVdsId(vds.getvds_id());
+                iface.setVdsId(vds.getId());
                 iface.setBonded(true);
 
                 java.util.Map dataAsMap = (java.util.Map) ((bonds.get(key) instanceof java.util.Map) ? bonds.get(key)
@@ -1005,7 +1005,7 @@ public class VdsBrokerObjectsBuilder {
                     if (data.getItem("slaves") != null) {
                         Object[] interfaces = (Object[]) ((data.getItem("slaves") instanceof Object[]) ? data
                                 .getItem("slaves") : null);
-                        iStats.setVdsId(vds.getvds_id());
+                        iStats.setVdsId(vds.getId());
                         AddBond(vds, iface, interfaces);
                     }
                     XmlRpcStruct config =
@@ -1124,7 +1124,7 @@ public class VdsBrokerObjectsBuilder {
                     if (!hostVlans.get(net.getname()).equals(net.getvlan_id())) {
                         // error wrong vlan
                         AuditLogableBase logable = new AuditLogableBase();
-                        logable.setVdsId(vds.getvds_id());
+                        logable.setVdsId(vds.getId());
                         logable.AddCustomValue("VlanIdHost", hostVlans.get(net.getname()).toString());
                         logable.AddCustomValue("VlanIdCluster", net.getvlan_id().toString());
                         AuditLogDirector.log(logable, AuditLogType.NETWORK_HOST_USING_WRONG_CLUSER_VLAN);
@@ -1132,7 +1132,7 @@ public class VdsBrokerObjectsBuilder {
                 } else {
                     // error no vlan
                     AuditLogableBase logable = new AuditLogableBase();
-                    logable.setVdsId(vds.getvds_id());
+                    logable.setVdsId(vds.getId());
                     logable.AddCustomValue("VlanIdCluster", net.getvlan_id().toString());
                     AuditLogDirector.log(logable, AuditLogType.NETWORK_HOST_MISSING_CLUSER_VLAN);
                 }

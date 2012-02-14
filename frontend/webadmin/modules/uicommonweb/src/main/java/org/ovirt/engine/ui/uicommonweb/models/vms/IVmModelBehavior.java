@@ -324,7 +324,7 @@ public abstract class IVmModelBehavior
                             VDS host = (VDS) model.getBehavior().getSystemTreeSelectedItem().getEntity();
                             for (VDS vds : hosts)
                             {
-                                if (host.getvds_id().equals(vds.getvds_id()))
+                                if (host.getId().equals(vds.getId()))
                                 {
                                     model.getDefaultHost()
                                             .setItems(new java.util.ArrayList<VDS>(java.util.Arrays.asList(new VDS[] { vds })));
@@ -339,7 +339,7 @@ public abstract class IVmModelBehavior
                         {
                             model.getDefaultHost().setItems(hosts);
                             model.getDefaultHost().setSelectedItem(oldDefaultHost != null ? Linq.FirstOrDefault(hosts,
-                                    new Linq.HostPredicate(oldDefaultHost.getvds_id())) : Linq.FirstOrDefault(hosts));
+                                    new Linq.HostPredicate(oldDefaultHost.getId())) : Linq.FirstOrDefault(hosts));
                         }
                         ChangeDefualtHost();
 

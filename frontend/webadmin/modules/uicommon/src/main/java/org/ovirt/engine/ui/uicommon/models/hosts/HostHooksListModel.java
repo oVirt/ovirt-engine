@@ -81,7 +81,7 @@ public class HostHooksListModel extends SearchableListModel
 		setIsEmpty(false);
 
 		GetVdsHooksByIdParameters tempVar = new GetVdsHooksByIdParameters();
-		tempVar.setVdsId(getEntity().getvds_id());
+		tempVar.setVdsId(getEntity().getId());
 		VdcQueryReturnValue retValue = Frontend.RunQuery(VdcQueryType.GetVdsHooksById, tempVar);
 
 		java.util.ArrayList<java.util.HashMap<String, String>> list = new java.util.ArrayList<java.util.HashMap<String, String>>();

@@ -442,7 +442,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 			{
 				VDS locaVds = DataProvider.GetLocalStorageHost(a.getstorage_pool_name());
 				RemoveStorageDomainParameters tempVar = new RemoveStorageDomainParameters(a.getid());
-				tempVar.setVdsId((locaVds != null ? locaVds.getvds_id() : null));
+				tempVar.setVdsId((locaVds != null ? locaVds.getId() : null));
 				tempVar.setDoFormat(true);
 				pb_remove.add(tempVar);
 			}

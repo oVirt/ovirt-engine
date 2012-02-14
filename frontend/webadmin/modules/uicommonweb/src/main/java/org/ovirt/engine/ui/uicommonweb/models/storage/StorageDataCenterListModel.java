@@ -525,7 +525,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                                 VDS locaVds = (VDS) returnValue;
                                 RemoveStorageDomainParameters tempVar =
                                         new RemoveStorageDomainParameters(storage.getid());
-                                tempVar.setVdsId((locaVds != null ? locaVds.getvds_id() : null));
+                                tempVar.setVdsId((locaVds != null ? locaVds.getId() : null));
                                 tempVar.setDoFormat(true);
                                 RemoveStorageDomainParameters removeStorageDomainParameters = tempVar;
                                 listModel.getremovePrms().add(removeStorageDomainParameters);

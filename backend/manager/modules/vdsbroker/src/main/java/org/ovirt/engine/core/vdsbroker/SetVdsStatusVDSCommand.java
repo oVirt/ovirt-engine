@@ -40,7 +40,7 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
                                 .runVdsCommand(
                                         VDSCommandType.ResetIrs,
                                         new ResetIrsVDSCommandParameters(vds.getstorage_pool_id(), vds
-                                                .gethost_name(), vds.getvds_id())).getSucceeded());
+                                                .gethost_name(), vds.getId())).getSucceeded());
             }
         } else {
             getVDSReturnValue().setSucceeded(false);

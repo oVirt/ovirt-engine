@@ -269,7 +269,7 @@ public class BackendHostNicResourceTest
 
     private VDS getHostModel() {
         VDS vds = new VDS();
-        vds.setvds_id(PARENT_GUID);
+        vds.setId(PARENT_GUID);
         vds.setvds_group_id(GUIDS[0]);
         return vds;
     }

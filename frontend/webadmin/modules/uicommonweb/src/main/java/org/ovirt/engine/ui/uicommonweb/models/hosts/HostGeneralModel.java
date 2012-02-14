@@ -125,7 +125,7 @@ public class HostGeneralModel extends EntityModel
     public void setEntity(Object value)
     {
         VDS vds = (VDS) value;
-        isEntityChanged = vds == null || getEntity() == null || !vds.getvds_id().equals(getEntity().getvds_id());
+        isEntityChanged = vds == null || getEntity() == null || !vds.getId().equals(getEntity().getId());
 
         super.setEntity(value);
     }
@@ -659,7 +659,7 @@ public class HostGeneralModel extends EntityModel
     public void SaveNICsConfig()
     {
         Frontend.RunMultipleAction(VdcActionType.CommitNetworkChanges,
-                new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new VdsActionParameters(getEntity().getvds_id()) })),
+                new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new VdsActionParameters(getEntity().getId()) })),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendMultipleActionAsyncResult result) {
@@ -698,7 +698,7 @@ public class HostGeneralModel extends EntityModel
                             installModel.getOVirtISO().setIsChangable(true);
 
                         }
-                    }), getEntity().getvds_id());
+                    }), getEntity().getId());
         } else {
             model.getRootPassword().setIsAvailable(true);
             model.getRootPassword().setIsChangable(true);
@@ -743,7 +743,7 @@ public class HostGeneralModel extends EntityModel
 
         UpdateVdsActionParameters param = new UpdateVdsActionParameters();
         param.setvds(getEntity());
-        param.setVdsId(getEntity().getvds_id());
+        param.setVdsId(getEntity().getId());
         param.setRootPassword((String) model.getRootPassword().getEntity());
         param.setIsReinstallOrUpgrade(true);
         param.setInstallVds(true);
@@ -908,7 +908,7 @@ public class HostGeneralModel extends EntityModel
                             }
 
                         }
-                    }), getEntity().getvds_id());
+                    }), getEntity().getId());
         }
 
         setNonOperationalReasonEntity((getEntity().getNonOperationalReason() == NonOperationalReason.NONE ? null

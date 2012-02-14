@@ -37,7 +37,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
     public static boolean UpdateNetworkToDb(VDS vds) {
         boolean returnValue = false;
         VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDAO().get(vds.getvds_group_id());
-        List<VdsNetworkInterface> dbIfaces = DbFacade.getInstance().getInterfaceDAO().getAllInterfacesForVds(vds.getvds_id());
+        List<VdsNetworkInterface> dbIfaces = DbFacade.getInstance().getInterfaceDAO().getAllInterfacesForVds(vds.getId());
         List<String> updatedIfaces = new ArrayList<String>();
 
         // First we check what interfaces need to update/delete
@@ -98,7 +98,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
         if (hasChanges && vds.getstatus() != VDSStatus.Maintenance) {
             ResourceManager.getInstance()
                     .getEventListener()
-                    .VdsNonOperational(vds.getvds_id(),
+                    .VdsNonOperational(vds.getId(),
                             NonOperationalReason.NETWORK_UNREACHABLE,
                             true,
                             true,

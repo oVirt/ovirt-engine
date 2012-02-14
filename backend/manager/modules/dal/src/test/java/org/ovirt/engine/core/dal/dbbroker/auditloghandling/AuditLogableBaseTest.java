@@ -386,7 +386,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new AuditLogableBase();
         b.setVdsIdRef(null);
         final VDS v = new VDS();
-        v.setvds_id(GUID);
+        v.setId(GUID);
         b.setVds(v);
         final NGuid g = b.getVdsIdRef();
         assertEquals(GUID, g);
@@ -715,7 +715,7 @@ public class AuditLogableBaseTest {
         b.setVdsId(vdsId);
         b.setVm(vm);
         final VDS v = b.getVds();
-        assertEquals(GUID, v.getvds_id());
+        assertEquals(GUID, v.getId());
     }
 
     @Test
@@ -729,7 +729,7 @@ public class AuditLogableBaseTest {
         b.setVdsId(vdsId);
         b.setVm(vm);
         final VDS v = b.getVds();
-        assertEquals(GUID2, v.getvds_id());
+        assertEquals(GUID2, v.getId());
     }
 
     @Test
@@ -1096,9 +1096,9 @@ public class AuditLogableBaseTest {
         public VdsDAO getVdsDAO() {
             final VdsDAO v = mock(VdsDAO.class);
             final VDS vds1 = new VDS();
-            vds1.setvds_id(GUID);
+            vds1.setId(GUID);
             final VDS vds2 = new VDS();
-            vds2.setvds_id(GUID2);
+            vds2.setId(GUID2);
             when(v.get(GUID)).thenReturn(vds1);
             when(v.get(GUID2)).thenReturn(vds2);
             when(v.get(GUID3)).thenThrow(new RuntimeException());

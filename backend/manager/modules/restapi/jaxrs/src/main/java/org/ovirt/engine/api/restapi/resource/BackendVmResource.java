@@ -102,7 +102,7 @@ public class BackendVmResource extends
     }
 
     private String getHostId(String hostName) {
-        return getEntity(VDS.class, SearchType.VDS, "Hosts: name=" + hostName).getvds_id().toString();
+        return getEntity(VDS.class, SearchType.VDS, "Hosts: name=" + hostName).getId().toString();
     }
 
     protected Guid lookupClusterId(VM vm) {

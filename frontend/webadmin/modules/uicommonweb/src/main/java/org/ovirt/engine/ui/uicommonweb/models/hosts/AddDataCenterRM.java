@@ -115,7 +115,7 @@ public class AddDataCenterRM extends BaseRM
             // Switch host back to previous cluster.
             VdcReturnValueBase returnValue =
                     Frontend.RunAction(VdcActionType.ChangeVDSCluster,
-                            new ChangeVDSClusterParameters(getData().getOldClusterId(), host.getvds_id()));
+                            new ChangeVDSClusterParameters(getData().getOldClusterId(), host.getId()));
 
             if (returnValue != null && returnValue.getSucceeded())
             {

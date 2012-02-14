@@ -486,7 +486,7 @@ public class PoolGeneralModel extends EntityModel
                                         (java.util.ArrayList<VDS>) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
                                 for (VDS host : hosts)
                                 {
-                                    if (host.getvds_id().equals(poolGeneralModel1.getvm().getdedicated_vm_for_vds()))
+                                    if (host.getId().equals(poolGeneralModel1.getvm().getdedicated_vm_for_vds()))
                                     {
                                         poolGeneralModel1.setDefaultHost(host.getvds_name());
                                         break;

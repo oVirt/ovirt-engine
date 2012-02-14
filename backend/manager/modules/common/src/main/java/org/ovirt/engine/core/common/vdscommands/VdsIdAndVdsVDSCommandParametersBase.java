@@ -21,7 +21,7 @@ public class VdsIdAndVdsVDSCommandParametersBase extends VdsIdVDSCommandParamete
     }
 
     public VdsIdAndVdsVDSCommandParametersBase(VDS vds) {
-        super(vds.getvds_id());
+        super(vds.getId());
         setVds(vds);
     }
 
