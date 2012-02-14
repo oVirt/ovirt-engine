@@ -2,13 +2,14 @@ package org.ovirt.engine.ui.userportal.section.main.view.tab;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.view.AbstractView;
+import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
+import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalBasicListProvider;
-import org.ovirt.engine.ui.userportal.widget.refresh.RefreshManager;
-import org.ovirt.engine.ui.userportal.widget.refresh.RefreshPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -30,11 +31,11 @@ public class MainTabBasicView extends AbstractView implements MainTabBasicPresen
     @UiField(provided = true)
     RefreshPanel refreshPanel;
 
-    private RefreshManager refreshManager;
+    private SimpleRefreshManager refreshManager;
 
     @Inject
-    public MainTabBasicView(ClientStorage clientStorage, UserPortalBasicListProvider modelProvider) {
-        this.refreshManager = new RefreshManager(modelProvider.getModel(), clientStorage);
+    public MainTabBasicView(UserPortalBasicListProvider modelProvider, EventBus eventBus, ClientStorage clientStorage) {
+        this.refreshManager = new SimpleRefreshManager(modelProvider, eventBus, clientStorage);
         this.refreshPanel = refreshManager.getRefreshPanel();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

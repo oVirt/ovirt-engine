@@ -3,9 +3,10 @@ package org.ovirt.engine.ui.userportal.section.main.view;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
+import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractSideTabWithDetailsPresenter;
-import org.ovirt.engine.ui.userportal.widget.table.SimpleActionTable;
 
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -24,11 +25,17 @@ public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableList
 
     public AbstractSideTabWithDetailsView(SearchableTableModelProvider<T, M> modelProvider) {
         this.modelProvider = modelProvider;
-        this.table = new SimpleActionTable<T>(modelProvider);
+        this.table = createActionTable();
         this.table.showRefreshButton();
 
         initWidget(splitPanel);
         initSplitPanel();
+    }
+
+    SimpleActionTable<T> createActionTable() {
+        return new SimpleActionTable<T>(modelProvider,
+                ClientGinjectorProvider.instance().getEventBus(),
+                ClientGinjectorProvider.instance().getClientStorage());
     }
 
     void initSplitPanel() {

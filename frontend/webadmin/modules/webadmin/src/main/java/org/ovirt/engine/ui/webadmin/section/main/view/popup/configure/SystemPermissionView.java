@@ -1,14 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PermissionTypeColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -38,14 +37,17 @@ public class SystemPermissionView extends Composite {
 
     private final SystemPermissionModelProvider modelProvider;
 
+    private final EventBus eventBus;
+    private final ClientStorage clientStorage;
+
     @Inject
-    public SystemPermissionView(ClientGinjector ginjector,
-            EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            SystemPermissionModelProvider modelProvider) {
+    public SystemPermissionView(ApplicationConstants constants,
+            SystemPermissionModelProvider modelProvider,
+            EventBus eventBus, ClientStorage clientStorage) {
         super();
         this.modelProvider = modelProvider;
+        this.eventBus = eventBus;
+        this.clientStorage = clientStorage;
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
@@ -59,14 +61,11 @@ public class SystemPermissionView extends Composite {
     }
 
     private void localize(ApplicationConstants constants) {
-
     }
 
     private void initTable() {
-        table =
-                new SimpleActionTable<permissions>(modelProvider,
-                        getTableHeaderlessResources(),
-                        getTableResources());
+        table = new SimpleActionTable<permissions>(modelProvider,
+                getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
         content.add(table);
 
@@ -136,4 +135,5 @@ public class SystemPermissionView extends Composite {
         @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/TabCellTable.css" })
         TableStyle cellTableStyle();
     }
+
 }

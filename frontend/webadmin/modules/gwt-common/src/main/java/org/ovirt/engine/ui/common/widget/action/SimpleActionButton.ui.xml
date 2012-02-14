@@ -2,7 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-	<ui:style type="org.ovirt.engine.ui.userportal.widget.action.SimpleActionButton.Style">
+	<ui:style type="org.ovirt.engine.ui.common.widget.action.SimpleActionButton.Style">
 		.actionButton {
 			float: left;
 			font-size: 11px;

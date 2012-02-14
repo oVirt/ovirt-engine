@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.widget.table;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
@@ -83,19 +82,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
     private int[] mousePosition = new int[2];
 
     public AbstractActionTable(SearchableTableModelProvider<T, ?> dataProvider,
-            EventBus eventBus, CommonApplicationConstants constants) {
-        this(dataProvider, null, eventBus, constants);
-    }
-
-    public AbstractActionTable(SearchableTableModelProvider<T, ?> dataProvider,
-            Resources resources, EventBus eventBus, CommonApplicationConstants constants) {
-        this(dataProvider, resources, null, eventBus, constants);
-    }
-
-    public AbstractActionTable(SearchableTableModelProvider<T, ?> dataProvider,
-            Resources resources, Resources headerRresources,
-            EventBus eventBus, CommonApplicationConstants constants) {
-        super(dataProvider, eventBus, constants);
+            Resources resources, Resources headerRresources, EventBus eventBus) {
+        super(dataProvider, eventBus);
         this.selectionModel = new OrderedMultiSelectionModel<T>(dataProvider);
 
         this.table = new ActionCellTable<T>(dataProvider, resources) {

@@ -1,6 +1,4 @@
-package org.ovirt.engine.ui.userportal.widget.action;
-
-import org.ovirt.engine.ui.common.widget.action.AbstractActionButton;
+package org.ovirt.engine.ui.common.widget.action;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

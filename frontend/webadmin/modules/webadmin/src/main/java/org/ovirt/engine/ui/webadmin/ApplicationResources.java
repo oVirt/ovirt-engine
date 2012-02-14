@@ -9,10 +9,6 @@ import com.google.gwt.resources.client.TextResource;
 
 public interface ApplicationResources extends CommonApplicationResources {
 
-    @Override
-    @Source("css/DialogBox.css")
-    CssResource dialogBoxStyle();
-
     @Source("images/admin.png")
     ImageResource adminImage();
 
@@ -194,9 +190,6 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/tag_locked.png")
     ImageResource readOnlyTagImage();
-
-    @Source("images/refresh.png")
-    ImageResource refreshButtonImage();
 
     @Source("images/icn_play_disabled.png")
     ImageResource runVmDisabledImage();
@@ -395,18 +388,6 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/button/footer_button_Down_end.png")
     ImageResource footerButtonDownEnd();
-
-    @Source("images/page_prev_enable.png")
-    ImageResource pagePrevEnable();
-
-    @Source("images/page_prev_disable.png")
-    ImageResource pagePrevDisable();
-
-    @Source("images/page_next_enable.png")
-    ImageResource pageNextEnable();
-
-    @Source("images/page_next_disable.png")
-    ImageResource pageNextDisable();
 
     @Source("Reports.xml")
     TextResource reportsXml();

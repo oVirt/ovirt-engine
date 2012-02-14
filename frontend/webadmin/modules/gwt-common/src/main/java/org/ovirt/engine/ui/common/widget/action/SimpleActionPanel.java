@@ -1,13 +1,9 @@
-package org.ovirt.engine.ui.webadmin.widget.action;
+package org.ovirt.engine.ui.common.widget.action;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
-import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
-import org.ovirt.engine.ui.common.widget.action.ActionButton;
-import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -31,9 +27,8 @@ public class SimpleActionPanel<T> extends AbstractActionPanel<T> {
     ButtonBase refreshButton;
 
     public SimpleActionPanel(SearchableModelProvider<T, ?> dataProvider,
-            SingleSelectionModel<T> selectionModel,
-            EventBus eventBus, ApplicationConstants constants) {
-        super(dataProvider, eventBus, constants);
+            SingleSelectionModel<T> selectionModel, EventBus eventBus) {
+        super(dataProvider, eventBus);
         this.selectionModel = selectionModel;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }

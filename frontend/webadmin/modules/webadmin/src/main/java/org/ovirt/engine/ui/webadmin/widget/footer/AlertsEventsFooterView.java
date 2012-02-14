@@ -3,15 +3,17 @@ package org.ovirt.engine.ui.webadmin.widget.footer;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
+import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider.AlertCountChangeHandler;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.FullDateTimeColumn;
 
@@ -89,20 +91,20 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         initButtonHandlers();
         alertModelProvider.setAlertCountChangeHandler(this);
 
-        alertsTable = new SimpleActionTable<AuditLog>(alertModelProvider, getTableResources());
+        alertsTable = createActionTable(alertModelProvider);
         alertsTable.setBarStyle(style.barStyle());
         initTable(alertsTable);
 
-        _alertsTable = new SimpleActionTable<AuditLog>(alertFirstRowModelProvider, getTableResources());
+        _alertsTable = createActionTable(alertFirstRowModelProvider);
         _alertsTable.setBarStyle(style.barStyle());
         _alertsTable.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
         initTable(_alertsTable);
 
-        eventsTable = new SimpleActionTable<AuditLog>(eventModelProvider, getTableResources());
+        eventsTable = createActionTable(eventModelProvider);
         eventsTable.setBarStyle(style.barStyle());
         initTable(eventsTable);
 
-        _eventsTable = new SimpleActionTable<AuditLog>(eventFirstRowModelProvider, getTableResources());
+        _eventsTable = createActionTable(eventFirstRowModelProvider);
         _eventsTable.setBarStyle(style.barStyle());
         _eventsTable.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
         initTable(_eventsTable);
@@ -123,6 +125,12 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         updateButtonResources();
         updateEventsButton();
         setAlertCount(0);
+    }
+
+    SimpleActionTable<AuditLog> createActionTable(SearchableTabModelProvider<AuditLog, ?> modelProvider) {
+        return new SimpleActionTable<AuditLog>(modelProvider, getTableResources(),
+                ClientGinjectorProvider.instance().getEventBus(),
+                ClientGinjectorProvider.instance().getClientStorage());
     }
 
     AlertsEventsFooterResources getTableResources() {

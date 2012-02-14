@@ -5,8 +5,10 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
+import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
@@ -15,9 +17,9 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostIn
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView.SubTableResources;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.host.HostInterfaceForm;
-import org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Label;
@@ -45,9 +47,10 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
     private final VerticalPanel contentPanel;
 
     @Inject
-    public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> modelProvider) {
+    public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> modelProvider,
+            EventBus eventBus, ClientStorage clientStorage) {
         super(modelProvider);
-        this.table = new SimpleActionTable<HostInterfaceLineModel>(modelProvider, getTableResources());
+        this.table = new SimpleActionTable<HostInterfaceLineModel>(modelProvider, getTableResources(), eventBus, clientStorage);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
 

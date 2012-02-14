@@ -3,11 +3,11 @@ package org.ovirt.engine.ui.webadmin.widget.bookmark;
 import org.ovirt.engine.core.common.businessentities.bookmarks;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
+import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.SimpleActionPanel;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
@@ -59,8 +59,7 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
     @Override
     protected SimpleActionPanel<bookmarks> createActionPanel(BookmarkModelProvider modelProvider) {
         return new SimpleActionPanel<bookmarks>(modelProvider, modelProvider.getSelectionModel(),
-                ClientGinjectorProvider.instance().getEventBus(),
-                ClientGinjectorProvider.instance().getApplicationConstants());
+                ClientGinjectorProvider.instance().getEventBus());
     }
 
     private void addActionButtons(final BookmarkModelProvider modelProvider) {

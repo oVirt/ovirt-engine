@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.webadmin.widget.tags;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
+import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.SimpleActionPanel;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
@@ -49,8 +49,7 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
     @Override
     protected SimpleActionPanel<TagListModel> createActionPanel(TagModelProvider modelProvider) {
         return new SimpleActionPanel(modelProvider, modelProvider.getSelectionModel(),
-                ClientGinjectorProvider.instance().getEventBus(),
-                ClientGinjectorProvider.instance().getApplicationConstants());
+                ClientGinjectorProvider.instance().getEventBus());
     }
 
     private void addActionButtons(final TagModelProvider modelProvider) {

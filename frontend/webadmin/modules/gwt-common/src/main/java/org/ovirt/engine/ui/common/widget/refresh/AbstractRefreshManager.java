@@ -5,6 +5,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
 
@@ -12,9 +15,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
 
 /**
- * Manages the Refresh Rate for a {@link GridController}.
+ * Provides refresh rate management for a {@link GridController}.
  */
 public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
 
@@ -30,26 +34,38 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
     }
 
     /**
-     * The acceptable Refresh Rates
+     * Returns acceptable refresh rates.
      */
     public static Set<Integer> getRefreshRates() {
         return Collections.unmodifiableSet(REFRESH_RATES);
     }
 
-    private final GridController controller;
+    private final ModelProvider<? extends GridController> modelProvider;
     private final ClientStorage clientStorage;
     private final T refreshPanel;
 
-    /**
-     * Create a Manager for the specified {@link GridController}
-     *
-     * @param refreshPanel
-     */
-    public AbstractRefreshManager(GridController controller, ClientStorage clientStorage) {
-        this.controller = controller;
+    private GridController controller;
+
+    public AbstractRefreshManager(ModelProvider<? extends GridController> modelProvider,
+            EventBus eventBus, ClientStorage clientStorage) {
+        this.modelProvider = modelProvider;
         this.clientStorage = clientStorage;
-        this.refreshPanel = createRefreshPane();
+        this.refreshPanel = createRefreshPanel();
         listenOnManualRefresh();
+
+        // Add handler to be notified when UiCommon models are (re)initialized
+        eventBus.addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
+            @Override
+            public void onUiCommonInit(UiCommonInitEvent event) {
+                updateController();
+            }
+        });
+
+        updateController();
+    }
+
+    private void updateController() {
+        this.controller = modelProvider.getModel();
 
         controller.setRefreshRate(readRefreshRate());
         controller.getTimer().addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -72,7 +88,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
         });
     }
 
-    protected abstract T createRefreshPane();
+    protected abstract T createRefreshPanel();
 
     protected void onRefresh(String status) {
         refreshPanel.showStatus(status);
@@ -100,7 +116,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
     }
 
     /**
-     * Returns refresh rate value if it exists; Otherwise, returns default refresh rate.
+     * Returns refresh rate value if it exists. Otherwise, returns default refresh rate.
      */
     int readRefreshRate() {
         String refreshRate = clientStorage.getLocalItem(getRefreshRateItemKey());

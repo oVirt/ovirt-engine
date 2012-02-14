@@ -1,18 +1,13 @@
-package org.ovirt.engine.ui.webadmin.widget.table;
+package org.ovirt.engine.ui.common.widget.table;
 
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButton;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager;
-import org.ovirt.engine.ui.common.widget.table.AbstractActionTable;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.SimpleActionButton;
-import org.ovirt.engine.ui.webadmin.widget.refresh.RefreshManager;
-import org.ovirt.engine.ui.webadmin.widget.refresh.RefreshPanel;
+import org.ovirt.engine.ui.common.widget.action.SimpleActionButton;
+import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
+import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -44,24 +39,25 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     @WithElementId
     public Label itemsCountLabel;
 
-    private final AbstractRefreshManager<RefreshPanel> refreshManager;
+    private final SimpleRefreshManager refreshManager;
 
-    public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider) {
-        this(dataProvider, null, null);
+    public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
+            EventBus eventBus, ClientStorage clientStorage) {
+        this(dataProvider, null, null, eventBus, clientStorage);
     }
 
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
-            Resources resources) {
-        this(dataProvider, resources, null);
+            Resources resources, EventBus eventBus, ClientStorage clientStorage) {
+        this(dataProvider, resources, null, eventBus, clientStorage);
     }
 
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
-            Resources resources, Resources headerResources) {
-        super(dataProvider, resources, headerResources, getEventBus(), getApplicationConstants());
-        this.refreshManager = new RefreshManager(dataProvider.getModel(), getClientStorage());
+            Resources resources, Resources headerResources,
+            EventBus eventBus, ClientStorage clientStorage) {
+        super(dataProvider, resources, headerResources, eventBus);
+        this.refreshManager = new SimpleRefreshManager(dataProvider, eventBus, clientStorage);
         this.refreshPanel = refreshManager.getRefreshPanel();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        localize(ClientGinjectorProvider.instance().getApplicationConstants());
         initStyles();
         refreshPanel.setVisible(false);
         prevPageButton.setVisible(false);
@@ -73,21 +69,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     protected void updateTableControls() {
         super.updateTableControls();
         itemsCountLabel.setText(getDataProvider().getItemsCount());
-    }
-
-    static CommonApplicationConstants getApplicationConstants() {
-        return ClientGinjectorProvider.instance().getApplicationConstants();
-    }
-
-    static EventBus getEventBus() {
-        return ClientGinjectorProvider.instance().getEventBus();
-    }
-
-    static ClientStorage getClientStorage() {
-        return ClientGinjectorProvider.instance().getClientStorage();
-    }
-
-    void localize(ApplicationConstants constants) {
     }
 
     void initStyles() {
@@ -119,6 +100,7 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
             item.addStyleName(style.subTitledButton());
         }
     }
+
     interface Style extends CssResource {
         String content();
 

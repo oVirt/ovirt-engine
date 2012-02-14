@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.webadmin.widget.tree;
 
 import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
+import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.SimpleActionPanel;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
@@ -40,8 +40,7 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
     @Override
     protected SimpleActionPanel<SystemTreeModel> createActionPanel(SystemTreeModelProvider modelProvider) {
         return new SimpleActionPanel(modelProvider, modelProvider.getSelectionModel(),
-                ClientGinjectorProvider.instance().getEventBus(),
-                ClientGinjectorProvider.instance().getApplicationConstants());
+                ClientGinjectorProvider.instance().getEventBus());
     }
 
     private void addActionButtons(final SystemTreeModelProvider modelProvider, final ApplicationConstants constants) {

@@ -3,13 +3,14 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.webadmin.widget.table.column.IsLockedImageTypeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ObjectNameColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.RoleTypeColumn;
@@ -17,6 +18,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.RoleTypeColumn;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -54,12 +56,18 @@ public class RoleView extends Composite {
     private final RoleModelProvider roleModelProvider;
     private final RolePermissionModelProvider permissionModelProvider;
 
+    private final EventBus eventBus;
+    private final ClientStorage clientStorage;
+
     @Inject
     public RoleView(ApplicationConstants constants,
             RoleModelProvider roleModelProvider,
-            RolePermissionModelProvider permissionModelProvider) {
+            RolePermissionModelProvider permissionModelProvider,
+            EventBus eventBus, ClientStorage clientStorage) {
         this.roleModelProvider = roleModelProvider;
         this.permissionModelProvider = permissionModelProvider;
+        this.eventBus = eventBus;
+        this.clientStorage = clientStorage;
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
@@ -136,8 +144,9 @@ public class RoleView extends Composite {
     }
 
     private void initRoleTable() {
-        this.table =
-                new SimpleActionTable<roles>(roleModelProvider, getTableHeaderlessResources(), getTableResources());
+        this.table = new SimpleActionTable<roles>(roleModelProvider,
+                getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
+
         TextColumnWithTooltip<roles> nameColumn = new TextColumnWithTooltip<roles>() {
             @Override
             public String getValue(roles object) {
@@ -206,7 +215,7 @@ public class RoleView extends Composite {
 
     private void initPermissionTable() {
         permissionTable = new SimpleActionTable<permissions>(permissionModelProvider,
-                getTableHeaderlessResources(), getTableResources());
+                getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
         TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
             @Override

@@ -13,12 +13,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("[N/A]")
     String unAvailablePropertyLabel();
 
-    @DefaultStringValue("This feature is not implemented in this version.")
-    String featureNotImplementedMessage();
-
-    @DefaultStringValue("This feature is not implemented but available in UserPortal for users assigned with PowerUser role.")
-    String featureNotImplementedButAvailInUserPortalMessage();
-
     // Widgets
 
     @DefaultStringValue("Next >>")

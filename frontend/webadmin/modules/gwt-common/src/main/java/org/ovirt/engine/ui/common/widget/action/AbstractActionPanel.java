@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
@@ -55,7 +54,6 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
 
     private final SearchableModelProvider<T, ?> dataProvider;
     private final EventBus eventBus;
-    private final CommonApplicationConstants constants;
 
     private final PopupPanel contextPopupPanel;
     private final MenuBar contextMenuBar;
@@ -64,11 +62,9 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
 
     private String elementId = DOM.createUniqueId();
 
-    public AbstractActionPanel(SearchableModelProvider<T, ?> dataProvider,
-            EventBus eventBus, CommonApplicationConstants constants) {
+    public AbstractActionPanel(SearchableModelProvider<T, ?> dataProvider, EventBus eventBus) {
         this.dataProvider = dataProvider;
         this.eventBus = eventBus;
-        this.constants = constants;
         this.contextPopupPanel = new PopupPanel(true);
         this.contextMenuBar = new MenuBar(true);
         this.actionPanelPopupPanel = new MenuPanelPopup(true);
@@ -144,7 +140,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
                     }
                 } else {
                     new FeatureNotImplementedYetPopup((Widget) event.getSource(),
-                            buttonDef.isImplInUserPortal(), constants).show();
+                            buttonDef.isImplInUserPortal()).show();
                 }
             }
         });

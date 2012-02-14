@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.ui.common.widget.table.AbstractActionTable;
+import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.SelectionChangeEvent;

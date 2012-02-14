@@ -1,21 +1,32 @@
 package org.ovirt.engine.ui.common.widget;
 
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.Constants;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FeatureNotImplementedYetPopup extends DecoratedPopupPanel {
 
-    public FeatureNotImplementedYetPopup(Widget target,
-            boolean availableInUserPortal, CommonApplicationConstants constants) {
+    interface PopupConstants extends Constants {
+
+        @DefaultStringValue("This feature is not implemented in this version.")
+        String featureNotImplementedMessage();
+
+        @DefaultStringValue("This feature is not implemented but available in UserPortal for users assigned with PowerUser role.")
+        String featureNotImplementedButAvailInUserPortalMessage();
+
+    }
+
+    private static final PopupConstants CONSTANTS = GWT.create(PopupConstants.class);
+
+    public FeatureNotImplementedYetPopup(Widget target, boolean availableInUserPortal) {
         super(true);
 
         if (availableInUserPortal) {
-            setWidget(new Label(constants.featureNotImplementedButAvailInUserPortalMessage()));
+            setWidget(new Label(CONSTANTS.featureNotImplementedButAvailInUserPortalMessage()));
         } else {
-            setWidget(new Label(constants.featureNotImplementedMessage()));
+            setWidget(new Label(CONSTANTS.featureNotImplementedMessage()));
         }
 
         setWidth("200px");

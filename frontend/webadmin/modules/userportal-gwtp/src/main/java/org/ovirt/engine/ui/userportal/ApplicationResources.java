@@ -2,14 +2,9 @@ package org.ovirt.engine.ui.userportal;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 
 public interface ApplicationResources extends CommonApplicationResources {
-
-    @Override
-    @Source("css/DialogBox.css")
-    CssResource dialogBoxStyle();
 
     @Source("images/button/button_start.png")
     ImageResource dialogButtonUpStart();

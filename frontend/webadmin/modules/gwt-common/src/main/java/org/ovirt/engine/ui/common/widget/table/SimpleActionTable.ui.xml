@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:r="urn:import:org.ovirt.engine.ui.webadmin.widget.refresh">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:r="urn:import:org.ovirt.engine.ui.common.widget.refresh">
 
-	<ui:with field='resources'
-		type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
-	<ui:style
-		type="org.ovirt.engine.ui.webadmin.widget.table.SimpleActionTable.Style">
+	<ui:style type="org.ovirt.engine.ui.common.widget.table.SimpleActionTable.Style">
 		.panel {
 		overflow: auto;
 		height: 100%;

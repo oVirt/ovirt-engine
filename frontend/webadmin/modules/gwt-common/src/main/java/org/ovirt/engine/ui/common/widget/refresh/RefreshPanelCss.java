@@ -1,6 +1,4 @@
-package org.ovirt.engine.ui.userportal.widget.refresh;
-
-import org.ovirt.engine.ui.common.widget.refresh.BaseRefreshPanelCss;
+package org.ovirt.engine.ui.common.widget.refresh;
 
 public interface RefreshPanelCss extends BaseRefreshPanelCss {
 
