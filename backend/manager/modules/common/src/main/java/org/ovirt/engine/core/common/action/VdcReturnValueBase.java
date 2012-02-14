@@ -21,6 +21,7 @@ public class VdcReturnValueBase implements Serializable {
     private boolean _endActionTryAgain = true;
     private final ArrayList<String> _executeFailedMessages = new ArrayList<String>();
     private VdcFault _fault;
+    private String correlationId;
 
     public VdcReturnValueBase() {
     }
@@ -112,5 +113,13 @@ public class VdcReturnValueBase implements Serializable {
 
     public void setEndActionTryAgain(boolean value) {
         _endActionTryAgain = value;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
     }
 }
