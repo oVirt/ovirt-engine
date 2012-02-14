@@ -52,7 +52,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     }
 
     @Override
-    protected boolean CreateSnapshotInIrsServer() {
+    protected boolean performImageVdsmOperation() {
         setDestinationImageId(Guid.NewGuid());
         mNewCreatedDiskImage = CloneDiskImage(getDestinationImageId());
         Guid storagePoolID = mNewCreatedDiskImage.getstorage_pool_id() != null ? mNewCreatedDiskImage

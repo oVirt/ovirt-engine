@@ -53,7 +53,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     protected void executeCommand() {
         super.executeCommand();
         if (CanCreateSnapshot()) {
-            if (CreateSnapshotInIrsServer()) {
+            if (performImageVdsmOperation()) {
                 /**
                  * Vitaly TODO: think about transactivity in DB
                  */
@@ -72,7 +72,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                 : Guid.Empty;
     }
 
-    protected boolean CreateSnapshotInIrsServer() {
+    protected boolean performImageVdsmOperation() {
         setDestinationImageId(Guid.NewGuid());
         mNewCreatedDiskImage = CloneDiskImage(getDestinationImageId());
         mNewCreatedDiskImage.setstorage_id(getDestinationStorageDomainId());
