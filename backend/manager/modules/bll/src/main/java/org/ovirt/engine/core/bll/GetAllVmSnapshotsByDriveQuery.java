@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveParameters;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDriveParameters>
         extends QueriesCommandBase<P> {
@@ -21,14 +21,14 @@ public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDrivePar
         String drive = getParameters().getDrive();
         DiskImage inactiveDisk = null;
         DiskImage activeDisk = null;
-        RefObject<DiskImage> tempRefObject = new RefObject<DiskImage>(activeDisk);
-        RefObject<DiskImage> tempRefObject2 = new RefObject<DiskImage>(inactiveDisk);
-        int count = ImagesHandler.getImagesMappedToDrive(vmId, drive, tempRefObject, tempRefObject2);
-        activeDisk = tempRefObject.argvalue;
-        inactiveDisk = tempRefObject2.argvalue;
+        RefObject<DiskImage> refActive = new RefObject<DiskImage>(activeDisk);
+        RefObject<DiskImage> refInactive = new RefObject<DiskImage>(inactiveDisk);
+        int count = ImagesHandler.getImagesMappedToDrive(vmId, drive, refActive, refInactive);
+        activeDisk = refActive.argvalue;
+        inactiveDisk = refInactive.argvalue;
         if ((count == 0 || count > 2 || activeDisk == null || (count == 2 && inactiveDisk == null))) {
             log.warnFormat("Vm {0} images data incorrect", vmId);
-            getQueryReturnValue().setReturnValue(new java.util.ArrayList<DiskImage>());
+            getQueryReturnValue().setReturnValue(new ArrayList<DiskImage>());
         } else {
             if (inactiveDisk != null) {
                 tryingImage = activeDisk.getParentId();
@@ -37,9 +37,12 @@ public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDrivePar
 
             getQueryReturnValue().setReturnValue(
                     ImagesHandler.getAllImageSnapshots(topmostImageGuid, activeDisk.getit_guid()));
-            ((GetAllVmSnapshotsByDriveQueryReturnValue) getQueryReturnValue()).setTryingImage(tryingImage);
+            getQueryReturnValue().setTryingImage(tryingImage);
         }
     }
 
-    private static Log log = LogFactory.getLog(GetAllVmSnapshotsByDriveQuery.class);
+    @Override
+    public GetAllVmSnapshotsByDriveQueryReturnValue getQueryReturnValue() {
+        return (GetAllVmSnapshotsByDriveQueryReturnValue) super.getQueryReturnValue();
+    }
 }
