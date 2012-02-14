@@ -40,7 +40,7 @@ actions:
     body:
       parameterType: VM
       signatures:
-      - mandatoryArguments: {vm.name: 'xs:string', vm.teamplate.id|name: 'xs:string', vm.cluster.id|name: 'xs:string'}
+      - mandatoryArguments: {vm.name: 'xs:string', vm.template.id|name: 'xs:string', vm.cluster.id|name: 'xs:string'}
         optionalArguments:
           vm.timezone: xs:string
           vm.os.boot.dev: xs:string
