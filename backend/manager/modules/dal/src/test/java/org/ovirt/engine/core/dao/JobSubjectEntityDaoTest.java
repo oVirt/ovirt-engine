@@ -49,7 +49,7 @@ public class JobSubjectEntityDaoTest extends BaseDAOTestCase {
     @Test
     public void getJobIdByEntityIdAndEntityType() {
         List<Guid> jobIdByEntityIdAndEntityType =
-                dao.getJobIdByEntityIdAndEntityType(EXISTING_ENTITY_ID);
+                dao.getJobIdByEntityId(EXISTING_ENTITY_ID);
         assertTrue("Verify job subject entities exist for a given job",
                 jobIdByEntityIdAndEntityType.contains(EXISTING_JOB_ID));
     }

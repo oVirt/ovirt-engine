@@ -40,6 +40,6 @@ public interface JobSubjectEntityDao extends DAO {
      *            the id of the entity
      * @return a list of Job IDs
      */
-    List<Guid> getJobIdByEntityIdAndEntityType(Guid entityId);
+    List<Guid> getJobIdByEntityId(Guid entityId);
 
 }

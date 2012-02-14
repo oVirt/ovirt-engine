@@ -184,7 +184,7 @@ public class JobRepositoryImpl implements JobRepository {
     @Override
     public List<Job> getJobsByEntityAndAction(Guid entityId, VdcActionType actionType) {
         List<Job> jobList = new ArrayList<Job>();
-        List<Guid> jobIdsList = jobSubjectEntityDao.getJobIdByEntityIdAndEntityType(entityId);
+        List<Guid> jobIdsList = jobSubjectEntityDao.getJobIdByEntityId(entityId);
 
         for (Guid jobId : jobIdsList) {
             Job job = jobDao.get(jobId);

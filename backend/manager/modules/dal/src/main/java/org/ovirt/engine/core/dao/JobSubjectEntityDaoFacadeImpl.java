@@ -49,11 +49,11 @@ public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements Jo
     }
 
     @Override
-    public List<Guid> getJobIdByEntityIdAndEntityType(Guid entityId) {
+    public List<Guid> getJobIdByEntityId(Guid entityId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("entity_id", entityId);
 
-        return getCallsHandler().executeReadList("GetAllJobIdsByEntityIdAndEntityType", jobIdRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllJobIdsByEntityId", jobIdRowMapper, parameterSource);
     }
 
     private static class JobSubjectEntity {

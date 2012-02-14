@@ -200,10 +200,10 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-----------------------------------------------------------------
--- Gets Job Subject Entity of a Job By entity-id and entity-type
-----------------------------------------------------------------
-Create or replace FUNCTION GetAllJobIdsByEntityIdAndEntityType(
+------------------------------------------------
+-- Gets Job Subject Entity of a Job By entity-id
+------------------------------------------------
+Create or replace FUNCTION GetAllJobIdsByEntityId(
     v_entity_id UUID)
 RETURNS SETOF UUID
 AS $procedure$
