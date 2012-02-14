@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.bookmarks;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -154,29 +155,20 @@ public class BookmarkListModel extends SearchableListModel
 
     public void OnRemove()
     {
-        // Frontend.RunMultipleActions(VdcActionType.RemoveBookmark,
-        // SelectedItems.Cast<bookmarks>()
-        // .Select(a => (VdcActionParametersBase)new BookmarksParametersBase(a.bookmark_id))
-        // .ToList()
-        // );
-        // List<VdcActionParametersBase> prms = new List<VdcActionParametersBase>();
-        // foreach (object item in SelectedItems)
-        // {
-        // org.ovirt.engine.core.common.businessentities.bookmarks i =
-        // (org.ovirt.engine.core.common.businessentities.bookmarks)item;
-        // prms.Add(new BookmarksParametersBase(i.bookmark_id));
-        // }
-        // Frontend.RunMultipleActions(VdcActionType.RemoveBookmark, prms);
 
-        VdcReturnValueBase returnValue =
-                Frontend.RunAction(VdcActionType.RemoveBookmark,
-                        new BookmarksParametersBase(((org.ovirt.engine.core.common.businessentities.bookmarks) getSelectedItem()).getbookmark_id()));
-        if (returnValue != null && returnValue.getSucceeded())
-        {
-            getSearchCommand().Execute();
-        }
+        bookmarks selectedBookmark = (bookmarks) getSelectedItem();
+        BookmarksParametersBase parameters = new BookmarksParametersBase(selectedBookmark.getbookmark_id());
 
-        Cancel();
+        IFrontendActionAsyncCallback async = new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+                PostOnSave(result.getReturnValue());
+            }
+        };
+
+        getWindow().StartProgress(null);
+
+        Frontend.RunAction(VdcActionType.RemoveBookmark, parameters, async);
     }
 
     public void Edit()
@@ -258,27 +250,26 @@ public class BookmarkListModel extends SearchableListModel
         Frontend.RunAction(model.getIsNew() ? VdcActionType.AddBookmark : VdcActionType.UpdateBookmark,
                 new BookmarksOperationParameters(bookmark),
                 new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
 
-                        BookmarkListModel localModel = (BookmarkListModel) result.getState();
-                        localModel.PostOnSave(result.getReturnValue());
+                BookmarkListModel localModel = (BookmarkListModel) result.getState();
+                localModel.PostOnSave(result.getReturnValue());
 
-                    }
-                },
-                this);
+            }
+        },
+        this);
     }
 
     public void PostOnSave(VdcReturnValueBase returnValue)
     {
-        BookmarkModel model = (BookmarkModel) getWindow();
-
-        model.StopProgress();
+        getWindow().StopProgress();
 
         if (returnValue != null && returnValue.getSucceeded())
         {
             Cancel();
-            getSearchCommand().Execute();
+            // Cancel() triggers a force refresh
+            // getSearchCommand().Execute();
         }
     }
 

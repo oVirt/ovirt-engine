@@ -49,8 +49,9 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<bookmarks, 
         selectionModel.addSelectionChangeHandler(new Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
-                List<bookmarks> selectedItems = selectionModel.getSelectedObject() != null
-                        ? new ArrayList<bookmarks>(Arrays.asList(selectionModel.getSelectedObject()))
+                bookmarks selectedObject = selectionModel.getSelectedObject();
+                List<bookmarks> selectedItems = selectedObject != null
+                        ? new ArrayList<bookmarks>(Arrays.asList(selectedObject))
                         : new ArrayList<bookmarks>();
                 BookmarkModelProvider.this.setSelectedItems(selectedItems);
             }
