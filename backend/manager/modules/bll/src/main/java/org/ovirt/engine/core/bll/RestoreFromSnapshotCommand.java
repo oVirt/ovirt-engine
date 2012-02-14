@@ -85,45 +85,10 @@ public class RestoreFromSnapshotCommand<T extends ImagesContainterParametersBase
             }
             RemoveChildren(getImage().getId());
         }
-        return RemoveImagesInIrs();
+        VDSReturnValue vdsReturnValue = performImageVdsmOperation();
+        return vdsReturnValue != null && vdsReturnValue.getSucceeded();
     }
 
-    /**
-     * This function encapsulated processing of removing image in Irs. If image
-     * not exists - no exception re throwing. This functionality aids to remove
-     * Vm/Vmtemplate even if one or more its images not exists in Irs.
-     */
-    private boolean RemoveImagesInIrs() {
-        try {
-            Guid storagePoolId = getDiskImage().getstorage_pool_id() != null ? getDiskImage().getstorage_pool_id()
-                    .getValue() : Guid.Empty;
-            Guid storageDomainId = getDiskImage().getstorage_id() != null ? getDiskImage().getstorage_id().getValue()
-                    : Guid.Empty;
-            Guid imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id()
-                    .getValue() : Guid.Empty;
-
-            VDSReturnValue vdsReturnValue = runVdsCommand(
-                            VDSCommandType.DestroyImage,
-                            new DestroyImageVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
-                                    _imagesToDelete, getDiskImage().getwipe_after_delete(), true, getStoragePool()
-                                            .getcompatibility_version().toString()));
-
-            if (vdsReturnValue.getSucceeded()) {
-                getReturnValue().getInternalTaskIdList().add(
-                        CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.RestoreAllSnapshots));
-            } else {
-                return false;
-            }
-        }
-        // Don't throw an exception when cannot destroy image in the VDSM.
-        catch (VdcBLLException e) {
-            // Set fault for parent command RestoreAllSnapshotCommand to use, if decided to fail the command.
-            getReturnValue().setFault(new VdcFault(e, e.getVdsError().getCode()));
-            log.info(String.format("%1$s Image not exist in Irs", getDiskImage().getId()));
-        }
-
-        return true;
-    }
 
     @Override
     protected Guid ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
@@ -211,4 +176,35 @@ public class RestoreFromSnapshotCommand<T extends ImagesContainterParametersBase
     }
 
     private static Log log = LogFactory.getLog(RestoreFromSnapshotCommand.class);
+
+    @Override
+    protected VDSReturnValue performImageVdsmOperation() {
+        VDSReturnValue vdsReturnValue = null;
+        try {
+            Guid storagePoolId = getDiskImage().getstorage_pool_id() != null ? getDiskImage().getstorage_pool_id()
+                    .getValue() : Guid.Empty;
+            Guid storageDomainId = getDiskImage().getstorage_id() != null ? getDiskImage().getstorage_id().getValue()
+                    : Guid.Empty;
+            Guid imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id()
+                    .getValue() : Guid.Empty;
+
+            vdsReturnValue = runVdsCommand(
+                            VDSCommandType.DestroyImage,
+                            new DestroyImageVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
+                                    _imagesToDelete, getDiskImage().getwipe_after_delete(), true, getStoragePool()
+                                            .getcompatibility_version().toString()));
+
+            if (vdsReturnValue.getSucceeded()) {
+                getReturnValue().getInternalTaskIdList().add(
+                        CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.RestoreAllSnapshots));
+            }
+        }
+        // Don't throw an exception when cannot destroy image in the VDSM.
+        catch (VdcBLLException e) {
+            // Set fault for parent command RestoreAllSnapshotCommand to use, if decided to fail the command.
+            getReturnValue().setFault(new VdcFault(e, e.getVdsError().getCode()));
+            log.info(String.format("%1$s Image not exist in Irs", getDiskImage().getId()));
+        }
+        return vdsReturnValue;
+    }
 }

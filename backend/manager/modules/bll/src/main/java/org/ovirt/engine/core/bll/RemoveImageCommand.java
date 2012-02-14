@@ -48,16 +48,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     @Override
     protected void executeCommand() {
         if (getDiskImage() != null) {
-            VDSReturnValue vdsReturnValue = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.DeleteImageGroup,
-                            new DeleteImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
-                                    getDiskImage().getstorage_id().getValue(), getDiskImage().getimage_group_id()
-                                            .getValue(), getDiskImage().getwipe_after_delete(), getParameters()
-                                            .getForceDelete(), getStoragePool().getcompatibility_version().toString()));
-
+            VDSReturnValue vdsReturnValue = performImageVdsmOperation();
             if (vdsReturnValue.getSucceeded()) {
                 getReturnValue().getInternalTaskIdList().add(
                         CreateTask(vdsReturnValue.getCreationInfo(), getParameters().getParentCommand()));
@@ -144,4 +135,17 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     private static Log log = LogFactory.getLog(RemoveImageCommand.class);
+
+    @Override
+    protected VDSReturnValue performImageVdsmOperation() {
+        return Backend
+        .getInstance()
+        .getResourceManager()
+        .RunVdsCommand(
+                VDSCommandType.DeleteImageGroup,
+                new DeleteImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
+                        getDiskImage().getstorage_id().getValue(), getDiskImage().getimage_group_id()
+                                .getValue(), getDiskImage().getwipe_after_delete(), getParameters()
+                                .getForceDelete(), getStoragePool().getcompatibility_version().toString()));
+    }
 }

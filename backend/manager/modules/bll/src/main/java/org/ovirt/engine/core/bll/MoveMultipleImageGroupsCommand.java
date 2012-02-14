@@ -34,17 +34,7 @@ public class MoveMultipleImageGroupsCommand<T extends MoveMultipleImageGroupsPar
         for (DiskImage disk : getParameters().getImagesList()) {
             SetImageStatus(disk, ImageStatus.LOCKED);
         }
-
-        VDSReturnValue vdsReturnValue = Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
-                        VDSCommandType.MoveMultipleImageGroups,
-                        new MoveMultipleImageGroupsVDSCommandParameters(getParameters().getImagesList().get(0)
-                                .getstorage_pool_id().getValue(), getParameters().getImagesList().get(0)
-                                .getstorage_id().getValue(), getParameters().getImagesList(), getParameters()
-                                .getStorageDomainId(), getParameters().getContainerId()));
-
+        VDSReturnValue vdsReturnValue = performImageVdsmOperation();
         if (vdsReturnValue.getSucceeded()) {
             AsyncTaskCreationInfo taskCreationInfo = vdsReturnValue.getCreationInfo();
             getReturnValue().getInternalTaskIdList().add(
@@ -90,5 +80,20 @@ public class MoveMultipleImageGroupsCommand<T extends MoveMultipleImageGroupsPar
             }
         }
         setSucceeded(true);
+    }
+
+    @Override
+    protected VDSReturnValue performImageVdsmOperation() {
+        VDSReturnValue vdsReturnValue = Backend
+        .getInstance()
+        .getResourceManager()
+        .RunVdsCommand(
+                VDSCommandType.MoveMultipleImageGroups,
+                new MoveMultipleImageGroupsVDSCommandParameters(getParameters().getImagesList().get(0)
+                        .getstorage_pool_id().getValue(), getParameters().getImagesList().get(0)
+                        .getstorage_id().getValue(), getParameters().getImagesList(), getParameters()
+                        .getStorageDomainId(), getParameters().getContainerId()));
+        return vdsReturnValue;
+
     }
 }

@@ -53,7 +53,8 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     protected void executeCommand() {
         super.executeCommand();
         if (CanCreateSnapshot()) {
-            if (performImageVdsmOperation()) {
+            VDSReturnValue vdsReturnValue = performImageVdsmOperation();
+            if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
                 /**
                  * Vitaly TODO: think about transactivity in DB
                  */
@@ -72,7 +73,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                 : Guid.Empty;
     }
 
-    protected boolean performImageVdsmOperation() {
+    protected VDSReturnValue performImageVdsmOperation() {
         setDestinationImageId(Guid.NewGuid());
         mNewCreatedDiskImage = CloneDiskImage(getDestinationImageId());
         mNewCreatedDiskImage.setstorage_id(getDestinationStorageDomainId());
@@ -84,9 +85,10 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         // storage team request
         mNewCreatedDiskImage.setvolume_type(VolumeType.Sparse);
         mNewCreatedDiskImage.setvolume_format(VolumeFormat.COW);
+        VDSReturnValue vdsReturnValue = null;
 
         try {
-            VDSReturnValue vdsReturnValue =
+           vdsReturnValue =
                     Backend
                             .getInstance()
                             .getResourceManager()
@@ -116,10 +118,6 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                     throw new RuntimeException();
                 }
             }
-
-            else {
-                return false;
-            }
         } catch (java.lang.Exception e) {
             log.errorFormat(
                     "CreateSnapshotCommand::CreateSnapshotInIrsServer::Failed creating snapshot from image id -'{0}'",
@@ -127,7 +125,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
         }
 
-        return true;
+        return vdsReturnValue;
     }
 
     @Override

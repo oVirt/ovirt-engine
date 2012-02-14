@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -110,6 +112,11 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             _destinationImageId = value;
         }
     }
+
+    protected VDSReturnValue performImageVdsmOperation() {
+        throw new NotImplementedException();
+    }
+
 
     protected DiskImage getDestinationDiskImage() {
         if (_destinationImage == null) {

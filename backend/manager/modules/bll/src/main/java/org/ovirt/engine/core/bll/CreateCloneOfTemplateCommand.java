@@ -52,14 +52,15 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     }
 
     @Override
-    protected boolean performImageVdsmOperation() {
+    protected VDSReturnValue performImageVdsmOperation() {
         setDestinationImageId(Guid.NewGuid());
         mNewCreatedDiskImage = CloneDiskImage(getDestinationImageId());
         Guid storagePoolID = mNewCreatedDiskImage.getstorage_pool_id() != null ? mNewCreatedDiskImage
                 .getstorage_pool_id().getValue() : Guid.Empty;
 
+        VDSReturnValue vdsReturnValue = null;
         try {
-            VDSReturnValue vdsReturnValue = Backend
+            vdsReturnValue = Backend
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(
@@ -75,8 +76,6 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
             if (vdsReturnValue.getSucceeded()) {
                 getReturnValue().getInternalTaskIdList().add(
                         CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.AddVmFromTemplate));
-            } else {
-                return false;
             }
         } catch (java.lang.Exception e) {
             log.errorFormat(
@@ -84,8 +83,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                     getImage().getId());
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
         }
-
-        return true;
+        return vdsReturnValue;
     }
 
     @Override
