@@ -841,7 +841,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 			list = new java.util.ArrayList<storage_domains>();
 			for (storage_domains a : storageDomains)
 			{
-				if (!a.getid().equals(disks.get(0).getstorage_id().getValue()))
+				if (!a.getId().equals(disks.get(0).getstorage_id().getValue()))
 				{
 					list.add(a);
 				}
@@ -929,7 +929,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
 		for (storage_domains a : items)
 		{
-			parameters.add(new MoveVmParameters(vm.getId(), a.getid()));
+			parameters.add(new MoveVmParameters(vm.getId(), a.getId()));
 		}
 
 
@@ -1053,7 +1053,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
 	private void showWarningOnExistingVms(ExportVmModel model)
 	{
-		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getid();
+		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getId();
 		storage_pool storagePool = DataProvider.GetFirstStoragePoolByStorageDomain(storageDomainId);
 		String existingVMs = "";
 		if (storagePool != null)
@@ -1121,7 +1121,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 	private java.util.ArrayList<String> getTemplatesNotPresentOnExportDomain()
 	{
 		ExportVmModel model = (ExportVmModel)getWindow();
-		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getid();
+		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getId();
 		storage_pool storagePool = DataProvider.GetFirstStoragePoolByStorageDomain(storageDomainId);
 		java.util.ArrayList<String> missingTemplates = new java.util.ArrayList<String>();
 
@@ -1186,7 +1186,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 	public void OnExport()
 	{
 		ExportVmModel model = (ExportVmModel)getWindow();
-		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getid();
+		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getId();
 		if (!model.Validate())
 		{
 			return;
@@ -1283,7 +1283,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 	private void OnExportNoTemplates()
 	{
 		ExportVmModel model = (ExportVmModel)getWindow();
-		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getid();
+		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getId();
 
 		if (model.getProgress() != null)
 		{
@@ -1605,7 +1605,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		newvm.setpriority((Integer)prioritySelectedItem.getEntity());
 
 		AddVmTemplateParameters addVmTemplateParameters = new AddVmTemplateParameters(newvm, (String)model.getName().getEntity(), (String)model.getDescription().getEntity());
-		addVmTemplateParameters.setDestinationStorageDomainId(((storage_domains)model.getStorageDomain().getSelectedItem()).getid());
+		addVmTemplateParameters.setDestinationStorageDomainId(((storage_domains)model.getStorageDomain().getSelectedItem()).getId());
 		addVmTemplateParameters.setPublicUse((Boolean)model.getIsTemplatePublic().getEntity());
 
 
@@ -2122,7 +2122,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
 					model.StartProgress(null);
 
-					Frontend.RunAction(VdcActionType.AddVmFromTemplate, new AddVmFromTemplateParameters(getcurrentVm(), dict, storageDomain.getid()),
+					Frontend.RunAction(VdcActionType.AddVmFromTemplate, new AddVmFromTemplateParameters(getcurrentVm(), dict, storageDomain.getId()),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {
@@ -2148,7 +2148,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 					model.StartProgress(null);
 
 					VmManagementParametersBase tempVar = new VmManagementParametersBase(getcurrentVm());
-					tempVar.setStorageDomainId(storageDomain.getid());
+					tempVar.setStorageDomainId(storageDomain.getId());
 					Frontend.RunAction(VdcActionType.AddVm, tempVar,
 		new IFrontendActionAsyncCallback() {
 			@Override

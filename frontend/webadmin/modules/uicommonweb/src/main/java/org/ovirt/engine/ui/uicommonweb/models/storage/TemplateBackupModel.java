@@ -97,7 +97,7 @@ public class TemplateBackupModel extends ManageBackupModel
                     {
                         VmTemplate template = (VmTemplate) a;
                         prms.add(new VmTemplateImportExportParameters(template.getId(),
-                                getEntity().getid(),
+                                getEntity().getId(),
                                 pool.getId()));
                     }
 
@@ -105,7 +105,7 @@ public class TemplateBackupModel extends ManageBackupModel
                 }
             }
         }),
-                getEntity().getid());
+                getEntity().getId());
         Cancel();
     }
 
@@ -220,12 +220,12 @@ public class TemplateBackupModel extends ManageBackupModel
 
                 };
                 AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery1,
-                        templateBackupModel.getEntity().getid());
+                        templateBackupModel.getEntity().getId());
             }
         };
 
         AsyncDataProvider.GetClusterListByStorageDomain(_asyncQuery,
-                getEntity().getid());
+                getEntity().getId());
     }
 
     private void OnRestore()
@@ -247,7 +247,7 @@ public class TemplateBackupModel extends ManageBackupModel
             VmTemplate item = (VmTemplate) a;
             prms.add(new ImprotVmTemplateParameters(model.getStoragePool().getId(),
                     model.getSourceStorage().getId(),
-                    ((storage_domains) model.getDestinationStorage().getSelectedItem()).getid(),
+                    ((storage_domains) model.getDestinationStorage().getSelectedItem()).getId(),
                     ((VDSGroup) model.getCluster().getSelectedItem()).getId(),
                     item));
         }
@@ -358,13 +358,13 @@ public class TemplateBackupModel extends ManageBackupModel
                         };
                         GetAllFromExportDomainQueryParamenters tempVar =
                                 new GetAllFromExportDomainQueryParamenters(dataCenter.getId(), backupModel.getEntity()
-                                        .getid());
+                                        .getId());
                         tempVar.setGetAll(true);
                         Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, _asyncQuery1);
                     }
                 }
             };
-            AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery, getEntity().getid());
+            AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery, getEntity().getId());
         }
     }
 

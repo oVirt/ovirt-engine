@@ -253,7 +253,7 @@ public class VmDiskListModel extends SearchableListModel
                                     (java.util.ArrayList<storage_domains>) diskModel2.getStorageDomain().getItems();
                             storage_domains storage2 = (storage_domains) result2;
                             vmDiskListModel2.StepA(storage2 != null
-                                    && Linq.IsSDItemExistInList(storageDomains2, storage2.getid()) ? storage2 : null);
+                                    && Linq.IsSDItemExistInList(storageDomains2, storage2.getId()) ? storage2 : null);
                         }
                     };
                     AsyncDataProvider.GetStorageDomainById(_asyncQuery2, disks.get(0).getstorage_id().getValue());
@@ -508,7 +508,7 @@ public class VmDiskListModel extends SearchableListModel
         if (model.getIsNew())
         {
             AddDiskToVmParameters tempVar = new AddDiskToVmParameters(vm.getId(), disk);
-            tempVar.setStorageDomainId(storageDomain.getid());
+            tempVar.setStorageDomainId(storageDomain.getId());
             Frontend.RunAction(VdcActionType.AddDiskToVm, tempVar,
                     new IFrontendActionAsyncCallback() {
                         @Override

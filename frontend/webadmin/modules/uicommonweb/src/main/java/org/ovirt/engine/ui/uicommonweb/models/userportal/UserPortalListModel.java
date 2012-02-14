@@ -688,7 +688,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         (String) model.getName().getEntity(),
                         (String) model.getDescription().getEntity());
         addVmTemplateParameters.setDestinationStorageDomainId(((storage_domains) model.getStorageDomain()
-                .getSelectedItem()).getid());
+                .getSelectedItem()).getId());
         addVmTemplateParameters.setPublicUse((Boolean) model.getIsTemplatePublic().getEntity());
 
         Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
@@ -758,7 +758,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             }
                         }
                     };
-                    AsyncDataProvider.GetIrsImageList(_asyncQuery01, isoDomain.getid(), false);
+                    AsyncDataProvider.GetIrsImageList(_asyncQuery01, isoDomain.getId(), false);
 
                     AsyncQuery _asyncQuery02 = new AsyncQuery();
                     _asyncQuery02.setModel(thisUserPortalListModel);
@@ -796,7 +796,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             }
                         }
                     };
-                    AsyncDataProvider.GetFloppyImageList(_asyncQuery02, isoDomain.getid(), false);
+                    AsyncDataProvider.GetFloppyImageList(_asyncQuery02, isoDomain.getId(), false);
                 }
 
             }
@@ -1149,7 +1149,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             }
                         }
                     };
-                    AsyncDataProvider.GetIrsImageList(_asyncQuery, isoDomain.getid(), false);
+                    AsyncDataProvider.GetIrsImageList(_asyncQuery, isoDomain.getId(), false);
                 }
             }
         };
@@ -1362,7 +1362,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             }
 
                             AddVmFromTemplateParameters parameters =
-                                    new AddVmFromTemplateParameters(gettempVm(), dict, getstorageDomain().getid());
+                                    new AddVmFromTemplateParameters(gettempVm(), dict, getstorageDomain().getId());
                             parameters.setMakeCreatorExplicitOwner(true);
 
                             Frontend.RunAction(VdcActionType.AddVmFromTemplate, parameters,
@@ -1383,7 +1383,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 else
                 {
                     VmManagementParametersBase parameters = new VmManagementParametersBase(gettempVm());
-                    parameters.setStorageDomainId(getstorageDomain().getid());
+                    parameters.setStorageDomainId(getstorageDomain().getId());
                     parameters.setMakeCreatorExplicitOwner(true);
 
                     Frontend.RunAction(VdcActionType.AddVm, parameters,

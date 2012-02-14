@@ -443,7 +443,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                             }
                         },
                         getHash()),
-                        getStorage().getid());
+                        getStorage().getId());
             }
         }
     }

@@ -102,13 +102,13 @@ public class VmBackupModel extends ManageBackupModel implements ITaskTarget
 			return;
 		}
 
-		storage_pool pool = DataProvider.GetFirstStoragePoolByStorageDomain(getEntity().getid());
+		storage_pool pool = DataProvider.GetFirstStoragePoolByStorageDomain(getEntity().getId());
 
 		java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
 		for (Object item : getSelectedItems())
 		{
 			VM vm = (VM)item;
-			list.add(new RemoveVmFromImportExportParamenters(vm, getEntity().getid(), pool.getId()));
+			list.add(new RemoveVmFromImportExportParamenters(vm, getEntity().getId(), pool.getId()));
 		}
 
 
@@ -142,7 +142,7 @@ public class VmBackupModel extends ManageBackupModel implements ITaskTarget
 		setWindow(model);
 		model.setTitle("Import Virtual Machine(s)");
 		model.setHashName("import_virtual_machine");
-		java.util.ArrayList<VDSGroup> clusters = DataProvider.GetClusterListByStorageDomain(getEntity().getid());
+		java.util.ArrayList<VDSGroup> clusters = DataProvider.GetClusterListByStorageDomain(getEntity().getId());
 
 		model.getCluster().setItems(clusters);
 		model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
@@ -224,7 +224,7 @@ public class VmBackupModel extends ManageBackupModel implements ITaskTarget
 				disks.put(a.getKey(), a.getValue());
 			}
 
-			ImportVmParameters tempVar = new ImportVmParameters(vm, model.getSourceStorage().getId(), destinationStorage.getid(), model.getStoragePool().getId(), cluster.getId());
+			ImportVmParameters tempVar = new ImportVmParameters(vm, model.getSourceStorage().getId(), destinationStorage.getId(), model.getStoragePool().getId(), cluster.getId());
 			tempVar.setForceOverride(true);
 			tempVar.setCopyCollapse(collapseSnapshots);
 			tempVar.setDiskInfoList(disks);
@@ -335,7 +335,7 @@ public class VmBackupModel extends ManageBackupModel implements ITaskTarget
 			switch ((Integer)context.getState())
 			{
 				case 1:
-					storageDomainId = getEntity().getid();
+					storageDomainId = getEntity().getId();
 					storage_pool pool = DataProvider.GetFirstStoragePoolByStorageDomain(storageDomainId);
 
 					GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(pool.getId(), storageDomainId);
@@ -346,7 +346,7 @@ public class VmBackupModel extends ManageBackupModel implements ITaskTarget
 					break;
 
 				case 2:
-					if (storageDomainId.equals(getEntity().getid()))
+					if (storageDomainId.equals(getEntity().getId()))
 					{
 						if (returnValue != null && returnValue.getSucceeded())
 						{

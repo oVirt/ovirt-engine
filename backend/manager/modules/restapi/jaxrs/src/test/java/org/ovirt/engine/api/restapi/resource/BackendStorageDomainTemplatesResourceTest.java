@@ -141,7 +141,7 @@ public class BackendStorageDomainTemplatesResourceTest
 
     public static storage_domains setUpStorageDomain(StorageDomainType domainType) {
         storage_domains entity = new storage_domains();
-        entity.setid(STORAGE_DOMAIN_ID);
+        entity.setId(STORAGE_DOMAIN_ID);
         entity.setstorage_domain_type(domainType);
         return entity;
     }

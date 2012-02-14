@@ -29,7 +29,7 @@ public class StorageDomainMapperTest extends
     @Override
     protected storage_domains getInverse(storage_domain_static to) {
         storage_domains inverse = new storage_domains();
-        inverse.setid(to.getId());
+        inverse.setId(to.getId());
         inverse.setstorage_name(to.getstorage_name());
         inverse.setstorage_domain_type(to.getstorage_domain_type());
         inverse.setstorage_type(to.getstorage_type());

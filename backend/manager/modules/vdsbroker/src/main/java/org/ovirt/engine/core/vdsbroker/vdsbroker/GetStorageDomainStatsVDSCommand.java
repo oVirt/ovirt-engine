@@ -29,7 +29,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
         _result = getBroker().getStorageDomainStats(getParameters().getStorageDomainId().toString());
         ProceedProxyReturnValue();
         storage_domains domain = BuildStorageDynamicFromXmlRpcStruct(_result.mStorageStats);
-        domain.setid(getParameters().getStorageDomainId());
+        domain.setId(getParameters().getStorageDomainId());
         setReturnValue(domain);
     }
 

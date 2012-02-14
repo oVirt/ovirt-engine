@@ -630,7 +630,7 @@ public class BackendVmsResourceTest
 
     private void setUpStorageDomainsExpectations(int storageIndex, int templateIndex) {
         storage_domains domain = control.createMock(storage_domains.class);
-        expect(domain.getid()).andReturn(GUIDS[storageIndex]).anyTimes();
+        expect(domain.getId()).andReturn(GUIDS[storageIndex]).anyTimes();
 
         setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainsByVmTemplateId,
                                      GetStorageDomainsByVmTemplateIdQueryParameters.class,

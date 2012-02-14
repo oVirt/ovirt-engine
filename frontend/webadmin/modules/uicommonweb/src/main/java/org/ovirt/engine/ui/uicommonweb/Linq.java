@@ -300,7 +300,7 @@ public final class Linq
     {
         for (storage_domains b : items)
         {
-            if (b.getid().equals(id))
+            if (b.getId().equals(id))
             {
                 return true;
             }
@@ -988,7 +988,7 @@ public final class Linq
         @Override
         public boolean Match(storage_domains source)
         {
-            return id.equals(source.getid());
+            return id.equals(source.getId());
         }
     }
 

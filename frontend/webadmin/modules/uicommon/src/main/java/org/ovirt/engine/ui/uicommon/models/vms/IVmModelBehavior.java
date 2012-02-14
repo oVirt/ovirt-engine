@@ -74,7 +74,7 @@ public abstract class IVmModelBehavior
 			storage_domains storageDomain = (storage_domains)returnValue;
 			if (storageDomain != null)
 			{
-				behavior.PostUpdateCdImage(storageDomain.getid());
+				behavior.PostUpdateCdImage(storageDomain.getId());
 			}
 			else
 			{

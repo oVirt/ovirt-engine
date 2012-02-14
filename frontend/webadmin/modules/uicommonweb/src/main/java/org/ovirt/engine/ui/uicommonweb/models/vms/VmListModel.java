@@ -992,7 +992,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             java.util.ArrayList<storage_domains> list = new java.util.ArrayList<storage_domains>();
             for (storage_domains a : storageDomains)
             {
-                if (!a.getid().equals(disks.get(0).getstorage_id().getValue()))
+                if (!a.getId().equals(disks.get(0).getstorage_id().getValue()))
                 {
                     list.add(a);
                 }
@@ -1076,7 +1076,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
         for (storage_domains a : items)
         {
-            parameters.add(new MoveVmParameters(vm.getId(), a.getid()));
+            parameters.add(new MoveVmParameters(vm.getId(), a.getId()));
         }
 
         model.StartProgress(null);
@@ -1208,7 +1208,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
     private void showWarningOnExistingVms(ExportVmModel model)
     {
-        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getid();
+        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
         AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(new Object[] { this, model },
                 new INewAsyncCallback() {
                     @Override
@@ -1272,7 +1272,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 }
             };
 
-            Guid storageDomainId = ((storage_domains) exportModel.getStorage().getSelectedItem()).getid();
+            Guid storageDomainId = ((storage_domains) exportModel.getStorage().getSelectedItem()).getId();
             GetAllFromExportDomainQueryParamenters tempVar =
                     new GetAllFromExportDomainQueryParamenters(storagePool.getId(), storageDomainId);
             tempVar.setGetAll(true);
@@ -1307,7 +1307,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     private void GetTemplatesNotPresentOnExportDomain()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getid();
+        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
 
         AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -1326,7 +1326,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     private void PostGetTemplatesNotPresentOnExportDomain(storage_pool storagePool)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getid();
+        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
 
         if (storagePool != null)
         {
@@ -1391,7 +1391,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     private void PostExportGetMissingTemplates(java.util.ArrayList<String> missingTemplatesFromVms)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getid();
+        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
         java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
 
         for (Object a : getSelectedItems())
@@ -1477,7 +1477,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     public void OnExport()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getid();
+        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
         if (!model.Validate())
         {
             return;
@@ -1489,7 +1489,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     private void OnExportNoTemplates()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getid();
+        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
 
         if (model.getProgress() != null)
         {
@@ -1708,7 +1708,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             }
                         }
                     };
-                    AsyncDataProvider.GetIrsImageList(_asyncQuery1, isoDomain.getid(), false);
+                    AsyncDataProvider.GetIrsImageList(_asyncQuery1, isoDomain.getId(), false);
 
                     AsyncQuery _asyncQuery2 = new AsyncQuery();
                     _asyncQuery2.setModel(vmListModel);
@@ -1724,7 +1724,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             vmListModel2.RunOnceUpdateFloppy(selectedVM, images);
                         }
                     };
-                    AsyncDataProvider.GetFloppyImageList(_asyncQuery2, isoDomain.getid(), false);
+                    AsyncDataProvider.GetFloppyImageList(_asyncQuery2, isoDomain.getId(), false);
                 }
 
             }
@@ -1952,7 +1952,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                         (String) model.getName().getEntity(),
                         (String) model.getDescription().getEntity());
         addVmTemplateParameters.setDestinationStorageDomainId(((storage_domains) model.getStorageDomain()
-                .getSelectedItem()).getid());
+                .getSelectedItem()).getId());
         addVmTemplateParameters.setPublicUse((Boolean) model.getIsTemplatePublic().getEntity());
 
         model.StartProgress(null);
@@ -2372,7 +2372,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             }
                         }
                     };
-                    AsyncDataProvider.GetIrsImageList(_asyncQuery2, isoDomain.getid(), false);
+                    AsyncDataProvider.GetIrsImageList(_asyncQuery2, isoDomain.getId(), false);
                 }
             }
         };
@@ -2596,11 +2596,11 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             AddVmFromTemplateParameters parameters =
                                     new AddVmFromTemplateParameters(vmListModel.getcurrentVm(),
                                             dict,
-                                            storageDomain.getid());
+                                            storageDomain.getId());
                             parameters.setMakeCreatorExplicitOwner(true);
 
                             Frontend.RunAction(VdcActionType.AddVmFromTemplate,
-                                    new AddVmFromTemplateParameters(getcurrentVm(), dict, storageDomain.getid()),
+                                    new AddVmFromTemplateParameters(getcurrentVm(), dict, storageDomain.getId()),
                                     new IFrontendActionAsyncCallback() {
                                         @Override
                                         public void Executed(FrontendActionAsyncResult result) {
@@ -2633,7 +2633,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                     storage_domains storageDomain = (storage_domains) model.getStorageDomain().getSelectedItem();
 
                     VmManagementParametersBase tempVar = new VmManagementParametersBase(getcurrentVm());
-                    tempVar.setStorageDomainId(storageDomain.getid());
+                    tempVar.setStorageDomainId(storageDomain.getId());
                     Frontend.RunAction(VdcActionType.AddVm, tempVar,
                             new IFrontendActionAsyncCallback() {
                                 @Override

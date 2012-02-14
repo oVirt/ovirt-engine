@@ -385,7 +385,7 @@ public class VmGuideModel extends GuideModel
         {
             // the StorageDomain value should be the one that all other Disks are on
             // (although this field is not-available, we use its value in the 'OnSave' method):
-            if (storage != null && Linq.IsSDItemExistInList(storageDomains, storage.getid()))
+            if (storage != null && Linq.IsSDItemExistInList(storageDomains, storage.getId()))
             {
                 storage_available = true;
             }
@@ -539,7 +539,7 @@ public class VmGuideModel extends GuideModel
             model.StartProgress(null);
 
             AddDiskToVmParameters tempVar2 = new AddDiskToVmParameters(getEntity().getId(), disk);
-            tempVar2.setStorageDomainId(storageDomain.getid());
+            tempVar2.setStorageDomainId(storageDomain.getId());
             Frontend.RunAction(VdcActionType.AddDiskToVm, tempVar2,
                     new IFrontendActionAsyncCallback() {
                         @Override

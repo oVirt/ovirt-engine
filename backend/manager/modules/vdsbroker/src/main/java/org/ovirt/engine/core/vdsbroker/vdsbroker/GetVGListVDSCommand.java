@@ -37,7 +37,7 @@ public class GetVGListVDSCommand<P extends VdsIdVDSCommandParametersBase> extend
                 storage_domains sDomain = new storage_domains();
                 if (vg.contains("name")) {
                     try {
-                        sDomain.setid(new Guid(vg.getItem("name").toString()));
+                        sDomain.setId(new Guid(vg.getItem("name").toString()));
                     } catch (java.lang.Exception e) {
                         sDomain.setstorage_name(vg.getItem("name").toString());
                     }

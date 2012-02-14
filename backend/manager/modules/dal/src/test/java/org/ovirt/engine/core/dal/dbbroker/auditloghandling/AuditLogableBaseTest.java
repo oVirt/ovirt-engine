@@ -526,7 +526,7 @@ public class AuditLogableBaseTest {
     public void storageDomainIdWithStorageDomain() {
         final AuditLogableBase b = new AuditLogableBase();
         final storage_domains s = new storage_domains();
-        s.setid(GUID);
+        s.setId(GUID);
         b.setStorageDomain(s);
         final NGuid g = b.getStorageDomainId();
         assertEquals(GUID, g);

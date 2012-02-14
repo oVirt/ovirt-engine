@@ -157,7 +157,7 @@ public class VmItemBehavior extends ItemBehavior
 								userPortalItemModel.getCdImages().add(tempVar2);
 							}
 						}};
-					AsyncDataProvider.GetIrsImageList(_asyncQuery, isoDomain.getid(), false);
+					AsyncDataProvider.GetIrsImageList(_asyncQuery, isoDomain.getId(), false);
 
 				}
 			}};

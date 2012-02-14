@@ -84,7 +84,7 @@ public class StorageDomainMapper {
     @Mapping(from = storage_domains.class, to = StorageDomain.class)
     public static StorageDomain map(storage_domains entity, StorageDomain template) {
         StorageDomain model = template != null ? template : new StorageDomain();
-        model.setId(entity.getid().toString());
+        model.setId(entity.getId().toString());
         model.setName(entity.getstorage_name());
         // REVIST No descriptions for storage domains
         // model.setDescription(entity.getdescription());

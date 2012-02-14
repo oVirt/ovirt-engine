@@ -78,7 +78,7 @@ public class TemplateBackupModel extends ManageBackupModel implements ITaskTarge
 
 	private void OnRemove()
 	{
-		storage_pool pool = DataProvider.GetFirstStoragePoolByStorageDomain(getEntity().getid());
+		storage_pool pool = DataProvider.GetFirstStoragePoolByStorageDomain(getEntity().getId());
 		//Frontend.RunMultipleActions(VdcActionType.RemoveVmTemplateFromImportExport,
 		//	SelectedItems.Cast<KeyValuePair<VmTemplate, List<DiskImage>>>()
 		//	.Select(a => (VdcActionParametersBase)new VmTemplateImportExportParameters(a.getKey().vmt_guid, Entity.id, pool.id))
@@ -89,7 +89,7 @@ public class TemplateBackupModel extends ManageBackupModel implements ITaskTarge
 		{
 			java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> item = (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>)a;
 			VmTemplate template = item.getKey();
-			prms.add(new VmTemplateImportExportParameters(template.getId(), getEntity().getid(), pool.getId()));
+			prms.add(new VmTemplateImportExportParameters(template.getId(), getEntity().getId(), pool.getId()));
 		}
 
 		Frontend.RunMultipleAction(VdcActionType.RemoveVmTemplateFromImportExport, prms);
@@ -113,7 +113,7 @@ public class TemplateBackupModel extends ManageBackupModel implements ITaskTarge
 		setWindow(model);
 		model.setTitle("Import Template(s)");
 		model.setHashName("import_template");
-		java.util.ArrayList<VDSGroup> clusters = DataProvider.GetClusterListByStorageDomain(getEntity().getid());
+		java.util.ArrayList<VDSGroup> clusters = DataProvider.GetClusterListByStorageDomain(getEntity().getId());
 
 		model.getCluster().setItems(clusters);
 		model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
@@ -129,7 +129,7 @@ public class TemplateBackupModel extends ManageBackupModel implements ITaskTarge
 		//    .ToList();
 
 		java.util.ArrayList<storage_domains> destStorages = new java.util.ArrayList<storage_domains>();
-		for (storage_domains domain : DataProvider.GetDataDomainsListByDomain(getEntity().getid()))
+		for (storage_domains domain : DataProvider.GetDataDomainsListByDomain(getEntity().getId()))
 		{
 			if ((domain.getstorage_domain_type() == StorageDomainType.Data || domain.getstorage_domain_type() == StorageDomainType.Master) && domain.getstatus() != null && domain.getstatus() == StorageDomainStatus.Active)
 			{
@@ -197,7 +197,7 @@ public class TemplateBackupModel extends ManageBackupModel implements ITaskTarge
 		for (Object a : getSelectedItems())
 		{
 			java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> item = (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>)a;
-			prms.add(new ImprotVmTemplateParameters(model.getStoragePool().getId(), model.getSourceStorage().getId(), ((storage_domains)model.getDestinationStorage().getSelectedItem()).getid(), ((VDSGroup)model.getCluster().getSelectedItem()).getId(), item.getKey()));
+			prms.add(new ImprotVmTemplateParameters(model.getStoragePool().getId(), model.getSourceStorage().getId(), ((storage_domains)model.getDestinationStorage().getSelectedItem()).getId(), ((VDSGroup)model.getCluster().getSelectedItem()).getId(), item.getKey()));
 		}
 
 		model.StartProgress(null);
@@ -304,7 +304,7 @@ public class TemplateBackupModel extends ManageBackupModel implements ITaskTarge
 			switch ((Integer)context.getState())
 			{
 				case 1:
-					storageDomainId = getEntity().getid();
+					storageDomainId = getEntity().getId();
 
 					storage_pool pool = DataProvider.GetFirstStoragePoolByStorageDomain(storageDomainId);
 
@@ -317,7 +317,7 @@ public class TemplateBackupModel extends ManageBackupModel implements ITaskTarge
 
 				case 2:
 					//if user didn't change the entity meanwhile, update Items, else dont touch it
-					if (storageDomainId.equals(getEntity().getid()))
+					if (storageDomainId.equals(getEntity().getId()))
 					{
 						if (returnValue != null && returnValue.getSucceeded())
 						{

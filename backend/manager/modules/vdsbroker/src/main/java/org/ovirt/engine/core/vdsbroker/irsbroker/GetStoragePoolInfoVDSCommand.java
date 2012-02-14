@@ -49,8 +49,8 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
             XmlRpcStruct domainAsStruct = new XmlRpcStruct((java.util.Map) xmlRpcStruct.getItem(domain));
             storage_domains sd = GetStorageDomainStatsVDSCommand.BuildStorageDynamicFromXmlRpcStruct(domainAsStruct);
             sd.setstorage_pool_id(getParameters().getStoragePoolId());
-            sd.setid(new Guid(domain));
-            if (!masterId.equals(Guid.Empty) && masterId.equals(sd.getid())) {
+            sd.setId(new Guid(domain));
+            if (!masterId.equals(Guid.Empty) && masterId.equals(sd.getId())) {
                 sd.setstorage_domain_type(StorageDomainType.Master);
             } else if (!masterId.equals(Guid.Empty)) {
                 sd.setstorage_domain_type(StorageDomainType.Data);

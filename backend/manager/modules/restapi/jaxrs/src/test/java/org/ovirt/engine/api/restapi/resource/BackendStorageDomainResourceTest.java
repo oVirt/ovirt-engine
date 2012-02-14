@@ -103,7 +103,7 @@ public class BackendStorageDomainResourceTest
 
     private storage_domains getFcpEntity() {
         storage_domains entity = control.createMock(storage_domains.class);
-        expect(entity.getid()).andReturn(GUIDS[0]).anyTimes();
+        expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
         expect(entity.getstorage_name()).andReturn(NAMES[0]).anyTimes();
         expect(entity.getstorage_domain_type()).andReturn(org.ovirt.engine.core.common.businessentities.StorageDomainType.Data).anyTimes();
         expect(entity.getstorage_type()).andReturn(org.ovirt.engine.core.common.businessentities.StorageType.FCP).anyTimes();

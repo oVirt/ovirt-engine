@@ -322,7 +322,7 @@ public class BackendStorageDomainTemplateResourceTest
 
     protected storage_domains getStorageDomain(int idx) {
         storage_domains dom = new storage_domains();
-        dom.setid(GUIDS[idx]);
+        dom.setId(GUIDS[idx]);
         return dom;
     }
 

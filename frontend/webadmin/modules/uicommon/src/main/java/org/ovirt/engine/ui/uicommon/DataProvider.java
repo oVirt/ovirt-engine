@@ -412,7 +412,7 @@ public final class DataProvider
 		storage_domains isoDomain = GetIsoDomainByDataCenterId(dataCenterId);
 		if (isoDomain != null)
 		{
-			return GetIsoListByIsoDomainId(isoDomain.getid(), forceRefresh);
+			return GetIsoListByIsoDomainId(isoDomain.getId(), forceRefresh);
 		}
 
 		return new java.util.ArrayList<String>();
@@ -1194,7 +1194,7 @@ public final class DataProvider
 			java.util.ArrayList<storage_domains> list = new java.util.ArrayList<storage_domains>();
 			for (storage_domains domain : GetStorageDomainList(pool.getId()))
 			{
-				if (!domain.getid().equals(storageDomainId))
+				if (!domain.getId().equals(storageDomainId))
 				{
 					list.add(domain);
 				}
@@ -1879,7 +1879,7 @@ public final class DataProvider
 		if (isoDomain != null)
 		{
 			GetAllIsoImagesListParameters parameters = new GetAllIsoImagesListParameters();
-			parameters.setStorageDomainId(isoDomain.getid());
+			parameters.setStorageDomainId(isoDomain.getId());
 			parameters.setForceRefresh(forceRefresh);
 
 			VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetAllFloppyImagesList, parameters);
@@ -2523,7 +2523,7 @@ public final class DataProvider
 		}
 		else if (entity instanceof storage_domains)
 		{
-			return ((storage_domains)entity).getid();
+			return ((storage_domains)entity).getId();
 		}
 		else if (entity instanceof VmTemplate)
 		{

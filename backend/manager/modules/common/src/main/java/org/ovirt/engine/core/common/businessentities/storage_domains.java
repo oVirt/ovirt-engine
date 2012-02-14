@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "storage_domains")
-public class storage_domains extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
+public class storage_domains extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid> {
     private static final long serialVersionUID = -6162192446628804305L;
 
     public storage_domains() {
@@ -33,7 +33,7 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         _staticData = new storage_domain_static();
         _dynamicData = new storage_domain_dynamic();
         setStoragePoolIsoMapData(new storage_pool_iso_map());
-        this.setid(id);
+        this.setId(id);
         this.setstorage(storage);
         this.setstorage_name(storage_name);
         this.setstorage_pool_id(storage_pool_id);
@@ -98,11 +98,13 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         _dynamicData = value;
     }
 
-    public Guid getid() {
+    @Override
+    public Guid getId() {
         return this.getStorageStaticData().getId();
     }
 
-    public void setid(Guid value) {
+    @Override
+    public void setId(Guid value) {
         getStorageStaticData().setId(value);
         getStorageDynamicData().setId(value);
         getStoragePoolIsoMapData().setstorage_id(value);
@@ -284,9 +286,10 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         getStorageStaticData().setStorageFormat(value);
     }
 
+    @Override
     public Object getQueryableId() {
         if(vdcQueryableId == null){
-            return getid();
+            return getId();
         }
         //used only by the Frontend project
         return vdcQueryableId;
@@ -334,7 +337,7 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         result = prime * result
                 + ((totalDiskSize == null) ? 0 : totalDiskSize.hashCode());
         result = prime * result
-                + ((getid() == null) ? 0 : getid().hashCode());
+                + ((getId() == null) ? 0 : getId().hashCode());
         return result;
     }
 
@@ -358,10 +361,10 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
                 return false;
         } else if (!totalDiskSize.equals(other.totalDiskSize))
             return false;
-        if (getid() == null) {
-            if (other.getid() != null)
+        if (getId() == null) {
+            if (other.getId() != null)
                 return false;
-        } else if (!getid().equals(other.getid()))
+        } else if (!getId().equals(other.getId()))
             return false;
         return true;
     }

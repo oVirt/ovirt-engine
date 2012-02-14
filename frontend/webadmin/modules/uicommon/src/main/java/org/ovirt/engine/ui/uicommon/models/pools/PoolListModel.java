@@ -543,7 +543,7 @@ public class PoolListModel extends ListWithDetailsModel
 
 
 		AddVmPoolWithVmsParameters tempVar2 = new AddVmPoolWithVmsParameters(pool, desktop, model.getIsAddVMMode() ? Integer.parseInt(model.getNumOfDesktops().getEntity().toString()) : 0, 0);
-		tempVar2.setStorageDomainId(((storage_domains)model.getStorageDomain().getSelectedItem()).getid());
+		tempVar2.setStorageDomainId(((storage_domains)model.getStorageDomain().getSelectedItem()).getId());
 		AddVmPoolWithVmsParameters param = tempVar2;
 
 

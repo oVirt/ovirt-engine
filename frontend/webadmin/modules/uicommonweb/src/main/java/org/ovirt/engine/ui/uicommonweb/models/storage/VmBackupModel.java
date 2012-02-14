@@ -124,7 +124,7 @@ public class VmBackupModel extends ManageBackupModel {
                     for (Object item : backupModel.getSelectedItems()) {
                         VM vm = (VM) item;
                         list.add(new RemoveVmFromImportExportParamenters(vm,
-                                backupModel.getEntity().getid(), pool.getId()));
+                                backupModel.getEntity().getId(), pool.getId()));
                     }
 
                     backupModel.StartProgress(null);
@@ -148,7 +148,7 @@ public class VmBackupModel extends ManageBackupModel {
             }
         };
         AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery,
-                getEntity().getid());
+                getEntity().getId());
     }
 
     @Override
@@ -264,12 +264,12 @@ public class VmBackupModel extends ManageBackupModel {
 
                 };
                 AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery1,
-                        vmBackupModel.getEntity().getid());
+                        vmBackupModel.getEntity().getId());
             }
         };
 
         AsyncDataProvider.GetClusterListByStorageDomain(_AsyncQuery,
-                getEntity().getid());
+                getEntity().getId());
     }
 
     public void OnRestore() {
@@ -289,7 +289,7 @@ public class VmBackupModel extends ManageBackupModel {
             VM vm = (VM) item;
             ImportVmParameters tempVar = new ImportVmParameters(vm, model
                     .getSourceStorage().getId(), ((storage_domains) model
-                    .getDestinationStorage().getSelectedItem()).getid(), model
+                    .getDestinationStorage().getSelectedItem()).getId(), model
                     .getStoragePool().getId(), ((VDSGroup) model.getCluster()
                     .getSelectedItem()).getId());
             tempVar.setForceOverride(true);
@@ -420,7 +420,7 @@ public class VmBackupModel extends ManageBackupModel {
                         };
                         GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(
                                 dataCenter.getId(), backupModel.getEntity()
-                                        .getid());
+                                        .getId());
                         tempVar.setGetAll(true);
                         Frontend.RunQuery(VdcQueryType.GetVmsFromExportDomain,
                                 tempVar, _asyncQuery1);
@@ -428,7 +428,7 @@ public class VmBackupModel extends ManageBackupModel {
                 }
             };
             AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery,
-                    getEntity().getid());
+                    getEntity().getId());
         }
     }
 

@@ -586,7 +586,7 @@ public class BackendStorageDomainsResourceTest
     }
 
     static storage_domains setUpEntityExpectations(storage_domains entity, int index) {
-        expect(entity.getid()).andReturn(GUIDS[index]).anyTimes();
+        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getstorage_name()).andReturn(NAMES[index]).anyTimes();
         // REVIST No descriptions for storage domains
         // expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
@@ -614,7 +614,7 @@ public class BackendStorageDomainsResourceTest
 
     protected storage_domains getIscsiEntity() {
         storage_domains entity = control.createMock(storage_domains.class);
-        expect(entity.getid()).andReturn(GUIDS[0]).anyTimes();
+        expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
         expect(entity.getstorage_name()).andReturn(NAMES[0]).anyTimes();
         expect(entity.getstorage_domain_type()).andReturn(TYPES_MAPPED[0]).anyTimes();
         expect(entity.getstorage_type()).andReturn(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI).anyTimes();

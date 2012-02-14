@@ -173,7 +173,7 @@ public class VmItemBehavior extends ItemBehavior
                             }
                         }
                     };
-                    AsyncDataProvider.GetIrsImageList(_asyncQuery, isoDomain.getid(), false);
+                    AsyncDataProvider.GetIrsImageList(_asyncQuery, isoDomain.getId(), false);
 
                 }
             }

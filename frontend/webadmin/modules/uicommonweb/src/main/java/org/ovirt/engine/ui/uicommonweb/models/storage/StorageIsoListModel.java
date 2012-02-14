@@ -139,7 +139,7 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
         storage_domains storageDomain = (storage_domains) getEntity();
 
         GetAllIsoImagesListParameters tempVar = new GetAllIsoImagesListParameters();
-        tempVar.setStorageDomainId(storageDomain.getid());
+        tempVar.setStorageDomainId(storageDomain.getId());
         tempVar.setForceRefresh(true);
         tempVar.setRefresh(getIsQueryFirstTime());
         GetAllIsoImagesListParameters parameters = tempVar;

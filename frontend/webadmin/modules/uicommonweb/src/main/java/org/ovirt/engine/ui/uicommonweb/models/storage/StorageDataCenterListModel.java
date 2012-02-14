@@ -211,14 +211,14 @@ public class StorageDataCenterListModel extends SearchableListModel
                     String guid =
                             domain.getstorage_pool_id() != null ? domain.getstorage_pool_id().getValue().toString()
                                     : Guid.Empty.toString();
-                    domain.setQueryableId(domain.getid() + "_" + guid);
+                    domain.setQueryableId(domain.getId() + "_" + guid);
                 }
                 searchableListModel.setItems(domains);
                 setIsEmpty(((java.util.List) searchableListModel.getItems()).size() == 0);
             }
         };
 
-        StorageDomainQueryParametersBase tempVar = new StorageDomainQueryParametersBase(getEntity().getid());
+        StorageDomainQueryParametersBase tempVar = new StorageDomainQueryParametersBase(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetStorageDomainListById, tempVar, _asyncQuery);
     }
@@ -229,7 +229,7 @@ public class StorageDataCenterListModel extends SearchableListModel
         super.AsyncSearch();
 
         setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetStorageDomainListById,
-                new StorageDomainQueryParametersBase(getEntity().getid())));
+                new StorageDomainQueryParametersBase(getEntity().getId())));
         setItems(getAsyncResult().getData());
     }
 
@@ -401,7 +401,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                     new java.util.ArrayList<VdcActionParametersBase>();
             for (storage_pool dataCenter : items)
             {
-                parameters.add(new StorageDomainPoolParametersBase(getEntity().getid(), dataCenter.getId()));
+                parameters.add(new StorageDomainPoolParametersBase(getEntity().getId(), dataCenter.getId()));
             }
 
             Frontend.RunMultipleAction(VdcActionType.AttachStorageDomainToPool, parameters,
@@ -504,7 +504,7 @@ public class StorageDataCenterListModel extends SearchableListModel
             if (storageDomain.getstorage_type() != StorageType.LOCALFS)
             {
                 DetachStorageDomainFromPoolParameters param = new DetachStorageDomainFromPoolParameters();
-                param.setStorageDomainId(getEntity().getid());
+                param.setStorageDomainId(getEntity().getId());
                 if (storageDomain.getstorage_pool_id() != null)
                 {
                     param.setStoragePoolId(storageDomain.getstorage_pool_id().getValue());
@@ -524,7 +524,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                                 storage_domains storage = (storage_domains) array[1];
                                 VDS locaVds = (VDS) returnValue;
                                 RemoveStorageDomainParameters tempVar =
-                                        new RemoveStorageDomainParameters(storage.getid());
+                                        new RemoveStorageDomainParameters(storage.getId());
                                 tempVar.setVdsId((locaVds != null ? locaVds.getId() : null));
                                 tempVar.setDoFormat(true);
                                 RemoveStorageDomainParameters removeStorageDomainParameters = tempVar;
@@ -558,7 +558,7 @@ public class StorageDataCenterListModel extends SearchableListModel
             storage_domains a = (storage_domains) item;
 
             StorageDomainPoolParametersBase parameters = new StorageDomainPoolParametersBase();
-            parameters.setStorageDomainId(getEntity().getid());
+            parameters.setStorageDomainId(getEntity().getId());
             if (a.getstorage_pool_id() != null)
             {
                 parameters.setStoragePoolId(a.getstorage_pool_id().getValue());
@@ -584,7 +584,7 @@ public class StorageDataCenterListModel extends SearchableListModel
             storage_domains a = (storage_domains) item;
 
             StorageDomainPoolParametersBase parameters = new StorageDomainPoolParametersBase();
-            parameters.setStorageDomainId(getEntity().getid());
+            parameters.setStorageDomainId(getEntity().getId());
             if (a.getstorage_pool_id() != null)
             {
                 parameters.setStoragePoolId(a.getstorage_pool_id().getValue());

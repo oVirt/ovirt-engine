@@ -30,7 +30,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
         List<storage_domains> domains = getAllForStoragePool(pool);
         for (storage_domains domain : domains) {
             if (domain.getstorage_domain_type() == StorageDomainType.Master) {
-                returnValue = domain.getid();
+                returnValue = domain.getId();
                 break;
             }
         }
@@ -236,7 +236,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
         public storage_domains mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             storage_domains entity = new storage_domains();
-            entity.setid(Guid.createGuidFromString(rs.getString("id")));
+            entity.setId(Guid.createGuidFromString(rs.getString("id")));
             entity.setstorage(rs.getString("storage"));
             entity.setstorage_name(rs.getString("storage_name"));
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs.getString("storage_pool_id")));

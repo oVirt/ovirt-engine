@@ -221,7 +221,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public NGuid getStorageDomainId() {
         if (_storageDomain != null) {
-            return _storageDomain.getid();
+            return _storageDomain.getId();
         } else {
             return _storageDomainId;
         }

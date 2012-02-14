@@ -640,7 +640,7 @@ public class PoolListModel extends ListWithDetailsModel
                                                 .getEntity()
                                                 .toString()) : 0,
                                         0);
-                        tempVar2.setStorageDomainId(((storage_domains) model.getStorageDomain().getSelectedItem()).getid());
+                        tempVar2.setStorageDomainId(((storage_domains) model.getStorageDomain().getSelectedItem()).getId());
                         AddVmPoolWithVmsParameters param = tempVar2;
 
                         model.StartProgress(null);

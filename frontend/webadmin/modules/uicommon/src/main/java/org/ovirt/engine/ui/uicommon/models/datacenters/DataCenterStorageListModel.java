@@ -169,7 +169,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 		java.util.ArrayList<VdcActionParametersBase> pb = new java.util.ArrayList<VdcActionParametersBase>();
 		for (storage_domains a : Linq.<storage_domains>Cast(getSelectedItems()))
 		{
-			pb.add(new StorageDomainPoolParametersBase(a.getid(), getEntity().getId()));
+			pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
 		}
 
 		Frontend.RunMultipleAction(VdcActionType.DeactivateStorageDomain, pb);
@@ -185,7 +185,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 		java.util.ArrayList<VdcActionParametersBase> pb = new java.util.ArrayList<VdcActionParametersBase>();
 		for (storage_domains a : Linq.<storage_domains>Cast(getSelectedItems()))
 		{
-			pb.add(new StorageDomainPoolParametersBase(a.getid(), getEntity().getId()));
+			pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
 		}
 
 
@@ -230,7 +230,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 			for (storage_domains a : list)
 			{
 				//if (Linq.All<storage_domains>(items, delegate(storage_domains b) { return b.id != a.id; }))
-				if (!Linq.IsSDItemExistInList(items, a.getid()))
+				if (!Linq.IsSDItemExistInList(items, a.getId()))
 				{
 					EntityModel tempVar = new EntityModel();
 					tempVar.setEntity(a);
@@ -250,7 +250,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 			{
 				addToList = false;
 
-				if(!Linq.IsSDItemExistInList(items, a.getid()) && a.getstorage_domain_type() == storageType)
+				if(!Linq.IsSDItemExistInList(items, a.getId()) && a.getstorage_domain_type() == storageType)
 				{
 					if(storageType == StorageDomainType.Data && a.getstorage_type() == getEntity().getstorage_pool_type() && a.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)
 					{
@@ -342,7 +342,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 			java.util.ArrayList<VdcActionParametersBase> pb = new java.util.ArrayList<VdcActionParametersBase>();
 			for (storage_domains a : items)
 			{
-				pb.add(new StorageDomainPoolParametersBase(a.getid(), getEntity().getId()));
+				pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
 			}
 
 
@@ -441,14 +441,14 @@ public class DataCenterStorageListModel extends SearchableListModel
 			if (a.getstorage_type() == StorageType.LOCALFS)
 			{
 				VDS locaVds = DataProvider.GetLocalStorageHost(a.getstorage_pool_name());
-				RemoveStorageDomainParameters tempVar = new RemoveStorageDomainParameters(a.getid());
+				RemoveStorageDomainParameters tempVar = new RemoveStorageDomainParameters(a.getId());
 				tempVar.setVdsId((locaVds != null ? locaVds.getId() : null));
 				tempVar.setDoFormat(true);
 				pb_remove.add(tempVar);
 			}
 			else
 			{
-				pb_detach.add(new DetachStorageDomainFromPoolParameters(a.getid(), getEntity().getId()));
+				pb_detach.add(new DetachStorageDomainFromPoolParameters(a.getId(), getEntity().getId()));
 			}
 		}
 

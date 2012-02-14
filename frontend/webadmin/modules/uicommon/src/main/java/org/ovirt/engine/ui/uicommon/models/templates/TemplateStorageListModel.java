@@ -141,7 +141,7 @@ public class TemplateStorageListModel extends SearchableListModel
 		for (Object item : getSelectedItems())
 		{
 			storage_domains a = (storage_domains)item;
-			ids.add(a.getid());
+			ids.add(a.getId());
 		}
 
 		VmTemplateParametersBase tempVar = new VmTemplateParametersBase(template.getId());

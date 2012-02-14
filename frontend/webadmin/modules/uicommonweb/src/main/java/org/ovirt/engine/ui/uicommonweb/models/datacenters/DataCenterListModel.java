@@ -496,7 +496,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                     for (storage_domains a : items)
                     {
                         parameters.add(new RecoveryStoragePoolParameters(((storage_pool) getSelectedItem()).getId(),
-                                a.getid()));
+                                a.getId()));
                     }
                     windowModel.StartProgress(null);
                     Frontend.RunMultipleAction(VdcActionType.RecoveryStoragePool, parameters,

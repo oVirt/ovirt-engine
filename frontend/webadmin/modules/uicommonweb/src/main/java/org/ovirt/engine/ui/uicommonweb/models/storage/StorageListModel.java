@@ -138,7 +138,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             for (Object item : getSelectedItems())
             {
                 storage_domains i = (storage_domains) item;
-                items.add(i.getid());
+                items.add(i.getId());
             }
             return items.toArray(new Object[] {});
         }
@@ -660,7 +660,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             VDS host = (VDS) model.getHostList().getSelectedItem();
 
-            RemoveStorageDomainParameters tempVar = new RemoveStorageDomainParameters(storage.getid());
+            RemoveStorageDomainParameters tempVar = new RemoveStorageDomainParameters(storage.getId());
             tempVar.setVdsId(host.getId());
             tempVar.setDoFormat((storage.getstorage_domain_type() == StorageDomainType.Data || storage.getstorage_domain_type() == StorageDomainType.Master) ? true
                     : (Boolean) model.getFormat().getEntity());
@@ -718,7 +718,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.StartProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.ForceRemoveStorageDomain,
-                new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new StorageDomainParametersBase(storageDomain.getid()) })),
+                new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new StorageDomainParametersBase(storageDomain.getId()) })),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendMultipleActionAsyncResult result) {
@@ -819,7 +819,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             storage_domains storage = (storage_domains) getSystemTreeSelectedItem().getEntity();
 
             setSelectedItem(Linq.FirstOrDefault(Linq.<storage_domains> Cast(getItems()),
-                    new Linq.StoragePredicate(storage.getid())));
+                    new Linq.StoragePredicate(storage.getId())));
         }
     }
 
@@ -1342,7 +1342,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                             if (lunIds.size() > 0)
                             {
                                 Frontend.RunAction(VdcActionType.ExtendSANStorageDomain,
-                                        new ExtendSANStorageDomainParameters(storageDomain1.getid(), lunIds),
+                                        new ExtendSANStorageDomainParameters(storageDomain1.getId(), lunIds),
                                         new IFrontendActionAsyncCallback() {
                                             @Override
                                             public void Executed(FrontendActionAsyncResult result1) {
@@ -1534,7 +1534,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                             storage_pool dataCenter = (storage_pool) model.getDataCenter().getSelectedItem();
                             if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
                             {
-                                storageListModel.AttachStorageToDataCenter(sdToAdd1.getid(), dataCenter.getId());
+                                storageListModel.AttachStorageToDataCenter(sdToAdd1.getId(), dataCenter.getId());
                             }
                             PostImportNfsStorage(storageListModel.context, true, storageListModel.storageModel, null);
                         }
@@ -1612,7 +1612,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                             storage_pool dataCenter = (storage_pool) model.getDataCenter().getSelectedItem();
                             if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
                             {
-                                storageListModel.AttachStorageToDataCenter(sdToAdd1.getid(), dataCenter.getId());
+                                storageListModel.AttachStorageToDataCenter(sdToAdd1.getId(), dataCenter.getId());
                             }
                             storageListModel.OnFinish(storageListModel.context, true, storageListModel.storageModel);
                         }
@@ -1729,7 +1729,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 setModelBoundWidget(reportModel);
             }
-        }), storage.getid());
+        }), storage.getId());
     }
 
     @Override
@@ -1741,9 +1741,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         if (idParamName != null) {
             for (storage_domains item : items) {
                 if (isMultiple) {
-                    reportModel.addResourceId(idParamName, item.getid().toString());
+                    reportModel.addResourceId(idParamName, item.getId().toString());
                 } else {
-                    reportModel.setResourceId(idParamName, item.getid().toString());
+                    reportModel.setResourceId(idParamName, item.getId().toString());
                 }
             }
         }

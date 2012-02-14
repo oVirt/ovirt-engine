@@ -40,8 +40,8 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
 
         existingImageGroupStorageDomainMap =
                 dao.getImageGroupStorageDomainMapForImageGroupAndStorageDomain(new image_group_storage_domain_map(EXISTING_IMAGE_GROUP_ID,
-                        existingDomain.getid()));
-        newImageGroupStorageDomainMap = new image_group_storage_domain_map(new Guid(), existingDomain.getid());
+                        existingDomain.getId()));
+        newImageGroupStorageDomainMap = new image_group_storage_domain_map(new Guid(), existingDomain.getId());
     }
 
     /**
@@ -70,7 +70,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGet() {
-        storage_domains result = dao.get(existingDomain.getid());
+        storage_domains result = dao.get(existingDomain.getId());
 
         assertNotNull(result);
         assertEquals(existingDomain, result);
@@ -91,7 +91,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetForStoragePoolWithInvalidPool() {
-        storage_domains result = dao.getForStoragePool(existingDomain.getid(),
+        storage_domains result = dao.getForStoragePool(existingDomain.getId(),
                 NGuid.NewGuid());
 
         assertNull(result);
@@ -102,7 +102,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetForStoragePool() {
-        storage_domains result = dao.getForStoragePool(existingDomain.getid(), EXISTING_STORAGE_POOL_ID);
+        storage_domains result = dao.getForStoragePool(existingDomain.getId(), EXISTING_STORAGE_POOL_ID);
 
         assertNotNull(result);
         assertEquals(existingDomain, result);
@@ -160,7 +160,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForStorageDomain() {
         List<storage_domains> result = dao
-                .getAllForStorageDomain(existingDomain.getid());
+                .getAllForStorageDomain(existingDomain.getId());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -276,7 +276,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals(result.get(0), existingDomain.getid());
+        assertEquals(result.get(0), existingDomain.getId());
     }
 
     @Test
@@ -312,12 +312,12 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllImageGroupStorageDomainMapsForStorageDomain() {
         List<image_group_storage_domain_map> result =
-                dao.getAllImageGroupStorageDomainMapsForStorageDomain(existingDomain.getid());
+                dao.getAllImageGroupStorageDomainMapsForStorageDomain(existingDomain.getId());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (image_group_storage_domain_map mapping : result) {
-            assertEquals(existingDomain.getid(), mapping.getstorage_domain_id());
+            assertEquals(existingDomain.getId(), mapping.getstorage_domain_id());
         }
     }
 

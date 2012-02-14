@@ -1136,7 +1136,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         {
             for (storage_domains sd : items)
             {
-                AttachStorageToDataCenter(sd.getid(), getEntity().getId());
+                AttachStorageToDataCenter(sd.getId(), getEntity().getId());
             }
         }
 
@@ -1172,7 +1172,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                             boolean isContains = false;
                                             for (storage_domains b : attachedStorage)
                                             {
-                                                if (b.getid().equals(a.getid()))
+                                                if (b.getId().equals(a.getId()))
                                                 {
                                                     isContains = true;
                                                     break;

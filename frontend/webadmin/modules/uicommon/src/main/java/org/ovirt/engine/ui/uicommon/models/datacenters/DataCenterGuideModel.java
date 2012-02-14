@@ -755,7 +755,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 			//    .Each(a => Frontend.RunAction(VdcActionType.AttachStorageDomainToPool, a));
 			for (storage_domains sd : items)
 			{
-				Frontend.RunAction(VdcActionType.AttachStorageDomainToPool, new StorageDomainPoolParametersBase(sd.getid(), getEntity().getId()));
+				Frontend.RunAction(VdcActionType.AttachStorageDomainToPool, new StorageDomainPoolParametersBase(sd.getId(), getEntity().getId()));
 			}
 		}
 
@@ -777,7 +777,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 			boolean isContains = false;
 			for (storage_domains b : attachedStorage)
 			{
-				if (b.getid().equals(a.getid()))
+				if (b.getId().equals(a.getId()))
 				{
 					isContains = true;
 					break;

@@ -254,7 +254,7 @@ public class NewVmModelBehavior extends IVmModelBehavior
 
                                         }
                                     }),
-                                    storage1.getid());
+                                    storage1.getId());
 
                         }
                     }, getModel().getHash()),
@@ -415,7 +415,7 @@ public class NewVmModelBehavior extends IVmModelBehavior
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
         {
             storage_domains selectStorage = (storage_domains) getSystemTreeSelectedItem().getEntity();
-            storage_domains sd = Linq.FirstOrDefault(list, new Linq.StoragePredicate(selectStorage.getid()));
+            storage_domains sd = Linq.FirstOrDefault(list, new Linq.StoragePredicate(selectStorage.getId()));
 
             getModel().getStorageDomain()
                     .setItems(new java.util.ArrayList<storage_domains>(java.util.Arrays.asList(new storage_domains[] { sd })));

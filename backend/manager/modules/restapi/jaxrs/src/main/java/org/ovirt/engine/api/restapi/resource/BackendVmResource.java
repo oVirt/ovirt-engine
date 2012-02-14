@@ -281,7 +281,7 @@ public class BackendVmResource extends
     }
 
     protected Guid lookupStorageDomainIdByName(String name) {
-        return getEntity(storage_domains.class, SearchType.StorageDomain, "Storage: name=" + name).getid();
+        return getEntity(storage_domains.class, SearchType.StorageDomain, "Storage: name=" + name).getId();
     }
 
     @Override

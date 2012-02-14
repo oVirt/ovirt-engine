@@ -84,7 +84,7 @@ public class StorageVmListModel extends SearchableListModel
         };
 
         StorageDomainQueryTopSizeVmsParameters tempVar =
-                new StorageDomainQueryTopSizeVmsParameters(getEntity().getid(), 0);
+                new StorageDomainQueryTopSizeVmsParameters(getEntity().getId(), 0);
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetTopSizeVmsFromStorageDomain, tempVar, _asyncQuery);
     }

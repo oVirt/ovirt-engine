@@ -244,7 +244,7 @@ public class BackendVmsResource extends
             if (queryReturn.getSucceeded()) {
                 storage_domains domain = (asCollection(storage_domains.class, queryReturn.getReturnValue())).get(0);
                 if (domain != null) {
-                    domainId = domain.getid();
+                    domainId = domain.getId();
                 }
             }
         } catch (Exception e) {

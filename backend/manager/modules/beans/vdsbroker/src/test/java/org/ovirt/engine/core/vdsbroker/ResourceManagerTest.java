@@ -89,7 +89,7 @@ public class ResourceManagerTest {
         ResourceManagerProxy proxy = new ResourceManagerProxy();
 
         GetVmsInfoVDSCommandParameters TempVar2 = new GetVmsInfoVDSCommandParameters(pool.getId());
-        TempVar2.setStorageDomainId(domain.getid());
+        TempVar2.setStorageDomainId(domain.getId());
         VDSReturnValue retVal = proxy.runVdsCommand(VDSCommandType.GetVmsList, TempVar2);
         String[] ids = (String[]) ((retVal.getReturnValue() instanceof String[]) ? retVal.getReturnValue() : null);
         for (String id : ids) {

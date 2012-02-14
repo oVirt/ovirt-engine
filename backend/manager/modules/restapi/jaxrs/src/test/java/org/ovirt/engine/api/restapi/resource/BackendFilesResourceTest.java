@@ -175,7 +175,7 @@ public class BackendFilesResourceTest
 
     private storage_domains getStorageDomain(Guid id, StorageDomainType type) {
         storage_domains sd =  new storage_domains();
-        sd.setid(id);
+        sd.setId(id);
         sd.setstorage_domain_type(type);
         return sd;
     }

@@ -83,7 +83,7 @@ public class StorageTemplateListModel extends SearchableListModel
             }
         };
 
-        StorageDomainQueryParametersBase tempVar = new StorageDomainQueryParametersBase(getEntity().getid());
+        StorageDomainQueryParametersBase tempVar = new StorageDomainQueryParametersBase(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetVmTemplatesFromStorageDomain, tempVar, _asyncQuery);
     }

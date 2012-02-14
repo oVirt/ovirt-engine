@@ -294,7 +294,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
 			else // "Edit Storage" mode:
 			{
-				java.util.List<storage_pool> dataCentersWithStorage = behavior.FilterDataCenter(DataProvider.GetDataCentersByStorageDomain(getStorage().getid()));
+				java.util.List<storage_pool> dataCentersWithStorage = behavior.FilterDataCenter(DataProvider.GetDataCentersByStorageDomain(getStorage().getId()));
 				if (dataCentersWithStorage.size() < 1 || dataCentersWithStorage.get(0) == null)
 				{
 					// [*** shouldn't happen - this is just to prevent unexpected crashes/behavior ***]

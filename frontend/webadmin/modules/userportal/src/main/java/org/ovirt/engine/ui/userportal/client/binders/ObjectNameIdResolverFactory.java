@@ -123,7 +123,7 @@ public class ObjectNameIdResolverFactory {
 				public String getItemId(Object o) {
 					if (o == null) 
 						return null;
-					return ((storage_domains)o).getid().toString();
+					return ((storage_domains)o).getId().toString();
 				}
 				public String getItemName(Object o) {
 					if (o == null) 

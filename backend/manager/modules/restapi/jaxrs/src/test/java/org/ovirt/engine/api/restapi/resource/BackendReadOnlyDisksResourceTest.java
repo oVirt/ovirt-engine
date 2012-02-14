@@ -138,10 +138,10 @@ public class BackendReadOnlyDisksResourceTest
         protected List<storage_domains> getStorageDomains() {
             List<storage_domains> storageDomains = new ArrayList<storage_domains>();
             storage_domains storageDomain = new storage_domains();
-            storageDomain.setid(GUIDS[2]);
+            storageDomain.setId(GUIDS[2]);
             storageDomains.add(storageDomain);
             storageDomain = new storage_domains();
-            storageDomain.setid(GUIDS[3]);
+            storageDomain.setId(GUIDS[3]);
             storageDomains.add(storageDomain);
             return storageDomains;
         }

@@ -225,7 +225,7 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
                             if (storageDomain.getstatus() == StorageDomainStatus.Active
                                     && (storageDomain.getstorage_domain_type() == StorageDomainType.Data || storageDomain.getstorage_domain_type() == StorageDomainType.Master))
                             {
-                                if (currentStorageDomain.getid().equals(storageDomain.getid()))
+                                if (currentStorageDomain.getId().equals(storageDomain.getId()))
                                 {
                                     vmStorageDomain = storageDomain;
                                 }
@@ -241,7 +241,7 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
                                         (storage_domains) getSystemTreeSelectedItem().getEntity();
                                 storage_domains s =
                                         Linq.FirstOrDefault(activeStorageDomainList,
-                                                new Linq.StoragePredicate(selectStorage.getid()));
+                                                new Linq.StoragePredicate(selectStorage.getId()));
                                 behavior.getModel()
                                         .getStorageDomain()
                                         .setItems(new java.util.ArrayList<storage_domains>(java.util.Arrays.asList(new storage_domains[] { s })));

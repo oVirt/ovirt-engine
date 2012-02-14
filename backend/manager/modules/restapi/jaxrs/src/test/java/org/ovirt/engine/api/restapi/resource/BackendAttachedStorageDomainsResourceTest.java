@@ -291,7 +291,7 @@ public class BackendAttachedStorageDomainsResourceTest
     }
 
     static storage_domains setUpEntityExpectations(storage_domains entity, int index, StorageType storageType) {
-        expect(entity.getid()).andReturn(GUIDS[index]).anyTimes();
+        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getstatus()).andReturn(StorageDomainStatus.Active).anyTimes();
         expect(entity.getstorage_domain_type()).andReturn(StorageDomainType.Master).anyTimes();
         expect(entity.getstorage_type()).andReturn(storageType).anyTimes();

@@ -157,7 +157,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 			boolean templateNotExistInAnyDomain_iter = true;
 			for (storage_domains b : domainsWithTemplate)
 			{
-				if (b.getid().equals(a.getid()) && (b.getstatus() == null ? StorageDomainStatus.InActive : b.getstatus()) == StorageDomainStatus.Active)
+				if (b.getId().equals(a.getId()) && (b.getstatus() == null ? StorageDomainStatus.InActive : b.getstatus()) == StorageDomainStatus.Active)
 				{
 					templateNotExistInAnyDomain_iter = false;
 					isTemplateExistInOneActiveDomain = true;
@@ -227,7 +227,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 			EntityModel a = (EntityModel)item;
 			if (a.getIsSelected())
 			{
-				items.add(new MoveOrCopyParameters(template.getId(), ((storage_domains)a.getEntity()).getid()));
+				items.add(new MoveOrCopyParameters(template.getId(), ((storage_domains)a.getEntity()).getId()));
 			}
 		}
 
@@ -373,7 +373,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 
 	private void showWarningOnExistingTemplates(ExportVmModel model)
 	{
-		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getid();
+		Guid storageDomainId = ((storage_domains)model.getStorage().getSelectedItem()).getId();
 		storage_pool storagePool = DataProvider.GetFirstStoragePoolByStorageDomain(storageDomainId);
 		String existingTemplates = "";
 		if (storagePool != null)
@@ -435,7 +435,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 			{
 				continue;
 			}
-			MoveOrCopyParameters tempVar = new MoveOrCopyParameters(a.getId(), ((storage_domains)model.getStorage().getSelectedItem()).getid());
+			MoveOrCopyParameters tempVar = new MoveOrCopyParameters(a.getId(), ((storage_domains)model.getStorage().getSelectedItem()).getId());
 			tempVar.setForceOverride((Boolean)model.getForceOverride().getEntity());
 			list.add(tempVar);
 		}

@@ -35,7 +35,7 @@ public class BackendReadOnlyDisksResource
             }
             for (storage_domains sd : storageDomains) {
                 StorageDomain storageDomain = new StorageDomain();
-                storageDomain.setId(sd.getid().toString());
+                storageDomain.setId(sd.getId().toString());
                 disk.getStorageDomains().getStorageDomains().add(storageDomain);
             }
         }

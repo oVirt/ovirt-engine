@@ -261,7 +261,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 					queryTypeList.add(VdcQueryType.GetAllIsoImagesList);
 
 					GetAllIsoImagesListParameters getIsoPamams = new GetAllIsoImagesListParameters();
-					getIsoPamams.setStorageDomainId(isoDomain.getid());
+					getIsoPamams.setStorageDomainId(isoDomain.getId());
 					getIsoPamams.setForceRefresh(false);
 					parametersList.add(getIsoPamams);
 				}

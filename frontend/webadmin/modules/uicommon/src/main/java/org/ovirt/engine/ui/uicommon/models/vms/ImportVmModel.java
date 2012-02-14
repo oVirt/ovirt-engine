@@ -281,7 +281,7 @@ public class ImportVmModel extends ListWithDetailsModel
 						addStorage = false;
 						for (storage_domains storageDomain : keyValuePair.getValue())
 						{
-							if (storageDomain.getid().equals(domain.getid()) || (Boolean)getCollapseSnapshots().getEntity())
+							if (storageDomain.getId().equals(domain.getId()) || (Boolean)getCollapseSnapshots().getEntity())
 							{
 								addStorage = true;
 								break;

@@ -318,7 +318,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     int masterVersion = data.getKey().getmaster_domain_version();
                     java.util.HashSet<Guid> domainsInVds = new java.util.HashSet<Guid>();
                     for (storage_domains domainData : data.getValue()) {
-                        domainsInVds.add(domainData.getid());
+                        domainsInVds.add(domainData.getId());
                         ProceedStorageDomain(domainData, masterVersion, storagePool);
                     }
                     List<storage_domains> domainsInDb = DbFacade.getInstance().getStorageDomainDAO()
@@ -327,7 +327,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     for (final storage_domains domainInDb : domainsInDb) {
                         if (domainInDb.getstorage_domain_type() != StorageDomainType.Master
                                 && domainInDb.getstatus() != StorageDomainStatus.Locked
-                                && !domainsInVds.contains(domainInDb.getid())) {
+                                && !domainsInVds.contains(domainInDb.getId())) {
                             // domain not attached to pool anymore
                             TransactionSupport.executeInScope(TransactionScopeOption.Suppress,
                                     new TransactionMethod<Object>() {
@@ -335,7 +335,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                         public Object runInTransaction() {
                                             DbFacade.getInstance()
                                                     .getStoragePoolIsoMapDAO()
-                                                    .remove(new StoragePoolIsoMapId(domainInDb.getid(),
+                                                    .remove(new StoragePoolIsoMapId(domainInDb.getId(),
                                                             _storagePoolId));
                                             return null;
                                         }
@@ -348,7 +348,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         private void ProceedStorageDomain(storage_domains data, int dataMasterVersion, storage_pool storagePool) {
-            storage_domains storage_domain = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(data.getid(), _storagePoolId);
+            storage_domains storage_domain = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(data.getId(), _storagePoolId);
             storage_domain_static domainFromDb = null;
             storage_pool_iso_map domainPoolMap = null;
 
@@ -450,7 +450,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             default:
                                 log.errorFormat("Unrecognized alert for domain {0}(id = {1}): {2}",
                                         data.getstorage_name(),
-                                        data.getid(),
+                                        data.getId(),
                                         alert);
                                 break;
                             }
@@ -459,7 +459,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 }
 
             } else {
-                log.debugFormat("The domain with id {0} was not found in DB", data.getid());
+                log.debugFormat("The domain with id {0} was not found in DB", data.getId());
             }
         }
 

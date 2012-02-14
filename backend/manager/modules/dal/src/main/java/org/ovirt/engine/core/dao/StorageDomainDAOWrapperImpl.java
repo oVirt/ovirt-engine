@@ -37,7 +37,7 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
         List<storage_domains> domains = getAllForStoragePool(pool);
         for (storage_domains domain : domains) {
             if (domain.getstorage_domain_type() == StorageDomainType.Master) {
-                returnValue = domain.getid();
+                returnValue = domain.getId();
                 break;
             }
         }
@@ -78,7 +78,7 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
                 "where spimap.id.storagePoolId = pool.id " +
                 "and spimap.id.storageId = :id");
 
-        query.setParameter("id", result.getid());
+        query.setParameter("id", result.getId());
 
         @SuppressWarnings("unchecked")
         List<storage_pool_iso_map> spimaps = query.list();

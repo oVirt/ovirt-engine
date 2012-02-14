@@ -63,7 +63,7 @@ public class StorageVmListModel extends SearchableListModel
 	{
 		super.SyncSearch();
 
-		VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetTopSizeVmsFromStorageDomain, new StorageDomainQueryTopSizeVmsParameters(getEntity().getid(), 0));
+		VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetTopSizeVmsFromStorageDomain, new StorageDomainQueryTopSizeVmsParameters(getEntity().getId(), 0));
 
 		if (returnValue != null && returnValue.getSucceeded())
 		{

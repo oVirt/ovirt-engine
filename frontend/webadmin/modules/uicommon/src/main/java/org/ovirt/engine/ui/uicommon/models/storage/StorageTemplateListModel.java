@@ -63,7 +63,7 @@ public class StorageTemplateListModel extends SearchableListModel
 	{
 		super.SyncSearch();
 
-		VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetVmTemplatesFromStorageDomain, new StorageDomainQueryParametersBase(getEntity().getid()));
+		VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetVmTemplatesFromStorageDomain, new StorageDomainQueryParametersBase(getEntity().getId()));
 
 		if (returnValue != null && returnValue.getSucceeded())
 		{

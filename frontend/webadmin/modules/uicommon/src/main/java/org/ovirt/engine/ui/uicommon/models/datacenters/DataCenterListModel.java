@@ -466,7 +466,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 			java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
 			for (storage_domains a : items)
 			{
-				parameters.add(new RecoveryStoragePoolParameters(((storage_pool)getSelectedItem()).getId(), a.getid()));
+				parameters.add(new RecoveryStoragePoolParameters(((storage_pool)getSelectedItem()).getId(), a.getId()));
 			}
 
 

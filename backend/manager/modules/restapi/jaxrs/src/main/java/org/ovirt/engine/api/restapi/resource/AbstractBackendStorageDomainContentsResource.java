@@ -46,7 +46,7 @@ public abstract class AbstractBackendStorageDomainContentsResource<C extends Bas
     }
 
     protected Guid lookupStorageDomainIdByName(String name) {
-        return getEntity(storage_domains.class, SearchType.StorageDomain, "Storage: name=" + name).getid();
+        return getEntity(storage_domains.class, SearchType.StorageDomain, "Storage: name=" + name).getId();
     }
 
     public Guid getDataCenterId(Guid storageDomainId) {

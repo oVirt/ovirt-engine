@@ -88,7 +88,7 @@ public class BackendAttachedStorageDomainsResource
     protected Guid lookupStorageDomainIdByName(String name) {
         return getEntity(storage_domains.class,
                          SearchType.StorageDomain,
-                         "Storage: name=" + name).getid();
+                         "Storage: name=" + name).getId();
     }
 
     protected storage_domains lookupStorageDomainById(Guid storageDomainId) {
