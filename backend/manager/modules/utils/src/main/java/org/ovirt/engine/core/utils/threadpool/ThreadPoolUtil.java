@@ -9,9 +9,9 @@ import java.util.concurrent.TimeUnit;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
+import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
 public class ThreadPoolUtil {
 
@@ -44,16 +44,23 @@ public class ThreadPoolUtil {
         private IVdcUser vdcUser;
         private String httpSessionId;
 
-        public InternalWrapperRunnable(Runnable job, IVdcUser vdcUser, String httpSessionId) {
+        /**
+         * Identifies the correlation-id associated with the thread invoker
+         */
+        private String correlationId;
+
+        public InternalWrapperRunnable(Runnable job, IVdcUser vdcUser, String httpSessionId, String correlationId) {
             this.job = job;
             this.vdcUser = vdcUser;
             this.httpSessionId = httpSessionId;
+            this.correlationId = correlationId;
         }
 
         @Override
         public void run() {
             ThreadLocalParamsContainer.setVdcUser(vdcUser);
             ThreadLocalParamsContainer.setHttpSessionId(httpSessionId);
+            ThreadLocalParamsContainer.setCorrelationId(correlationId);
             job.run();
         }
 
@@ -65,7 +72,8 @@ public class ThreadPoolUtil {
         try {
             es.submit(new InternalWrapperRunnable(command,
                     ThreadLocalParamsContainer.getVdcUser(),
-                    ThreadLocalParamsContainer.getHttpSessionId()));
+                    ThreadLocalParamsContainer.getHttpSessionId(),
+                    ThreadLocalParamsContainer.getCorrelationId()));
         } catch (RejectedExecutionException e) {
             log.warn("The thread pool is out of limit. A submitted task was rejected");
             throw e;
