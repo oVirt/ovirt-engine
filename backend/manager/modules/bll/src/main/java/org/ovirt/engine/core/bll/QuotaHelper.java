@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
@@ -17,6 +20,7 @@ import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -153,6 +157,31 @@ public class QuotaHelper {
         }
 
         return true;
+    }
+
+    /**
+     * Helper method which get as an input disk image list for VM or template and returns a list of quotas and their
+     * desired limitation to be used.<BR/>
+     *
+     * @param diskImageList
+     *            - The disk image list to be grouped by
+     * @return List of summarized requested size for quota.
+     */
+    public Map<Pair<Guid, Guid>, Double> getQuotaConsumeMap(List<DiskImage> diskImageList) {
+        Map<Pair<Guid, Guid>, Double> quotaForStorageConsumption = new HashMap<Pair<Guid, Guid>, Double>();
+        for (DiskImage disk : diskImageList) {
+            Pair<Guid, Guid> quotaForStorageKey =
+                    new Pair<Guid, Guid>(disk.getQuotaId(), disk.getstorage_ids().get(0).getValue());
+            Double storageRequest = quotaForStorageConsumption.get(quotaForStorageKey);
+            if (storageRequest != null) {
+                storageRequest += disk.getsize();
+            } else {
+                storageRequest = new Double(disk.getsize());
+            }
+            quotaForStorageConsumption.put(quotaForStorageKey, storageRequest);
+        }
+
+        return quotaForStorageConsumption;
     }
 
     public boolean checkQuotaNameExisting(Quota quota, List<String> messages) {

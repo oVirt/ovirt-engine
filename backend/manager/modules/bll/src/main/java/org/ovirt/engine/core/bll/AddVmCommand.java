@@ -338,6 +338,27 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return returnValue;
     }
 
+    @Override
+    protected boolean validateQuota() {
+        // Set default quota id if storage pool enforcement is disabled.
+        getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getVmStaticData()
+                .getQuotaId(),
+                getStoragePool()));
+        for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
+            dit.setQuotaId(QuotaHelper.getInstance()
+                    .getQuotaIdToConsume(getParameters().getVmStaticData().getQuotaId(),
+                            getStoragePool()));
+        }
+        if (!isInternalExecution()) {
+            // TODO: Should be changed when multiple storage domain will be implemented and the desired quotas will be transferred.
+            return QuotaManager.validateMultiStorageQuota(getStoragePool().getQuotaEnforcementType(),
+                        QuotaHelper.getInstance().getQuotaConsumeMap(getVmTemplate().getDiskList()),
+                        getCommandId(),
+                        getReturnValue().getCanDoActionMessages());
+        }
+        return true;
+    }
+
     public boolean CanAddVm(Object vmTemplateId, java.util.ArrayList<String> reasons, int vmsCount, String name,
                             Guid storagePoolId, int vmPriority) {
         boolean returnValue;
@@ -451,6 +472,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             vmStatic.setorigin(OriginType.valueOf(Config.<String>GetValue(ConfigValues.OriginType)));
         }
         vmStatic.setId(getVmId());
+        vmStatic.setQuotaId(getParameters().getQuotaId());
         vmStatic.setcreation_date(new Date());
         // Parses the custom properties field that was filled by frontend to
         // predefined and user defined fields
@@ -499,6 +521,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 tempVar.setParentCommand(VdcActionType.AddVm);
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setParentParemeters(getParameters());
+                tempVar.setQuotaId(dit.getQuotaId());
                 VdcReturnValueBase result =
                         Backend.getInstance().runInternalAction(VdcActionType.CreateSnapshotFromTemplate,
                                 tempVar,
@@ -516,6 +539,15 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
         }
         return true;
+    }
+
+    protected void removeQuotaCommandLeftOver() {
+        if (!isInternalExecution()) {
+            QuotaManager.removeMultiStorageDeltaQuotaCommand(QuotaHelper.getInstance()
+                    .getQuotaConsumeMap(getVmTemplate().getDiskList()),
+                    getStoragePool().getQuotaEnforcementType(),
+                    getCommandId());
+        }
     }
 
     @Override
