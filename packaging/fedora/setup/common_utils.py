@@ -613,4 +613,4 @@ class Service():
         """
         logging.debug("executing action %s on service %s", serviceName, action)
         cmd = [basedefs.EXEC_SERVICE, serviceName, action]
-        return execCmd(cmd)
+        return execCmd(cmdList=cmd, usePipeFiles=True)
