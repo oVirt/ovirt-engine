@@ -639,7 +639,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                     }
                 }
                 if (!existPlugged) {
-                    message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK.toString());
+                    String messageStr = !diskVmDevices.isEmpty() ?
+                            VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_PLUGGED_DISK.toString() :
+                            VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK.toString();
+
+                    message.add(messageStr);
                     retValue = false;
                 }
             } else {

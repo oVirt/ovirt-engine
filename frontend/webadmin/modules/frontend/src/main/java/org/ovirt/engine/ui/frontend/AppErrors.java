@@ -1098,4 +1098,6 @@ public interface AppErrors extends ConstantsWithLookup {
     String HOT_PLUG_DISK_IS_NOT_UNPLUGGED();
 
     String HOT_UNPLUG_DISK_IS_NOT_PLUGGED();
+
+    String VM_CANNOT_RUN_FROM_DISK_WITHOUT_PLUGGED_DISK();
 }
