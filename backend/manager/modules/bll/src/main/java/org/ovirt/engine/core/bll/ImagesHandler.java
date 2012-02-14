@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
@@ -29,18 +30,18 @@ public final class ImagesHandler {
     public static final String DefaultDriveName = "1";
 
     /**
-     * This function developed espessially for Gui needs. Its returns list of
-     * all snapshots of current image of specific VM. If there are two images,
-     * maped to same vm, assumption that this is TryBackToImage case and returns
-     * list of snapshots of inactive images. In this case parent of active image
-     * appears to be trybackfrom image
+     * This function was developed especially for GUI needs.
+     * It returns a list of all the snapshots of current image of a specific VM.
+     * If there are two images mapped to same VM, it's assumed that this is a TryBackToImage case and
+     * the function returns a list of snapshots of inactive images.
+     * In this case the parent of the active image appears to be trybackfrom image
      *
      * @param imageId
      * @param imageTemplateId
      * @return
      */
-    public static java.util.ArrayList<DiskImage> getAllImageSnapshots(Guid imageId, Guid imageTemplateId) {
-        java.util.ArrayList<DiskImage> snapshots = new java.util.ArrayList<DiskImage>();
+    public static ArrayList<DiskImage> getAllImageSnapshots(Guid imageId, Guid imageTemplateId) {
+        ArrayList<DiskImage> snapshots = new ArrayList<DiskImage>();
         Guid curImage = imageId;
         while (!imageTemplateId.equals(curImage) && !curImage.equals(Guid.Empty)) {
             DiskImage curDiskImage = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(curImage);
@@ -51,7 +52,7 @@ public final class ImagesHandler {
     }
 
     public static Iterable<DiskImage> getAllImageSnapshotsFromIrs(Guid imageId, Guid imageTemplateId) {
-        java.util.ArrayList<DiskImage> snapshots = new java.util.ArrayList<DiskImage>();
+        List<DiskImage> snapshots = new ArrayList<DiskImage>();
         Guid curImage = imageId;
         while (!imageTemplateId.equals(curImage) && !curImage.equals(Guid.Empty)) {
             DiskImage image = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(curImage);
@@ -77,7 +78,7 @@ public final class ImagesHandler {
     }
 
     public static int getImagesMappedToDrive(Guid vmId, String drive, RefObject<DiskImage> activeImage,
-                                             RefObject<DiskImage> inactiveImage) {
+            RefObject<DiskImage> inactiveImage) {
         String currentDrive = StringHelper.isNullOrEmpty(drive) ? DefaultDriveName : drive;
         activeImage.argvalue = null;
         inactiveImage.argvalue = null;
@@ -108,11 +109,11 @@ public final class ImagesHandler {
     }
 
     public static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId, Guid storageDomainId) {
-        return isImagesExists(images, storagePoolId, storageDomainId, new RefObject<java.util.ArrayList<DiskImage>>());
+        return isImagesExists(images, storagePoolId, storageDomainId, new RefObject<ArrayList<DiskImage>>());
     }
 
     private static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId, Guid domainId,
-                                          RefObject<java.util.ArrayList<DiskImage>> irsImages) {
+            RefObject<java.util.ArrayList<DiskImage>> irsImages) {
         irsImages.argvalue = new java.util.ArrayList<DiskImage>();
 
         for (DiskImage image : images) {
@@ -145,16 +146,15 @@ public final class ImagesHandler {
         for (DiskImage image : images) {
             if (drives.contains(image.getinternal_drive_mapping())) {
                 return true;
-            } else {
-                drives.add(image.getinternal_drive_mapping());
             }
+            drives.add(image.getinternal_drive_mapping());
         }
 
         return false;
     }
 
     public static boolean CheckImageConfiguration(storage_domain_static storageDomain,
-                                                  DiskImageBase diskInfo, java.util.ArrayList<String> messages) {
+            DiskImageBase diskInfo, java.util.ArrayList<String> messages) {
         boolean result = true;
         if ((diskInfo.getvolume_type() == VolumeType.Preallocated && diskInfo.getvolume_format() == VolumeFormat.COW)
                 || ((storageDomain.getstorage_type() == StorageType.FCP || storageDomain.getstorage_type() == StorageType.ISCSI) && (diskInfo
@@ -168,8 +168,8 @@ public final class ImagesHandler {
     }
 
     public static boolean CheckImagesConfiguration(Guid storageDomainId,
-                                                   java.util.ArrayList<DiskImageBase> disksConfigList,
-                                                   java.util.ArrayList<String> messages) {
+            java.util.ArrayList<DiskImageBase> disksConfigList,
+            java.util.ArrayList<String> messages) {
         boolean result = true;
         storage_domain_static storageDomain = DbFacade.getInstance().getStorageDomainStaticDAO().get(storageDomainId);
         for (DiskImageBase diskInfo : disksConfigList) {
@@ -181,33 +181,33 @@ public final class ImagesHandler {
     }
 
     public static boolean PerformImagesChecks(Guid vmGuid,
-                                              java.util.ArrayList<String> messages,
-                                              Guid storagePoolId,
-                                              Guid storageDomainId,
-                                              boolean diskSpaceCheck,
-                                              boolean checkImagesLocked,
-                                              boolean checkImagesIllegal,
-                                              boolean checkImagesExist,
-                                              boolean checkVmInPreview,
-                                              boolean checkVmIsDown,
-                                              boolean checkStorageDomain) {
+            java.util.ArrayList<String> messages,
+            Guid storagePoolId,
+            Guid storageDomainId,
+            boolean diskSpaceCheck,
+            boolean checkImagesLocked,
+            boolean checkImagesIllegal,
+            boolean checkImagesExist,
+            boolean checkVmInPreview,
+            boolean checkVmIsDown,
+            boolean checkStorageDomain) {
         return PerformImagesChecks(vmGuid, messages, storagePoolId, storageDomainId, diskSpaceCheck,
                 checkImagesLocked, checkImagesIllegal, checkImagesExist, checkVmInPreview,
                 checkVmIsDown, checkStorageDomain, true);
     }
 
     public static boolean PerformImagesChecks(Guid vmGuid,
-                                              java.util.ArrayList<String> messages,
-                                              Guid storagePoolId,
-                                              Guid storageDomainId,
-                                              boolean diskSpaceCheck,
-                                              boolean checkImagesLocked,
-                                              boolean checkImagesIllegal,
-                                              boolean checkImagesExist,
-                                              boolean checkVmInPreview,
-                                              boolean checkVmIsDown,
-                                              boolean checkStorageDomain,
-                                              boolean checkIsValid) {
+            java.util.ArrayList<String> messages,
+            Guid storagePoolId,
+            Guid storageDomainId,
+            boolean diskSpaceCheck,
+            boolean checkImagesLocked,
+            boolean checkImagesIllegal,
+            boolean checkImagesExist,
+            boolean checkVmInPreview,
+            boolean checkVmIsDown,
+            boolean checkStorageDomain,
+            boolean checkIsValid) {
 
         boolean returnValue = true;
         boolean isValid = checkIsValid
@@ -267,25 +267,31 @@ public final class ImagesHandler {
                 }
                 if (returnValue && checkVmInPreview && isVmInPreview(images)) {
                     returnValue = false;
-                    messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString());
+                    if (messages != null) {
+                        messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString());
+                    }
                 }
                 if (returnValue && diskSpaceCheck) {
                     storage_domains domain = DbFacade.getInstance().getStorageDomainDAO().get(domainId);
                     if (!StorageDomainSpaceChecker.isBelowThresholds(domain)) {
                         returnValue = false;
-                        messages.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
+                        if (messages != null) {
+                            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
+                        }
                     }
                 }
             } else if (checkImagesExist) {
                 returnValue = false;
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS.toString());
+                if (messages != null) {
+                    messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS.toString());
+                }
             }
         }
         return returnValue;
     }
 
     private static boolean CheckImagesLegality(List<String> messages,
-                                               List<DiskImage> images, VmDynamic vm, List<DiskImage> irsImages) {
+            List<DiskImage> images, VmDynamic vm, List<DiskImage> irsImages) {
         boolean returnValue = true;
         if (vm.getstatus() == VMStatus.ImageIllegal) {
             returnValue = false;
