@@ -32,7 +32,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             VDSGroup entity = new VDSGroup();
             entity.setdescription(rs.getString("description"));
             entity.setname(rs.getString("name"));
-            entity.setID(Guid.createGuidFromString(rs
+            entity.setId(Guid.createGuidFromString(rs
                         .getString("vds_group_id")));
             entity.setcpu_name(rs.getString("cpu_name"));
             entity.setselection_algorithm(VdsSelectionAlgorithm.forValue(rs
@@ -76,7 +76,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 VDSGroup entity = new VDSGroup();
                 entity.setdescription(rs.getString("description"));
                 entity.setname(rs.getString("name"));
-                entity.setID(Guid.createGuidFromString(rs.getString("vds_group_id")));
+                entity.setId(Guid.createGuidFromString(rs.getString("vds_group_id")));
                 entity.setcpu_name(rs.getString("cpu_name"));
                 entity.setselection_algorithm(VdsSelectionAlgorithm.forValue(rs.getInt("selection_algorithm")));
                 entity.sethigh_utilization(rs.getInt("high_utilization"));
@@ -106,7 +106,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 VDSGroup entity = new VDSGroup();
                 entity.setdescription(rs.getString("description"));
                 entity.setname(rs.getString("name"));
-                entity.setID(Guid.createGuidFromString(rs
+                entity.setId(Guid.createGuidFromString(rs
                         .getString("vds_group_id")));
                 entity.setcpu_name(rs.getString("cpu_name"));
                 entity.setselection_algorithm(VdsSelectionAlgorithm.forValue(rs
@@ -147,7 +147,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 VDSGroup entity = new VDSGroup();
                 entity.setdescription(rs.getString("description"));
                 entity.setname(rs.getString("name"));
-                entity.setID(Guid.createGuidFromString(rs
+                entity.setId(Guid.createGuidFromString(rs
                         .getString("vds_group_id")));
                 entity.setcpu_name(rs.getString("cpu_name"));
                 entity.setselection_algorithm(VdsSelectionAlgorithm.forValue(rs
@@ -183,7 +183,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 VDSGroup entity = new VDSGroup();
                 entity.setdescription(rs.getString("description"));
                 entity.setname(rs.getString("name"));
-                entity.setID(Guid.createGuidFromString(rs
+                entity.setId(Guid.createGuidFromString(rs
                         .getString("vds_group_id")));
                 entity.setcpu_name(rs.getString("cpu_name"));
                 entity.setselection_algorithm(VdsSelectionAlgorithm.forValue(rs
@@ -221,7 +221,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 VDSGroup entity = new VDSGroup();
                 entity.setdescription(rs.getString("description"));
                 entity.setname(rs.getString("name"));
-                entity.setID(Guid.createGuidFromString(rs
+                entity.setId(Guid.createGuidFromString(rs
                         .getString("vds_group_id")));
                 entity.setcpu_name(rs.getString("cpu_name"));
                 entity.setselection_algorithm(VdsSelectionAlgorithm.forValue(rs
@@ -267,7 +267,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                         group.getTransparentHugepages())
                 .addValue("compatibility_version",
                         group.getcompatibility_version())
-                .addValue("vds_group_id", group.getID())
+                .addValue("vds_group_id", group.getId())
                 .addValue("migrate_on_error", group.getMigrateOnError());
 
         Map<String, Object> dbResults = getCallsHandler().executeModification("InsertVdsGroups", parameterSource);
@@ -280,7 +280,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("description", group.getdescription())
                 .addValue("name", group.getname())
-                .addValue("vds_group_id", group.getID())
+                .addValue("vds_group_id", group.getId())
                 .addValue("cpu_name", group.getcpu_name())
                 .addValue("selection_algorithm", group.getselection_algorithm())
                 .addValue("high_utilization", group.gethigh_utilization())

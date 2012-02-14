@@ -183,7 +183,7 @@ public final class Linq
 	{
 		for (VDSGroup cluster : clusters)
 		{
-			if (cluster.getID().equals(host.getvds_group_id()))
+			if (cluster.getId().equals(host.getvds_group_id()))
 			{
 				return true;
 			}
@@ -257,7 +257,7 @@ public final class Linq
 	{
 		for (VDSGroup a : items)
 		{
-			if (id.equals(a.getID()))
+			if (id.equals(a.getId()))
 			{
 				return true;
 			}
@@ -846,7 +846,7 @@ public final class Linq
 
 		public boolean Match(VDSGroup source)
 		{
-			return id.equals(source.getID());
+			return id.equals(source.getId());
 		}
 	}
 

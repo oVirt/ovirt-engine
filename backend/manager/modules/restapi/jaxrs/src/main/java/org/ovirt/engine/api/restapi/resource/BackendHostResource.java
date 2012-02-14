@@ -124,7 +124,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             host.setCluster(cluster);
         } else {
             host.setCluster(new Cluster());
-            host.getCluster().setId(lookupClusterByName(cluster.getName()).getID().toString());
+            host.getCluster().setId(lookupClusterByName(cluster.getName()).getId().toString());
         }
         return host;
     }

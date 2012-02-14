@@ -724,7 +724,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         host.setport(Integer.parseInt(model.getPort().getEntity().toString()));
 
         Guid oldClusterId = host.getvds_group_id();
-        Guid newClusterId = ((VDSGroup) model.getCluster().getSelectedItem()).getID();
+        Guid newClusterId = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
         host.setvds_group_id(newClusterId);
         host.setpm_enabled((Boolean) model.getIsPm().getEntity());
         host.setpm_user((String) model.getPmUserName().getEntity());
@@ -1067,7 +1067,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
         {
             VDSGroup tempVar = new VDSGroup();
             tempVar.setname(vds.getvds_group_name());
-            tempVar.setID(vds.getvds_group_id());
+            tempVar.setId(vds.getvds_group_id());
             tempVar.setcompatibility_version(vds.getvds_group_compatibility_version());
             model.getCluster()
                     .setItems(new java.util.ArrayList<VDSGroup>(java.util.Arrays.asList(new VDSGroup[] { tempVar })));

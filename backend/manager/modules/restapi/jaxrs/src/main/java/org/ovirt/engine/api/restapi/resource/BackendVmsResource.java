@@ -273,7 +273,7 @@ public class BackendVmsResource extends
 
     protected Guid getClusterId(VM vm) {
         return getEntity(VDSGroup.class, SearchType.Cluster,
-                "Cluster: name=" + vm.getCluster().getName()).getID();
+                "Cluster: name=" + vm.getCluster().getName()).getId();
     }
 
     @Override

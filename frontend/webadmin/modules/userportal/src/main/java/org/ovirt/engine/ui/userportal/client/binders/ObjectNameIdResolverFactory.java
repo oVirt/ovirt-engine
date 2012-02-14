@@ -51,7 +51,7 @@ public class ObjectNameIdResolverFactory {
 				public String getItemId(Object o) {
 					if (o == null)
 						return null;
-					return ((VDSGroup)o).getID().toString();
+					return ((VDSGroup)o).getId().toString();
 				}
 				public String getItemName(Object o) {
 					if (o == null)

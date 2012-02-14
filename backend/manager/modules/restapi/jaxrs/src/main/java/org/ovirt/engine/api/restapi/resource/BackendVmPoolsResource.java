@@ -110,7 +110,7 @@ public class BackendVmPoolsResource
     protected String getClusterId(VmPool pool) {
         return getEntity(VDSGroup.class,
                          SearchType.Cluster,
-                         "Cluster: name=" + pool.getCluster().getName()).getID().toString();
+                         "Cluster: name=" + pool.getCluster().getName()).getId().toString();
     }
 
     protected boolean namedTemplate(VmPool pool) {

@@ -358,7 +358,7 @@ public class AuditLogableBase extends TimeoutBase {
         if (mVdsGroupId != null) {
             return mVdsGroupId;
         } else if (getVdsGroup() != null) {
-            mVdsGroupId = getVdsGroup().getID();
+            mVdsGroupId = getVdsGroup().getId();
             return mVdsGroupId;
         } else {
             return Guid.Empty;

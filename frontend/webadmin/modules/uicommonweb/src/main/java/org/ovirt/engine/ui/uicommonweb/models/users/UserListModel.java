@@ -86,7 +86,7 @@ public class UserListModel extends ListWithDetailsModel
             java.util.ArrayList<Object> items = new java.util.ArrayList<Object>();
             for (Object i : getSelectedItems())
             {
-                items.add(((VDSGroup) i).getID());
+                items.add(((VDSGroup) i).getId());
             }
             return items.toArray(new Object[] {});
         }

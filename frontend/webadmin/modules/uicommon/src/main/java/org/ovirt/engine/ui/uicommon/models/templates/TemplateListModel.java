@@ -646,7 +646,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 		template.setdescription((String)model.getDescription().getEntity());
 		template.setdomain(model.getDomain().getIsAvailable() ? (String)model.getDomain().getSelectedItem() : "");
 		template.setmem_size_mb((Integer)model.getMemSize().getEntity());
-		template.setvds_group_id(((VDSGroup)model.getCluster().getSelectedItem()).getID());
+		template.setvds_group_id(((VDSGroup)model.getCluster().getSelectedItem()).getId());
 		template.settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((java.util.Map.Entry<String, String>)model.getTimeZone().getSelectedItem()).getKey() : "");
 		template.setnum_of_sockets((Integer)model.getNumOfSockets().getEntity());
 		template.setcpu_per_socket((Integer)model.getTotalCPUCores().getEntity() / (Integer)model.getNumOfSockets().getEntity());

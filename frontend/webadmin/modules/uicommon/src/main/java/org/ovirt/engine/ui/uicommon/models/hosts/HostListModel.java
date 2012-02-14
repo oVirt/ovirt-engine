@@ -1,29 +1,63 @@
 package org.ovirt.engine.ui.uicommon.models.hosts;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommon.*;
-import org.ovirt.engine.ui.uicommon.models.*;
-import org.ovirt.engine.core.common.*;
-
-import org.ovirt.engine.ui.uicommon.models.clusters.*;
-import org.ovirt.engine.ui.uicommon.models.common.*;
-import org.ovirt.engine.ui.uicommon.models.configure.*;
-import org.ovirt.engine.ui.uicommon.models.datacenters.*;
-import org.ovirt.engine.ui.uicommon.models.tags.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.interfaces.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.*;
-import org.ovirt.engine.ui.uicommon.*;
-import org.ovirt.engine.ui.uicommon.models.*;
+import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.AddVdsActionParameters;
+import org.ovirt.engine.core.common.action.ApproveVdsParameters;
+import org.ovirt.engine.core.common.action.AttachVdsToTagParameters;
+import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
+import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
+import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
+import org.ovirt.engine.core.common.action.MaintananceNumberOfVdssParameters;
+import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.ValueObjectMap;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NotifyCollectionChangedEventArgs;
+import org.ovirt.engine.core.compat.ObservableCollection;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.TimeSpan;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommon.Cloner;
+import org.ovirt.engine.ui.uicommon.DataProvider;
+import org.ovirt.engine.ui.uicommon.Linq;
+import org.ovirt.engine.ui.uicommon.TagsEqualityComparer;
+import org.ovirt.engine.ui.uicommon.UICommand;
+import org.ovirt.engine.ui.uicommon.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommon.models.EntityModel;
+import org.ovirt.engine.ui.uicommon.models.ISupportSystemTreeContext;
+import org.ovirt.engine.ui.uicommon.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommon.models.Model;
+import org.ovirt.engine.ui.uicommon.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommon.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommon.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommon.models.tags.TagListModel;
+import org.ovirt.engine.ui.uicommon.models.tags.TagModel;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.ITaskTarget;
+import org.ovirt.engine.ui.uicompat.Task;
+import org.ovirt.engine.ui.uicompat.TaskContext;
+import org.ovirt.engine.ui.uicompat.TransactionAbortedException;
+import org.ovirt.engine.ui.uicompat.TransactionScope;
 
 @SuppressWarnings("unused")
 public class HostListModel extends ListWithDetailsModel implements ITaskTarget, ISupportSystemTreeContext
@@ -633,7 +667,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
 		host.setport(Integer.parseInt(model.getPort().getEntity().toString()));
 
 		Guid oldClusterId = host.getvds_group_id();
-		Guid newClusterId = ((VDSGroup)model.getCluster().getSelectedItem()).getID();
+		Guid newClusterId = ((VDSGroup)model.getCluster().getSelectedItem()).getId();
 		host.setvds_group_id(newClusterId);
 		host.setpm_enabled((Boolean)model.getIsPm().getEntity());
 		host.setpm_user((String)model.getPmUserName().getEntity());
@@ -955,7 +989,7 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
 		{
 			VDSGroup tempVar = new VDSGroup();
 			tempVar.setname(vds.getvds_group_name());
-			tempVar.setID(vds.getvds_group_id());
+            tempVar.setId(vds.getvds_group_id());
 			tempVar.setcompatibility_version(vds.getvds_group_compatibility_version());
 			model.argvalue.getCluster().setItems(new java.util.ArrayList<VDSGroup>(java.util.Arrays.asList(new VDSGroup[] { tempVar })));
 		}
@@ -1492,7 +1526,8 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
 		}
 	}
 
-	public void run(TaskContext context)
+	@Override
+    public void run(TaskContext context)
 	{
 		switch ((Integer)context.getState())
 		{
@@ -1533,11 +1568,13 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
 
 
 	private SystemTreeItemModel systemTreeSelectedItem;
-	public SystemTreeItemModel getSystemTreeSelectedItem()
+	@Override
+    public SystemTreeItemModel getSystemTreeSelectedItem()
 	{
 		return systemTreeSelectedItem;
 	}
-	public void setSystemTreeSelectedItem(SystemTreeItemModel value)
+	@Override
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
 	{
 		if (systemTreeSelectedItem != value)
 		{

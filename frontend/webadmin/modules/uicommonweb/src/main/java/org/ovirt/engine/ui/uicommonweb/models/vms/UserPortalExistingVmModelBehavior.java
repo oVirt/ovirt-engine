@@ -56,7 +56,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
             {
                 filteredList.add(cluster);
 
-                if (Guid.OpEquality(cluster.getID(), vm.getvds_group_id().getValue()))
+                if (Guid.OpEquality(cluster.getId(), vm.getvds_group_id().getValue()))
                 {
                     listContainsVmCluster = true;
                 }

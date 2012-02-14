@@ -239,7 +239,7 @@ public final class Cloner
     private static VDSGroup CloneVDSGroup(VDSGroup instance)
     {
         VDSGroup obj = new VDSGroup();
-        obj.setID(instance.getID());
+        obj.setId(instance.getId());
         obj.setname(instance.getname());
         obj.setdescription(instance.getdescription());
         obj.setcpu_name(instance.getcpu_name());

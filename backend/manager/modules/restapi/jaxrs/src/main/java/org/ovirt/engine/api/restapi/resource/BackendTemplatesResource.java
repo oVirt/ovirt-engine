@@ -96,6 +96,6 @@ public class BackendTemplatesResource
 
     protected Guid getClusterId(Template template) {
         return getEntity(VDSGroup.class, SearchType.Cluster,
-                         "Cluster: name=" + template.getCluster().getName()).getID();
+                         "Cluster: name=" + template.getCluster().getName()).getId();
     }
 }

@@ -370,7 +370,7 @@ public class ConfigureLocalStorageModel extends Model
                 else
                 {
                     // use the DC cluster.
-                    getCluster().setClusterId(clusterList.get(0).getID());
+                    getCluster().setClusterId(clusterList.get(0).getId());
                     getCluster().getName().setEntity(clusterList.get(0).getname());
                     getCluster().getDescription().setEntity(clusterList.get(0).getdescription());
                     VDSGroup cluster = DataProvider.GetClusterById(getCluster().getClusterId().getValue());

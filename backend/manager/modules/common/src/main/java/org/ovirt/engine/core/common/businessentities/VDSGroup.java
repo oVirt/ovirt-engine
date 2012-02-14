@@ -40,7 +40,7 @@ import org.ovirt.engine.core.compat.Version;
                                   name = "vdsgroup_with_running_vms",
                                   query = "from VDSGroup g where g.id = :vds_group_id and :vds_group_id in (select s.vds_group_id from VmStatic s, VmDynamic d where d.status not in (0, 13, 14) and d.id = s.id)")
               })
-public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
+public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid> {
 
 
     private static final long serialVersionUID = 5659359762655478095L;
@@ -133,16 +133,18 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
     }
 
     @XmlElement
-    public Guid getID() {
+    @Override
+    public Guid getId() {
         return id;
     }
 
-    public void setID(Guid value) {
+    @Override
+    public void setId(Guid value) {
         id = value;
     }
 
     public void setvds_group_id(Guid value) {
-        setID(value);
+        setId(value);
     }
 
     @XmlElement
@@ -249,7 +251,7 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
 
     @Override
     public Object getQueryableId() {
-        return getID();
+        return getId();
     }
 
     private static final java.util.ArrayList<String> _vmProperties = new java.util.ArrayList<String>(

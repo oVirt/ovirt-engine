@@ -1,23 +1,22 @@
 package org.ovirt.engine.ui.uicommon.models.vms;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommon.*;
-import org.ovirt.engine.ui.uicommon.models.*;
-import org.ovirt.engine.core.common.*;
-
-import org.ovirt.engine.ui.uicommon.dataprovider.*;
-import org.ovirt.engine.ui.uicommon.validation.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.ui.uicommon.*;
-import org.ovirt.engine.ui.uicommon.models.*;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommon.Linq;
+import org.ovirt.engine.ui.uicommon.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommon.models.EntityModel;
+import org.ovirt.engine.ui.uicommon.models.SystemTreeItemModel;
 
 @SuppressWarnings("unused")
 public class ExistingVmModelBehavior extends IVmModelBehavior
@@ -51,7 +50,7 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
 				ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) model.getBehavior();
 				VM currentVm = behavior.vm;
 				VDSGroup tempVar = new VDSGroup();
-				tempVar.setID(currentVm.getvds_group_id());
+				tempVar.setId(currentVm.getvds_group_id());
 				tempVar.setname(currentVm.getvds_group_name());
 				VDSGroup cluster = tempVar;
 				model.getCluster().setItems(new java.util.ArrayList<VDSGroup>(java.util.Arrays.asList(new VDSGroup[] {cluster})));
@@ -205,7 +204,7 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
 			Guid vdsId = vm.getdedicated_vm_for_vds().getValue();
 			if (getModel().getDefaultHost().getItems() != null)
 			{
-				getModel().getDefaultHost().setSelectedItem(Linq.FirstOrDefault((java.util.ArrayList<VDS>)getModel().getDefaultHost().getItems(), new Linq.HostPredicate(vdsId)));
+				getModel().getDefaultHost().setSelectedItem(Linq.FirstOrDefault(getModel().getDefaultHost().getItems(), new Linq.HostPredicate(vdsId)));
 			}
 			getModel().getIsAutoAssign().setEntity(false);
 		}

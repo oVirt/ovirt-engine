@@ -291,7 +291,7 @@ public class VmBackupModel extends ManageBackupModel {
                     .getSourceStorage().getId(), ((storage_domains) model
                     .getDestinationStorage().getSelectedItem()).getid(), model
                     .getStoragePool().getId(), ((VDSGroup) model.getCluster()
-                    .getSelectedItem()).getID());
+                    .getSelectedItem()).getId());
             tempVar.setForceOverride(true);
             ImportVmParameters prm = tempVar;
 

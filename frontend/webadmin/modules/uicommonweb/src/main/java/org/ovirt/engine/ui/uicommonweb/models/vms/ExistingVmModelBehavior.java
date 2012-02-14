@@ -52,7 +52,7 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
                             ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) model.getBehavior();
                             VM currentVm = behavior.vm;
                             VDSGroup tempVar = new VDSGroup();
-                            tempVar.setID(currentVm.getvds_group_id());
+                            tempVar.setId(currentVm.getvds_group_id());
                             tempVar.setname(currentVm.getvds_group_name());
                             VDSGroup cluster = tempVar;
                             model.getCluster()

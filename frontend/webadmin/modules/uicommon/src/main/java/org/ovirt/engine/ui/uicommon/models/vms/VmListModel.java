@@ -1583,7 +1583,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		tempVar.setvm_domain(model.getDomain().getIsAvailable() ? (String)model.getDomain().getSelectedItem() : "");
 		tempVar.setvm_mem_size_mb((Integer)model.getMemSize().getEntity());
 		tempVar.setMinAllocatedMem((Integer)model.getMinAllocatedMemory().getEntity());
-		tempVar.setvds_group_id(((VDSGroup)model.getCluster().getSelectedItem()).getID());
+		tempVar.setvds_group_id(((VDSGroup)model.getCluster().getSelectedItem()).getId());
 		tempVar.settime_zone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((java.util.Map.Entry<String, String>)model.getTimeZone().getSelectedItem()).getKey() : "");
 		tempVar.setnum_of_sockets((Integer)model.getNumOfSockets().getEntity());
 		tempVar.setcpu_per_socket((Integer)model.getTotalCPUCores().getEntity() / (Integer)model.getNumOfSockets().getEntity());
@@ -2007,7 +2007,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 		getcurrentVm().setvm_domain(model.getDomain().getIsAvailable() ? (String)model.getDomain().getSelectedItem() : "");
 		getcurrentVm().setvm_mem_size_mb((Integer)model.getMemSize().getEntity());
 		getcurrentVm().setMinAllocatedMem((Integer)model.getMinAllocatedMemory().getEntity());
-		Guid newClusterID = ((VDSGroup)model.getCluster().getSelectedItem()).getID();
+		Guid newClusterID = ((VDSGroup)model.getCluster().getSelectedItem()).getId();
 		getcurrentVm().setvds_group_id(newClusterID);
 		getcurrentVm().settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((java.util.Map.Entry<String, String>)model.getTimeZone().getSelectedItem()).getKey() : "");
 		getcurrentVm().setnum_of_sockets((Integer)model.getNumOfSockets().getEntity());

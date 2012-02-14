@@ -41,7 +41,7 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
 
         newNetworkCluster = new network_cluster();
         newNetworkCluster.setnetwork_id(networkNoCluster.getId());
-        newNetworkCluster.setcluster_id(freeCluster.getID());
+        newNetworkCluster.setcluster_id(freeCluster.getId());
 
         existingNetworkCluster = dao.getAll().get(0);
     }
@@ -74,12 +74,12 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForCluster() {
-        List<network_cluster> result = dao.getAllForCluster(cluster.getID());
+        List<network_cluster> result = dao.getAllForCluster(cluster.getId());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (network_cluster thiscluster : result) {
-            assertEquals(cluster.getID(), thiscluster.getcluster_id());
+            assertEquals(cluster.getId(), thiscluster.getcluster_id());
         }
     }
 

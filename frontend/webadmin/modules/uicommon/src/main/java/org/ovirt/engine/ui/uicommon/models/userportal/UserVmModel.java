@@ -1160,7 +1160,7 @@ public class UserVmModel extends Model
 			VDSGroup clusterToSelect = null;
 			for (VDSGroup a : clusters)
 			{
-				if (a.getID().equals(template.getvds_group_id()))
+				if (a.getId().equals(template.getvds_group_id()))
 				{
 					clusterToSelect = a;
 					break;

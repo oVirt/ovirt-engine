@@ -44,7 +44,7 @@ public class AddClusterRM extends BaseRM
             VDSGroup cluster = DataProvider.GetClusterByName(name);
             if (cluster != null)
             {
-                getData().setClusterId(cluster.getID());
+                getData().setClusterId(cluster.getId());
                 preparingEnlistment.Prepared();
             }
             else

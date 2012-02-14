@@ -78,7 +78,7 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         VDSGroup transform = getMapper().map(cluster, null);
         assertNotNull(transform.getselection_algorithm());
         assertEquals(transform.getselection_algorithm(), VdsSelectionAlgorithm.None);
-        transform.setID(Guid.Empty);
+        transform.setId(Guid.Empty);
         cluster = ClusterMapper.map(transform, cluster);
         assertNull(cluster.getSchedulingPolicy().getPolicy());
     }

@@ -197,7 +197,7 @@ public class TemplateBackupModel extends ManageBackupModel implements ITaskTarge
 		for (Object a : getSelectedItems())
 		{
 			java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> item = (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>)a;
-			prms.add(new ImprotVmTemplateParameters(model.getStoragePool().getId(), model.getSourceStorage().getId(), ((storage_domains)model.getDestinationStorage().getSelectedItem()).getid(), ((VDSGroup)model.getCluster().getSelectedItem()).getID(), item.getKey()));
+			prms.add(new ImprotVmTemplateParameters(model.getStoragePool().getId(), model.getSourceStorage().getId(), ((storage_domains)model.getDestinationStorage().getSelectedItem()).getid(), ((VDSGroup)model.getCluster().getSelectedItem()).getId(), item.getKey()));
 		}
 
 		model.StartProgress(null);

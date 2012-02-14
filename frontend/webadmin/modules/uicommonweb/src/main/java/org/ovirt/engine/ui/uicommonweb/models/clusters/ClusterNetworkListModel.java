@@ -129,7 +129,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             }
         };
 
-        VdsGroupQueryParamenters tempVar = new VdsGroupQueryParamenters(getEntity().getID());
+        VdsGroupQueryParamenters tempVar = new VdsGroupQueryParamenters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetAllNetworksByClusterId, tempVar, _asyncQuery);
     }
@@ -140,7 +140,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         super.AsyncSearch();
 
         setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetAllNetworksByClusterId,
-                new VdsGroupQueryParamenters(getEntity().getID())));
+                new VdsGroupQueryParamenters(getEntity().getId())));
         setItems(getAsyncResult().getData());
     }
 

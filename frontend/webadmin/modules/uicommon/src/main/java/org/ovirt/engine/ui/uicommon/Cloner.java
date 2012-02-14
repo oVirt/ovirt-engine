@@ -1,17 +1,20 @@
 package org.ovirt.engine.ui.uicommon;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommon.*;
-import org.ovirt.engine.ui.uicommon.models.*;
-import org.ovirt.engine.core.common.*;
-
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.NetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.compat.NotImplementedException;
+import org.ovirt.engine.core.compat.Version;
 
 @SuppressWarnings("unused")
 public final class Cloner
@@ -233,7 +236,7 @@ public final class Cloner
 	private static VDSGroup CloneVDSGroup(VDSGroup instance)
 	{
 		VDSGroup obj = new VDSGroup();
-		obj.setID(instance.getID());
+        obj.setId(instance.getId());
 		obj.setname(instance.getname());
 		obj.setdescription(instance.getdescription());
 		obj.setcpu_name(instance.getcpu_name());
@@ -422,7 +425,7 @@ public final class Cloner
 		obj.setName(vdsNetworkInterface.getName());
 		obj.setNetworkName(vdsNetworkInterface.getNetworkName());
 		obj.setSpeed(vdsNetworkInterface.getSpeed());
-		obj.setStatistics(CloneVdsNetworkStatistics((VdsNetworkStatistics)vdsNetworkInterface.getStatistics()));
+		obj.setStatistics(CloneVdsNetworkStatistics(vdsNetworkInterface.getStatistics()));
 
 		return obj;
 	}
@@ -449,7 +452,7 @@ public final class Cloner
 		obj.setVmId(vmNetworkInterface.getVmId());
 		obj.setVmName(vmNetworkInterface.getVmName());
 		obj.setVmTemplateId(vmNetworkInterface.getVmTemplateId());
-		obj.setStatistics(CloneVmNetworkStatistics((VmNetworkStatistics)vmNetworkInterface.getStatistics()));
+		obj.setStatistics(CloneVmNetworkStatistics(vmNetworkInterface.getStatistics()));
 
 		return obj;
 	}

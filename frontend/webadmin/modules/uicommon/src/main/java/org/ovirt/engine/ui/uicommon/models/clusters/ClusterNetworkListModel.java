@@ -116,7 +116,7 @@ public class ClusterNetworkListModel extends SearchableListModel
 			searchableListModel.setItems((java.util.ArrayList<network>)((VdcQueryReturnValue)ReturnValue).getReturnValue());
 		}};
 
-		Frontend.RunQuery(VdcQueryType.GetAllNetworksByClusterId, new VdsGroupQueryParamenters(getEntity().getID()), _asyncQuery);
+		Frontend.RunQuery(VdcQueryType.GetAllNetworksByClusterId, new VdsGroupQueryParamenters(getEntity().getId()), _asyncQuery);
 	}
 
 	@Override
@@ -124,7 +124,7 @@ public class ClusterNetworkListModel extends SearchableListModel
 	{
 		super.AsyncSearch();
 
-		setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetAllNetworksByClusterId, new VdsGroupQueryParamenters(getEntity().getID())));
+		setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetAllNetworksByClusterId, new VdsGroupQueryParamenters(getEntity().getId())));
 		setItems(getAsyncResult().getData());
 	}
 

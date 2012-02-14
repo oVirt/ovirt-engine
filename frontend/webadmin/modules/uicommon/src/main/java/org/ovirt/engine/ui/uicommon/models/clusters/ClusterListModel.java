@@ -103,7 +103,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 			java.util.ArrayList<Object> items = new java.util.ArrayList<Object>();
 			for (Object i : getSelectedItems())
 			{
-				items.add(((VDSGroup)i).getID());
+				items.add(((VDSGroup)i).getId());
 			}
 			return items.toArray(new Object[]{});
 		}
@@ -276,7 +276,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 		model.getDataCenter().setIsChangable(model.getDataCenter().getSelectedItem() == null);
 
 		// When editing, the possible version values should be retrieved by the cluster.
-		model.getVersion().setItems(DataProvider.GetClusterVersions(cluster.getID()));
+		model.getVersion().setItems(DataProvider.GetClusterVersions(cluster.getId()));
 		model.getVersion().setSelectedItem((Version)cluster.getcompatibility_version());
 
 		model.setMigrateOnErrorOption(cluster.getMigrateOnError());
@@ -344,7 +344,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 		java.util.ArrayList<VdcActionParametersBase> prms = new java.util.ArrayList<VdcActionParametersBase>();
 		for (Object a : getSelectedItems())
 		{
-			prms.add(new VdsGroupParametersBase(((VDSGroup)a).getID()));
+			prms.add(new VdsGroupParametersBase(((VDSGroup)a).getId()));
 		}
 
 
@@ -492,7 +492,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 		{
 			VDSGroup cluster = (VDSGroup)getSystemTreeSelectedItem().getEntity();
 
-			setSelectedItem(Linq.FirstOrDefault(Linq.<VDSGroup>Cast(getItems()), new Linq.ClusterPredicate(cluster.getID())));
+			setSelectedItem(Linq.FirstOrDefault(Linq.<VDSGroup>Cast(getItems()), new Linq.ClusterPredicate(cluster.getId())));
 		}
 	}
 

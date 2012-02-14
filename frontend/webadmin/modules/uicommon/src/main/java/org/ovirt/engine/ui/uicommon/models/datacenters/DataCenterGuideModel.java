@@ -953,9 +953,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 		for (VDS host : model.getSelectedHosts())
 		{
 			//Try to change host's cluster as neccessary.
-			if (host.getvds_group_id() != null && !host.getvds_group_id().equals(cluster.getID()))
+			if (host.getvds_group_id() != null && !host.getvds_group_id().equals(cluster.getId()))
 			{
-				paramerterList.add(new ChangeVDSClusterParameters(cluster.getID(), host.getvds_id()));
+				paramerterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getvds_id()));
 
 			}
 		}
@@ -1063,7 +1063,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 		host.sethost_name((String)model.getHost().getEntity());
 		host.setManagmentIp((String)model.getManagementIp().getEntity());
 		host.setport(Integer.parseInt(model.getPort().getEntity().toString()));
-		host.setvds_group_id(((VDSGroup)model.getCluster().getSelectedItem()).getID());
+		host.setvds_group_id(((VDSGroup)model.getCluster().getSelectedItem()).getId());
 		host.setpm_enabled((Boolean)model.getIsPm().getEntity());
 		host.setpm_user((Boolean)model.getIsPm().getEntity() ? (String)model.getPmUserName().getEntity() : null);
 		host.setpm_password((Boolean)model.getIsPm().getEntity() ? (String)model.getPmPassword().getEntity() : null);

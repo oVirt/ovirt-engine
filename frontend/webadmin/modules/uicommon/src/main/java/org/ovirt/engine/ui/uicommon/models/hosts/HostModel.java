@@ -421,7 +421,7 @@ public class HostModel extends Model implements ITaskTarget
 
 			if (oldCluster != null)
 			{
-				getCluster().setSelectedItem(Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(oldCluster.getID())));
+				getCluster().setSelectedItem(Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(oldCluster.getId())));
 			}
 
 			if (getCluster().getSelectedItem() == null)

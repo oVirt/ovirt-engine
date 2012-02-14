@@ -72,7 +72,7 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
     }
 
     protected Guid lookupClusterIdByName(String name) {
-        return lookupClusterByName(name).getID();
+        return lookupClusterByName(name).getId();
     }
 
     protected VDSGroup lookupClusterByName(String name) {

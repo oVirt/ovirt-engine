@@ -206,9 +206,9 @@ public class SystemTreeModel extends SearchableListModel
 					hostsItem.setEntity(cluster);
 					clusterItem.getChildren().add(hostsItem);
 
-					if (hostMap.containsKey(cluster.getID()))
+					if (hostMap.containsKey(cluster.getId()))
 					{
-						for (VDS host : hostMap.get(cluster.getID()))
+						for (VDS host : hostMap.get(cluster.getId()))
 						{
 							SystemTreeItemModel hostItem = new SystemTreeItemModel();
 							hostItem.setType(SystemTreeItemType.Host);

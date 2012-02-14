@@ -248,7 +248,7 @@ public class TemplateBackupModel extends ManageBackupModel
             prms.add(new ImprotVmTemplateParameters(model.getStoragePool().getId(),
                     model.getSourceStorage().getId(),
                     ((storage_domains) model.getDestinationStorage().getSelectedItem()).getid(),
-                    ((VDSGroup) model.getCluster().getSelectedItem()).getID(),
+                    ((VDSGroup) model.getCluster().getSelectedItem()).getId(),
                     item));
         }
 

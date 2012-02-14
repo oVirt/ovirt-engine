@@ -509,7 +509,7 @@ public class HostModel extends Model
                         if (oldCluster != null)
                         {
                             VDSGroup newSelectedItem =
-                                    Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(oldCluster.getID()));
+                                    Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(oldCluster.getId()));
                             if (newSelectedItem != null)
                             {
                                 hostModel.getCluster().setSelectedItem(newSelectedItem);

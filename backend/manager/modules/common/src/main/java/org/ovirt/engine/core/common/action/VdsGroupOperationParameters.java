@@ -17,7 +17,7 @@ public class VdsGroupOperationParameters extends VdsGroupParametersBase {
     private VDSGroup _vdsGroup;
 
     public VdsGroupOperationParameters(VDSGroup group) {
-        super(group.getID());
+        super(group.getId());
         _vdsGroup = group;
     }
 

@@ -857,7 +857,7 @@ public class AuditLogableBaseTest {
     public void getVdsGroupIdVdsGroup() {
         final AuditLogableBase b = new AuditLogableBase();
         final VDSGroup gr = new VDSGroup();
-        gr.setID(GUID);
+        gr.setId(GUID);
         b.setVdsGroup(gr);
         final Guid g = b.getVdsGroupId();
         assertEquals(GUID, g);
@@ -884,7 +884,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new TestAuditLogableBase();
         b.setVdsGroupId(GUID);
         final VDSGroup g = b.getVdsGroup();
-        assertEquals(GUID, g.getID());
+        assertEquals(GUID, g.getId());
     }
 
     @Test
@@ -894,7 +894,7 @@ public class AuditLogableBaseTest {
         v.setvds_group_id(GUID);
         b.setVds(v);
         final VDSGroup g = b.getVdsGroup();
-        assertEquals(GUID, g.getID());
+        assertEquals(GUID, g.getId());
     }
 
     @Test
@@ -904,7 +904,7 @@ public class AuditLogableBaseTest {
         v.setvds_group_id(GUID);
         b.setVm(v);
         final VDSGroup g = b.getVdsGroup();
-        assertEquals(GUID, g.getID());
+        assertEquals(GUID, g.getId());
     }
 
     @Test

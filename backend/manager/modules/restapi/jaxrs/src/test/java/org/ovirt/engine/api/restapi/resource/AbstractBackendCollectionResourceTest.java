@@ -279,7 +279,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
 
     protected VDSGroup setUpVDSGroup(Guid id) {
         VDSGroup cluster = control.createMock(VDSGroup.class);
-        expect(cluster.getID()).andReturn(id).anyTimes();
+        expect(cluster.getId()).andReturn(id).anyTimes();
         return cluster;
     }
 

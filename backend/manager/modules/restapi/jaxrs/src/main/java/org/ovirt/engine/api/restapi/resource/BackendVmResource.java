@@ -110,7 +110,7 @@ public class BackendVmResource extends
                                            :
                                            getEntity(VDSGroup.class,
                                                      SearchType.Cluster,
-                                                     "Cluster: name=" + vm.getCluster().getName()).getID();
+                                                     "Cluster: name=" + vm.getCluster().getName()).getId();
     }
 
     @Override

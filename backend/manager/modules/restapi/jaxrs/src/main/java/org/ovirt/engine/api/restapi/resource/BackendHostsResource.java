@@ -98,7 +98,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
                            "Cluster: name="
                            + (host.isSetCluster() && host.getCluster().isSetName()
                               ? host.getCluster().getName()
-                              : "Default")).getID();
+                              : "Default")).getId();
     }
 
 }

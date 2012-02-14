@@ -105,7 +105,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             java.util.ArrayList<Object> items = new java.util.ArrayList<Object>();
             for (Object i : getSelectedItems())
             {
-                items.add(((VDSGroup) i).getID());
+                items.add(((VDSGroup) i).getId());
             }
             return items.toArray(new Object[] {});
         }
@@ -150,7 +150,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         if (getGuideContext() == null) {
             VDSGroup cluster = (VDSGroup) getSelectedItem();
-            setGuideContext(cluster.getID());
+            setGuideContext(cluster.getId());
         }
 
         AsyncDataProvider.GetClusterById(new AsyncQuery(this,
@@ -338,7 +338,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         java.util.ArrayList<VdcActionParametersBase> prms = new java.util.ArrayList<VdcActionParametersBase>();
         for (Object a : getSelectedItems())
         {
-            prms.add(new VdsGroupParametersBase(((VDSGroup) a).getID()));
+            prms.add(new VdsGroupParametersBase(((VDSGroup) a).getId()));
         }
 
         model.StartProgress(null);
@@ -488,7 +488,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             VDSGroup cluster = (VDSGroup) getSystemTreeSelectedItem().getEntity();
 
             setSelectedItem(Linq.FirstOrDefault(Linq.<VDSGroup> Cast(getItems()),
-                    new Linq.ClusterPredicate(cluster.getID())));
+                    new Linq.ClusterPredicate(cluster.getId())));
         }
     }
 

@@ -659,7 +659,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : "");
         tempVar.setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
-        tempVar.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getID());
+        tempVar.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
         tempVar.settime_zone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((java.util.Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
                 : "");
@@ -1255,7 +1255,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 .getSelectedItem() : "");
         gettempVm().setvm_mem_size_mb((Integer) getVmModel().getMemSize().getEntity());
         gettempVm().setMinAllocatedMem((Integer) getVmModel().getMinAllocatedMemory().getEntity());
-        Guid newClusterID = ((VDSGroup) getVmModel().getCluster().getSelectedItem()).getID();
+        Guid newClusterID = ((VDSGroup) getVmModel().getCluster().getSelectedItem()).getId();
         gettempVm().setvds_group_id(newClusterID);
         gettempVm().settime_zone((getVmModel().getTimeZone().getIsAvailable() && getVmModel().getTimeZone()
                 .getSelectedItem() != null) ? ((java.util.Map.Entry<String, String>) getVmModel().getTimeZone()
@@ -1506,7 +1506,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             for (Object item : getVmModel().getCluster().getItems())
             {
                 VDSGroup a = (VDSGroup) item;
-                if (a.getID().equals(vm.getvds_group_id()))
+                if (a.getId().equals(vm.getvds_group_id()))
                 {
                     cluster = a;
                     break;

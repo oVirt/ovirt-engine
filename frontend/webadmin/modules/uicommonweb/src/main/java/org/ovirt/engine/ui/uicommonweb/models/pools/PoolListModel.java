@@ -426,7 +426,7 @@ public class PoolListModel extends ListWithDetailsModel
                         for (Object item : model.getCluster().getItems())
                         {
                             VDSGroup a = (VDSGroup) item;
-                            if (a.getID().equals(pool.getvds_group_id()))
+                            if (a.getId().equals(pool.getvds_group_id()))
                             {
                                 model.getCluster().setSelectedItem(a);
                                 break;
@@ -573,7 +573,7 @@ public class PoolListModel extends ListWithDetailsModel
                         // Save changes.
                         pool.setvm_pool_name((String) model.getName().getEntity());
                         pool.setvm_pool_description((String) model.getDescription().getEntity());
-                        pool.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getID());
+                        pool.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
 
                         EntityModel poolTypeSelectedItem = (EntityModel) model.getPoolType().getSelectedItem();
                         pool.setvm_pool_type((VmPoolType) poolTypeSelectedItem.getEntity());
@@ -608,7 +608,7 @@ public class PoolListModel extends ListWithDetailsModel
                                 .getSelectedItem() : "");
                         tempVar.setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
                         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
-                        tempVar.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getID());
+                        tempVar.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
                         tempVar.settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
                                 .getSelectedItem() != null) ? ((java.util.Map.Entry<String, String>) model.getTimeZone()
                                 .getSelectedItem()).getKey()

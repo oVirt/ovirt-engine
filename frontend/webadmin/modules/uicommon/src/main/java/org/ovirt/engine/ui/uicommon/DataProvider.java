@@ -2515,7 +2515,7 @@ public final class DataProvider
 		}
 		else if (entity instanceof VDSGroup)
 		{
-			return ((VDSGroup)entity).getID();
+			return ((VDSGroup)entity).getId();
 		}
 		else if (entity instanceof VDS)
 		{

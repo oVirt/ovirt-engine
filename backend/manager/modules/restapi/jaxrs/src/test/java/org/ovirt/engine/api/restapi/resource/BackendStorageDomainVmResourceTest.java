@@ -329,7 +329,7 @@ public class BackendStorageDomainVmResourceTest
 
     protected VDSGroup getCluster(int idx) {
         VDSGroup cluster = new VDSGroup();
-        cluster.setID(GUIDS[idx]);
+        cluster.setId(GUIDS[idx]);
         return cluster;
     }
 }

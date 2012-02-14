@@ -190,7 +190,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
 
     protected VDSGroup setUpVDSGroupExpectations(Guid id) {
         VDSGroup group = control.createMock(VDSGroup.class);
-        expect(group.getID()).andReturn(id).anyTimes();
+        expect(group.getId()).andReturn(id).anyTimes();
 
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                                      GetVdsGroupByVdsGroupIdParameters.class,

@@ -234,7 +234,7 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
 		for (VDSGroup vdsGroup : getClusterList())
 		{
 			queryTypeList.add(VdcQueryType.GetAllNetworksByClusterId);
-			parametersList.add(new VdsGroupQueryParamenters(vdsGroup.getID()));
+			parametersList.add(new VdsGroupQueryParamenters(vdsGroup.getId()));
 			SelectionTreeNodeModel tempVar = new SelectionTreeNodeModel();
 			tempVar.setIsSelectedNullable(false);
 			tempVar.setEntity(vdsGroup);

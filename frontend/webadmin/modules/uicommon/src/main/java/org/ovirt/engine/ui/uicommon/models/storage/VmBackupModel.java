@@ -224,7 +224,7 @@ public class VmBackupModel extends ManageBackupModel implements ITaskTarget
 				disks.put(a.getKey(), a.getValue());
 			}
 
-			ImportVmParameters tempVar = new ImportVmParameters(vm, model.getSourceStorage().getId(), destinationStorage.getid(), model.getStoragePool().getId(), cluster.getID());
+			ImportVmParameters tempVar = new ImportVmParameters(vm, model.getSourceStorage().getId(), destinationStorage.getid(), model.getStoragePool().getId(), cluster.getId());
 			tempVar.setForceOverride(true);
 			tempVar.setCopyCollapse(collapseSnapshots);
 			tempVar.setDiskInfoList(disks);

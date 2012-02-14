@@ -65,7 +65,7 @@ public class VdsGroupDAOTestCase extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithRunningVmsWhereThereAreNone() {
-        VDSGroup result = dao.getWithRunningVms(groupWithNoRunningVms.getID());
+        VDSGroup result = dao.getWithRunningVms(groupWithNoRunningVms.getId());
 
         assertNull(result);
     }
@@ -75,7 +75,7 @@ public class VdsGroupDAOTestCase extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithRunningVms() {
-        VDSGroup result = dao.getWithRunningVms(existingVdsGroup.getID());
+        VDSGroup result = dao.getWithRunningVms(existingVdsGroup.getId());
 
         assertNotNull(result);
     }
@@ -85,7 +85,7 @@ public class VdsGroupDAOTestCase extends BaseDAOTestCase {
      */
     @Test
     public void testGet() {
-        VDSGroup result = dao.get(existingVdsGroup.getID());
+        VDSGroup result = dao.get(existingVdsGroup.getId());
 
         assertNotNull(result);
         assertEquals(existingVdsGroup, result);
@@ -172,7 +172,7 @@ public class VdsGroupDAOTestCase extends BaseDAOTestCase {
         existingVdsGroup.setname("This is the new name");
         dao.update(existingVdsGroup);
 
-        VDSGroup result = dao.get(existingVdsGroup.getID());
+        VDSGroup result = dao.get(existingVdsGroup.getId());
 
         assertNotNull(result);
         assertEquals(existingVdsGroup, result);
@@ -187,9 +187,9 @@ public class VdsGroupDAOTestCase extends BaseDAOTestCase {
      */
     @Test
     public void testRemove() {
-        dao.remove(groupWithNoRunningVms.getID());
+        dao.remove(groupWithNoRunningVms.getId());
 
-        VDSGroup result = dao.get(groupWithNoRunningVms.getID());
+        VDSGroup result = dao.get(groupWithNoRunningVms.getId());
 
         assertNull(result);
     }

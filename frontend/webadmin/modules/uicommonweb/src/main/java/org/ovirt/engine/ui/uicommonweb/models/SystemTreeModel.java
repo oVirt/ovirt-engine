@@ -353,9 +353,9 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                     hostsItem.setEntity(cluster);
                     clusterItem.getChildren().add(hostsItem);
 
-                    if (getHostMap().containsKey(cluster.getID()))
+                    if (getHostMap().containsKey(cluster.getId()))
                     {
-                        for (VDS host : getHostMap().get(cluster.getID()))
+                        for (VDS host : getHostMap().get(cluster.getId()))
                         {
                             SystemTreeItemModel hostItem = new SystemTreeItemModel();
                             hostItem.setType(SystemTreeItemType.Host);
