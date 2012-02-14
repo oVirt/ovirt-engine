@@ -35,12 +35,15 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "processed")
     private boolean processed = false;
 
+    private String correlationId;
+    private NGuid jobId;
+
     public AuditLog() {
     }
 
     public AuditLog(long audit_log_id, java.util.Date log_time, int log_type, int severity, String message,
             NGuid user_id, String user_name, NGuid vds_id, String vds_name, NGuid vm_id, String vm_name,
-            NGuid vm_template_id, String vm_template_name) {
+            NGuid vm_template_id, String vm_template_name, String correlationId, NGuid jobId) {
         this.auditLogId = audit_log_id;
         this.logTime = log_time;
         this.logType = log_type;
@@ -54,6 +57,8 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         this.vmName = vm_name;
         this.vmTemplateId = vm_template_id;
         this.vmTemplateName = vm_template_name;
+        this.correlationId = correlationId;
+        this.jobId = jobId;
     }
 
     @Id
@@ -363,6 +368,22 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         return processed;
     }
 
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public void setJobId(NGuid jobId) {
+        this.jobId = jobId;
+    }
+
+    public NGuid getJobId() {
+        return jobId;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -379,6 +400,8 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         result = prime * result + ((vmId == null) ? 0 : vmId.hashCode());
         result = prime * result + ((vmTemplateId == null) ? 0 : vmTemplateId.hashCode());
         result = prime * result + (processed ? prime : 0);
+        result = prime * result + ((correlationId == null) ? 0 : correlationId.hashCode());
+        result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
         return result;
     }
 
@@ -438,6 +461,16 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         } else if (!vmTemplateId.equals(other.vmTemplateId))
             return false;
         if(processed != other.processed)
+            return false;
+        if (correlationId == null) {
+            if (other.correlationId != null)
+                return false;
+        } else if (!correlationId.equals(other.correlationId))
+            return false;
+        if (jobId == null) {
+            if (other.jobId != null)
+                return false;
+        } else if (!jobId.equals(other.jobId))
             return false;
         return true;
     }

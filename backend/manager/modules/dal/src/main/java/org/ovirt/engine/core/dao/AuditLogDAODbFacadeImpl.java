@@ -87,7 +87,9 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
                 .addValue("storage_domain_id", event.getstorage_domain_id())
                 .addValue("storage_domain_name", event.getstorage_domain_name())
                 .addValue("vds_group_id", event.getvds_group_id())
-                .addValue("vds_group_name", event.getvds_group_name());
+                .addValue("vds_group_name", event.getvds_group_name())
+                .addValue("correlation_id", event.getCorrelationId())
+                .addValue("job_id", event.getJobId());
     }
 
     @Override
@@ -174,6 +176,8 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
                     .getString("vds_group_id")));
             entity.setvds_group_name(rs
                     .getString("vds_group_name"));
+            entity.setCorrelationId(rs.getString("correlation_id"));
+            entity.setJobId(NGuid.createGuidFromString(rs.getString("job_id")));
             return entity;
         }
     }
