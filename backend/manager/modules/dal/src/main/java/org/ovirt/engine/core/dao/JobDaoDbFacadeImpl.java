@@ -18,6 +18,8 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class JobDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Job, Guid> implements JobDao {
 
+    private static JobRowMapper jobRowMapper = new JobRowMapper();
+
     @Override
     protected String getProcedureNameForSave() {
         return "InsertJob";
@@ -64,26 +66,7 @@ public class JobDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Job, Guid> imp
 
     @Override
     protected ParameterizedRowMapper<Job> createEntityRowMapper() {
-        return new ParameterizedRowMapper<Job>() {
-
-            @Override
-            public Job mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Job job = new Job();
-
-                job.setId(Guid.createGuidFromString(rs.getString("job_id")));
-                job.setActionType(VdcActionType.valueOf(rs.getString("action_type")));
-                job.setDescription(rs.getString("description"));
-                job.setStatus(JobExecutionStatus.valueOf(rs.getString("status")));
-                job.setOwnerId(NGuid.createGuidFromString(rs.getString("owner_id")));
-                job.setVisible(rs.getBoolean("visible"));
-                job.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
-                job.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
-                job.setLastUpdateTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_update_time")));
-                job.setCorrelationId(rs.getString("correlation_id"));
-
-                return job;
-            }
-        };
+        return jobRowMapper;
     }
 
     @Override
@@ -137,6 +120,27 @@ public class JobDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Job, Guid> imp
                 .addValue("failed_end_time", failedJobs);
         getCallsHandler().executeModification("DeleteCompletedJobsOlderThanDate", parameterSource);
 
+    }
+
+    private static class JobRowMapper implements ParameterizedRowMapper<Job> {
+
+        @Override
+        public Job mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Job job = new Job();
+
+            job.setId(Guid.createGuidFromString(rs.getString("job_id")));
+            job.setActionType(VdcActionType.valueOf(rs.getString("action_type")));
+            job.setDescription(rs.getString("description"));
+            job.setStatus(JobExecutionStatus.valueOf(rs.getString("status")));
+            job.setOwnerId(NGuid.createGuidFromString(rs.getString("owner_id")));
+            job.setVisible(rs.getBoolean("visible"));
+            job.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
+            job.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
+            job.setLastUpdateTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_update_time")));
+            job.setCorrelationId(rs.getString("correlation_id"));
+
+            return job;
+        }
     }
 
 }
