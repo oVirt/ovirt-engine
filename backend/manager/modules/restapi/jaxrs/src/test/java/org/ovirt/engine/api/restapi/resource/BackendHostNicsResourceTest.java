@@ -10,7 +10,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNIC;
@@ -90,12 +89,7 @@ public class BackendHostNicsResourceTest
     @Test
     public void testAddBond() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
-                                     GetAllNetworkQueryParamenters.class,
-                                     new String[] { "StoragePoolId" },
-                                     new Object[] { Guid.Empty },
-                                     asList(getNetwork()));
-
+        setUpNetworkQueryExpectations(2);
         setUpEntityQueryExpectations(1);
 
         setUpCreationExpectations(VdcActionType.AddBond,
@@ -130,11 +124,7 @@ public class BackendHostNicsResourceTest
     }
 
     private void doTestBadAdd(boolean canDo, boolean success, String detail) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
-                                     GetAllNetworkQueryParamenters.class,
-                                     new String[] { "StoragePoolId" },
-                                     new Object[] { Guid.Empty },
-                                     asList(getNetwork()));
+        setUpNetworkQueryExpectations(2);
 
         setUriInfo(setUpActionExpectations(VdcActionType.AddBond,
                                            AddBondParameters.class,
@@ -272,6 +262,16 @@ public class BackendHostNicsResourceTest
                                          new String[] { "VdsId" },
                                          new Object[] { PARENT_GUID },
                                          setUpInterfaces());
+        }
+    }
+
+    protected void setUpNetworkQueryExpectations(int times) throws Exception {
+        while (times-- > 0) {
+            setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
+                    GetAllNetworkQueryParamenters.class,
+                    new String[] { "StoragePoolId" },
+                    new Object[] { Guid.Empty },
+                    asList(getNetwork()));
         }
     }
 
