@@ -178,7 +178,7 @@ public class BackendHostNicsResource
     @Override
     protected VdsNetworkInterface map(HostNIC entity, VdsNetworkInterface template) {
         VdsNetworkInterface iface = super.map(entity, template);
-        if (entity.isSetNetwork() && entity.getNetwork() != null) {
+        if (entity.isSetNetwork()) {
             network net = lookupNetwork(entity.getNetwork());
             iface.setNetworkName(net.getname());
         }
