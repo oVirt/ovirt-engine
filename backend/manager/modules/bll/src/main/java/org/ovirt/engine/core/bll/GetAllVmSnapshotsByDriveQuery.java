@@ -1,12 +1,14 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveParameters;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDriveParameters>
         extends QueriesCommandBase<P> {
@@ -23,7 +25,8 @@ public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDrivePar
         DiskImage activeDisk = null;
         RefObject<DiskImage> refActive = new RefObject<DiskImage>(activeDisk);
         RefObject<DiskImage> refInactive = new RefObject<DiskImage>(inactiveDisk);
-        int count = ImagesHandler.getImagesMappedToDrive(vmId, drive, refActive, refInactive);
+        List<DiskImage> images = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId);
+        int count = ImagesHandler.getImagesMappedToDrive(images, drive, refActive, refInactive);
         activeDisk = refActive.argvalue;
         inactiveDisk = refInactive.argvalue;
         if ((count == 0 || count > 2 || activeDisk == null || (count == 2 && inactiveDisk == null))) {
