@@ -82,7 +82,6 @@
 		<include name="core/common/businessentities/VDS.java" />
 		<include name="core/common/businessentities/VDSDomainsData.java" />
 		<include name="core/common/businessentities/VdsDynamic.java" />
-		<include name="core/common/businessentities/VdsFencingOptions.java" />
 		<include name="core/common/businessentities/VDSGroup.java" />
 		<include name="core/common/businessentities/VdsSelectionAlgorithm.java" />
 		<include name="core/common/businessentities/VdsSpmStatus.java" />
