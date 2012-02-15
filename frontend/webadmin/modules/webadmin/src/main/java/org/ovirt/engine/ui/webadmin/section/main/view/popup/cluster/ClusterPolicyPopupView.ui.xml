@@ -3,7 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:f="urn:import:org.ovirt.engine.ui.webadmin.widget.form" 
+	xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form" 
 	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
 	<ui:style  type="org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPolicyPopupView.WidgetStyle">

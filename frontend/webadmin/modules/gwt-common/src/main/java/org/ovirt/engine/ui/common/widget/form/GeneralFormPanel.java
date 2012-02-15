@@ -1,6 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.form;
-
-import org.ovirt.engine.ui.common.widget.form.AbstractFormPanel;
+package org.ovirt.engine.ui.common.widget.form;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;

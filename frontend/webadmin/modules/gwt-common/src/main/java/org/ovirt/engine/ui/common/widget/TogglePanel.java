@@ -1,6 +1,5 @@
-package org.ovirt.engine.ui.webadmin.widget;
+package org.ovirt.engine.ui.common.widget;
 
-import org.ovirt.engine.ui.common.widget.ModelBoundCheckBox;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;

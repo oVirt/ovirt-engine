@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.tab;
+package org.ovirt.engine.ui.common.widget.tab;
 
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -7,14 +7,13 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
-import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+
+import com.google.gwt.event.shared.EventBus;
 
 public class ModelBoundTab extends SimpleTab {
 
-    public ModelBoundTab(final ModelBoundTabData tabData, AbstractTabPanel tabPanel) {
+    public ModelBoundTab(final ModelBoundTabData tabData, AbstractTabPanel tabPanel, EventBus eventBus) {
         super(tabData, tabPanel);
         setAlign(tabData.getAlign());
 
@@ -26,14 +25,13 @@ public class ModelBoundTab extends SimpleTab {
         registerModelEventListeners(tabData.getModelProvider());
 
         // Add handler to be notified when UiCommon models are (re)initialized
-        ClientGinjectorProvider.instance().getEventBus()
-                .addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
-                    @Override
-                    public void onUiCommonInit(UiCommonInitEvent event) {
-                        setAccessible(tabData.getModelProvider().getModel().getIsAvailable());
-                        registerModelEventListeners(tabData.getModelProvider());
-                    }
-                });
+        eventBus.addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
+            @Override
+            public void onUiCommonInit(UiCommonInitEvent event) {
+                setAccessible(tabData.getModelProvider().getModel().getIsAvailable());
+                registerModelEventListeners(tabData.getModelProvider());
+            }
+        });
     }
 
     void registerModelEventListeners(final ModelProvider<? extends EntityModel> modelProvider) {

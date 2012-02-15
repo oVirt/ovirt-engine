@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.form;
+package org.ovirt.engine.ui.common.widget.form;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.StyleInjector;
@@ -168,4 +168,5 @@ public class Slider extends Composite {
         slider.addWest(westPanel, getPivot() - getMin());
         slider.add(centerPanel);
     }
+
 }

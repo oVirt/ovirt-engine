@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.webadmin.widget.host;
 
+import org.ovirt.engine.ui.common.widget.TogglePanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.webadmin.widget.TogglePanel;
 import org.ovirt.engine.ui.webadmin.widget.renderer.HostInterfaceBondNameRenderer;
 
 import com.google.gwt.dom.client.Style;

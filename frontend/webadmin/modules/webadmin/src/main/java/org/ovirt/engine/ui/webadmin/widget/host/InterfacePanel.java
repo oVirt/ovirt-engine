@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 
 import java.util.List;
 
+import org.ovirt.engine.ui.common.widget.TogglePanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterface;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.webadmin.widget.TogglePanel;
 import org.ovirt.engine.ui.webadmin.widget.renderer.RxTxRateRenderer;
 import org.ovirt.engine.ui.webadmin.widget.renderer.SumUpRenderer;
 
