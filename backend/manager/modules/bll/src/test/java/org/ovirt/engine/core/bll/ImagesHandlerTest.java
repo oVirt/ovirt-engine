@@ -46,7 +46,7 @@ public class ImagesHandlerTest {
      * @param internalMapping
      *            The internal mapping property.
      */
-    private void addDiskImage(ArrayList<DiskImage> images, String internalMapping) {
+    private static void addDiskImage(ArrayList<DiskImage> images, String internalMapping) {
         DiskImage diskImage = new DiskImage();
         diskImage.setinternal_drive_mapping(internalMapping);
         images.add(diskImage);
