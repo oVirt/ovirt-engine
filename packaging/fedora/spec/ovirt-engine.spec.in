@@ -296,6 +296,7 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %files setup
 %attr (755,root,root) %{_datadir}/%{name}/scripts/basedefs.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/engine_validators.py*
+%attr (755,root,root) %{_datadir}/%{name}/scripts/engine_params.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/common_utils.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/output_messages.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/nfsutils.py*
