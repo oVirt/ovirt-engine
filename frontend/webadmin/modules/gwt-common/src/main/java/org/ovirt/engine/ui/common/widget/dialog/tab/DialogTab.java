@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.dialog.tab;
+package org.ovirt.engine.ui.common.widget.dialog.tab;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidget;
@@ -24,16 +24,10 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
     }
 
     interface Style extends CssResource {
-
         String active();
 
         String inactive();
-
     }
-
-    private Widget tabContent;
-
-    private boolean isActive;
 
     @UiField
     SimplePanel tabContainer;
@@ -43,6 +37,9 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
 
     @UiField
     Style style;
+
+    private Widget tabContent;
+    private boolean isActive;
 
     public DialogTab() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));

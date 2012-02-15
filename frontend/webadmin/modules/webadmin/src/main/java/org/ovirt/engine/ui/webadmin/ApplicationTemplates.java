@@ -70,17 +70,6 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     SafeHtml alertFooterHeader(SafeHtml imageHtml, int alertCount);
 
     @Template("<table cellspacing='0' cellpadding='0'><tr>" +
-            "<td style='background: url({2});width:2px;'></td>" +
-            "<td style='text-align:center;'>" +
-            "<div class='{5} {6}' style='background: url({3}) repeat-x; height: 20px;'>" +
-            "<span style='vertical-align: middle; margin-right: 3px; line-height: 20px;'>{0}</span>{1}</div>" +
-            "</td>" +
-            "<td style='background: url({4});width:2px;'></td>" +
-            "</tr></table>")
-    SafeHtml dialogButton(SafeHtml image, String text, String start, String stretch,
-            String end, String contentStyleName, String customContentStyleName);
-
-    @Template("<table cellspacing='0' cellpadding='0'><tr>" +
             "<td style='background: url({2});width: 4px;'></td>" +
             "<td style='text-align:center;'>" +
             "<div class='{5}' style='background: url({3}) repeat-x; white-space: nowrap; height: 20px; line-height: 20px;'>" +

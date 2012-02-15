@@ -1,6 +1,5 @@
-package org.ovirt.engine.ui.webadmin.widget.dialog;
+package org.ovirt.engine.ui.common.widget.dialog;
 
-import org.ovirt.engine.ui.common.widget.dialog.AbstractDialogPanel;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 import com.google.gwt.core.client.GWT;
@@ -22,11 +21,9 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     }
 
     protected interface Style extends CssResource {
-
         String footerButton();
 
         String contentWidget();
-
     }
 
     @UiField
@@ -44,10 +41,10 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     @UiField
     ButtonBase helpButton;
 
-    UICommand helpCommand;
-
     @UiField
     Style style;
+
+    UICommand helpCommand;
 
     public SimpleDialogPanel() {
         setWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -109,8 +106,10 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
         });
     }
 
+    @Override
     public void setHelpCommand(UICommand command) {
         helpCommand = command;
         helpButton.setVisible(command != null);
     }
+
 }

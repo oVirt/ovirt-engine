@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.dialog;
+package org.ovirt.engine.ui.common.widget.dialog;
 
 import org.ovirt.engine.ui.common.widget.IsProgressContentWidget;
 
@@ -28,6 +28,7 @@ public class ProgressPopupContent extends Composite implements IsProgressContent
         progressImage.getElement().getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
     }
 
+    @Override
     public void setProgressMessage(String text) {
         progressLabel.setText(text);
         progressLabel.setVisible(text != null);

@@ -2,14 +2,14 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-	<ui:style src='../../../defines.css' type="org.ovirt.engine.ui.webadmin.widget.dialog.tab.DialogTab.Style">
+	<ui:style type="org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab.Style">
 		.tab {
 			padding: 5px;
 			cursor: pointer;			
 		}
 		
 		.active {
-			background-color: mainBackgroundColor;
+			background-color: #82AA32;
 			color: white;
 			font-weight: bold;
 			border: 1px solid #345B7A;

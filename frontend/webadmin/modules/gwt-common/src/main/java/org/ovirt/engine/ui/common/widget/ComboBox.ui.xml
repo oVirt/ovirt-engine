@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"  xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
-	
-	<ui:style type="org.ovirt.engine.ui.webadmin.widget.ComboBox.WidgetStyle">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+	<ui:style type="org.ovirt.engine.ui.common.widget.ComboBox.WidgetStyle">
 		.listBoxEditor {
+			
 		}
 		
 		.listBoxLabel {
@@ -14,14 +16,14 @@
 			position: absolute;
 			top: 0px;
 			margin-top: 2px;
-			margin-top: 1px\9;
+			margin-top: 1px;
 			right: 18px;
-			right: 20px\9;
+			right: 20px;
 		}
 		
 		.textBoxWidget {
 			width: 180px;
-			width: 178px\9;			
+			width: 178px;
 		}
 		
 		.textBoxInput {
@@ -40,7 +42,7 @@
 
 	<g:AbsolutePanel>
 		<e:ListModelListBoxEditor ui:field="listBoxEditor" addStyleNames="{style.listBoxEditor}" />
-		<e:EntityModelTextBoxEditor ui:field="textBoxEditor" addStyleNames="{style.textBoxEditor}" />				
+		<e:EntityModelTextBoxEditor ui:field="textBoxEditor" addStyleNames="{style.textBoxEditor}" />
 	</g:AbsolutePanel>
 
 </ui:UiBinder>

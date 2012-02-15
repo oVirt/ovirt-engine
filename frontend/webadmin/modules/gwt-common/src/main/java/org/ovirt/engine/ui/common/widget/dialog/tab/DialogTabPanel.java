@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.dialog.tab;
+package org.ovirt.engine.ui.common.widget.dialog.tab;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -58,8 +58,9 @@ public class DialogTabPanel extends Composite {
         if (activeTab != null)
             activeTab.deactivate();
 
-        if (tab != null)
+        if (tab != null) {
             tab.activate();
+        }
 
         activeTab = tab;
     }
@@ -71,4 +72,5 @@ public class DialogTabPanel extends Composite {
     public void addBarStyle(String styleName) {
         tabContainer.addStyleName(styleName);
     }
+
 }

@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget;
+package org.ovirt.engine.ui.common.widget;
 
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -11,6 +11,9 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * Combines {@link ListModelListBoxEditor} and {@link EntityModelTextBoxEditor} into a single widget.
+ */
 public class ComboBox extends Composite {
 
     interface WidgetUiBinder extends UiBinder<Widget, ComboBox> {
@@ -58,4 +61,5 @@ public class ComboBox extends Composite {
 
         String listBoxLabel();
     }
+
 }

@@ -1,8 +1,9 @@
 package org.ovirt.engine.ui.webadmin.widget.editor;
 
+import org.ovirt.engine.ui.common.widget.IntegerSlider;
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
 import org.ovirt.engine.ui.common.widget.editor.TakesValueWithChangeHandlersEditor;
-import org.ovirt.engine.ui.webadmin.widget.IntegerSlider;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -45,7 +46,7 @@ public class EntityModelInputWithSlider extends Composite implements
         maxValueLabel = new Label(Integer.toString(max));
         maxValueLabel.setStyleName("gwt-SliderBar-maxrange-label");
 
-        slider = new IntegerSlider(min, max) {
+        slider = new IntegerSlider(min, max, ClientGinjectorProvider.instance().getApplicationResources()) {
             @Override
             public void setMinValue(double minValue) {
                 super.setMinValue(minValue);

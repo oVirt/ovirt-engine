@@ -2,8 +2,6 @@ package org.ovirt.engine.ui.webadmin;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.TextResource;
 
@@ -41,25 +39,6 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/desktop.gif")
     ImageResource desktopImage();
-
-    /* Dialog resources */
-    @Source("images/dialog/dialog_header_image.png")
-    ImageResource dialogHeaderImage();
-
-    @Source("images/dialog/error.png")
-    ImageResource dialogLogoErrorImage();
-
-    @Source("images/dialog/info.png")
-    ImageResource dialogLogoInfoImage();
-
-    @Source("images/dialog/warning.png")
-    ImageResource dialogLogoWarningImage();
-
-    @Source("images/dialog/guide.png")
-    ImageResource dialogLogoGuideImage();
-
-    @Source("images/dialog/progress.gif")
-    ImageResource dialogProgressImage();
 
     @Source("images/disk.png")
     ImageResource diskImage();
@@ -298,78 +277,6 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/enlarge_bottom_panel.png")
     ImageResource enlargeFooterPanelImage();
-
-    @Source("images/button/button_start.png")
-    ImageResource dialogButtonUpStart();
-
-    @Source("images/button/button_stretch.png")
-    ImageResource dialogButtonUpStretch();
-
-    @Source("images/button/button_end.png")
-    ImageResource dialogButtonUpEnd();
-
-    @Source("images/button/button_Over_start.png")
-    ImageResource dialogButtonOverStart();
-
-    @Source("images/button/button_Over_stretch.png")
-    ImageResource dialogButtonOverStretch();
-
-    @Source("images/button/button_Over_end.png")
-    ImageResource dialogButtonOverEnd();
-
-    @Source("images/button/button_Down_start.png")
-    ImageResource dialogButtonDownStart();
-
-    @Source("images/button/button_Down_stretch.png")
-    ImageResource dialogButtonDownStretch();
-
-    @Source("images/button/button_Down_end.png")
-    ImageResource dialogButtonDownEnd();
-
-    @Source("images/button/button_Disabled_start.png")
-    ImageResource dialogButtonUpDisabledStart();
-
-    @Source("images/button/button_Disabled_stretch.png")
-    ImageResource dialogButtonUpDisabledStretch();
-
-    @Source("images/button/button_Disabled_end.png")
-    ImageResource dialogButtonUpDisabledEnd();
-
-    // Slider
-    /**
-     * An image used for the sliding knob
-     *
-     * @return a prototype of this image
-     */
-    @Source("images/slider.gif")
-    ImageResource slider();
-
-    /**
-     * An image used for the sliding knob.
-     * @return a prototype of this image
-     */
-    @Source("images/sliderDisabled.gif")
-    ImageResource sliderDisabled();
-
-    /**
-     * An image used for the sliding knob while sliding.
-     * @return a prototype of this image
-     */
-    @Source("images/sliderSliding.gif")
-    ImageResource sliderSliding();
-
-    @NotStrict
-    @Source("css/SliderBar.css")
-    CssResource sliderBarCss();
-
-    @Source("images/icon_help.png")
-    ImageResource dialogIconHelp();
-
-    @Source("images/icon_help_down.png")
-    ImageResource dialogIconHelpDown();
-
-    @Source("images/icon_help_rollover.png")
-    ImageResource dialogIconHelpRollover();
 
     @Source("images/button/footer_button_start.png")
     ImageResource footerButtonUpStart();

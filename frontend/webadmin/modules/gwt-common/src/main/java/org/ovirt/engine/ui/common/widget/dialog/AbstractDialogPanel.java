@@ -21,4 +21,5 @@ public abstract class AbstractDialogPanel extends DialogBoxWithKeyHandlers {
     public abstract void setFooterPanelVisible(boolean visible);
 
     public abstract void setHelpCommand(UICommand command);
+
 }

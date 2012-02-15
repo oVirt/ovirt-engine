@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget;
+package org.ovirt.engine.ui.common.widget;
 
 /*
  * Copyright 2008 Google Inc.
@@ -19,8 +19,7 @@ package org.ovirt.engine.ui.webadmin.widget;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -78,7 +77,7 @@ import com.google.gwt.user.client.ui.RequiresResize;
 public class SliderBar extends FocusPanel implements RequiresResize,
         HasValue<Integer>, HasValueChangeHandlers<Integer> {
 
-    ApplicationResources images;
+    CommonApplicationResources images;
 
     /**
      * A formatter used to format the labels displayed in the widget.
@@ -283,23 +282,8 @@ public class SliderBar extends FocusPanel implements RequiresResize,
      * @param maxValue
      *            the maximum value in the range
      */
-    public SliderBar(double minValue, double maxValue) {
-        this(minValue, maxValue, null);
-    }
-
-    /**
-     * Create a slider bar.
-     *
-     * @param minValue
-     *            the minimum value in the range
-     * @param maxValue
-     *            the maximum value in the range
-     * @param labelFormatter
-     *            the label formatter
-     */
-    public SliderBar(double minValue, double maxValue,
-            LabelFormatter labelFormatter) {
-        this(minValue, maxValue, labelFormatter, ClientGinjectorProvider.instance().getApplicationResources());
+    public SliderBar(double minValue, double maxValue, CommonApplicationResources images) {
+        this(minValue, maxValue, null, images);
     }
 
     /**
@@ -315,7 +299,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
      *            the images to use for the slider
      */
     public SliderBar(double minValue, double maxValue,
-            LabelFormatter labelFormatter, ApplicationResources images) {
+            LabelFormatter labelFormatter, CommonApplicationResources images) {
         super();
         images.sliderBarCss().ensureInjected();
         this.minValue = minValue;

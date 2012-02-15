@@ -4,9 +4,9 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
 import org.ovirt.engine.ui.common.widget.IsProgressContentWidget;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
+import org.ovirt.engine.ui.common.widget.dialog.ProgressPopupContent;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.webadmin.widget.UiCommandButton;
-import org.ovirt.engine.ui.webadmin.widget.dialog.ProgressPopupContent;
 
 import com.google.gwt.event.shared.EventBus;
 

@@ -12,6 +12,7 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.resources.client.ImageResource.ImageOptions;
 
 public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonDefinition<T> {
 
@@ -26,13 +27,17 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
      * A ClientBundle that provides images for this widget.
      */
     public interface Resources extends ClientBundle {
+
+        @Source("org/ovirt/engine/ui/webadmin/images/triangle_down.gif")
+        @ImageOptions(width = 7, height = 5)
         ImageResource triangle_down();
+
     }
 
     public UiMenuBarButtonDefinition(String title,
             List<ActionButtonDefinition<T>> subActions,
-            boolean subTitledAction,
-            boolean availableOnlyFromContext, boolean asTitle, Resources resources) {
+            boolean subTitledAction, boolean availableOnlyFromContext,
+            boolean asTitle, Resources resources) {
         super(title, resources.triangle_down(), resources.triangle_down(), true, true, availableOnlyFromContext);
         this.subActions = subActions;
         this.subTitledAction = subTitledAction;
@@ -45,8 +50,7 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
 
     public UiMenuBarButtonDefinition(String title,
             List<ActionButtonDefinition<T>> subActions,
-            boolean asTitle,
-            Resources resources) {
+            boolean asTitle, Resources resources) {
         this(title, subActions, false, false, asTitle, resources);
     }
 
@@ -79,11 +83,13 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
     @Override
     public boolean isEnabled(List<T> selectedItems) {
         boolean isEnabled = false;
+
         for (ActionButtonDefinition<T> subAction : getSubActions()) {
             if (subAction.isEnabled(selectedItems) && subAction.isVisible(selectedItems)) {
                 return true;
             }
         }
+
         return isEnabled;
     }
 
@@ -100,7 +106,6 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
     @Override
     public void update() {
         // Do nothing
-
     }
 
     /**
