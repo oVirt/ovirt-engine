@@ -79,10 +79,20 @@ public final class ImagesHandler {
 
     public static int getImagesMappedToDrive(Guid vmId, String drive, RefObject<DiskImage> activeImage,
             RefObject<DiskImage> inactiveImage) {
+        return getImagesMappedToDrive(DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId),
+                drive,
+                activeImage,
+                inactiveImage);
+    }
+
+    public static int getImagesMappedToDrive(
+            List<DiskImage> disks,
+            String drive,
+            RefObject<DiskImage> activeImage,
+            RefObject<DiskImage> inactiveImage) {
         String currentDrive = StringHelper.isNullOrEmpty(drive) ? DefaultDriveName : drive;
         activeImage.argvalue = null;
         inactiveImage.argvalue = null;
-        List<DiskImage> disks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId);
         int count = 0;
         for (DiskImage disk : disks) {
             if (StringHelper.EqOp(disk.getinternal_drive_mapping(), currentDrive)) {
