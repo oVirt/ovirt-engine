@@ -46,8 +46,11 @@
 		.minMaxPanel {
 			margin-top: 50px;
 		}
+		.marginLeft {
+			margin-left: 5px;
+		}
 	</ui:style>
-	<g:HorizontalPanel>
+	<g:HorizontalPanel addStyleNames="{style.marginLeft}">
 		<g:FlowPanel width="400px">
 			<w:UiCommandButton ui:field="editPolicyButton" addStyleNames="{style.button}" />
 			<g:HorizontalPanel>

@@ -224,10 +224,10 @@ public class ClusterPolicyPopupView extends WebAdminModelBoundPopupView<ClusterP
     private void setSelectionAlgorithm() {
         if (getClusterPolicyModel().getSelectionAlgorithm().equals(VdsSelectionAlgorithm.PowerSave)) {
             setVisibility(true);
-            leftSlider.setValue((getClusterPolicyModel().getOverCommitLowLevel() <= 10 ? 20
+            leftSlider.setValue((getClusterPolicyModel().getOverCommitLowLevel() < 10 ? 20
                     : getClusterPolicyModel().getOverCommitLowLevel()));
             if (getClusterPolicyModel().getOverCommitHighLevel() <= 50
-                    || getClusterPolicyModel().getOverCommitHighLevel() >= 90) {
+                    || getClusterPolicyModel().getOverCommitHighLevel() > 90) {
                 rightSlider.setValue(75);
             } else {
                 rightSlider.setValue(getClusterPolicyModel().getOverCommitHighLevel());
