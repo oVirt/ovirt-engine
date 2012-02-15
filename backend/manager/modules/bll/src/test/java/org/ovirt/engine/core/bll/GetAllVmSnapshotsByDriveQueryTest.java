@@ -22,8 +22,8 @@ public class GetAllVmSnapshotsByDriveQueryTest extends
 
     @Test
     public void testExecuteQuery() {
-        Guid vmID = new Guid(UUID.randomUUID());
-        Guid parentID = new Guid(UUID.randomUUID());
+        Guid vmID = Guid.NewGuid();
+        Guid parentID = Guid.NewGuid();
         String drive = RandomUtils.instance().nextNumericString(3);
         when(getQueryParameters().getId()).thenReturn(vmID);
         when(getQueryParameters().getDrive()).thenReturn(drive);
@@ -49,7 +49,8 @@ public class GetAllVmSnapshotsByDriveQueryTest extends
         parent.setId(parentID);
         parent.setParentId(Guid.Empty);
 
-        when(diskImageDAOMock.getAllForVm(vmID)).thenReturn(Arrays.asList(activeImage, inactiveImage));
+        when(diskImageDAOMock.getAllForVm(vmID, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(Arrays.asList(activeImage,
+                inactiveImage));
         when(diskImageDAOMock.getSnapshotById(inactiveImage.getId())).thenReturn(inactiveImage);
         when(diskImageDAOMock.getSnapshotById(parentID)).thenReturn(parent);
 

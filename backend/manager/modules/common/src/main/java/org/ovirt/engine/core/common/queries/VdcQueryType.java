@@ -71,7 +71,7 @@ public enum VdcQueryType implements Serializable {
     GetSystemPermissions,
 
     // Images queries
-    GetAllVmSnapshotsByDrive,
+    GetAllVmSnapshotsByDrive(VdcQueryAuthType.User),
     GetAllIsoImagesList,
     GetAllFloppyImagesList,
     GetAllDisksByVmId(VdcQueryAuthType.User),

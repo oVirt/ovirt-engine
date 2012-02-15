@@ -25,7 +25,8 @@ public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDrivePar
         DiskImage activeDisk = null;
         RefObject<DiskImage> refActive = new RefObject<DiskImage>(activeDisk);
         RefObject<DiskImage> refInactive = new RefObject<DiskImage>(inactiveDisk);
-        List<DiskImage> images = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId);
+        List<DiskImage> images =
+                DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId, getUserID(), getParameters().isFiltered());
         int count = ImagesHandler.getImagesMappedToDrive(images, drive, refActive, refInactive);
         activeDisk = refActive.argvalue;
         inactiveDisk = refInactive.argvalue;
@@ -38,6 +39,8 @@ public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDrivePar
             }
             Guid topmostImageGuid = inactiveDisk == null ? activeDisk.getId() : inactiveDisk.getId();
 
+            // Note that no additional permission filtering is needed -
+            // if a user could read the disk of a VM, all its snapshots are OK too
             getQueryReturnValue().setReturnValue(
                     ImagesHandler.getAllImageSnapshots(topmostImageGuid, activeDisk.getit_guid()));
             getQueryReturnValue().setTryingImage(tryingImage);

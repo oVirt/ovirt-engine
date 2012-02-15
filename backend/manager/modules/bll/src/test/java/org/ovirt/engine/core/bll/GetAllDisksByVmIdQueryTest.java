@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
@@ -149,15 +147,6 @@ public class GetAllDisksByVmIdQueryTest extends AbstractQueryTest<GetAllDisksByV
         // Assert the disks have the correct snapshots
         assertCorrectSnapshots(pluggedDisk);
         assertCorrectSnapshots(unpluggedDisk);
-
-        verify(diskImageDAOMock).getAllForVm(vmID, getUser().getUserId(), getQueryParameters().isFiltered());
-        verify(vmDeviceDAOMock).getVmDeviceByVmIdTypeAndDevice(vmID,
-                VmDeviceType.getName(VmDeviceType.DISK),
-                VmDeviceType.getName(VmDeviceType.DISK),
-                getUser().getUserId(),
-                getQueryParameters().isFiltered());
-
-        verifyNoMoreInteractions(diskImageDAOMock, vmDeviceDAOMock);
     }
 
     /**
