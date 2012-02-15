@@ -146,6 +146,7 @@ BEGIN
    IF EXISTS (SELECT * FROM information_schema.tables WHERE table_name ILIKE 'vm_device') THEN
 
       truncate table vm_device;
+       ALTER TABLE vm_device ALTER COLUMN is_plugged DROP not null;
        -- insert images (disks) to vm_device
        insert INTO vm_device(
        device_id, vm_id, type, device, address, boot_order, spec_params, is_managed, is_plugged, is_readonly)
