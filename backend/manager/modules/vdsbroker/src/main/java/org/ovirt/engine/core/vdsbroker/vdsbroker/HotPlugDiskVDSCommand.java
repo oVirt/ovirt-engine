@@ -34,10 +34,8 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         VmDevice vmDevice = getParameters().getVmDevice();
 
         drive.put("type", "disk");
-        // drive.put("index", String.valueOf(pciCount));
         // drive.put("address", getParameters().getVmDevice().getAddress());
         drive.put("format", diskImage.getvolume_format().toString().toLowerCase());
-        drive.put("bootOrder", String.valueOf(vmDevice.getBootOrder()));
         drive.put("propagateErrors", diskImage.getpropagate_errors().toString().toLowerCase());
         drive.put("iface", diskImage.getdisk_interface().toString().toLowerCase());
         drive.put("shared", Boolean.FALSE.toString());
