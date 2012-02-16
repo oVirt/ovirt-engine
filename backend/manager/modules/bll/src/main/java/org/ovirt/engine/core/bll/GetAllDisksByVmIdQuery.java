@@ -36,7 +36,7 @@ public class GetAllDisksByVmIdQuery<P extends GetAllDisksByVmIdParameters> exten
         for (DiskImage diskImage : disks) {
             diskImage.getSnapshots().addAll(
                     ImagesHandler.getAllImageSnapshots(diskImage.getId(), diskImage.getit_guid()));
-            diskImage.setPlugged(pluggedDiskIds.contains(diskImage.getId()));
+            diskImage.setPlugged(pluggedDiskIds.contains(diskImage.getDisk().getId()));
         }
         getQueryReturnValue().setReturnValue(disks);
     }

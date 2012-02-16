@@ -273,7 +273,8 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
         getReturnValue().setActionReturnValue(tmpRetValue.getActionReturnValue());
         getReturnValue().setFault(tmpRetValue.getFault());
         if (tmpRetValue.getSucceeded()) {
-            VmDeviceUtils.addManagedDevice(new VmDeviceId((Guid)getActionReturnValue(), getVmId()),  VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
+            DiskImage image = DbFacade.getInstance().getDiskImageDAO().get((Guid)getActionReturnValue());
+            VmDeviceUtils.addManagedDevice(new VmDeviceId(image.getimage_group_id(), getVmId()),  VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
         }
 
         setSucceeded(tmpRetValue.getSucceeded());

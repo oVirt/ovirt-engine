@@ -178,7 +178,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         }
         Map[] drives = new Map[pluggedDiskIds.size()];
         for (DiskImage disk : diskImages) {
-            if (pluggedDiskIds.contains(disk.getId())) {
+            if (pluggedDiskIds.contains(disk.getDisk().getId())) {
                 Map drive = new HashMap();
                 drive.put("domainID", disk.getstorage_id().toString());
                 drive.put("poolID", disk.getstorage_pool_id().toString());
