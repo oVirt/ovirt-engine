@@ -153,7 +153,11 @@ RETURN QUERY SELECT
     network_view.vlan_id,
     network_view.stp,
     network_view.storage_pool_id,
-    network_cluster.* FROM network_view
+    network_cluster.network_id,
+    network_cluster.cluster_id,
+    network_cluster.status,
+    network_cluster.is_display
+   FROM network_view
    INNER JOIN network_cluster
    ON network_view.id = network_cluster.network_id
    where network_cluster.cluster_id = v_id;
