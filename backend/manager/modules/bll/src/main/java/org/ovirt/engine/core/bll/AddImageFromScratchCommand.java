@@ -60,6 +60,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             mNewCreatedDiskImage.setactive(true);
             mNewCreatedDiskImage.setimageStatus(ImageStatus.LOCKED);
             mNewCreatedDiskImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
+            mNewCreatedDiskImage.setQuotaId(getParameters().getQuotaId());
 
             AddDiskImageToDb(mNewCreatedDiskImage);
             // add disk to vm device

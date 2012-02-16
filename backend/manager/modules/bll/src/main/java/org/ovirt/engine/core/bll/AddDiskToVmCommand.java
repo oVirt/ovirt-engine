@@ -54,6 +54,7 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
     public AddDiskToVmCommand(T parameters) {
         super(parameters);
         parameters.setEntityId(parameters.getVmId());
+        setQuotaId(parameters.getDiskInfo() != null ? parameters.getDiskInfo().getQuotaId() : null);
     }
 
     public String getDiskName() {
@@ -168,10 +169,6 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
                 returnValue = false;
             }
         }
-        if (!returnValue) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
-        }
         return returnValue;
     }
 
@@ -248,6 +245,25 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
     }
 
     @Override
+    protected boolean validateQuota() {
+        // Set default quota id if storage pool enforcement is disabled.
+        getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getDiskInfo().getQuotaId(),
+                getStoragePool()));
+
+        return (QuotaManager.validateStorageQuota(getStorageDomainId().getValue(),
+                getParameters().getQuotaId(),
+                getStoragePool().getQuotaEnforcementType(),
+                new Double(getRequestDiskSpace()),
+                getCommandId(),
+                getReturnValue().getCanDoActionMessages()));
+    }
+
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
+    }
+
+    @Override
     protected void ExecuteVmCommand() {
         // NOTE: Assuming that we need to lock the vm before adding a disk!
         VmHandler.checkStatusAndLockVm(getVm().getId(), getCompensationContext());
@@ -255,6 +271,7 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
         // create from blank template, create new vm snapshot id
         AddImageFromScratchParameters parameters = new AddImageFromScratchParameters(Guid.Empty, getVmId(),
                 getParameters().getDiskInfo());
+        parameters.setQuotaId(getParameters().getQuotaId());
         parameters.setStorageDomainId(getStorageDomainId().getValue());
         parameters.setVmSnapshotId(calculateSnapshotId());
         parameters.setParentCommand(VdcActionType.AddDiskToVm);
@@ -324,6 +341,14 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
             }
         }
         return Integer.toString(driveNum);
+    }
+
+    @Override
+    protected void removeQuotaCommandLeftOver() {
+        QuotaManager.removeStorageDeltaQuotaCommand(getQuotaId(),
+                getStorageDomainId().getValue(),
+                getStoragePool().getQuotaEnforcementType(),
+                getCommandId());
     }
 
     @Override
