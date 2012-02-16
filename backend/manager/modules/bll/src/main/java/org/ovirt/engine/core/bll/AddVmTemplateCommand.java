@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -404,10 +405,29 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
      */
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getVdsGroup() == null
-                || getVdsGroup().getstorage_pool_id() == null ? null : getVdsGroup()
-                .getstorage_pool_id().getValue(), VdcObjectType.StoragePool,
-                getActionType().getActionGroup()));
+        List<PermissionSubject> list = new ArrayList<PermissionSubject>();
+        Guid storagePoolId = getVdsGroup() == null || getVdsGroup().getstorage_pool_id() == null ? null
+                : getVdsGroup().getstorage_pool_id().getValue();
+        list.add(new PermissionSubject(storagePoolId, VdcObjectType.StoragePool, getActionType().getActionGroup()));
+        list = QuotaHelper.getInstance().addQuotaPermissionSubject(list,
+                getStoragePool(),
+                getVm().getStaticData().getQuotaId());
+        list = setPermissionListForDiskImage(list);
+        return list;
+    }
+
+    private List<PermissionSubject> setPermissionListForDiskImage(List<PermissionSubject> list) {
+        Map<Guid, Object> quotaMap = new HashMap<Guid, Object>();
+        // Distinct the quotas for images.
+        for (DiskImage diskImage : mImages) {
+            if (quotaMap.get(diskImage.getQuotaId()) == null) {
+                quotaMap.put(diskImage.getQuotaId(), diskImage.getQuotaId());
+                list = QuotaHelper.getInstance().addQuotaPermissionSubject(list,
+                        getStoragePool(),
+                        diskImage.getQuotaId());
+            }
+        }
+        return list;
     }
 
     private void addPermission() {
