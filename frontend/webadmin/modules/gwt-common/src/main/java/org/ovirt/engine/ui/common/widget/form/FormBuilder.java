@@ -10,8 +10,6 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-
 public class FormBuilder {
 
     // A panel in which the builder assemble FormItems
@@ -22,10 +20,6 @@ public class FormBuilder {
 
     // A map between property name and a FormItem
     HashMap<String, FormItem> propertyNamesMap = new HashMap<String, FormItem>();
-
-    // TODO(vszocs) why do we need EditorDriver in this widget?
-    @SuppressWarnings("rawtypes")
-    SimpleBeanEditorDriver driver;
 
     EntityModel model;
 
@@ -48,10 +42,8 @@ public class FormBuilder {
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    public void showForm(EntityModel model, SimpleBeanEditorDriver driver) {
+    public void showForm(EntityModel model) {
         this.model = model;
-        this.driver = driver;
 
         // Clear the form panel
         formPanel.clear();

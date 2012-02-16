@@ -69,7 +69,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
     public void setMainTabSelectedItem(DbUser selectedItem) {
         Driver.driver.edit(getDetailModel());
 
-        formBuilder.showForm(getDetailModel(), Driver.driver);
+        formBuilder.showForm(getDetailModel());
     }
 
 }

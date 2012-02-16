@@ -117,7 +117,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<storage_dom
         usedSize.setValue(entity.getused_disk_size());
         overAllocationRatio.setValue(entity.getstorage_domain_over_commit_percent());
 
-        formBuilder.showForm(getDetailModel(), Driver.driver);
+        formBuilder.showForm(getDetailModel());
     }
 
 }

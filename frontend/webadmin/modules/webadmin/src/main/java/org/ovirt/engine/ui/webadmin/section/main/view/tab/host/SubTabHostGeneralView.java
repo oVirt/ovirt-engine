@@ -150,7 +150,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         physicalMemoryDetails.setValue(physicalMemoryDetailsArray);
         swapSizeDetails.setValue(swapSizeDetailsArray);
 
-        formBuilder.showForm(getDetailModel(), Driver.driver);
+        formBuilder.showForm(getDetailModel());
     }
 
     @Override

@@ -110,7 +110,7 @@ public class SubTabTemplateGeneralView extends AbstractSubTabFormView<VmTemplate
         isHighlyAvailable.setText(Boolean.toString(getDetailModel().getIsHighlyAvailable()));
         isStateless.setText(Boolean.toString(getDetailModel().getIsStateless()));
 
-        formBuilder.showForm(getDetailModel(), Driver.driver);
+        formBuilder.showForm(getDetailModel());
     }
 
 }

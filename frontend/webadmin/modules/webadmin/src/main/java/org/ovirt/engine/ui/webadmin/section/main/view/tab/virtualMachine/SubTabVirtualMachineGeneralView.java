@@ -135,7 +135,7 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
         // TODO required because of GWT#5864
         monitorCount.setText(Integer.toString(getDetailModel().getMonitorCount()));
 
-        formBuilder.showForm(getDetailModel(), Driver.driver);
+        formBuilder.showForm(getDetailModel());
     }
 
 }

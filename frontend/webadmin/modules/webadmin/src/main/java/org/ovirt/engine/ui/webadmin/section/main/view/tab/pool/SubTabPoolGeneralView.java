@@ -114,7 +114,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<vm_pools, Pool
         monitorCount.setText(String.valueOf(getDetailModel().getMonitorCount()));
         isStateless.setText(Boolean.toString(getDetailModel().getIsStateless()));
 
-        formBuilder.showForm(getDetailModel(), Driver.driver);
+        formBuilder.showForm(getDetailModel());
     }
 
 }

@@ -64,7 +64,7 @@ public class SubTabExtendedVmGeneralView extends AbstractSubTabFormView<UserPort
 
     void update() {
         Driver.driver.edit(getDetailModel());
-        formBuilder.showForm(getDetailModel(), Driver.driver);
+        formBuilder.showForm(getDetailModel());
     }
 
 }
