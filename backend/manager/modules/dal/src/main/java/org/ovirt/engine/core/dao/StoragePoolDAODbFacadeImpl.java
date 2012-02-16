@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -18,9 +19,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 /**
  * <code>StoragePoolDAODbFacadeImpl</code> provides a concrete implementation of {@link StoragePoolDAO} based on code
  * from {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
- *
- *
  */
+@SuppressWarnings("synthetic-access")
 public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements StoragePoolDAO {
 
     private final class StoragePoolRawMapper implements ParameterizedRowMapper<storage_pool> {
@@ -45,11 +45,11 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
         }
     }
 
-    private StorageFormatType getStorageFormatTypeForPool(ResultSet rs) throws SQLException {
+    private static StorageFormatType getStorageFormatTypeForPool(ResultSet rs) throws SQLException {
         return StorageFormatType.forValue(rs.getString("storage_pool_format_type"));
     }
 
-   @Override
+    @Override
     public storage_pool get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
@@ -150,7 +150,6 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<storage_pool> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
@@ -180,7 +179,6 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
         return getCallsHandler().executeReadList("GetAllFromstorage_pool", mapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<storage_pool> getAllOfType(StorageType type) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -211,7 +209,6 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
         return getCallsHandler().executeReadList("Getstorage_poolsByType", mapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<storage_pool> getAllForStorageDomain(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -322,8 +319,8 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     @Override
     public void updateStatus(Guid id, StoragePoolStatus status) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-        .addValue("id", id)
-        .addValue("status", status);
+                .addValue("id", id)
+                .addValue("status", status);
         getCallsHandler().executeModification("Updatestorage_pool_status", parameterSource);
 
     }
@@ -348,5 +345,4 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 mapper, parameterSource);
     }
 
-
-  }
+}
