@@ -92,4 +92,10 @@ public interface QuotaDAO extends DAO {
      * Get the default quota for storage pool.
      */
     public Quota getDefaultQuotaByStoragePoolId(Guid storagePoolId);
+
+    /**
+     * Returns all the Quota storages in the storage pool if v_storage_id is null, if v_storage_id is not null then a
+     * specific quota storage will be returned.
+     */
+    public List<Quota> getQuotaByStoragePoolGuid(Guid storagePoolId);
 }

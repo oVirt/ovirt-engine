@@ -83,6 +83,18 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     }
 
     /**
+     * Returns all the Quota storages in the storage pool if v_storage_id is null, if v_storage_id is not null then a
+     * specific quota storage will be returned.
+     */
+    public List<Quota> getQuotaByStoragePoolGuid(Guid storagePoolId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_pool_id", storagePoolId);
+        List<Quota> quotaList = getCallsHandler().executeReadList("GetQuotaByStoragePoolGuid",
+                getQuotaFromResultSet(),
+                parameterSource);
+        return quotaList;
+    }
+
+    /**
      * Get full <code>Quota</code> entity.
      */
     public Quota getById(Guid quotaId) {

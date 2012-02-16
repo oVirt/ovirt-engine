@@ -367,6 +367,41 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         assertEquals(dao.getById(FixturesTool.DEFAULT_QUOTA_GENERAL).equals(defaultQuota), true);
     }
 
+    /**
+     * Test get all Quotas in the setup
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testGetFetchAllQuotaInTheSetup() throws Exception {
+        setUp();
+        List<Quota> quotaList = dao.getQuotaByStoragePoolGuid(null);
+        assertEquals(true, quotaList.size() == 4);
+    }
+
+    /**
+     * Test get Quota by storage pool Id
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testGetFetchForSpecificStoragePool() throws Exception {
+        setUp();
+        List<Quota> quotaList = dao.getQuotaByStoragePoolGuid(FixturesTool.STORAGE_POOL_NFS);
+        assertEquals(true, quotaList.size() == 4);
+    }
+
+    /**
+     * Test get Quota by storage pool Id, for storage pool with no quotas in it.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testFetchStoragePoolWithNoQuota() throws Exception {
+        setUp();
+        List<Quota> quotaList = dao.getQuotaByStoragePoolGuid(Guid.NewGuid());
+        assertEquals(true, quotaList.size() == 0);
+    }
 
     /**
      * Test get Quota by Name, with name that does not exist for the storage pool.
