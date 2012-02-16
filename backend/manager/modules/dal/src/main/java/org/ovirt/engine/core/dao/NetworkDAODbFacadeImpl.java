@@ -15,9 +15,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>NetworkDAODbFacadeImpl</code> provides a concrete implementation of {@link NetworkDAO} based on code refactored
- * from {@link DbFacade}.
- *
- *
+ * from {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
 public class NetworkDAODbFacadeImpl extends BaseDAODbFacade implements NetworkDAO {
 
@@ -30,7 +28,7 @@ public class NetworkDAODbFacadeImpl extends BaseDAODbFacade implements NetworkDA
             @Override
             public network mapRow(ResultSet rs, int rowNum) throws SQLException {
                 network entity = new network();
-                ;
+
                 entity.setaddr(rs.getString("addr"));
                 entity.setdescription(rs.getString("description"));
                 entity.setId(Guid.createGuidFromString(rs.getString("id")));
@@ -65,7 +63,7 @@ public class NetworkDAODbFacadeImpl extends BaseDAODbFacade implements NetworkDA
             @Override
             public network mapRow(ResultSet rs, int rowNum) throws SQLException {
                 network entity = new network();
-                ;
+
                 entity.setId(Guid.createGuidFromString(rs.getString("id")));
                 entity.setname(rs.getString("name"));
                 entity.setdescription(rs.getString("description"));
@@ -91,7 +89,6 @@ public class NetworkDAODbFacadeImpl extends BaseDAODbFacade implements NetworkDA
         return (List<network>) dbResults.get("RETURN_VALUE");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<network> getAllForDataCenter(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -101,7 +98,7 @@ public class NetworkDAODbFacadeImpl extends BaseDAODbFacade implements NetworkDA
             @Override
             public network mapRow(ResultSet rs, int rowNum) throws SQLException {
                 network entity = new network();
-                ;
+
                 entity.setId(Guid.createGuidFromString(rs.getString("id")));
                 entity.setname(rs.getString("name"));
                 entity.setdescription(rs.getString("description"));
@@ -122,7 +119,6 @@ public class NetworkDAODbFacadeImpl extends BaseDAODbFacade implements NetworkDA
         return getCallsHandler().executeReadList("GetAllNetworkByStoragePoolId", mapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<network> getAllForCluster(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -132,7 +128,7 @@ public class NetworkDAODbFacadeImpl extends BaseDAODbFacade implements NetworkDA
             @Override
             public network mapRow(ResultSet rs, int rowNum) throws SQLException {
                 network entity = new network();
-                ;
+
                 entity.setId(Guid.createGuidFromString(rs.getString("id")));
                 entity.setname(rs.getString("name"));
                 entity.setdescription(rs.getString("description"));
@@ -203,7 +199,7 @@ public class NetworkDAODbFacadeImpl extends BaseDAODbFacade implements NetworkDA
             @Override
             public network mapRow(ResultSet rs, int rowNum) throws SQLException {
                 network entity = new network();
-                ;
+
                 entity.setaddr(rs.getString("addr"));
                 entity.setdescription(rs.getString("description"));
                 entity.setId(Guid.createGuidFromString(rs.getString("id")));
