@@ -8,11 +8,10 @@ import com.google.gwt.event.shared.EventBus;
 public abstract class UserPortalButtonDefinition<T> extends UiCommandButtonDefinition<T> {
 
     public UserPortalButtonDefinition(String title) {
-        super(title);
+        super(getEventBus(), title);
     }
 
-    @Override
-    protected EventBus getEventBus() {
+    static EventBus getEventBus() {
         return ClientGinjectorProvider.instance().getEventBus();
     }
 

@@ -35,6 +35,8 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
         }
     };
 
+    protected final EventBus eventBus;
+
     private UICommand command;
 
     private final SafeHtml title;
@@ -55,11 +57,13 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
 
     private final String toolTip;
 
-    protected UiCommandButtonDefinition(String title,
+    protected UiCommandButtonDefinition(EventBus eventBus,
+            String title,
             boolean implInWebAdmin,
             boolean implInUserPortal,
             boolean availableOnlyFromContext,
             boolean subTitledAction, String toolTip) {
+        this.eventBus = eventBus;
         this.title = SafeHtmlUtils.fromSafeConstant(title);
         this.implInWebAdmin = implInWebAdmin;
         this.implInUserPortal = implInUserPortal;
@@ -69,7 +73,7 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
         update();
 
         // Add handler to be notified when UiCommon models are (re)initialized
-        getEventBus().addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
+        eventBus.addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
             @Override
             public void onUiCommonInit(UiCommonInitEvent event) {
                 update();
@@ -80,8 +84,8 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
     /**
      * Creates a new button with the given title.
      */
-    public UiCommandButtonDefinition(String title) {
-        this(title, true, false, false, false, null);
+    public UiCommandButtonDefinition(EventBus eventBus, String title) {
+        this(eventBus, title, true, false, false, false, null);
     }
 
     /**
@@ -90,15 +94,15 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
      * If {@code availableOnlyFromContext} is {@code true}, the button will only be available from the corresponding
      * context menu.
      */
-    public UiCommandButtonDefinition(String title, boolean availableOnlyFromContext) {
-        this(title, true, false, availableOnlyFromContext, false, null);
+    public UiCommandButtonDefinition(EventBus eventBus, String title, boolean availableOnlyFromContext) {
+        this(eventBus, title, true, false, availableOnlyFromContext, false, null);
     }
 
     /**
      * TODO This constructor will be removed when all WebAdmin features are implemented.
      */
-    public UiCommandButtonDefinition(String title, boolean implInWebAdmin, boolean implInUserPortal) {
-        this(title, implInWebAdmin, implInUserPortal, false, false, null);
+    public UiCommandButtonDefinition(EventBus eventBus, String title, boolean implInWebAdmin, boolean implInUserPortal) {
+        this(eventBus, title, implInWebAdmin, implInUserPortal, false, false, null);
     }
 
     /**
@@ -134,8 +138,6 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
      */
     protected abstract UICommand resolveCommand();
 
-    protected abstract EventBus getEventBus();
-
     /**
      * {@inheritDoc}
      * <p>
@@ -148,7 +150,7 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
 
     @Override
     public HandlerRegistration addInitializeHandler(InitializeHandler handler) {
-        return getEventBus().addHandler(InitializeEvent.getType(), handler);
+        return eventBus.addHandler(InitializeEvent.getType(), handler);
     }
 
     @Override
@@ -208,7 +210,7 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
 
     @Override
     public void fireEvent(GwtEvent<?> event) {
-        getEventBus().fireEvent(event);
+        eventBus.fireEvent(event);
     }
 
     @Override
@@ -230,4 +232,5 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
     public String getCustomToolTip() {
         return customToolTip;
     }
+
 }

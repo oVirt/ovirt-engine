@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;

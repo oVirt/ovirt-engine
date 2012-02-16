@@ -1,7 +1,6 @@
-package org.ovirt.engine.ui.webadmin.widget.table.column;
+package org.ovirt.engine.ui.common.widget.table.column;
 
-import org.ovirt.engine.ui.common.widget.table.column.RenderedTextColumn;
-import org.ovirt.engine.ui.webadmin.widget.renderer.RxTxRateRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
 
 /**
  * Column for displaying Rx/Tx transfer rates.

@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.action;
 
 import java.util.List;
 
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 import com.google.gwt.event.logical.shared.InitializeEvent;
@@ -34,24 +33,27 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
 
     }
 
-    public UiMenuBarButtonDefinition(String title,
-            List<ActionButtonDefinition<T>> subActions,
+    public UiMenuBarButtonDefinition(EventBus eventBus,
+            String title, List<ActionButtonDefinition<T>> subActions,
             boolean subTitledAction, boolean availableOnlyFromContext,
             boolean asTitle, Resources resources) {
-        super(title, resources.triangle_down(), resources.triangle_down(), true, true, availableOnlyFromContext);
+        super(eventBus, title, resources.triangle_down(), resources.triangle_down(),
+                true, true, availableOnlyFromContext);
         this.subActions = subActions;
         this.subTitledAction = subTitledAction;
         this.asTitle = asTitle;
     }
 
-    public UiMenuBarButtonDefinition(String title, List<ActionButtonDefinition<T>> subActions, Resources resources) {
-        this(title, subActions, false, resources);
+    public UiMenuBarButtonDefinition(EventBus eventBus,
+            String title, List<ActionButtonDefinition<T>> subActions,
+            Resources resources) {
+        this(eventBus, title, subActions, false, resources);
     }
 
-    public UiMenuBarButtonDefinition(String title,
-            List<ActionButtonDefinition<T>> subActions,
+    public UiMenuBarButtonDefinition(EventBus eventBus,
+            String title, List<ActionButtonDefinition<T>> subActions,
             boolean asTitle, Resources resources) {
-        this(title, subActions, false, false, asTitle, resources);
+        this(eventBus, title, subActions, false, false, asTitle, resources);
     }
 
     @Override
@@ -67,12 +69,12 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
 
     @Override
     public HandlerRegistration addInitializeHandler(InitializeHandler handler) {
-        return getEventBus().addHandler(InitializeEvent.getType(), handler);
+        return eventBus.addHandler(InitializeEvent.getType(), handler);
     }
 
     @Override
     public void fireEvent(GwtEvent<?> event) {
-        getEventBus().fireEvent(event);
+        eventBus.fireEvent(event);
     }
 
     @Override
@@ -141,12 +143,6 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
     public boolean isVisible(List<T> selectedItems) {
         return true;
     }
-
-    @Override
-    protected abstract EventBus getEventBus();
-
-    @Override
-    protected abstract CommonApplicationTemplates getCommonApplicationTemplates();
 
     public boolean isAsTitle() {
         return asTitle;

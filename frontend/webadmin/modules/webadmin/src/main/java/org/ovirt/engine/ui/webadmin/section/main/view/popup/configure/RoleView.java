@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
+import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -21,7 +23,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
@@ -257,21 +258,4 @@ public class RoleView extends Composite {
         return (Resources) GWT.create(MainTableResources.class);
     }
 
-    public interface MainTableHeaderlessResources extends CellTable.Resources {
-        interface TableStyle extends CellTable.Style {
-        }
-
-        @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/TabCellTableHeaderless.css" })
-        TableStyle cellTableStyle();
-    }
-
-    public interface MainTableResources extends CellTable.Resources {
-        interface TableStyle extends CellTable.Style {
-        }
-
-        @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/TabCellTable.css" })
-        TableStyle cellTableStyle();
-    }
 }

@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
+import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractView;
@@ -8,7 +10,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 
 /**
@@ -54,24 +55,6 @@ public abstract class AbstractMainTabTableView<T, M extends SearchableListModel>
 
     protected SimpleActionTable<T> getTable() {
         return table;
-    }
-
-    public interface MainTableHeaderlessResources extends CellTable.Resources {
-        interface TableStyle extends CellTable.Style {
-        }
-
-        @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/TabCellTableHeaderless.css" })
-        TableStyle cellTableStyle();
-    }
-
-    public interface MainTableResources extends CellTable.Resources {
-        interface TableStyle extends CellTable.Style {
-        }
-
-        @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/TabCellTable.css" })
-        TableStyle cellTableStyle();
     }
 
 }
