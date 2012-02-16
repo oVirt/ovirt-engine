@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -31,6 +32,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         super(parameters);
         parameters.setEntityId(getVmId());
         setSnapshotName(parameters.getDescription());
+        setQuotaId(parameters.getQuotaId());
+        setStoragePoolId(getVm().getstorage_pool_id());
     }
 
     private List<DiskImage> getDisksList() {
@@ -93,18 +96,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getQuotaId(),
                 getStoragePool()));
 
-        boolean isQuotaValid = true;
-        Double sizeRequestedForSnapshot = 0d;
-        for (DiskImage image : getDisksList()) {
-            sizeRequestedForSnapshot += image.getactual_size();
-        }
-        isQuotaValid = QuotaManager.validateStorageQuota(getDisksList().get(0).getstorage_ids().get(0).getValue(),
-                getParameters().getQuotaId(),
-                getStoragePool().getQuotaEnforcementType(),
-                sizeRequestedForSnapshot,
-                getCommandId(),
-                getReturnValue().getCanDoActionMessages());
-        return isQuotaValid;
+        return QuotaManager.validateMultiStorageQuota(getStoragePool().getQuotaEnforcementType(),
+                QuotaHelper.getInstance().getQuotaConsumeMap(getDisksList()),
+               getCommandId(),
+               getReturnValue().getCanDoActionMessages());
     }
 
     @Override
@@ -156,6 +151,14 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         }
         return result;
     }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
+        permissionList = QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList, getStoragePool(), getQuotaId());
+        return permissionList;
+    }
+
 
     @Override
     protected VdcActionType getChildActionType() {

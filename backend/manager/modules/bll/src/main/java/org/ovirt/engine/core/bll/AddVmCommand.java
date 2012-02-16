@@ -592,6 +592,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
         permissionList.add(new PermissionSubject(getVdsGroupId(), VdcObjectType.VdsGroups, getActionType().getActionGroup()));
         permissionList.add(new PermissionSubject(getVmTemplateId(), VdcObjectType.VmTemplate, getActionType().getActionGroup()));
+        permissionList = QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList, getStoragePool(), getQuotaId());
         return permissionList;
     }
 

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -256,6 +257,16 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
                 new Double(getRequestDiskSpace()),
                 getCommandId(),
                 getReturnValue().getCanDoActionMessages()));
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> listPermissionSubjects = super.getPermissionCheckSubjects();
+        listPermissionSubjects =
+                QuotaHelper.getInstance().addQuotaPermissionSubject(listPermissionSubjects,
+                        getStoragePool(),
+                        getQuotaId());
+        return listPermissionSubjects;
     }
 
     protected void setActionMessageParameters() {
