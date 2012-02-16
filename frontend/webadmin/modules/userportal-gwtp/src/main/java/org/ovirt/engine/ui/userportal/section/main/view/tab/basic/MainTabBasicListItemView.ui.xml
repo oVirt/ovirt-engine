@@ -7,7 +7,7 @@
 		type='org.ovirt.engine.ui.userportal.ApplicationResources' />
 		
 	<ui:with field='itemResources'
-		type='org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListItemResources' />
+		type='org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup' />
 
 	<ui:with field='messages'
 		type='org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListItemMessages' />

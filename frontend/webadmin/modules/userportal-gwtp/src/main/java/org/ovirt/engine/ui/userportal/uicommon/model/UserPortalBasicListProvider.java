@@ -8,22 +8,14 @@ import com.google.inject.Inject;
 
 public class UserPortalBasicListProvider extends UserPortalDataBoundModelProvider<UserPortalItemModel, UserPortalBasicListModel> {
 
-    private final UserPortalItemModelKeyProvider keyProvider;
-
     @Inject
-    public UserPortalBasicListProvider(ClientGinjector ginjector, UserPortalItemModelKeyProvider keyProvider) {
+    public UserPortalBasicListProvider(ClientGinjector ginjector) {
         super(ginjector);
-        this.keyProvider = keyProvider;
     }
 
     @Override
     protected UserPortalBasicListModel createModel() {
         return new UserPortalBasicListModel();
-    }
-
-    @Override
-    public Object getKey(UserPortalItemModel item) {
-        return keyProvider.getKey(item);
     }
 
 }

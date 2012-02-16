@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.userportal.widget.table.column;
 
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
+import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 
@@ -42,13 +44,17 @@ public class VmImageColumn extends ImageResourceColumn<UserPortalItemModel> {
         case RHEL6x64:
             return getApplicationResources().RHEL6x64SmallImage();
         case OtherLinux:
-            return getApplicationResources().otherLinuxSmallImage();
+            return getApplicationResources().OtherLinuxSmallImage();
         case Other:
-            return getApplicationResources().otherOsSmallImage();
+            return getApplicationResources().OtherOsSmallImage();
         case Unassigned:
         default:
-            return getApplicationResources().unassignedSmallImage();
+            return getApplicationResources().UnassignedSmallImage();
         }
+    }
+
+    protected ApplicationResourcesWithLookup getApplicationResources() {
+        return ClientGinjectorProvider.instance().getApplicationResourcesWithLookup();
     }
 
 }

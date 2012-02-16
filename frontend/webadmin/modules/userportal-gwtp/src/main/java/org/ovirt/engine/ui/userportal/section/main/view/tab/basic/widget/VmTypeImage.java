@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget;
 
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListItemResources;
+import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
 
 import com.google.gwt.uibinder.client.UiConstructor;
 
@@ -9,10 +9,10 @@ import com.google.gwt.uibinder.client.UiConstructor;
  * The type of VM such as server, desktop, pool
  *
  */
-public class VmTypeImage extends AbstractDynamicImage<UserPortalItemModel, MainTabBasicListItemResources> {
+public class VmTypeImage extends AbstractDynamicImage<UserPortalItemModel, ApplicationResourcesWithLookup> {
 
     @UiConstructor
-    public VmTypeImage(MainTabBasicListItemResources resources) {
+    public VmTypeImage(ApplicationResourcesWithLookup resources) {
         super(resources);
     }
 

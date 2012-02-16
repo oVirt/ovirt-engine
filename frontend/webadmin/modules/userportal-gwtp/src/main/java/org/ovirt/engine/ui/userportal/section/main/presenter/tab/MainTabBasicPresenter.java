@@ -1,16 +1,19 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.tab;
 
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
+import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractModelActivationPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicListPresenterWidget;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalBasicListProvider;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
-import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.TabDataBasic;
 import com.gwtplatform.mvp.client.View;
@@ -22,7 +25,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class MainTabBasicPresenter extends Presenter<MainTabBasicPresenter.ViewDef, MainTabBasicPresenter.ProxyDef> {
+public class MainTabBasicPresenter extends AbstractModelActivationPresenter<UserPortalItemModel, UserPortalBasicListModel, MainTabBasicPresenter.ViewDef, MainTabBasicPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.basicMainTabPlace)
@@ -54,8 +57,9 @@ public class MainTabBasicPresenter extends Presenter<MainTabBasicPresenter.ViewD
             ViewDef view,
             ProxyDef proxy,
             MainTabBasicListPresenterWidget vmList,
-            MainTabBasicDetailsPresenterWidget vmDetails) {
-        super(eventBus, view, proxy);
+            MainTabBasicDetailsPresenterWidget vmDetails,
+            UserPortalBasicListProvider provider) {
+        super(eventBus, view, proxy, provider);
         this.vmList = vmList;
         this.vmDetails = vmDetails;
 

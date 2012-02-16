@@ -17,66 +17,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/login/login_page_header_title.png")
     ImageResource loginPopupHeaderTitleImage();
 
-    // OS type small images
-    // TODO remove this images (they are in MainTabBasicListItemResources. This has to be generalized)
-
-    @Source("images/os/Other.jpg")
-    ImageResource otherOsSmallImage();
-
-    @Source("images/os/OtherLinux.jpg")
-    ImageResource otherLinuxSmallImage();
-
-    @Source("images/os/RHEL3.jpg")
-    ImageResource RHEL3SmallImage();
-
-    @Source("images/os/RHEL3x64.jpg")
-    ImageResource RHEL3x64SmallImage();
-
-    @Source("images/os/RHEL4.jpg")
-    ImageResource RHEL4SmallImage();
-
-    @Source("images/os/RHEL4x64.jpg")
-    ImageResource RHEL4x64SmallImage();
-
-    @Source("images/os/RHEL5.jpg")
-    ImageResource RHEL5SmallImage();
-
-    @Source("images/os/RHEL5x64.jpg")
-    ImageResource RHEL5x64SmallImage();
-
-    @Source("images/os/RHEL6.jpg")
-    ImageResource RHEL6SmallImage();
-
-    @Source("images/os/RHEL6x64.jpg")
-    ImageResource RHEL6x64SmallImage();
-
-    @Source("images/os/Unassigned.jpg")
-    ImageResource unassignedSmallImage();
-
-    @Source("images/os/Windows2003.jpg")
-    ImageResource Windows2003SmallImage();
-
-    @Source("images/os/Windows2003x64.jpg")
-    ImageResource Windows2003x64SmallImage();
-
-    @Source("images/os/Windows2008.jpg")
-    ImageResource Windows2008SmallImage();
-
-    @Source("images/os/Windows2008R2x64.jpg")
-    ImageResource Windows2008R2x64SmallImage();
-
-    @Source("images/os/Windows2008x64.jpg")
-    ImageResource Windows2008x64SmallImage();
-
-    @Source("images/os/Windows7.jpg")
-    ImageResource Windows7SmallImage();
-
-    @Source("images/os/Windows7x64.jpg")
-    ImageResource Windows7x64SmallImage();
-
-    @Source("images/os/WindowsXP.jpg")
-    ImageResource WindowsXPSmallImage();
-
     // Basic icons
 
     @Source("images/general/tvlayout_disabled_mask.png")

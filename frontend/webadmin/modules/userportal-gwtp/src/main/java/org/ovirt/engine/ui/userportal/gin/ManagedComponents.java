@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
+import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.section.login.presenter.LoginSectionPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainSectionPresenter;
@@ -32,6 +33,8 @@ public interface ManagedComponents {
     ApplicationConstants getApplicationConstants();
 
     ApplicationResources getApplicationResources();
+
+    ApplicationResourcesWithLookup getApplicationResourcesWithLookup();
 
     ApplicationTemplates getApplicationTemplates();
 

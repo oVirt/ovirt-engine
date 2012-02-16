@@ -8,7 +8,7 @@
 		type='org.ovirt.engine.ui.userportal.ApplicationResources' />
 
 	<ui:with field='itemResources'
-		type='org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListItemResources' />
+		type='org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup' />
 		
 	<ui:style
 		type="org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicDetailsView.Style">
