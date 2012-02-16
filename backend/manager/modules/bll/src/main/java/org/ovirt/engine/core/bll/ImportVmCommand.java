@@ -480,7 +480,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
             getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
             if(vdcRetValue.getSucceeded()) {
-                VmDeviceUtils.addManagedDevice(new VmDeviceId((Guid) getActionReturnValue(), getVmId()),
+                VmDeviceUtils.addManagedDevice(new VmDeviceId(disk.getDisk().getId(), getVmId()),
                         VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
             }
 
