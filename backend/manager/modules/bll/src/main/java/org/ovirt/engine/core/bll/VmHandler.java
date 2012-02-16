@@ -226,6 +226,10 @@ public class VmHandler {
 
     public static void updateDisksFromDb(VM vm) {
         List<DiskImage> imageList = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getvm_guid());
+        updateDisksForVm(vm,imageList);
+    }
+
+    public static void updateDisksForVm(VM vm, List<DiskImage> imageList) {
         for (DiskImage image : imageList) {
             if (image.getactive() != null && image.getactive()) {
                 vm.getDiskMap().put(image.getinternal_drive_mapping(), image);
