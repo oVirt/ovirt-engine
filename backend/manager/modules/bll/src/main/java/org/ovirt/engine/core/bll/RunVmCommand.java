@@ -75,6 +75,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     public RunVmCommand(T runVmParams) {
         super(runVmParams);
         getParameters().setEntityId(runVmParams.getVmId());
+        setStoragePoolId(getVm() != null ? getVm().getstorage_pool_id() : null);
+        if (getVm() != null && getVm().getStaticData() != null) {
+            setQuotaId(getVm().getStaticData().getQuotaId());
+        }
         InitRunVmCommand();
     }
 
@@ -361,6 +365,17 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         }
     }
 
+    @Override
+    protected boolean validateQuota() {
+        return (QuotaManager.validateVdsGroupQuota(getVm().getvds_group_id(),
+                getVm().getStaticData().getQuotaId(),
+                getStoragePool().getQuotaEnforcementType(),
+                getVm().getcpu_per_socket() * getVm().getnum_of_sockets(),
+                new Double(getVm().getmem_size_mb()),
+                getCommandId(),
+                getReturnValue().getCanDoActionMessages()));
+    }
+
     protected VMStatus CreateVm() {
 
         // reevaluate boot parameters if VM was executed with 'run once'
@@ -375,10 +390,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             getVm().setkernel_url(getIsoPrefixFilePath(getVm().getkernel_url()));
         }
 
-        return (VMStatus) Backend
+        VMStatus vmStatus = (VMStatus) Backend
                 .getInstance()
                 .getResourceManager()
                 .RunAsyncVdsCommand(VDSCommandType.CreateVm, initVdsCreateVmParams(), this).getReturnValue();
+
+        // After VM was create (or not), we can remove the quota vds group memory.
+        removeQuotaCommandLeftOver();
+        return vmStatus;
     }
 
     /**
@@ -828,12 +847,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         // since canRunVm is static and can not call non-static method isInternalExecution
         getParameters().setIsInternal(isInternalExecution());
         boolean canDoAction = CanRunVm();
-        if (!canDoAction) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RUN);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-        }
-
         return canDoAction;
+    }
+
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RUN);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
     }
 
     @Override
@@ -929,6 +948,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             }
         }
         return isoGuid;
+    }
+
+    protected void removeQuotaCommandLeftOver() {
+        QuotaManager.removeVdsGroupDeltaQuotaCommand(getQuotaId(),
+                getVm().getvds_group_id(),
+                getCommandId());
     }
 
     private static boolean shouldVmRunAsStateless(RunVmParams param, VM vm) {

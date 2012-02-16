@@ -60,7 +60,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, Backend.class, ImagesHandler.class })
+@PrepareForTest({ DbFacade.class, Backend.class, ImagesHandler.class, QuotaManager.class })
 public class RunVmCommandTest {
 
     /**
@@ -73,6 +73,9 @@ public class RunVmCommandTest {
 
     @Mock
     private VmDAO vmDAO;
+
+    @Mock
+    private QuotaManager quotaManager;
 
     @Mock
     BackendInternal backend;
@@ -281,6 +284,7 @@ public class RunVmCommandTest {
         vm.setstatus(VMStatus.Down);
         AuditLogableBaseMockUtils.mockVmDao(spyVmCommand, vmDAO);
         when(vmDAO.getById(command.getParameters().getVmId())).thenReturn(vm);
+        PowerMockito.mockStatic(QuotaManager.class);
         return vm;
     }
 

@@ -33,6 +33,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         getParameters().OriginalTemplate = getVm().getvmt_guid();
         VmTemplateHandler.lockVmTemplateInTransaction(getParameters().OriginalTemplate, getCompensationContext());
         getVm().setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
+        getVm().getStaticData().setQuotaId(getParameters().getQuotaId());
         DbFacade.getInstance().getVmStaticDAO().update(getVm().getStaticData());
     }
 

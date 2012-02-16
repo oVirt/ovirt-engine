@@ -126,6 +126,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // Set default quota id if storage pool enforcement is disabled.
         getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getQuotaId(),
                 getStoragePool()));
+        for (DiskImage diskImage : mImages) {
+            diskImage.setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getQuotaId(),
+                    getStoragePool()));
+        }
 
         if (!isInternalExecution()) {
             return QuotaManager.validateMultiStorageQuota(getStoragePool().getQuotaEnforcementType(),
@@ -335,10 +339,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             VdcActionType.CreateImageTemplate,
                             createParams,
                             ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-            QuotaManager.reduceCommandStorageSize(createParams.getStorageDomainId(), diskImage.getsize(),
-                    getStoragePool().getQuotaEnforcementType(),
-                    getCommandId(),
-                    getParameters().getQuotaId());
 
             getReturnValue().getTaskIdList().addAll(retValue.getInternalTaskIdList());
         }
