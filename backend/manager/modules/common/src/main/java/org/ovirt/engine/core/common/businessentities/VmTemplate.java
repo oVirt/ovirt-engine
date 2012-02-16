@@ -87,7 +87,7 @@ public class VmTemplate extends VmBase {
     private Map<String, DiskImage> diskMap = new HashMap<String, DiskImage>();
 
     @Transient
-    private final ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
+    private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
 
     @Transient
     private HashMap<String, DiskImageTemplate> diskTemplateMap = new HashMap<String, DiskImageTemplate>();
@@ -298,6 +298,9 @@ public class VmTemplate extends VmBase {
         return diskList;
     }
 
+    public void setDiskList(ArrayList<DiskImage> disks) {
+        diskList = disks;
+    }
 
     public boolean addDiskImageTemplate(DiskImageTemplate dit) {
         boolean retval = false;
