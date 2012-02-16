@@ -8,6 +8,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +28,14 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -47,6 +50,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockU
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -284,7 +288,7 @@ public class RunVmCommandTest {
 
     @Test
     public void canRunVmFailNodisk() {
-        initMocks(new ArrayList<DiskImage>(), new HashMap<VDSCommandType, Boolean>());
+        initMocks(new ArrayList<DiskImage>(), new HashMap<VDSCommandType, Boolean>(), new ArrayList<VmDevice>());
 
         final VM vm = new VM();
         final ArrayList<String> messages = new ArrayList<String>();
@@ -301,7 +305,9 @@ public class RunVmCommandTest {
         final DiskImage diskImage = new DiskImage();
         diskImage.setstorage_id(new Guid());
         disks.add(diskImage);
-        initMocks(disks, new HashMap<VDSCommandType, Boolean>());
+        final VmDevice vmDevice = new VmDevice();
+        vmDevice.setIsPlugged(true);
+        initMocks(disks, new HashMap<VDSCommandType, Boolean>(), Collections.singletonList(vmDevice));
         final VM vm = new VM();
         vm.setstatus(VMStatus.Up);
         final ArrayList<String> messages = new ArrayList<String>();
@@ -320,13 +326,15 @@ public class RunVmCommandTest {
         final DiskImage diskImage = new DiskImage();
         diskImage.setstorage_id(new Guid());
         disks.add(diskImage);
+        final VmDevice vmDevice = new VmDevice();
+        vmDevice.setIsPlugged(true);
         final HashMap<VDSCommandType, Boolean> calls = new HashMap<VDSCommandType, Boolean>();
 
         final VdsSelector vdsSelector = Mockito.mock(VdsSelector.class);
         Mockito.when(vdsSelector.CanFindVdsToRunOn(any(ArrayList.class), anyBoolean())).thenReturn(true);
 
         calls.put(VDSCommandType.IsVmDuringInitiating, false);
-        initMocks(disks, calls);
+        initMocks(disks, calls, Collections.singletonList(vmDevice));
 
         final VM vm = new VM();
         // set stateless and HA
@@ -383,7 +391,8 @@ public class RunVmCommandTest {
      * @param disks
      *            the disks for the VM
      */
-    private void initMocks(final List<DiskImage> disks, final Map<VDSCommandType, Boolean> calls) {
+    private void initMocks(final List<DiskImage> disks, final Map<VDSCommandType, Boolean> calls,
+            final List<VmDevice> vmDevices) {
         final Guid guid = new Guid("00000000-0000-0000-0000-000000000000");
         final IConfigUtilsInterface cfgUtils = Mockito.mock(IConfigUtilsInterface.class);
         Mockito.when(cfgUtils.GetValue(ConfigValues.VdsSelectionAlgorithm, "general")).thenReturn("0");
@@ -398,6 +407,11 @@ public class RunVmCommandTest {
         Mockito.when(storageDomainDAO.getAllForStoragePool(guid))
                 .thenReturn(new ArrayList<storage_domains>());
 
+        final VmDeviceDAO vmDeviceDao = Mockito.mock(VmDeviceDAO.class);
+        Mockito.when(vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(guid,
+                VmDeviceType.getName(VmDeviceType.DISK),
+                VmDeviceType.getName(VmDeviceType.DISK))).thenReturn(vmDevices);
+
         final DbFacade facadeMock = new DbFacade() {
             @Override
             public DiskImageDAO getDiskImageDAO() {
@@ -407,6 +421,11 @@ public class RunVmCommandTest {
             @Override
             public StorageDomainDAO getStorageDomainDAO() {
                 return storageDomainDAO;
+            }
+
+            @Override
+            public VmDeviceDAO getVmDeviceDAO() {
+                return vmDeviceDao;
             }
         };
 
