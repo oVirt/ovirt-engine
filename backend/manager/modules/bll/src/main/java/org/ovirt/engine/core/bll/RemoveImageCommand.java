@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -112,6 +113,9 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                             .getAllSnapshotsForImageGroup(diskImage.getimage_group_id());
             if (imagesForDisk == null || imagesForDisk.isEmpty()) {
                 DbFacade.getInstance().getDiskDao().remove(diskImage.getimage_group_id());
+                DbFacade.getInstance()
+                        .getVmDeviceDAO()
+                        .remove(new VmDeviceId(diskImage.getimage_group_id(), getParameters().getContainerId()));
             }
         } else {
             log.warn("RemoveImageCommand::RemoveImageFromDB: DiskImage is null, nothing to remove.");
