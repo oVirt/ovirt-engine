@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -13,9 +14,11 @@ import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.IImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -355,6 +358,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     protected void saveDiskIfNotExists(DiskImage image) {
         if (!getDiskDao().exists(image.getimage_group_id())) {
             getDiskDao().save(image.getDisk());
+            // add disk to vm device
+            VmDeviceUtils.addManagedDevice(new VmDeviceId(image.getDisk().getId(), getVmId()),
+                    VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
         }
     }
 
