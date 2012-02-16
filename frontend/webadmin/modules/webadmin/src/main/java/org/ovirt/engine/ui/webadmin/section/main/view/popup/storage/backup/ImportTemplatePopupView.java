@@ -192,7 +192,7 @@ public class ImportTemplatePopupView extends WebAdminModelBoundPopupView<ImportT
         TextColumnWithTooltip<VmTemplate> diskColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
-                return String.valueOf(object.getDiskMap().size());
+                return String.valueOf(object.getDiskList().size());
             }
         };
         table.addColumn(diskColumn, "Disks", "50px");

@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -139,7 +139,7 @@ public class ImportTemplateModel extends ListWithDetailsModel
         return "ImportTemplateModel";
     }
 
-    public void setExtendedItems(ArrayList<Entry<VmTemplate, ArrayList<DiskImage>>> extendedItems) {
-        templateImportDiskListModel.setExtendedItems(extendedItems);
+    public void setExtendedItems(ArrayList<Entry<VmTemplate, DiskImageList>> arrayList) {
+        templateImportDiskListModel.setExtendedItems(arrayList);
     }
 }

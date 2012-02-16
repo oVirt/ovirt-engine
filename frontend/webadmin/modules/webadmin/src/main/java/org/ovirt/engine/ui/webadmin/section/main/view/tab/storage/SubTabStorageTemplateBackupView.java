@@ -69,7 +69,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                 new TextColumnWithTooltip<VmTemplate>() {
                     @Override
                     public String getValue(VmTemplate object) {
-                        return String.valueOf(object.getDiskMap().size());
+                        return String.valueOf(object.getDiskList().size());
                     }
                 };
         getTable().addColumn(diskColumn, "Disks");

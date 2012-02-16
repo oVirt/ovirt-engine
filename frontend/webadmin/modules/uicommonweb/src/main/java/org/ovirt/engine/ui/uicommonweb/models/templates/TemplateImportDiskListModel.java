@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.queries.DiskImageList;
 @SuppressWarnings("unused")
 public class TemplateImportDiskListModel extends TemplateDiskListModel
 {
-    private ArrayList<Entry<VmTemplate, ArrayList<DiskImage>>> extendedItems;
+    private ArrayList<Entry<VmTemplate, DiskImageList>> extendedItems;
 
     public TemplateImportDiskListModel() {
         setIsTimerDisabled(true);
@@ -27,9 +27,9 @@ public class TemplateImportDiskListModel extends TemplateDiskListModel
             {
                 ArrayList<DiskImage> list = new ArrayList<DiskImage>();
                 VmTemplate template = (VmTemplate) getEntity();
-                for (Entry<VmTemplate, ArrayList<DiskImage>> item : extendedItems) {
+                for (Entry<VmTemplate, DiskImageList> item : extendedItems) {
                     if (item.getKey().getQueryableId().equals(template.getQueryableId())) {
-                        DiskImageList diskImageList = (DiskImageList) (Object) item.getValue();
+                        DiskImageList diskImageList = item.getValue();
                         for (DiskImage diskImage : diskImageList.getDiskImages()) {
                             list.add(diskImage);
                         }
@@ -51,8 +51,8 @@ public class TemplateImportDiskListModel extends TemplateDiskListModel
         }
     }
 
-    public void setExtendedItems(ArrayList<Entry<VmTemplate, ArrayList<DiskImage>>> extendedItems) {
-        this.extendedItems = extendedItems;
+    public void setExtendedItems(ArrayList<Entry<VmTemplate, DiskImageList>> arrayList) {
+        this.extendedItems = arrayList;
     }
 
     @Override
