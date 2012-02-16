@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -125,7 +126,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractQueryTest<GetAllDisksByV
                 new Guid(UUID.randomUUID()),
                 ImageStatus.OK,
                 new Date(),
-                "");
+                "",VmEntityType.VM);
     }
 
     @Test

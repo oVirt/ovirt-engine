@@ -1,11 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddImagesFromImportParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -35,13 +33,7 @@ public class AddTemplateImagesFromImportCommand<T extends AddImagesFromImportPar
                                                                    // be only
                                                                    // one):
             {
-                DiskImageTemplate dt = new DiskImageTemplate(importedImage.getId(),
-                        importedImage.getcontainer_guid(), importedImage.getinternal_drive_mapping(),
-                        importedImage.getId(), "", "", new Date(), importedImage.getsize(),
-                        importedImage.getdescription(), null);
-
                 try {
-                    DbFacade.getInstance().getDiskImageTemplateDAO().save(dt);
                     importedImage.setimageStatus(ImageStatus.LOCKED);
                     DbFacade.getInstance().getDiskImageDAO().save(importedImage);
                     saveDiskIfNotExists(importedImage);
@@ -55,8 +47,7 @@ public class AddTemplateImagesFromImportCommand<T extends AddImagesFromImportPar
                             e);
                     throw new VdcBLLException(VdcBllErrors.DB, e);
                 }
-
-                setActionReturnValue(dt); // / TODO: Not a good return value -
+                setActionReturnValue(importedImage); // / TODO: Not a good return value -
                                           // template has
                 // several DiskImageTemplates in case of a multi-drive template.
             }

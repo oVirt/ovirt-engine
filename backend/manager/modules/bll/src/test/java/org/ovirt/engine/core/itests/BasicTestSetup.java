@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -197,7 +198,8 @@ public class BasicTestSetup {
                         vmId,
                         ImageStatus.OK,
                         now,
-                        "");
+                        "",
+                        VmEntityType.VM);
         disk.setvolume_type(VolumeType.Sparse);
         disk.setvolume_format(VolumeFormat.COW);
         disk.setdisk_type(DiskType.Data);

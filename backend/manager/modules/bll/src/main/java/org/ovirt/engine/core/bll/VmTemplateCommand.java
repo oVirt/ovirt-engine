@@ -7,7 +7,6 @@ import java.util.Map;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -90,14 +89,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             }
         }
         if (returnValue && checkImagesExists) {
-            java.util.ArrayList<DiskImage> vmtImages = new java.util.ArrayList<DiskImage>();
-            for (DiskImageTemplate image : DbFacade.getInstance()
-                    .getDiskImageTemplateDAO()
-                    .getAllByVmTemplate(vmTemplateId)) {
-                if (!VmTemplateHandler.BlankVmTemplateId.equals(image.getId())) {
-                    vmtImages.add(DbFacade.getInstance().getDiskImageDAO().getSnapshotById(image.getId()));
-                }
-            }
+            List<DiskImage> vmtImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmTemplateId);
             if (vmtImages.size() > 0
                     && !ImagesHandler.isImagesExists(vmtImages, vmtImages.get(0).getstorage_pool_id().getValue(),
                             storageDomainId)) {

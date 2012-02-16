@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_group_storage_domain_map;
@@ -131,14 +130,10 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
      */
     private List<Guid> getAllTemplateDoamins() {
         ArrayList<Guid> domainsList = new ArrayList<Guid>();
-        List<DiskImageTemplate> imageTemplates =
-                DbFacade.getInstance().getDiskImageTemplateDAO().getAllByVmTemplate(getVmTemplateId());
+        List<DiskImage> imageTemplates =
+                DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVmTemplateId());
         if (imageTemplates != null && !imageTemplates.isEmpty()) {
-            DiskImage disk =
-                    DbFacade.getInstance()
-                            .getDiskImageDAO()
-                            .getSnapshotById(imageTemplates.get(0).getId());
-
+            DiskImage disk = imageTemplates.get(0);
             // populate storages list
             domainsList.add(disk.getstorage_id().getValue());
             for (image_group_storage_domain_map map : DbFacade.getInstance()
@@ -161,7 +156,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
             // if for some reason template doesn't have images, remove it now and not in end action
             final boolean hasImanges =
-                    DbFacade.getInstance().getDiskImageTemplateDAO().getAllByVmTemplate(getVmTemplateId()).size() > 0;
+                    DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVmTemplateId()).size() > 0;
             if (RemoveTemplateInSpm(getVmTemplate().getstorage_pool_id().getValue(), getVmTemplateId())) {
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 

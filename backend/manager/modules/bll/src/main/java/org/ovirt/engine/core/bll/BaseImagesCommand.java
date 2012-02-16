@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
-import org.ovirt.engine.core.common.businessentities.IImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -35,7 +34,7 @@ import org.ovirt.engine.core.dao.DiskDao;
  */
 public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> extends StorageDomainCommandBase<T> {
     private DiskImage _destinationImage;
-    private IImage mImage;
+    private DiskImage mImage;
     private Guid mImageId = new Guid();
     private Guid mImageContainerId = Guid.Empty;
     /**
@@ -56,7 +55,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         }
     }
 
-    protected IImage getImage() {
+    protected DiskImage getImage() {
         if (mImage == null) {
             DiskImage image = DbFacade.getInstance().getDiskImageDAO().get(getImageId());
             if (image != null) {
@@ -88,8 +87,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected DiskImage getDiskImage() {
         if (_diskImage == null) {
-            IImage tempVar = getImage();
-            _diskImage = (DiskImage) ((tempVar instanceof DiskImage) ? tempVar : null);
+            _diskImage = getImage();
         }
         return _diskImage;
     }
@@ -171,8 +169,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      */
     protected void CheckImageValidity() {
         try {
-            IImage tempVar = getImage();
-            DiskImage diskImage = (DiskImage) ((tempVar instanceof DiskImage) ? tempVar : null);
+            DiskImage diskImage = getImage();
 
             /**
              * Vitaly change. Prevent operating image with illegal status TODO:
@@ -228,7 +225,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         List<DiskImage> images = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getImageContainerId());
         int count = 0;
         for (DiskImage image : images) {
-            if (StringHelper.EqOp(image.getinternal_drive_mapping(), getImage().getinternal_drive_mapping())) {
+            if (StringHelper.EqOp(image.getinternal_drive_mapping(),getImage().getinternal_drive_mapping())) {
                 count++;
                 if (count > 1) {
                     log.error("Cannot create snapshot. Vm is in preview status");

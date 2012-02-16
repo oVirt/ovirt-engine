@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,23 +34,20 @@ public class VmTemplateHandler {
                 "initrd_url", "kernel_url", "kernel_params" });
     }
 
-    public static void UpdateDisksFromDb(VmTemplate vmt) {
+    public static List<DiskImage> UpdateDisksFromDb(VmTemplate vmt) {
         vmt.getDiskMap().clear();
         vmt.getDiskImageMap().clear();
         vmt.getDiskList().clear();
-        List<DiskImageTemplate> diskList =
-                DbFacade.getInstance().getDiskImageTemplateDAO().getAllByVmTemplate(vmt.getId());
-        for (DiskImageTemplate dit : diskList) {
+        List<DiskImage> diskList =
+                DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmt.getId());
+        for (DiskImage dit : diskList) {
             vmt.getDiskMap().put(dit.getinternal_drive_mapping(), dit);
-
             // Translation from number of sectors to GB.
             vmt.setSizeGB(Double.valueOf(dit.getsize()) / Double.valueOf((1024 * 1024 * 1024)));
-            DiskImage image = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(dit.getId());
-            if (image != null) {
-                vmt.getDiskImageMap().put(dit.getinternal_drive_mapping(), image);
-                vmt.getDiskList().add(image);
-            }
+            vmt.getDiskImageMap().put(dit.getinternal_drive_mapping(), dit);
+            vmt.getDiskList().add(dit);
         }
+        return diskList;
     }
 
     /**
@@ -66,19 +62,6 @@ public class VmTemplateHandler {
             returnValue = true;
         }
         return returnValue;
-    }
-
-    public static java.util.ArrayList<DiskImage> GetDiskImageListByDiskImageTemplateList(VmTemplate vmTemplate,
-                                                                                         java.util.ArrayList<DiskImageTemplate> templateImages) {
-        java.util.ArrayList<DiskImage> vmTemplateDiskImages = new java.util.ArrayList<DiskImage>();
-
-        if (!VmTemplateHandler.BlankVmTemplateId.equals(vmTemplate.getId())) {
-            for (DiskImageTemplate image : templateImages) {
-                DiskImage diskImage = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(image.getId());
-                vmTemplateDiskImages.add(diskImage);
-            }
-        }
-        return vmTemplateDiskImages;
     }
 
     /**

@@ -2,8 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +9,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -20,15 +19,17 @@ import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.image_vm_map;
+import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -37,6 +38,7 @@ import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -49,7 +51,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmTemplateParameters> {
 
-    public Map<Guid,Guid> imageToDestinationDomainMap = Collections.emptyMap();
+    public Map<Guid,Guid> imageToDestinationDomainMap;
 
     public ImportVmTemplateCommand(ImprotVmTemplateParameters parameters) {
         super(parameters);
@@ -314,21 +316,23 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         getVmTemplate().setstatus(VmTemplateStatus.Locked);
         DbFacade.getInstance().getVmTemplateDAO().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
-
         for (DiskImage image : getParameters().getImages()) {
-            DiskImageTemplate dt = new DiskImageTemplate(image.getId(), getParameters().getVmTemplate()
-                    .getId(), image.getinternal_drive_mapping(), image.getId(), "", "", new Date(),
-                    image.getsize(), image.getdescription(), null);
-
             DbFacade.getInstance().getDiskImageDAO().save(image);
-            DbFacade.getInstance().getDiskImageTemplateDAO().save(dt);
             getCompensationContext().snapshotNewEntity(image);
-            getCompensationContext().snapshotNewEntity(dt);
-
             if (!DbFacade.getInstance().getDiskDao().exists(image.getimage_group_id())) {
                 Disk disk = image.getDisk();
+                VmDeviceUtils.addManagedDevice(getCompensationContext(),
+                        new VmDeviceId((Guid) image.getDisk().getId(), image.getvm_guid()),
+                        VmDeviceType.DISK,
+                        VmDeviceType.DISK,
+                        "",
+                        true,
+                        false);
                 DbFacade.getInstance().getDiskDao().save(disk);
                 getCompensationContext().snapshotNewEntity(disk);
+                image_vm_map imageVmMap = new image_vm_map(true, image.getId(), image.getvm_guid());
+                DbFacade.getInstance().getImageVmMapDAO().save(imageVmMap);
+                getCompensationContext().snapshotNewEntity(imageVmMap);
             }
 
             DiskImageDynamic diskDynamic = new DiskImageDynamic();
@@ -337,7 +341,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
             DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
             getCompensationContext().snapshotNewEntity(diskDynamic);
         }
-
     }
 
     protected void AddVmInterfaces() {
@@ -382,8 +385,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
     protected void RemoveImages() {
         for (DiskImage image : getParameters().getImages()) {
             DbFacade.getInstance().getDiskImageDynamicDAO().remove(image.getId());
-            DbFacade.getInstance().getDiskImageTemplateDAO().remove(image.getId());
             DbFacade.getInstance().getDiskImageDAO().remove(image.getId());
+            DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(image.getDisk().getId(),image.getvm_guid()));
+            DbFacade.getInstance().getImageVmMapDAO().remove(new image_vm_map_id(image.getId(),image.getvm_guid()));
             DbFacade.getInstance().getDiskDao().remove(image.getimage_group_id());
         }
     }

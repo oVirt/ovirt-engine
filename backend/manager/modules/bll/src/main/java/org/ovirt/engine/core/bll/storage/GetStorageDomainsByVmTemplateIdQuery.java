@@ -22,24 +22,9 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
         VmTemplate vmTemplate = DbFacade.getInstance().getVmTemplateDAO()
                 .get(getParameters().getId());
         if (vmTemplate != null && vmTemplate.getstorage_pool_id() != null) {
-            java.util.ArrayList<DiskImage> templateDisks = GetTemplateDisks();
+            List<DiskImage> templateDisks = getTemplateDisks();
+
             if (templateDisks.size() > 0) {
-                // LINQ 29456
-                // List<Guid> domains =
-                // (List<Guid>)Backend.getInstance().ResourceManager.RunVdsCommand(VDSCommandType.GetImageDomainsList,
-                // new
-                // GetImageDomainsListVDSCommandParameters(vmTemplate.storage_pool_id.Value,
-                // templateDisks.First().image_group_id.Value)).ReturnValue;
-                // foreach (Guid domainId in domains)
-                // {
-                // storage_domains domain =
-                // DbFacade.Instance.GetStorageDomainsByIdAndStoragePoolId(domainId,
-                // vmTemplate.storage_pool_id.Value);
-                // if (domain != null)
-                // {
-                // result.Add(domain);
-                // }
-                // }
 
                 List<Guid> domains =
                         (List<Guid>) DbFacade.getInstance()
@@ -53,7 +38,6 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
                         result.add(domain);
                     }
                 }
-
             }
         }
         getQueryReturnValue().setReturnValue(result);

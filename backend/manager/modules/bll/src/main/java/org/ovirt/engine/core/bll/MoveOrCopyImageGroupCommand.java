@@ -11,8 +11,6 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
-import org.ovirt.engine.core.common.businessentities.IImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.businessentities.image_group_storage_domain_map;
@@ -22,9 +20,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @InternalCommandAttribute
 public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> extends BaseImagesCommand<T> {
@@ -35,47 +30,14 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
     private DiskImage _diskImage;
 
     @Override
-    protected IImage getImage() {
+    protected DiskImage getImage() {
         switch (getActionState()) {
         case END_SUCCESS:
         case END_FAILURE:
             if (_diskImage == null) {
-                if (getVm() != null) {
-                    VmHandler.updateDisksFromDb(getVm());
-                    // LINQ 29456
-                    // _diskImage = Vm.DiskMap.Values.First(a =>
-                    // a.image_group_id == MoveParameters.ImageGroupID);
-                    _diskImage = LinqUtils.firstOrNull(getVm().getDiskMap().values(), new Predicate<DiskImage>() {
-                        @Override
-                        public boolean eval(DiskImage a) {
-                            return a.getimage_group_id().equals(getImageGroupId());
-                        }
-                    });
-                } else if (getVmTemplate() != null) {
-                    VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
-                    // LINQ 29456
-                    // List<DiskImage> templateDisks =
-                    // VmTemplate.DiskMap.Values.Select(a =>
-                    // DbFacade.Instance.GetSnapshotById(a.image_guid)).ToList();
-
-                    // _diskImage = templateDisks.First(a =>
-                    // a.image_group_id == MoveParameters.ImageGroupID);
-                    List<DiskImage> templateDisks = LinqUtils.foreach(getVmTemplate().getDiskMap().values(),
-                            new Function<DiskImageTemplate, DiskImage>() {
-                                @Override
-                                public DiskImage eval(DiskImageTemplate a) {
-                                    return DbFacade.getInstance().getDiskImageDAO().getSnapshotById(a.getId());
-                                }
-                            });
-
-                    _diskImage = LinqUtils.firstOrNull(templateDisks, new Predicate<DiskImage>() {
-                        @Override
-                        public boolean eval(DiskImage a) {
-                            return a.getimage_group_id().equals(getImageGroupId());
-                        }
-                    });
-
-                }
+                List<DiskImage> diskImages =
+                        DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(getImageGroupId());
+                _diskImage = (diskImages.isEmpty()) ? null : diskImages.get(0);
             }
 
             return _diskImage;

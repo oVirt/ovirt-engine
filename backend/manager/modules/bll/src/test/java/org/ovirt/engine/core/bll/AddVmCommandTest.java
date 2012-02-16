@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -244,8 +243,8 @@ public class AddVmCommandTest {
         mockConfigSizeRequirements(sizeRequired, pctRequired);
         VmTemplate template = new VmTemplate();
         template.setstorage_pool_id(Guid.NewGuid());
-        DiskImageTemplate image = new DiskImageTemplate();
-        template.addDiskImageTemplate(image);
+        DiskImage image = new DiskImage();
+        template.addDiskImage(image);
         return template;
     }
 
@@ -294,9 +293,9 @@ public class AddVmCommandTest {
         return vm;
     }
 
-     private void setNewDisksForTemplate(int numberOfNewDisks, Map<String, DiskImageTemplate> disksMap) {
+     private void setNewDisksForTemplate(int numberOfNewDisks, Map<String, DiskImage> disksMap) {
          for (int newDiskInd = 0; newDiskInd < numberOfNewDisks; newDiskInd++) {
-             DiskImageTemplate diskImageTempalte = new DiskImageTemplate();
+             DiskImage diskImageTempalte = new DiskImage();
              diskImageTempalte.setId(Guid.NewGuid());
              disksMap.put(Guid.NewGuid().toString(), diskImageTempalte);
          }
@@ -364,7 +363,7 @@ public class AddVmCommandTest {
         if (vmTemplate == null) {
             vmTemplate = new VmTemplate();
             vmTemplate.setstorage_pool_id(STORAGE_POOL_ID);
-            vmTemplate.addDiskImageTemplate(createDiskImageTemplate());
+            vmTemplate.addDiskImage(createDiskImageTemplate());
             Map<String, DiskImage> diskImageMap = new HashMap<String, DiskImage>(1);
             diskImageMap.put("disk1", createDiskImage());
             vmTemplate.setDiskImageMap(diskImageMap);
@@ -372,9 +371,9 @@ public class AddVmCommandTest {
         return vmTemplate;
     }
 
-    private DiskImageTemplate createDiskImageTemplate() {
-        DiskImageTemplate i = new DiskImageTemplate();
-        i.setSizeInGigabyte(USED_SPACE_GB + AVAILABLE_SPACE_GB);
+    private DiskImage createDiskImageTemplate() {
+        DiskImage i = new DiskImage();
+        i.setSizeInGigabytes(USED_SPACE_GB + AVAILABLE_SPACE_GB);
         i.setId(Guid.NewGuid());
         return i;
     }

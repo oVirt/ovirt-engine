@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -67,9 +67,9 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
 
     @Override
     protected boolean AddVmImages() {
-        List<DiskImageTemplate> disks = DbFacade.getInstance().getDiskImageTemplateDAO().getAllByVmTemplate(
+        List<DiskImage> disks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(
                 getParameters().getVmStaticData().getvmt_guid());
-        if (disks.isEmpty()) {
+        if (disks.isEmpty() && !getParameters().getVmStaticData().getvmt_guid().equals(Guid.Empty)) {
             throw new VdcBLLException(VdcBllErrors.VM_TEMPLATE_CANT_LOCATE_DISKS_IN_DB);
         }
         // only one (first) disk can be boot disk, make all other disks not boot
@@ -99,8 +99,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                     diskImageBase.setboot(false);
             }
         }
-
-        return ConcreteAddVmImages(disks.get(0).getit_guid());
+        return (!disks.isEmpty()) ? ConcreteAddVmImages(disks.get(0).getId()) : true;
     }
 
     protected boolean ConcreteAddVmImages(Guid itGuid) {

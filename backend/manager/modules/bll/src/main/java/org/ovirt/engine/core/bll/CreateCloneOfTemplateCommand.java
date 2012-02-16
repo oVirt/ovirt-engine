@@ -66,7 +66,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                     .RunVdsCommand(
                             VDSCommandType.CopyImage,
                             new CopyImageVDSCommandParameters(storagePoolID, getDiskImage().getstorage_id().getValue(),
-                                    getVmTemplateId(), getDiskImage().getimage_group_id().getValue(), getImage()
+                                    getVmTemplateId(), getDiskImage().getimage_group_id().getValue(),getImage()
                                             .getId(), getImageGroupId(), getDestinationImageId(),
                                     CalculateImageDescription(), getDestinationStorageDomainId(),
                                     CopyVolumeType.LeafVol, mNewCreatedDiskImage.getvolume_format(),

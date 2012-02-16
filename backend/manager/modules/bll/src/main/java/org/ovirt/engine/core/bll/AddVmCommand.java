@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -87,12 +86,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     @Override
     public NGuid getStorageDomainId() {
         if (getParameters() != null) {
-            // LINQ && VmTemplate.DiskMap.Values.First().image_guid !=
-            // VmTemplateHandler.BlankVmTemplateId)
             if (getParameters().getStorageDomainId().equals(Guid.Empty)
                     && getVmTemplate() != null
                     && getVmTemplate().getDiskMap().size() > 0
-                    && !LinqUtils.firstOrNull(getVmTemplate().getDiskMap().values(), new All<DiskImageTemplate>())
+                    && !LinqUtils.firstOrNull(getVmTemplate().getDiskMap().values(), new All<DiskImage>())
                             .getId().equals(VmTemplateHandler.BlankVmTemplateId)) {
                 getParameters().setStorageDomainId(SelectStorageDomain(getVmTemplate()));
             }
@@ -117,7 +114,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             // DiskImage disk = null; // LINQ
             // DbFacade.Instance.GetSnapshotById(vmTemplate.DiskMap.Values.First().image_guid);
             DiskImage disk = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(
-                    LinqUtils.firstOrNull(vmTemplate.getDiskMap().values(), new All<DiskImageTemplate>())
+                    LinqUtils.firstOrNull(vmTemplate.getDiskMap().values(), new All<DiskImage>())
                             .getId());
             java.util.ArrayList<Guid> domainsList = (java.util.ArrayList<Guid>) Backend
                     .getInstance()
@@ -172,14 +169,13 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             // _vmDisks =
             // DbFacade.Instance.getImageTemplateByVmt(VmTemplateId).Select(a =>
             // (DiskImageBase)DbFacade.Instance.GetSnapshotById(a.image_guid)).ToList();
-
             _vmDisks =
                     LinqUtils.foreach(DbFacade.getInstance()
-                            .getDiskImageTemplateDAO()
-                            .getAllByVmTemplate(getVmTemplateId()),
-                            new Function<DiskImageTemplate, DiskImageBase>() {
+                            .getDiskImageDAO()
+                            .getAllForVm(getVmTemplateId()),
+                            new Function<DiskImage, DiskImageBase>() {
                                 @Override
-                                public DiskImageBase eval(DiskImageTemplate diskImageTemplate) {
+                                public DiskImageBase eval(DiskImage diskImageTemplate) {
                                     return DbFacade.getInstance()
                                             .getDiskImageDAO()
                                             .getSnapshotById(diskImageTemplate.getId());
@@ -205,10 +201,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 returnValue = false;
             }
         }
-
         if (returnValue
                 && getVmTemplate().getDiskMap().size() > 0
-                && !LinqUtils.firstOrNull(getVmTemplate().getDiskMap().values(), new All<DiskImageTemplate>())
+                && !LinqUtils.firstOrNull(getVmTemplate().getDiskMap().values(), new All<DiskImage>())
                         .getId().equals(VmTemplateHandler.BlankVmTemplateId)) {
             storage_domains domain = DbFacade.getInstance().getStorageDomainDAO().get(
                     getStorageDomainId().getValue());
@@ -228,7 +223,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
             }
         }
-        // Check id dedicated host is same as VM cluster
         if (returnValue) {
             returnValue = isDedicatedVdsOnSameCluster(vmStaticFromParams);
         }
@@ -496,10 +490,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
             VmHandler.LockVm(getVmId());
-
-            for (DiskImageTemplate dit : getVmTemplate().getDiskMap().values()) {
+            for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
                 CreateSnapshotFromTemplateParameters tempVar = new CreateSnapshotFromTemplateParameters(
-                        dit.getit_guid(), getParameters().getVmStaticData().getId());
+                        dit.getId(), getParameters().getVmStaticData().getId());
                 tempVar.setStorageDomainId(getStorageDomainId().getValue());
                 tempVar.setVmSnapshotId(getVmSnapshotId());
                 tempVar.setParentCommand(VdcActionType.AddVm);
@@ -519,7 +512,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 }
             }
         }
-
         return true;
     }
 

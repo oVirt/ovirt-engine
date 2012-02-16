@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Date;
-
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -13,8 +11,9 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.common.businessentities.image_vm_map;
+import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -81,17 +80,10 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         newImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
         newImage.setParentId(ImagesHandler.BlankImageTemplateId);
         newImage.setit_guid(ImagesHandler.BlankImageTemplateId);
-
-        // Note ImageGuid copied to DiskImage template twise due bug:
-        // 1. as vtmid_guid
-        // 2. as it_guid
-        // TODO: review it after bug will be fixed
-        DiskImageTemplate dt = new DiskImageTemplate(newImage.getId(), getImageContainerId(),
-                newImage.getinternal_drive_mapping(), newImage.getId(), "", "", new Date(),
-                newImage.getactual_size(), newImage.getdescription(), null);
-        DbFacade.getInstance().getDiskImageTemplateDAO().save(dt);
+        image_vm_map imageVmMap = new image_vm_map(true, newImage.getId(), getImageContainerId());
         DbFacade.getInstance().getDiskImageDAO().save(newImage);
         DbFacade.getInstance().getDiskDao().save(newImage.getDisk());
+        DbFacade.getInstance().getImageVmMapDAO().save(imageVmMap);
 
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(newImage.getId());
@@ -100,7 +92,6 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
 
         // set source image as locked:
         LockImage();
-
         setSucceeded(true);
     }
 
@@ -138,14 +129,13 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         UnLockImage();
         setVmTemplate(DbFacade.getInstance().getVmTemplateDAO()
                 .get(getVmTemplateId()));
-
-        DbFacade.getInstance().getDiskImageTemplateDAO().remove(getDestinationImageId());
-        DbFacade.getInstance().getDiskImageDAO().remove(getDestinationImageId());
         if (getDestinationDiskImage() != null) {
+            DbFacade.getInstance().getImageVmMapDAO().remove(new image_vm_map_id(getDestinationDiskImage().getId(),getDestinationDiskImage().getvm_guid()));
             DbFacade.getInstance().getDiskDao().remove(getDestinationDiskImage().getimage_group_id());
             if (DbFacade.getInstance().getDiskImageDynamicDAO().get(getDestinationDiskImage().getId()) != null) {
                 DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getId());
             }
+            DbFacade.getInstance().getDiskImageDAO().remove(getDestinationImageId());
         }
         setSucceeded(true);
     }

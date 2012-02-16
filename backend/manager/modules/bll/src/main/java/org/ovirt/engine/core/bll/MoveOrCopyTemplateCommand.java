@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
@@ -87,15 +86,11 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     }
 
-    private java.util.ArrayList<DiskImage> _templateDisks;
+    private java.util.List<DiskImage> _templateDisks;
 
-    protected java.util.ArrayList<DiskImage> getTemplateDisks() {
+    protected java.util.List<DiskImage> getTemplateDisks() {
         if (_templateDisks == null && getVmTemplate() != null) {
-            VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
-            _templateDisks = new java.util.ArrayList<DiskImage>();
-            for (DiskImageTemplate diTemplate : getVmTemplate().getDiskMap().values()) {
-                _templateDisks.add(DbFacade.getInstance().getDiskImageDAO().getSnapshotById(diTemplate.getId()));
-            }
+            _templateDisks = VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
         }
         return _templateDisks;
     }

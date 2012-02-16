@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.utils;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -118,6 +119,24 @@ public class VmDeviceUtils {
                     isReadOnly);
         DbFacade.getInstance().getVmDeviceDAO().save(managedDevice);
     }
+
+    public static void addManagedDevice(CompensationContext ctx,VmDeviceId id, VmDeviceType type, VmDeviceType device, String specParams, boolean is_plugged, boolean isReadOnly) {
+        VmDevice managedDevice =
+            new VmDevice(id,
+                    VmDeviceType.getName(type),
+                    VmDeviceType.getName(device),
+                    "",
+                    0,
+                    specParams,
+                    true,
+                    is_plugged,
+                    isReadOnly);
+        DbFacade.getInstance().getVmDeviceDAO().save(managedDevice);
+        if (ctx != null) {
+            ctx.snapshotNewEntity(managedDevice);
+        }
+    }
+
     /**
      * updates existing VM CD ROM in vm_device
      * @param oldVmStatic

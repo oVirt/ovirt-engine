@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -262,7 +261,7 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         for (DiskImage diskImage : getDiskImageList()) {
             vmTemplate.getDiskList().add(diskImage);
         }
-        Map<String, DiskImageTemplate> diskImageTemplate = getDiskImageTempalteList();
+        Map<String, DiskImage> diskImageTemplate = getDiskImageTempalteList();
         for (String key : diskImageTemplate.keySet()) {
             vmTemplate.getDiskMap().put(key, diskImageTemplate.get(key));
         }
@@ -279,12 +278,12 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         return diskList;
     }
 
-    private Map<String, DiskImageTemplate> getDiskImageTempalteList() {
-        Map<String, DiskImageTemplate> diskTemplateList = new HashMap<String, DiskImageTemplate>();
-        DiskImageTemplate diskImageTemplate = new DiskImageTemplate();
+    private Map<String, DiskImage> getDiskImageTempalteList() {
+        Map<String, DiskImage> diskTemplateList = new HashMap<String, DiskImage>();
+        DiskImage diskImageTemplate = new DiskImage();
         diskImageTemplate.setId(Guid.NewGuid());
         diskTemplateList.put(diskImageTemplate.getId().toString(), diskImageTemplate);
-        diskImageTemplate = new DiskImageTemplate();
+        diskImageTemplate = new DiskImage();
         diskImageTemplate.setId(Guid.NewGuid());
         diskTemplateList.put(diskImageTemplate.getId().toString(), diskImageTemplate);
         return diskTemplateList;

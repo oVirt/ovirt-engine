@@ -11,8 +11,6 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
-import org.ovirt.engine.core.common.businessentities.IImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
@@ -23,7 +21,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @InternalCommandAttribute
 public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters> extends CreateSnapshotCommand<T> {
-    private DiskImageTemplate mTemplate;
+
 
     public AddImageFromScratchCommand(T parameters) {
         super(parameters);
@@ -104,15 +102,8 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     }
 
     @Override
-    protected IImage getImage() {
-        if (mTemplate == null) {
-            // use blank id for template because we create image from scratch
-            mTemplate =
-                    DbFacade.getInstance()
-                            .getDiskImageTemplateDAO()
-                            .getByVmTemplateAndId(ImagesHandler.BlankImageTemplateId, getImageId());
-        }
-        return mTemplate;
+    protected DiskImage getImage() {
+        return null;
     }
 
     @Override

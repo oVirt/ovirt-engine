@@ -8,13 +8,14 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.image_group_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * This command responsible to removing all Image Templates, of a VmTemplate
@@ -30,22 +31,21 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
 
     @Override
     protected void executeCommand() {
-        List<DiskImageTemplate> imageTemplates = DbFacade.getInstance().getDiskImageTemplateDAO().getAllByVmTemplate(
+        List<DiskImage> imageTemplates = DbFacade.getInstance().getDiskImageDAO().getAllForVm(
                 getVmTemplateId());
         boolean noImagesRemovedYet = true;
         boolean changeStorageInImagesTable = false;
-        for (DiskImageTemplate template : imageTemplates) {
+        for (DiskImage template : imageTemplates) {
             // get disk
-            DiskImage disk = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(template.getId());
             // remove this disk in all domain that were sent
             for (Guid domain : getParameters().getStorageDomainsList()) {
-                ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(template.getit_guid(),
-                        disk.getinternal_drive_mapping(), getVmTemplateId());
+                ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(template.getId(),
+                        template.getinternal_drive_mapping(), getVmTemplateId());
                 tempVar.setStorageDomainId(domain);
-                tempVar.setStoragePoolId(disk.getstorage_pool_id().getValue());
-                tempVar.setImageGroupID(disk.getimage_group_id().getValue());
+                tempVar.setStoragePoolId(template.getstorage_pool_id().getValue());
+                tempVar.setImageGroupID(template.getimage_group_id().getValue());
                 tempVar.setEntityId(getParameters().getEntityId());
-                tempVar.setWipeAfterDelete(disk.getwipe_after_delete());
+                tempVar.setWipeAfterDelete(template.getwipe_after_delete());
                 tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                 VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                                 VdcActionType.RemoveTemplateSnapshot,
@@ -68,35 +68,39 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
 
                 // if removing from the domain saved in images table, set value to change it to another domain
                 if (!changeStorageInImagesTable) {
-                    changeStorageInImagesTable = domain.equals(disk.getstorage_id());
+                    changeStorageInImagesTable = domain.equals(template.getstorage_id());
                 }
 
                 DbFacade.getInstance().getStorageDomainDAO().removeImageGroupStorageDomainMap(
-                        new image_group_storage_domain_map(disk.getimage_group_id().getValue(), domain));
+                        new image_group_storage_domain_map(template.getimage_group_id().getValue(), domain));
                 noImagesRemovedYet = false;
             }
 
             // remove images from db only if removing template completely
             if (getParameters().isRemoveTemplateFromDb()) {
-                DiskImage diskImage = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(template.getId());
+                DiskImage diskImage = DbFacade.getInstance().getDiskImageDAO().get(template.getId());
                 if (diskImage != null) {
                     DbFacade.getInstance().getDiskDao().remove(diskImage.getimage_group_id());
                 }
-
+                DbFacade.getInstance()
+                        .getImageVmMapDAO()
+                        .remove(new image_vm_map_id(diskImage.getId(), diskImage.getvm_guid()));
+                DbFacade.getInstance()
+                        .getVmDeviceDAO()
+                        .remove(new VmDeviceId(diskImage.getId(), diskImage.getvm_guid()));
                 DbFacade.getInstance().getDiskImageDAO().remove(template.getId());
-                DbFacade.getInstance().getDiskImageTemplateDAO().remove(template.getit_guid());
             }
             else {
                 // change the domain saved in images table to another one
                 // assuming there is one since isRemoveTemplateFromDb = false
                 if (changeStorageInImagesTable) {
                     // get all other domains that still has this images
-                    List<image_group_storage_domain_map> imageDomainsMap = DbFacade.getInstance().getStorageDomainDAO().getAllImageGroupStorageDomainMapsForImage(disk.getimage_group_id().getValue());
+                    List<image_group_storage_domain_map> imageDomainsMap = DbFacade.getInstance().getStorageDomainDAO().getAllImageGroupStorageDomainMapsForImage(template.getimage_group_id().getValue());
                     image_group_storage_domain_map domainForImages = imageDomainsMap.get(0);
 
-                    disk.setstorage_id(domainForImages.getstorage_domain_id());
+                    template.setstorage_id(domainForImages.getstorage_domain_id());
                     // update images table
-                    DbFacade.getInstance().getDiskImageDAO().update(disk);
+                    DbFacade.getInstance().getDiskImageDAO().update(template);
                     // remove from map
                     DbFacade.getInstance().getStorageDomainDAO().removeImageGroupStorageDomainMap(domainForImages);
                 }

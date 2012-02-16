@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -255,7 +255,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (getParameters().getStorageDomainId().equals(Guid.Empty) && getVmTemplate() != null
                 // LINQ && VmTemplate.DiskMap.Values.First().image_guid !=
                 // VmTemplateHandler.BlankVmTemplateId)
-                && !LinqUtils.firstOrNull(getVmTemplate().getDiskMap().values(), new All<DiskImageTemplate>())
+                && !LinqUtils.firstOrNull(getVmTemplate().getDiskMap().values(), new All<DiskImage>())
                         .getId().equals(VmTemplateHandler.BlankVmTemplateId)) {
             getParameters().setStorageDomainId(AddVmCommand.SelectStorageDomain(getVmTemplate()));
         }

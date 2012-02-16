@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -45,11 +44,10 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
             VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
-            for (DiskImageTemplate dit : getVmTemplate().getDiskMap().values()) {
+            for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
                 DiskImageBase diskInfo = null;
                 diskInfo = getParameters().getDiskInfoList().get(dit.getinternal_drive_mapping());
-
-                CreateCloneOfTemplateParameters tempVar = new CreateCloneOfTemplateParameters(dit.getit_guid(),
+                CreateCloneOfTemplateParameters tempVar = new CreateCloneOfTemplateParameters(dit.getId(),
                         getParameters().getVmStaticData().getId(), diskInfo);
                 DiskImage img = DbFacade.getInstance().getDiskImageDAO().get(dit.getId());
                 tempVar.setStorageDomainId(img.getstorage_id().getValue());

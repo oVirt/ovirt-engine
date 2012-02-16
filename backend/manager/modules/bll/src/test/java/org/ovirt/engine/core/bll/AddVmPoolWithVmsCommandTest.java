@@ -10,7 +10,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -86,9 +86,9 @@ public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestA
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
 
-    private void setNewDisksForTemplate(int numberOfNewDisks, Map<String, DiskImageTemplate> disksMap) {
+    private void setNewDisksForTemplate(int numberOfNewDisks, Map<String, DiskImage> disksMap) {
         for (int newDiskInd = 0; newDiskInd < numberOfNewDisks; newDiskInd++) {
-            DiskImageTemplate diskImageTempalte = new DiskImageTemplate();
+            DiskImage diskImageTempalte = new DiskImage();
             disksMap.put(Guid.NewGuid().toString(), diskImageTempalte);
         }
     }

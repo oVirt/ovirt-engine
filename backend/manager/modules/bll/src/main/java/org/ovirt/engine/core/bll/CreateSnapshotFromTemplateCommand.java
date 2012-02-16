@@ -2,9 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageTemplate;
-import org.ovirt.engine.core.common.businessentities.IImage;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -21,30 +18,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 @InternalCommandAttribute
 public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTemplateParameters> extends
         CreateSnapshotCommand<T> {
-    private DiskImageTemplate mTemplate;
-
-    /**
-     * Image in this command is ImageTemplate
-     */
-    @Override
-    protected IImage getImage() {
-        switch (getActionState()) {
-        case EXECUTE:
-            if (mTemplate == null) {
-                VM vm = DbFacade.getInstance().getVmDAO().getById(getImageContainerId());
-                mTemplate =
-                        DbFacade.getInstance()
-                                .getDiskImageTemplateDAO()
-                                .getByVmTemplateAndId(vm.getvmt_guid(), getImageId());
-            }
-            return mTemplate;
-
-            // in case of EndAction, the base definition of Image is the
-            // correct one:
-        default:
-            return super.getImage();
-        }
-    }
 
     public CreateSnapshotFromTemplateCommand(T parameters) {
         super(parameters);
@@ -72,12 +45,6 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
         Guid storageDomainId = ((CreateSnapshotFromTemplateParameters) getParameters()).getStorageDomainId();
         storageDomainId = (storageDomainId == null) ? Guid.Empty : storageDomainId;
         return (!storageDomainId.equals(Guid.Empty)) ? storageDomainId : super.getDestinationStorageDomainId();
-    }
-
-    @Override
-    protected void executeCommand() {
-        setDiskImage(DbFacade.getInstance().getDiskImageDAO().getSnapshotById(getImage().getId()));
-        super.executeCommand();
     }
 
     @Override

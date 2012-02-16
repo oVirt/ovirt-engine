@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +65,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameters> {
     private static final long serialVersionUID = -5500615685812075744L;
     private static VmStatic vmStaticForDefaultValues;
-    private Map<Guid,Guid> imageToDestinationDomainMap = Collections.emptyMap();
+    private Map<Guid,Guid> imageToDestinationDomainMap;
     private List<DiskImage> imageList;
 
     static {
