@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -44,6 +45,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateCommand<T> {
     private final java.util.ArrayList<DiskImage> mImages = new java.util.ArrayList<DiskImage>();
+    private Map<Pair<Guid, Guid>, Double> quotaForStorageConsumption;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -61,7 +63,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         setVdsGroupId(parameters.getMasterVm().getvds_group_id());
         if (getVm() != null) {
             VmHandler.updateDisksFromDb(getVm());
+            setStoragePoolId(getVm().getstorage_pool_id());
         }
+        setQuotaId(parameters.getQuotaId());
     }
 
     @Override
@@ -115,6 +119,35 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         });
 
+    }
+
+    @Override
+    protected boolean validateQuota() {
+        // Set default quota id if storage pool enforcement is disabled.
+        getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getQuotaId(),
+                getStoragePool()));
+
+        if (!isInternalExecution()) {
+            return QuotaManager.validateMultiStorageQuota(getStoragePool().getQuotaEnforcementType(),
+                     getQuotaConsumeMap(),
+                    getCommandId(),
+                    getReturnValue().getCanDoActionMessages());
+        }
+        return true;
+    }
+
+    private Map<Pair<Guid, Guid>, Double> getQuotaConsumeMap() {
+        if (quotaForStorageConsumption == null) {
+            quotaForStorageConsumption = QuotaHelper.getInstance().getQuotaConsumeMap(mImages);
+        }
+        return quotaForStorageConsumption;
+    }
+
+    @Override
+    protected void removeQuotaCommandLeftOver() {
+        if (!isInternalExecution()) {
+            QuotaManager.removeMultiStorageDeltaQuotaCommand(getQuotaConsumeMap(), getStoragePool().getQuotaEnforcementType(), getCommandId());
+        }
     }
 
     @Override
@@ -247,6 +280,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         getVmTemplate().setkernel_url(getParameters().getMasterVm().getkernel_url());
         getVmTemplate().setkernel_params(getParameters().getMasterVm().getkernel_params());
         getVmTemplate().setis_stateless(getParameters().getMasterVm().getis_stateless());
+        getVmTemplate().setQuotaId(getParameters().getQuotaId());
         DbFacade.getInstance().getVmTemplateDAO().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());
@@ -301,6 +335,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             VdcActionType.CreateImageTemplate,
                             createParams,
                             ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            QuotaManager.reduceCommandStorageSize(createParams.getStorageDomainId(), diskImage.getsize(),
+                    getStoragePool().getQuotaEnforcementType(),
+                    getCommandId(),
+                    getParameters().getQuotaId());
 
             getReturnValue().getTaskIdList().addAll(retValue.getInternalTaskIdList());
         }
