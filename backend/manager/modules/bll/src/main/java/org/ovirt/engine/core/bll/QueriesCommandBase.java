@@ -121,13 +121,16 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     *         <code>false</code> otherwise.
     */
     private final boolean validatePermissions() {
-        if (!isInternalExecution && (type.isAdmin() || !parameters.isFiltered())) {
-            if (user == null) {
-                return false;
-            }
-            return MultiLevelAdministrationHandler.isAdminUser(user.getUserId());
-        }
         return true;
+        // TODO: This code is TEMPORARILY commented out, after being pushed by mistake and breaking the User Portal.
+        // It should be umcommented once all the user queries are done.
+        // if (!isInternalExecution && (type.isAdmin() || !parameters.isFiltered())) {
+        // if (user == null) {
+        // return false;
+        // }
+        // return MultiLevelAdministrationHandler.isAdminUser(user.getUserId());
+        // }
+        // return true;
     }
 
     /**

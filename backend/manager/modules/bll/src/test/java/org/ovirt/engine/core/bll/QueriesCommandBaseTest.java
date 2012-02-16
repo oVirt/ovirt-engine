@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -105,56 +104,57 @@ public class QueriesCommandBaseTest {
         assertEquals("Wrong type for 'ThereIsNoSuchQuery' ", VdcQueryType.Unknown, f.get(query));
     }
 
-    /** Tests Admin permission check */
-    @Test
-    public void testPermissionChecking() throws Exception {
-        boolean[] booleans = { true, false };
-        for (VdcQueryType queryType : VdcQueryType.values()) {
-            for (boolean isFiltered : booleans) {
-                for (boolean isUserAdmin : booleans) {
-                    for (boolean isInternalExecution : booleans) {
-                        boolean shouldBeAbleToRunQuery =
-                                isInternalExecution || isUserAdmin || (isFiltered && !queryType.isAdmin());
-
-                        log.debug("Running on query: " + toString());
-
-                        String sessionId = getClass().getSimpleName();
-
-                        // Mock parameters
-                        VdcQueryParametersBase params = mock(VdcQueryParametersBase.class);
-                        when(params.isFiltered()).thenReturn(isFiltered);
-                        when(params.getSessionId()).thenReturn(sessionId);
-
-                        Guid guid = mock(Guid.class);
-
-                        PowerMockito.mockStatic(MultiLevelAdministrationHandler.class);
-                        when(MultiLevelAdministrationHandler.isAdminUser(guid)).thenReturn(isUserAdmin);
-
-                        // Set up the user id env.
-                        IVdcUser user = mock(IVdcUser.class);
-                        when(user.getUserId()).thenReturn(guid);
-                        ThreadLocalParamsContainer.setHttpSessionId(sessionId);
-                        ThreadLocalParamsContainer.setVdcUser(user);
-
-                        // Mock-Set the query as admin/user
-                        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(params);
-                        Field adminQueryField = getQueryTypeField();
-                        adminQueryField.set(query, queryType);
-
-                        query.setInternalExecution(isInternalExecution);
-                        query.ExecuteCommand();
-                        assertEquals("Running with type=" + queryType + " isUserAdmin=" + isUserAdmin + " isFiltered="
-                                + isFiltered + " isInternalExecution=" + isInternalExecution + "\n " +
-                                "Query should succeed is: ", shouldBeAbleToRunQuery, query.getQueryReturnValue()
-                                .getSucceeded());
-
-                        ThreadLocalParamsContainer.clean();
-                        SessionDataContainer.getInstance().removeSession();
-                    }
-                }
-            }
-        }
-    }
+// TODO: Temporarily commented out until permission checking will be re-enabled, comment this back in when possible
+//    /** Tests Admin permission check */
+//    @Test
+//    public void testPermissionChecking() throws Exception {
+//        boolean[] booleans = { true, false };
+//        for (VdcQueryType queryType : VdcQueryType.values()) {
+//            for (boolean isFiltered : booleans) {
+//                for (boolean isUserAdmin : booleans) {
+//                    for (boolean isInternalExecution : booleans) {
+//                        boolean shouldBeAbleToRunQuery =
+//                                isInternalExecution || isUserAdmin || (isFiltered && !queryType.isAdmin());
+//
+//                        log.debug("Running on query: " + toString());
+//
+//                        String sessionId = getClass().getSimpleName();
+//
+//                        // Mock parameters
+//                        VdcQueryParametersBase params = mock(VdcQueryParametersBase.class);
+//                        when(params.isFiltered()).thenReturn(isFiltered);
+//                        when(params.getSessionId()).thenReturn(sessionId);
+//
+//                        Guid guid = mock(Guid.class);
+//
+//                        PowerMockito.mockStatic(MultiLevelAdministrationHandler.class);
+//                        when(MultiLevelAdministrationHandler.isAdminUser(guid)).thenReturn(isUserAdmin);
+//
+//                        // Set up the user id env.
+//                        IVdcUser user = mock(IVdcUser.class);
+//                        when(user.getUserId()).thenReturn(guid);
+//                        ThreadLocalParamsContainer.setHttpSessionId(sessionId);
+//                        ThreadLocalParamsContainer.setVdcUser(user);
+//
+//                        // Mock-Set the query as admin/user
+//                        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(params);
+//                        Field adminQueryField = getQueryTypeField();
+//                        adminQueryField.set(query, queryType);
+//
+//                        query.setInternalExecution(isInternalExecution);
+//                        query.ExecuteCommand();
+//                        assertEquals("Running with type=" + queryType + " isUserAdmin=" + isUserAdmin + " isFiltered="
+//                                + isFiltered + " isInternalExecution=" + isInternalExecution + "\n " +
+//                                "Query should succeed is: ", shouldBeAbleToRunQuery, query.getQueryReturnValue()
+//                                .getSucceeded());
+//
+//                        ThreadLocalParamsContainer.clean();
+//                        SessionDataContainer.getInstance().removeSession();
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     @Test
     public void testGetUserID() {
