@@ -19,15 +19,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-import org.springframework.test.annotation.NotTransactional;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
-
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -76,11 +67,19 @@ import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.businessentities.vm_template_image_map;
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dal.dbbroker.user_sessions;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
-
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.test.annotation.NotTransactional;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <code>BaseDAOTestCase</code> provides a foundation for creating unit tests for the persistence layer.
@@ -88,10 +87,13 @@ import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestExecutionListeners({TransactionalTestExecutionListener.class})
-@ContextConfiguration(loader=CustomizedContextLoader.class)
+@TestExecutionListeners({ TransactionalTestExecutionListener.class })
+@ContextConfiguration(loader = CustomizedContextLoader.class)
 @Transactional
 public abstract class BaseDAOTestCase {
+    protected static final Guid PRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
+    protected static final Guid UNPRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
+
     private static SessionFactory sessionFactory;
     protected static DbFacade dbFacade;
     private static Object dataFactory;
@@ -103,14 +105,14 @@ public abstract class BaseDAOTestCase {
     @NotTransactional
     @BeforeClass
     public static void initTestCase() throws Exception {
-       dataSource = createDataSource();
-       dataset = initDataSet();
-       dbFacade = new DbFacade();
-       dbFacade.setDbEngineDialect(DbFacadeLocator.loadDbEngineDialect());
-       dbFacade.setTemplate(dbFacade.getDbEngineDialect().createJdbcTemplate(dataSource));
+        dataSource = createDataSource();
+        dataset = initDataSet();
+        dbFacade = new DbFacade();
+        dbFacade.setDbEngineDialect(DbFacadeLocator.loadDbEngineDialect());
+        dbFacade.setTemplate(dbFacade.getDbEngineDialect().createJdbcTemplate(dataSource));
 
-       //load data from fixtures to DB
-       DatabaseOperation.CLEAN_INSERT.execute(getConnection(), dataset);
+        // load data from fixtures to DB
+        DatabaseOperation.CLEAN_INSERT.execute(getConnection(), dataset);
     }
 
     @NotTransactional
@@ -143,7 +145,6 @@ public abstract class BaseDAOTestCase {
                 "/fixtures.xml"));
     }
 
-
     protected void setUpDatabaseConfig(DatabaseConfig config) {
         config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, dataFactory);
     }
@@ -168,9 +169,11 @@ public abstract class BaseDAOTestCase {
 
         try {
             String job = System.getProperty("JOB_NAME");
-            if(job == null) job = "";
+            if (job == null)
+                job = "";
             String number = System.getProperty("BUILD_NUMBER");
-            if(number == null) number = "";
+            if (number == null)
+                number = "";
             String schemaNamePostfix = job + number;
             properties.load(BaseDAOTestCase.class.getResourceAsStream(
                     "/test-database.properties"));
