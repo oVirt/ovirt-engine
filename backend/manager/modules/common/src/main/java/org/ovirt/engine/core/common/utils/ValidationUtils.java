@@ -2,10 +2,16 @@ package org.ovirt.engine.core.common.utils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 
 public class ValidationUtils {
 
@@ -61,4 +67,22 @@ public class ValidationUtils {
         return validator;
 
     }
+
+    public static <T extends VdcActionParametersBase> ArrayList<String> validateInputs(List<Class<?>> validationGroupList,
+            T parameters) {
+
+        ArrayList<String> messages = null;
+        Set<ConstraintViolation<T>> violations = ValidationUtils.getValidator().validate(parameters,
+                        validationGroupList.toArray(new Class<?>[validationGroupList.size()]));
+
+        if (!violations.isEmpty()) {
+            messages = new ArrayList<String>(violations.size());
+
+            for (ConstraintViolation<T> constraintViolation : violations) {
+                messages.add(constraintViolation.getMessage());
+            }
+        }
+        return messages;
+    }
+
 }

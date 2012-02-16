@@ -8,14 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.ejb.TransactionRolledbackLocalException;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import javax.validation.groups.Default;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -93,7 +90,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private CommandActionState _actionState = CommandActionState.forValue(0);
     private boolean isInternalExecution = false;
     private VdcActionType actionType;
-    private final static Validator validator = ValidationUtils.getValidator();
     private final List<Class<?>> validationGroups =
             new ArrayList<Class<?>>(Arrays.asList(new Class<?>[] { Default.class }));
     private CompensationContext compensationContext;
@@ -412,15 +408,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *         validation
      */
     protected boolean validateInputs() {
-        List<Class<?>> validationGroupList = getValidationGroups();
-        Set<ConstraintViolation<T>> violations =
-                validator.validate(getParameters(),
-                        validationGroupList.toArray(new Class<?>[validationGroupList.size()]));
-        if (!violations.isEmpty()) {
-            ArrayList<String> msgs = getReturnValue().getCanDoActionMessages();
-            for (ConstraintViolation<T> constraintViolation : violations) {
-                msgs.add(constraintViolation.getMessage());
-            }
+        ArrayList<String> messages = ValidationUtils.validateInputs(getValidationGroups(), getParameters());
+        if (messages != null) {
+            getReturnValue().getCanDoActionMessages().addAll(messages);
             return false;
         }
         return true;
