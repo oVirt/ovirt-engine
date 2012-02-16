@@ -3,6 +3,8 @@ package org.ovirt.engine.core.dal.dbbroker;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
@@ -58,6 +60,12 @@ public class PGHack implements DataSource {
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
         return real.unwrap(iface);
+    }
+
+    // In Java 7 the override annotation should be uncommented.
+    // @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return real.getParentLogger();
     }
 
 }
