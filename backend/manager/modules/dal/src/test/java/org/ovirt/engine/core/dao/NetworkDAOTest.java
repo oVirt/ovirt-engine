@@ -80,7 +80,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures the right set of networks are returved for the given cluster.
+     * Ensures the right set of networks are returned for the given cluster.
      */
     @Test
     public void testGetAllForCluster() {
