@@ -137,7 +137,7 @@ LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS networkViewClusterType CASCADE;
 CREATE TYPE networkViewClusterType AS(id uuid,name VARCHAR(50),description VARCHAR(4000),type INTEGER,addr VARCHAR(50),subnet VARCHAR(20),gateway VARCHAR(20),vlan_id INTEGER,stp BOOLEAN,storage_pool_id UUID,network_id UUID,cluster_id UUID, status INTEGER, is_display BOOLEAN);
-Create or replace FUNCTION GetAllNetworkByClusterId(v_id UUID)
+Create or replace FUNCTION GetAllNetworkByClusterId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
 RETURNS SETOF networkViewClusterType
    AS $procedure$
 BEGIN
@@ -160,7 +160,12 @@ RETURN QUERY SELECT
    FROM network_view
    INNER JOIN network_cluster
    ON network_view.id = network_cluster.network_id
-   where network_cluster.cluster_id = v_id;
+   where network_cluster.cluster_id = v_id
+  AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                    FROM   user_vds_groups_permissions_view
+                                    WHERE  user_id = v_user_id AND entity_id = v_id));
+
+
 
 END; $procedure$
 LANGUAGE plpgsql;

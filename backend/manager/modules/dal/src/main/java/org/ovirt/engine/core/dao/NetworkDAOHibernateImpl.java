@@ -3,9 +3,9 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
-
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NotImplementedException;
 
 /**
  * <code>NetworkDAOHibernateImpl</code> provides an implementation of {@Link NetworkDAO} using Hibernate.
@@ -24,5 +24,10 @@ public class NetworkDAOHibernateImpl extends BaseDAOHibernateImpl<network, Guid>
     @Override
     public List<network> getAllForCluster(Guid id) {
         return findByCriteria(Restrictions.eq("cluster.clusterId", id));
+    }
+
+    @Override
+    public List<network> getAllForCluster(Guid id, Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
     }
 }

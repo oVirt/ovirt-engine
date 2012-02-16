@@ -37,4 +37,17 @@ public interface NetworkDAO extends GenericDao<network, Guid> {
      * @return the list of networks
      */
     List<network> getAllForCluster(Guid id);
+
+    /**
+     * Retrieves all networks for the given cluster with optional permission filtering.
+     *
+     * @param id
+     *            the cluster
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the list of networks
+     */
+    List<network> getAllForCluster(Guid id, Guid userID, boolean isFiltered);
 }

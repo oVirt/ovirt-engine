@@ -121,8 +121,13 @@ public class NetworkDAODbFacadeImpl extends BaseDAODbFacade implements NetworkDA
 
     @Override
     public List<network> getAllForCluster(Guid id) {
+        return getAllForCluster(id, null, false);
+    }
+
+    @Override
+    public List<network> getAllForCluster(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", id);
+                .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
         ParameterizedRowMapper<network> mapper = new ParameterizedRowMapper<network>() {
             @Override

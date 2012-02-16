@@ -86,6 +86,51 @@ public class NetworkDAOTest extends BaseDAOTestCase {
     public void testGetAllForCluster() {
         List<network> result = dao.getAllForCluster(cluster);
 
+        assertGetAllForClusterResult(result);
+    }
+
+    /**
+     * Ensures the right set of networks are returned for the given cluster,
+     * with a privileged user
+     */
+    @Test
+    public void testGetAllForClusterFilteredWithPermissions() {
+        // A use with permissions
+        List<network> result = dao.getAllForCluster(cluster, PRIVILEGED_USER_ID, true);
+
+        assertGetAllForClusterResult(result);
+    }
+
+    /**
+     * Ensures the right set of networks are returned for the given cluster,
+     * with a unprivileged user and with filtering enabled
+     */
+    @Test
+    public void testGetAllForClusterFilteredWithPermissionsNoPermissions() {
+        // A use with permissions
+        List<network> result = dao.getAllForCluster(cluster, UNPRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Ensures the right set of networks are returned for the given cluster,
+     * with a unprivileged user, but with no filtering
+     */
+    @Test
+    public void testGetAllForClusterFilteredWithPermissionsNoPermissionsAndNoFilter() {
+        // A use with permissions
+        List<network> result = dao.getAllForCluster(cluster, UNPRIVILEGED_USER_ID, false);
+
+        assertGetAllForClusterResult(result);
+    }
+
+    /**
+     * Asserts the result of {@link NetworkDAO#getAllForCluster(Guid)} contains all the required networks
+     * @param result
+     */
+    private static void assertGetAllForClusterResult(List<network> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
     }
@@ -108,8 +153,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
     public void testGetAllForDataCenter() {
         List<network> result = dao.getAllForDataCenter(datacenter);
 
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
+        assertGetAllForClusterResult(result);
         for (network net : result) {
             assertEquals(datacenter, net.getstorage_pool_id());
         }
