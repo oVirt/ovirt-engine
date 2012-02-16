@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 
@@ -28,17 +27,16 @@ public class LoginPopupPresenterWidget extends PresenterWidget<LoginPopupPresent
 
     private static final Logger logger = Logger.getLogger(LoginPopupPresenterWidget.class.getName());
 
-    private static final String LOGIN_AUTOCONNECT_COOKIE_NAME = "Login_ConnectAutomaticallyChecked";
-
-    private final ClientStorage clientStorage;
+    private final ConnectAutomaticallyProvider connectAutomaticallyProvider;
 
     @Inject
     public LoginPopupPresenterWidget(EventBus eventBus,
             ViewDef view,
             UserPortalLoginModel loginModel,
-            ClientStorage clientStorage) {
+            ConnectAutomaticallyProvider connectAutomaticallyProvider) {
         super(eventBus, view);
-        this.clientStorage = clientStorage;
+
+        this.connectAutomaticallyProvider = connectAutomaticallyProvider;
         getView().edit(loginModel);
     }
 
@@ -74,19 +72,12 @@ public class LoginPopupPresenterWidget extends PresenterWidget<LoginPopupPresent
     }
 
     private void saveLoginAutomatically(UserPortalLoginModel loginModel) {
-        String isAutoconnect = Boolean.toString((Boolean) loginModel.getIsAutoConnect().getEntity());
-        clientStorage.setLocalItem(LOGIN_AUTOCONNECT_COOKIE_NAME, isAutoconnect);
+        Boolean isAutoconnect = (Boolean) loginModel.getIsAutoConnect().getEntity();
+        connectAutomaticallyProvider.storeConnectAutomatically(isAutoconnect);
     }
 
     private void initLoginAutomatically(UserPortalLoginModel loginModel) {
-        String storedIsAutoconnect = clientStorage.getLocalItem(LOGIN_AUTOCONNECT_COOKIE_NAME);
-
-        // default value is true (checkbox is checked)
-        boolean isAutoconnect = true;
-        if (storedIsAutoconnect != null && !"".equals(storedIsAutoconnect)) {
-            isAutoconnect = Boolean.parseBoolean(storedIsAutoconnect);
-        }
-
+        boolean isAutoconnect = connectAutomaticallyProvider.readConnectAutomatically();
         loginModel.getIsAutoConnect().setEntity(isAutoconnect);
     }
 

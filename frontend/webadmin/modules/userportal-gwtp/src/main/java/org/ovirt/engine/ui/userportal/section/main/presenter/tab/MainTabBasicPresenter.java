@@ -58,11 +58,14 @@ public class MainTabBasicPresenter extends AbstractModelActivationPresenter<User
             ProxyDef proxy,
             MainTabBasicListPresenterWidget vmList,
             MainTabBasicDetailsPresenterWidget vmDetails,
-            UserPortalBasicListProvider provider) {
+            UserPortalBasicListProvider provider,
+            ConnectAutomaticallyManager connectAutomaticallyManager) {
         super(eventBus, view, proxy, provider);
         this.vmList = vmList;
         this.vmDetails = vmDetails;
 
+        // TODO fix the problem with logout/login
+        connectAutomaticallyManager.registerModel(provider.getModel());
     }
 
     @Override

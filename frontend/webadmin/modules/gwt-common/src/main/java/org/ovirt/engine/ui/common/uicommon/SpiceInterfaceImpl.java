@@ -504,8 +504,8 @@ public class SpiceInterfaceImpl implements ISpice {
                                             }
                                             }
 
-                                            return pluginsFound;
                                             }
+                                            return pluginsFound;
                                             }-*/;
 
     public native void connectNativelyViaActiveX() /*-{

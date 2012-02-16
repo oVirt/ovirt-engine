@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalListProvider;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -41,8 +42,12 @@ public class MainTabExtendedPresenter extends TabContainerPresenter<MainTabExten
     }
 
     @Inject
-    public MainTabExtendedPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy) {
+    public MainTabExtendedPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+            ConnectAutomaticallyManager connectAutomaticallyManager, UserPortalListProvider provider) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs);
+
+        // TODO fix logout/login issue
+        connectAutomaticallyManager.registerModel(provider.getModel());
     }
 
     @Override
