@@ -21,7 +21,7 @@ public class EnumRenderer<E extends Enum<E>> extends AbstractRenderer<E> {
     @Override
     public String render(E object) {
         if (object == null) {
-            return "null";
+            return "N/A";
         }
         Translator translator = EnumTranslator.Create(object.getDeclaringClass());
         String translation = object.name();
