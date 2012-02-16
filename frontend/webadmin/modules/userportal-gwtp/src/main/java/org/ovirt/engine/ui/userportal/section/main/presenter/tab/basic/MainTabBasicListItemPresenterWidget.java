@@ -14,6 +14,8 @@ import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicLi
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.ConsoleProtocol;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.ConsoleUtils;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalBasicListProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -69,7 +71,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     public MainTabBasicListItemPresenterWidget(EventBus eventBus,
             ViewDef view,
             ConsoleUtils consoleUtils,
-            UserPortalBasicListProvider modelProvider,
+            final UserPortalBasicListProvider modelProvider,
             MainTabBasicListItemMessages messages) {
         super(eventBus, view);
         this.consoleUtils = consoleUtils;
@@ -87,16 +89,20 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
             }
 
         });
+
+        getEventBus().addHandler(UserPortalModelInitEvent.getType(), new UserPortalModelInitHandler() {
+
+            @Override
+            public void onUserPortalModelInit(UserPortalModelInitEvent event) {
+                listenOnSelectedItemChanged(modelProvider);
+            }
+        });
+
+        listenOnSelectedItemChanged(modelProvider);
     }
 
-    public void setModel(final UserPortalItemModel model) {
-        this.model = model;
-        this.listModel = modelProvider.getModel();
-        setuSelectedProtocol(model);
-        setupDefaultVmStyles();
-        getView().edit(model);
-
-        listModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
+    private void listenOnSelectedItemChanged(UserPortalBasicListProvider modelProvider) {
+        modelProvider.getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -107,6 +113,15 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
                 }
             }
         });
+
+    }
+
+    public void setModel(final UserPortalItemModel model) {
+        this.model = model;
+        this.listModel = modelProvider.getModel();
+        setuSelectedProtocol(model);
+        setupDefaultVmStyles();
+        getView().edit(model);
 
         if (sameEntity((UserPortalItemModel) listModel.getSelectedItem(), model)) {
             getView().setSelected();

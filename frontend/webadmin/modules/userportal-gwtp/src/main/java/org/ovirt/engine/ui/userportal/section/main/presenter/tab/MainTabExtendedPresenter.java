@@ -4,6 +4,8 @@ import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalListProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -43,11 +45,21 @@ public class MainTabExtendedPresenter extends TabContainerPresenter<MainTabExten
 
     @Inject
     public MainTabExtendedPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            ConnectAutomaticallyManager connectAutomaticallyManager, UserPortalListProvider provider) {
+            final ConnectAutomaticallyManager connectAutomaticallyManager,
+            final UserPortalListProvider provider) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs);
 
-        // TODO fix logout/login issue
         connectAutomaticallyManager.registerModel(provider.getModel());
+
+        getEventBus().addHandler(UserPortalModelInitEvent.getType(), new UserPortalModelInitHandler() {
+
+            @Override
+            public void onUserPortalModelInit(UserPortalModelInitEvent event) {
+                connectAutomaticallyManager.unregisterModels();
+                connectAutomaticallyManager.registerModel(provider.getModel());
+            }
+
+        });
     }
 
     @Override

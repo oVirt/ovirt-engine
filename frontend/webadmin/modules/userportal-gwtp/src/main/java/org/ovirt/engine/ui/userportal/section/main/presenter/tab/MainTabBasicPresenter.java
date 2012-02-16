@@ -9,6 +9,8 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresent
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicListPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalBasicListProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
@@ -58,14 +60,22 @@ public class MainTabBasicPresenter extends AbstractModelActivationPresenter<User
             ProxyDef proxy,
             MainTabBasicListPresenterWidget vmList,
             MainTabBasicDetailsPresenterWidget vmDetails,
-            UserPortalBasicListProvider provider,
-            ConnectAutomaticallyManager connectAutomaticallyManager) {
+            final UserPortalBasicListProvider provider,
+            final ConnectAutomaticallyManager connectAutomaticallyManager) {
         super(eventBus, view, proxy, provider);
         this.vmList = vmList;
         this.vmDetails = vmDetails;
 
-        // TODO fix the problem with logout/login
         connectAutomaticallyManager.registerModel(provider.getModel());
+        getEventBus().addHandler(UserPortalModelInitEvent.getType(), new UserPortalModelInitHandler() {
+
+            @Override
+            public void onUserPortalModelInit(UserPortalModelInitEvent event) {
+                connectAutomaticallyManager.unregisterModels();
+                connectAutomaticallyManager.registerModel(provider.getModel());
+            }
+
+        });
     }
 
     @Override

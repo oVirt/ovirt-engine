@@ -13,6 +13,8 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.Conso
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.ConsoleProtocol;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.ConsoleUtils;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalBasicListProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -58,6 +60,16 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
         listenOnEditButton(modelProvider);
 
         listenOnConsoleModelChangeEvent(eventBus, modelProvider);
+
+        getEventBus().addHandler(UserPortalModelInitEvent.getType(), new UserPortalModelInitHandler() {
+
+            @Override
+            public void onUserPortalModelInit(UserPortalModelInitEvent event) {
+                listenOnSelectedItemEvent(modelProvider);
+                listenOnDiskModelChangeEvent(modelProvider);
+            }
+
+        });
 
     }
 
