@@ -42,15 +42,12 @@ import org.ovirt.engine.core.utils.linq.All;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 /**
- * This class responsible to create vmpool with vms within. This class not
- * transactive, that mean that function Execute not running in transaction. From
- * other hand, each vm added to system and attached to vmpool in transaction(one
- * transaction for two operation). To make it work, Transaction generated in
- * Execute function. Transactions isolated, that mean if one of vms not added
- * from some reason(image not exists, etc) - it not affect other vms generation
- * Each vm created with this format: {vm_name}_{number} where number runs from 1
- * to vms count. If one of vms to be created already exists - number increased.
- * For example if vm_8 exists - vm_9 will be created instead of it.
+ * This class responsible to create vmpool with vms within. This class not transactive, that mean that function Execute
+ * not running in transaction. From other hand, each vm added to system and attached to vmpool in transaction(one
+ * transaction for two operation). To make it work, Transaction generated in Execute function. Transactions isolated,
+ * that mean if one of vms not added from some reason(image not exists, etc) - it not affect other vms generation Each
+ * vm created with this format: {vm_name}_{number} where number runs from 1 to vms count. If one of vms to be created
+ * already exists - number increased. For example if vm_8 exists - vm_9 will be created instead of it.
  */
 
 @CustomLogFields({ @CustomLogField("VmsCount") })
@@ -58,7 +55,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
      * @param commandId
      */
     protected CommonVmPoolWithVmsCommand(Guid commandId) {
@@ -82,8 +78,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     protected abstract Guid GetPoolId();
 
     /**
-     * This operation may take much time, so transactions timeout increased to 2
-     * minutes
+     * This operation may take much time, so transactions timeout increased to 2 minutes
      */
     @Override
     protected void executeCommand() {
@@ -237,6 +232,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return false;
         }
 
+        if (getParameters().getVmPool().getPrestartedVms() > getParameters().getVmsCount()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PRESTARTED_VMS_CANNOT_EXCEED_VMS_COUNT);
+            return false;
+        }
+
         return CheckFreeSpaceOnDestinationDomains();
     }
 
@@ -302,19 +302,12 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     }
 
     /**
-     * Check if the name of the VM-Pool has valid length, meaning it's not too
-     * long.
-     *
-     * Since VMs in a pool are named like: 'SomePool_22', the max length allowed
-     * for the name is the max VM-name length + room for the suffix: <Max Length
-     * of VM name> - (length(<MaxVmsInPool>) + 1)
-     *
-     * In deciding the max length for a VM name, take into consideration if it's
-     * a Windows or non-Windows VM
-     *
+     * Check if the name of the VM-Pool has valid length, meaning it's not too long.
+     * Since VMs in a pool are named like: 'SomePool_22', the max length allowed for the name is the max VM-name length
+     * + room for the suffix: <Max Length of VM name> - (length(<MaxVmsInPool>) + 1)
+     * In deciding the max length for a VM name, take into consideration if it's a Windows or non-Windows VM
      * @param vmPoolName
      *            name of pool
-     *
      * @return true if name has valid length; false if the name is too long
      */
     protected boolean isVmPoolNameValidLength(String vmPoolName) {
