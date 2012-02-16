@@ -164,7 +164,7 @@ public enum VdcActionType {
 
     // Quota
     AddQuota(601, ActionGroup.CONFIGURE_QUOTA),
-    EditQuota(602, ActionGroup.CONFIGURE_QUOTA),
+    UpdateQuota(602, ActionGroup.CONFIGURE_QUOTA),
     RemoveQuota(603, ActionGroup.CONFIGURE_QUOTA),
 
     // bookmarks
