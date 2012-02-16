@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
-import org.ovirt.engine.core.common.queries.*;
+import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetAllNetworksByClusterIdQuery<P extends VdsGroupQueryParamenters> extends QueriesCommandBase<P> {
     public GetAllNetworksByClusterIdQuery(P parameters) {
