@@ -18,6 +18,8 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBa
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedResourcePresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedTemplatePresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedVirtualMachinePresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.ExtendedTemplateSubTabPanelPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateGeneralPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.ExtendedVmSubTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGeneralPresenter;
 import org.ovirt.engine.ui.userportal.section.main.view.HeaderView;
@@ -32,6 +34,8 @@ import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicLi
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedResourceView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedTemplateView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedVirtualMachineView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.ExtendedTemplateSubTabPanelView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.SubTabExtendedTemplateGeneralView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.ExtendedVmSubTabPanelView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmGeneralView;
 import org.ovirt.engine.ui.userportal.view.ErrorPopupView;
@@ -103,6 +107,16 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabExtendedVmGeneralPresenter.ViewDef.class,
                 SubTabExtendedVmGeneralView.class,
                 SubTabExtendedVmGeneralPresenter.ProxyDef.class);
+
+        // Template
+        bindPresenter(ExtendedTemplateSubTabPanelPresenter.class,
+                ExtendedTemplateSubTabPanelPresenter.ViewDef.class,
+                ExtendedTemplateSubTabPanelView.class,
+                ExtendedTemplateSubTabPanelPresenter.ProxyDef.class);
+        bindPresenter(SubTabExtendedTemplateGeneralPresenter.class,
+                SubTabExtendedTemplateGeneralPresenter.ViewDef.class,
+                SubTabExtendedTemplateGeneralView.class,
+                SubTabExtendedTemplateGeneralPresenter.ProxyDef.class);
 
         // Main section: basic view
         bindSingletonPresenterWidget(MainTabBasicDetailsPresenterWidget.class,

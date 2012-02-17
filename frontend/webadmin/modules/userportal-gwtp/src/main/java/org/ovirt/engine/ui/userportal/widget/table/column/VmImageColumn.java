@@ -1,16 +1,23 @@
 package org.ovirt.engine.ui.userportal.widget.table.column;
 
-import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class VmImageColumn extends ImageResourceColumn<UserPortalItemModel> {
+public class VmImageColumn<T> extends ImageResourceColumn<T> {
+
+    private OsTypeExtractor<T> extractor;
+
+    public VmImageColumn(OsTypeExtractor<T> extractor) {
+        super();
+        this.extractor = extractor;
+    }
 
     @Override
-    public ImageResource getValue(UserPortalItemModel item) {
-        switch (item.getOsType()) {
+    public ImageResource getValue(T item) {
+        switch (extractor.extractOsType(item)) {
         case WindowsXP:
             return getApplicationResources().WindowsXPSmallImage();
         case Windows2003:
@@ -57,4 +64,7 @@ public class VmImageColumn extends ImageResourceColumn<UserPortalItemModel> {
         return ClientGinjectorProvider.instance().getApplicationResourcesWithLookup();
     }
 
+    public interface OsTypeExtractor<T> {
+        VmOsType extractOsType(T item);
+    }
 }

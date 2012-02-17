@@ -14,6 +14,8 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtended
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedResourcePresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedTemplatePresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedVirtualMachinePresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.ExtendedTemplateSubTabPanelPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateGeneralPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.ExtendedVmSubTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGeneralPresenter;
 
@@ -73,5 +75,11 @@ public interface ManagedComponents {
     AsyncProvider<ExtendedVmSubTabPanelPresenter> getExtendedVmSubTabPanelPresenter();
 
     AsyncProvider<SubTabExtendedVmGeneralPresenter> getSubTabExtendedVmGeneralPresenter();
+
+    // Template
+
+    AsyncProvider<ExtendedTemplateSubTabPanelPresenter> getExtendedTemplateSubTabPanelPresenter();
+
+    AsyncProvider<SubTabExtendedTemplateGeneralPresenter> getSubTabExtendedTemplateGeneralPresenter();
 
 }

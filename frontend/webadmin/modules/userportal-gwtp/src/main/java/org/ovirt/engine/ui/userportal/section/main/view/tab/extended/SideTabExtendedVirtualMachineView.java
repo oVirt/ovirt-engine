@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended;
 
+import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
@@ -10,6 +11,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.AbstractSideTabWithDetai
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.widget.action.UserPortalButtonDefinition;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn;
+import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn.OsTypeExtractor;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmStatusColumn;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -31,7 +33,14 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
     }
 
     void initTable(final ApplicationTemplates templates) {
-        getTable().addColumn(new VmImageColumn(), "", "77px");
+        getTable().addColumn(new VmImageColumn<UserPortalItemModel>(new OsTypeExtractor<UserPortalItemModel>() {
+
+            @Override
+            public VmOsType extractOsType(UserPortalItemModel item) {
+                return item.getOsType();
+            }
+        }), "", "77px");
+
         getTable().addColumn(new VmStatusColumn(), "", "55px");
 
         SafeHtmlColumn<UserPortalItemModel> nameAndDescriptionColumn = new SafeHtmlColumn<UserPortalItemModel>() {

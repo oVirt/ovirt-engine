@@ -74,4 +74,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Console Options")
     String consoleOptions();
+
+    @DefaultStringValue("General")
+    String extendedTemplateGeneralSubTabLabel();
 }
