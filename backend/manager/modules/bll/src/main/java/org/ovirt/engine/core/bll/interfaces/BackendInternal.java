@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.interfaces;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -41,32 +40,13 @@ public interface BackendInternal extends BackendLocal {
      *            The type of command to end.
      * @param parameters
      *            The command's parameters.
-     * @param compensationContext
-     *            The compensation context to use.
-     * @return The result of the command ending.
-     */
-    public VdcReturnValueBase endAction(VdcActionType actionType,
-            VdcActionParametersBase parameters,
-            CompensationContext compensationContext);
-
-    /**
-     * End the command with the passed compensation context, so that the calling command can compensate the internal
-     * changes if need to.
-     *
-     * @param actionType
-     *            The type of command to end.
-     * @param parameters
-     *            The command's parameters.
-     * @param compensationContext
-     *            The compensation context to use.
-     * @param executionContext
-     *            The context by which the command should be ended: stores the {@code Job} entity describes the action.
+     * @param context
+     *            The context by which the command should be ended
      * @return The result of the command ending.
      */
     VdcReturnValueBase endAction(VdcActionType actionType,
             VdcActionParametersBase parameters,
-            CompensationContext compensationContext,
-            ExecutionContext executionContext);
+            CommandContext context);
 
     public VdcQueryReturnValue runInternalQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
 

@@ -175,11 +175,11 @@ VmPoolUserCommandBase<T> {
         if (getVm() != null) {
             // next line is for retrieving the VmPool from the DB
             // so we won't get a log-deadlock because of the transaction.
-            vm_pools vmPool = getVmPool();
-
             if (DbFacade.getInstance().getDiskImageDAO().getImageVmPoolMapByVmId(getVm().getId()).size() > 0) {
                setSucceeded(Backend.getInstance().endAction(VdcActionType.CreateAllSnapshotsFromVm,
-                       getParameters().getImagesParameters().get(0), getCompensationContext()).getSucceeded());
+                                getParameters().getImagesParameters().get(0),
+                                new CommandContext(getCompensationContext()))
+                        .getSucceeded());
 
                 if (getSucceeded()) {
                     // ParametersCurrentUser =
@@ -227,7 +227,8 @@ VmPoolUserCommandBase<T> {
 
         // From AttachUserToVmAndRunCommand
         Backend.getInstance().endAction(VdcActionType.CreateAllSnapshotsFromVm,
-                getParameters().getImagesParameters().get(0), getCompensationContext());
+                getParameters().getImagesParameters().get(0),
+                new CommandContext(getCompensationContext()));
         detachUserFromVmFromPool();
         setSucceeded(true);
 

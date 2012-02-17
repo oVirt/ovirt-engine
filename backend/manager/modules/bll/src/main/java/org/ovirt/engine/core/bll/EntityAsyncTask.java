@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -136,8 +137,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
                 vdcReturnValue =
                         Backend.getInstance().endAction(entityInfo.getActionType(),
                                 this.getParameters().getDbAsyncTask().getaction_parameters(),
-                                null,
-                                context);
+                                new CommandContext(context));
             } catch (RuntimeException Ex) {
                 String errorMessage =
                         String

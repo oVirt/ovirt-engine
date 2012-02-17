@@ -859,7 +859,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
         if (_isVmRunningStateless) {
             VdcReturnValueBase vdcReturnValue = Backend.getInstance().endAction(VdcActionType.CreateAllSnapshotsFromVm,
-                    getParameters().getImagesParameters().get(0), getCompensationContext());
+                    getParameters().getImagesParameters().get(0), new CommandContext(getCompensationContext()));
 
             if (getVm() != null) {
                 VmHandler.updateDisksFromDb(getVm());
