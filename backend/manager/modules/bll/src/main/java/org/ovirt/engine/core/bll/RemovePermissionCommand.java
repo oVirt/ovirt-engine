@@ -61,7 +61,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParametes> e
             if (vm != null && vm.getVmPoolId() != null) {
                 Backend.getInstance().runInternalAction(VdcActionType.DetachUserFromVmFromPool,
                         new VmPoolSimpleUserParameters(vm.getVmPoolId(), userId),
-                        ExecutionHandler.createDefaultContexForTasks(executionContext));
+                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             }
         }
 

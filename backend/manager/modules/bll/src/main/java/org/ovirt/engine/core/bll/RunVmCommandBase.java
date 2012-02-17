@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -248,13 +249,13 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 processVmPoolOnStopVm();
             }
         });
-        ExecutionHandler.setAsyncJob(executionContext, false);
-        ExecutionHandler.endJob(executionContext, false);
+        ExecutionHandler.setAsyncJob(getExecutionContext(), false);
+        ExecutionHandler.endJob(getExecutionContext(), false);
     }
 
     private void processVmPoolOnStopVm() {
         VmPoolHandler.ProcessVmPoolOnStopVm(getVm().getId(),
-                ExecutionHandler.createDefaultContexForTasks(executionContext));
+                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
     }
 
     /**
@@ -268,8 +269,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         setSucceeded(true);
         setActionReturnValue(VMStatus.Up);
         log();
-        ExecutionHandler.setAsyncJob(executionContext, false);
-        ExecutionHandler.endJob(executionContext, true);
+        ExecutionHandler.setAsyncJob(getExecutionContext(), false);
+        ExecutionHandler.endJob(getExecutionContext(), true);
         for (Guid vdsId : getRunVdssList()) {
             if (!getCurrentVdsId().equals(vdsId)) {
                 Backend.getInstance().getResourceManager()
@@ -298,6 +299,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     @Override
     public void reportCompleted() {
+        ExecutionContext executionContext = getExecutionContext();
         if (executionContext != null && executionContext.isMonitored()) {
             if (!executionContext.isCompleted()) {
                 if (executionContext.getExecutionMethod() == ExecutionMethod.AsJob) {

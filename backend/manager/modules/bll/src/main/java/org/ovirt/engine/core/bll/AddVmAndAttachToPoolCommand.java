@@ -32,7 +32,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
             returnValueFromAddVm =
                     Backend.getInstance().runInternalAction(VdcActionType.AddVmFromScratch,
                             tempVar,
-                            ExecutionHandler.createDefaultContexForTasks(executionContext));
+                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         } else {
             VmManagementParametersBase tempVar2 = new VmManagementParametersBase(vmStatic);
             tempVar2.setSessionId(getParameters().getSessionId());

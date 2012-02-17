@@ -72,7 +72,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                                 VdcActionType.CreateSnapshot,
                                 p,
-                                ExecutionHandler.createDefaultContexForTasks(executionContext));
+                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
                 if (vdcReturnValue.getSucceeded()) {
                     getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());

@@ -16,6 +16,7 @@ import javax.transaction.Transaction;
 import javax.validation.groups.Default;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.context.DefaultCompensationContext;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
@@ -88,20 +89,19 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private T _parameters;
     private VdcReturnValueBase _returnValue;
     private final IBackendCallBackServer _backendCallBack = CallbackServer.Instance;
-    private CommandActionState _actionState = CommandActionState.forValue(0);
+    private CommandActionState _actionState = CommandActionState.EXECUTE;
     private boolean isInternalExecution = false;
     private VdcActionType actionType;
     private final List<Class<?>> validationGroups =
             new ArrayList<Class<?>>(Arrays.asList(new Class<?>[] { Default.class }));
-    private CompensationContext compensationContext;
     private Guid commandId = Guid.NewGuid();
 
     protected Log log = LogFactory.getLog(getClass());
 
     /**
-     * The execution context which defines how to monitor the command
+     * The context defines how to monitor the command and handle its compensation
      */
-    protected ExecutionContext executionContext = new ExecutionContext();
+    private CommandContext context = new CommandContext();
 
     /**
      * A map contains the properties for describing the job
@@ -118,7 +118,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected CommandBase(T parameters) {
         _parameters = parameters;
         setCurrentUser(SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId()));
-        ThreadLocalParamsContainer.setCorrelationId(parameters.getCorrelationId());
+        // correlation ID thread local variable is set for non multi-action
+        if (!parameters.getMultipleAction()) {
+            ThreadLocalParamsContainer.setCorrelationId(parameters.getCorrelationId());
+        }
         setCorrelationId(parameters.getCorrelationId());
     }
 
@@ -163,14 +166,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @return the compensationContext
      */
     protected CompensationContext getCompensationContext() {
-        return compensationContext;
+        return context.getCompensationContext();
     }
 
     /**
      * @param compensationContext the compensationContext to set
      */
     public void setCompensationContext(CompensationContext compensationContext) {
-        this.compensationContext = compensationContext;
+        context.setCompensationContext(compensationContext);
     }
 
     private String _description = "";
@@ -192,11 +195,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         setActionMessageParameters();
 
         boolean actionAllowed = false;
-        Step validatingStep = ExecutionHandler.addStep(executionContext, StepEnum.VALIDATING, null);
+        Step validatingStep = ExecutionHandler.addStep(getExecutionContext(), StepEnum.VALIDATING, null);
 
         try {
             actionAllowed = acquireLock() && (getReturnValue().getCanDoAction() || InternalCanDoAction());
-            ExecutionHandler.endStep(executionContext, validatingStep, actionAllowed);
+            ExecutionHandler.endStep(getExecutionContext(), validatingStep, actionAllowed);
 
             if (actionAllowed) {
                 getReturnValue().setCanDoAction(true);
@@ -289,7 +292,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     public VdcReturnValueBase EndAction() {
-        ExecutionHandler.startFinalizingStep(executionContext);
+        ExecutionHandler.startFinalizingStep(getExecutionContext());
 
         try {
             SetActionState();
@@ -322,8 +325,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             endActionScope = forceCompensation ? endActionScope : scope;
         }
 
-        if (compensationContext == null) {
-            compensationContext = createCompensationContext(scope, forceCompensation);
+        if (getCompensationContext() == null) {
+            context.setCompensationContext(createCompensationContext(scope, forceCompensation));
         }
     }
 
@@ -710,7 +713,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private void Execute() {
-        ExecutionHandler.addStep(executionContext, StepEnum.EXECUTING, null);
+        ExecutionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
 
         try {
             handleTransactivity();
@@ -737,7 +740,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 }
             } finally {
                 if (getReturnValue().getTaskIdList().isEmpty()) {
-                    ExecutionHandler.endJob(executionContext, getSucceeded());
+                    ExecutionHandler.endJob(getExecutionContext(), getSucceeded());
                 }
             }
         }
@@ -854,7 +857,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         try {
             Step taskStep =
-                    ExecutionHandler.addTaskStep(executionContext,
+                    ExecutionHandler.addTaskStep(getExecutionContext(),
                             StepEnum.getStepNameByTaskType(asyncTaskCreationInfo.getTaskType()),
                             description);
             if (taskStep != null) {
@@ -1094,17 +1097,37 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     public void setExecutionContext(ExecutionContext executionContext) {
-        if (executionContext != null) {
-            this.executionContext = executionContext;
-        }
+        context.setExecutionContext(executionContext);
     }
 
     public ExecutionContext getExecutionContext() {
-        return executionContext;
+        return context.getExecutionContext();
     }
 
     public Guid getCommandId() {
         return commandId;
+    }
+
+    public void setContext(CommandContext context) {
+        if (context == null) {
+            return;
+        }
+
+        CompensationContext compensationContext = context.getCompensationContext();
+        if (compensationContext != null) {
+            setCompensationContext(compensationContext);
+        }
+
+        ExecutionContext executionContext = context.getExecutionContext();
+        if (executionContext != null) {
+            setExecutionContext(executionContext);
+            if (executionContext.getJob() != null) {
+                setJobId(executionContext.getJob().getId());
+            } else if (executionContext.getStep() != null) {
+                setJobId(executionContext.getStep().getJobId());
+            }
+        }
+
     }
 
 }

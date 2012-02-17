@@ -78,7 +78,7 @@ public class RemoveDisksFromVmCommand<T extends RemoveDisksFromVmParameters> ext
                     VdcReturnValueBase vdcReturnValue =
                             Backend.getInstance().runInternalAction(VdcActionType.RemoveImage,
                                     p,
-                                    ExecutionHandler.createDefaultContexForTasks(executionContext));
+                                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
                     getParameters().getImagesParameters().add(p);
                     getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
                     if (!vdcReturnValue.getSucceeded()) {

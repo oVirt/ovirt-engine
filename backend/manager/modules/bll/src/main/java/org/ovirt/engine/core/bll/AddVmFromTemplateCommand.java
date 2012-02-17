@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 
 public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> extends AddVmCommand<T> {
@@ -58,7 +58,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 VdcReturnValueBase result = Backend.getInstance().runInternalAction(
                                 VdcActionType.CreateCloneOfTemplate,
                                 p,
-                                ExecutionHandler.createDefaultContexForTasks(executionContext));
+                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
                 getParameters().getImagesParameters().add(p);
 
                 /**

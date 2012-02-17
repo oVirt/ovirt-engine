@@ -165,7 +165,7 @@ public class AddVmTemplateFromImportCommand<T extends AddVmTemplateFromImportPar
                 new AddImagesFromImportParameters(candidateID.toString(), candidateID, baseImageIds, getParameters()
                         .getCandidateInfoParams().getPath(), getParameters().getCandidateInfoParams()
                         .getCandidateSource(), getParameters().getForce(), _candidateInfo.getImagesData()),
-                ExecutionHandler.createDefaultContexForTasks(executionContext));
+                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
     }
 

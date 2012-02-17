@@ -82,7 +82,7 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
             tempVar.setImagesList(imagesList);
             Backend.getInstance().runInternalAction(VdcActionType.RestoreAllSnapshots,
                     tempVar,
-                    ExecutionHandler.createDefaultContexForTasks(executionContext));
+                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         }
     }
 

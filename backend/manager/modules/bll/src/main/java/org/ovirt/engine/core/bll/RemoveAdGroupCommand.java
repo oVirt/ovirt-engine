@@ -89,7 +89,7 @@ public class RemoveAdGroupCommand<T extends AdElementParametersBase> extends AdG
             param.setSessionId(getParameters().getSessionId());
             Backend.getInstance().runInternalAction(VdcActionType.RemovePermission,
                     param,
-                    ExecutionHandler.createDefaultContexForTasks(executionContext));
+                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         }
         DbFacade.getInstance().getAdGroupDAO().remove(getAdGroup().getid());
         setSucceeded(true);

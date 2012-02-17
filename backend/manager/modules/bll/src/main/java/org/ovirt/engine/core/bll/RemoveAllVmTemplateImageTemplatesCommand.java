@@ -50,7 +50,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                 VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                                 VdcActionType.RemoveTemplateSnapshot,
                                 tempVar,
-                                ExecutionHandler.createDefaultContexForTasks(executionContext));
+                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
                 if (vdcReturnValue.getSucceeded()) {
                     getReturnValue().getInternalTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());

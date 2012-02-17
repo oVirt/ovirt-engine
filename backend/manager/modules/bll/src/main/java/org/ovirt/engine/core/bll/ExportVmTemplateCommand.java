@@ -55,7 +55,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                     VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
                                     VdcActionType.MoveOrCopyImageGroup,
                                     p,
-                                    ExecutionHandler.createDefaultContexForTasks(executionContext));
+                                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
                     getParameters().getImagesParameters().add(p);
 
                     getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());

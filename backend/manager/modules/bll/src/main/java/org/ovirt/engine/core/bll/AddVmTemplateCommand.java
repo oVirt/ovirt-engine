@@ -296,7 +296,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(
                             VdcActionType.CreateImageTemplate,
                             createParams,
-                            ExecutionHandler.createDefaultContexForTasks(executionContext));
+                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
             getReturnValue().getTaskIdList().addAll(retValue.getInternalTaskIdList());
         }

@@ -183,7 +183,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                                 new ResumeVDSCommandParameters(getVdsId(), getVm().getId()), this);
                 setActionReturnValue(result.getReturnValue());
                 setSucceeded(result.getSucceeded());
-                ExecutionHandler.setAsyncJob(executionContext, true);
+                ExecutionHandler.setAsyncJob(getExecutionContext(), true);
             } finally {
                 DecrementVdsPendingVmsCount();
             }
@@ -200,7 +200,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 IncrementVdsPendingVmsCount();
                 AttachCd();
                 status = CreateVm();
-                ExecutionHandler.setAsyncJob(executionContext, true);
+                ExecutionHandler.setAsyncJob(getExecutionContext(), true);
             } finally {
                 DecrementVdsPendingVmsCount();
             }
@@ -338,7 +338,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
     private void removeVmStatlessImages() {
         isFailedStatlessSnapshot = true;
-        VmPoolHandler.removeVmStatelessImages(getVm().getId(), new CommandContext(executionContext));
+        VmPoolHandler.removeVmStatelessImages(getVm().getId(), new CommandContext(getExecutionContext()));
         setSucceeded(true);
     }
 

@@ -12,10 +12,10 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters> extends VmCommand<T> {
 
@@ -51,7 +51,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 returnValue = Backend.getInstance().runInternalAction(
                                 VdcActionType.RestoreFromSnapshot,
                                 p,
-                                ExecutionHandler.createDefaultContexForTasks(executionContext));
+                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
                 getParameters().getImagesParameters().add(p);
                 getTaskIdList().addAll(returnValue.getInternalTaskIdList());
             }

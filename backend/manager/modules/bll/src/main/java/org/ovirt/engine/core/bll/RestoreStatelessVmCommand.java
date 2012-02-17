@@ -56,7 +56,7 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
             VdcReturnValueBase vdcReturn =
                     Backend.getInstance().runInternalAction(VdcActionType.RestoreAllSnapshots,
                             tempVar,
-                            ExecutionHandler.createDefaultContexForTasks(executionContext));
+                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             returnVal = vdcReturn.getSucceeded();
         }
         setSucceeded(returnVal);

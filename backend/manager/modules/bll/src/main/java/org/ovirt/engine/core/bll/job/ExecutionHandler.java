@@ -99,7 +99,9 @@ public class ExecutionHandler {
      *            Indicates if the execution described by the step ended successfully or not.
      */
     public static void endStep(ExecutionContext context, Step step, boolean exitStatus) {
-
+        if (context == null) {
+            return;
+        }
         if (context.isMonitored()) {
             context.setCompleted(true);
             Job job = context.getJob();
@@ -192,7 +194,6 @@ public class ExecutionHandler {
                 JobRepositoryFactory.getJobRepository().saveJob(job);
                 context.setExecutionMethod(ExecutionMethod.AsJob);
                 context.setJob(job);
-                command.setJobId(job.getId());
                 command.setExecutionContext(context);
                 context.setMonitored(isMonitored);
             }
@@ -234,6 +235,9 @@ public class ExecutionHandler {
      * @return The created instance of the step or {@code null}.
      */
     public static Step addStep(ExecutionContext context, StepEnum stepName, String description) {
+        if (context == null) {
+            return null;
+        }
         Step step = null;
 
         if (context.isMonitored()) {
@@ -281,6 +285,9 @@ public class ExecutionHandler {
      * @return The created instance of the step or {@code null}.
      */
     public static Step addTaskStep(ExecutionContext context, StepEnum stepName, String description) {
+        if (context == null) {
+            return null;
+        }
         Step step = null;
 
         if (context != null && context.isTasksMonitored()) {
@@ -332,7 +339,7 @@ public class ExecutionHandler {
     public static Step addSubStep(ExecutionContext context, Step parentStep, StepEnum newStepName, String description) {
         Step step = null;
 
-        if (parentStep == null) {
+        if (context == null || parentStep == null) {
             return null;
         }
 
@@ -375,6 +382,9 @@ public class ExecutionHandler {
      *            Indicates if the execution described by the job ended successfully or not.
      */
     public static void endJob(ExecutionContext context, boolean exitStatus) {
+        if (context == null) {
+            return;
+        }
 
         Job job = context.getJob();
 
@@ -474,6 +484,9 @@ public class ExecutionHandler {
      * @return A created instance of the Finalizing step
      */
     public static Step startFinalizingStep(ExecutionContext executionContext) {
+        if (executionContext == null) {
+            return null;
+        }
         Step step = null;
         Job job = executionContext.getJob();
         try {
@@ -532,6 +545,9 @@ public class ExecutionHandler {
      *            indicates if the job should be ended by current action
      */
     public static void setAsyncJob(ExecutionContext executionContext, boolean isAsync) {
+        if (executionContext == null) {
+            return;
+        }
         Job job = executionContext.getJob();
         if (executionContext.getExecutionMethod() == ExecutionMethod.AsJob && job != null) {
             job.setIsAsyncJob(isAsync);

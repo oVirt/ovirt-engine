@@ -62,7 +62,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 VdcReturnValueBase vdcReturnValue =
                         Backend.getInstance().runInternalAction(VdcActionType.TryBackToSnapshot,
                                 p,
-                                ExecutionHandler.createDefaultContexForTasks(executionContext));
+                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
                 getParameters().getImagesParameters().add(p);
 
                 if (vdcReturnValue.getSucceeded()) {

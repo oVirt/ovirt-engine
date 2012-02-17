@@ -134,12 +134,12 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
             Map<String, String> values = new HashMap<String, String>();
             values.put(VdcObjectType.VDS.name().toLowerCase(), getParameters().getvds().getvds_name());
-            Step installStep = ExecutionHandler.addSubStep(executionContext,
-                    executionContext.getJob().getStep(StepEnum.EXECUTING),
+            Step installStep = ExecutionHandler.addSubStep(getExecutionContext(),
+                    getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
                     StepEnum.INSTALLING_HOST,
                     ExecutionMessageDirector.resolveStepMessage(StepEnum.INSTALLING_HOST, values));
             final ExecutionContext installCtx = new ExecutionContext();
-            installCtx.setJob(executionContext.getJob());
+            installCtx.setJob(getExecutionContext().getJob());
             installCtx.setStep(installStep);
             installCtx.setMonitored(true);
             installCtx.setShouldEndJob(true);
@@ -151,7 +151,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                             new CommandContext(installCtx));
                 }
             });
-            ExecutionHandler.setAsyncJob(executionContext, true);
+            ExecutionHandler.setAsyncJob(getExecutionContext(), true);
         }
     }
 

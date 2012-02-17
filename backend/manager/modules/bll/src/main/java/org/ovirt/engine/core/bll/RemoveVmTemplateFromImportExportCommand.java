@@ -133,7 +133,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
         VdcReturnValueBase vdcRetValue =
                 Backend.getInstance().runInternalAction(VdcActionType.RemoveAllVmImages,
                         tempVar2,
-                        ExecutionHandler.createDefaultContexForTasks(executionContext));
+                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
         getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
         setSucceeded(true);

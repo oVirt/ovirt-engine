@@ -44,7 +44,7 @@ public class RemoveUserCommand<T extends AdElementParametersBase> extends UserCo
             tempVar.setShouldBeLogged(false);
             Backend.getInstance().runInternalAction(VdcActionType.RemovePermission,
                     tempVar,
-                    ExecutionHandler.createDefaultContexForTasks(executionContext));
+                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         }
         DbFacade.getInstance().getDbUserDAO().remove(getAdUserId());
         setSucceeded(true);

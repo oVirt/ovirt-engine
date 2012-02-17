@@ -127,7 +127,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             getVm().setmigrating_to_vds(null);
             throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_MIGRATION_FAILED_AT_DST);
         }
-        ExecutionHandler.setAsyncJob(executionContext, true);
+        ExecutionHandler.setAsyncJob(getExecutionContext(), true);
     }
 
     @Override

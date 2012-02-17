@@ -21,10 +21,8 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
@@ -318,29 +316,9 @@ public class Backend implements BackendInternal, BackendRemote {
 
             CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
             command.setInternalExecution(runAsInternal);
+            command.setContext(context);
+            ExecutionHandler.prepareCommandForMonitoring(command, actionType, runAsInternal);
 
-            CompensationContext compensationContext = null;
-            ExecutionContext executionContext = null;
-
-            if (context != null) {
-                compensationContext = context.getCompensationContext();
-                executionContext = context.getExecutionContext();
-            }
-
-            if (executionContext != null) {
-                command.setExecutionContext(executionContext);
-                if (executionContext.getExecutionMethod() == ExecutionMethod.AsJob && executionContext.getJob() != null) {
-                    command.setJobId(executionContext.getJob().getId());
-                } else if (executionContext.getStep() != null) {
-                    command.setJobId(executionContext.getStep().getJobId());
-                }
-            } else {
-                ExecutionHandler.prepareCommandForMonitoring(command, actionType, runAsInternal);
-            }
-
-            if (compensationContext != null) {
-                command.setCompensationContext(compensationContext);
-            }
             returnValue = command.ExecuteAction();
             returnValue.setCorrelationId(parameters.getCorrelationId());
             return returnValue;
@@ -358,11 +336,7 @@ public class Backend implements BackendInternal, BackendRemote {
             VdcActionParametersBase parameters,
             CommandContext context) {
         CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
-
-        if (context != null) {
-            command.setCompensationContext(context.getCompensationContext());
-            command.setExecutionContext(context.getExecutionContext());
-        }
+        command.setContext(context);
         return command.EndAction();
     }
 

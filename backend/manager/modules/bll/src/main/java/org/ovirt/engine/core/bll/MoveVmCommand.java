@@ -184,7 +184,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         VdcReturnValueBase vdcRetValue =
                 Backend.getInstance().runInternalAction(VdcActionType.MoveMultipleImageGroups,
                         p,
-                        ExecutionHandler.createDefaultContexForTasks(executionContext));
+                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
         getParameters().getImagesParameters().add(p);
         getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());

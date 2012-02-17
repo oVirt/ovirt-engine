@@ -73,7 +73,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                             VdcActionType.RemoveSnapshotSingleDisk,
                             p,
-                            ExecutionHandler.createDefaultContexForTasks(executionContext));
+                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             getParameters().getImagesParameters().add(p);
 
             if (vdcReturnValue != null && vdcReturnValue.getInternalTaskIdList() != null) {

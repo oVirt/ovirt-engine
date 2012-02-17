@@ -157,7 +157,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         VdcReturnValueBase vdcRetValue =
                 Backend.getInstance().runInternalAction(VdcActionType.RemoveAllVmImages,
                         tempVar,
-                        ExecutionHandler.createDefaultContexForTasks(executionContext));
+                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
         if (vdcRetValue.getSucceeded()) {
             getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
