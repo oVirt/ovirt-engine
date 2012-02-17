@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -185,7 +186,8 @@ public abstract class VdsLoadBalancingAlgorithm {
                         new MigrateVmToServerParameters(false, vm.getId(), destinationVdsId);
                     parameters.setShouldBeLogged(false);
                     Backend.getInstance().runInternalAction(VdcActionType.MigrateVmToServer,
-                            parameters);
+                            parameters,
+                            ExecutionHandler.createInternalJobContext());
                     /**
                      * Remove server from list
                      */
@@ -265,7 +267,8 @@ public abstract class VdsLoadBalancingAlgorithm {
                             new MigrateVmToServerParameters(false, vm.getId(), destinationVdsId);
                         parameters.setShouldBeLogged(false);
                         Backend.getInstance().runInternalAction(VdcActionType.MigrateVmToServer,
-                                parameters);
+                                parameters,
+                                ExecutionHandler.createInternalJobContext());
                         currentList.remove(destinationVdsId);
                         log.infoFormat(
                                 "VdsLoadBalancer: Desktop {0} migrated from underutilized server {1} to server {2}",

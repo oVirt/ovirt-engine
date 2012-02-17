@@ -8,6 +8,8 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -66,14 +68,17 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void StorageDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
         Backend.getInstance().runInternalAction(VdcActionType.HandleFailedStorageDomain,
-                new StorageDomainPoolParametersBase(storageDomainId, storagePoolId));
+                new StorageDomainPoolParametersBase(storageDomainId, storagePoolId),
+                ExecutionHandler.createInternalJobContext());
     }
 
     @Override
     public void MasterDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
         VdcActionParametersBase parameters = new ReconstructMasterParameters(storagePoolId, storageDomainId, false);
         parameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-        Backend.getInstance().runInternalAction(VdcActionType.ReconstructMasterDomain, parameters);
+        Backend.getInstance().runInternalAction(VdcActionType.ReconstructMasterDomain,
+                parameters,
+                ExecutionHandler.createInternalJobContext());
     }
 
     @Override
@@ -104,7 +109,8 @@ public class VdsEventListener implements IVdsEventListener {
                         vds.getId(),
                         vds.gethost_name());
                 Backend.getInstance().runInternalAction(VdcActionType.VdsNotRespondingTreatment,
-                        new FenceVdsActionParameters(vds.getId(), FenceActionType.Restart));
+                        new FenceVdsActionParameters(vds.getId(), FenceActionType.Restart),
+                        ExecutionHandler.createInternalJobContext());
             }
         });
     }
@@ -132,8 +138,11 @@ public class VdsEventListener implements IVdsEventListener {
                                         return parameters;
                                     }
                                 }));
+                        ExecutionContext executionContext = new ExecutionContext();
+                        executionContext.setMonitored(true);
                         Backend.getInstance().runInternalMultipleActions(VdcActionType.MigrateVmToServer,
-                                vmToServerParametersList);
+                                vmToServerParametersList,
+                                executionContext);
 
                         // LINQ 29456
                         // Backend.getInstance().RunMultipleActions(VdcActionType.MigrateVmToServer,
@@ -157,11 +166,13 @@ public class VdsEventListener implements IVdsEventListener {
                             if (Config
                                     .<Boolean> GetValue(ConfigValues.PowerClientDedicatedVmLaunchOnVdsWhilePowerClientStarts)) {
                                 Backend.getInstance().runInternalAction(VdcActionType.RunVmOnDedicatedVds,
-                                        new RunVmParams(vms.get(0).getId(), vdsId));
+                                        new RunVmParams(vms.get(0).getId(), vdsId),
+                                        ExecutionHandler.createInternalJobContext());
                             } else {
                                 ThreadUtils.sleep(10000);
                                 Backend.getInstance().runInternalAction(VdcActionType.RunVmOnPowerClient,
-                                        new RunVmParams(vms.get(0).getId(), vdsId));
+                                        new RunVmParams(vms.get(0).getId(), vdsId),
+                                        ExecutionHandler.createInternalJobContext());
                             }
                         }
                     } catch (RuntimeException e) {
@@ -188,13 +199,12 @@ public class VdsEventListener implements IVdsEventListener {
                     // Run PowerClientMigrateOnConnectCheck if configured.
                     if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoMigrateToPowerClientOnConnect)
                             || Config.<Boolean> GetValue(ConfigValues.PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient)) {
-                        Backend.getInstance().runInternalAction(
-                                VdcActionType.PowerClientMigrateOnConnectCheck,
-                                              new PowerClientMigrateOnConnectCheckParameters(false,
-                                                                                             vmDynamic.getId(),
-                                                                                             vmDynamic
-                                                                                                     .getclient_ip(),
-                                        vds.getId()));
+                        Backend.getInstance().runInternalAction(VdcActionType.PowerClientMigrateOnConnectCheck,
+                                new PowerClientMigrateOnConnectCheckParameters(false,
+                                        vmDynamic.getId(),
+                                        vmDynamic.getclient_ip(),
+                                        vds.getId()),
+                                ExecutionHandler.createInternalJobContext());
                     }
                 }
             });
@@ -276,7 +286,9 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void RunFailedAutoStartVM(Guid vmId) {
-        Backend.getInstance().runInternalAction(VdcActionType.RunVm, new RunVmParams(vmId));
+        Backend.getInstance().runInternalAction(VdcActionType.RunVm,
+                new RunVmParams(vmId),
+                ExecutionHandler.createInternalJobContext());
     }
 
     @Override
@@ -284,7 +296,9 @@ public class VdsEventListener implements IVdsEventListener {
         return Backend
                 .getInstance()
                 .runInternalAction(VdcActionType.RestartVds,
-                        new FenceVdsActionParameters(vdsId, FenceActionType.Restart)).getSucceeded();
+                        new FenceVdsActionParameters(vdsId, FenceActionType.Restart),
+                        ExecutionHandler.createInternalJobContext())
+                .getSucceeded();
     }
 
     @Override

@@ -189,7 +189,7 @@ public class ExecutionHandler {
             boolean isMonitored = shouldMonitorCommand(actionType, runAsInternal);
 
             // A monitored job is created for monitored external flows
-            if (isMonitored) {
+            if (isMonitored || context.isJobRequired()) {
                 Job job = createJob(actionType, command);
                 JobRepositoryFactory.getJobRepository().saveJob(job);
                 context.setExecutionMethod(ExecutionMethod.AsJob);
@@ -206,9 +206,11 @@ public class ExecutionHandler {
     }
 
     /**
-     * Determines if a specific action should be monitored by the following criteria: <li>
-     * {@code VdcActionType.isMonitored} - defined for a specific action type</li> <li>{@code isInternal} - By default,
-     * only non-internal commands are monitored</li>
+     * Determines if a specific action should be monitored by the following criteria:
+     * <ul>
+     * <li>{@code VdcActionType.isMonitored} - defined for a specific action type</li>
+     * <li>{@code isInternal} - By default, only non-internal commands are monitored</li>
+     * </ul>
      *
      * @param actionType
      *            The action type
@@ -422,6 +424,18 @@ public class ExecutionHandler {
         } catch (Exception e) {
             log.errorFormat("Failed to end Job {0}, {1}", job.getId(), job.getActionType().name(), e);
         }
+    }
+
+    /**
+     * Creates a context for execution of internal command as a monitored Job
+     *
+     * @return an execution context as a Job
+     */
+    public static CommandContext createInternalJobContext() {
+        ExecutionContext executionContext = new ExecutionContext();
+        executionContext.setJobRequired(true);
+        executionContext.setMonitored(true);
+        return new CommandContext(executionContext);
     }
 
     /**

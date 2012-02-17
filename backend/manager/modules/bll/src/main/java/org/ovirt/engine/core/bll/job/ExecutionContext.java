@@ -87,6 +87,11 @@ public class ExecutionContext implements Serializable{
     private boolean isCompleted;
 
     /**
+     * Specifies if a Job should be created for a context with {@code ExecutionMethod.AsJob}
+     */
+    private boolean isJobRequired;
+
+    /**
      * Default constructor which defines the default monitored steps of the internal command
      */
     public ExecutionContext() {
@@ -174,6 +179,14 @@ public class ExecutionContext implements Serializable{
 
     public void setCompleted(boolean isCompleted) {
         this.isCompleted = isCompleted;
+    }
+
+    public void setJobRequired(boolean isJobRequired) {
+        this.isJobRequired = isJobRequired;
+    }
+
+    public boolean isJobRequired() {
+        return isJobRequired;
     }
 
 }
