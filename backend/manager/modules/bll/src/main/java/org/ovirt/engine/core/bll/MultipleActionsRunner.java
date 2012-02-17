@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -16,11 +17,12 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class MultipleActionsRunner {
 
-    private final int CONCURRENT_ACTIONS = 10;
+    private static Log log = LogFactory.getLog(MultipleActionsRunner.class);
+    private final static int CONCURRENT_ACTIONS = 10;
 
-    private VdcActionType _actionType = VdcActionType.forValue(0);
+    private VdcActionType _actionType = VdcActionType.Unknown;
     private List<VdcActionParametersBase> _parameters;
-    private final java.util.ArrayList<CommandBase> _commands = new java.util.ArrayList<CommandBase>();
+    private final ArrayList<CommandBase<?>> _commands = new ArrayList<CommandBase<?>>();
     protected boolean isInternal;
 
     /**
@@ -38,18 +40,18 @@ public class MultipleActionsRunner {
         return _parameters;
     }
 
-    protected java.util.ArrayList<CommandBase> getCommands() {
+    protected ArrayList<CommandBase<?>> getCommands() {
         return _commands;
     }
 
-    public java.util.ArrayList<VdcReturnValueBase> Execute() {
+    public ArrayList<VdcReturnValueBase> Execute() {
         // sanity - don't do anything if no parameters passed
         if (_parameters == null || _parameters.isEmpty()) {
             log.infoFormat("{0} of type {1} invoked with no actions", this.getClass().getSimpleName(), _actionType);
             return new ArrayList<VdcReturnValueBase>();
         }
 
-        java.util.ArrayList<VdcReturnValueBase> returnValues = new java.util.ArrayList<VdcReturnValueBase>();
+        ArrayList<VdcReturnValueBase> returnValues = new ArrayList<VdcReturnValueBase>();
         try {
             VdcReturnValueBase returnValue;
             for (VdcActionParametersBase parameter : getParameters()) {
@@ -89,7 +91,7 @@ public class MultipleActionsRunner {
      * @param executorService
      */
     private void CheckCanDoActionsAsyncroniousely(
-                                                  java.util.ArrayList<VdcReturnValueBase> returnValues) {
+                                                  ArrayList<VdcReturnValueBase> returnValues) {
         for (int i = 0; i < getCommands().size(); i += CONCURRENT_ACTIONS) {
             int handleSize = Math.min(CONCURRENT_ACTIONS, getCommands().size() - i);
             CountDownLatch latch = new CountDownLatch(handleSize);
@@ -106,17 +108,17 @@ public class MultipleActionsRunner {
     }
 
     private void RunCanDoActionAsyncroniousely(
-                                               final java.util.ArrayList<VdcReturnValueBase> returnValues,
+                                               final ArrayList<VdcReturnValueBase> returnValues,
                                                final int currentCanDoActionId, final int totalSize, final CountDownLatch latch) {
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
-                CommandBase command = getCommands().get(currentCanDoActionId);
+                CommandBase<?> command = getCommands().get(currentCanDoActionId);
                 if (command != null) {
                     String actionType = command.getActionType().toString();
                     try {
                         log.infoFormat("Start time: {0}. Start running CanDoAction for command number {1}/{2} (Command type: {3})",
-                                new java.util.Date(),
+                                new Date(),
                                 currentCanDoActionId + 1,
                                 totalSize,
                                 actionType);
@@ -133,7 +135,7 @@ public class MultipleActionsRunner {
                     } finally {
                         latch.countDown();
                         log.infoFormat("End time: {0}. Finish handling CanDoAction for command number {1}/{2} (Command type: {3})",
-                                new java.util.Date(),
+                                new Date(),
                                 currentCanDoActionId + 1,
                                 totalSize,
                                 actionType);
@@ -172,8 +174,6 @@ public class MultipleActionsRunner {
             command.ExecuteAction();
         }
     }
-
-    private static Log log = LogFactory.getLog(MultipleActionsRunner.class);
 
     public void setExecutionContext(ExecutionContext executionContext) {
         this.executionContext = executionContext;

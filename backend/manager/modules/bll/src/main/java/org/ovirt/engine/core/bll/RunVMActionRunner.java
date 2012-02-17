@@ -13,16 +13,15 @@ public class RunVMActionRunner extends SortedMultipleActionsRunnerBase {
 
     public RunVMActionRunner(VdcActionType actionType, ArrayList<VdcActionParametersBase> parameters, boolean isInternal) {
         super(actionType, parameters, isInternal);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
     protected void SortCommands() {
 
-        ArrayList<CommandBase> commandsList = getCommands();
-        HashMap<Guid, RunVmCommandBase> runVmCommandsMap = new HashMap<Guid, RunVmCommandBase>();
-        for (CommandBase command : commandsList) {
-            RunVmCommandBase runVMCommandBase = (RunVmCommandBase) command;
+        ArrayList<CommandBase<?>> commandsList = getCommands();
+        HashMap<Guid, RunVmCommandBase<?>> runVmCommandsMap = new HashMap<Guid, RunVmCommandBase<?>>();
+        for (CommandBase<?> command : commandsList) {
+            RunVmCommandBase<?> runVMCommandBase = (RunVmCommandBase<?>) command;
             runVmCommandsMap.put(runVMCommandBase.getVmId(), runVMCommandBase);
         }
 

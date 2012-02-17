@@ -23,18 +23,18 @@ public class MigrateVMActionRunner extends SortedMultipleActionsRunnerBase {
 
     @Override
     protected void SortCommands() {
-        ArrayList<CommandBase> commands = getCommands();
+        ArrayList<CommandBase<?>> commands = getCommands();
         final Map<Guid, VM> vms = new HashMap<Guid, VM>(commands.size());
-        for (CommandBase<VdcActionParametersBase> cmd : commands) {
+        for (CommandBase<?> cmd : commands) {
             vms.put(cmd.getVmId(), DbFacade.getInstance().getVmDAO().get(cmd.getVmId()));
         }
 
-        Collections.sort(commands, Collections.reverseOrder(new Comparator<CommandBase>() {
+        Collections.sort(commands, Collections.reverseOrder(new Comparator<CommandBase<?>>() {
 
             private final VmsComparer vmComparator = new VmsComparer();
 
             @Override
-            public int compare(CommandBase o1, CommandBase o2) {
+            public int compare(CommandBase<?> o1, CommandBase<?> o2) {
                 VM vm1 = vms.get(o1.getVmId());
                 VM vm2 = vms.get(o2.getVmId());
 
