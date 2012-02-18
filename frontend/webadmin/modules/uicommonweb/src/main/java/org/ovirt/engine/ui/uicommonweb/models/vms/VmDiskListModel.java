@@ -558,7 +558,7 @@ public class VmDiskListModel extends SearchableListModel
             DiskImage disk = (DiskImage) item;
             disk.setPlugged(plug);
 
-            paramerterList.add(new UpdateVmDiskParameters(vm.getvm_guid(), disk.getId(), disk));
+            paramerterList.add(new UpdateVmDiskParameters(vm.getId(), disk.getId(), disk));
         }
 
         Frontend.RunMultipleAction(VdcActionType.UpdateVmDisk, paramerterList,

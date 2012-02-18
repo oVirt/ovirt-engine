@@ -736,7 +736,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         List<VmDevice> diskVmDevices =
                     DbFacade.getInstance()
                             .getVmDeviceDAO()
-                            .getVmDeviceByVmIdTypeAndDevice(vm.getvm_guid(),
+                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
                                     VmDeviceType.getName(VmDeviceType.DISK),
                                     VmDeviceType.getName(VmDeviceType.DISK));
         boolean existPlugged = false;
