@@ -13,7 +13,19 @@ import org.ovirt.engine.core.compat.Guid;
  *
  *
  */
-public interface StoragePoolDAO  extends GenericDao<storage_pool, Guid>, StatusAwareDao<Guid, StoragePoolStatus>, SearchDAO<storage_pool> {
+public interface StoragePoolDAO extends GenericDao<storage_pool, Guid>, StatusAwareDao<Guid, StoragePoolStatus>, SearchDAO<storage_pool> {
+
+    /**
+     * Retrieves the storage pool with the given ID, with optional filtering
+     * @param ID
+     *            The ID of the storage pool
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return The storage pool
+     */
+    storage_pool get(Guid ID, Guid userID, boolean isFiltered);
 
     /**
      * Retrieves the storage pool with the given name.

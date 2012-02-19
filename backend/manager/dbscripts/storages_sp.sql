@@ -124,12 +124,17 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getstorage_poolByid(v_id UUID) RETURNS SETOF storage_pool
+Create or replace FUNCTION Getstorage_poolByid(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF storage_pool
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
    FROM storage_pool
-   WHERE id = v_id;
+   WHERE id = v_id
+   AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                     FROM   user_storage_pool_permissions_view
+                                     WHERE  user_id = v_user_id AND entity_id = v_id));
+
+
 
 END; $procedure$
 LANGUAGE plpgsql;

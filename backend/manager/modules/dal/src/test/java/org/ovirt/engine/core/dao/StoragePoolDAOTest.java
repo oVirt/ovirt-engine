@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
-
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -61,8 +60,28 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
     public void testGet() {
         storage_pool result = dao.get(existingPool.getId());
 
-        assertNotNull(result);
-        assertEquals(existingPool, result);
+        assertGetResult(result);
+    }
+
+    @Test
+    public void testGetFilteredWithPermissions() {
+        storage_pool result = dao.get(existingPool.getId(), PRIVILEGED_USER_ID, true);
+
+        assertGetResult(result);
+    }
+
+    @Test
+    public void testGetFilteredWithPermissionsNoPermissions() {
+        storage_pool result = dao.get(existingPool.getId(), UNPRIVILEGED_USER_ID, true);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void testGetFilteredWithPermissionsNoPermissionsAndNoFilter() {
+        storage_pool result = dao.get(existingPool.getId(), UNPRIVILEGED_USER_ID, false);
+
+        assertGetResult(result);
     }
 
     /**
@@ -82,6 +101,14 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
     public void testGetByName() {
         storage_pool result = dao.getByName(existingPool.getname());
 
+        assertGetResult(result);
+    }
+
+    /**
+     * Asserts the result of {@link StoragePoolDAO#get(Guid)} is correct
+     * @param result The result to check
+     */
+    private void assertGetResult(storage_pool result) {
         assertNotNull(result);
         assertEquals(existingPool, result);
     }
@@ -175,8 +202,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
 
         storage_pool result = dao.get(existingPool.getId());
 
-        assertNotNull(result);
-        assertEquals(existingPool, result);
+        assertGetResult(result);
     }
 
     /**
@@ -190,8 +216,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
 
         storage_pool result = dao.get(existingPool.getId());
 
-        assertNotNull(result);
-        assertEquals(existingPool, result);
+        assertGetResult(result);
     }
 
     /**
@@ -204,8 +229,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
 
         storage_pool result = dao.get(existingPool.getId());
 
-        assertNotNull(result);
-        assertEquals(existingPool, result);
+        assertGetResult(result);
     }
 
     /**
@@ -219,4 +243,5 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
 
         assertNull(result);
     }
+
 }

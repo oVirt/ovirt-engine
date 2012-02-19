@@ -10,10 +10,16 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NotImplementedException;
 
 public class StoragePoolDAOHibernateImpl extends BaseDAOHibernateImpl<storage_pool, Guid> implements StoragePoolDAO {
     public StoragePoolDAOHibernateImpl() {
         super(storage_pool.class);
+    }
+
+    @Override
+    public storage_pool get(Guid ID, Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
     }
 
     @Override
