@@ -20,7 +20,7 @@ import org.ovirt.engine.core.compat.Version;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "VM")
-public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterable<DiskImage>, Serializable {
+public class VM extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
     private static final long serialVersionUID = -4078140531074414263L;
     @Valid
     private VmStatic mVmStatic;
@@ -1449,11 +1449,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Iterabl
     @Override
     public int hashCode() {
         return super.hashCode();
-    }
-
-    @Override
-    public java.util.Iterator<DiskImage> iterator() {
-        return mDiskMap.values().iterator();
     }
 
     @XmlElement(name = "VmPoolName")

@@ -75,7 +75,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
         // VM vm = DbFacade.Instance.GetvmsBy_vm_guid(VmId);
         VmHandler.updateDisksFromDb(getVm());
         // todo: omer - save only vm_snapshot_id instead all vm images
-        for (DiskImage image : getVm()) {
+        for (DiskImage image : getVm().getDiskMap().values()) {
             DbFacade.getInstance().getDiskImageDAO().addImageVmPoolMap(
                     new image_vm_pool_map(image.getId(), image.getinternal_drive_mapping(), getVmId()));
         }
