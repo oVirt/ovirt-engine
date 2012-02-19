@@ -101,6 +101,10 @@ public class HostInterfaceLineModel extends Model
         }
     }
 
+    public int getVlanSize() {
+        return vLans == null ? 0 : vLans.size();
+    }
+
     private String networkName;
 
     public String getNetworkName()

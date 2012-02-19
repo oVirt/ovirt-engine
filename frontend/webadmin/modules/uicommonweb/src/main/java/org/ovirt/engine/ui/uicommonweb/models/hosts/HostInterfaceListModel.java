@@ -1551,6 +1551,19 @@ public class HostInterfaceListModel extends SearchableListModel
         VdsNetworkInterface interfaceWithNetwork =
                 (VdsNetworkInterface) Linq.FindInterfaceNetworkNameNotEmpty(Linq.VdsNetworkInterfaceListToBase(selectedItems));
 
+        // look for lines with vlans
+        java.util.ArrayList<HostInterfaceLineModel> itemList =
+                (java.util.ArrayList<HostInterfaceLineModel>) getItems();
+        for (HostInterfaceLineModel lineModel : itemList)
+        {
+            if (lineModel.getIsSelected() && lineModel.getVlanSize() == 1)
+            {
+                interfaceWithNetwork = lineModel.getVLans().get(0).getInterface();
+                // bond action is only enabled if there is one vlaned interface
+                break;
+            }
+        }
+
         if (interfaceWithNetwork != null)
         {
             UpdateNetworkToVdsParameters parameters =
@@ -2128,16 +2141,29 @@ public class HostInterfaceListModel extends SearchableListModel
                 && Linq.FindAllInterfaceBondNameIsEmpty(selectedItems).size() == selectedItems.size()
                 && Linq.FindAllInterfaceVlanIdIsEmpty(selectedItems).size() == selectedItems.size());
 
+        // to bond, selected lines must not have more that 1 networks (vlan or not)
         if (getItems() != null)
         {
             java.util.ArrayList<HostInterfaceLineModel> itemList =
                     (java.util.ArrayList<HostInterfaceLineModel>) getItems();
-            for (HostInterfaceLineModel lineMdoel : itemList)
+            // total network count cannot be more than 1
+            int totalNetworkCount = 0;
+            for (HostInterfaceLineModel lineModel : itemList)
             {
-                if (lineMdoel.getIsSelected() && lineMdoel.getVLans() != null && lineMdoel.getVLans().size() > 0)
+                if (lineModel.getIsSelected())
                 {
-                    getBondCommand().setIsExecutionAllowed(false);
-                    break;
+                    int lineNetworkCount = lineModel.getVlanSize() + (lineModel.getNetworkName() != null ? 1 : 0);
+                    if (lineNetworkCount > 1) {
+                        // bailout
+                        getBondCommand().setIsExecutionAllowed(false);
+                        break;
+                    }
+                    totalNetworkCount += lineNetworkCount;
+                    if (totalNetworkCount > 1) {
+                        // bailout
+                        getBondCommand().setIsExecutionAllowed(false);
+                        break;
+                    }
                 }
             }
         }
