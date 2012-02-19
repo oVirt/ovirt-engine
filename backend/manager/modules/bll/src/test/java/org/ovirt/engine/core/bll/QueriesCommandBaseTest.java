@@ -4,17 +4,16 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
@@ -23,6 +22,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -35,17 +35,20 @@ public class QueriesCommandBaseTest {
     /* Getters and Setters tests */
 
     /** Test {@link QueriesCommandBase#isInternalExecution()} and {@link QueriesCommandBase#setInternalExecution(boolean) */
+    @Test
     public void testIsInternalExecutionDefault() {
         ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(mock(VdcQueryParametersBase.class));
         assertFalse("By default, a query should not be marked for internel execution", query.isInternalExecution());
     }
 
+    @Test
     public void testIsInternalExecutionTrue() {
         ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(mock(VdcQueryParametersBase.class));
         query.setInternalExecution(true);
         assertTrue("Query should be marked for internel execution", query.isInternalExecution());
     }
 
+    @Test
     public void testIsInternalExecutionFalse() {
         ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(mock(VdcQueryParametersBase.class));
 
@@ -53,7 +56,7 @@ public class QueriesCommandBaseTest {
         query.setInternalExecution(true);
         query.setInternalExecution(false);
 
-        assertTrue("Query should not be marked for internel execution", query.isInternalExecution());
+        assertFalse("Query should not be marked for internel execution", query.isInternalExecution());
     }
 
     /** Test queries are created with the correct type */
@@ -81,11 +84,8 @@ public class QueriesCommandBaseTest {
                 }
                 QueriesCommandBase<?> query = cons.newInstance(params);
 
-                // find the getQueryType method - note that it's private.
-                Field typeField = getQueryTypeField();
+                VdcQueryType type = TestHelperQueriesCommandType.getQueryTypeFieldValue(query);
 
-                // Invoke it and get the enum
-                VdcQueryType type = (VdcQueryType) typeField.get(query);
                 assertNotNull("could not find type", type);
                 assertFalse("could not find type", type.equals(VdcQueryType.Unknown));
             } catch (ClassNotFoundException ignore) {
@@ -100,61 +100,62 @@ public class QueriesCommandBaseTest {
     @Test
     public void testUnknownQuery() throws Exception {
         ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(mock(VdcQueryParametersBase.class));
-        Field f = getQueryTypeField();
-        assertEquals("Wrong type for 'ThereIsNoSuchQuery' ", VdcQueryType.Unknown, f.get(query));
+        assertEquals("Wrong type for 'ThereIsNoSuchQuery' ",
+                VdcQueryType.Unknown,
+                TestHelperQueriesCommandType.getQueryTypeFieldValue(query));
     }
 
-// TODO: Temporarily commented out until permission checking will be re-enabled, comment this back in when possible
-//    /** Tests Admin permission check */
-//    @Test
-//    public void testPermissionChecking() throws Exception {
-//        boolean[] booleans = { true, false };
-//        for (VdcQueryType queryType : VdcQueryType.values()) {
-//            for (boolean isFiltered : booleans) {
-//                for (boolean isUserAdmin : booleans) {
-//                    for (boolean isInternalExecution : booleans) {
-//                        boolean shouldBeAbleToRunQuery =
-//                                isInternalExecution || isUserAdmin || (isFiltered && !queryType.isAdmin());
-//
-//                        log.debug("Running on query: " + toString());
-//
-//                        String sessionId = getClass().getSimpleName();
-//
-//                        // Mock parameters
-//                        VdcQueryParametersBase params = mock(VdcQueryParametersBase.class);
-//                        when(params.isFiltered()).thenReturn(isFiltered);
-//                        when(params.getSessionId()).thenReturn(sessionId);
-//
-//                        Guid guid = mock(Guid.class);
-//
-//                        PowerMockito.mockStatic(MultiLevelAdministrationHandler.class);
-//                        when(MultiLevelAdministrationHandler.isAdminUser(guid)).thenReturn(isUserAdmin);
-//
-//                        // Set up the user id env.
-//                        IVdcUser user = mock(IVdcUser.class);
-//                        when(user.getUserId()).thenReturn(guid);
-//                        ThreadLocalParamsContainer.setHttpSessionId(sessionId);
-//                        ThreadLocalParamsContainer.setVdcUser(user);
-//
-//                        // Mock-Set the query as admin/user
-//                        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(params);
-//                        Field adminQueryField = getQueryTypeField();
-//                        adminQueryField.set(query, queryType);
-//
-//                        query.setInternalExecution(isInternalExecution);
-//                        query.ExecuteCommand();
-//                        assertEquals("Running with type=" + queryType + " isUserAdmin=" + isUserAdmin + " isFiltered="
-//                                + isFiltered + " isInternalExecution=" + isInternalExecution + "\n " +
-//                                "Query should succeed is: ", shouldBeAbleToRunQuery, query.getQueryReturnValue()
-//                                .getSucceeded());
-//
-//                        ThreadLocalParamsContainer.clean();
-//                        SessionDataContainer.getInstance().removeSession();
-//                    }
-//                }
-//            }
-//        }
-//    }
+    // TODO: Temporarily ignored until permission checking will be re-enabled, comment this back in when possible
+    /** Tests Admin permission check */
+    @Ignore
+    @Test
+    public void testPermissionChecking() throws Exception {
+        boolean[] booleans = { true, false };
+        for (VdcQueryType queryType : VdcQueryType.values()) {
+            for (boolean isFiltered : booleans) {
+                for (boolean isUserAdmin : booleans) {
+                    for (boolean isInternalExecution : booleans) {
+                        boolean shouldBeAbleToRunQuery =
+                                isInternalExecution || isUserAdmin || (isFiltered && !queryType.isAdmin());
+
+                        log.debug("Running on query: " + toString());
+
+                        String sessionId = getClass().getSimpleName();
+
+                        // Mock parameters
+                        VdcQueryParametersBase params = mock(VdcQueryParametersBase.class);
+                        when(params.isFiltered()).thenReturn(isFiltered);
+                        when(params.getSessionId()).thenReturn(sessionId);
+
+                        Guid guid = mock(Guid.class);
+
+                        PowerMockito.mockStatic(MultiLevelAdministrationHandler.class);
+                        when(MultiLevelAdministrationHandler.isAdminUser(guid)).thenReturn(isUserAdmin);
+
+                        // Set up the user id env.
+                        IVdcUser user = mock(IVdcUser.class);
+                        when(user.getUserId()).thenReturn(guid);
+                        ThreadLocalParamsContainer.setHttpSessionId(sessionId);
+                        ThreadLocalParamsContainer.setVdcUser(user);
+
+                        // Mock-Set the query as admin/user
+                        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(params);
+                        TestHelperQueriesCommandType.setQueryTypeFieldValue(query, queryType);
+
+                        query.setInternalExecution(isInternalExecution);
+                        query.ExecuteCommand();
+                        assertEquals("Running with type=" + queryType + " isUserAdmin=" + isUserAdmin + " isFiltered="
+                                + isFiltered + " isInternalExecution=" + isInternalExecution + "\n " +
+                                "Query should succeed is: ", shouldBeAbleToRunQuery, query.getQueryReturnValue()
+                                .getSucceeded());
+
+                        ThreadLocalParamsContainer.clean();
+                        SessionDataContainer.getInstance().removeSession();
+                    }
+                }
+            }
+        }
+    }
 
     @Test
     public void testGetUserID() {
@@ -181,18 +182,6 @@ public class QueriesCommandBaseTest {
     public void clearSession() {
         ThreadLocalParamsContainer.clean();
         SessionDataContainer.getInstance().removeSession();
-    }
-
-    /** @return The private type field, via reflection */
-    private static Field getQueryTypeField() {
-        for (Field f : QueriesCommandBase.class.getDeclaredFields()) {
-            if (f.getName().equals("type")) {
-                f.setAccessible(true);
-                return f;
-            }
-        }
-        fail("Can't find the type field");
-        return null;
     }
 
     /** A stub class that will cause the {@link VdcQueryType#Unknown} to be used */

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -10,6 +11,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.UUID;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -21,7 +23,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 /** An abstract test class for query classes that handles common mocking requirements */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DbFacade.class)
-public class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> {
+public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> {
 
     private P params;
     private Q query;
@@ -95,5 +97,12 @@ public class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends Queri
     /** @return The mocked user to use in the test */
     protected IVdcUser getUser() {
         return user;
+    }
+
+    /** Verify that all queries tested in this manner were flagged as user queries in the {@link org.ovirt.engine.core.common.queries.VdcQueryType} enum */
+    @Test
+    public void testQueryIsAUserQuery() throws IllegalArgumentException, IllegalAccessException {
+        assertFalse("A query tested for filtered access should not be an admin query",
+                TestHelperQueriesCommandType.getQueryTypeFieldValue(getQuery()).isAdmin());
     }
 }
