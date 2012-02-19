@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION Upgrade_AddSnapshotsTable_03_01_0380()
+CREATE OR REPLACE FUNCTION Upgrade_AddSnapshotsTable_03_01_0390()
 RETURNS void
 AS $function$
 BEGIN
@@ -26,7 +26,7 @@ END; $function$
 LANGUAGE plpgsql;
 
 
-SELECT * FROM Upgrade_AddSnapshotsTable_03_01_0380();
+SELECT * FROM Upgrade_AddSnapshotsTable_03_01_0390();
 
-DROP FUNCTION Upgrade_AddSnapshotsTable_03_01_0380();
+DROP FUNCTION Upgrade_AddSnapshotsTable_03_01_0390();
 
