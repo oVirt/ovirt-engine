@@ -5,6 +5,7 @@ import sys
 import os
 import logging
 import traceback
+import types
 import pwd
 from optparse import OptionParser
 import yum
@@ -26,7 +27,11 @@ RPM_DBSCRIPTS = "ovirt-engine-dbscripts"
 RPM_SETUP = "ovirt-engine-setup"
 RPM_UPGRADE = "ovirt-engine-upgrade"
 
-SERVER_NAME = "127.0.0.1"
+# DB default configuration
+SERVER_NAME = basedefs.DB_HOST
+SERVER_PORT = basedefs.DB_PORT
+SERVER_ADMIN = basedefs.DB_ADMIN
+
 BACKUP_DIR = "/usr/share/ovirt-engine/db-backups"
 BACKUP_FILE = "ovirt-engine_db_backup"
 LOG_PATH = "/var/log/ovirt-engine"
@@ -51,6 +56,7 @@ MSG_ERROR_BACKUP_DB = "Error: Database backup failed"
 MSG_ERROR_RESTORE_DB = "Error: Database restore failed"
 MSG_ERROR_DROP_DB = "Error: Database drop failed"
 MSG_ERROR_UPDATE_DB = "Error: Database update failed"
+MSG_ERROR_RENAME_DB = "Error: Database rename failed. Check that there are no active connections and try again."
 MSG_ERROR_YUM_HISTORY_LIST = "Error: Can't get history from yum"
 MSG_ERROR_YUM_HISTORY_GETLAST = "Error: Can't find last install transaction in yum"
 MSG_ERROR_YUM_HISTORY_UNDO = "Error: Can't rollback yum"
@@ -65,6 +71,7 @@ MSG_ERR_FAILED_STATUS_JBOSS_SERVICE = "Error: Can't get JBoss service status"
 MSG_ERR_FAILED_START_SERVICE = "Error: Can't start the %s service"
 MSG_ERR_FAILED_STOP_SERVICE = "Error: Can't stop the %s service"
 MSG_ERR_SQL_CODE = "Failed running sql query"
+MSG_ERR_EXP_UPD_DC_TYPE="Failed updating default Data Center Storage Type in %s db"
 MSG_ERROR_JBOSS_PID = "Error: JBoss service is dead, but pid file exists"
 MSG_ERROR_YUM_TID = "Error: Yum transaction mismatch"
 
@@ -73,6 +80,8 @@ MSG_INFO_ERROR = "ERROR"
 MSG_INFO_REASON = " **Reason: %s**\n"
 MSG_INFO_STOP_JBOSS = "Stopping JBoss Service"
 MSG_INFO_BACKUP_DB = "Backing Up Database"
+MSG_INFO_RENAME_DB = "Rename Database"
+MSG_INFO_RESTORE_DB = "Restore Database name"
 MSG_INFO_YUM_UPDATE = "Updating rpms"
 MSG_INFO_DB_UPDATE = "Updating Database"
 MSG_INFO_RUN_POST = "Running post install configuration"
@@ -394,6 +403,7 @@ class DB():
         date = utils.getCurrentDateTime()
         self.sqlfile = "%s/%s_%s.sql" % (BACKUP_DIR, BACKUP_FILE, date)
         self.updated = False
+        self.name = basedefs.DB_NAME
 
     def __del__(self):
         if self.updated:
@@ -401,25 +411,26 @@ class DB():
             print "* %s %s" % (MSG_INFO_DB_BACKUP_FILE, self.sqlfile)
 
     def backup(self):
-        # pg_dump -C -E UTF8  --column-inserts --disable-dollar-quoting  --disable-triggers -U postgres --format=p -f $dir/$file  ovirt-engine
+        # pg_dump -C -E UTF8  --column-inserts --disable-dollar-quoting  --disable-triggers -U postgres -h host -p port --format=p -f $dir/$file  ovirt-engine
         logging.debug("DB Backup started")
-        #cmd = "%s -C -E UTF8 --column-inserts --disable-dollar-quoting  --disable-triggers -U %s --format=p -f %s %s"\
-            #%(basedefs.EXEC_PGDUMP, basedefs.DB_ADMIN, self.sqlfile, basedefs.DB_NAME)
+        #cmd = "%s -C -E UTF8 --column-inserts --disable-dollar-quoting  --disable-triggers -U %s -h %s -p %s --format=p -f %s %s"\
+            #%(basedefs.EXEC_PGDUMP, SERVER_ADMIN, SERVER_HOST, SERVER_PORT, self.sqlfile, basedefs.DB_NAME)
         cmd = [basedefs.EXEC_PGDUMP, "-C", "-E", "UTF8", "--column-inserts", "--disable-dollar-quoting", "--disable-triggers",
-                "-U", basedefs.DB_ADMIN, "--format=p", "-f", self.sqlfile, basedefs.DB_NAME]
+                "-U", SERVER_ADMIN, "-h", SERVER_NAME, "-p", SERVER_PORT, "--format=p", "-f", self.sqlfile, basedefs.DB_NAME]
         output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_BACKUP_DB)
         logging.debug("DB Backup completed successfully")
 
     def restore(self):
-        #psql -U postgres -f <backup directory>/<backup_file>
+        #psql -U postgres -h host -p port -f <backup directory>/<backup_file>
         if self.updated:
             logging.debug("DB Restore started")
-            # Drop
-            cmd = [basedefs.EXEC_DROPDB, "-U", basedefs.DB_ADMIN, basedefs.DB_NAME]
+
+            # If we're here, upgrade failed. Drop temp DB.
+            cmd = [basedefs.EXEC_DROPDB, "-U", SERVER_ADMIN, "-h", SERVER_NAME, "-p", SERVER_PORT, self.name]
             output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_DROP_DB)
 
             # Restore
-            cmd = [basedefs.EXEC_PSQL, "-U", basedefs.DB_ADMIN, "-f", self.sqlfile]
+            cmd = [basedefs.EXEC_PSQL, "-U", SERVER_ADMIN, "-h", SERVER_NAME, "-p", SERVER_PORT, "-f", self.sqlfile]
             output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_RESTORE_DB)
             logging.debug("DB Restore completed successfully")
         else:
@@ -433,28 +444,35 @@ class DB():
         try:
             self.updated = True
             logging.debug("DB Update started")
-            # ./upgrade.sh -s ${SERVERNAME} -d ${DATABASE} -u ${USERNAME};
-            #cmd = "%s -s %s -d %s -u %s"%(basedefs.FILE_DB_UPGRADE_SCRIPT, SERVER_NAME, basedefs.DB_NAME, basedefs.DB_ADMIN)
+
+            # Perform the upgrade
+            # ./upgrade.sh -s ${SERVERNAME} -p ${PORT} -u ${USERNAME} -d ${DATABASE};
             dbupgrade = os.path.join(basedefs.DIR_DB_SCRIPTS, basedefs.FILE_DB_UPGRADE_SCRIPT)
-            cmd = [dbupgrade, "-s", SERVER_NAME, "-d", basedefs.DB_NAME, "-u", basedefs.DB_ADMIN]
+            cmd = [dbupgrade, "-s", SERVER_NAME, "-p", SERVER_PORT, "-u", SERVER_ADMIN, "-d", self.name]
             output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_UPDATE_DB)
             logging.debug("DB Update completed successfully")
+
         finally:
             os.chdir(cwd)
 
-def restartPostgresql():
-    """
-    restart the postgresql service
-    """
+    def rename(self, newname):
+        """ Rename DB from current name to a newname"""
 
-    logging.debug("Restarting the postgresql service")
-    postgresql = utils.Service("postgresql")
-    postgresql.stop(True)
-    postgresql.start(True)
+        # Check that newname is different from current
+        if self.name == newname:
+            return
 
-    # Now we want to make sure the postgres service is up
-    # before we continue to the upgrade
-    utils.retry(isDBUp, tries=10, timeout=30)
+        # run the rename query and raise Exception on error
+        query = "ALTER DATABASE %s RENAME TO %s" % (self.name, newname)
+        try:
+            utils.execRemoteSqlCommand(SERVER_ADMIN, SERVER_NAME, SERVER_PORT, basedefs.DB_POSTGRES, query, True, MSG_ERROR_RENAME_DB)
+            # set name to the newname
+            self.name = newname
+        except:
+            # if this happened before DB update, remove DB backup file.
+            if not self.updated and os.path.exists(self.sqlfile):
+                os.remove(self.sqlfile)
+            raise
 
 def stopJboss():
     logging.debug("stopping jboss service.")
@@ -482,7 +500,10 @@ def runFunc(funcList, dispString):
     spaceLen = basedefs.SPACE_LEN - len(dispString)
     try:
         for func in funcList:
-            func()
+            if type(func) is types.ListType:
+                func[0](*func[1:])
+            else:
+                func()
         print ("[ " + utils.getColoredText(MSG_INFO_DONE, basedefs.GREEN) + " ]").rjust(spaceLen)
     except:
         print ("[ " + utils.getColoredText(MSG_INFO_ERROR, basedefs.RED) + " ]").rjust(spaceLen+3)
@@ -563,6 +584,7 @@ def startDbRelatedServices(etlService, notificationService):
 def main(options):
     rhyum = MYum()
     db = DB()
+    DB_NAME_TEMP = "%s_%s" % (basedefs.DB_NAME, utils.getCurrentDateTime())
 
     # Check for upgrade, else exit
     print MSG_INFO_CHECK_UPDATE
@@ -596,7 +618,7 @@ def main(options):
         # We ask the user before stoping jboss or take command line option
         if options.unattended_upgrade or checkJbossService():
             # Stopping jboss
-            runFunc([stopJboss], MSG_INFO_STOP_JBOSS )
+            runFunc([stopJboss], MSG_INFO_STOP_JBOSS)
         else:
             # This means that user chose not to stop jboss
             logging.debug("exiting gracefully")
@@ -606,6 +628,7 @@ def main(options):
         # Backup DB
         if isUpdateRelatedToDb(rhyum):
             runFunc([db.backup], MSG_INFO_BACKUP_DB)
+            runFunc([[db.rename, DB_NAME_TEMP]], MSG_INFO_RENAME_DB)
 
     except Exception as e:
         print e
@@ -624,8 +647,9 @@ def main(options):
         if isUpdateRelatedToDb(rhyum):
             stopDbRelatedServices(etlService, notificationService)
 
-            # Update the db
-            runFunc([restartPostgresql, db.update], MSG_INFO_DB_UPDATE)
+            # Update the db and restore its name back
+            runFunc([db.update], MSG_INFO_DB_UPDATE)
+            runFunc([[db.rename, basedefs.DB_NAME]], MSG_INFO_RESTORE_DB)
 
             # Bring up any services we shut down before db upgrade
             startDbRelatedServices(etlService, notificationService)
@@ -669,6 +693,11 @@ if __name__ == '__main__':
 
         # Init logging facility
         initLogging()
+
+        # DB Configuration
+        SERVER_NAME = utils.getDbHostName()
+        SERVER_PORT = utils.getDbPort()
+        SERVER_ADMIN = utils.getDbAdminUser()
 
         # get iso and domain from user arguments
         (options, args) = getOptions()

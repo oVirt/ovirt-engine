@@ -176,7 +176,7 @@ class XMLConfigFileHandler(ConfigFileHandler):
 
     def addNodes(self, xpath, xml):
         """
-        Add a given xml into a specific point specified by the given xpath path into the xml object 
+        Add a given xml into a specific point specified by the given xpath path into the xml object
         xml can be either a libxml2 instance or a string which contains a valid xml
         """
         parentNode = self.xpathEval(xpath)[0]
@@ -200,7 +200,7 @@ def getXmlNode(xml, xpath):
         raise Exception(output_messages.ERR_EXP_UPD_XML_CONTENT%(xpath, len(nodes)))
     return nodes[0]
 
-def setXmlContent(xml,xpath,content):
+def setXmlContent(xml, xpath,content):
     node = xml.xpathEval(xpath)
     if len(node) == 0:
         parentNode = xml.xpathEval(os.path.dirname(xpath))
@@ -236,7 +236,7 @@ def isTcpPortOpen(port):
     pid = False
     logging.debug("Checking if TCP port %s is open by any process" % port)
     output, rc = execExternalCmd(cmd, True, output_messages.ERR_EXP_LSOF)
-	#regex catches: 
+	#regex catches:
 	#java      17564    jboss   90u  IPv4 1251444      0t0  TCP *:3873 (LISTEN)
     pattern=re.compile("^(\w+)\s+(\d+)\s+.+TCP\s\*\:(%s)\s\(LISTEN\)$" % (port))
     list = output.split("\n")
@@ -313,8 +313,14 @@ def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_COD
     return ("".join(output.splitlines(True)), proc.returncode)
 
 def execSqlCommand(userName, dbName, sqlQuery, failOnError=False, errMsg=output_messages.ERR_SQL_CODE):
-    logging.debug("running sql query %s on db: \'%s\'."%(dbName, sqlQuery))
+    logging.debug("running sql query \'%s\' on db." % sqlQuery)
     cmd = "/usr/bin/psql -U %s -d %s -c \"%s\""%(userName, dbName, sqlQuery)
+    return execExternalCmd(cmd, failOnError, errMsg)
+
+#TODO: refactor this and previous functions into same execution.
+def execRemoteSqlCommand(userName, dbHost, dbPort, dbName, sqlQuery, failOnError=False, errMsg=output_messages.ERR_SQL_CODE):
+    logging.debug("running sql query '%s' on db server: \'%s\'." % (sqlQuery, dbHost))
+    cmd = "/usr/bin/psql -h %s -p %s -U %s -d %s -c \"%s\"" % (dbHost, dbPort, userName, dbName, sqlQuery)
     return execExternalCmd(cmd, failOnError, errMsg)
 
 def replaceWithLink(target, link):
@@ -498,40 +504,111 @@ def copyFile(filename, destination, uid=-1, gid=-1, filemod=-1):
     logging.debug("setting file %s mode to %d"%(targetFile, filemod))
     os.chmod(targetFile, filemod)
 
-def backupDB(db, user, backupFile):
+def getDbAdminUser():
+    """
+    Retrieve Admin user from .pgpass file on the system.
+    Use default settings if file is not found.
+    """
+    admin_user = getDbConfig("admin")
+    if admin_user:
+        return admin_user
+    return basedefs.DB_ADMIN
+
+def getDbHostName():
+    """
+    Retrieve DB Host name from .pgpass file on the system.
+    Use default settings if file is not found, or '*' was used.
+    """
+
+    host = getDbConfig("host")
+    if host and host != "*":
+        return host
+    return basedefs.DB_HOST
+
+def getDbPort():
+    """
+    Retrieve DB port number from .pgpass file on the system.
+    Use default settings if file is not found, or '*' was used.
+    """
+    port = getDbConfig("port")
+    if port:
+        return port
+    return basedefs.DB_PORT
+
+def getDbConfig(param):
+    """
+    Generic function to retrieve values from admin line in .pgpass
+    """
+    field = {'admin' : 3, 'host' : 0, 'port' : 1}
+    if param not in field.keys():
+        return False
+
+    inDbConfigSection = False
+    if (os.path.exists(basedefs.DB_PASS_FILE)):
+        logging.debug("found existing pgpass file, fetching DB %s value" % param)
+        with open (basedefs.DB_PASS_FILE) as pgPassFile:
+            for line in pgPassFile:
+                if "oVirt-engine DB ADMIN settings section" in line:
+                    inDbConfigSection = True
+                    continue
+
+                if inDbConfigSection:
+                    # Means we're on DB ADMIN user line, as it's for all DBs
+                    dbcreds = line.split(":")
+                    pgPassFile.close()
+                    return dbcreds[field[param]]
+
+    return False
+
+
+def backupDB(db, user, backupFile, host="localhost", port="5432"):
     """
     Backup postgres db
     using pgdump
     Args:  file - a target file to backup to
            db - db name to backup
            user - db user to use for backup
+           host - db host where postgresql server runs
+           port - db connection port
     """
     logging.debug("%s DB Backup started"%(db))
-    cmd = "%s -C -E UTF8 --column-inserts --disable-dollar-quoting  --disable-triggers -U %s --format=p -f %s %s"\
-        %(basedefs.EXEC_PGDUMP, user, backupFile, db)
+    cmd = "%s -C -E UTF8 --column-inserts\
+                         --disable-dollar-quoting\
+                         --disable-triggers\
+                         --format=p -f %s %s\
+                         -U %s -h %s -p %s"\
+        %(basedefs.EXEC_PGDUMP, backupFile, db, user, host, port)
+
     output, rc = execExternalCmd(cmd, True, output_messages.ERR_DB_BACKUP)
     logging.debug("%s DB Backup completed successfully"%(db))
 
-def restoreDB(db, user, backupFile):
+def restoreDB(user, host, port, backupFile):
     """
     Restore postgres db
     using pgrestore
-    WARNING! - DROPS EXISTING DB
     Args:  file - a db backup file to restore from
-           db - db name to backup
            user - db user to use for backup
+           host - db host where postgresql server runs
+           port - db connection port
     """
-    # Drop
-    #TODO: do we want to backup existing db before drop?
-    logging.debug("dropping %s DB"%(db))
-    cmd = "%s -U %s %s"%(basedefs.EXEC_DROPDB, user, db)
-    output, rc = execExternalCmd(cmd, True, output_messages.ERR_DB_DROP)
 
     # Restore
-    logging.debug("%s DB Restore started"%(db))
-    cmd = "%s -U %s -f %s"%(basedefs.EXEC_PSQL, user, backupFile)
+    logging.debug("DB Restore started")
+    cmd = "%s -h %s -p %s -U %s -f %s"%(basedefs.EXEC_PSQL, host, port, user, backupFile)
     output, rc = execExternalCmd(cmd, True, output_messages.ERR_DB_RESTORE)
-    logging.debug("%s DB Restore completed successfully"%(db))
+    logging.debug("DB Restore completed successfully")
+
+def renameDB(oldname, newname):
+    """docstring for renameDb"""
+
+    if oldname == newname:
+        return
+
+    logging.info("Renaming '%s' to '%s'..." % (oldname, newname))
+    sqlQuery="ALTER DATABASE %s RENAME TO %s" % (oldname, newname)
+    execRemoteSqlCommand(getDbAdminUser(), getDbHostName(), getDbPort(),
+                               basedefs.DB_POSTGRES, sqlQuery, True,
+                               output_messages.ERR_DB_RENAME % (oldname, newname))
 
 def updateVDCOption(key, value, maskList=[]):
     """
@@ -610,15 +687,55 @@ def retry(func, expectedException=Exception, tries=None, timeout=None, sleep=1):
 
             time.sleep(sleep)
 
-def checkIfRhevmDbIsUp():
+def checkIfDbIsUp():
     """
-    func to test is rhevm is up
-    
+    func to test is db is up
+
     will throw exception on error
     and not return a value
     """
-    logging.debug("checking if rhevm db is already installed and running..")
-    (out, rc) = execSqlCommand(basedefs.DB_ADMIN, basedefs.DB_NAME, "select 1", True)
+    logging.debug("checking if db is already installed and running..")
+    execRemoteSqlCommand(getDbAdminUser(), getDbHostName(), getDbPort(), basedefs.DB_NAME, "select 1", True)
+
+def localHost(hostname):
+    # Create an ip set of possible IPs on the machine. Set has only unique values, so
+    # there's no problem with union.
+    # TODO: cache the list somehow? There's no poing quering the IP configuraion all the time.
+    ipset = getConfiguredIps().union(set([ "localhost", "127.0.0.1"]))
+    if hostname in ipset:
+        return True
+    return False
+
+def clearDbConnections(dbName):
+    """ Lock local DB and clear active connections """
+    # Block new connections first
+    logging.info("Closing DB '%s' for new connections" % dbName)
+    query = "update pg_database set datallowconn = 'false' where datname = '%s';" % dbName
+    cmd = [basedefs.EXEC_PSQL, "-U", getDbAdminUser(), "-c", query]
+    execCmd(cmd, None, True, output_messages.ERROR_BLOCK_DB_CONNECTIONS)
+
+    # Disconnect active connections
+    logging.info("Disconnect active connections from DB '%s'" % dbName)
+    query = "SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname = '%s'" % dbName
+    cmd = [basedefs.EXEC_PSQL, "-U", getDbAdminUser(), "-c", query]
+    execCmd(cmd, None, True, output_messages.ERROR_CLEAR_DB_CONNECTIONS)
+
+def listTempDbs():
+    """ Create a list of temp DB's on the server with regex 'engine_*' """
+
+    dbListRemove = [basedefs.DB_NAME]
+    cmd = [basedefs.EXEC_PSQL, "-U", getDbAdminUser(), "-h", getDbHostName(), "-p", getDbPort(), "--list"]
+    output, rc = execCmd(cmd, None, False, output_messages.ERR_DB_TEMP_LIST)
+    if rc:
+        logging.error(output_messages.ERR_DB_TEMP_LIST)
+        raise Exception ("\n" + output_messages.ERR_DB_TEMP_LIST + "\n")
+
+    # if there are temp DB that need to be removed, add them to DB list
+    tempDbs = re.findall("engine_\w*", output)
+    if len(tempDbs) > 0:
+        dbListRemove.extend(tempDbs)
+
+    return dbListRemove
 
 # TODO: Support SystemD services
 class Service():
@@ -668,7 +785,7 @@ class Service():
         (output, rc) = self._serviceFacility(self.serviceName, "status")
         return (output, rc)
 
-    def _serviceFacility(self, serviceName, action): 
+    def _serviceFacility(self, serviceName, action):
         """
         Execute the command "service serviceName action"
         returns: output, rc
@@ -676,13 +793,3 @@ class Service():
         logging.debug("executing action %s on service %s", serviceName, action)
         cmd = [basedefs.EXEC_SERVICE, serviceName, action]
         return execCmd(cmdList=cmd, usePipeFiles=True)
-
-def getColoredText (text, color):
-    ''' gets text string and color
-        and returns a colored text.
-        the color values are RED/BLUE/GREEN/YELLOW
-        everytime we color a text, we need to disable
-        the color at the end of it, for that
-        we use the NO_COLOR chars.
-    '''
-    return color + text + basedefs.NO_COLOR

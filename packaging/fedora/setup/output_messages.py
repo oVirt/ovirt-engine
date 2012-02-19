@@ -2,7 +2,7 @@
 external text file to hold all user visible text.
 info messages begins with INFO_ and error msg with ERR_
 
-any text with %s inside it, has dynamic parameters inside. 
+any text with %s inside it, has dynamic parameters inside.
 please don't remove the %s from the text.
 you can relocate %s position in the text as long as the context is kept.
 \n means new line in the text
@@ -18,8 +18,8 @@ import basedefs
 ####INFO MESSAGES####
 #####################
 
-#Global parameters 
-MY_NAME="oVirt Engine" 
+#Global parameters
+MY_NAME="oVirt Engine"
 CONST_CLEANUP="engine-cleanup"
 CONST_SETUP="engine-setup"
 CONST_MANAGE_DOMAINS="engine-manage-domains"
@@ -29,6 +29,7 @@ INFO_HEADER="Welcome to %s setup utility" % MY_NAME
 INFO_INSTALL_SUCCESS="\n **** Installation completed successfully ******\n\n     (Please allow %s a few moments to start up.....)\n" % MY_NAME
 INFO_INSTALL="Installing:"
 INFO_SET_DB_SECURITY="Setting Database Security"
+INFO_SET_DB_CONFIGURATION="Setting Database Configuration"
 INFO_CONFIG_OVIRT_ENGINE="Configuring oVirt-engine"
 INFO_CREATE_CA="Creating CA"
 INFO_CREATE_DB="Creating Database"
@@ -57,8 +58,10 @@ INFO_ERROR="ERROR"
 
 # Group descriptions
 INFO_GRP_ALL="General configuration parameters"
-INFO_GRP_ISO="ISO Domain paramters"
-INFO_GRP_IPTABLES="Firewall related paramters"
+INFO_GRP_REMOTE_DB="Remote DB parameters"
+INFO_GRP_LOCAL_DB="Local DB parameters"
+INFO_GRP_ISO="ISO Domain parameters"
+INFO_GRP_IPTABLES="Firewall related parameters"
 
 #_addFinalInfoMsg
 INFO_LOG_FILE_PATH="The installation log file is available at: %s"
@@ -67,7 +70,7 @@ INFO_RHEVM_URL="To access "+MY_NAME+" please go to the following URL: %s"
 #_printAdditionalMessages
 INFO_ADDTIONAL_MSG="Additional information:"
 # the %s here is the msg
-INFO_ADDTIONAL_MSG_BULLET=" * %s" 
+INFO_ADDTIONAL_MSG_BULLET=" * %s"
 
 #addtional info about db restore
 INFO_DB_RESTORED="Database upgrade failed. Previous database has been restored"
@@ -115,9 +118,24 @@ INFO_CONF_PARAMS_NFS_DESC_USAGE="ISO Domain name"
 INFO_CONF_PARAMS_NFS_DESC_PROMPT="Display name for the ISO Domain"
 INFO_CONF_PARAMS_MAC_RANGE_USAGE="MAC range for the virtual machines, e.g. 00:11:22:33:44:00-00:11:22:33:44:FF"
 INFO_CONF_PARAMS_MAC_RANG_PROMPT="MAC range for the virtual machines"
-INFO_CONF_PARAMS_DB_PASSWD_USAGE="Password for the locally created database"
-INFO_CONF_PARAMS_DB_PASSWD_PROMPT="Database password (required for secure authentication with the locally created database)"
+INFO_CONF_PARAMS_DB_PASSWD_USAGE="Password for the local database administrator"
+INFO_CONF_PARAMS_DB_PASSWD_PROMPT="Enter local database password (required for secure authentication with the database)"
 INFO_CONF_PARAMS_PASSWD_CONFIRM_PROMPT="Confirm password"
+
+#Remote DB interaction
+INFO_CONF_PARAMS_REMOTE_DB_USAGE="Select local or remote DB server"
+INFO_CONF_PARAMS_REMOTE_DB_PROMPT="Enter DB type for installation"
+INFO_CONF_PARAMS_USE_DB_HOST_USAGE="Hostname or IP address of the DB server."
+INFO_CONF_PARAMS_USE_DB_HOST_PROMPT="Enter the host IP or host name where DB is running"
+INFO_CONF_PARAMS_USE_DB_PORT_USAGE="Connection port for the remote DB"
+INFO_CONF_PARAMS_USE_DB_PORT_PROMPT="Enter DB port number"
+INFO_CONF_PARAMS_DB_ADMIN_USAGE="Remote DB admin user"
+INFO_CONF_PARAMS_DB_ADMIN_PROMPT="Enter DB admin user name"
+INFO_CONF_PARAMS_REMOTE_DB_PASSWD_USAGE="Password for the remote database administrator"
+INFO_CONF_PARAMS_REMOTE_DB_PASSWD_PROMPT="Enter remote database password (required for secure authentication with the database)"
+INFO_CONF_PARAMS_DB_SECURE_CONNECTION_USAGE="Should the connection to the DB be secure? (The support must be configured on remote DB server)"
+INFO_CONF_PARAMS_DB_SECURE_CONNECTION_PROMPT="Configure secure connection?"
+
 
 #Auth domain
 INFO_VAL_PATH_NAME_INVALID="ERROR: mount point is not a valid path"
@@ -154,6 +172,12 @@ INFO_STRING_CONTAINS_ILLEGAL_CHARS="String contains illegal characters"
 #####ERR MESSAGES####
 #####################
 
+# Ping failed
+ERR_PING = "ERROR: the provided hostname is unreachable"
+
+# Error creating temp pgpass file
+ERR_BACKUP_PGPASS = "ERROR: Failed to backup pgpass to temp file %s. Check file permissions."
+
 #runFunction
 ERR_EXP_RUN_FUNCTION="Internal error, Please report this issue"
 
@@ -162,20 +186,19 @@ ERR_CHECK_LOG_FILE_FOR_MORE_INFO="Please check log file %s for more information"
 ERR_YUM_LOCK="Internal Error: Can't edit versionlock "
 ERR_RPM_QUERY="Internal Error: Can't query rpm versions"
 
-#_createDB
+#_DB Errors
 ERR_DB_CREATE_FAILED="Database creation failed"
-
-# Upgrade db
 ERR_DB_UPGRADE_FAILED="Database upgrade failed. Previous database has been restored"
-
-# Db Backup
 ERR_DB_BACKUP="Database backup failed"
-
-# Db Backup
 ERR_DB_RESTORE="Database restore failed"
-
-# Db Backup
 ERR_DB_DROP="Database drop failed"
+ERR_DB_RENAME = "Failed to rename DB '%s' to '%s'. Check that there are no active connections and try again."
+ERR_DB_CONNECTION = "Could not connect to host %s with provided credentials. Check that your settings are correct."
+ERR_DB_CREATE_PRIV = "Couldn't create temp database on server %s. Check provided credentials."
+ERR_DB_DROP_PRIV = "Couldn't drop temp database on server %s. Check provided credentials."
+ERR_DB_CONNECTIONS_BLOCK = "Error: failed to block new DB connections"
+ERR_DB_CONNECTIONS_CLEAR = "Error: failed to clear active DB connections"
+ERR_DB_TEMP_LIST = "Error: failed fetch temp remote DB list. Verify that DB server is up and accessible."
 
 #_updateVdcOptions
 ERR_CANT_FIND_VDC_OPTION_FILE="Unexpected error, Cannot find %s"
@@ -254,7 +277,7 @@ ERR_EXP_UPD_JBOSS_BEANS="Error while editing %s"
 ERR_EXP_UPD_XML_FILE="Error while editing %s"
 
 #edit root war
-ERR_EXP_UPD_ROOT_WAR="Error while updating jboss ROOT.war directory" #Give full path  
+ERR_EXP_UPD_ROOT_WAR="Error while updating jboss ROOT.war directory" #Give full path
 ERR_EXP_CANT_FIND_CA_FILE="Can't find file %s"
 ERR_EXP_CPY_FILE="Failed copying %s to %s"
 ERR_READ_RPM_VER="Error reading version number for package %s"
@@ -269,7 +292,7 @@ ERR_EXP_FIND_AND_REPLACE="Failed to replace content in %s"
 ERR_EXP_UPD_XML_CONTENT="Unexpected error: XML query %s returned %s results"
 ERR_EXP_UNKN_XML_OBJ="Unexpected error: given XML is neither string nor instance"
 
-ERR_EXP_FAILED_CONFIG_JBOSS="Failed updating JBoss configuration" 
+ERR_EXP_FAILED_CONFIG_JBOSS="Failed updating JBoss configuration"
 
 #edit transaction timeout
 ERR_EXP_UPD_TRANS_TIMEOUT="Failed updating JBoss transaction timeout in %s"
@@ -344,4 +367,3 @@ ERR_EXP_EDIT_PSQL_CONF="Error: failed editing %s" % basedefs.FILE_PSQL_CONF
 ERR_EXP_FAILED_LIMITS="Error: Could not edit %s" % basedefs.FILE_LIMITS_CONF
 
 ERR_EXP_FAILED_KERNEL_PARAMS="Error: failed setting the kernel parameters"
-ERR_CLEAR_DB_CONNECTIONS = "Error: failed to clear all DB connections"

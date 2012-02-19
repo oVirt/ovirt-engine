@@ -36,6 +36,7 @@ usage() {
     printf "Usage: ${ME} [-h] [-s SERVERNAME] [-d DATABASE] [-u USERNAME] [-f VERSION][-v]\n"
     printf "\n"
     printf "\t-s SERVERNAME - The database servername for the database (def. ${SERVERNAME})\n"
+    printf "\t-s PORT       - The database port for the database       (def. ${PORT})\n"
     printf "\t-d DATABASE   - The database name                        (def. ${DATABASE})\n"
     printf "\t-u USERNAME   - The username for the database.\n"
     printf "\t-l LOGFILE    - The logfile for capturing output         (def. ${LOGFILE}\n"
@@ -56,6 +57,7 @@ DEBUG () {
 while getopts hs:d:u:p:l:f:v option; do
     case $option in
         s) SERVERNAME=$OPTARG;;
+        p) PORT=$OPTARG;;
         d) DATABASE=$OPTARG;;
         u) USERNAME=$OPTARG;;
         l) LOGFILE=$OPTARG;;

@@ -5,6 +5,7 @@ import os
 
 DB_ADMIN="postgres"
 DB_NAME="engine"
+DB_POSTGRES = "postgres"
 DB_HOST="localhost"
 DB_USER="engine"
 DB_PORT="5432"

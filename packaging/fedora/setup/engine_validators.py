@@ -118,6 +118,62 @@ def validateUser(param, options=[]):
     else:
         return True
 
+def validateRemoteHost(param, options=[]):
+    """ Validate that the we are working with remote DB host
+    """
+    # If we received localhost, use default flow.
+    # If not local, REMOTE_DB group is run.
+    # It means returning True if remote, and False if local
+
+    if "DB_REMOTE_INSTALL" in param.keys() and param["DB_REMOTE_INSTALL"] == "remote":
+        return True
+    else:
+        return False
+
+def validateRemoteDB(param={}, options=[]):
+    """ Ensure, that params provided for the remote DB are
+     working, and if not, issue the correct error.
+    """
+
+    logging.info("Validating %s as a RemoteDb" % param["DB_HOST"])
+    if utils.localHost(param["DB_HOST"]):
+        logging.info("%s is a local host, no connection checks needed" % param["DB_HOST"])
+        return True
+
+    if "DB_ADMIN" not in param.keys():
+        param["DB_ADMIN"] = basedefs.DB_ADMIN
+        param["DB_PORT"] = basedefs.DB_PORT
+        param["DB_PASS"] = param["DB_LOCAL_PASS"]
+    else:
+        param["DB_PASS"] = param["DB_REMOTE_PASS"]
+
+    # Create a new pgpass, store previous in backupFile
+    backupFile = _createTempPgPass(param["DB_ADMIN"], param["DB_HOST"],
+                                   param["DB_PORT"], param["DB_PASS"])
+
+    # Now, let's check credentials:
+    try:
+        # Connection check
+        _checkDbConnection(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
+
+        # DB Create check
+        _checkCreateDbPrivilege(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
+
+        # Delete DB check
+        _checkDropDbPrivilege(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
+
+        # Everything is fine, return True
+        return True
+
+    except Exception,e:
+        # Something failed, print the error on screen and return False
+        print e
+        return False
+
+    finally:
+        # restore the original pgpass file in all cases
+        os.rename(backupFile, basedefs.DB_PASS_FILE)
+
 def validateFQDN(param, options=[]):
     logging.info("Validating %s as a FQDN"%(param))
     if not validateDomain(param,options):
@@ -215,6 +271,82 @@ def validateOrgName(param, options=[]):
     else:
         return True
 
+def validatePing(param, options=[]):
+    """
+    Check that provided host answers to ping
+    """
+    if validateStringNotEmpty(param):
+        out, rc = utils.execCmd(["/bin/ping", "-c 1", "%s" % param])
+        if rc == 0:
+            return True
+
+    print "\n" + output_messages.ERR_PING + ".\n"
+    return False
+
+def _checkDbConnection(dbAdminUser, dbHost, dbPort):
+    """ _checkDbConnection checks connection to the DB"""
+
+    # Connection check
+    logging.info("Trying to connect to the remote database with provided credentials.")
+    out, rc = utils.execRemoteSqlCommand(dbAdminUser, dbHost, dbPort,
+                                           basedefs.DB_POSTGRES, "select 1")
+
+    # It error is in "SELECT 1" it means that we have a problem with simple DB connection.
+    if rc:
+        logging.error(output_messages.ERR_DB_CONNECTION % dbHost)
+        raise Exception("\n" + output_messages.ERR_DB_CONNECTION % dbHost + "\n")
+    else:
+        logging.info("Successfully connected to the DB host %s." % dbHost)
+
+def _checkCreateDbPrivilege(dbAdminUser, dbHost, dbPort):
+    """ _checkCreateDbPrivilege checks CREATE DB privilege on DB server"""
+
+    logging.info("Creating database 'ovirt_engine_test' on remote server.")
+    out, rc = utils.execRemoteSqlCommand(dbAdminUser, dbHost, dbPort,
+                                           basedefs.DB_POSTGRES, "CREATE DATABASE ovirt_engine_test")
+
+    # Error in "CREATE DATABASE", meaning we don't have enough privileges to create database.
+    if rc:
+        logging.error(output_messages.ERR_DB_CREATE_FAILED % dbHost)
+        raise Exception("\n" + output_messages.ERR_DB_CREATE_FAILED % dbHost + ".\n")
+    else:
+        logging.info("Successfully created temp database on server %s." % dbHost)
+
+def _checkDropDbPrivilege(dbAdminUser, dbHost, dbPort):
+    """ _checkCreateDbPrivilege checks CREATE DB privilege on DB server"""
+
+    logging.info("Deleting the test database from the remote server")
+    out, rc = utils.execRemoteSqlCommand(dbAdminUser, dbHost, dbPort,
+                                           basedefs.DB_POSTGRES, "DROP DATABASE ovirt_engine_test")
+
+    # Error in "DROP DATABASE", meaning we don't have enough privileges to drop database.
+    if rc:
+        logging.error(output_messages.ERR_DB_DROP_PRIV % dbHost)
+        raise Exception("\n" + output_messages.ERR_DB_DROP_PRIV % dbHost + ".\n")
+    else:
+        logging.info("Successfully deleted database on server %s." % dbHost)
+
+def _createTempPgPass(dbAdminUser, dbHost, dbPort, dbPass):
+    """docstring for _createTempPgPass"""
+
+    #backup existing .pgpass
+    backupFile = "%s.%s" % (basedefs.DB_PASS_FILE, utils.getCurrentDateTime())
+    try:
+        if (os.path.exists(basedefs.DB_PASS_FILE)):
+            logging.debug("found existing pgpass file, backing current to %s for validation" % (backupFile))
+            os.rename(basedefs.DB_PASS_FILE, backupFile)
+
+        with open(basedefs.DB_PASS_FILE, "w") as pgPassFile:
+            pgPassFile.write("%s:%s:*:%s:%s" %
+                            (dbHost, dbPort, dbAdminUser, dbPass))
+        #make sure the file has still 0600 mod
+        os.chmod(basedefs.DB_PASS_FILE, 0600)
+        return backupFile
+    except:
+        # Restore original file
+        os.rename(backupFile, basedefs.DB_PASS_FILE)
+        raise Exception(output_messages.ERR_BACKUP_PGPASS % backupFile)
+
 def _validateString(string, minLen, maxLen, regex=".*"):
     """
     Generic func to verify a string
@@ -292,3 +424,4 @@ def _isPathWriteable(path):
         logging.warning(traceback.format_exc())
         logging.warning("%s is not writeable" % path)
         return False
+

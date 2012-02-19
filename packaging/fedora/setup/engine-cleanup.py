@@ -3,6 +3,7 @@
 # Imports
 import sys
 import os
+import re
 import logging
 import traceback
 import tempfile
@@ -23,20 +24,24 @@ LOG_FILE = "%s-cleanup.log" % (PREFIX)
 
 # PATH
 LOG_PATH = "/var/log/%s" % (BASE_NAME)
-PKI_DIR = "/etc/pki/%s" %(BASE_NAME)
-TRUSTORE = os.path.join (PKI_DIR, ".truststore")
-KEYSTORE = os.path.join (PKI_DIR, ".keystore")
+PKI_DIR = "/etc/pki/%s" % (BASE_NAME)
+TRUSTORE = os.path.join(PKI_DIR, ".truststore")
+KEYSTORE = os.path.join(PKI_DIR, ".keystore")
 JBOSS_SERVER_DIR = "/var/lib/jbossas/server"
 VAR_SLIMMED_DIR = os.path.join(JBOSS_SERVER_DIR, basedefs.JBOSS_PROFILE_NAME)
 ETC_JBOSS_DIR = "/etc/jbossas"
 ETC_SLIMMED_DIR = os.path.join(ETC_JBOSS_DIR, basedefs.JBOSS_PROFILE_NAME)
 PKI_BACKUP_DIR = "/etc/pki/%s-backups" % (PREFIX)
 
+# Default DB Configuration
+DB_HOST = basedefs.DB_HOST
+DB_PORT = basedefs.DB_PORT
+DB_ADMIN = basedefs.DB_ADMIN
+
 #MSGS
 MSG_ERROR_USER_NOT_ROOT = "Error: insufficient permissions for user %s, you must run with user root."
 MSG_RC_ERROR = "Return Code is not zero"
 MSG_ERROR_BACKUP_DB = "Error: Database backup failed"
-MSG_ERROR_CLEAR_DB_CONNECTIONS = "Error: failed to clear all DB connections"
 MSG_ERROR_DROP_DB = "Error: Database drop failed"
 MSG_ERROR_CHECK_LOG = "Error: Cleanup failed.\nplease check log at %s"
 MSG_ERR_FAILED_JBOSS_SERVICE_STILL_RUN = "Error: Can't stop jboss service. Please shut it down manually."
@@ -66,6 +71,7 @@ MSG_PROCEED_QUESTION = "Would you like to proceed"
 #global err msg list
 err_messages = []
 
+
 # Code
 def getOptions():
     parser = OptionParser()
@@ -93,6 +99,7 @@ def getOptions():
     (options, args) = parser.parse_args()
     return (options, args)
 
+
 def askYesNo(question=None):
     """
     service func to ask yes/no
@@ -113,7 +120,8 @@ def askYesNo(question=None):
     else:
         return askYesNo(question)
 
-def _getColoredText (text, color):
+
+def _getColoredText(text, color):
     """
         gets text string and color
         and returns a colored text.
@@ -123,6 +131,7 @@ def _getColoredText (text, color):
         we use the NO_COLOR chars.
     """
     return color + text + basedefs.NO_COLOR
+
 
 def askForUserApproval():
     """
@@ -139,6 +148,7 @@ def askForUserApproval():
     else:
         logging.debug("User chose to exit")
         return False
+
 
 def initLogging():
     global LOG_FILE
@@ -217,9 +227,16 @@ class DB():
         """
         # pg_dump -C -E UTF8  --column-inserts --disable-dollar-quoting  --disable-triggers -U postgres --format=p -f $dir/$file  dbname
         logging.debug("DB Backup started")
-        cmd = [basedefs.EXEC_PGDUMP, "-C", "-E", "UTF8", "--column-inserts", "--disable-dollar-quoting",  "--disable-triggers", "-U",
-                basedefs.DB_ADMIN, "--format=p", "-f", self.sqlfile, basedefs.DB_NAME]
-        output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_BACKUP_DB, [])
+        cmd = [basedefs.EXEC_PGDUMP,
+                        "-C", "-E", "UTF8",
+                        "--column-inserts", "--disable-dollar-quoting",  "--disable-triggers",
+                        "-U", DB_ADMIN,
+                        "-h", DB_HOST,
+                        "-p", DB_PORT,
+                        "--format=p",
+                        "-f", self.sqlfile,
+                        basedefs.DB_NAME]
+        utils.execCmd(cmd, None, True, MSG_ERROR_BACKUP_DB, [])
         logging.debug("DB Backup completed successfully")
 
     def drop(self):
@@ -228,14 +245,18 @@ class DB():
         """
         logging.debug("DB Drop started")
 
-        # Block New connections and disconnect active ones
-        clearQuery = "update pg_database set datallowconn = 'false' where datname = '%s'; SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname = '%s'" % (basedefs.DB_NAME, basedefs.DB_NAME)
-        cmd = [basedefs.EXEC_PSQL, "-U", basedefs.DB_ADMIN, "-c", clearQuery]
-        output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_CLEAR_DB_CONNECTIONS)
+        # Block New connections and disconnect active ones - only on local installation.
+        if utils.localHost(DB_HOST):
+            utils.clearDbConnections(basedefs.DB_NAME)
 
-        # Drop DB
-        cmd = [basedefs.EXEC_DROPDB, "-w", "-U", basedefs.DB_ADMIN, basedefs.DB_NAME]
-        output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_DROP_DB)
+        # Drop DBs - including the tempoarary ones created during upgrade operations
+        # go over all dbs in the list of temp DBs and remove them
+        for dbname in utils.listTempDbs():
+            cmd = [basedefs.EXEC_DROPDB, "-w", "-U", DB_ADMIN, "-h", DB_HOST, "-p", DB_PORT, dbname]
+            output, rc = utils.execCmd(cmd, None, False, MSG_ERROR_DROP_DB)
+            if rc:
+                logging.error("DB drop operation failed. Check that there are no active connection to the '%s' DB." % dbname)
+                raise Exception(MSG_ERROR_DROP_DB)
         self.dropped = True
         logging.debug("DB Drop completed successfully")
 
@@ -245,20 +266,21 @@ class DB():
         """
         logging.debug("verifying that db '%s' exists" % (basedefs.DB_NAME))
 
-        # Making sure postgresql service is up
-        postgresql = utils.Service("postgresql")
-        postgresql.conditionalStart()
+        # Making sure postgresql service is up - only on local installation
+        if utils.localHost(DB_HOST):
+            postgresql = utils.Service("postgresql")
+            postgresql.conditionalStart()
 
         try:
-            # We want to make check if postgresql service is up
+            # We want to make check that we can connect to basedefs.DB_NAME DB
             logging.debug("making sure postgresql service is up")
-            utils.retry(utils.checkIfRhevmDbIsUp, tries=5, timeout=15, sleep=3)
+            utils.retry(utils.checkIfDbIsUp, tries=5, timeout=15, sleep=3)
         except:
             # If we're here, it means something is wrong, either there is a real db error
             # or the db is not installed, let's check
             logging.debug("checking if db is already installed..")
-            (out, rc) = utils.execSqlCommand(basedefs.DB_ADMIN, basedefs.DB_NAME, "select 1")
-            if (rc != 0):
+            out, rc = utils.execRemoteSqlCommand(DB_ADMIN, DB_HOST, DB_PORT, basedefs.DB_NAME, "select 1")
+            if rc != 0:
                 if utils.verifyStringFormat(out,".*FATAL:\s*database\s*\"%s\"\s*does not exist" % (PREFIX)):
                     # This means that the db is not installed, so we return false
                     return False
@@ -275,17 +297,6 @@ def stopJboss():
     if "[FAILED]" in output and "Timeout: Shutdown command was sent, but process is still running" in output:
         raise OSError(MSG_ERR_FAILED_JBOSS_SERVICE_STILL_RUN)
 
-def restartPostgresql():
-    """
-    restart the postgresql service
-    """
-    logging.debug("Restarting the postgresql service")
-    postgresql = utils.Service("postgresql")
-    postgresql.stop(True)
-    postgresql.start(True)
-
-    # We want to make sure the postgres service is up
-    utils.retry(utils.checkIfRhevmDbIsUp, tries=10, timeout=30, sleep=3)
 
 def runFunc(funcs, dispString):
     print "%s..." % (dispString),
@@ -361,11 +372,15 @@ if __name__ == '__main__':
         # Init logging facility
         initLogging()
 
+        # Initialise DB settings
+        DB_HOST = utils.getDbHostName()
+        DB_PORT = utils.getDbPort()
+        DB_ADMIN = utils.getDbAdminUser()
+
         # get iso and domain from user arguments
         (options, args) = getOptions()
 
         main(options)
-
     except SystemExit:
         raise
 

@@ -100,19 +100,21 @@ def initSequences():
                                               { 'title'     : output_messages.INFO_CREATE_CA,
                                                 'functions' : [_createCA]},
                                               { 'title'     : output_messages.INFO_UPD_JBOSS_CONF,
-                                                'functions' : [configJbossXml, deployJbossModules, _editRootWar]} ]
+                                                'functions' : [configJbossXml, deployJbossModules, _editRootWar] },
+                                              { 'title'     : output_messages.INFO_SET_DB_CONFIGURATION,
+                                                'functions' : [_updatePgPassFile]}]
                        },
                       { 'description'     : 'Update DB',
                         'condition'       : [_isDbAlreadyInstalled],
                         'condition_match' : [True],
                         'steps'           : [ { 'title'     : output_messages.INFO_UPGRADE_DB,
-                                                'functions' : [stopRhevmDbRelatedServices, restartPostgresql, _upgradeDB, startRhevmDbRelatedServices]} ]
+                                                'functions' : [stopRhevmDbRelatedServices, _upgradeDB, startRhevmDbRelatedServices]} ]
                        },
                       { 'description'     : 'Create DB',
                         'condition'       : [_isDbAlreadyInstalled],
                         'condition_match' : [False],
                         'steps'           : [ { 'title'     : output_messages.INFO_SET_DB_SECURITY,
-                                                'functions' : [_updatePgPassFile, _encryptDBPass, configEncryptedPass]},
+                                                'functions' : [_encryptDBPass, configEncryptedPass]},
                                               { 'title'     : output_messages.INFO_CREATE_DB,
                                                 'functions' : [_createDB,  _updateVDCOptions]},
                                               { 'title'     : output_messages.INFO_UPD_DC_TYPE,
@@ -244,19 +246,6 @@ def initConfig():
                 "NEED_CONFIRM"    : True,
                 "CONDITION"       : False},
 
-            {   "CMD_OPTION"      :"db-pass",
-                "USAGE"           :output_messages.INFO_CONF_PARAMS_DB_PASSWD_USAGE,
-                "PROMPT"          :output_messages.INFO_CONF_PARAMS_DB_PASSWD_PROMPT,
-                "OPTION_LIST"     :[],
-                "VALIDATION_FUNC" :validate.validatePassword,
-                "DEFAULT_VALUE"   :"",
-                "MASK_INPUT"      : True,
-                "LOOSE_VALIDATION": False,
-                "CONF_NAME"       : "DB_PASS",
-                "USE_DEFAULT"     : False,
-                "NEED_CONFIRM"    : True,
-                "CONDITION"       : False},
-
              {  "CMD_OPTION"      :"org-name",
                 "USAGE"           :output_messages.INFO_CONF_PARAMS_ORG_NAME_USAGE,
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_ORG_NAME_PROMPT,
@@ -281,8 +270,102 @@ def initConfig():
                 "CONF_NAME"       : "DC_TYPE",
                 "USE_DEFAULT"     : False,
                 "NEED_CONFIRM"    : False,
-                "CONDITION"       : False} ]
+                "CONDITION"       : False},
+
+            {   "CMD_OPTION"      : "db-remote-install",
+                "USAGE"           : output_messages.INFO_CONF_PARAMS_REMOTE_DB_USAGE,
+                "PROMPT"          : output_messages.INFO_CONF_PARAMS_REMOTE_DB_PROMPT,
+                "OPTION_LIST"     : ["remote", "local"],
+                "VALIDATION_FUNC" : validate.validateOptions,
+                "DEFAULT_VALUE"   : "local",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "DB_REMOTE_INSTALL",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False}]
          ,
+         "LOCAL_DB": [
+            {   "CMD_OPTION"      :"db-local-pass",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_DB_PASSWD_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_DB_PASSWD_PROMPT,
+                "OPTION_LIST"     :[],
+                "VALIDATION_FUNC" :validate.validatePassword,
+                "DEFAULT_VALUE"   :"",
+                "MASK_INPUT"      : True,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "DB_LOCAL_PASS",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : True,
+                "CONDITION"       : False}]
+         ,
+         "REMOTE_DB" : [
+
+            {   "CMD_OPTION"      : "db-host",
+                "USAGE"           : output_messages.INFO_CONF_PARAMS_USE_DB_HOST_USAGE,
+                "PROMPT"          : output_messages.INFO_CONF_PARAMS_USE_DB_HOST_PROMPT,
+                "OPTION_LIST"     : [],
+                "VALIDATION_FUNC" : validate.validatePing,
+                "DEFAULT_VALUE"   : "",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": True,
+                "CONF_NAME"       : "DB_HOST",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},
+
+            {   "CMD_OPTION"      : "db-port",
+                "USAGE"           : output_messages.INFO_CONF_PARAMS_USE_DB_PORT_USAGE,
+                "PROMPT"          : output_messages.INFO_CONF_PARAMS_USE_DB_PORT_PROMPT,
+                "OPTION_LIST"     : [],
+                "VALIDATION_FUNC" : validate.validateInteger,
+                "DEFAULT_VALUE"   : basedefs.DB_PORT,
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "DB_PORT",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},
+
+            {   "CMD_OPTION"      : "db-admin",
+                "USAGE"           : output_messages.INFO_CONF_PARAMS_DB_ADMIN_USAGE,
+                "PROMPT"          : output_messages.INFO_CONF_PARAMS_DB_ADMIN_PROMPT,
+                "OPTION_LIST"     : [],
+                "VALIDATION_FUNC" : validate.validateUser,
+                "DEFAULT_VALUE"   : basedefs.DB_ADMIN,
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "DB_ADMIN",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},
+
+            {   "CMD_OPTION"      : "db-remote-pass",
+                "USAGE"           : output_messages.INFO_CONF_PARAMS_REMOTE_DB_PASSWD_USAGE,
+                "PROMPT"          : output_messages.INFO_CONF_PARAMS_REMOTE_DB_PASSWD_PROMPT,
+                "OPTION_LIST"     : [],
+                "VALIDATION_FUNC" : validate.validatePassword,
+                "DEFAULT_VALUE"   : "",
+                "MASK_INPUT"      : True,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "DB_REMOTE_PASS",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : True,
+                "CONDITION"       : False},
+
+            {   "CMD_OPTION"      : "db-secure-connection",
+                "USAGE"           : output_messages.INFO_CONF_PARAMS_DB_SECURE_CONNECTION_USAGE,
+                "PROMPT"          : output_messages.INFO_CONF_PARAMS_DB_SECURE_CONNECTION_PROMPT,
+                "OPTION_LIST"     : ["yes", "no"],
+                "VALIDATION_FUNC" : validate.validateOptions,
+                "DEFAULT_VALUE"   : "no",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "DB_SECURE_CONNECTION",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},]
+          ,
           "NFS": [
              {  "CMD_OPTION"      :"nfs-mp",
                 "USAGE"           :output_messages.INFO_CONF_PARAMS_NFS_MP_USAGE,
@@ -332,10 +415,23 @@ def initConfig():
     POST_CONDITION       - Condition to match after all params in the groups has been queried. if fails, will re-query all parameters
     POST_CONDITION_MATCH - Value to match condition with
     """
-    conf_groups = ( { "GROUP_NAME"            : "ALL_PARAMS",
+    conf_groups = (
+                    { "GROUP_NAME"            : "ALL_PARAMS",
                       "DESCRIPTION"           : output_messages.INFO_GRP_ALL,
                       "PRE_CONDITION"         : False,
                       "PRE_CONDITION_MATCH"   : True,
+                      "POST_CONDITION"        : False,
+                      "POST_CONDITION_MATCH"  : True},
+                    { "GROUP_NAME"            : "REMOTE_DB",
+                      "DESCRIPTION"           : output_messages.INFO_GRP_REMOTE_DB,
+                      "PRE_CONDITION"         : validate.validateRemoteHost,
+                      "PRE_CONDITION_MATCH"   : True,
+                      "POST_CONDITION"        : validate.validateRemoteDB,
+                      "POST_CONDITION_MATCH"  : True},
+                    { "GROUP_NAME"            : "LOCAL_DB",
+                      "DESCRIPTION"           : output_messages.INFO_GRP_LOCAL_DB,
+                      "PRE_CONDITION"         : validate.validateRemoteHost,
+                      "PRE_CONDITION_MATCH"   : False,
                       "POST_CONDITION"        : False,
                       "POST_CONDITION_MATCH"  : True},
                     { "GROUP_NAME"            : "NFS",
@@ -420,7 +516,7 @@ def _getInputFromUser(param):
                     else:
                         if commandLineValues.has_key(param.getKey("CONF_NAME")):
                             del commandLineValues[param.getKey("CONF_NAME")]
-                        loop = True                        
+                        loop = True
                 else:
                     # Delete value from commandLineValues so that we will prompt the user for input
                     if commandLineValues.has_key(param.getKey("CONF_NAME")):
@@ -594,7 +690,7 @@ def _addMimeMapNode(webXmlHandler):
     adds a new mime-mapping node after description
     """
     descMapNode = utils.getXmlNode(webXmlHandler, "/web-app/description")
-    mimeMapListNode = libxml2.newNode('mime-mapping') 
+    mimeMapListNode = libxml2.newNode('mime-mapping')
 
     #add the new node as a next sibling to the servletMapNode
     descMapNode.addNextSibling(mimeMapListNode)
@@ -684,7 +780,6 @@ def _editExternalConfig():
 
         node = utils.getXmlNode(exConfigHandler, "//add[@key='BackendPort']")
         node.setProp("value", controller.CONF["HTTPS_PORT"])
-        
         exConfigHandler.close()
     except:
         logging.error(traceback.format_exc())
@@ -728,11 +823,11 @@ def _createCA():
             # Add random string to certificate CN field
             randInt = random.randint(10000,99999)
 
-	    # Truncating host fqdn to max allowed in certificate CN field
-	    truncatedFqdn = controller.CONF["HOST_FQDN"][0:basedefs.CONST_MAX_HOST_FQDN_LEN]
-	    logging.debug("truncated HOST_FQDN '%s' to '%s'. sized reduced to %d.."%(controller.CONF["HOST_FQDN"],truncatedFqdn,len(truncatedFqdn)))
+            # Truncating host fqdn to max allowed in certificate CN field
+            truncatedFqdn = controller.CONF["HOST_FQDN"][0:basedefs.CONST_MAX_HOST_FQDN_LEN]
+            logging.debug("truncated HOST_FQDN '%s' to '%s'. sized reduced to %d.."%(controller.CONF["HOST_FQDN"],truncatedFqdn,len(truncatedFqdn)))
             uniqueCN = truncatedFqdn + "." + str(randInt)
-	    logging.debug("using unique CN: '%s' for CA certificate"%uniqueCN)
+            logging.debug("using unique CN: '%s' for CA certificate"%uniqueCN)
 
             # Create the CA
             cmd = [os.path.join(basedefs.DIR_OVIRT_PKI, "installCA.sh"), controller.CONF["HOST_FQDN"],
@@ -905,12 +1000,17 @@ def _createDB():
     logging.debug("engine db creation is logged at %s/%s" % (basedefs.DIR_LOG, dbLogFilename))
 
     # Set rhevm-db-install.sh args - logfile and db password
+    # To handle remote DB installation, we need to pass host/port/user values, and the script needs to handle them.
     scriptHome = os.path.join(basedefs.DIR_DB_SCRIPTS, basedefs.FILE_DB_INSTALL_SCRIPT)
-    cmd = [scriptHome, dbLogFilename, controller.CONF["DB_PASS"]]
+    cmd = [scriptHome, "-l", dbLogFilename,
+                       "-w", controller.CONF["DB_PASS"],
+                       "-u", getDbAdminUser(),
+                       "-s", getDbHostName(),
+                       "-p", getDbPort()]
 
     # Create db using shell command
     output, rc = utils.execCmd(cmd, None, True, output_messages.ERR_DB_CREATE_FAILED, masked_value_set)
-    logging.debug('Successfully installed %s db'%(basedefs.DB_NAME))
+    logging.debug("Successfully installed %s db" % basedefs.DB_NAME)
 
 def _upgradeDB():
     """
@@ -918,43 +1018,68 @@ def _upgradeDB():
     required installed db.
     won't change db security settings
     """
-    logging.debug("upgrading rhevm db schema")
-    dbScriptArgs = "-u %s -d %s"%(basedefs.DB_ADMIN, basedefs.DB_NAME)
-    cmd = os.path.join("/bin/sh ", basedefs.DIR_DB_SCRIPTS, basedefs.FILE_DB_UPGRADE_SCRIPT + " " + dbScriptArgs)
 
     # Before db upgrade we want to make a backup of existing db in case we fail
-    dbBackupFile = tempfile.mkstemp(suffix=".sql", dir=basedefs.DIR_DB_BACKUPS)[1] 
+    # The backup is performed on local system, even for remote DB.
+    dbBackupFile = tempfile.mkstemp(suffix=".sql", dir=basedefs.DIR_DB_BACKUPS)[1]
     logging.debug("backing up %s db to file %s"%(basedefs.DB_NAME, dbBackupFile))
 
     # Run db backup
-    utils.backupDB(basedefs.DB_NAME, basedefs.DB_ADMIN, dbBackupFile)
+    utils.backupDB(basedefs.DB_NAME, getDbAdminUser(), dbBackupFile, getDbHostName(), getDbPort())
+
+    # Rename DB first. If it fails - stop with "active connections" error.
+    # if upgrade passes fine, rename the DB back.
+    DB_NAME_TEMP = "%s_%s" % (basedefs.DB_NAME, utils.getCurrentDateTime())
+    utils.renameDB(basedefs.DB_NAME, DB_NAME_TEMP)
+
+    # if we're here, DB was renamed.
+    logging.debug("upgrading db schema")
+    dbScriptArgs = "-u %s -d %s -h %s --port=%s" %(getDbAdminUser(), DB_NAME_TEMP, getDbHostName(), getDbPort())
+    cmd = os.path.join("/bin/sh ", basedefs.DIR_DB_SCRIPTS, basedefs.FILE_DB_UPGRADE_SCRIPT + " " + dbScriptArgs)
 
     # Upgrade script must run from dbscripts dir
     currentDir = os.getcwd()
     os.chdir(basedefs.DIR_DB_SCRIPTS)
 
     try:
+
         # Run upgrade.sh script to update existing db
         output, rc = utils.execExternalCmd(cmd, True, output_messages.ERR_DB_UPGRADE_FAILED)
 
+        # Log the successful upgrade
+        logging.debug('Successfully upgraded %s DB'%(basedefs.DB_NAME))
+        controller.MESSAGES.append("DB was upgraded to latest version. previous DB backup can be found at %s"%(dbBackupFile))
+
         # Go back to previous dir
         os.chdir(currentDir)
-        logging.debug('Successfully upgraded %s db'%(basedefs.DB_NAME))
-        controller.MESSAGES.append("DB was upgraded to latest version. previous DB backup can be found at %s"%(dbBackupFile))
+
+        # Upgrade was successful, so rename the DB back.
+        utils.renameDB(DB_NAME_TEMP, basedefs.DB_NAME)
 
         # Update rpm version in vdc options
         utils.updateVDCOption("ProductRPMVersion", utils.getRpmVersion(basedefs.ENGINE_RPM_NAME))
     except:
         # Upgrade failed! we need to restore the old db
-        logging.debug("%s DB upgrade failed, restoring db to previous state. db was backed up to %s"%(basedefs.DB_NAME, dbBackupFile))
-        utils.restoreDB(basedefs.DB_NAME, basedefs.DB_ADMIN, dbBackupFile)
+        logging.debug("DB upgrade failed, restoring it to a previous state. DB was backed up to %s", dbBackupFile)
+        utils.restoreDB(getDbAdminUser(), getDbHostName(), getDbPort(), dbBackupFile)
+
+        # Delete the original DB.
+        # TODO: handle the case of failure - it should not stop the flow, but should write to the log
+        sqlQuery="DROP DATABASE %s" % DB_NAME_TEMP
+        utils.execRemoteSqlCommand(getDbAdminUser(), \
+                                   getDbHostName(), \
+                                   getDbPort(), \
+                                   basedefs.DB_POSTGRES, \
+                                   sqlQuery, False, \
+                                   output_messages.ERR_DB_DROP % DB_NAME_TEMP)
+
         raise Exception(output_messages.ERR_DB_UPGRADE_FAILED)
 
 def _updateDefaultDCType():
     logging.debug("updating default data center storage type")
     newDcTypeNum = controller.CONF["DC_TYPE_ENUM"].parse(str.upper(controller.CONF["DC_TYPE"]))
-    sqlQuery = "select inst_update_default_storage_pool_type (%s)"%(newDcTypeNum)
-    utils.execSqlCommand(basedefs.DB_ADMIN, basedefs.DB_NAME, sqlQuery, True, output_messages.ERR_EXP_UPD_DC_TYPE%(basedefs.DB_NAME)) 
+    sqlQuery = "select inst_update_default_storage_pool_type (%s)" % newDcTypeNum
+    utils.execRemoteSqlCommand(getDbAdminUser(), getDbHostName(), getDbPort(), basedefs.DB_NAME, sqlQuery, True, output_messages.ERR_EXP_UPD_DC_TYPE%(basedefs.DB_NAME))
 
 def _updateVDCOptions():
     logging.debug("updating vdc options..")
@@ -1003,8 +1128,8 @@ def _updateVDCOptions():
             "AdminPassword":controller.CONF["AUTH_PASS"]
         }
     )
-              
-    try: 
+
+    try:
         if (os.path.exists(basedefs.FILE_RHEVM_CONFIG_BIN)):
             if (os.path.exists(basedefs.FILE_RHEVM_EXTENDED_CONF)):
                 #1st iterate on the CA related options
@@ -1019,7 +1144,7 @@ def _updateVDCOptions():
             raise Exception(output_messages.ERR_CANT_FIND_RHEVM_CONFIG_FILE%(basedefs.FILE_RHEVM_CONFIG_BIN))
 
     except:
-          raise Exception(output_messages.ERR_FAILED_UPD_VDC_OPTIONS%(sys.exc_info()[1]))
+        raise Exception(output_messages.ERR_FAILED_UPD_VDC_OPTIONS%(sys.exc_info()[1]))
 
 def _getVDCOption(key):
     #running rhevm-config to get values per key
@@ -1029,6 +1154,36 @@ def _getVDCOption(key):
     output, rc = utils.execExternalCmd(cmd, True, msg, masked_value_set)
     logging.debug("Value of %s is %s" % (key, output))
     return output
+
+def getDbAdminUser():
+    """
+    Check whether db admin user was provided during interactive setup.
+    If it was - use the provided value, if not, use default (basedefs.DB_ADMIN)
+    """
+    if "DB_ADMIN" in controller.CONF.keys():
+            return controller.CONF["DB_ADMIN"]
+
+    return basedefs.DB_ADMIN
+
+def getDbHostName():
+    """
+    Get the host name for the DB.
+    """
+
+    if "DB_HOST" in controller.CONF.keys():
+            return controller.CONF["DB_HOST"]
+
+    return basedefs.DB_HOST
+
+def getDbPort():
+    """
+    Get the db port
+    """
+
+    if "DB_PORT" in controller.CONF.keys():
+            return controller.CONF["DB_PORT"]
+
+    return basedefs.DB_PORT
 
 def _updatePgPassFile():
     """
@@ -1045,18 +1200,29 @@ def _updatePgPassFile():
             backupFile = "%s.%s" % (basedefs.DB_PASS_FILE, utils.getCurrentDateTime())
             logging.debug("found existing pgpass file, backing current to %s" % (backupFile))
             os.rename(basedefs.DB_PASS_FILE, backupFile)
-            
+
         pgPassFile = open (basedefs.DB_PASS_FILE, "w")
 
+        pgPassFile.write("#####  oVirt-engine DB ADMIN settings section. Do not change!!"+"\n")
         #insert line for postgres - db admin
         #(very important for maintance and upgrades in case user rhevm is not created yet).
-        line = _updatePgPassLine(basedefs.DB_HOST, basedefs.DB_PORT, "*", basedefs.DB_ADMIN, controller.CONF["DB_PASS"])
-        pgPassFile.write(line + "\n")
+        # Use parameters received from the user and skip if the install is local
+        if "DB_ADMIN" in controller.CONF.keys():
+            logging.info("Using db credentials provided by the user")
+            line_admin = _updatePgPassLine(controller.CONF["DB_HOST"], controller.CONF["DB_PORT"],"*",
+                                          controller.CONF["DB_ADMIN"], controller.CONF["DB_PASS"])
 
-        #insert line for user rhevm
-        line = _updatePgPassLine(basedefs.DB_HOST, basedefs.DB_PORT, basedefs.DB_NAME, basedefs.DB_USER, controller.CONF["DB_PASS"])
-        pgPassFile.write(line + "\n")
+            #insert line for user  ('engine' by default)
+            line_user = _updatePgPassLine(controller.CONF["DB_HOST"], controller.CONF["DB_PORT"],
+                                          basedefs.DB_NAME, basedefs.DB_USER, controller.CONF["DB_PASS"])
+        else:
+            logging.info("Using default db credentials")
+            line_admin = _updatePgPassLine(controller.CONF["DB_HOST"], basedefs.DB_PORT, "*", basedefs.DB_ADMIN, controller.CONF["DB_PASS"])
+            line_user = _updatePgPassLine(controller.CONF["DB_HOST"], basedefs.DB_PORT, basedefs.DB_NAME, basedefs.DB_USER, controller.CONF["DB_PASS"])
 
+        pgPassFile.write(line_admin + "\n")
+        pgPassFile.write(line_user + "\n")
+        pgPassFile.write("#####  End of oVirt-engine DB ADMIN settings section."+"\n")
         pgPassFile.close()
 
         #make sure the file has still 0600 mod
@@ -1104,7 +1270,7 @@ def _verifyUserPermissions():
 def _addDefaultsToMaskedValueSet():
     """
     For every param in conf_params
-    that has MASK_INPUT enabled keep the default value 
+    that has MASK_INPUT enabled keep the default value
     in the 'masked_value_set'
     """
     global masked_value_set
@@ -1120,8 +1286,8 @@ def _addDefaultsToMaskedValueSet():
 
 def _updateMaskedValueSet():
     """
-    For every param in conf 
-    has MASK_INPUT enabled keep the user input 
+    For every param in conf
+    has MASK_INPUT enabled keep the user input
     in the 'masked_value_set'
     """
     global masked_value_set
@@ -1146,20 +1312,20 @@ def mask(input):
         for item in input:
             org = item
             orgIndex = input.index(org)
-            if type(item) == types.StringType: 
+            if type(item) == types.StringType:
                 item = maskString(item)
             if item != org:
                 output.remove(org)
                 output.insert(orgIndex, item)
     if type(input) == types.StringType:
             output = maskString(input)
-    
+
     return output
 
 def removeMaskString(maskedString):
     """
     remove an element from masked_value_set
-    we need to itterate over the set since 
+    we need to itterate over the set since
     calling set.remove() on an string that does not exit
     will raise an exception
     """
@@ -1184,7 +1350,7 @@ def _validateParamValue(param, paramValue):
     validateFunc = param.getKey("VALIDATION_FUNC")
     optionsList  = param.getKey("OPTION_LIST")
     logging.debug("validating param %s in answer file." % param.getKey("CONF_NAME"))
-    if (not validateFunc(paramValue, optionsList)):
+    if not validateFunc(paramValue, optionsList):
         raise Exception(output_messages.ERR_EXP_VALIDATE_PARAM % param.getKey("CONF_NAME"))
 
 def _handleGroupCondition(config, conditionName, conditionValue):
@@ -1194,7 +1360,7 @@ def _handleGroupCondition(config, conditionName, conditionValue):
     and validates the params related to the group
     """
 
-    # If the post condtition is a function
+    # If the post condition is a function
     if type(conditionName) == types.FunctionType:
         # Call the function conditionName with conf as the arg
         conditionValue = conditionName(controller.CONF)
@@ -1251,6 +1417,7 @@ def _handleAnswerFileParams(answerFile):
                 preConditionValue = _handleGroupCondition(fconf, group.getKey("PRE_CONDITION"), preConditionValue)
 
             # Handle pre condition match with case insensitive values
+            logging.info("Comparing pre- conditions, value: '%s', and match: '%s'" % (preConditionValue, group.getKey("PRE_CONDITION_MATCH")))
             if utils.compareStrIgnoreCase(preConditionValue, group.getKey("PRE_CONDITION_MATCH")):
                 for param in group.getAllParams():
                     _loadParamFromFile(fconf, "general", param.getKey("CONF_NAME"))
@@ -1290,6 +1457,7 @@ def _handleInteractiveParams():
             inputLoop = True
 
             # If we have a match, i.e. condition returned True, go over all params in the group
+            logging.info("Comparing pre-conditions; condition: '%s', and match: '%s'" % (preConditionValue, group.getKey("PRE_CONDITION_MATCH")))
             if utils.compareStrIgnoreCase(preConditionValue, group.getKey("PRE_CONDITION_MATCH")):
                 while inputLoop:
                     for param in group.getAllParams():
@@ -1384,7 +1552,7 @@ def _displaySummary():
                     if not param.getKey("MASK_INPUT"):
                         param.setKey("DEFAULT_VALUE", controller.CONF[param.getKey("CONF_NAME")])
                     # Remove the string from mask_value_set in order
-                    # to remove values that might be over overwritten. 
+                    # to remove values that might be over overwritten.
                     removeMaskString(controller.CONF[param.getKey("CONF_NAME")])
                     del controller.CONF[param.getKey("CONF_NAME")]
                 if commandLineValues.has_key(param.getKey("CONF_NAME")):
@@ -1400,7 +1568,7 @@ def _startJboss():
     output, rc = utils.execExternalCmd("/sbin/chkconfig jboss-as on", True, output_messages.ERR_FAILED_CHKCFG_JBOSS)
     _handleJbossService('stop', output_messages.INFO_STOP_JBOSS, output_messages.ERR_FAILED_STP_JBOSS_SERVICE, False)
     _handleJbossService('start', output_messages.INFO_START_JBOSS, output_messages.ERR_FAILED_START_JBOSS_SERVICE, False)
-    
+
 def _configNfsShare():
     #ISO_DOMAIN_NAME, NFS_MP
     try:
@@ -1450,25 +1618,25 @@ def setMaxSharedMemory():
     logging.debug("loading %s", basedefs.FILE_SYSCTL)
     txtHandler = utils.TextConfigFileHandler(basedefs.FILE_SYSCTL)
     txtHandler.open()
-    
+
     # Compare to basedefs.CONST_SHMMAX
     currentShmmax = txtHandler.getParam("kernel.shmmax")
     if currentShmmax and (int(currentShmmax) >= basedefs.CONST_SHMMAX):
         logging.debug("current shared memory max in kernel is %s, there is no need to update the kernel parameters", currentShmmax)
         return
-    
-    # If we got here, it means we need to update kernel.shmmax in sysctl.conf    
+
+    # If we got here, it means we need to update kernel.shmmax in sysctl.conf
     logging.debug("setting SHARED MEMORY MAX to: %s", basedefs.CONST_SHMMAX)
     txtHandler.editParam("kernel.shmmax", basedefs.CONST_SHMMAX)
     txtHandler.close()
-    
+
     # Execute sysctl -a
     utils.execExternalCmd("%s -e -p" % basedefs.EXEC_SYSCTL, True, output_messages.ERR_EXP_FAILED_KERNEL_PARAMS)
 
 def _addIsoDomaintoDB(uuid, description):
     logging.debug("Adding iso domain into DB")
     sqlQuery = "select inst_add_iso_storage_domain ('%s', '%s', '%s:%s', %s, %s)" % (uuid, description, controller.CONF["HOST_FQDN"], controller.CONF["NFS_MP"], 0, 0)
-    utils.execSqlCommand(basedefs.DB_ADMIN, basedefs.DB_NAME, sqlQuery, True, output_messages.ERR_FAILED_INSERT_ISO_DOMAIN%(basedefs.DB_NAME)) 
+    utils.execRemoteSqlCommand(getDbAdminUser(), getDbHostName(), getDbPort(), basedefs.DB_NAME, sqlQuery, True, output_messages.ERR_FAILED_INSERT_ISO_DOMAIN%(basedefs.DB_NAME))
 
 def _startNfsServices():
     logging.debug("Enabling the rpcbind & nfs services")
@@ -1512,7 +1680,7 @@ def _printAdditionalMessages():
 
 def _addFinalInfoMsg():
     """
-    add info msg to the user finalizing the 
+    add info msg to the user finalizing the
     successfull install of rhemv
     """
     controller.MESSAGES.append(output_messages.INFO_LOG_FILE_PATH%(logFile))
@@ -1566,7 +1734,7 @@ def _lockRpmVersion():
 
 def editPostgresConf():
     """
-    edit /var/lib/pgsql/data/postgresql.conf and change max_connections to 150    
+    edit /var/lib/pgsql/data/postgresql.conf and change max_connections to 150
     """
     try:
         tempFile = tempfile.mktemp(dir="/tmp")
@@ -1683,23 +1851,15 @@ def _summaryParamsToLog():
                     maskedValue = mask(controller.CONF[param.getKey("CONF_NAME")])
                     logging.debug("%s: %s" % (param.getKey("CMD_OPTION"), maskedValue ))
 
-def restartPostgresql():
-    """
-    restart the postgresql service
-    """
-
-    logging.debug("Restarting the postgresql service")
-    postgresql = utils.Service("postgresql")
-    postgresql.stop(True)
-    postgresql.start(True)
-
-    # Now we want to make sure the postgres service is up
-    # before we continue to the upgrade
-    utils.retry(utils.checkIfRhevmDbIsUp, tries=10, timeout=30)
-
 def _isDbAlreadyInstalled():
-    logging.debug("checking if rhevm db is already installed..")
-    (out, rc) = utils.execSqlCommand(basedefs.DB_ADMIN, basedefs.DB_NAME, "select 1")
+    logging.debug("Checking if db is already installed..")
+    logging.debug("Checking the presence of .pgpass file")
+    if not os.path.exists(basedefs.DB_PASS_FILE):
+        logging.debug(".pgpass file was not found. Considering this a first installation")
+        return False
+
+    # Else, let's check the DB itself
+    (out, rc) = utils.execRemoteSqlCommand(getDbAdminUser(), getDbHostName(), getDbPort(), basedefs.DB_NAME, "select 1")
     if (rc != 0):
         return False
     else:
@@ -1942,11 +2102,23 @@ def configJbossDatasource(xmlObj):
     # removeNodes will remove the node if it exists and will do nothing if it does not exist
     xmlObj.removeNodes("//datasource:subsystem/datasource:datasources/datasource:datasource[@jndi-name='java:/ENGINEDataSource']")
 
+    secure_conn = ''
+    if "DB_SECURE_CONNECTION" in controller.CONF.keys() and controller.CONF["DB_SECURE_CONNECTION"] == "yes":
+        secure_conn = '''
+            <connection-property name="ssl">
+                 true
+            </connection-property>
+            <connection-property name="sslfactory">
+                 org.postgresql.ssl.NonValidatingFactory
+            </connection-property>
+       '''
+
     datasourceStr = '''
         <datasource jndi-name="java:/ENGINEDataSource" pool-name="ENGINEDataSource" enabled="true">
         <connection-url>
-            jdbc:postgresql://localhost:5432/engine
+            jdbc:postgresql://%s:%s/engine
         </connection-url>
+        %s
         <driver>
             postgresql
         </driver>
@@ -1978,7 +2150,7 @@ def configJbossDatasource(xmlObj):
             </prepared-statement-cache-size>
         </statement>
     </datasource>
-'''
+''' % (getDbHostName(), getDbPort(), secure_conn)
     logging.debug("Adding ENGINE datasource")
     xmlObj.addNodes("//datasource:subsystem/datasource:datasources", datasourceStr)
 
@@ -2156,6 +2328,18 @@ def main(configFile=None):
 
         initPluginsSequences()
 
+        # We now have all params - update password and host hack.
+        # This is a hack as there's no properly defined param named DB_PASS.
+        # But we consider it OK, as it happens after handleParams call,
+        # which would already have handled our interactive params.
+        if "DB_HOST" not in controller.CONF.keys():
+            controller.CONF["DB_HOST"] = basedefs.DB_HOST
+
+        for passkey in ("DB_LOCAL_PASS", "DB_REMOTE_PASS"):
+            if passkey in controller.CONF.keys():
+                controller.CONF["DB_PASS"] = controller.CONF[passkey]
+                break
+
         # Run main setup logic
         runSequences()
 
@@ -2320,7 +2504,7 @@ def initMain():
     _verifyUserPermissions()
 
     # Initialize logging
-    initLogging() 
+    initLogging()
 
     # Load Plugins
     loadPlugins()
@@ -2330,7 +2514,7 @@ def initMain():
 
     initPluginsConfig()
 
-    # Validate host has enough memory 
+    # Validate host has enough memory
     _checkAvailableMemory()
 
 if __name__ == "__main__":
