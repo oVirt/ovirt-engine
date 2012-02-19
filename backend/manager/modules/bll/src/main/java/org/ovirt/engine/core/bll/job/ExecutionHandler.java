@@ -3,13 +3,17 @@ package org.ovirt.engine.core.bll.job;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -60,13 +64,27 @@ public class ExecutionHandler {
         job.setId(Guid.NewGuid());
         job.setActionType(actionType);
         job.setDescription(ExecutionMessageDirector.resolveJobMessage(actionType, command.getJobMessageProperties()));
-        job.setJobSubjectEntities(command.getPermissionCheckSubjects());
+        job.setJobSubjectEntities(getSubjectEntities(command.getPermissionCheckSubjects()));
         job.setOwnerId(command.getUserId());
         job.setStatus(JobExecutionStatus.STARTED);
         job.setStartTime(new Date());
         job.setCorrelationId(command.getCorrelationId());
 
         return job;
+    }
+
+    private static Map<Guid, VdcObjectType> getSubjectEntities(Map<Guid, VdcObjectType> subjects) {
+        Map<Guid, VdcObjectType> entities = new HashMap<Guid, VdcObjectType>();
+        VdcObjectType entityType;
+        Guid entityId;
+        for (Entry<Guid, VdcObjectType> entry : subjects.entrySet()) {
+            entityType = entry.getValue();
+            entityId = entry.getKey();
+            if (entityType != null && entityId != null) {
+                entities.put(entityId, entityType);
+            }
+        }
+        return entities;
     }
 
     /**
