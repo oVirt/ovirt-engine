@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.bll.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetStorageDomainsByStoragePoolIdQuery<P extends StoragePoolQueryParametersBase>
         extends QueriesCommandBase<P> {
