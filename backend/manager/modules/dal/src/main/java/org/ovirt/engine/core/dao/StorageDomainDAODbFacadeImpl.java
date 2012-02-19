@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -19,9 +20,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 /**
  * <code>StorageDomainDAODbFacadeImpl</code> provides an implementation of {@link StorageDomainDAO} based on code from
  * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
- *
- *
  */
+@SuppressWarnings("synthetic-access")
 public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements StorageDomainDAO {
 
     @Override
@@ -52,15 +52,14 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
                 .addValue("id", id).addValue("storage_pool_id", storagepool);
 
         ParameterizedRowMapper<storage_domains> mapper = new StorageDomainRowMapper();
-        return getCallsHandler().executeRead("Getstorage_domains_By_id_and_by_storage_pool_id",mapper
-                ,parameterSource);
+        return getCallsHandler().executeRead("Getstorage_domains_By_id_and_by_storage_pool_id", mapper
+                , parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<storage_domains> getAllForConnection(String connection) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-        .addValue("connection", connection);
+                .addValue("connection", connection);
 
         ParameterizedRowMapper<storage_domains> mapper = new StorageDomainRowMapper();
 
@@ -68,7 +67,6 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
                 parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<storage_domains> getAllForStoragePool(Guid pool) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -80,7 +78,6 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
                 parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<storage_domains> getAllForImageGroup(NGuid group) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -92,7 +89,6 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
                 parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<storage_domains> getAllForStorageDomain(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -110,7 +106,6 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
         return new SimpleJdbcTemplate(jdbcTemplate).query(query, mapper);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<storage_domains> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
@@ -120,7 +115,6 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
         return getCallsHandler().executeReadList("GetAllFromstorage_domains", mapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Guid> getAllStorageDomainsByImageGroup(Guid imageGroupId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -184,7 +178,6 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
         getCallsHandler().executeModification("Deleteimage_group_storage_domain_map", parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<image_group_storage_domain_map> getAllImageGroupStorageDomainMapsForStorageDomain(Guid storage_domain_id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_domain_id",
@@ -206,7 +199,6 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
                 parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<image_group_storage_domain_map> getAllImageGroupStorageDomainMapsForImage(Guid image_group_id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("image_group_id",
@@ -254,7 +246,6 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<storage_domains> getAllByStoragePoolAndConnection(Guid storagePoolId, String connection) {
         MapSqlParameterSource parameterSource =

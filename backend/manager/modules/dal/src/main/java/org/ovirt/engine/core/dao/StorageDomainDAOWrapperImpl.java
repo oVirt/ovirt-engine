@@ -55,7 +55,6 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
         storage_domains result = null;
 
         if (staticPart != null) {
-            @SuppressWarnings("deprecation")
             storage_domain_dynamic dynamicPart = dynamicDAO.get(staticPart.getId());
             if (dynamicPart != null) {
                 result = new storage_domains();
