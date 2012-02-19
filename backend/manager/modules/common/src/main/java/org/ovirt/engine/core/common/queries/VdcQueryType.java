@@ -191,7 +191,7 @@ public enum VdcQueryType implements Serializable {
     IsStoragePoolWithSameNameExist,
     GetStorageDomainById,
     GetStorageServerConnectionById,
-    GetStoragePoolById,
+    GetStoragePoolById(VdcQueryAuthType.User),
     GetStorageDomainsByConnection,
     GetStorageDomainsByStoragePoolId,
     GetStorageServerConnections,

@@ -12,6 +12,8 @@ public class GetStoragePoolByIdQuery<P extends StoragePoolQueryParametersBase> e
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue()
-                .setReturnValue(DbFacade.getInstance().getStoragePoolDAO().get(getParameters().getStoragePoolId()));
+                .setReturnValue(DbFacade.getInstance()
+                        .getStoragePoolDAO()
+                        .get(getParameters().getStoragePoolId(), getUserID(), getParameters().isFiltered()));
     }
 }
