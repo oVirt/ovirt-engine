@@ -72,8 +72,16 @@ Create or replace FUNCTION GetJobsByOffsetAndPageSize(v_position INTEGER, v_page
 RETURNS SETOF job
 AS $procedure$
 BEGIN
-    RETURN QUERY SELECT job.*
+    RETURN QUERY
+    (SELECT job.*
     FROM JOB
+    WHERE status = 'STARTED'
+    ORDER BY last_update_time desc)
+    UNION ALL
+    (SELECT job.*
+    FROM JOB
+    WHERE status != 'STARTED'
+    ORDER BY last_update_time desc)
     OFFSET v_position LIMIT v_page_size;
 END; $procedure$
 LANGUAGE plpgsql;
