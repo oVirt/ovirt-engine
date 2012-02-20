@@ -55,7 +55,6 @@ RETURNS SETOF quota_vds_group_view
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT COALESCE(q_vds_view.quota_vds_group_id, q_g_view.quota_id) as quota_vds_group_id,
-   quota_vds_group_id,
    q_g_view.quota_id as quota_id,
    q_vds_view.vds_group_id as vds_group_id,
    q_vds_view.vds_group_name as vds_group_name,
