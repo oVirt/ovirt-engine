@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -50,6 +51,7 @@ public class RemoveQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
 
     @Override
     protected void executeCommand() {
+        setQuota(getQuotaDAO().getById(getParameters().getQuotaId()));
         getQuotaDAO().remove(getParameters().getQuotaId());
         getReturnValue().setSucceeded(true);
     }
@@ -63,5 +65,10 @@ public class RemoveQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__QUOTA);
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+          return getSucceeded() ? AuditLogType.USER_DELETE_QUOTA : AuditLogType.USER_FAILED_DELETE_QUOTA;
     }
 }
