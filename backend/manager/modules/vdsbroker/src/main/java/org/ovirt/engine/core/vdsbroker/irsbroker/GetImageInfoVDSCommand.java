@@ -76,10 +76,6 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
         DiskImage newImage = new DiskImage();
         try {
             newImage.setId(new Guid((String) xmlRpcStruct.getItem(IrsProperties.uuid)));
-            if (xmlRpcStruct.getItem(IrsProperties.children).getClass().getName().equals("String[]")) {
-                String[] childrenIdList = (String[]) xmlRpcStruct.getItem(IrsProperties.children);
-                newImage.setchildrenId(convertStringGuidArray(childrenIdList));
-            }
 
             newImage.setParentId(new Guid((String) xmlRpcStruct.getItem(IrsProperties.parent)));
             newImage.setdescription((String) xmlRpcStruct.getItem(IrsProperties.description));

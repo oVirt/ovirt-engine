@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Date;
 
 import org.ovirt.engine.core.compat.Guid;
@@ -50,7 +49,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
                 + (int) (actualSizeFromDiskImageDynamic ^ (actualSizeFromDiskImageDynamic >>> 32));
         result = prime * result
                 + ((appList == null) ? 0 : appList.hashCode());
-        result = prime * result + Arrays.hashCode(childrenIdField);
         result = prime
                 * result
                 + ((creation_dateField == null) ? 0 : creation_dateField
@@ -114,8 +112,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
             if (other.appList != null)
                 return false;
         } else if (!appList.equals(other.appList))
-            return false;
-        if (!Arrays.equals(childrenIdField, other.childrenIdField))
             return false;
         if (description == null) {
             if (other.description != null)
@@ -415,8 +411,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         }
     }
 
-    private Guid[] childrenIdField = new Guid[0];
-
     private int mReadRateKbPerSec;
 
     private int mWriteRateKbPerSec;
@@ -433,14 +427,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         setboot(diskImageBase.getboot());
         setwipe_after_delete(diskImageBase.getwipe_after_delete());
         setpropagate_errors(diskImageBase.getpropagate_errors());
-    }
-
-    public Guid[] getchildrenId() {
-        return this.childrenIdField;
-    }
-
-    public void setchildrenId(Guid[] value) {
-        this.childrenIdField = value;
     }
 
     private double _actualDiskWithSnapthotsSize;
@@ -548,10 +534,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
                 otherDisk.getPropagateErrors()));
         di.storage_pool_idField = new NGuid(diskImage.storage_pool_idField.getUuid());
         di.actualSize = diskImage.actualSize;
-        di.childrenIdField = new Guid[diskImage.childrenIdField.length];
-        for (int i = 0; i < di.childrenIdField.length; i++) {
-            di.childrenIdField[i] = new Guid(diskImage.childrenIdField[i].getUuid());
-        }
         di.mReadRateKbPerSec = diskImage.mReadRateKbPerSec;
         di.mWriteRateKbPerSec = diskImage.mWriteRateKbPerSec;
 

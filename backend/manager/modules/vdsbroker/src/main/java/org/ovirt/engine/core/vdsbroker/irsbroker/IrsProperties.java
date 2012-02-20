@@ -22,7 +22,6 @@ public final class IrsProperties {
 
     public static final String uuid = "uuid";
     public static final String size = "size";
-    public static final String children = "children";
     public static final String parent = "parent";
     public static final String description = "description";
     public static final String path = "path";
