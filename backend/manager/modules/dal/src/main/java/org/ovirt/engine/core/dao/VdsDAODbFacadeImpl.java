@@ -26,7 +26,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
  */
 public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
 
-
     @Override
     public VDS get(NGuid id) {
         return getCallsHandler().executeRead("GetVdsByVdsId",
@@ -112,6 +111,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
                         .addValue("vds_group_id", vdsGroupID));
     }
 
+    @Override
     public List<VDS> getListForSpmSelection(Guid storagePoolId) {
         return getCallsHandler().executeReadList("GetUpAndPrioritizedVds",
                 new VdsRowMapper(),

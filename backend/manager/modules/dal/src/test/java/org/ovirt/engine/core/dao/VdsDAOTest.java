@@ -17,7 +17,7 @@ import org.ovirt.engine.core.compat.NGuid;
 public class VdsDAOTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
 
-     private static final String IP_ADDRESS = "192.168.122.17";
+    private static final String IP_ADDRESS = "192.168.122.17";
     private VdsDAO dao;
     private VDS existingVds;
 

@@ -19,9 +19,9 @@ import org.ovirt.engine.core.dao.vds.VdsStatisticsDAOHibernateImpl;
 
 public class VdsDAOWrapperImpl extends BaseDAOWrapperImpl implements VdsDAO {
 
-    private VdsStaticDAOHibernateImpl vdsStaticDAO = new VdsStaticDAOHibernateImpl();
-    private VdsDynamicDAOHibernateImpl vdsDynamicDAO = new VdsDynamicDAOHibernateImpl();
-    private VdsStatisticsDAOHibernateImpl vdsStatisticsDAO = new VdsStatisticsDAOHibernateImpl();
+    private final VdsStaticDAOHibernateImpl vdsStaticDAO = new VdsStaticDAOHibernateImpl();
+    private final VdsDynamicDAOHibernateImpl vdsDynamicDAO = new VdsDynamicDAOHibernateImpl();
+    private final VdsStatisticsDAOHibernateImpl vdsStatisticsDAO = new VdsStatisticsDAOHibernateImpl();
 
     @Override
     public void setSession(Session session) {
@@ -47,26 +47,6 @@ public class VdsDAOWrapperImpl extends BaseDAOWrapperImpl implements VdsDAO {
 
         return new VDS(staticPart, dynamicPart, statisticsPart);
     }
-    /* TODO - align with VDS DAO split - Darryl
-    @Override
-    public VdsStatic getStatic(Guid id) {
-        return vdsStaticDAO.get(id);
-    }
-
-    @Override
-    public VdsDynamic getDynamic(Guid id) {
-        return vdsDynamicDAO.get(id);
-    }
-
-    @Override
-    public VdsStatistics getStatistics(Guid id) {
-        return vdsStatisticsDAO.get(id);
-    }
-
-    @Override
-    public VdsStatic getStaticByName(String name) {
-        return vdsStaticDAO.getByName(name);
-    } */
 
     private List<VDS> convertToVdsList(List<VdsStatic> found) {
         List<VDS> result = new ArrayList<VDS>();
@@ -94,13 +74,6 @@ public class VdsDAOWrapperImpl extends BaseDAOWrapperImpl implements VdsDAO {
 
         return convertToVdsList(found);
     }
-    /* TODO - align with VDS DAO split - Darryl
-    @Override
-    public List<VDS> getAllWithIpAddress(String address) {
-        List<VdsStatic> found = vdsStaticDAO.findByCriteria(Restrictions.eq("ip", address));
-
-        return convertToVdsList(found);
-    } */
 
     @Override
     public List<VDS> getAllWithUniqueId(String id) {
@@ -155,75 +128,6 @@ public class VdsDAOWrapperImpl extends BaseDAOWrapperImpl implements VdsDAO {
 
         return convertToVdsList(found);
     }
-    /* TODO - align with VDS DAO split - Darryl
-    @Override
-    public List<VDS> getAllForVdsGroup(Guid vdsGroup) {
-        List<VdsStatic> found = vdsStaticDAO.findByCriteria(Restrictions.eq("vdsGroupId", vdsGroup));
-
-        return convertToVdsList(found);
-    }
-
-    @Override
-    public List<VdsStatic> getAllForHost(String hostname) {
-        return vdsStaticDAO.findByCriteria(Restrictions.eq("hostname", hostname));
-    }
-
-    @Override
-    public List<VdsStatic> getAllWithIpAddress(String address) {
-        return vdsStaticDAO.findByCriteria(Restrictions.eq("ip", address));
-    }
-
-    @Override
-    public List<VdsStatic> getAllForVdsGroup(Guid vdsGroup) {
-        return vdsStaticDAO.findByCriteria(Restrictions.eq("vdsGroupId", vdsGroup));
-    }
-
-    @Override
-    public void save(VdsStatic vds) {
-        vdsStaticDAO.save(vds);
-    }
-
-    @Override
-    public void saveDynamic(VdsDynamic vds) {
-        vdsDynamicDAO.save(vds);
-    }
-
-    @Override
-    public void saveStatistics(VdsStatistics stats) {
-        vdsStatisticsDAO.save(stats);
-    }
-
-    @Override
-    public void updateStatic(VdsStatic vds) {
-        saveStatic(vds);
-    }
-
-    @Override
-    public void updateDynamic(VdsDynamic vds) {
-        saveDynamic(vds);
-    }
-
-    @Override
-    public void updateStatistics(VdsStatistics stats) {
-        saveStatistics(stats);
-    }
-
-    @Override
-    public void removeStatic(Guid id) {
-        vdsStaticDAO.remove(id);
-    }
-
-    @Override
-    public void removeDynamic(Guid id) {
-        vdsDynamicDAO.remove(id);
-    }
-
-    @Override
-    public void removeStatistics(Guid id) {
-        vdsStatisticsDAO.remove(id);
-    } */
-
-    /* TODO - align with VDS DAO split - Darryl , all methods below were added to apply inherited interface.*/
 
     @Override
     public List<VDS> getAllWithIpAddress(String address) {
@@ -236,37 +140,6 @@ public class VdsDAOWrapperImpl extends BaseDAOWrapperImpl implements VdsDAO {
         // TODO Auto-generated method stub
         return null;
     }
-    /* TODO Follow separation of Spm Id Map handling from VdsDAO - Darryl
-    @Override
-    public vds_spm_id_map getVdsSpmIdMapForVds(Guid vdsId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void addVdsSpmIdMap(vds_spm_id_map vds_spm_id_map) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void removeVdsSpmIdMap(Guid vdsId) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public List<vds_spm_id_map> getAllVdsSpmIdMapsForStoragePool(Guid storagePoolId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public vds_spm_id_map getVdsSpmIdMapForStoragePoolAndVdsSpmId(Guid storagePoolId, int VdsSPMId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    */
 
     @Override
     public List<VDS> getListForSpmSelection(Guid storagePoolId) {
