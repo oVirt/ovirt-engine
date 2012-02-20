@@ -13,9 +13,9 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.Conso
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListItemMessages;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.ConsoleProtocol;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.ConsoleUtils;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalBasicListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
+import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

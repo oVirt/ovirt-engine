@@ -8,9 +8,9 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractModelActiva
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicListPresenterWidget;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalBasicListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
+import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;

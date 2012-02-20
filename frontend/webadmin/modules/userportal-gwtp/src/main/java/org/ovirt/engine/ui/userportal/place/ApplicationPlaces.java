@@ -35,4 +35,10 @@ public class ApplicationPlaces {
     public static final String extendedTempplateGeneralSubTabPlace = extendedTemplateSideTabPlace
             + SUB_TAB_PREFIX + "general";
 
+    public static final String extendedTempplateNetworkInterfacesSubTabPlace = extendedTemplateSideTabPlace
+            + SUB_TAB_PREFIX + "network_interfaces";
+
+    public static final String extendedTempplateVirtualDisksSubTabPlace = extendedTemplateSideTabPlace
+            + SUB_TAB_PREFIX + "virtual_disks";
+
 }

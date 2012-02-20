@@ -1,29 +1,32 @@
-package org.ovirt.engine.ui.webadmin.section.main.view.tab.template;
+package org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateVirtualDisksPresenter;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
-import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
 import org.ovirt.engine.ui.common.widget.uicommon.template.TemplateDiskListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
-import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateDiskPresenter;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
+import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateDiskListModelProvider;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabTemplateDiskView extends AbstractSubTabTableWidgetView<VmTemplate, DiskImage, TemplateListModel, TemplateDiskListModel>
-        implements SubTabTemplateDiskPresenter.ViewDef {
+public class SubTabExtendedTemplateVirtualDisksView
+        extends AbstractSubTabTableWidgetView<VmTemplate, DiskImage, UserPortalTemplateListModel, TemplateDiskListModel>
+        implements SubTabExtendedTemplateVirtualDisksPresenter.ViewDef, Editor<TemplateDiskListModel> {
 
-    interface ViewIdHandler extends ElementIdHandler<SubTabTemplateDiskView> {
+    interface ViewIdHandler extends ElementIdHandler<SubTabExtendedTemplateVirtualDisksView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     @Inject
-    public SubTabTemplateDiskView(SearchableDetailModelProvider<DiskImage, TemplateListModel, TemplateDiskListModel> modelProvider,
+    public SubTabExtendedTemplateVirtualDisksView(
+            TemplateDiskListModelProvider modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage) {
         super(new TemplateDiskListModelTable(modelProvider, eventBus, clientStorage));
@@ -31,5 +34,4 @@ public class SubTabTemplateDiskView extends AbstractSubTabTableWidgetView<VmTemp
         initTable();
         initWidget(getModelBoundTableWidget());
     }
-
 }

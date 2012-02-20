@@ -3,10 +3,13 @@ package org.ovirt.engine.ui.userportal.gin;
 import org.ovirt.engine.ui.common.gin.BaseUiCommonModule;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 import org.ovirt.engine.ui.userportal.uicommon.UserPortalConfigurator;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalBasicListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalListProvider;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalTemplateListProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
+import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateDiskListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateGeneralModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateInterfaceListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.template.UserPortalTemplateListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmGeneralModelProvider;
 
 import com.google.inject.Singleton;
@@ -33,11 +36,14 @@ public class UiCommonModule extends BaseUiCommonModule {
         // Extended tab: Template
         bind(UserPortalTemplateListProvider.class).asEagerSingleton();
         bind(TemplateGeneralModelProvider.class).asEagerSingleton();
+        bind(TemplateInterfaceListModelProvider.class).asEagerSingleton();
+        bind(TemplateDiskListModelProvider.class).asEagerSingleton();
     }
 
     void bindIntegration() {
         bindCommonIntegration();
         bindConfiguratorIntegration(UserPortalConfigurator.class);
+        bind(UserPortalModelResolver.class).asEagerSingleton();
         bind(UserPortalLoginModel.class).in(Singleton.class);
     }
 

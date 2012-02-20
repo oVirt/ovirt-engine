@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListM
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedTemplatePresenter;
 import org.ovirt.engine.ui.userportal.section.main.view.AbstractSideTabWithDetailsView;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalTemplateListProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.template.UserPortalTemplateListProvider;
 import org.ovirt.engine.ui.userportal.widget.action.UserPortalButtonDefinition;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn.OsTypeExtractor;

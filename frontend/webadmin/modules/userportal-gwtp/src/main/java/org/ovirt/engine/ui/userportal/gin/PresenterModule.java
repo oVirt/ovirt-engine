@@ -20,6 +20,8 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTa
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedVirtualMachinePresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.ExtendedTemplateSubTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateGeneralPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateNetworkInterfacesPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateVirtualDisksPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.ExtendedVmSubTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGeneralPresenter;
 import org.ovirt.engine.ui.userportal.section.main.view.HeaderView;
@@ -36,6 +38,8 @@ import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExte
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedVirtualMachineView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.ExtendedTemplateSubTabPanelView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.SubTabExtendedTemplateGeneralView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.SubTabExtendedTemplateNetworkInterfacesView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.SubTabExtendedTemplateVirtualDisksView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.ExtendedVmSubTabPanelView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmGeneralView;
 import org.ovirt.engine.ui.userportal.view.ErrorPopupView;
@@ -117,6 +121,14 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabExtendedTemplateGeneralPresenter.ViewDef.class,
                 SubTabExtendedTemplateGeneralView.class,
                 SubTabExtendedTemplateGeneralPresenter.ProxyDef.class);
+        bindPresenter(SubTabExtendedTemplateNetworkInterfacesPresenter.class,
+                SubTabExtendedTemplateNetworkInterfacesPresenter.ViewDef.class,
+                SubTabExtendedTemplateNetworkInterfacesView.class,
+                SubTabExtendedTemplateNetworkInterfacesPresenter.ProxyDef.class);
+        bindPresenter(SubTabExtendedTemplateVirtualDisksPresenter.class,
+                SubTabExtendedTemplateVirtualDisksPresenter.ViewDef.class,
+                SubTabExtendedTemplateVirtualDisksView.class,
+                SubTabExtendedTemplateVirtualDisksPresenter.ProxyDef.class);
 
         // Main section: basic view
         bindSingletonPresenterWidget(MainTabBasicDetailsPresenterWidget.class,

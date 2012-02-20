@@ -1,29 +1,31 @@
-package org.ovirt.engine.ui.webadmin.section.main.view.tab.template;
+package org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template;
 
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
-import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
 import org.ovirt.engine.ui.common.widget.uicommon.template.TemplateInterfaceListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
-import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateInterfacePresenter;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateNetworkInterfacesPresenter;
+import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateInterfaceListModelProvider;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabTemplateInterfaceView extends AbstractSubTabTableWidgetView<VmTemplate, VmNetworkInterface, TemplateListModel, TemplateInterfaceListModel>
-        implements SubTabTemplateInterfacePresenter.ViewDef {
+public class SubTabExtendedTemplateNetworkInterfacesView extends AbstractSubTabTableWidgetView<VmTemplate, VmNetworkInterface, UserPortalTemplateListModel, TemplateInterfaceListModel>
+        implements SubTabExtendedTemplateNetworkInterfacesPresenter.ViewDef, Editor<TemplateInterfaceListModel> {
 
-    interface ViewIdHandler extends ElementIdHandler<SubTabTemplateInterfaceView> {
+    interface ViewIdHandler extends ElementIdHandler<SubTabExtendedTemplateNetworkInterfacesView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     @Inject
-    public SubTabTemplateInterfaceView(SearchableDetailModelProvider<VmNetworkInterface, TemplateListModel, TemplateInterfaceListModel> modelProvider,
+    public SubTabExtendedTemplateNetworkInterfacesView(
+            TemplateInterfaceListModelProvider modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage) {
         super(new TemplateInterfaceListModelTable(modelProvider, eventBus, clientStorage));

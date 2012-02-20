@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalBasicListProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;

@@ -1,8 +1,9 @@
-package org.ovirt.engine.ui.userportal.uicommon.model;
+package org.ovirt.engine.ui.userportal.uicommon.model.basic;
 
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 
 import com.google.inject.Inject;
 
@@ -19,3 +20,4 @@ public class UserPortalBasicListProvider extends UserPortalDataBoundModelProvide
     }
 
 }
+

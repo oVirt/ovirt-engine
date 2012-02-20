@@ -77,4 +77,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("General")
     String extendedTemplateGeneralSubTabLabel();
+
+    @DefaultStringValue("Network Interfaces")
+    String extendedTemplateNetworkInterfacesSubTabLabel();
+
+    @DefaultStringValue("Virtual Disks")
+    String extendedTemplateVirtualDisksSubTabLabel();
 }

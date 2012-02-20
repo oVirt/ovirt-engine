@@ -3,25 +3,30 @@ package org.ovirt.engine.ui.userportal.uicommon.model;
 import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.TabModelProvider;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 /**
- * A {@link DetailModelProvider} implementation that resolves a detail model by its class using parent model provider.
+ * Default {@link UserPortalDataBoundModelProvider} implementation for use with as a detail model provider
  *
+ * @param <T>
+ *            Detail model item type.
  * @param <M>
- *            Parent model type.
+ *            Main model type.
  * @param <D>
  *            Detail model type.
  */
-public class UserPortalDetailModelProvider<M extends ListWithDetailsModel, D extends EntityModel> extends TabModelProvider<D> implements DetailModelProvider<M, D> {
+public abstract class UserPortalSearchableDetailModelProvider<T, M extends ListWithDetailsModel, D extends SearchableListModel>
+        extends UserPortalDataBoundModelProvider<T, D>
+        implements DetailModelProvider<M, D> {
 
     private final ModelProvider<M> parentModelProvider;
+
     private final Class<D> detailModelClass;
+
     private final UserPortalModelResolver modelResolver;
 
-    public UserPortalDetailModelProvider(BaseClientGinjector ginjector,
+    public UserPortalSearchableDetailModelProvider(BaseClientGinjector ginjector,
             ModelProvider<M> parentModelProvider, Class<D> detailModelClass,
             UserPortalModelResolver modelResolver) {
         super(ginjector);
