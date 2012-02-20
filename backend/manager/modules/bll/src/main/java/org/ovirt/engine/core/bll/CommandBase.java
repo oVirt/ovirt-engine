@@ -388,7 +388,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             Transaction transaction = TransactionSupport.suspend();
             try {
                 returnValue =
-                        IsUserAutorizedToRunAction() && IsBackwardsCompatible() && validateInputs() && canDoAction();
+                        IsUserAutorizedToRunAction() && IsBackwardsCompatible() && validateInputs() && canDoAction()
+                                && validateQuota();
                 if (!returnValue && getReturnValue().getCanDoActionMessages().size() > 0) {
                     log.warnFormat("CanDoAction of action {0} failed. Reasons:{1}", getActionType(),
                             StringHelper.aggregate(getReturnValue().getCanDoActionMessages(), ','));
@@ -407,6 +408,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             return false;
         }
 
+    }
+
+    protected void removeQuotaCommandLeftOver() {
     }
 
     /**
@@ -546,6 +550,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return true;
     }
 
+    protected boolean validateQuota() {
+        return true;
+    }
+
     /**
      * Factory to determine the type of the ReturnValue field
      *
@@ -643,6 +651,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             } else {
                 cleanUpCompensationData();
             }
+            removeQuotaCommandLeftOver();
         }
         return functionReturnValue;
     }
