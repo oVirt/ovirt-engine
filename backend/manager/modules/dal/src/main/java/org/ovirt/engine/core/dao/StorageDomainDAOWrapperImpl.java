@@ -52,6 +52,11 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
         return createDomain(staticPart);
     }
 
+    @Override
+    public storage_domains get(Guid id, Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
+    }
+
     private storage_domains createDomain(storage_domain_static staticPart) {
         storage_domains result = null;
 

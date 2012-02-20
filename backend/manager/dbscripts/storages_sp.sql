@@ -364,13 +364,16 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getstorage_domains_By_id(v_id UUID)
+Create or replace FUNCTION Getstorage_domains_By_id(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
 RETURNS SETOF storage_domains_without_storage_pools
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
    FROM storage_domains_without_storage_pools
-   WHERE id = v_id;
+   WHERE id = v_id
+   AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                     FROM   user_storage_domain_permissions_view
+                                     WHERE  user_id = v_user_id AND entity_id = v_id));
 
 END; $procedure$
 LANGUAGE plpgsql;

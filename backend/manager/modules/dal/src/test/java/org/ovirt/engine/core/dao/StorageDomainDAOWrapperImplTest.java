@@ -19,7 +19,12 @@ public class StorageDomainDAOWrapperImplTest {
     }
 
     @Test(expected = NotImplementedException.class)
-    public void testUnimplementedMethods() {
+    public void testUnimplementedFilteredGetAllForStoragePool() {
         dao.getAllForStoragePool(Guid.NewGuid(), Guid.NewGuid(), true);
+    }
+
+    @Test(expected = NotImplementedException.class)
+    public void testUnimplementedFilteredGet() {
+        dao.get(Guid.NewGuid(), Guid.NewGuid(), true);
     }
 }

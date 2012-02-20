@@ -72,8 +72,37 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     public void testGet() {
         storage_domains result = dao.get(existingDomain.getId());
 
-        assertNotNull(result);
-        assertEquals(existingDomain, result);
+        assertGetResult(result);
+    }
+
+    /**
+     * Ensures that the right collection is returned for a given storage pool with filtering for a privileged user.
+     */
+    @Test
+    public void testGetWithPermissionsPrivilegedUser() {
+        storage_domains result = dao.get(existingDomain.getId(), PRIVILEGED_USER_ID, true);
+
+        assertGetResult(result);
+    }
+
+    /**
+     * Ensures that the right collection is returned for a given storage pool with filtering disabled for an unprivileged user.
+     */
+    @Test
+    public void testGetWithPermissionsDisabledUnprivilegedUser() {
+        storage_domains result = dao.get(existingDomain.getId(), UNPRIVILEGED_USER_ID, false);
+
+        assertGetResult(result);
+    }
+
+    /**
+     * Ensures that an empty collection is returned for a given storage pool for an unprivileged user.
+     */
+    @Test
+    public void testGetWithPermissionsUnprivilegedUser() {
+        storage_domains result = dao.get(existingDomain.getId(), UNPRIVILEGED_USER_ID, true);
+
+        assertNull(result);
     }
 
     /**
@@ -84,6 +113,15 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         storage_domains result = dao.getForStoragePool(Guid.NewGuid(), EXISTING_STORAGE_POOL_ID);
 
         assertNull(result);
+    }
+
+    /**
+     * Asserts the result of {@link StorageDomainDAO#get(Guid)} returns the correct domain
+     * @param result
+     */
+    private void assertGetResult(storage_domains result) {
+        assertNotNull(result);
+        assertEquals(existingDomain, result);
     }
 
     /**
@@ -104,8 +142,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     public void testGetForStoragePool() {
         storage_domains result = dao.getForStoragePool(existingDomain.getId(), EXISTING_STORAGE_POOL_ID);
 
-        assertNotNull(result);
-        assertEquals(existingDomain, result);
+        assertGetResult(result);
     }
 
     /**

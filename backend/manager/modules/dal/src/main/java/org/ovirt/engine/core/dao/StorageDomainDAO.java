@@ -32,6 +32,19 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains> {
     storage_domains get(Guid id);
 
     /**
+     * Retrieves the storage domain with specified id, with optional permissions filtering.
+     *
+     * @param id
+     *            the storage domain id
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the storage domain
+     */
+    storage_domains get(Guid id, Guid userID, boolean isFiltered);
+
+    /**
      * Retrieves the storage domain for the given pool with the specified id.
      *
      * @param id
