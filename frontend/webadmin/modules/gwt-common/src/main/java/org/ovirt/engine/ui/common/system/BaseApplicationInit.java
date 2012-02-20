@@ -61,14 +61,7 @@ public abstract class BaseApplicationInit implements LogoutHandler {
         loginModel.getLoggedInEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                // UiCommon login preparation
-                Frontend.setLoggedInUser(loginModel.getLoggedUser());
-                beforeUiCommonInitEvent(loginModel);
-                UiCommonInitEvent.fire(eventBus);
-
-                // UI login actions
-                user.onUserLogin(loginModel.getLoggedUser().getUserName());
-                clearPassword(loginModel);
+                onLogin(loginModel);
             }
         });
     }
@@ -85,7 +78,7 @@ public abstract class BaseApplicationInit implements LogoutHandler {
         // No-op, override as necessary
     }
 
-    void clearPassword(LoginModel loginModel) {
+    protected void clearPassword(LoginModel loginModel) {
         String password = (String) loginModel.getPassword().getEntity();
 
         if (password != null) {
@@ -137,4 +130,14 @@ public abstract class BaseApplicationInit implements LogoutHandler {
         }
     }
 
+    protected void onLogin(LoginModel loginModel) {
+        // UiCommon login preparation
+        Frontend.setLoggedInUser(loginModel.getLoggedUser());
+        beforeUiCommonInitEvent(loginModel);
+        UiCommonInitEvent.fire(eventBus);
+
+        // UI login actions
+        user.onUserLogin(loginModel.getLoggedUser().getUserName());
+        clearPassword(loginModel);
+    }
 }

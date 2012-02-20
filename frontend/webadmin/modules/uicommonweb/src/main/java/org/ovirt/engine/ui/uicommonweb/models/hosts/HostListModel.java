@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
@@ -55,7 +52,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -1691,25 +1687,5 @@ public class HostListModel extends ListWithDetailsModel implements ITaskTarget, 
     @Override
     protected String getListName() {
         return "HostListModel";
-    }
-
-    @Override
-    protected ReportModel createReportModel() {
-        ReportModel reportModel = super.createReportModel();
-
-        List<VDS> items =
-                getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems() : new ArrayList<VDS>();
-
-        boolean isFromSameDc = true;
-        Guid dcId = items.iterator().next()!= null ? items.iterator().next().getstorage_pool_id() : null;
-        for (VDS item : items){
-            if (!item.getstorage_pool_id().equals(dcId)) {
-                isFromSameDc = false;
-                reportModel.setDifferntDcError(true);
-                continue;
-            }
-        }
-        reportModel.setDataCenterID(dcId.toString());
-        return reportModel;
     }
 }

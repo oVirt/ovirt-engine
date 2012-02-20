@@ -72,7 +72,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
                     handleWindowModelChange(windowPopup, false);
                 } else if ("ConfirmWindow".equals(propName)) {
                     handleWindowModelChange(confirmWindowPopup, true);
-                } else if ("ModelBoundWidget".equals(propName)) {
+                } else if ("WidgetModel".equals(propName)) {
                     modelBoundWidgetChange();
                 }
             }
@@ -83,7 +83,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
     void modelBoundWidgetChange() {
         UICommand lastExecutedCommand = getModel().getLastExecutedCommand();
         ModelBoundPresenterWidget<?> modelBoundPresenterWidget = getModelBoundWidget(lastExecutedCommand);
-        ((ModelBoundPresenterWidget<Model>) modelBoundPresenterWidget).init(getModel().getModelBoundWidget());
+        ((ModelBoundPresenterWidget<Model>) modelBoundPresenterWidget).init(getModel().getWidgetModel());
     }
     @SuppressWarnings("unchecked")
     void handleWindowModelChange(AbstractModelBoundPopupPresenterWidget<?, ?> popup, boolean isConfirm) {

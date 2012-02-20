@@ -10,11 +10,12 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.ReportsHelper;
+import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
@@ -176,10 +177,12 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             }
         });
 
-        List<ActionButtonDefinition<VDS>> resourceSubActions =
-                ReportsHelper.getInstance().getResourceSubActions("Host", getMainModel());
-        if (resourceSubActions != null && resourceSubActions.size() > 0) {
-            getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>("Show Report", resourceSubActions));
+        if (ReportInit.getInstance().isReportsEnabled()) {
+            List<ActionButtonDefinition<VDS>> resourceSubActions =
+                    ReportActionsHelper.getInstance().getResourceSubActions("Host", getMainModel());
+            if (resourceSubActions != null && resourceSubActions.size() > 0) {
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>("Show Report", resourceSubActions));
+            }
         }
     }
 }

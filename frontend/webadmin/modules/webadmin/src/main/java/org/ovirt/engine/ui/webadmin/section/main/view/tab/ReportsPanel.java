@@ -12,8 +12,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 
 public abstract class ReportsPanel extends SimplePanel {
 
-    public abstract int getNumOfFrames();
-
     protected List<ReportPostableFrame> frames = new LinkedList<ReportPostableFrame>();
 
     public void setCommonUrl(String url) {

@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
-import java.util.Date;
-
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -21,6 +19,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SearchSuggestModel;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkEventArgs;
@@ -426,7 +425,7 @@ public class CommonModel extends ListModel
         templateList.setIsAvailable(!getHasSelectedTags());
         userList.setIsAvailable(true);
         eventList.setIsAvailable(!getHasSelectedTags());
-        // reportsList.setIsAvailable(!getHasSelectedTags());
+        reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled() && !getHasSelectedTags());
 
         /*
          * --- JUICOMMENT_BEGIN monitor.setIsAvailable(!getHasSelectedTags()); JUICOMMENT_END ---
@@ -549,8 +548,9 @@ public class CommonModel extends ListModel
                 || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Host
                 || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.System);
 
-        // reportsList.setIsAvailable(model.getType() == SystemTreeItemType.System
-        // || model.getType() == SystemTreeItemType.DataCenter || model.getType() == SystemTreeItemType.Clusters);
+        reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled()
+                && (model.getType() == SystemTreeItemType.System
+                || model.getType() == SystemTreeItemType.DataCenter || model.getType() == SystemTreeItemType.Clusters));
 
         // Select a default item depending on system tree selection.
         ListModel oldSelectedItem = getSelectedItem();
@@ -753,14 +753,10 @@ public class CommonModel extends ListModel
         eventList = new EventListModel();
         list.add(eventList);
 
-        reportsList = new ReportsListModel("10.35.1.139", 8080, "jasperserver-pro");
+        reportsList = new ReportsListModel(ReportInit.getInstance().getReportBaseUrl());
         reportsList.setUser("ovirt");
         reportsList.setPassword("1234");
-        reportsList.setReportStartDate(new Date(2011, 8, 1));
-        reportsList.setReportEndDate(new Date(2011, 8, 31));
         list.add(reportsList);
-
-        reportsList.setIsAvailable(false);
 
         setItems(list);
 

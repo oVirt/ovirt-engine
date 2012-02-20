@@ -30,9 +30,4 @@ public class HostReportsPanel extends ReportsPanel {
         frames.add(frame1);
         frames.add(frame2);
     }
-
-    @Override
-    public int getNumOfFrames() {
-        return 2;
-    }
 }

@@ -1,8 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -74,7 +72,6 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
@@ -3095,26 +3092,5 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     @Override
     protected String getListName() {
         return "VmListModel";
-    }
-
-    @Override
-    protected ReportModel createReportModel() {
-        ReportModel reportModel = super.createReportModel();
-
-        List<VM> items =
-                getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems() : new ArrayList<VM>();
-
-        boolean isFromSameDc = true;
-        Guid dcId = items.iterator().next() != null ? items.iterator().next().getstorage_pool_id() : null;
-        for (VM item : items) {
-            if (!item.getstorage_pool_id().equals(dcId)) {
-                isFromSameDc = false;
-                reportModel.setDifferntDcError(true);
-                continue;
-            }
-        }
-
-        reportModel.setDataCenterID(items.iterator().next().getstorage_pool_id().toString());
-        return reportModel;
     }
 }

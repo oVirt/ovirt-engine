@@ -65,19 +65,19 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         }
     }
 
-    private Model modelBoundWidget;
+    private Model widgetModel;
 
-    public Model getModelBoundWidget()
+    public Model getWidgetModel()
     {
-        return modelBoundWidget;
+        return widgetModel;
     }
 
-    public void setModelBoundWidget(Model value)
+    public void setWidgetModel(Model value)
     {
-        if (modelBoundWidget != value)
+        if (widgetModel != value)
         {
-            modelBoundWidget = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ModelBoundWidget"));
+            widgetModel = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("WidgetModel"));
         }
     }
 

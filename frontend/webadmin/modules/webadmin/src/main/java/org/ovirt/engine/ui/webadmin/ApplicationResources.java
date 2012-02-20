@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.resources.client.TextResource;
 
 public interface ApplicationResources extends CommonApplicationResources {
 
@@ -296,10 +295,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/button/footer_button_Down_end.png")
     ImageResource footerButtonDownEnd();
 
-    @Source("Reports.xml")
-    TextResource reportsXml();
-
     @Source("images/icon_task.png")
     ImageResource iconTask();
-
 }

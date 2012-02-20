@@ -60,7 +60,7 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 EntityModel senderEntityModel = (EntityModel) sender;
-                updateReportsPanel((SystemTreeItemType) senderEntityModel.getEntity());
+                updateReportsPanel(((SystemTreeItemModel) senderEntityModel.getEntity()).getType());
             }
         });
     }

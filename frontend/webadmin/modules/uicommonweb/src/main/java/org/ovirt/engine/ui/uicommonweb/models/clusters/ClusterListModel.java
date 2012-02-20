@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -15,7 +12,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -34,7 +30,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -579,27 +574,5 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     @Override
     protected String getListName() {
         return "ClusterListModel";
-    }
-
-    @Override
-    protected ReportModel createReportModel() {
-        ReportModel reportModel = super.createReportModel();
-
-        List<VDSGroup> items =
-                getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems()
-                        : new ArrayList<VDSGroup>();
-
-        boolean isFromSameDc = true;
-        NGuid dcId = items.iterator().next() != null ? items.iterator().next().getstorage_pool_id() : null;
-        for (VDSGroup item : items) {
-            if (!item.getstorage_pool_id().equals(dcId)) {
-                isFromSameDc = false;
-                reportModel.setDifferntDcError(true);
-                continue;
-            }
-        }
-
-        reportModel.setDataCenterID(items.iterator().next().getstorage_pool_id().toString());
-        return reportModel;
     }
 }

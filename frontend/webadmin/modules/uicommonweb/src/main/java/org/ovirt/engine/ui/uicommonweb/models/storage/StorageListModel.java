@@ -1727,7 +1727,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     return;
                 }
 
-                setModelBoundWidget(reportModel);
+                setWidgetModel(reportModel);
             }
         }), storage.getId());
     }

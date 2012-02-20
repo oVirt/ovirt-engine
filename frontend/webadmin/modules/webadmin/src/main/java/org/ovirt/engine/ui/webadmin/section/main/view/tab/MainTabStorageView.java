@@ -12,11 +12,12 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.uicommon.ReportsHelper;
+import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
@@ -123,11 +124,13 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
                 return getMainModel().getDestroyCommand();
             }
         });
-        List<ActionButtonDefinition<storage_domains>> resourceSubActions =
-                ReportsHelper.getInstance().getResourceSubActions("Storage", getMainModel());
-        if (resourceSubActions != null && resourceSubActions.size() > 0) {
-            getTable().addActionButton(new WebAdminMenuBarButtonDefinition<storage_domains>("Show Report",
-                    resourceSubActions));
+        if (ReportInit.getInstance().isReportsEnabled()) {
+            List<ActionButtonDefinition<storage_domains>> resourceSubActions =
+                    ReportActionsHelper.getInstance().getResourceSubActions("Storage", getMainModel());
+            if (resourceSubActions != null && resourceSubActions.size() > 0) {
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<storage_domains>("Show Report",
+                        resourceSubActions));
+            }
         }
     }
 

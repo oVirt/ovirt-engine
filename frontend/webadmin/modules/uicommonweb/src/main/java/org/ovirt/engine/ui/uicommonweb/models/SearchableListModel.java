@@ -1,11 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.HasStoragePool;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -26,9 +29,10 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.RegistrationResult;
-import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.ProvideTickEvent;
+import org.ovirt.engine.ui.uicommonweb.ReportCommand;
+import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
@@ -91,31 +95,6 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     private void setForceRefreshCommand(UICommand value)
     {
         privateForceRefreshCommand = value;
-    }
-
-    public static class ReportCommand extends UICommand {
-        private final String idParamName;
-        private final String uriValue;
-        private final boolean isMultiple;
-
-        public ReportCommand(String name, String idParamName, boolean isMultiple, String uriValue, ICommandTarget target) {
-            super(name, target);
-            this.idParamName = idParamName;
-            this.isMultiple = isMultiple;
-            this.uriValue = uriValue;
-        }
-
-        public String getIdParamName() {
-            return idParamName;
-        }
-
-        public boolean isMultiple() {
-            return isMultiple;
-        }
-
-        public String getUriValue() {
-            return uriValue;
-        }
     }
 
     private final List<ReportCommand> openReportCommands = new LinkedList<ReportCommand>();
@@ -452,49 +431,59 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         }
     }
 
-    protected ReportModel createReportModel() {
-        ReportCommand reportCommand = (ReportCommand) getLastExecutedCommand();
-        ReportModel reportModel = new ReportModel("10.35.1.139", 8080, "jasperserver-pro");
-        reportModel.setUser("ovirt");
-        reportModel.setPassword("1234");
-        reportModel.setReportStartDate(new Date(2011, 8, 1));
-        reportModel.setReportEndDate(new Date(2011, 8, 31));
-        reportModel.setViewAsDashboard(false);
-
-        reportModel.setReportUnit(reportCommand.getUriValue());
-
-        setReportModelResourceId(reportModel,
-                reportCommand.getIdParamName(),
-                ((ReportCommand) getLastExecutedCommand()).isMultiple);
-
-        return reportModel;
-    }
-
     protected void setReportModelResourceId(ReportModel reportModel, String idParamName, boolean isMultiple) {
-        java.util.ArrayList<IVdcQueryable> items =
-                getSelectedItems() != null ? Linq.<IVdcQueryable> Cast(getSelectedItems())
-                        : new java.util.ArrayList<IVdcQueryable>();
 
-        if (idParamName != null) {
-            for (IVdcQueryable item : items) {
-                if (isMultiple) {
-                    reportModel.addResourceId(idParamName, item.getQueryableId().toString());
-                } else {
-                    reportModel.setResourceId(idParamName, item.getQueryableId().toString());
-                }
-            }
-        }
     }
 
     protected void OpenReport()
     {
-        ReportModel reportModel = createReportModel();
+        setWidgetModel(createReportModel());
+    }
 
-        if (reportModel == null) {
-            return;
+    protected ReportModel createReportModel() {
+        ReportCommand reportCommand = (ReportCommand) getLastExecutedCommand();
+        ReportModel reportModel = new ReportModel(ReportInit.getInstance().getReportBaseUrl());
+
+        // TODO: remove user and password from the code when the sso will be ready
+        reportModel.setUser("ovirt");
+        reportModel.setPassword("1234");
+        // -----------------------------------------------------------------------
+
+        reportModel.setReportUnit(reportCommand.getUriValue());
+
+        if (reportCommand.getIdParamName() != null) {
+            for (Object item : getSelectedItems()) {
+                if (((ReportCommand) getLastExecutedCommand()).isMultiple) {
+                    reportModel.addResourceId(reportCommand.getIdParamName(), ((BusinessEntity<?>) item).getId()
+                            .toString());
+                } else {
+                    reportModel.setResourceId(reportCommand.getIdParamName(), ((BusinessEntity<?>) item).getId()
+                            .toString());
+                }
+            }
         }
 
-        setModelBoundWidget(reportModel);
+        boolean isFromSameDc = true;
+        boolean firstItem = true;
+        String dcId = "";
+        for (Object item : getSelectedItems()) {
+            if (item instanceof HasStoragePool) {
+                if (firstItem) {
+                    dcId = ((HasStoragePool<?>) item).getstorage_pool_id().toString();
+                    firstItem = false;
+                } else if (!(((HasStoragePool<?>) item).getstorage_pool_id().toString().equals(dcId))) {
+                    isFromSameDc = false;
+                    reportModel.setDifferntDcError(true);
+                    continue;
+                }
+            }
+        }
+
+        if (!dcId.equals("")) {
+            reportModel.setDataCenterID(dcId);
+        }
+
+        return reportModel;
     }
 
     private String dateStr(Date date) {
@@ -592,14 +581,14 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         UpdateActionAvailability();
     }
 
-    private void UpdateReportCommandAvailability(ReportCommand reportCommand, ArrayList<IVdcQueryable> selectedItems) {
+    private void UpdateReportCommandAvailability(ReportCommand reportCommand, List<?> selectedItems) {
         reportCommand.setIsExecutionAllowed((!reportCommand.isMultiple() && (selectedItems.size() == 1))
                 || (reportCommand.isMultiple() && (selectedItems.size() > 1)));
     }
     private void UpdateActionAvailability() {
-        java.util.ArrayList<IVdcQueryable> items =
-                getSelectedItems() != null ? Linq.<IVdcQueryable> Cast(getSelectedItems())
-                        : new java.util.ArrayList<IVdcQueryable>();
+        List<?> items =
+                getSelectedItems() != null ? getSelectedItems()
+                        : Collections.emptyList();
 
         for (ReportCommand reportCommand : openReportCommands)
         {

@@ -1,34 +1,27 @@
 package org.ovirt.engine.ui.uicommonweb.models.reports;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.ui.uicommonweb.HtmlParameters;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.UrlBuilder;
 
 public class ReportsListModel extends SearchableListModel {
 
-    private final UrlBuilder builder;
-    private final Map<String, List<String>> reportParams = new HashMap<String, List<String>>();
+    HtmlParameters htmlParams = new HtmlParameters();
     private String lastResourceId = "";
+    private final String reportUrl;
 
-    public ReportsListModel(String host, int port, String context) {
-        builder = new UrlBuilder();
-        builder.setHost(host);
-        builder.setPort(port);
-        builder.setPath(context + "/flow.html");
-        reportParams.put("_flowId", new LinkedList<String>(Collections.singletonList("viewReportFlow")));
-        reportParams.put(" active_hosts_select",
-                new LinkedList<String>(Collections.singletonList("AND+delete_date+IS+NULL")));
+    public ReportsListModel(String baseUrl) {
+        reportUrl = baseUrl + "/flow.html" + "?viewAsDashboardFrame=true";
+
+        htmlParams.setParameter("_flowId", "viewReportFlow");
+        htmlParams.setParameter(" active_hosts_select", "AND+delete_date+IS+NULL");
 
         setDefaultSearchString("Reports:");
         setSearchString(getDefaultSearchString());
@@ -37,59 +30,47 @@ public class ReportsListModel extends SearchableListModel {
         getSearchPreviousPageCommand().setIsAvailable(false);
 
         setIsTimerDisabled(true);
-
-        setViewAsDashboard(true);
     }
 
     public Map<String, List<String>> getCommonParams() {
-        return Collections.unmodifiableMap(reportParams);
+        return htmlParams.getParameters();
     }
 
     public String getCommonUrl() {
-        return builder.buildString();
+        return reportUrl;
     }
 
     public void setDataCenterID(final String uuid) {
-        reportParams.put("P_DataCenter_ID", new LinkedList<String>(Collections.singletonList(uuid)));
+        htmlParams.setParameter("P_DataCenter_ID", uuid);
     }
 
     public void setPassword(String password) {
-        reportParams.put("j_password", new LinkedList<String>(Collections.singletonList(password)));
+        htmlParams.setParameter("j_password", password);
     }
 
-    public void setReportEndDate(Date date) {
-        reportParams.put("P_End_Date", new LinkedList<String>(Collections.singletonList(dateStr(date))));
+    public void setReportEndDate(String date) {
+        htmlParams.setParameter("P_End_Date", date);
     }
 
-    public void setReportStartDate(Date date) {
-        reportParams.put("P_Start_Date", new LinkedList<String>(Collections.singletonList(dateStr(date))));
+    public void setReportStartDate(String date) {
+        htmlParams.setParameter("P_Start_Date", date);
     }
 
     public void setUser(String user) {
-        reportParams.put("j_username", new LinkedList<String>(Collections.singletonList(user)));
-    }
-
-    public void setViewAsDashboard(boolean viewAsDashboard) {
-        builder.setParameter("viewAsDashboardFrame", String.valueOf(viewAsDashboard));
+        htmlParams.setParameter("j_username", user);
     }
 
     public void setReportUnit(String uri) {
-        reportParams.put("reportUnit", new LinkedList<String>(Collections.singletonList(uri)));
+        htmlParams.setParameter("reportUnit", uri);
     }
 
     public void setResourceId(String idParamName, String id) {
-        reportParams.put(idParamName, new LinkedList<String>(Collections.singletonList(id)));
+        htmlParams.setParameter(idParamName, id);
         lastResourceId = idParamName;
     }
 
     public void addResourceId(String idParamName, String id) {
-        List<String> ids = reportParams.get(idParamName);
-
-        if (ids == null) {
-            setResourceId(idParamName, id);
-        } else {
-            ids.add(id);
-        }
+        htmlParams.addParameter(idParamName, id);
     }
 
     private void clearTreeSensitiveParams() {
@@ -98,7 +79,7 @@ public class ReportsListModel extends SearchableListModel {
     }
 
     public void removeParam(String paramName) {
-        reportParams.remove(paramName);
+        htmlParams.removeParameter(paramName);
     }
 
     public void OnSystemTreeChanged(SystemTreeItemModel model) {
@@ -147,15 +128,11 @@ public class ReportsListModel extends SearchableListModel {
         }
         GWT.log("Tree Item changed: " + title);
 
-        setEntity(model.getType());
+        setEntity(model);
     }
 
     @Override
     protected String getListName() {
         return "DeashboardReportsListModel";
-    }
-
-    private String dateStr(Date date) {
-        return date.getYear() + "-" + date.getMonth() + "-" + date.getDate();
     }
 }

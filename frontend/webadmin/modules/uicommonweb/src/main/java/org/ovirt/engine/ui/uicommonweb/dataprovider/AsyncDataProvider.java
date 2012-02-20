@@ -1722,6 +1722,19 @@ public final class AsyncDataProvider {
         GetConfigFromCache(tempVar, aQuery);
     }
 
+    public static void GetRedirectServletReportsPage(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (String) source : "";
+            }
+        };
+        GetConfigFromCache(
+                new GetConfigurationValueParameters(ConfigurationValues.RedirectServletReportsPage),
+                aQuery);
+    }
+
     /**
      * method to get an item from config while caching it (config is not supposed to change during a session)
      *

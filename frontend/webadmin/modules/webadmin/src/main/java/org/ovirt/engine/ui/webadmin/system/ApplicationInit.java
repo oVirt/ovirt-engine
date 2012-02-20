@@ -1,13 +1,16 @@
 package org.ovirt.engine.ui.webadmin.system;
 
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.system.BaseApplicationInit;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
+import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
-import org.ovirt.engine.ui.webadmin.uicommon.ReportsHelper;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -28,11 +31,24 @@ public class ApplicationInit extends BaseApplicationInit {
     @Override
     protected void beforeUiCommonInitEvent(LoginModel loginModel) {
         CommonModelManager.init(eventBus, user, loginModel);
-        ReportsHelper.getInstance().init();
     }
 
     @Override
     public void onLogout() {
         CommonModelManager.instance().SignOut();
+    }
+
+    @Override
+    protected void onLogin(final LoginModel loginModel) {
+        // init reports
+        ReportInit.getInstance().init();
+
+        ReportInit.getInstance().getReportsInitEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                ApplicationInit.super.onLogin(loginModel);
+            }
+        });
     }
 }
