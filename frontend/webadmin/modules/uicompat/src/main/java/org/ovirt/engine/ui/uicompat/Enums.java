@@ -694,4 +694,8 @@ public interface Enums extends ConstantsWithLookup {
     String NetworkBootProtocol___Dhcp();
 
     String NetworkBootProtocol___StaticIp();
+
+    String VmEntityType___VM();
+
+    String VmEntityType___TEMPLATE();
 }

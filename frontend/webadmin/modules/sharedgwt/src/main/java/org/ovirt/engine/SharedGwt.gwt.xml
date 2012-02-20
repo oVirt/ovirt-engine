@@ -19,7 +19,6 @@
 		<include name="core/common/businessentities/DiskImage.java" />
 		<include name="core/common/businessentities/DiskImageBase.java" />
 		<include name="core/common/businessentities/DiskImageDynamic.java" />
-		<include name="core/common/businessentities/DiskImageTemplate.java" />
 		<include name="core/common/businessentities/DiskInterface.java" />
 		<include name="core/common/businessentities/DiskType.java" />
 		<include name="core/common/businessentities/DisplayType.java" />
@@ -50,6 +49,7 @@
 		<include name="core/common/businessentities/NetworkStatus.java" />
 		<include name="core/common/businessentities/OperationMode.java" />
 		<include name="core/common/businessentities/OriginType.java" />
+                <include name="core/common/businessentities/VmEntityType.java" />
 		<include name="core/common/businessentities/permissions.java" />
 		<include name="core/common/businessentities/PropagateErrors.java" />
 		<include name="core/common/businessentities/RecoveryMode.java" />
