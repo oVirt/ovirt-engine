@@ -13,15 +13,15 @@ import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
+import org.ovirt.engine.ui.common.widget.label.MemorySizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.widget.label.DetailsLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.EnumLabel;
-import org.ovirt.engine.ui.webadmin.widget.label.MemorySizeLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.VersionLabel;
@@ -59,13 +59,13 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     NullableNumberLabel<Integer> activeVms = new NullableNumberLabel<Integer>();
     NullableNumberLabel<Integer> numberOfCPUs = new NullableNumberLabel<Integer>();
 
-    MemorySizeLabel<Integer> physicalMemory = new MemorySizeLabel<Integer>();
-    MemorySizeLabel<Integer> usedMemory = new MemorySizeLabel<Integer>();
-    MemorySizeLabel<Integer> freeMemory = new MemorySizeLabel<Integer>();
+    MemorySizeLabel<Integer> physicalMemory;
+    MemorySizeLabel<Integer> usedMemory;
+    MemorySizeLabel<Integer> freeMemory;
 
-    MemorySizeLabel<Long> swapTotal = new MemorySizeLabel<Long>();
-    MemorySizeLabel<Long> usedSwap = new MemorySizeLabel<Long>();
-    MemorySizeLabel<Long> swapFree = new MemorySizeLabel<Long>();
+    MemorySizeLabel<Long> swapTotal;
+    MemorySizeLabel<Long> usedSwap;
+    MemorySizeLabel<Long> swapFree;
 
     @Ignore
     DetailsLabel<ArrayList<ValueLabel<Integer>>, Integer> physicalMemoryDetails =
@@ -100,11 +100,13 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     }
 
     @Inject
-    public SubTabHostGeneralView(DetailModelProvider<HostListModel, HostGeneralModel> modelProvider) {
+    public SubTabHostGeneralView(DetailModelProvider<HostListModel, HostGeneralModel> modelProvider,
+            ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
+        initMemorySizeLabels(constants);
 
         // Inject a reference to the resources:
-        resources = ClientGinjectorProvider.instance().getApplicationResources();
+        this.resources = resources;
 
         // Init form panel:
         formPanel = new GeneralFormPanel();
@@ -132,6 +134,16 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formBuilder.addFormItem(new FormItem("Physical Memory", physicalMemoryDetails, 0, 2));
         formBuilder.addFormItem(new FormItem("Swap Size", swapSizeDetails, 1, 2));
         formBuilder.addFormItem(new FormItem("Shared Memory", sharedMemory, 2, 2));
+    }
+
+    void initMemorySizeLabels(ApplicationConstants constants) {
+        this.physicalMemory = new MemorySizeLabel<Integer>(constants);
+        this.usedMemory = new MemorySizeLabel<Integer>(constants);
+        this.freeMemory = new MemorySizeLabel<Integer>(constants);
+
+        this.swapTotal = new MemorySizeLabel<Long>(constants);
+        this.usedSwap = new MemorySizeLabel<Long>(constants);
+        this.swapFree = new MemorySizeLabel<Long>(constants);
     }
 
     @SuppressWarnings("unchecked")

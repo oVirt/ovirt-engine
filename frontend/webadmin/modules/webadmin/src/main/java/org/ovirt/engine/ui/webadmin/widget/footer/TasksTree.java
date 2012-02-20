@@ -11,11 +11,11 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.webadmin.widget.storage.AbstractTaskSubTabTree;
 import org.ovirt.engine.ui.webadmin.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TaskStatusColumn;
@@ -218,14 +218,14 @@ public class TasksTree extends AbstractTaskSubTabTree<TaskListModel> {
         openTasks.clear();
         openSteps.clear();
         for (int i = 0; i < tree.getItemCount(); i++) {
-            collapseAllTasksHelper((TreeItem) tree.getItem(i));
+            collapseAllTasksHelper(tree.getItem(i));
         }
     }
 
     private void collapseAllTasksHelper(TreeItem item) {
         item.setState(false);
         for (int i = 0; i < item.getChildCount(); i++) {
-            collapseAllTasksHelper((TreeItem) item.getChild(i));
+            collapseAllTasksHelper(item.getChild(i));
         }
     }
 }

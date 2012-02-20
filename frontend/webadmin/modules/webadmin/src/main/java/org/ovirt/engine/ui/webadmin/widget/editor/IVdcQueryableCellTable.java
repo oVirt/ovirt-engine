@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.PopupTableResources;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
@@ -22,7 +23,7 @@ public class IVdcQueryableCellTable<IVdcQueryable, M extends ListModel> extends 
     private M listModel;
 
     public IVdcQueryableCellTable() {
-        super(DEFAULT_PAGESIZE, (Resources) GWT.create(IVdcQueryableCellTableResources.class));
+        super(DEFAULT_PAGESIZE, (Resources) GWT.create(PopupTableResources.class));
 
         SingleSelectionModel<IVdcQueryable> selectionModel = new SingleSelectionModel<IVdcQueryable>();
         setSelectionModel(selectionModel);
@@ -85,15 +86,6 @@ public class IVdcQueryableCellTable<IVdcQueryable, M extends ListModel> extends 
     @Override
     public M flush() {
         return listModel;
-    }
-
-    public interface IVdcQueryableCellTableResources extends CellTable.Resources {
-        interface TableStyle extends CellTable.Style {
-        }
-
-        @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/PopupCellTable.css" })
-        TableStyle cellTableStyle();
     }
 
 }

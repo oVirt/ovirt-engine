@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
+import org.ovirt.engine.ui.common.widget.parser.EntityModelParser;
 import org.ovirt.engine.ui.common.widget.renderer.EmptyValueRenderer;
 
 import com.google.gwt.dom.client.Document;

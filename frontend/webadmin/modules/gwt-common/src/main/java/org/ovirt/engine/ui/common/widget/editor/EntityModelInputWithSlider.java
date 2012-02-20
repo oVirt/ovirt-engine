@@ -1,10 +1,9 @@
-package org.ovirt.engine.ui.webadmin.widget.editor;
+package org.ovirt.engine.ui.common.widget.editor;
 
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.IntegerSlider;
-import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
-import org.ovirt.engine.ui.common.widget.editor.TakesValueWithChangeHandlersEditor;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressHandler;
@@ -24,9 +23,10 @@ import com.google.gwt.user.client.ui.TextBox;
 /**
  * This class extends Composite instead of InputText and embeds a slider widget for setting its value.
  */
-public class EntityModelInputWithSlider extends Composite implements
-        EditorWidget<Object, LeafValueEditor<Object>>, TakesValue<Object>,
+public class EntityModelInputWithSlider extends Composite implements EditorWidget<Object, LeafValueEditor<Object>>, TakesValue<Object>,
         HasValueChangeHandlers<Object> {
+
+    private static final CommonApplicationResources RESOURCES = GWT.create(CommonApplicationResources.class);
 
     private TakesValueWithChangeHandlersEditor<Object> editor;
     private TextBox t;
@@ -46,7 +46,7 @@ public class EntityModelInputWithSlider extends Composite implements
         maxValueLabel = new Label(Integer.toString(max));
         maxValueLabel.setStyleName("gwt-SliderBar-maxrange-label");
 
-        slider = new IntegerSlider(min, max, ClientGinjectorProvider.instance().getApplicationResources()) {
+        slider = new IntegerSlider(min, max, RESOURCES) {
             @Override
             public void setMinValue(double minValue) {
                 super.setMinValue(minValue);

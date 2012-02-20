@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.common.widget.editor;
+package org.ovirt.engine.ui.common.widget.parser;
 
 import java.text.ParseException;
 

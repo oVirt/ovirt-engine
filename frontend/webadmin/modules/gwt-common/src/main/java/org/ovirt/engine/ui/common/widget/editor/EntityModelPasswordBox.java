@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
+import org.ovirt.engine.ui.common.widget.parser.EntityModelParser;
+
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.editor.ui.client.adapters.ValueBoxEditor;
 import com.google.gwt.user.client.ui.ValueBoxBase;

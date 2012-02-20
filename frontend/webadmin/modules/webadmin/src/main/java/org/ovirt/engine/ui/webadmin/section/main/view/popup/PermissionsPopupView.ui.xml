@@ -58,7 +58,7 @@
 					<w:UiCommandButton ui:field="searchButton" addStyleNames="{style.goButton}" />
 				</g:HorizontalPanel>
 				<g:ScrollPanel ui:field="searchItemsScrollPanel" addStyleNames="{style.searchItemsPanel}">
-					<we:EntityModelCellTable ui:field="searchItems" />
+					<e:EntityModelCellTable ui:field="searchItems" />
 				</g:ScrollPanel>
 				<g:HorizontalPanel spacing="10" ui:field="roleSelectionPanel" addStyleNames="{style.rolePanel}">
 					<g:Label ui:field="roleToAssignLabel" addStyleNames="{style.mainLabel}">Role to Assign:</g:Label>

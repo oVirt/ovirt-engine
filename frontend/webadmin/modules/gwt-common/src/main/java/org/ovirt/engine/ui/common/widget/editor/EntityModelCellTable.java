@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.editor;
+package org.ovirt.engine.ui.common.widget.editor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.PopupTableResources;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.table.ElementIdCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.RadioboxCell;
@@ -50,7 +51,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      * Create a new {@link EntityModelCellTable} with Single Selection
      */
     public EntityModelCellTable() {
-        this(false, (Resources) GWT.create(EntityModelCellTableResources.class));
+        this(false, (Resources) GWT.create(PopupTableResources.class));
     }
 
     /**
@@ -70,11 +71,11 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      *            Whether to allow multi/single selection
      */
     public EntityModelCellTable(boolean multiSelection) {
-        this(multiSelection, (Resources) GWT.create(EntityModelCellTableResources.class));
+        this(multiSelection, (Resources) GWT.create(PopupTableResources.class));
     }
 
     public EntityModelCellTable(boolean multiSelection, boolean hideCheckbox) {
-        this(multiSelection, (Resources) GWT.create(EntityModelCellTableResources.class), hideCheckbox);
+        this(multiSelection, (Resources) GWT.create(PopupTableResources.class), hideCheckbox);
     }
 
     /**
@@ -248,15 +249,6 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     @Override
     public M flush() {
         return listModel;
-    }
-
-    public interface EntityModelCellTableResources extends CellTable.Resources {
-        interface TableStyle extends CellTable.Style {
-        }
-
-        @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/PopupCellTable.css" })
-        TableStyle cellTableStyle();
     }
 
 }

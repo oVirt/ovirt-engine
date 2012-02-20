@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.parser;
+package org.ovirt.engine.ui.common.widget.parser;
 
 import java.text.ParseException;
 
@@ -7,6 +7,7 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.text.shared.Parser;
 
 public class MemorySizeParser implements Parser<Object> {
+
     @Override
     public Object parse(CharSequence text) throws ParseException {
         MatchResult match = RegExp.compile("(\\d*)\\s*(\\w*)").exec(text.toString());
@@ -31,4 +32,5 @@ public class MemorySizeParser implements Parser<Object> {
 
         return size;
     }
+
 }
