@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.NotImplementedException;
 
 public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements StorageDomainDAO {
     StorageDomainStaticDAOHibernateImpl staticDAO = new StorageDomainStaticDAOHibernateImpl();
@@ -105,6 +106,11 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
     @Override
     public List<storage_domains> getAllForStoragePool(Guid pool) {
         return createDomains(staticDAO.getAllForStoragePool(pool));
+    }
+
+    @Override
+    public List<storage_domains> getAllForStoragePool(Guid pool, Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
     }
 
     private List<storage_domains> createDomains(List<storage_domain_static> staticParts) {

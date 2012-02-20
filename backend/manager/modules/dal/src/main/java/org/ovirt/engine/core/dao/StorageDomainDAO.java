@@ -61,6 +61,19 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains> {
     List<storage_domains> getAllForStoragePool(Guid pool);
 
     /**
+     * Retrieves all storage domains for the specified storage pool, with optional filtering.
+     *
+     * @param pool
+     *            the storage pool
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the list of storage domains
+     */
+    List<storage_domains> getAllForStoragePool(Guid pool, Guid userID, boolean isFiltered);
+
+    /**
      * Retrieves all storage domains for the specified image group.
      *
      * @param imageGroup

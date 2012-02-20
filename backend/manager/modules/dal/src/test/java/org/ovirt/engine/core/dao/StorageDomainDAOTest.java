@@ -184,11 +184,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     public void testGetAllForConnection() {
         List<storage_domains> result = dao.getAllForConnection(EXISTING_CONNECTION);
 
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (storage_domains domain : result) {
-            assertEquals(EXISTING_STORAGE_POOL_ID, domain.getstorage_pool_id());
-        }
+        assertGetAllForStoragePoolResult(result);
     }
 
     /**
@@ -235,11 +231,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         List<storage_domains> result =
                 dao.getAllByStoragePoolAndConnection(EXISTING_STORAGE_POOL_ID, EXISTING_CONNECTION);
 
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (storage_domains domain : result) {
-            assertEquals(EXISTING_STORAGE_POOL_ID, domain.getstorage_pool_id());
-        }
+        assertGetAllForStoragePoolResult(result);
     }
 
     /**
@@ -260,6 +252,45 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     public void testGetAllForStoragePool() {
         List<storage_domains> result = dao.getAllForStoragePool(EXISTING_STORAGE_POOL_ID);
 
+        assertGetAllForStoragePoolResult(result);
+    }
+
+    /**
+     * Ensures that the right collection is returned for a given storage pool with filtering for a privileged user.
+     */
+    @Test
+    public void testGetAllForStoragePoolWithPermissionsPrivilegedUser() {
+        List<storage_domains> result = dao.getAllForStoragePool(EXISTING_STORAGE_POOL_ID, PRIVILEGED_USER_ID, true);
+
+        assertGetAllForStoragePoolResult(result);
+    }
+
+    /**
+     * Ensures that the right collection is returned for a given storage pool with filtering disabled for an unprivileged user.
+     */
+    @Test
+    public void testGetAllForStoragePoolWithPermissionsDisabledUnprivilegedUser() {
+        List<storage_domains> result = dao.getAllForStoragePool(EXISTING_STORAGE_POOL_ID, UNPRIVILEGED_USER_ID, false);
+
+        assertGetAllForStoragePoolResult(result);
+    }
+
+    /**
+     * Ensures that an empty collection is returned for a given storage pool for an unprivileged user.
+     */
+    @Test
+    public void testGetAllForStoragePoolWithPermissionsUnprivilegedUser() {
+        List<storage_domains> result = dao.getAllForStoragePool(EXISTING_STORAGE_POOL_ID, UNPRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Asserts the result returned from {@link StorageDomainDAO#getAllForStoragePool(Guid)} is correct
+     * @param result The result to check
+     */
+    private static void assertGetAllForStoragePoolResult(List<storage_domains> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (storage_domains domain : result) {
