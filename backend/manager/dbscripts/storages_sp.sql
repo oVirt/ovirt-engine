@@ -570,3 +570,22 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION GetFailingStorage_domains()
+RETURNS SETOF storage_domains
+   AS $procedure$
+BEGIN
+   RETURN QUERY
+    SELECT * FROM storage_domains WHERE recoverable AND status = 4; --inactive
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION GetFailingVdss()
+RETURNS SETOF vds
+   AS $procedure$
+BEGIN
+   RETURN QUERY
+    SELECT * FROM vds WHERE recoverable AND status = 10; --non operational
+END; $procedure$
+LANGUAGE plpgsql;
+

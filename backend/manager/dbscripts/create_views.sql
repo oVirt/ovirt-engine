@@ -130,7 +130,8 @@ storage_domain_static.id as id,
 		storage_domain_static.storage_domain_type as storage_domain_type,
                 storage_domain_static.storage_domain_format_type as storage_domain_format_type,
         storage_pool_iso_map.owner as owner,
-        fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_domain_static.storage,storage_domain_static.storage_type) as storage_domain_shared_status
+        fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_domain_static.storage,storage_domain_static.storage_type) as storage_domain_shared_status,
+	storage_domain_static.recoverable as recoverable
 FROM    storage_domain_static
 INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
 LEFT OUTER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_iso_map.storage_id
@@ -149,7 +150,8 @@ storage_domain_static.id as id, storage_domain_static.storage as storage, storag
 		storage_domain_dynamic.available_disk_size as available_disk_size,
 		storage_domain_dynamic.used_disk_size as used_disk_size,
 		fn_get_disk_commited_value_by_storage(storage_domain_static.id) as commited_disk_size,
-        fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_domain_static.storage,storage_domain_static.storage_type) as storage_domain_shared_status
+        fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_domain_static.storage,storage_domain_static.storage_type) as storage_domain_shared_status,
+		storage_domain_static.recoverable as recoverable
 FROM
 storage_domain_static
 INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id;
@@ -426,7 +428,8 @@ SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group
                       vds_dynamic.cpu_flags as cpu_flags,vds_groups.cpu_name as vds_group_cpu_name, vds_dynamic.cpu_sockets as cpu_sockets, vds_spm_id_map.vds_spm_id as vds_spm_id, vds_static.otp_validity as otp_validity,
                       CASE WHEN storage_pool.spm_vds_id = vds_static.vds_id THEN CASE WHEN storage_pool.status = 5 THEN 1 ELSE 2 END ELSE 0 END as spm_status, vds_dynamic.supported_cluster_levels as supported_cluster_levels, vds_dynamic.supported_engines as supported_engines, vds_groups.compatibility_version as vds_group_compatibility_version,
                       vds_dynamic.host_os as host_os, vds_dynamic.kvm_version as kvm_version, vds_dynamic.spice_version as spice_version, vds_dynamic.kernel_version as kernel_version, vds_dynamic.iscsi_initiator_name as iscsi_initiator_name,
-                      vds_dynamic.transparent_hugepages_state as transparent_hugepages_state, vds_dynamic.anonymous_hugepages as anonymous_hugepages, vds_dynamic.non_operational_reason as non_operational_reason
+                      vds_dynamic.transparent_hugepages_state as transparent_hugepages_state, vds_dynamic.anonymous_hugepages as anonymous_hugepages, vds_dynamic.non_operational_reason as non_operational_reason,
+			vds_static.recoverable as recoverable
 FROM         vds_groups INNER JOIN
 vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id INNER JOIN
 vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id INNER JOIN
@@ -707,7 +710,8 @@ storage_domain_static.id,
 		storage_domain_shared_status,
 		vds_groups.vds_group_id,
 		vds_static.vds_id,
-		storage_pool_iso_map.storage_pool_id
+		storage_pool_iso_map.storage_pool_id,
+		vds_static.recoverable
 FROM storage_domain_static
 	INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
 	LEFT OUTER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_iso_map.storage_id
