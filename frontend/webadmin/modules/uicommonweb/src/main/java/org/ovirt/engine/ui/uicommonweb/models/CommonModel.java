@@ -265,7 +265,12 @@ public class CommonModel extends ListModel
 
     public void setSearchString(String value)
     {
-        if (!StringHelper.stringsEqual(searchString, value))
+        setSearchString(value, true);
+    }
+
+    public void setSearchString(String value, boolean checkIfNewValue)
+    {
+        if (!checkIfNewValue || !StringHelper.stringsEqual(searchString, value))
         {
             searchString = value;
             SearchStringChanged();
@@ -630,7 +635,7 @@ public class CommonModel extends ListModel
 
     private void ClearSearchString()
     {
-        setSearchString(getHasSearchStringPrefix() ? null : getSelectedItem().getDefaultSearchString());
+        setSearchString(getHasSearchStringPrefix() ? null : getSelectedItem().getDefaultSearchString(), false);
         getSearchCommand().Execute();
     }
 

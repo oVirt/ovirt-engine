@@ -39,6 +39,8 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
 
         HasClickHandlers getBookmarkButton();
 
+        HasClickHandlers getClearButton();
+
         HasClickHandlers getSearchButton();
 
         HasKeyDownHandlers getSearchInputHandlers();
@@ -104,6 +106,13 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
             @Override
             public void onClick(ClickEvent event) {
                 commonModel.getBookmarkList().getNewCommand().Execute();
+            }
+        }));
+
+        registerHandler(getView().getClearButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                commonModel.getClearSearchStringCommand().Execute();
             }
         }));
 

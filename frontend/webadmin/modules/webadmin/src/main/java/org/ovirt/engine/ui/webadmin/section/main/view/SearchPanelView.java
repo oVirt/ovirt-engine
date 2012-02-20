@@ -14,6 +14,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyDownHandlers;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -50,6 +58,9 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
     FlowPanel searchBoxBookmark;
 
     @UiField
+    FlowPanel searchBoxClear;
+
+    @UiField
     HTML searchBoxLeft;
 
     @UiField
@@ -62,6 +73,10 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
     @WithElementId
     @UiField
     Image bookmarkButton;
+
+    @WithElementId
+    @UiField
+    Image clearButton;
 
     @WithElementId
     @UiField
@@ -80,7 +95,7 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
     private final SearchSuggestOracle oracle;
 
     @Inject
-    public SearchPanelView(ApplicationConstants constants, ApplicationResources applicationResources) {
+    public SearchPanelView(ApplicationConstants constants, final ApplicationResources applicationResources) {
         // Define the oracle that finds suggestions
         oracle = new SearchSuggestOracle();
 
@@ -96,6 +111,46 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
 
         bookmarkButton.setResource(applicationResources.bookmarkImage());
         searchButton.setResource(applicationResources.searchButtonImage());
+        clearButton.setResource(applicationResources.clearSearchImage());
+
+        clearButton.addMouseOverHandler(new MouseOverHandler() {
+
+            @Override
+            public void onMouseOver(MouseOverEvent event) {
+                clearButton.setResource(applicationResources.clearSearchImage_mouseOver());
+
+            }
+
+        });
+
+        clearButton.addMouseOutHandler(new MouseOutHandler() {
+
+            @Override
+            public void onMouseOut(MouseOutEvent event) {
+                clearButton.setResource(applicationResources.clearSearchImage());
+
+            }
+
+        });
+
+        clearButton.addMouseDownHandler(new MouseDownHandler() {
+
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                clearButton.setResource(applicationResources.clearSearchImage_mouseDown());
+
+            }
+        });
+
+        clearButton.addMouseUpHandler(new MouseUpHandler() {
+
+            @Override
+            public void onMouseUp(MouseUpEvent event) {
+                clearButton.setResource(applicationResources.clearSearchImage_mouseOver());
+
+            }
+
+        });
 
         searchPanelContainer.setCellWidth(searchBoxPanel, "1000px");
 
@@ -142,19 +197,24 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
             searchBoxLeft.addStyleName(style.searchBoxLeft_HasSelectedTags());
             searchBoxRight.addStyleName(style.searchBoxRight_HasSelectedTags());
             searchBoxPanel.addStyleName(style.searchBoxPanel_HasSelectedTags());
-            searchBoxBookmark.addStyleName(style.searchBoxBookmark_HasSelectedTags());
+            searchBoxClear.addStyleName(style.searchBoxClear_HasSelectedTags());
         }
         else {
             searchBoxLeft.setStyleName(style.searchBoxLeft());
             searchBoxRight.setStyleName(style.searchBoxRight());
             searchBoxPanel.setStyleName(style.searchBoxPanel());
-            searchBoxBookmark.setStyleName(style.searchBoxBookmark());
+            searchBoxClear.setStyleName(style.searchBoxClear());
         }
     }
 
     @Override
     public HasClickHandlers getBookmarkButton() {
         return bookmarkButton;
+    }
+
+    @Override
+    public HasClickHandlers getClearButton() {
+        return clearButton;
     }
 
     @Override
@@ -186,9 +246,9 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
 
         String searchBoxPanel_HasSelectedTags();
 
-        String searchBoxBookmark();
+        String searchBoxClear();
 
-        String searchBoxBookmark_HasSelectedTags();
+        String searchBoxClear_HasSelectedTags();
 
     }
 

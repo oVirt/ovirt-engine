@@ -81,12 +81,12 @@
 			height: 24px;
 		}		
 		
-		.searchBoxBookmark {
+		.searchBoxClear {
 			float: left;
-			padding-top: 2px;
+			padding-top: 6px;
 			background-image: url(images/search_bar_middle.png);
 			background-repeat: repeat-x;
-			width: 20px;
+			width: 12px;
 			height: 24px;
 			cursor: pointer;
 		}	
@@ -103,7 +103,7 @@
 			background-image: url(images/search_bar_middle_HasSelectedTags.png);
 		}
 		
-		.searchBoxBookmark_HasSelectedTags {
+		.searchBoxClear_HasSelectedTags {
 			background-image: url(images/search_bar_middle_HasSelectedTags.png);
 		}
 		
@@ -141,9 +141,17 @@
 			width: 100% !important;
 		}
 		
+		.searchBoxBookmark {
+			float: left;
+			padding-top: 2px;
+			width: 20px;
+			height: 24px;
+			cursor: pointer;
+		}
+
 		.searchButton {
 			float: left;
-			margin-left: 10px;
+			margin-left: 5px;
 			width: 25px;
 			height: 24px;
 			cursor: pointer;
@@ -172,12 +180,16 @@
 				</g:HorizontalPanel>
 			</g:VerticalPanel>
 	
-			<g:FlowPanel ui:field="searchBoxBookmark" addStyleNames="{style.searchBoxBookmark}">
-				<g:Image ui:field="bookmarkButton" />
+			<g:FlowPanel ui:field="searchBoxClear" addStyleNames="{style.searchBoxClear}">
+				<g:Image ui:field="clearButton" />
 			</g:FlowPanel>
 	
 			<g:HTML ui:field="searchBoxRight" addStyleNames="{style.searchBoxRight}" />
 	
+			<g:FlowPanel ui:field="searchBoxBookmark" addStyleNames="{style.searchBoxBookmark}">
+				<g:Image ui:field="bookmarkButton" />
+			</g:FlowPanel>
+
 			<g:FlowPanel addStyleNames="{style.searchButton}">
 				<g:Image ui:field="searchButton" />
 			</g:FlowPanel>

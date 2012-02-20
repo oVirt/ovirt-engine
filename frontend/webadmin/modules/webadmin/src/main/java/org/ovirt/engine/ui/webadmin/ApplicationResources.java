@@ -21,6 +21,15 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/bookmark.gif")
     ImageResource bookmarkImage();
 
+    @Source("images/but_erase_search_bar_text_normal.png")
+    ImageResource clearSearchImage();
+
+    @Source("images/but_erase_search_bar_text_hover.png")
+    ImageResource clearSearchImage_mouseOver();
+
+    @Source("images/but_erase_search_bar_text_mousedown.png")
+    ImageResource clearSearchImage_mouseDown();
+
     @Source("images/cluster.png")
     ImageResource clusterImage();
 
