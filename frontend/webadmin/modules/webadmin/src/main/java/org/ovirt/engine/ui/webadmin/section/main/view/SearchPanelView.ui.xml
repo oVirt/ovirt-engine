@@ -83,7 +83,8 @@
 		
 		.searchBoxClear {
 			float: left;
-			padding-top: 6px;
+			line-height: 26px;
+			vertical-align: middle; 
 			background-image: url(images/search_bar_middle.png);
 			background-repeat: repeat-x;
 			width: 12px;
