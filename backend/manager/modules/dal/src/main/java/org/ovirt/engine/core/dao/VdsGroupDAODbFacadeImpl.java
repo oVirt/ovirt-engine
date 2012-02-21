@@ -23,34 +23,35 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
  * found in {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  *
  */
+@SuppressWarnings("synthetic-access")
 public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroupDAO {
 
     private final class VdsGroupRawMapper implements ParameterizedRowMapper<VDSGroup> {
         @Override
         public VDSGroup mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
+                throws SQLException {
             VDSGroup entity = new VDSGroup();
             entity.setdescription(rs.getString("description"));
             entity.setname(rs.getString("name"));
             entity.setId(Guid.createGuidFromString(rs
-                        .getString("vds_group_id")));
+                    .getString("vds_group_id")));
             entity.setcpu_name(rs.getString("cpu_name"));
             entity.setselection_algorithm(VdsSelectionAlgorithm.forValue(rs
-                        .getInt("selection_algorithm")));
+                    .getInt("selection_algorithm")));
             entity.sethigh_utilization(rs.getInt("high_utilization"));
             entity.setlow_utilization(rs.getInt("low_utilization"));
             entity.setcpu_over_commit_duration_minutes(rs
-                        .getInt("cpu_over_commit_duration_minutes"));
+                    .getInt("cpu_over_commit_duration_minutes"));
             entity.sethypervisor_type(HypervisorType.forValue(rs
-                        .getInt("hypervisor_type")));
+                    .getInt("hypervisor_type")));
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs
-                        .getString("storage_pool_id")));
+                    .getString("storage_pool_id")));
             entity.setmax_vds_memory_over_commit(rs
-                        .getInt("max_vds_memory_over_commit"));
+                    .getInt("max_vds_memory_over_commit"));
             entity.setTransparentHugepages(rs
-                        .getBoolean("transparent_hugepages"));
+                    .getBoolean("transparent_hugepages"));
             entity.setcompatibility_version(new Version(rs
-                        .getString("compatibility_version")));
+                    .getString("compatibility_version")));
             entity.setMigrateOnError(MigrateOnErrorOptions.forValue(rs.getInt("migrate_on_error")));
             return entity;
         }
@@ -59,7 +60,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
     @Override
     public VDSGroup get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                    .addValue("vds_group_id", id);
+                .addValue("vds_group_id", id);
 
         return getCallsHandler().executeRead("GetVdsGroupByVdsGroupId", new VdsGroupRawMapper(), parameterSource);
     }
@@ -129,7 +130,6 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 return entity;
             }
         };
-
 
         return (VDSGroup) DbFacadeUtils.asSingleResult(
                 getCallsHandler().executeReadList("GetVdsGroupByVdsGroupName", mapper, parameterSource));

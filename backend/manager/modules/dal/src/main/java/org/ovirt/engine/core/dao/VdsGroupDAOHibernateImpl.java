@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
-
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
@@ -37,6 +36,7 @@ public class VdsGroupDAOHibernateImpl extends BaseDAOHibernateImpl<VDSGroup, Gui
         return findAllWithSQL(query);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<VDSGroup> getClustersWithPermittedAction(Guid userId, ActionGroup actionGroup) {
         Query query = getSession().getNamedQuery("fn_perms_get_vds_groups_with_with_permitted_action");
