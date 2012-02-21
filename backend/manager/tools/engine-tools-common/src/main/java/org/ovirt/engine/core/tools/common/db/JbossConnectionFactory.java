@@ -11,7 +11,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
 import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -102,7 +101,7 @@ public class JbossConnectionFactory implements ConnectionFactory {
 
         String securityDomain = getStringFromXml(xpath, SECURITY_DOMAIN_NAME_PATH, inputSource);
 
-	    if ( securityDomain != null ) {
+        if (StringUtils.isNotEmpty(securityDomain)) {
             credentials.setSecurityDomain(securityDomain);
             credentials.setUserName(getAttributeStringFromXml(xpath, String.format(SECURITY_DOMAIN_USER_NAME_PATH, securityDomain), inputSource, VALUE_ATTRIBUTE));
             String password = getAttributeStringFromXml(xpath, String.format(SECURITY_DOMAIN_PASSWORD_PATH, securityDomain), inputSource, VALUE_ATTRIBUTE);
