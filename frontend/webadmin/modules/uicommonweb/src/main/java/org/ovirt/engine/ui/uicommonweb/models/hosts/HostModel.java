@@ -663,7 +663,15 @@ public class HostModel extends Model
 
             @Override
             public void OnFailure(FrontendQueryAsyncResult result) {
-                String message = "Test Failed (unknown error).";
+                String message;
+                if (result != null && result.getReturnValue() != null
+                        && result.getReturnValue().getReturnValue() != null) {
+                    FenceStatusReturnValue fenceStatusReturnValue =
+                            (FenceStatusReturnValue) result.getReturnValue().getReturnValue();
+                    message = fenceStatusReturnValue.toString();
+                } else {
+                    message = "Test Failed (unknown error).";
+                }
                 setMessage(message);
                 getTestCommand().setIsExecutionAllowed(true);
 
