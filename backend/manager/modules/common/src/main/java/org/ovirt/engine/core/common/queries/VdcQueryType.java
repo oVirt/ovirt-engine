@@ -229,6 +229,12 @@ public enum VdcQueryType implements Serializable {
     // Async Tasks
     GetTasksStatusesByTasksIDs,
 
+    // Quota
+    GetQuotaByStoragePoolId,
+    GetQuotaByQuotaId,
+    GetQuotaVdsGroupByQuotaId,
+    GetQuotaStorageByQuotaId,
+
     // Jobs
     GetJobByJobId,
     GetJobsByCorrelationId,
