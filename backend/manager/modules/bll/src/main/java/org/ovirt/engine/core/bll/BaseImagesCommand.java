@@ -172,7 +172,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             DiskImage diskImage = getImage();
 
             /**
-             * Vitaly change. Prevent operating image with illegal status TODO: insert it in new CanDoAction mechanizm
+             * Prevent operating image with illegal status TODO: insert it in new CanDoAction mechanism
              */
             if (diskImage == null) {
                 diskImage = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(getImage().getId());
@@ -214,10 +214,11 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     /**
-     * Snapshot can be created only when there is no other images maped to same drive in vm.
+     * Snapshot can be created only when there is no other images mapped to same drive in vm.
      *
-     * @return TODO: Vitaly. Remove coupling between this and CanCreateAllSnapshotsFromVm
+     * @return true if snapshot can be created
      */
+    // TODO: Should be moved to another class in the hierarchy
     protected boolean CanCreateSnapshot() {
         List<DiskImage> images = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getImageContainerId());
         int count = 0;
@@ -356,9 +357,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             vm = DbFacade.getInstance().getVmDAO().getById(getVmId());
         }
 
-        /**
-         * Vitaly: added description per QA request
-         */
         StringBuilder vmLabel = new StringBuilder("ActiveImage");
         vmLabel = (vm == null) ? vmLabel : vmLabel.append("_").append(vm.getvm_name());
         return String.format("_%1$s_%2$s", vmLabel, new java.util.Date());
@@ -487,7 +485,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     /**
-     * Vitaly TODO: move it other class in hierarch
+     * Vitaly TODO: move it other class in hierarchy
      */
 
     protected void RemoveSnapshot(DiskImage snapshot) {
