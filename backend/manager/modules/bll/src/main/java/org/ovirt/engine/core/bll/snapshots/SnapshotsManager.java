@@ -205,7 +205,7 @@ public class SnapshotsManager {
      *            The configuration to update from.
      * @return In case of a problem reading the configuration, <code>false</code>. Otherwise, <code>true</code>.
      */
-    protected boolean updateVmFromConfiguration(VM vm, String configuration) {
+    public boolean updateVmFromConfiguration(VM vm, String configuration) {
 
         try {
             RefObject<VM> vmRef = new RefObject<VM>();
