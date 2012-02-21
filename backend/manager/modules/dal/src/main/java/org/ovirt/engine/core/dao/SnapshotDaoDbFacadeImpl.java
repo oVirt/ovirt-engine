@@ -201,4 +201,17 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
         protected void mapConfiguration(ResultSet rs, Snapshot snapshot) throws SQLException {
         }
     }
+
+    @Override
+    public Snapshot get(Guid id) {
+        return get(id, null, false);
+    }
+
+    @Override
+    public Snapshot get(Guid id, Guid userId, boolean isFiltered) {
+        MapSqlParameterSource parameterSource = createIdParameterMapper(id)
+                .addValue("user_id", userId)
+                .addValue("is_filtered", isFiltered);
+        return getCallsHandler().executeRead(getProcedureNameForGet(), createEntityRowMapper(), parameterSource);
+    }
 }

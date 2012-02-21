@@ -170,6 +170,26 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
         assertFullGetAllByVmResult(snapshots);
     }
 
+    @Test
+    public void getFilteredWithPermissions() {
+        Snapshot snapshot = dao.get(EXISTING_SNAPSHOT_ID, PRIVILEGED_USER_ID, true);
+        assertNotNull(snapshot);
+        assertEquals(existingEntity, snapshot);
+    }
+
+    @Test
+    public void getFilteredWithPermissionsNoPermissions() {
+        Snapshot snapshot = dao.get(EXISTING_SNAPSHOT_ID, UNPRIVILEGED_USER_ID, true);
+        assertNull(snapshot);
+    }
+
+    @Test
+    public void getFilteredWithPermissionsNoPermissionsAndNoFilter() {
+        Snapshot snapshot = dao.get(EXISTING_SNAPSHOT_ID, UNPRIVILEGED_USER_ID, false);
+        assertNotNull(snapshot);
+        assertEquals(existingEntity, snapshot);
+    }
+
     /**
      * Asserts the result of {@link SnapshotDao#getAll(Guid)} contains the correct snapshots.
      *

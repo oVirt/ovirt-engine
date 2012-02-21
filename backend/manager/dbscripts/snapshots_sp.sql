@@ -154,14 +154,17 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetSnapshotBySnapshotId(v_snapshot_id UUID)
+Create or replace FUNCTION GetSnapshotBySnapshotId(v_snapshot_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
 RETURNS SETOF snapshots
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
     FROM   snapshots
-    WHERE  snapshot_id = v_snapshot_id;
+    WHERE  snapshot_id = v_snapshot_id AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                        FROM   user_vm_permissions_view
+                                        WHERE  user_id = v_user_id AND entity_id = (SELECT vm_id
+                                        FROM snapshots where snapshot_id = v_snapshot_id)));
 END; $procedure$
 LANGUAGE plpgsql;
 

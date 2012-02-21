@@ -23,6 +23,19 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
     void updateId(Guid snapshotId, Guid newSnapshotId);
 
     /**
+     * Gets a filtered snapshot (the filter is optional and performed according to user permissions)
+     *
+     * @param id
+     *            If of the snapshot to fetch
+     * @param userId
+     *            ID of the user that invoked the query
+     * @param isFiltered
+     *            whether the filtering will be performed
+     * @return
+     */
+    Snapshot get(Guid id, Guid userId, boolean isFiltered);
+
+    /**
      * Return the {@link Snapshot} <b>first</b> id that matches the given parameters.<br>
      * <b>Note:</b> If more than one snapshot answers to the parameters, only the first will be returned (oldest by
      * creation date).
