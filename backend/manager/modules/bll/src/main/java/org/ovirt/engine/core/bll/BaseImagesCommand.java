@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -118,7 +119,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         throw new NotImplementedException();
     }
 
-
     protected DiskImage getDestinationDiskImage() {
         if (_destinationImage == null) {
             DiskImage image = DbFacade.getInstance().getDiskImageDAO().get(getDestinationImageId());
@@ -172,8 +172,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             DiskImage diskImage = getImage();
 
             /**
-             * Vitaly change. Prevent operating image with illegal status TODO:
-             * insert it in new CanDoAction mechanizm
+             * Vitaly change. Prevent operating image with illegal status TODO: insert it in new CanDoAction mechanizm
              */
             if (diskImage == null) {
                 diskImage = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(getImage().getId());
@@ -215,17 +214,15 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     /**
-     * Snapshot can be created only when there is no other images maped to same
-     * drive in vm.
+     * Snapshot can be created only when there is no other images maped to same drive in vm.
      *
-     * @return TODO: Vitaly. Remove coupling between this and
-     *         CanCreateAllSnapshotsFromVm
+     * @return TODO: Vitaly. Remove coupling between this and CanCreateAllSnapshotsFromVm
      */
     protected boolean CanCreateSnapshot() {
         List<DiskImage> images = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getImageContainerId());
         int count = 0;
         for (DiskImage image : images) {
-            if (StringHelper.EqOp(image.getinternal_drive_mapping(),getImage().getinternal_drive_mapping())) {
+            if (StringHelper.EqOp(image.getinternal_drive_mapping(), getImage().getinternal_drive_mapping())) {
                 count++;
                 if (count > 1) {
                     log.error("Cannot create snapshot. Vm is in preview status");
@@ -237,8 +234,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     /**
-     * Returns first found image in database that assigned to Image's parent Vm
-     * and mapped to same drive
+     * Returns first found image in database that assigned to Image's parent Vm and mapped to same drive
      *
      * @return m
      */
@@ -260,12 +256,23 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      *
      * @param newImageGuid
      *            the image id of the cloned disk image.
-     * @return the cloned disk image. Note that the cloned image's status is
-     *         'Locked'.
+     * @return the cloned disk image. Note that the cloned image's status is 'Locked'.
      */
     protected DiskImage CloneDiskImage(Guid newImageGuid) {
-        DiskImage retDiskImage = DiskImage.copyOf(getDiskImage());
+        return cloneDiskImage(newImageGuid, getDiskImage());
+    }
 
+    /**
+     * Creates a copy of the source disk image
+     *
+     * @param newImageGuid
+     *            the image id of the cloned disk image.
+     * @param srcDiskImage
+     *            the disk image to copy from
+     * @return the cloned disk image. Note that the cloned image's status is 'Locked'.
+     */
+    protected DiskImage cloneDiskImage(Guid newImageGuid, DiskImage srcDiskImage) {
+        DiskImage retDiskImage = DiskImage.copyOf(srcDiskImage);
         retDiskImage.setId(newImageGuid);
         retDiskImage.setdescription(CalculateImageDescription());
         retDiskImage.setParentId(getDiskImage().getId());
@@ -277,8 +284,47 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     /**
-     * Overrides the relevant fields of the destination disk image
-     * ('DestinationDiskImage') with some values of the IRS disk image.
+     * Creates a copy of the source disk image and updates it with fields from diskImageBase object. Currently we're
+     * interested only at volume type and format
+     *
+     * @param newImageGuid
+     *            the image id of the cloned disk image.
+     * @param srcDiskImage
+     *            the source to copy from
+     * @param diskImageBase
+     *            the disk image base to update fields from
+     * @return the cloned disk image. Note that the cloned image's status is 'Locked'.
+     */
+    protected DiskImage cloneImageAndUpdateFromDiskImageBase(Guid newImageGuid,
+            DiskImage srcDiskImage,
+            DiskImageBase diskImageBase) {
+        DiskImage retDiskImage = cloneDiskImage(newImageGuid, srcDiskImage);
+        if (diskImageBase != null) {
+            retDiskImage.setvolume_type(diskImageBase.getvolume_type());
+            retDiskImage.setvolume_format(diskImageBase.getvolume_format());
+        }
+        return retDiskImage;
+    }
+
+    /**
+     * Creates a copy of the source disk image and updates it with fields from diskImageBase object. Currently we're
+     * interested only at volume type and format
+     *
+     * @param newImageGuid
+     *            the image id of the cloned disk image.
+     * @param srcDiskImage
+     *            the source to copy from
+     * @param diskImageBase
+     *            the disk image base to update fields from
+     * @return the cloned disk image. Note that the cloned image's status is 'Locked'.
+     */
+    protected DiskImage cloneImageAndUpdateFromDiskImageBase(Guid newImageGuid, DiskImageBase diskImageBase) {
+        return cloneImageAndUpdateFromDiskImageBase(newImageGuid, getDiskImage(), diskImageBase);
+    }
+
+    /**
+     * Overrides the relevant fields of the destination disk image ('DestinationDiskImage') with some values of the IRS
+     * disk image.
      *
      * @param fromIRS
      *            the IRS disk image.
