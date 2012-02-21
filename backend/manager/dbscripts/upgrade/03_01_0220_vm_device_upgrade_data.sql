@@ -184,7 +184,8 @@ BEGIN
 END; $function$
 LANGUAGE plpgsql;
 
-SELECT * FROM vm_device_upgrade_data_03_01_0220();
+--This script has a fix , therfor call is commented
+--SELECT * FROM vm_device_upgrade_data_03_01_0220();
 
 
 DROP FUNCTION vm_device_upgrade_data_03_01_0220();
