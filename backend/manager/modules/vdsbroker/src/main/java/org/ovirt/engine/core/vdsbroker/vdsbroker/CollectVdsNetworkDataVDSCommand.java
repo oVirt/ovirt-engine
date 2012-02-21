@@ -94,8 +94,6 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
         network tempNetwork;
         java.util.List<network> networks = vds.getNetworks();
         for (network net : clusterNetworks) {
-            // LINQ 29456
-            // if (vds.Networks.FirstOrDefault(n => n.name == net.name) == null)
             tempNetwork = null;
             String outterNetworkName = net.getname();
             if (outterNetworkName != null) {
@@ -106,7 +104,6 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
                     }
                 }
             }
-            // LINQ 29456
             if (net.getStatus() == NetworkStatus.Operational && tempNetwork == null) {
                 hasChanges = true;
                 break;
