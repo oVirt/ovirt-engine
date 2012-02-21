@@ -160,10 +160,10 @@ def downloadBootstrap(url_bs, random_num, vds_complete):
         src_url = url_bs + script_name
         tmp_script_name = buildScriptName(random_num, vds_complete)
         trg_script = "/tmp/%s"%(tmp_script_name)
+        trg_lib = "/tmp/%s"%(install_lib)
 
-        if install_lib is not None and not os.path.exists(install_lib):
+        if install_lib is not None and not os.path.exists(trg_lib):
             src_lib_url = url_bs + install_lib
-            trg_lib = "/tmp/%s"%(install_lib)
             execfn = ["/usr/bin/curl","-s", "-k", "-w", "%{http_code}", "-o", trg_lib, src_lib_url]
             logging.debug("trying to fetch %s script cmd = '%s'",install_lib, string.join(execfn, " "))
             code = subprocess.Popen(execfn, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
