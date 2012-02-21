@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import static org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomAuditLogKeys.HostNetworkMTU;
+import static org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomAuditLogKeys.LogicalNetworkMTU;
+import static org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomAuditLogKeys.NetworkName;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,6 +52,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomAuditLogKeys;
 import org.ovirt.engine.core.dal.dbbroker.generic.RepositoryException;
 import org.ovirt.engine.core.dao.MassOperationsDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -655,6 +660,77 @@ public class VdsUpdateRunTimeInfo {
                 hostDownTimes.remove(_vds.getId());
             }
         }
+    }
+
+    public void logMTUDifferences(Map<String, network> clusterNetworkByName,
+            List<VdsNetworkInterface> interfaces) {
+        for (VdsNetworkInterface iface : interfaces) {
+            if (iface.getNetworkName() != null && clusterNetworkByName.containsKey(iface.getNetworkName()) &&
+                    iface.getMtu() != clusterNetworkByName.get(iface.getNetworkName()).getMtu()) {
+                AuditLogableBase logable = new AuditLogableBase();
+                logable.AddCustomValue(NetworkName, iface.getNetworkName());
+                logable.AddCustomValue(HostNetworkMTU, String.valueOf(iface.getMtu()));
+                logable.AddCustomValue(LogicalNetworkMTU,
+                        String.valueOf(clusterNetworkByName.get(iface.getNetworkName()).getMtu()));
+                AuditLogDirector.log(logable, AuditLogType.VDS_NETWORK_MTU_DIFFER_FROM_LOGICAL_NETWORK);
+            }
+        }
+    }
+
+    private void poplate(Map<String, Boolean> activeBonds,
+            List<network> clusterNetworks,
+            List<String> networks,
+            Map<String, List<String>> bondNics,
+            VdsNetworkInterface iface) {
+        Pair<Boolean, String> retVal =
+                IsNetworkInCluster(iface.getBondName(), clusterNetworks);
+        String networkName = retVal.getSecond();
+        if (retVal.getFirst()) {
+            if (!activeBonds.containsKey(iface.getBondName())) {
+                activeBonds.put(iface.getBondName(), false);
+            }
+            activeBonds.put(iface.getBondName(),
+                    activeBonds.get(iface.getBondName())
+                            || (iface.getStatistics().getStatus() == InterfaceStatus.Up));
+
+            if (!networks.contains(networkName)
+                    && !activeBonds.containsKey(iface.getName())) {
+                networks.add(networkName);
+            }
+            // we remove the network from the audit log if the bond
+            // is active
+            else if (networks.contains(networkName)
+                    && activeBonds.containsKey(iface.getBondName())) {
+                networks.remove(networkName);
+            }
+            if (!bondNics.containsKey(iface.getBondName())) {
+                bondNics.put(iface.getBondName(),
+                        new ArrayList<String>());
+            }
+            bondNics.get(iface.getBondName()).add(iface.getName());
+        }
+    }
+
+    private boolean isInteraceDown(List<network> clusterNetworks,
+            List<String> networks,
+            List<String> nics,
+            VdsNetworkInterface iface) {
+        if (iface.getStatistics().getStatus() != InterfaceStatus.Up
+                && iface.getNetworkName() != null
+                && iface.getBonded() == null
+                && !isBondOrVlanOverBond(iface)) {
+            // check if the network require by the cluster
+            for (network net : clusterNetworks) {
+                if (net.getStatus() == NetworkStatus.Operational &&
+                        net.getname().equals(iface.getNetworkName()) &&
+                        (iface.getVlanId() == null || !isVlanInterfaceUp(iface))) {
+                    networks.add(iface.getNetworkName());
+                    nics.add(iface.getName());
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     // method get bond name, list of cluster network - checks if the specified

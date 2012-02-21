@@ -738,4 +738,6 @@ public interface Enums extends ConstantsWithLookup {
 //    String ActionGroup___GLUSTER_CREATE_VOLUME();
 //
 //    String ActionGroup___GLUSTER_VOLUME_OPERATIONS();
+//
+    String AuditLogType___VDS_NETWORK_MTU_DIFFER_FROM_LOGICAL_NETWORK();
 }
