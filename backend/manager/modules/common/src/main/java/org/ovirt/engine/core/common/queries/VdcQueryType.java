@@ -20,7 +20,7 @@ public enum VdcQueryType implements Serializable {
     IsVdsWithSameNameExist,
     IsVdsWithSameHostExist,
     IsVdsWithSameIpExists,
-    GetVdsByVdsId,
+    GetVdsByVdsId(VdcQueryAuthType.User),
     GetVdsByHost,
     GetVdsByName,
     GetVdsByType,

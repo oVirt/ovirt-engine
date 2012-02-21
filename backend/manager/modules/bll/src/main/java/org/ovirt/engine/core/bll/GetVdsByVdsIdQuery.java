@@ -11,7 +11,10 @@ public class GetVdsByVdsIdQuery<P extends GetVdsByVdsIdParameters> extends Queri
 
     @Override
     protected void executeQueryCommand() {
-        VDS vds = DbFacade.getInstance().getVdsDAO().get(getParameters().getVdsId());
+        VDS vds =
+                DbFacade.getInstance()
+                        .getVdsDAO()
+                        .get(getParameters().getVdsId(), getUserID(), getParameters().isFiltered());
 
         if (vds != null) {
             vds.setCpuName(CpuFlagsManagerHandler.FindMaxServerCpuByFlags(vds.getcpu_flags(),
