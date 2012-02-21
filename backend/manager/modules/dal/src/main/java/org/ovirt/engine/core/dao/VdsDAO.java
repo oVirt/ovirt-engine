@@ -23,6 +23,19 @@ public interface VdsDAO extends DAO, SearchDAO<VDS> {
     VDS get(NGuid id);
 
     /**
+     * Retrieves the instance with the given id, with optional permission filtering.
+     *
+     * @param id
+     *            the id
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the VDS instance
+     */
+    VDS get(NGuid id, Guid userID, boolean isFiltered);
+
+    /**
      * Finds all instances with the given name.
      *
      * @param name

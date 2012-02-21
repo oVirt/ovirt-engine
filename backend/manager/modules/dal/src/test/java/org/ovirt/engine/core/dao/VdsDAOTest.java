@@ -45,8 +45,37 @@ public class VdsDAOTest extends BaseDAOTestCase {
     public void testGet() {
         VDS result = dao.get(existingVds.getId());
 
-        assertNotNull(result);
-        assertEquals(existingVds, result);
+        assertCorrectGetResult(result);
+    }
+
+    /**
+     * Ensures that retrieving VDS by ID works as expected for a privileged user.
+     */
+    @Test
+    public void testGetWithPermissionsPrivilegedUser() {
+        VDS result = dao.get(existingVds.getId(), PRIVILEGED_USER_ID, true);
+
+        assertCorrectGetResult(result);
+    }
+
+    /**
+     * Ensures that retrieving VDS by ID works as expected with filtering disabled for an unprivileged user.
+     */
+    @Test
+    public void testGetWithPermissionsDisabledUnprivilegedUser() {
+        VDS result = dao.get(existingVds.getId(), UNPRIVILEGED_USER_ID, false);
+
+        assertCorrectGetResult(result);
+    }
+
+    /**
+     * Ensures that no VDS is retrieved for an unprivileged user.
+     */
+    @Test
+    public void testGetWithPermissionsUnprivilegedUser() {
+        VDS result = dao.get(existingVds.getId(), UNPRIVILEGED_USER_ID, true);
+
+        assertNull(result);
     }
 
     /**
@@ -56,6 +85,24 @@ public class VdsDAOTest extends BaseDAOTestCase {
     public void testGetAllWithNameUsingInvalidName() {
         List<VDS> result = dao.getAllWithName("farkle");
 
+        assertIncorrectGetResult(result);
+    }
+
+    /**
+     * Asserts the result from {@link VdsDAO#get(NGuid)} is correct.
+     * @param result
+     */
+    private void assertCorrectGetResult(VDS result) {
+        assertNotNull(result);
+        assertEquals(existingVds, result);
+    }
+
+    /**
+     * Asserts the result from a call to {@link VdsDAO#get(NGuid)}
+     * that isn't supposed to return any data is indeed empty.
+     * @param result
+     */
+    private static void assertIncorrectGetResult(List<VDS> result) {
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -120,8 +167,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
     public void testGetAllOfTypeWithUnrepresentedType() {
         List<VDS> result = dao.getAllOfType(VDSType.oVirtNode);
 
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertIncorrectGetResult(result);
     }
 
     /**
@@ -146,8 +192,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
         List<VDS> result = dao
                 .getAllOfTypes(new VDSType[] { VDSType.oVirtNode });
 
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertIncorrectGetResult(result);
     }
 
     /**

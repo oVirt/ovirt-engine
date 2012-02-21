@@ -574,13 +574,16 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsByVdsId(v_vds_id UUID) RETURNS SETOF vds
+Create or replace FUNCTION GetVdsByVdsId(v_vds_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds
    AS $procedure$
 BEGIN
 BEGIN
       RETURN QUERY SELECT DISTINCT vds.*
       FROM vds
-      WHERE vds_id = v_vds_id;
+      WHERE vds_id = v_vds_id
+      AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                        FROM   user_vds_permissions_view
+                                        WHERE  user_id = v_user_id AND entity_id = v_vds_id));
    END;
 
    RETURN;

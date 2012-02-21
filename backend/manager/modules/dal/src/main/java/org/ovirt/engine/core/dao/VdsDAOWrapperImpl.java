@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.dao.vds.VdsDynamicDAOHibernateImpl;
 import org.ovirt.engine.core.dao.vds.VdsStaticDAOHibernateImpl;
 import org.ovirt.engine.core.dao.vds.VdsStatisticsDAOHibernateImpl;
@@ -46,6 +47,11 @@ public class VdsDAOWrapperImpl extends BaseDAOWrapperImpl implements VdsDAO {
         }
 
         return new VDS(staticPart, dynamicPart, statisticsPart);
+    }
+
+    @Override
+    public VDS get(NGuid id, Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
     }
 
     private List<VDS> convertToVdsList(List<VdsStatic> found) {
