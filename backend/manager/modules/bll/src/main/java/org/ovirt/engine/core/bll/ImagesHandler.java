@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
@@ -152,7 +153,7 @@ public final class ImagesHandler {
     }
 
     public static boolean CheckImagesConfiguration(Guid storageDomainId,
-            java.util.ArrayList<DiskImageBase> disksConfigList,
+            Collection<? extends DiskImageBase> disksConfigList,
             java.util.ArrayList<String> messages) {
         boolean result = true;
         storage_domain_static storageDomain = DbFacade.getInstance().getStorageDomainStaticDAO().get(storageDomainId);
