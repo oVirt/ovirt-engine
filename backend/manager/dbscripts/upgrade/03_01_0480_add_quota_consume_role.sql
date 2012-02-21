@@ -1,0 +1,2 @@
+INSERT INTO roles(id,name,description,is_readonly,role_type) select 'DEF0000a-0000-0000-0000-DEF00000000a', 'QuotaConsumer','Quota consumer',true,2 where
+not exists (select id,name,description,is_readonly,role_type from roles where id= 'DEF0000a-0000-0000-0000-DEF00000000a' and name='QuotaConsumer' and description='Quota consumer' and is_readonly=true and role_type=2);

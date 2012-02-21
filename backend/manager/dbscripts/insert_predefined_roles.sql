@@ -14,6 +14,7 @@ RETURNS VOID
    v_VM_POOL_ADMIN_ID UUID;
    v_TEMPLATE_ADMIN_ID UUID;
    v_TEMPLATE_USER_ID UUID;
+   v_QUOTA_CONSUMER_USER_ID UUID;
 BEGIN
    v_super_user_id_0001 := '00000000-0000-0000-0000-000000000001';
    v_power_user_id_0002 := '00000000-0000-0000-0001-000000000002';
@@ -28,6 +29,7 @@ BEGIN
    v_VM_POOL_ADMIN_ID := 'DEF00007-0000-0000-0000-DEF000000007';
    v_TEMPLATE_ADMIN_ID := 'DEF00008-0000-0000-0000-DEF000000008';
    v_TEMPLATE_USER_ID := 'DEF00009-0000-0000-0000-DEF000000009';
+   v_QUOTA_CONSUMER_USER_ID := 'DEF0000a-0000-0000-0000-DEF00000000a';
 
 
 --insert into vdc_options (option_name,option_value,version) select  'DomainName','example.org','general' where not exists (select option_name,version from vdc_options where option_name='DomainName' and version='general');
@@ -465,6 +467,17 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_ADMIN_ID,204
 delete from roles_groups where role_id = v_TEMPLATE_USER_ID;
 INSERT INTO roles(id,name,description,is_readonly,role_type) select v_TEMPLATE_USER_ID,'TemplateUser','Template User',true,2 where 
 not exists (select id,name,description,is_readonly,role_type from roles where id= v_TEMPLATE_USER_ID and name='TemplateUser' and description='Template User' and is_readonly=true and role_type=2);
+
+--------------
+--QUOTA_CONSUMER_USER role
+--------------
+-- Add new role for quota adminstrator
+delete from roles_groups where role_id = v_QUOTA_CONSUMER_USER_ID;
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_QUOTA_CONSUMER_USER_ID, 'QuotaConsumer','Quota consumer',true,2 where
+not exists (select id,name,description,is_readonly,role_type from roles where id= v_QUOTA_CONSUMER_USER_ID and name='QuotaConsumer' and description='Quota consumer' and is_readonly=true and role_type=2);
+
+-- Add role to consume from quota
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_QUOTA_CONSUMER_USER_ID, 901);
 
 ---Vm Groups
 --CREATE_VM
