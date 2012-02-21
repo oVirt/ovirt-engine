@@ -22,25 +22,15 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
             }));
 
     private NGuid vdsId;
-
     private String vdsName;
-
     private NetworkBootProtocol bootProtocol;
-
     private String address;
-
     private String subnet;
-
     private String gateway;
-
     private Integer vlanId;
-
     private Boolean bonded;
-
     private String bondName;
-
     private Integer bondType;
-
     private String bondOptions;
 
     public VdsNetworkInterface() {
