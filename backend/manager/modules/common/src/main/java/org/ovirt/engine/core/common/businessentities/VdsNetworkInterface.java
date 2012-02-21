@@ -32,6 +32,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private String bondName;
     private Integer bondType;
     private String bondOptions;
+    private int mtu;
 
     public VdsNetworkInterface() {
         super(new VdsNetworkStatistics(), VdsInterfaceType.None.getValue());
@@ -264,5 +265,13 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     @Override
     public ArrayList<String> getChangeablePropertiesList() {
         return _changeablePropertiesList;
+    }
+
+    public int getMtu() {
+        return mtu;
+    }
+
+    public void setMtu(int mtu) {
+        this.mtu = mtu;
     }
 }

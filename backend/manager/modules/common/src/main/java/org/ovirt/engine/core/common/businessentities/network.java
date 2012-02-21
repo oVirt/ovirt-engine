@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -75,6 +76,8 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
             inverseJoinColumns = @JoinColumn(name = "cluster_id"))
     private network_cluster cluster = new network_cluster();
 
+    private int mtu;
+
     public network() {
     }
     //Because the webadmin uses the same BE as backend, the constructor of these BEs
@@ -82,7 +85,7 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
     public network(String dummyVariable){}
 
     public network(String addr, String description, Guid id, String name, String subnet, String gateway, Integer type,
-            Integer vlan_id, boolean stp) {
+            Integer vlan_id, boolean stp, int mtu) {
         this.addr = addr;
         this.description = description;
         this.id = id;
@@ -92,6 +95,7 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
         this.type = type;
         this.vlan_id = vlan_id;
         this.stp = stp;
+        this.mtu = mtu;
     }
 
     public network_cluster getCluster() {
@@ -208,7 +212,7 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
 
     private static final java.util.ArrayList<String> _networkProperties = new java.util.ArrayList<String>(
             java.util.Arrays.asList(new String[] { "addr", "description", "name", "subnet", "type", "vlan_id",
-                    "Status", "stp", "storage_pool_id", "gateway", "is_display" }));
+                    "Status", "stp", "storage_pool_id", "gateway", "is_display", "mtu" }));
 
     @Override
     public java.util.ArrayList<String> getChangeablePropertiesList() {
@@ -233,6 +237,7 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
         result = prime * result + ((subnet == null) ? 0 : subnet.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((vlan_id == null) ? 0 : vlan_id.hashCode());
+        result = prime * result + (mtu);
         return result;
     }
 
@@ -300,6 +305,14 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
                 return false;
         } else if (!vlan_id.equals(other.vlan_id))
             return false;
+        if (mtu != other.mtu)
+            return false;
         return true;
+    }
+    public int getMtu() {
+        return mtu;
+    }
+    public void setMtu(int mtu) {
+        this.mtu = mtu;
     }
 }

@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
@@ -51,7 +52,8 @@ public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements Interfa
                 .addValue("boot_protocol", stats.getBootProtocol())
                 .addValue("type", stats.getType())
                 .addValue("vds_id", stats.getVdsId())
-                .addValue("vlan_id", stats.getVlanId());
+                .addValue("vlan_id", stats.getVlanId())
+                .addValue("mtu", stats.getMtu());
 
         getCallsHandler().executeModification("Insertvds_interface", parameterSource);
     }
@@ -107,7 +109,8 @@ public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements Interfa
                 .addValue("boot_protocol", stats.getBootProtocol())
                 .addValue("type", stats.getType())
                 .addValue("vds_id", stats.getVdsId())
-                .addValue("vlan_id", stats.getVlanId());
+                .addValue("vlan_id", stats.getVlanId())
+                .addValue("mtu", stats.getMtu());
 
         getCallsHandler().executeModification("Updatevds_interface", parameterSource);
     }
@@ -147,6 +150,7 @@ public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements Interfa
                 entity.setVdsName(rs.getString("vds_name"));
                 entity.setId(Guid.createGuidFromString(rs.getString("id")));
                 entity.setBootProtocol(NetworkBootProtocol.forValue(rs.getInt("boot_protocol")));
+                entity.setMtu(rs.getInt("mtu"));
                 return entity;
             }
         };

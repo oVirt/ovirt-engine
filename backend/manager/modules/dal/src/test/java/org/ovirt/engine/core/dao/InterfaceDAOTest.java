@@ -44,6 +44,7 @@ public class InterfaceDAOTest extends BaseDAOTestCase {
         newVdsInterface.setBootProtocol(NetworkBootProtocol.StaticIp);
         newVdsInterface.setMacAddress("01:C0:81:21:71:17");
         newVdsInterface.setGateway("192.168.122.1");
+        newVdsInterface.setMtu(1500);
 
         newVdsStatistics = newVdsInterface.getStatistics();
     }

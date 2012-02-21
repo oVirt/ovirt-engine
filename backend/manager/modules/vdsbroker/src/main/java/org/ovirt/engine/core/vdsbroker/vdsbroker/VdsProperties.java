@@ -61,6 +61,7 @@ public final class VdsProperties {
     public static final String network = "network";
     public static final String bootproto = "BOOTPROTO";
     public static final String stp = "STP";
+    public static final String mtu = "mtu";
     public static final String bonding_opts = "BONDING_OPTS";
     public static final String dhcp = "dhcp";
     public static final String force = "force";

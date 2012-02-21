@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties.mtu;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
@@ -33,8 +36,6 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.BooleanCompat;
 import org.ovirt.engine.core.compat.FormatException;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.LongCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -42,8 +43,11 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
+
 
 /**
  * This class encapsulate the knowlage of how to create objects from the VDS Rpc protocol responce. This class has
@@ -926,6 +930,10 @@ public class VdsBrokerObjectsBuilder {
                         iface.setMacAddress((String) ((data.getItem("permhwaddr") instanceof String) ? data.getItem("permhwaddr")
                                 : null));
                     }
+                    if (StringUtils.isNotBlank((String) data.getItem(mtu))) {
+                        iface.setMtu(Integer.parseInt((String) data.getItem(mtu)));
+                    }
+
                 }
 
                 iStats.setVdsId(vds.getId());
@@ -969,6 +977,10 @@ public class VdsBrokerObjectsBuilder {
                     iface.setSubnet((String) ((data.getItem("netmask") instanceof String) ? data.getItem("netmask")
                             : null));
                 }
+                if (StringUtils.isNotBlank((String) data.getItem(mtu))) {
+                    iface.setMtu(Integer.parseInt((String) data.getItem(mtu)));
+                }
+
                 iStats.setVdsId(vds.getId());
 
                 vds.getInterfaces().add(iface);
@@ -1017,6 +1029,10 @@ public class VdsBrokerObjectsBuilder {
                         iStats.setVdsId(vds.getId());
                         AddBond(vds, iface, interfaces);
                     }
+                    if (StringUtils.isNotBlank((String) data.getItem(mtu))) {
+                        iface.setMtu(Integer.parseInt((String) data.getItem(mtu)));
+                    }
+
                     XmlRpcStruct config =
                             (data.getItem("cfg") instanceof Map) ? new XmlRpcStruct((Map) data.getItem("cfg")) : null;
 
@@ -1054,6 +1070,9 @@ public class VdsBrokerObjectsBuilder {
                     }
                     if (network.getItem(VdsProperties.GLOBAL_GATEWAY) != null) {
                         net.setgateway(network.getItem(VdsProperties.GLOBAL_GATEWAY).toString());
+                    }
+                    if (StringUtils.isNotBlank((String) network.getItem(mtu))) {
+                        net.setMtu(Integer.parseInt((String) network.getItem(mtu)));
                     }
 
                     // map interface to network

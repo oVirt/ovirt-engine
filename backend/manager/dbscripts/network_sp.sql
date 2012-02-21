@@ -15,16 +15,16 @@ Create or replace FUNCTION Insertnetwork(v_addr VARCHAR(50) ,
 	v_gateway VARCHAR(20) ,
 	v_type INTEGER ,
 	v_vlan_id INTEGER ,
-    v_stp BOOLEAN ,
-    v_storage_pool_id UUID)
+	v_stp BOOLEAN ,
+	v_storage_pool_id UUID,
+	v_mtu INTEGER)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO network(addr, description, id, name, subnet, gateway, type, vlan_id, stp, storage_pool_id)
-	VALUES(v_addr, v_description, v_id, v_name, v_subnet, v_gateway, v_type, v_vlan_id, v_stp, v_storage_pool_id);
+INSERT INTO network(addr, description, id, name, subnet, gateway, type, vlan_id, stp, storage_pool_id, mtu)
+	VALUES(v_addr, v_description, v_id, v_name, v_subnet, v_gateway, v_type, v_vlan_id, v_stp, v_storage_pool_id, v_mtu);
 END; $procedure$
-LANGUAGE plpgsql;    
-
+LANGUAGE plpgsql;
 
 
 
@@ -37,17 +37,18 @@ Create or replace FUNCTION Updatenetwork(v_addr VARCHAR(50) ,
 	v_gateway VARCHAR(20) ,
 	v_type INTEGER ,
 	v_vlan_id INTEGER ,
-    v_stp BOOLEAN ,
-    v_storage_pool_id UUID)
+	v_stp BOOLEAN,
+	v_storage_pool_id UUID,
+	v_mtu INTEGER)
 RETURNS VOID
 
 	--The [network] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
    AS $procedure$
 BEGIN
       UPDATE network
-      SET addr = v_addr,description = v_description,name = v_name,subnet = v_subnet, 
-      gateway = v_gateway,type = v_type,vlan_id = v_vlan_id, 
-      stp = v_stp,storage_pool_id = v_storage_pool_id
+      SET addr = v_addr,description = v_description,name = v_name,subnet = v_subnet,
+      gateway = v_gateway,type = v_type,vlan_id = v_vlan_id,
+      stp = v_stp,storage_pool_id = v_storage_pool_id, mtu = v_mtu
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -62,14 +63,14 @@ RETURNS VOID
    DECLARE
    v_val  UUID;
 BEGIN
-	
+
 	-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-	-- in order to force locking parent before children 
+	-- in order to force locking parent before children
    select   id INTO v_val FROM network  WHERE id = v_id     FOR UPDATE;
-	
+
    DELETE FROM network
    WHERE id = v_id;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -81,7 +82,7 @@ Create or replace FUNCTION GetAllFromnetwork() RETURNS SETOF network_view
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT
-   distinct network_view.*  
+   distinct network_view.*
    FROM network_view;
 
 END; $procedure$
@@ -127,7 +128,8 @@ RETURNS SETOF network_view
 BEGIN
 RETURN QUERY SELECT 
 distinct   network.id, network.name, network.description, network.type, network.addr, network.subnet, network.gateway,
-                      network.vlan_id, network.stp, network.storage_pool_id, CAST(0 AS BOOLEAN) as is_display, 0 as status
+                      network.vlan_id, network.stp, network.storage_pool_id, CAST(0 AS BOOLEAN) as is_display, 0 as status,
+                      network.mtu as mtu
    FROM network_view network
    where storage_pool_id = v_id;
 
@@ -136,7 +138,9 @@ LANGUAGE plpgsql;
 
 
 DROP TYPE IF EXISTS networkViewClusterType CASCADE;
-CREATE TYPE networkViewClusterType AS(id uuid,name VARCHAR(50),description VARCHAR(4000),type INTEGER,addr VARCHAR(50),subnet VARCHAR(20),gateway VARCHAR(20),vlan_id INTEGER,stp BOOLEAN,storage_pool_id UUID,network_id UUID,cluster_id UUID, status INTEGER, is_display BOOLEAN);
+CREATE TYPE networkViewClusterType AS(id uuid,name VARCHAR(50),description VARCHAR(4000),type INTEGER,
+            addr VARCHAR(50),subnet VARCHAR(20),gateway VARCHAR(20),vlan_id INTEGER,stp BOOLEAN,storage_pool_id UUID,
+            mtu INTEGER, network_id UUID,cluster_id UUID, status INTEGER, is_display BOOLEAN);
 Create or replace FUNCTION GetAllNetworkByClusterId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
 RETURNS SETOF networkViewClusterType
    AS $procedure$
@@ -153,6 +157,7 @@ RETURN QUERY SELECT
     network_view.vlan_id,
     network_view.stp,
     network_view.storage_pool_id,
+    network_view.mtu,
     network_cluster.network_id,
     network_cluster.cluster_id,
     network_cluster.status,
@@ -195,12 +200,15 @@ Create or replace FUNCTION Insertvds_interface(v_addr VARCHAR(20) ,
  v_boot_protocol INTEGER ,  
  v_type INTEGER ,  
  v_vds_id UUID,  
- v_vlan_id INTEGER)
+ v_vlan_id INTEGER,
+ v_mtu INTEGER)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vds_interface(addr, bond_name, bond_type, gateway, id, is_bond, bond_opts, mac_addr, name, network_name, speed, subnet, boot_protocol, type, VDS_ID, vlan_id)
-	VALUES(v_addr, v_bond_name, v_bond_type, v_gateway, v_id, v_is_bond, v_bond_opts, v_mac_addr, v_name, v_network_name, v_speed, v_subnet, v_boot_protocol, v_type, v_vds_id, v_vlan_id);
+INSERT INTO vds_interface(addr, bond_name, bond_type, gateway, id, is_bond, bond_opts, mac_addr, name,
+                          network_name, speed, subnet, boot_protocol, type, VDS_ID, vlan_id, mtu)
+	VALUES(v_addr, v_bond_name, v_bond_type, v_gateway, v_id, v_is_bond, v_bond_opts, v_mac_addr, v_name,
+	       v_network_name, v_speed, v_subnet, v_boot_protocol, v_type, v_vds_id, v_vlan_id,v_mtu);
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -223,7 +231,8 @@ Create or replace FUNCTION Updatevds_interface(v_addr VARCHAR(20) ,
  v_boot_protocol INTEGER ,  
  v_type INTEGER ,  
  v_vds_id UUID,  
- v_vlan_id INTEGER)
+ v_vlan_id INTEGER,
+ v_mtu INTEGER)
 RETURNS VOID
 
 	--The [vds_interface] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -234,7 +243,7 @@ BEGIN
       is_bond = v_is_bond,bond_opts = v_bond_opts,mac_addr = v_mac_addr, 
       name = v_name,network_name = v_network_name,speed = v_speed, 
       subnet = v_subnet,boot_protocol = v_boot_protocol, 
-      type = v_type,VDS_ID = v_vds_id,vlan_id = v_vlan_id,_update_date = LOCALTIMESTAMP
+      type = v_type,VDS_ID = v_vds_id,vlan_id = v_vlan_id,_update_date = LOCALTIMESTAMP, mtu = v_mtu
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;

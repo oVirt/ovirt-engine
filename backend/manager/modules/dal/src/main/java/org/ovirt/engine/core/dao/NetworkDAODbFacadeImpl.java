@@ -38,6 +38,7 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, G
                         .getString("storage_pool_id")));
                 entity.setis_display((Boolean) rs.getObject("is_display"));
                 entity.setStatus(NetworkStatus.forValue(rs.getInt("status")));
+                entity.setMtu(rs.getInt("mtu"));
                 return entity;
             };
         };
@@ -135,7 +136,9 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, G
                 .addValue("type", network.gettype())
                 .addValue("vlan_id", network.getvlan_id())
                 .addValue("stp", network.getstp())
-                .addValue("storage_pool_id", network.getstorage_pool_id());
+                .addValue("storage_pool_id", network.getstorage_pool_id())
+                .addValue("mtu", network.getMtu());
+
     }
 
     @Override
