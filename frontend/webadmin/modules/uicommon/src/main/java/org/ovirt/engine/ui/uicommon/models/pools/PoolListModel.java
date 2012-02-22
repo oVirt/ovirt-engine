@@ -1,4 +1,5 @@
 package org.ovirt.engine.ui.uicommon.models.pools;
+import java.util.ArrayList;
 import java.util.Collections;
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.ui.uicompat.*;
@@ -318,14 +319,21 @@ public class PoolListModel extends ListWithDetailsModel
 			model.getInitrd_path().setEntity(vm.getinitrd_url());
 
 			//feature for filling storage domain in case of datacenter list empty
-			java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(vm.getId());
-			NGuid storageId = disks.get(0).getstorage_id();
-			if (disks.size() > 0 && storageId != null)
-			{
-				storage_domains storage = DataProvider.GetStorageDomainById(disks.get(0).getstorage_id().getValue());
-				model.getStorageDomain().setItems(new java.util.ArrayList<storage_domains>(java.util.Arrays.asList(new storage_domains[] { storage })));
-				model.getStorageDomain().setSelectedItem(storage);
-			}
+            java.util.ArrayList<DiskImage> disks = DataProvider.GetVmDiskList(vm.getId());
+            if (disks.size() > 0) {
+                ArrayList<Guid> storage_ids = disks.get(0).getstorage_ids();
+                Guid storageId =
+                        storage_ids != null && storage_ids.size() > 0 ? storage_ids
+                                .get(0)
+                                : null;
+                if (storageId != null) {
+                    storage_domains storage =
+                            DataProvider.GetStorageDomainById(storageId);
+                    model.getStorageDomain()
+                            .setItems(new java.util.ArrayList<storage_domains>(java.util.Arrays.asList(new storage_domains[] { storage })));
+                    model.getStorageDomain().setSelectedItem(storage);
+                }
+            }
 			model.getStorageDomain().setIsChangable(false);
 
 			cdImage = vm.getiso_path();

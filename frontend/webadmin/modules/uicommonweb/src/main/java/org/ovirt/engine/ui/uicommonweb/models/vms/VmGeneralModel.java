@@ -667,7 +667,7 @@ public class VmGeneralModel extends EntityModel
 
                     DiskImage firstDisk = (DiskImage) disksIterator.next();
                     StorageDomainQueryParametersBase params =
-                            new StorageDomainQueryParametersBase(firstDisk.getstorage_id().getValue());
+                            new StorageDomainQueryParametersBase(firstDisk.getstorage_ids().get(0));
                     params.setRefresh(false);
                     Frontend.RunQuery(VdcQueryType.GetStorageDomainById, params, _asyncQuery1);
                 }

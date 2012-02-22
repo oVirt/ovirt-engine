@@ -162,7 +162,7 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
 			}
 			if (disks.size() > 0)
 			{
-				behavior.InitStorageDomains(disks.get(0).getstorage_id());
+				behavior.InitStorageDomains(disks.get(0).getstorage_ids().get(0));
 			}
 
 			}

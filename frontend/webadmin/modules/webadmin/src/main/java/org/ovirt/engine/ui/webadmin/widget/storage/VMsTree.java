@@ -52,7 +52,7 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel, VM, DiskImag
 
     @Override
     protected boolean getIsNodeEnabled(DiskImage disk) {
-        return disk.getstorage_id().equals(listModel.getEntity().getId());
+        return disk.getstorage_ids().get(0).equals(listModel.getEntity().getId());
     }
 
     @Override

@@ -1246,8 +1246,10 @@ public final class DataProvider
 	{
 		if (disk != null)
 		{
-			Guid selectedStorageDomainId = (disk.getstorage_id() != null) ? disk.getstorage_id().getValue() : Guid.Empty;
-			if (!selectedStorageDomainId.equals(Guid.Empty))
+            Guid selectedStorageDomainId =
+                    (disk.getstorage_ids() != null && disk.getstorage_ids().size() > 0) ? disk.getstorage_ids().get(0)
+                            : Guid.Empty;
+            if (!selectedStorageDomainId.equals(Guid.Empty))
 			{
 				storage_domains selectedStorageDomain = GetStorageDomainById(selectedStorageDomainId);
 

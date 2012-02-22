@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.pools;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -362,25 +364,32 @@ public class PoolListModel extends ListWithDetailsModel
                                                                         (java.util.LinkedList<DiskImage>) returnValue;
                                                                 // feature for filling storage domain in case of
                                                                 // datacenter list empty
-                                                                NGuid storageId = disks.get(0).getstorage_id();
-                                                                if (disks.size() > 0 && storageId != null)
+                                                                if (disks.size() > 0)
                                                                 {
+                                                                    ArrayList<Guid> storage_ids =
+                                                                            disks.get(0).getstorage_ids();
+                                                                    Guid storageId =
+                                                                            storage_ids != null
+                                                                                    && storage_ids.size() > 0 ? storage_ids
+                                                                                    .get(0)
+                                                                                    : null;
+                                                                    if (storageId != null) {
+                                                                        AsyncDataProvider.GetStorageDomainById(new AsyncQuery(this,
+                                                                                new INewAsyncCallback() {
+                                                                                    @Override
+                                                                                    public void OnSuccess(Object target,
+                                                                                            Object returnValue) {
+                                                                                        storage_domains storageDomain =
+                                                                                                (storage_domains) returnValue;
+                                                                                        model.getStorageDomain()
+                                                                                                .setItems(new java.util.ArrayList<storage_domains>(java.util.Arrays.asList(new storage_domains[] { storageDomain })));
+                                                                                        model.getStorageDomain()
+                                                                                                .setSelectedItem(storageDomain);
 
-                                                                    AsyncDataProvider.GetStorageDomainById(new AsyncQuery(this,
-                                                                            new INewAsyncCallback() {
-                                                                                @Override
-                                                                                public void OnSuccess(Object target,
-                                                                                        Object returnValue) {
-                                                                                    storage_domains storageDomain =
-                                                                                            (storage_domains) returnValue;
-                                                                                    model.getStorageDomain()
-                                                                                            .setItems(new java.util.ArrayList<storage_domains>(java.util.Arrays.asList(new storage_domains[] { storageDomain })));
-                                                                                    model.getStorageDomain()
-                                                                                            .setSelectedItem(storageDomain);
-
-                                                                                }
-                                                                            }),
-                                                                            disks.get(0).getstorage_id().getValue());
+                                                                                    }
+                                                                                }),
+                                                                                storageId);
+                                                                    }
 
                                                                 }
                                                                 model.getStorageDomain().setIsChangable(false);

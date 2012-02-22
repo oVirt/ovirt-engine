@@ -316,7 +316,7 @@ public class VmGuideModel extends GuideModel
                         vmGuideModel.disks = disks;
 
                         if (!disks.isEmpty()) {
-                            Guid storageDomainId = disks.get(0).getstorage_id().getValue();
+                            Guid storageDomainId = disks.get(0).getstorage_ids().get(0);
 
                             AsyncDataProvider.GetStorageDomainById(new AsyncQuery(vmGuideModel,
                                     new INewAsyncCallback() {

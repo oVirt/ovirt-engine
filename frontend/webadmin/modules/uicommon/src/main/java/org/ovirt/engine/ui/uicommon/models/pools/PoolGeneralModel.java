@@ -498,7 +498,7 @@ public class PoolGeneralModel extends EntityModel
 				}};
 
 				DiskImage firstDisk = (DiskImage)disksIterator.next();
-				Frontend.RunQuery(VdcQueryType.GetStorageDomainById, new StorageDomainQueryParametersBase(firstDisk.getstorage_id().getValue()), _asyncQuery1);
+				Frontend.RunQuery(VdcQueryType.GetStorageDomainById, new StorageDomainQueryParametersBase(firstDisk.getstorage_ids().get(0)), _asyncQuery1);
 			}
 			else
 			{

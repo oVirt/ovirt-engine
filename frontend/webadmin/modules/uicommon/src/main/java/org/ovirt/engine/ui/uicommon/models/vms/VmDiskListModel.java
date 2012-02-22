@@ -160,7 +160,7 @@ public class VmDiskListModel extends SearchableListModel
 													storage_domains storage2 = (storage_domains)result2;
 													vmDiskListModel2.StepA(storage2 != null && Linq.IsSDItemExistInList(storageDomains2, storage2.getId()) ? storage2 : null);
 												}};
-												AsyncDataProvider.GetStorageDomainById(_asyncQuery2, disks.get(0).getstorage_id().getValue());
+												AsyncDataProvider.GetStorageDomainById(_asyncQuery2, disks.get(0).getstorage_ids().get(0));
 											}
 											else // first disk -> just choose the first from the list of available storage-domains:
 											{
@@ -270,7 +270,7 @@ public class VmDiskListModel extends SearchableListModel
 
 
 					  }};
-		AsyncDataProvider.GetStorageDomainById(_asyncQuery1, disk.getstorage_id().getValue());
+		AsyncDataProvider.GetStorageDomainById(_asyncQuery1, disk.getstorage_ids().get(0));
 	}
 
 	private void remove()
