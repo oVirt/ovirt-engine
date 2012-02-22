@@ -26,7 +26,6 @@ public class SubTabExtendedTemplateGeneralPresenter extends BasicSubTabExtendedT
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VmTemplate> {
-        void editTemplate(VmTemplate entity);
     }
 
     @TabInfo(container = ExtendedTemplateSubTabPanelPresenter.class)
@@ -38,13 +37,6 @@ public class SubTabExtendedTemplateGeneralPresenter extends BasicSubTabExtendedT
     public SubTabExtendedTemplateGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, TemplateGeneralModelProvider modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
-    }
-
-    @Override
-    protected void onDetailModelEntityChange(Object entity) {
-        if (entity instanceof VmTemplate) {
-            getView().editTemplate((VmTemplate) entity);
-        }
     }
 
 }

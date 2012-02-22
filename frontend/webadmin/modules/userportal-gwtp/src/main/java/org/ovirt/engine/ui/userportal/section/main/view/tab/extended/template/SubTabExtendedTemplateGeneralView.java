@@ -36,9 +36,4 @@ public class SubTabExtendedTemplateGeneralView extends AbstractSubTabFormView<Vm
         form.update();
     }
 
-    @Override
-    public void editTemplate(VmTemplate entity) {
-        form.update();
-    }
-
 }

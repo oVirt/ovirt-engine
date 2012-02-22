@@ -8,7 +8,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 
 /**
- * A {@link DetailModelProvider} implementation that resolves a detail model by its class using parent model provider.
+ * A {@link DetailModelProvider} implementation that uses {@link UserPortalModelResolver} to retrieve UiCommon
+ * {@link EntityModel}.
  *
  * @param <M>
  *            Parent model type.
@@ -32,7 +33,7 @@ public class UserPortalDetailModelProvider<M extends ListWithDetailsModel, D ext
 
     @Override
     public D getModel() {
-        return modelResolver.<D, M> getDetailListModel(detailModelClass, parentModelProvider);
+        return modelResolver.<D, M> getDetailModel(detailModelClass, parentModelProvider);
     }
 
     protected M getParentModel() {

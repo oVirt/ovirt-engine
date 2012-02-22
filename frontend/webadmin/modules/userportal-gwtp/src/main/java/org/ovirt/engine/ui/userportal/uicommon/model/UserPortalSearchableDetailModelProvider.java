@@ -7,23 +7,21 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 /**
- * Default {@link UserPortalDataBoundModelProvider} implementation for use with as a detail model provider
+ * A {@link DetailModelProvider} implementation that uses {@link UserPortalModelResolver} to retrieve UiCommon
+ * {@link SearchableListModel}.
  *
  * @param <T>
  *            Detail model item type.
  * @param <M>
- *            Main model type.
+ *            Parent model type.
  * @param <D>
  *            Detail model type.
  */
 public abstract class UserPortalSearchableDetailModelProvider<T, M extends ListWithDetailsModel, D extends SearchableListModel>
-        extends UserPortalDataBoundModelProvider<T, D>
-        implements DetailModelProvider<M, D> {
+        extends UserPortalDataBoundModelProvider<T, D> implements DetailModelProvider<M, D> {
 
     private final ModelProvider<M> parentModelProvider;
-
     private final Class<D> detailModelClass;
-
     private final UserPortalModelResolver modelResolver;
 
     public UserPortalSearchableDetailModelProvider(BaseClientGinjector ginjector,
@@ -37,7 +35,7 @@ public abstract class UserPortalSearchableDetailModelProvider<T, M extends ListW
 
     @Override
     public D getModel() {
-        return modelResolver.<D, M> getDetailListModel(detailModelClass, parentModelProvider);
+        return modelResolver.<D, M> getDetailModel(detailModelClass, parentModelProvider);
     }
 
     protected M getParentModel() {

@@ -5,18 +5,13 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 
 /**
- * Used to resolve the detail models in context of user portal
- *
- * @param <M>
- *            Main model type.
- * @param <D>
- *            Detail model type.
+ * Used to resolve UiCommon detail models using parent model providers.
  */
 public class UserPortalModelResolver {
 
     @SuppressWarnings("unchecked")
-    public <D, M extends ListWithDetailsModel> D getDetailListModel(Class<D> detailModelClass,
-            ModelProvider<M> parentModelProvider) {
+    public <D extends EntityModel, M extends ListWithDetailsModel> D getDetailModel(
+            Class<D> detailModelClass, ModelProvider<M> parentModelProvider) {
         M parentModel = parentModelProvider.getModel();
 
         // Resolve detail model by its class
@@ -29,4 +24,5 @@ public class UserPortalModelResolver {
         throw new IllegalStateException("Cannot resolve detail model [" + detailModelClass +
                 "] from parent list model [" + parentModel.getClass() + "]");
     }
+
 }
