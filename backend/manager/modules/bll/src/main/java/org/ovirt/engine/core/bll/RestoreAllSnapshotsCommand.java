@@ -6,7 +6,6 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -42,18 +41,9 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
             VdcReturnValueBase returnValue = null;
             for (DiskImage image : getImagesList()) {
-                ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(image.getId(),
+                ImagesContainterParametersBase params = new ImagesContainterParametersBase(image.getId(),
                         image.getinternal_drive_mapping(), getVmId());
-                tempVar.setEntityId(getParameters().getEntityId());
-                VdcActionParametersBase p = tempVar;
-                p.setParentCommand(getActionType());
-                p.setParentParemeters(getParameters());
-                returnValue = Backend.getInstance().runInternalAction(
-                                VdcActionType.RestoreFromSnapshot,
-                                p,
-                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-                getParameters().getImagesParameters().add(p);
-                getTaskIdList().addAll(returnValue.getInternalTaskIdList());
+                returnValue = runAsyncTask(VdcActionType.RestoreFromSnapshot, params);
             }
 
             // We should have at least one task in the VDSM, to be sure that EndCommand will be called and the VM would
@@ -69,6 +59,35 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         } else {
             setSucceeded(true);
         }
+    }
+
+    /**
+     * Run the given command as async task, which includes these steps:
+     * <ul>
+     * <li>Add parent info to task parameters.</li>
+     * <li>Run with current command's {@link org.ovirt.engine.core.bll.job.ExecutionContext}.</li>
+     * <li>Add son parameters to saved image parameters.</li>
+     * <li>Add son task IDs to list of task IDs.</li>
+     * </ul>
+     *
+     * @param taskType
+     *            The type of the command to run as async task.
+     * @param params
+     *            The command parameters.
+     * @return The return value from the task.
+     */
+    private VdcReturnValueBase runAsyncTask(VdcActionType taskType, ImagesContainterParametersBase params) {
+        VdcReturnValueBase returnValue;
+        params.setEntityId(getParameters().getEntityId());
+        params.setParentCommand(getActionType());
+        params.setParentParemeters(getParameters());
+        returnValue = Backend.getInstance().runInternalAction(
+                taskType,
+                params,
+                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+        getParameters().getImagesParameters().add(params);
+        getTaskIdList().addAll(returnValue.getInternalTaskIdList());
+        return returnValue;
     }
 
     @Override
