@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.junit.Test;
-
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
@@ -354,7 +357,8 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (permissions permission : result) {
-            assertTrue(VDS_GROUP_ID.equals(permission.getObjectId()) || VM_TEMPLATE_ENTITY_ID.equals(permission.getObjectId()));
+            assertTrue(VDS_GROUP_ID.equals(permission.getObjectId())
+                    || VM_TEMPLATE_ENTITY_ID.equals(permission.getObjectId()));
         }
     }
 
@@ -366,7 +370,8 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (permissions permission : result) {
-            assertTrue(VDS_GROUP_ID.equals(permission.getObjectId()) || VM_POOL_ENTITY_ID.equals(permission.getObjectId()));
+            assertTrue(VDS_GROUP_ID.equals(permission.getObjectId())
+                    || VM_POOL_ENTITY_ID.equals(permission.getObjectId()));
         }
     }
 
@@ -378,7 +383,8 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (permissions permission : result) {
-            assertTrue(VDS_GROUP_ID.equals(permission.getObjectId()) || CLUSTER_ENTITY_ID.equals(permission.getObjectId()));
+            assertTrue(VDS_GROUP_ID.equals(permission.getObjectId())
+                    || CLUSTER_ENTITY_ID.equals(permission.getObjectId()));
         }
     }
 

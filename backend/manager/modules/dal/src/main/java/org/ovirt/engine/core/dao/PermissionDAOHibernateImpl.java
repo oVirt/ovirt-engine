@@ -3,10 +3,9 @@ package org.ovirt.engine.core.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
-
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -57,6 +56,7 @@ public class PermissionDAOHibernateImpl extends BaseDAOHibernateImpl<permissions
         query = getSession().createQuery("from ad_groups where name in :names");
         query.setParameterList("names", user.getGroupsAsArray());
 
+        @SuppressWarnings("unchecked")
         List<ad_groups> groups = query.list();
 
         List<Guid> ids = new ArrayList<Guid>();
@@ -162,8 +162,9 @@ public class PermissionDAOHibernateImpl extends BaseDAOHibernateImpl<permissions
         }
     }
 
+    @SuppressWarnings("unused")
     private void getVmTemplateParentIds(Guid id, List<NGuid> ids) {
-
+        // Not implemented yet
     }
 
     private void getVmPoolParentIds(Guid id, List<NGuid> ids) {
@@ -221,6 +222,7 @@ public class PermissionDAOHibernateImpl extends BaseDAOHibernateImpl<permissions
      *            the instance
      * @return
      */
+    @SuppressWarnings("incomplete-switch")
     private permissions fillInPermissionDetails(permissions permission) {
         if (permission != null) {
             // get the object name

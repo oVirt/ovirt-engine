@@ -15,9 +15,8 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 /**
  * <code>PermissionsDAODbFacadeImpl</code> provides a concrete implementation of {@link PermissionDAO} using code from
  * DbFacade.
- *
- *
  */
+@SuppressWarnings("synthetic-access")
 public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements PermissionDAO {
     private class PermissionRowMapper implements
             ParameterizedRowMapper<permissions> {
@@ -25,13 +24,13 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
         public permissions mapRow(ResultSet rs, int rowNum) throws SQLException {
             permissions entity = new permissions();
             entity.setad_element_id(Guid.createGuidFromString(rs
-                                                              .getString("ad_element_id")));
+                    .getString("ad_element_id")));
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
             entity.setrole_id(Guid.createGuidFromString(rs.getString("role_id")));
             entity.setObjectId(Guid.createGuidFromString(rs
-                                                         .getString(("object_id"))));
+                    .getString(("object_id"))));
             entity.setObjectType(VdcObjectType.forValue(rs
-                                                        .getInt(("object_type_id"))));
+                    .getInt(("object_type_id"))));
             entity.setRoleName(rs.getString("role_name"));
             entity.setObjectName(rs.getString("object_name"));
             entity.setOwnerName(rs.getString("owner_name"));
@@ -58,7 +57,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public permissions getForRoleAndAdElementAndObject(Guid roleid,
-                                                       Guid elementid, Guid objectid) {
+            Guid elementid, Guid objectid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("role_id", roleid)
                 .addValue("ad_element_id", elementid)
@@ -71,7 +70,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public permissions getForRoleAndAdElementAndObjectWithGroupCheck(Guid roleid,
-                                                                     Guid elementid, Guid objectid) {
+            Guid elementid, Guid objectid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("role_id", roleid)
                 .addValue("ad_element_id", elementid)
@@ -114,10 +113,10 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public List<permissions> getAllForRoleAndAdElement(Guid roleid,
-                                                       Guid elementid) {
+            Guid elementid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("role_id", roleid).addValue("ad_element_id",
-                                              elementid);
+                        elementid);
 
         return getCallsHandler().executeReadList("GetPermissionsByRoleIdAndAdElementId",
                 new PermissionRowMapper(),
@@ -145,7 +144,9 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     public List<permissions> getTreeForEntity(Guid id, VdcObjectType type) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id).addValue("object_type_id", type.getValue());
-        return getCallsHandler().executeReadList("GetPermissionsTreeByEntityId", new PermissionRowMapper(), parameterSource);
+        return getCallsHandler().executeReadList("GetPermissionsTreeByEntityId",
+                new PermissionRowMapper(),
+                parameterSource);
     }
 
     @Override
