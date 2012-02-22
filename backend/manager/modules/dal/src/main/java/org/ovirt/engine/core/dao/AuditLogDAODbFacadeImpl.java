@@ -42,7 +42,6 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
                 .addValue("date", cutoff);
 
         return getCallsHandler().executeReadList("GetAuditLogLaterThenDate", auditLogRowMapper, parameterSource);
-
     }
 
     @Override
@@ -89,7 +88,9 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
                 .addValue("vds_group_id", event.getvds_group_id())
                 .addValue("vds_group_name", event.getvds_group_name())
                 .addValue("correlation_id", event.getCorrelationId())
-                .addValue("job_id", event.getJobId());
+                .addValue("job_id", event.getJobId())
+                .addValue("quota_id", event.getQuotaId())
+                .addValue("quota_name", event.getQuotaName());
     }
 
     @Override
@@ -178,6 +179,8 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
                     .getString("vds_group_name"));
             entity.setCorrelationId(rs.getString("correlation_id"));
             entity.setJobId(NGuid.createGuidFromString(rs.getString("job_id")));
+            entity.setQuotaId(NGuid.createGuidFromString(rs.getString("quota_id")));
+            entity.setQuotaName(rs.getString("quota_name"));
             return entity;
         }
     }

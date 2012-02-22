@@ -43,7 +43,7 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
 
     public AuditLog(long audit_log_id, java.util.Date log_time, int log_type, int severity, String message,
             NGuid user_id, String user_name, NGuid vds_id, String vds_name, NGuid vm_id, String vm_name,
-            NGuid vm_template_id, String vm_template_name, String correlationId, NGuid jobId) {
+            NGuid vm_template_id, String vm_template_name, String correlationId, NGuid jobId, NGuid quotaId, String quotaName) {
         this.auditLogId = audit_log_id;
         this.logTime = log_time;
         this.logType = log_type;
@@ -59,6 +59,8 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         this.vmTemplateName = vm_template_name;
         this.correlationId = correlationId;
         this.jobId = jobId;
+        this.quotaId = quotaId;
+        this.quotaName = quotaName;
     }
 
     @Id
@@ -129,6 +131,26 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
 
     public void setuser_name(String value) {
         this.userName = value;
+    }
+
+    private NGuid quotaId;
+
+    public NGuid getQuotaId() {
+        return this.quotaId;
+    }
+
+    public void setQuotaId(NGuid value) {
+        this.quotaId = value;
+    }
+
+    private String quotaName;
+
+    public String getQuotaName() {
+        return this.quotaName;
+    }
+
+    public void setQuotaName(String value) {
+        this.quotaName = value;
     }
 
     @Column(name = "vds_id")
@@ -397,6 +419,7 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         result = prime * result + (severity * prime);
         result = prime * result + ((userId == null) ? 0 : userId.hashCode());
         result = prime * result + ((vdsId == null) ? 0 : vdsId.hashCode());
+        result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
         result = prime * result + ((vmId == null) ? 0 : vmId.hashCode());
         result = prime * result + ((vmTemplateId == null) ? 0 : vmTemplateId.hashCode());
         result = prime * result + (processed ? prime : 0);
@@ -449,6 +472,11 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
             if (other.vdsId != null)
                 return false;
         } else if (!vdsId.equals(other.vdsId))
+            return false;
+        if (quotaId == null) {
+            if (other.quotaId != null)
+                return false;
+        } else if (!quotaId.equals(other.quotaId))
             return false;
         if (vmId == null) {
             if (other.vmId != null)

@@ -645,6 +645,8 @@ public final class AuditLogDirector {
                     tempVar.setvds_group_name(auditLogable.getVdsGroupName());
                     tempVar.setCorrelationId(auditLogable.getCorrelationId());
                     tempVar.setJobId(auditLogable.getJobId());
+                    tempVar.setQuotaId(auditLogable.getQuotaId());
+                    tempVar.setQuotaName(auditLogable.getQuotaName());
                     auditLog = tempVar;
                 } else {
                     auditLog = new AuditLog(logType, severity, resolvedMessage, null, null, null, null, null, null,
