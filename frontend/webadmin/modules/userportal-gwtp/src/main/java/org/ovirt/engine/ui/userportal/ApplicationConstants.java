@@ -86,4 +86,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Events")
     String extendedTemplateEventsSubTabLabel();
+
+    @DefaultStringValue("Permissions")
+    String extendedTemplatePermissionsSubTabLabel();
 }

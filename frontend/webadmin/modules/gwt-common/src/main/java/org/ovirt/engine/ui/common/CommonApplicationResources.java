@@ -119,4 +119,11 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/icon_alert_configure.png")
     ImageResource alertConfigureImage();
 
+    // permissions
+    @Source("images/admin.png")
+    ImageResource adminImage();
+
+    @Source("images/user.png")
+    ImageResource userImage();
+
 }

@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.ObjectNameColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
@@ -14,8 +15,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserPe
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GroupNameColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.ObjectNameColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.PermissionTypeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminPermissionTypeColumn;
 
 import com.google.gwt.core.client.GWT;
 
@@ -35,7 +35,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, pe
     }
 
     void initTable() {
-        getTable().addColumn(new PermissionTypeColumn(), "", "30px");
+        getTable().addColumn(new WebAdminPermissionTypeColumn(), "", "30px");
 
         TextColumnWithTooltip<permissions> roleColumn = new TextColumnWithTooltip<permissions>() {
             @Override

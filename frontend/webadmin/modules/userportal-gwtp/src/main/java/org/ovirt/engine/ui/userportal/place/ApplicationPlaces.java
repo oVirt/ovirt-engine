@@ -44,4 +44,6 @@ public class ApplicationPlaces {
     public static final String extendedTempplateEventsSubTabPlace = extendedTemplateSideTabPlace
             + SUB_TAB_PREFIX + "events";
 
+    public static final String extendedTempplatePersmissionsSubTabPlace = extendedTemplateSideTabPlace
+            + SUB_TAB_PREFIX + "permissions";
 }

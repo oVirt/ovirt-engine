@@ -31,6 +31,7 @@ public class AuditLogModelTable<T extends EventListModel> extends AbstractModelB
         this.auditLogCoulmn = auditLogCoulmn;
     }
 
+    @Override
     public void initTable() {
         getTable().addColumn(auditLogCoulmn, "", "20px");
 

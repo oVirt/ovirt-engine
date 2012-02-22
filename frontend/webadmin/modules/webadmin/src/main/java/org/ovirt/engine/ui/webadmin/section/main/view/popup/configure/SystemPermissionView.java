@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.PermissionTypeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminPermissionTypeColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -70,7 +70,7 @@ public class SystemPermissionView extends Composite {
 
         content.add(table);
 
-        table.addColumn(new PermissionTypeColumn(), "", "30px");
+        table.addColumn(new WebAdminPermissionTypeColumn(), "", "30px");
 
         TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
             @Override

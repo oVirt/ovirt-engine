@@ -6,9 +6,6 @@ import com.google.gwt.resources.client.ImageResource;
 
 public interface ApplicationResources extends CommonApplicationResources {
 
-    @Source("images/admin.png")
-    ImageResource adminImage();
-
     @Source("images/bg.png")
     ImageResource bgImage();
 
@@ -237,9 +234,6 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/user_group.png")
     ImageResource userGroupImage();
-
-    @Source("images/user.png")
-    ImageResource userImage();
 
     @Source("images/vm.png")
     ImageResource vmImage();

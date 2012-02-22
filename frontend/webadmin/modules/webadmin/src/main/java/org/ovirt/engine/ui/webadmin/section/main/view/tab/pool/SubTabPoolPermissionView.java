@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
@@ -12,6 +13,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolPe
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabPermissionsView;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
 
 public class SubTabPoolPermissionView extends AbstractSubTabPermissionsView<vm_pools, PoolListModel>
         implements SubTabPoolPermissionPresenter.ViewDef {
@@ -21,15 +23,14 @@ public class SubTabPoolPermissionView extends AbstractSubTabPermissionsView<vm_p
     }
 
     @Inject
-    public SubTabPoolPermissionView(SearchableDetailModelProvider<permissions, PoolListModel, PermissionListModel> modelProvider) {
-        super(modelProvider);
-        initWidget(getTable());
+    public SubTabPoolPermissionView(SearchableDetailModelProvider<permissions, PoolListModel, PermissionListModel> modelProvider,
+            EventBus eventBus,
+            ClientStorage clientStorage) {
+        super(modelProvider, eventBus, clientStorage);
     }
 
     @Override
-    protected void initTable() {
+    protected void generateIds() {
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        super.initTable();
     }
-
 }

@@ -1,0 +1,38 @@
+package org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template;
+
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
+import org.ovirt.engine.ui.common.widget.uicommon.template.PermissionListModelTable;
+import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplatePermissionsPresenter;
+import org.ovirt.engine.ui.userportal.uicommon.model.template.PermissionListModelProvider;
+import org.ovirt.engine.ui.userportal.widget.table.column.UserPortalPermissionTypeColumn;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.Editor;
+import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
+
+public class SubTabExtendedTemplatePermissionsView extends AbstractSubTabTableWidgetView<VmTemplate, permissions, UserPortalTemplateListModel, PermissionListModel>
+    implements SubTabExtendedTemplatePermissionsPresenter.ViewDef, Editor<TemplateInterfaceListModel> {
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabExtendedTemplatePermissionsView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
+    @Inject
+    public SubTabExtendedTemplatePermissionsView(
+            PermissionListModelProvider modelProvider,
+            EventBus eventBus,
+            ClientStorage clientStorage) {
+        super(new PermissionListModelTable(modelProvider, eventBus, clientStorage, new UserPortalPermissionTypeColumn()));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
+        initTable();
+        initWidget(getModelBoundTableWidget());
+    }
+}

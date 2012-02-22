@@ -1,7 +1,6 @@
-package org.ovirt.engine.ui.webadmin.widget.renderer;
+package org.ovirt.engine.ui.common.widget.renderer;
 
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 
 import com.google.gwt.text.shared.AbstractRenderer;

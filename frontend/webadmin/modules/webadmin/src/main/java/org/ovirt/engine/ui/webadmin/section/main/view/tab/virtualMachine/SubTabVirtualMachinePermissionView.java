@@ -3,20 +3,20 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
+import org.ovirt.engine.ui.common.widget.uicommon.template.PermissionListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachinePermissionPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabPermissionsView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.PermissionTypeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminPermissionTypeColumn;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabVirtualMachinePermissionView extends AbstractSubTabPermissionsView<VM, VmListModel>
+public class SubTabVirtualMachinePermissionView extends AbstractSubTabTableWidgetView<VM, permissions, VmListModel, PermissionListModel>
         implements SubTabVirtualMachinePermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVirtualMachinePermissionView> {
@@ -24,45 +24,12 @@ public class SubTabVirtualMachinePermissionView extends AbstractSubTabPermission
     }
 
     @Inject
-    public SubTabVirtualMachinePermissionView(SearchableDetailModelProvider<permissions, VmListModel, PermissionListModel> modelProvider) {
-        super(modelProvider);
-        initWidget(getTable());
-    }
-
-    @Override
-    protected void initTable() {
+    public SubTabVirtualMachinePermissionView(SearchableDetailModelProvider<permissions, VmListModel, PermissionListModel> modelProvider,
+            EventBus eventBus,
+            ClientStorage clientStorage) {
+        super(new PermissionListModelTable(modelProvider, eventBus, clientStorage, new WebAdminPermissionTypeColumn()));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-
-        getTable().addColumn(new PermissionTypeColumn(), "", "30px");
-
-        TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
-            @Override
-            public String getValue(permissions object) {
-                return object.getOwnerName();
-            }
-        };
-        getTable().addColumn(userColumn, "User");
-
-        TextColumnWithTooltip<permissions> roleColumn = new TextColumnWithTooltip<permissions>() {
-            @Override
-            public String getValue(permissions object) {
-                return object.getRoleName();
-            }
-        };
-        getTable().addColumn(roleColumn, "Role");
-
-        getTable().addActionButton(new WebAdminButtonDefinition<permissions>("Add") {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getAddCommand();
-            }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<permissions>("Remove") {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRemoveCommand();
-            }
-        });
+        initTable();
+        initWidget(getModelBoundTableWidget());
     }
-
 }

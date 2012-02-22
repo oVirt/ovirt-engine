@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.templa
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateEventsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateGeneralPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateNetworkInterfacesPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplatePermissionsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateVirtualDisksPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.ExtendedVmSubTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGeneralPresenter;
@@ -38,6 +39,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExte
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedTemplateView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedVirtualMachineView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.ExtendedTemplateSubTabPanelView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.SubTabExtendedTemplatePermissionsView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.SubTabExtendedTemplateEventsView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.SubTabExtendedTemplateGeneralView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.SubTabExtendedTemplateNetworkInterfacesView;
@@ -135,6 +137,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabExtendedTemplateEventsPresenter.ViewDef.class,
                 SubTabExtendedTemplateEventsView.class,
                 SubTabExtendedTemplateEventsPresenter.ProxyDef.class);
+        bindPresenter(SubTabExtendedTemplatePermissionsPresenter.class,
+                SubTabExtendedTemplatePermissionsPresenter.ViewDef.class,
+                SubTabExtendedTemplatePermissionsView.class,
+                SubTabExtendedTemplatePermissionsPresenter.ProxyDef.class);
 
         // Main section: basic view
         bindSingletonPresenterWidget(MainTabBasicDetailsPresenterWidget.class,
