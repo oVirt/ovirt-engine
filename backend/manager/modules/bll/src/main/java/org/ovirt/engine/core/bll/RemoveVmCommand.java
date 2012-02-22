@@ -77,10 +77,20 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Override
     protected boolean canDoAction() {
+        boolean retVal = true;
         List<String> messages = getReturnValue().getCanDoActionMessages();
+
+        if (getVm() == null) {
+            retVal = false;
+            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.name());
+        } else {
+            retVal = super.canDoAction() && isUnlockedOrForced(messages) && CanRemoveVm(getVmId(), messages);
+            setDescription(getVmName());
+        }
+
         messages.add(VdcBllMessages.VAR__ACTION__REMOVE.toString());
         messages.add(VdcBllMessages.VAR__TYPE__VM.toString());
-        return super.canDoAction() && isUnlockedOrForced(messages) && CanRemoveVm(getVmId(), messages);
+        return retVal;
     }
 
     private boolean isUnlockedOrForced(List<String> message) {
