@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -203,11 +204,10 @@ public class UpdateVmDiskCommandTest {
 
     private void mockVmDevice(boolean plugged) {
         VmDevice vmDevice = new VmDevice();
-        VmDeviceId vmDeviceId = new VmDeviceId(diskImageGuid, command.getParameters().getVmId());
-        vmDevice.setId(vmDeviceId);
+        vmDevice.setId(new VmDeviceId());
         vmDevice.setIsPlugged(plugged);
         doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
-        when(vmDeviceDAO.get(vmDeviceId)).thenReturn(vmDevice);
+        when(vmDeviceDAO.get(Mockito.any(VmDeviceId.class))).thenReturn(vmDevice);
     }
 
     /**
@@ -251,20 +251,6 @@ public class UpdateVmDiskCommandTest {
         disk.setdisk_interface(DiskInterface.VirtIO);
         disk.setdisk_type(DiskType.Data);
         disk.setPlugged(false);
-        doReturn(diskImageDao).when(command).getDiskImageDao();
-        when(diskImageDao.get(diskImageGuid)).thenReturn(disk);
-        return disk;
-    }
-
-    /**
-     * The following method will create a VirtIO system disk
-     * @return
-     */
-    private DiskImage createVirtIOSystemDisk() {
-        DiskImage disk = new DiskImage();
-        disk.setId(diskImageGuid);
-        disk.setdisk_interface(DiskInterface.VirtIO);
-        disk.setdisk_type(DiskType.System);
         doReturn(diskImageDao).when(command).getDiskImageDao();
         when(diskImageDao.get(diskImageGuid)).thenReturn(disk);
         return disk;

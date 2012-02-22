@@ -63,7 +63,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
             } else {
                 oldVmDevice =
-                        getVmDeviceDao().get(new VmDeviceId(_oldDisk.getId(), getVmId()));
+                        getVmDeviceDao().get(new VmDeviceId(_oldDisk.getDisk().getId(), getVmId()));
                 if (getVm().getstatus() != VMStatus.Up || getParameters().getDiskInfo().getPlugged() == null) {
                     retValue = checkCanPerformRegularUpdate();
                 } else {
