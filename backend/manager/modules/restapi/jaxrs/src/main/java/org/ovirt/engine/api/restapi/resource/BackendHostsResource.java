@@ -54,6 +54,9 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         if (host.isSetOverrideIptables()) {
             addParams.setOverrideFirewall(host.isOverrideIptables());
         }
+        if (host.isSetRebootAfterInstallation()) {
+            addParams.setRebootAfterInstallation(host.isRebootAfterInstallation());
+        }
         return performCreation(VdcActionType.AddVds,
                                addParams,
                                new QueryIdResolver(VdcQueryType.GetVdsByVdsId, GetVdsByVdsIdParameters.class));

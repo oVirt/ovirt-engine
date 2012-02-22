@@ -983,6 +983,8 @@
           <xs:element name="memory" type="xs:long" minOccurs="0"/>
           <xs:element name="summary" type="VmSummary" minOccurs="0" maxOccurs="1"/>
           <xs:element name="override_iptables" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <!-- when installing a host, optionally reboot the host -->
+          <xs:element name="reboot_after_installation" type="xs:boolean" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
