@@ -1,64 +1,63 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.ovirt.engine.ui</groupId>
-    <artifactId>webadmin-modules</artifactId>
-    <version>3.0.0-0001</version>
-  </parent>
+	<parent>
+		<groupId>org.ovirt.engine.ui</groupId>
+		<artifactId>webadmin-modules</artifactId>
+		<version>3.0.0-0001</version>
+	</parent>
 
-  <artifactId>uicommonweb</artifactId>
-  <packaging>jar</packaging>
+	<artifactId>uicommonweb</artifactId>
+	<packaging>jar</packaging>
 
-  <name>UICommonWeb</name>
+	<name>UICommonWeb</name>
 
-  <dependencies>
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>frontend</artifactId>
-      <version>${engine.version}</version>
-      <scope>provided</scope>
-    </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>org.ovirt.engine.core</groupId>
+			<artifactId>searchbackend</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${engine.groupId}</groupId>
+			<artifactId>frontend</artifactId>
+			<version>${engine.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>sharedgwt</artifactId>
-      <version>${engine.version}</version>
-      <scope>provided</scope>
-    </dependency>
+		<dependency>
+			<groupId>${engine.groupId}</groupId>
+			<artifactId>uicompat</artifactId>
+			<version>${engine.version}</version>
+		</dependency>
 
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>uicompat</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
+		<dependency>
+			<groupId>${engine.groupId}</groupId>
+			<artifactId>genericapi</artifactId>
+			<version>${engine.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>genericapi</artifactId>
-      <version>${engine.version}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-      	<artifactId>maven-checkstyle-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

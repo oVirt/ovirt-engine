@@ -1,8 +1,10 @@
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 1.6//EN"
         "http://google-web-toolkit.googlecode.com/svn/releases/1.6/distro-source/core/src/gwt-module.dtd">
 <module>
-	<inherits name='org.ovirt.engine.SharedGwt' />
 	<inherits name="com.google.gwt.xml.XML" />
+	<inherits name='org.ovirt.engine.core.SearchBackend' />
+	<inherits name='org.ovirt.engine.core.Common' />
+	<inherits name='org.ovirt.engine.core.Compat' />
 
 	<source path="uicompat">
 	</source>

@@ -1,0 +1,71 @@
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 1.6//EN"
+        "http://google-web-toolkit.googlecode.com/svn/releases/1.6/distro-source/src/gwt-module.dtd">
+<module>
+	<inherits name='com.google.gwt.core.Core' />
+	<source path="">
+		<!--======================COMPAT====================== -->
+		<include name="compat/Encoding.java" />
+		<include name="compat/Environment.java" />
+		<!--Required by UICommon/Common's business entities -->
+		<include name="compat/Version.java" />
+		<include name="compat/RpmVersion.java" />
+		<!-- Required by common's entities -->
+		<include name="compat/INotifyPropertyChanged.java" />
+		<include name="compat/PropertyChangedEventArgs.java" />
+		<include name="compat/EventArgs.java" />
+		<include name="compat/StringHelper.java" />
+		<include name="compat/Guid.java" />
+		<include name="compat/NGuid.java" />
+		<include name="compat/Serializable.java" />
+		<include name="compat/LongCompat.java" />
+		<include name="compat/DoubleCompat.java" />
+		<include name="compat/ApplicationException.java" />
+		<!-- Required by common's utils -->
+		<include name="compat/PropertyInfo.java" />
+		<include name="compat/TypeCompat.java" />
+
+		<!-- Referenced directly by UICommon -->
+		<include name="compat/CompatException.java" />
+		<include name="compat/CultureInfo.java" />
+		<include name="compat/IntegerCompat.java" />
+		<include name="compat/NumberStyles.java" />
+		<include name="compat/RefObject.java" />
+		<include name="compat/KeyValuePairCompat.java" />
+		<include name="compat/NotImplementedException.java" />
+		<include name="compat/Pipeline.java" />
+		<include name="compat/PipelineCommands.java" />
+		<include name="compat/PipelineReason.java" />
+		<include name="compat/PipelineState.java" />
+		<include name="compat/TimeSpan.java" />
+
+		<include name="compat/XmlRpcStruct.java" />
+
+		<include name="compat/DateTime.java" />
+		<include name="compat/DayOfWeek.java" />
+		<include name="compat/DateTimeStyles.java" />
+		<include name="compat/RegEx.java" />
+
+		<!-- Required by SearchBackend's SyntaxContainer.java -->
+		<include name="compat/StringBuilderCompat.java" />
+		<include name="compat/StringTokenizerCompat.java" />
+
+		<!-- Required by common->action->VdcActionParametersBase.java -->
+		<include name="compat/TransactionScopeOption.java" />
+		<include name="compat/EnumCompat.java" />
+		<!-- <include name="compat/javax/**" /> -->
+		<include name="compat/Event.java" />
+		<include name="compat/EventDefinition.java" />
+		<include name="compat/IEventListener.java" />
+		<include name="compat/ObservableCollection.java" />
+		<include name="compat/NotifyCollectionChangedAction.java" />
+		<include name="compat/NotifyCollectionChangedEventArgs.java" />
+		<include name="compat/IProvideCollectionChangedEvent.java" />
+		<include name="compat/ProvideCollectionChangedEvent.java" />
+		<include name="compat/IProvidePropertyChangedEvent.java" />
+		<include name="compat/ProvidePropertyChangedEvent.java" />
+
+	</source>
+
+	<super-source path="ui/uioverrides" />
+</module>
+

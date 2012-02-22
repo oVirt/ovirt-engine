@@ -1,0 +1,63 @@
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 1.6//EN"
+        "http://google-web-toolkit.googlecode.com/svn/releases/1.6/distro-source/src/gwt-module.dtd">
+<module>
+	<inherits name='com.google.gwt.core.Core' />
+	<source path="">
+		<!--======================SEARCHBACKEND====================== -->
+
+		<include name="searchbackend/ISyntaxChecker.java" />
+		<include name="searchbackend/SyntaxContainer.java" />
+		<include name="searchbackend/SearchBackend.java" />
+		<include name="searchbackend/SyntaxObject.java" />
+		<include name="searchbackend/SyntaxObjectType.java" />
+		<include name="searchbackend/SearchObjects.java" />
+		<include name="searchbackend/SyntaxError.java" />
+		<include name="searchbackend/SyntaxChecker.java" />
+		<include name="searchbackend/ADSyntaxChecker.java" />
+		<include name="searchbackend/AdSearchObjecAutoCompleter.java" />
+		<include name="searchbackend/BaseAutoCompleter.java" />
+		<include name="searchbackend/IConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/AdUserConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/AdGroupConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/IAutoCompleter.java" />
+		<include name="searchbackend/IConditionValueAutoCompleter.java" />
+		<include name="searchbackend/valueValidationFunction.java" />
+		<include name="searchbackend/StringConditionRelationAutoCompleter.java" />
+		<include name="searchbackend/PagingType.java" />
+		<include name="searchbackend/SyntaxCheckerFactory.java" />
+		<include name="searchbackend/SearchObjectAutoCompleter.java" />
+		<include name="searchbackend/BaseConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/SearchObjectsBaseAutoCompleter.java" />
+		<include name="searchbackend/AuditCrossRefAutoCompleter.java" />
+		<include name="searchbackend/TemplateCrossRefAutoCompleter.java" />
+		<include name="searchbackend/UserCrossRefAutoCompleter.java" />
+		<include name="searchbackend/VdsCrossRefAutoCompleter.java" />
+		<include name="searchbackend/VmCrossRefAutoCompleter.java" />
+		<include name="searchbackend/ClusterCrossRefAutoCompleter.java" />
+		<include name="searchbackend/StoragePoolCrossRefAutoCompleter.java" />
+		<include name="searchbackend/VdsConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/VmConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/VmTemplateConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/AuditLogConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/VdcUserConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/PoolConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/ClusterConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/StoragePoolFieldAutoCompleter.java" />
+		<include name="searchbackend/StorageDomainFieldAutoCompleter.java" />
+		<include name="searchbackend/EnumValueAutoCompleter.java" />
+		<include name="searchbackend/NumericConditionRelationAutoCompleter.java" />
+		<include
+			name="searchbackend/StringOnlyEqualConditionRelationAutoCompleter.java" />
+		<include name="searchbackend/TimeConditionRelationAutoCompleter.java" />
+		<include name="searchbackend/BiggerOrSmallerRelationAutoCompleter.java" />
+		<include name="searchbackend/DateEnumValueAutoCompleter.java" />
+		<include name="searchbackend/BitValueAutoCompleter.java" />
+		<include name="searchbackend/StorageDomainCrossRefAutoCompleter.java" />
+		<include name="searchbackend/DateUtils.java" />
+		<include name="searchbackend/SqlInjectionChecker.java" />
+		<include name="searchbackend/PostgresSqlInjectionChecker.java" />
+	</source>
+
+	<super-source path="ui/uioverrides" />
+</module>
+

@@ -1,0 +1,263 @@
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 1.6//EN"
+        "http://google-web-toolkit.googlecode.com/svn/releases/1.6/distro-source/src/gwt-module.dtd">
+<module>
+	<inherits name='com.google.gwt.core.Core' />
+	<source path="">
+		<!--======================COMMON====================== -->
+		<!-- Config -->
+		<include name="common/config/**" />
+
+		<!-- Business entities -->
+		<include name="common/businessentities/HasStoragePool.java" />
+		<include name="common/businessentities/BusinessEntity.java" />
+		<include name="common/businessentities/ad_groups.java" />
+		<include name="common/businessentities/AdRefStatus.java" />
+		<include name="common/businessentities/AdUser.java" />
+		<include name="common/businessentities/AuditLog.java" />
+		<include name="common/businessentities/bookmarks.java" />
+		<include name="common/businessentities/Disk.java" />
+		<include name="common/businessentities/DiskImage.java" />
+		<include name="common/businessentities/DiskImageBase.java" />
+		<include name="common/businessentities/DiskImageDynamic.java" />
+		<include name="common/businessentities/DiskInterface.java" />
+		<include name="common/businessentities/DiskType.java" />
+		<include name="common/businessentities/DisplayType.java" />
+		<include name="common/businessentities/event_notification_methods.java" />
+		<include name="common/businessentities/event_subscriber.java" />
+		<include name="common/businessentities/event_subscriber_id.java" />
+		<include name="common/businessentities/DbUser.java" />
+		<include name="common/businessentities/DbUserBase.java" />
+		<include name="common/businessentities/custom_actions.java" />
+		<include name="common/businessentities/BootSequence.java" />
+		<include name="common/businessentities/HypervisorType.java" />
+		<include name="common/businessentities/IImage.java" />
+		<include name="common/businessentities/ImageStatus.java" />
+		<include name="common/businessentities/NetworkInterface.java" />
+		<include name="common/businessentities/VdsNetworkInterface.java" />
+		<include name="common/businessentities/VmNetworkInterface.java" />
+		<include name="common/businessentities/InterfaceStatus.java" />
+		<include name="common/businessentities/IrsStatus.java" />
+		<include name="common/businessentities/IVdcQueryable.java" />
+		<include
+			name="common/businessentities/LUN_storage_server_connection_map.java" />
+		<include
+			name="common/businessentities/LUN_storage_server_connection_map_id.java" />
+		<include name="common/businessentities/LUNs.java" />
+		<include name="common/businessentities/network_cluster.java" />
+		<include name="common/businessentities/network.java" />
+		<include name="common/businessentities/NetworkBootProtocol.java" />
+		<include name="common/businessentities/NetworkInterface.java" />
+		<include name="common/businessentities/NetworkStatistics.java" />
+		<include name="common/businessentities/NetworkStatus.java" />
+		<include name="common/businessentities/OperationMode.java" />
+		<include name="common/businessentities/OriginType.java" />
+		<include name="common/businessentities/VmEntityType.java" />
+		<include name="common/businessentities/permissions.java" />
+		<include name="common/businessentities/PropagateErrors.java" />
+		<include name="common/businessentities/RecoveryMode.java" />
+		<include name="common/businessentities/roles_actions.java" />
+		<include name="common/businessentities/roles.java" />
+		<include name="common/businessentities/ServerCpu.java" />
+		<include name="common/businessentities/SessionState.java" />
+		<include name="common/businessentities/Snapshot.java" />
+		<include name="common/businessentities/storage_domain_dynamic.java" />
+		<include name="common/businessentities/storage_domain_static.java" />
+		<include name="common/businessentities/storage_domains.java" />
+		<include name="common/businessentities/storage_pool_iso_map.java" />
+		<include name="common/businessentities/StoragePoolIsoMapId.java" />
+		<include name="common/businessentities/storage_pool.java" />
+		<include name="common/businessentities/storage_server_connections.java" />
+		<include name="common/businessentities/StorageDomainOwnerType.java" />
+		<include name="common/businessentities/StorageDomainSharedStatus.java" />
+		<include name="common/businessentities/StorageDomainStatus.java" />
+		<include name="common/businessentities/StorageDomainType.java" />
+		<include name="common/businessentities/StoragePoolStatus.java" />
+		<include name="common/businessentities/StorageType.java" />
+		<include name="common/businessentities/StorageFormatType.java" />
+		<include name="common/businessentities/TabType.java" />
+		<include name="common/businessentities/tags_vm_map.java" />
+		<include name="common/businessentities/tags.java" />
+		<include name="common/businessentities/TagsType.java" />
+		<include name="common/queries/IRegisterQueryUpdatedData.java" />
+		<include name="common/EventNotificationMethods.java" />
+		<include name="common/businessentities/time_lease_vm_pool_map.java" />
+		<include name="common/businessentities/time_lease_vm_pool_map_id.java" />
+		<include name="common/businessentities/UsbPolicy.java" />
+		<include name="common/businessentities/VDS.java" />
+		<include name="common/businessentities/VDSDomainsData.java" />
+		<include name="common/businessentities/VdsDynamic.java" />
+		<include name="common/businessentities/VDSGroup.java" />
+		<include name="common/businessentities/VdsSelectionAlgorithm.java" />
+		<include name="common/businessentities/VdsSpmStatus.java" />
+		<include name="common/businessentities/VdsStatic.java" />
+		<include name="common/businessentities/VdsStatistics.java" />
+		<include name="common/businessentities/VDSStatus.java" />
+		<include name="common/businessentities/VDSType.java" />
+		<include name="common/businessentities/VdsVersion.java" />
+		<include name="common/businessentities/vm_pool_map.java" />
+		<include name="common/businessentities/vm_pools.java" />
+		<include name="common/businessentities/VM.java" />
+		<include name="common/businessentities/VmBase.java" />
+		<include name="common/businessentities/VmDynamic.java" />
+		<include name="common/businessentities/VmExitStatus.java" />
+		<include name="common/businessentities/VmInterfaceType.java" />
+		<include name="common/businessentities/VdsInterfaceType.java" />
+		<include name="common/businessentities/VmNetworkInterface.java" />
+		<include name="common/businessentities/VmNetworkStatistics.java" />
+		<include name="common/businessentities/VmOsType.java" />
+		<include name="common/businessentities/OsType.java" />
+		<include name="common/businessentities/VmPoolType.java" />
+		<include name="common/businessentities/VmsComparer.java" />
+		<include name="common/businessentities/VmsComparerByDiskSize.java" />
+		<include name="common/businessentities/VmStatic.java" />
+		<include name="common/businessentities/VmStatistics.java" />
+		<include name="common/businessentities/VMStatus.java" />
+		<include name="common/businessentities/VmTemplate.java" />
+		<include name="common/businessentities/time_lease_vm_pool_map.java" />
+		<include name="common/businessentities/UsbPolicy.java" />
+		<include name="common/businessentities/VmTemplateStatus.java" />
+		<include name="common/businessentities/VmType.java" />
+		<include name="common/businessentities/VolumeFormat.java" />
+		<include name="common/businessentities/VolumeType.java" />
+		<include name="common/businessentities/IrsNodeStatus.java" />
+		<include name="common/businessentities/IrsCluStstus.java" />
+		<include name="common/businessentities/RoleType.java" />
+		<include name="common/businessentities/VdsNetworkInterface.java" />
+		<include name="common/businessentities/VdsNetworkStatistics.java" />
+		<include name="common/businessentities/VDSNiceType.java" />
+		<include name="common/businessentities/DateEnumForSearch.java" />
+		<include name="common/businessentities/ActionGroup.java" />
+		<include name="common/businessentities/VmPauseStatus.java" />
+		<include name="common/businessentities/MigrationSupport.java" />
+		<include name="common/businessentities/VdsTransparentHugePagesState.java" />
+		<include name="common/businessentities/OvfExportOnlyField.java" />
+		<include name="common/businessentities/async_tasks.java" />
+		<include name="common/businessentities/NonOperationalReason.java" />
+		<include name="common/businessentities/MigrateOnErrorOptions.java" />
+		<include name="common/businessentities/tags_vm_map_id.java" />
+		<include name="common/businessentities/FileRepoMetaData.java" />
+		<include name="common/businessentities/RepoFileMetaData.java" />
+		<include name="common/businessentities/FileTypeExtension.java" />
+
+		<include name="common/job/*.java" />
+		
+		<!-- Quota -->
+		<include name="common/businessentities/Quota.java"/>
+		<include name="common/businessentities/QuotaEnforcmentTypeEnum.java"/>
+		<include name="common/businessentities/QuotaStorage.java"/>
+		<include name="common/businessentities/QuotaStorageProperties.java"/>
+		<include name="common/businessentities/QuotaVdsGroup.java"/>
+		<include name="common/businessentities/QuotaVdsGroupProperties.java"/>
+		<include name="common/action/QuotaCRUDParameters.java"/>
+		<include name="common/queries/GetQuotaByStoragePoolIdQueryParameters.java"/>
+		<include name="common/queries/GetQuotaByQuotaIdQueryParameters.java"/>
+		<include name="common/queries/GetQuotaVdsGroupByQuotaIdQueryParameters.java"/>
+		<include name="common/queries/GetQuotaStorageByQuotaIdQueryParameters.java"/>
+		<include name="common/queries/GetEntitiesRelatedToQuotaIdParameters.java"/>
+		<include name="common/queries/GetDisksByQuotaIdParameters.java"/>
+		<include name="common/queries/GetQuotasByAdElementIdQueryParameters.java"/>
+
+		<!-- Misc -->
+		<include name="common/AuditLogType.java" />
+		<include name="common/AuditLogTimeInterval.java" />
+		<include name="common/AuditLogSeverity.java" />
+		<include name="common/users/VdcUser.java" />
+		<include name="common/utils/ObjectDescriptor.java" />
+		<include name="common/utils/EnumUtils.java" />
+		<include name="common/interfaces/IVdcUser.java" />
+		<include name="common/VdcObjectType.java" />
+
+		<!-- Actions -->
+		<include name="common/action/VdcActionType.java" />
+
+		<!-- Queries -->
+		<include name="common/queries/ValueObjectMap.java" />
+		<include name="common/queries/ValueObject.java" />
+		<include name="common/queries/ValueObjectPair.java" />
+		<include name="common/queries/ValueObjectList.java" />
+		<include name="common/queries/ValueObjectSingle.java" />
+		<include name="common/queries/GetVmsMessagesParameters.java" />
+		<include name="common/queries/GetUserMessagesParameters.java" />
+
+		<!-- Required by frontend -->
+		<include name="common/queries/VdcQueryReturnValue.java" />
+		<include
+			name="common/queries/VdcQueryReturnValue_CustomFieldSerializer.java" />
+		<include name="common/queries/SearchParameters.java" />
+		<include name="common/queries/SearchReturnValue.java" />
+		<include name="common/queries/LicenseReturnValue.java" />
+		<include name="common/interfaces/SearchType.java" />
+		<include
+			name="common/queries/GetAllVmSnapshotsByDriveQueryReturnValue.java" />
+		<include name="common/queries/VmCandidateInfo.java" />
+		<include name="common/queries/TemplateCandidateInfo.java" />
+		<include name="common/queries/ImportCandidateSourceEnum.java" />
+		<include name="common/queries/ListIVdcQueryableUpdatedData.java" />
+		<include name="common/queries/DiskImageList.java" />
+		<include name="common/businessentities/FenceStatusReturnValue.java" />
+		<include name="common/businessentities/AsyncTaskStatus.java" />
+		<include name="common/businessentities/event_map.java" />
+		<include name="common/businessentities/event_map_id.java" />
+		<include name="common/businessentities/AsyncTaskStatusEnum.java" />
+		<include name="common/businessentities/AsyncTaskResultEnum.java" />
+		<include name="common/queries/ImportCandidateInfoBase.java" />
+
+		<!-- Sadly because VdcQueryParametersBase / VdcActionParametersBase :/ -->
+		<include name="common/queries/*.java" />
+		<include name="common/action/*.java" />
+
+		<!-- Most custom field serializers match the two previous rules, but some 
+			dont, we need to include them explicitly: -->
+		<include name="**/*_CustomFieldSerializer.java" />
+
+		<include name="common/businessentities/VdcRole.java" />
+		<include name="common/action/AddVdsActionParameters.java" />
+		<include name="common/action/VdsActionParameters.java" />
+		<include name="common/action/VdcActionParametersBase.java" />
+		<include name="common/action/VdsOperationActionParameters.java" />
+		<include name="common/businessentities/AsyncTaskResultEnum.java" />
+		<include name="common/queries/VdcQueryParametersBase.java" />
+
+		<include name="common/businessentities/FenceActionType.java" />
+		<include name="common/businessentities/CopyVolumeType.java" />
+		<include name="common/businessentities/ImageOperation.java" />
+		<include name="common/businessentities/VdcOption.java" />
+		<include name="common/errors/VdcFault.java" />
+		<include name="common/errors/VdcBllErrors.java" />
+		<include name="common/errors/SqlInjectionException.java" />
+		<include name="common/errors/SearchEngineIllegalCharacterException.java" />
+		<include name="common/businessentities/VdsMovedToNonOperationalType.java" />
+
+		<!--required by action/VdcActionParametersBase.java -->
+		<include name="common/asynctasks/EndedTaskInfo.java" />
+		<include name="common/asynctasks/IEndedTaskVisitor.java" />
+		<include name="common/asynctasks/AsyncTaskParameters.java" />
+		<include name="common/businessentities/RoleGroupMap.java" />
+		<include name="common/businessentities/RoleGroupMapId.java" />
+		<include name="common/asynctasks/AsyncTaskCreationInfo.java" />
+		<include name="common/asynctasks/AsyncTaskType.java" />
+
+		<!-- SearchBackend -->
+		<include name="common/VdcEventNotificationUtils.java" />
+		<include name="common/EventNotificationEntity.java" />
+		<include name="common/interfaces/ITagsHandler.java" />
+		<!-- UiCommon -->
+		<include name="common/VdcActionUtils.java" />
+		<include name="common/ManageableTypes.java" />
+
+		<!-- Validations -->
+		<include name="common/utils/VmValidationUtils.java" />
+
+		<!-- Backend V<include name="searchbackend/SqlInjectionChecker.java" /> 
+			<include name="searchbackend/PostgresSqlInjectionChecker.java" />alidation 
+			framework -->
+		<include name="common/utils/EnumUtils.java" />
+		<include name="common/utils/IObjectDescriptorContainer.java" />
+		<include name="common/validation/annotation/HostnameOrIp.java" />
+		<include name="common/validation/group/**" />
+
+
+	</source>
+
+	<super-source path="ui/uioverrides" />
+</module>

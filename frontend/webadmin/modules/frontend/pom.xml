@@ -15,13 +15,6 @@
   <dependencies>
     <dependency>
       <groupId>${engine.groupId}</groupId>
-      <artifactId>sharedgwt</artifactId>
-      <version>${engine.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
       <artifactId>uicompat</artifactId>
       <version>${engine.version}</version>
       <scope>provided</scope>
