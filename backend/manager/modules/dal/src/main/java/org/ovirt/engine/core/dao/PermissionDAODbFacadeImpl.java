@@ -83,8 +83,13 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public List<permissions> getAllForAdElement(Guid id) {
+        return getAllForAdElement(id, null, false);
+    }
+
+    @Override
+    public List<permissions> getAllForAdElement(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("ad_element_id", id);
+                .addValue("ad_element_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
         ParameterizedRowMapper<permissions> mapper = new PermissionRowMapper();
 

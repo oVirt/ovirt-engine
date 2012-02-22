@@ -79,6 +79,11 @@ public class PermissionDAOHibernateImpl extends BaseDAOHibernateImpl<permissions
     }
 
     @Override
+    public List<permissions> getAllForAdElement(Guid id, Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public List<permissions> getAllForRole(Guid id) {
         return fillInPermissionDetails(findByCriteria(Restrictions.eq("roleId", id)));
     }

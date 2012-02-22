@@ -1039,3 +1039,10 @@ SELECT       DISTINCT entity_id, user_id
 FROM         user_vm_permissions_view_base
 NATURAL JOIN user_flat_groups;
 
+
+-- Permissions on permissions
+CREATE OR REPLACE VIEW user_permissions_permissions_view (entity_id, user_id)
+AS
+SELECT       DISTINCT id, ad_element_id
+FROM         user_permissions_view
+JOIN         user_flat_groups ON granted_id = ad_element_id;

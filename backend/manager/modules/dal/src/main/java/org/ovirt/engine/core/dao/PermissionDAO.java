@@ -24,7 +24,7 @@ public interface PermissionDAO extends GenericDao<permissions, Guid> {
      * @return the permission
      */
     permissions getForRoleAndAdElementAndObject(Guid roleid, Guid elementid,
-                                                Guid objectid);
+            Guid objectid);
 
     /**
      * Retrieves the permission for the specified role, element and object,
@@ -39,7 +39,7 @@ public interface PermissionDAO extends GenericDao<permissions, Guid> {
      * @return the permission
      */
     permissions getForRoleAndAdElementAndObjectWithGroupCheck(Guid roleid, Guid elementid,
-                                                              Guid objectid);
+            Guid objectid);
 
     /**
      * Get all permissions to consume from quota
@@ -57,6 +57,20 @@ public interface PermissionDAO extends GenericDao<permissions, Guid> {
      * @return the list of permissions
      */
     List<permissions> getAllForAdElement(Guid id);
+
+    /**
+     * Gets all permissions for the specified AD element, including permissions of groups that it is in,
+     * with optional filtering according to the permissions of the issuing user.
+     *
+     * @param id
+     *            the AD element
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the list of permissions
+     */
+    List<permissions> getAllForAdElement(Guid id, Guid userID, boolean isFiltered);
 
     /**
      * Gets all permissions for the specified AD element only, excluding permissions of groups that it is in.
