@@ -24,10 +24,9 @@ CREATE OR REPLACE VIEW images_storage_domain_view
 AS
 
 -- TODO: Change code to treat disks values directly instead of through this view.
-SELECT vm_device.vm_id as vm_guid,
+SELECT DISTINCT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
 storage_domain_static_view.storage as storage_path,
 	storage_domain_static_view.storage_pool_id as storage_pool_id,
-	images.image_guid as image_guid,
 	images.creation_date as creation_date,
     images.size as size,
     images.it_guid as it_guid,
@@ -35,12 +34,13 @@ storage_domain_static_view.storage as storage_path,
     images.ParentId as ParentId,
     images.lastModified as lastModified,
     images.app_list as app_list,
-    images.storage_id as storage_id,
+    image_storage_domain_map.storage_domain_id as storage_id,
     images.vm_snapshot_id as vm_snapshot_id,
     images.volume_type as volume_type,
     images.volume_format as volume_format,
     images.boot as boot,
     images.imageStatus as imageStatus,
+    images.quota_id as quota_id,
     disks.disk_id as image_group_id,
     vm_static.entity_type as entity_type,
     CAST (disks.internal_drive_mapping AS VARCHAR(50)) as internal_drive_mapping,
@@ -64,12 +64,10 @@ storage_domain_static_view.storage as storage_path,
     disk_image_dynamic.write_rate as write_rate
 FROM
 images
-LEFT OUTER JOIN
-storage_domain_static_view
-ON
-images.storage_id = storage_domain_static_view.id
 left outer join disk_image_dynamic on images.image_guid = disk_image_dynamic.image_id
-JOIN disks ON images.image_group_id = disks.disk_id left outer JOIN vm_device on vm_device.device_id = images.image_guid left outer join vm_static on vm_static.vm_guid = vm_device.vm_id;
+JOIN disks ON images.image_group_id = disks.disk_id left outer JOIN vm_device on vm_device.device_id = images.image_guid left outer join vm_static on vm_static.vm_guid = vm_device.vm_id
+LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
+LEFT OUTER JOIN storage_domain_static_view ON image_storage_domain_map.storage_domain_id = storage_domain_static_view.id;
 
 
 CREATE OR REPLACE VIEW storage_domain_file_repos
@@ -203,23 +201,6 @@ WHERE entity_type = 'TEMPLATE';
 CREATE OR REPLACE VIEW vm_templates_storage_domain
 AS
 
-SELECT     vm_templates.vm_guid AS vmt_guid, vm_templates.vm_name AS name, vm_templates.mem_size_mb, vm_templates.os, vm_templates.creation_date,
-                      vm_templates.child_count, vm_templates.num_of_sockets, vm_templates.cpu_per_socket,
-                      vm_templates.num_of_sockets*vm_templates.cpu_per_socket AS num_of_cpus, vm_templates.description,
-                      vm_templates.vds_group_id, vm_templates.domain, vm_templates.num_of_monitors, vm_templates.template_status AS status,
-                      vm_templates.usb_policy, vm_templates.time_zone, vm_templates.is_auto_suspend, vm_templates.fail_back,
-                      vds_groups.name AS vds_group_name, vm_templates.vm_type, vm_templates.hypervisor_type, vm_templates.operation_mode,
-                      vm_templates.nice_level, storage_pool.id AS storage_pool_id, storage_pool.name AS storage_pool_name,
-                      vm_templates.default_boot_sequence, vm_templates.default_display_type, vm_templates.priority, vm_templates.auto_startup,
-                      vm_templates.is_stateless, vm_templates.iso_path, vm_templates.origin, vm_templates.initrd_url, vm_templates.kernel_url,
-                      vm_templates.kernel_params, images.storage_id
-FROM       vm_static AS vm_templates INNER JOIN
-                      vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN
-                      storage_pool ON storage_pool.id = vds_groups.storage_pool_id INNER JOIN
-                      image_vm_map AS vm_template_image_map ON vm_template_image_map.vm_id = vm_templates.vm_guid LEFT JOIN
-                      images ON images.image_guid = vm_template_image_map.image_id
-WHERE      entity_type = 'TEMPLATE'
-UNION
 SELECT                vm_templates_1.vm_guid AS vmt_guid, vm_templates_1.vm_name AS name, vm_templates_1.mem_size_mb, vm_templates_1.os, vm_templates_1.creation_date,
                       vm_templates_1.child_count, vm_templates_1.num_of_sockets, vm_templates_1.cpu_per_socket,
                       vm_templates_1.num_of_sockets*vm_templates_1.cpu_per_socket AS num_of_cpus, vm_templates_1.description, vm_templates_1.vds_group_id,
@@ -229,13 +210,13 @@ SELECT                vm_templates_1.vm_guid AS vmt_guid, vm_templates_1.vm_name
                       storage_pool_1.name AS storage_pool_name, vm_templates_1.default_boot_sequence, vm_templates_1.default_display_type,
                       vm_templates_1.priority, vm_templates_1.auto_startup, vm_templates_1.is_stateless, vm_templates_1.iso_path, vm_templates_1.origin,
                       vm_templates_1.initrd_url, vm_templates_1.kernel_url, vm_templates_1.kernel_params,
-                      image_group_storage_domain_map.storage_domain_id AS storage_id
+                      image_storage_domain_map.storage_domain_id AS storage_id
 FROM                  vm_static AS vm_templates_1 INNER JOIN
                       vds_groups AS vds_groups_1 ON vm_templates_1.vds_group_id = vds_groups_1.vds_group_id LEFT OUTER JOIN
                       storage_pool AS storage_pool_1 ON storage_pool_1.id = vds_groups_1.storage_pool_id INNER JOIN
                       image_vm_map AS vm_template_image_map_1 ON vm_template_image_map_1.vm_id = vm_templates_1.vm_guid INNER JOIN
                       images AS images_1 ON images_1.image_guid = vm_template_image_map_1.image_id INNER JOIN
-                      image_group_storage_domain_map ON image_group_storage_domain_map.image_group_id = images_1.image_group_id
+                      image_storage_domain_map ON image_storage_domain_map.image_id = images_1.image_guid
 WHERE                 entity_type = 'TEMPLATE';
 
 
@@ -381,8 +362,8 @@ SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.vmt_guid, vms.v
 FROM        vms LEFT OUTER JOIN
             tags_vm_map_view ON vms.vm_guid = tags_vm_map_view.vm_id LEFT OUTER JOIN
             image_vm_map ON vms.vm_guid = image_vm_map.vm_id LEFT OUTER JOIN
-            images ON images.image_guid = image_vm_map.image_id LEFT OUTER JOIN
-            storage_domain_static ON storage_domain_static.id = images.storage_id;
+            image_storage_domain_map ON image_storage_domain_map.image_id = image_vm_map.image_id LEFT OUTER JOIN
+            storage_domain_static ON storage_domain_static.id = image_storage_domain_map.storage_domain_id;
 
 CREATE OR REPLACE VIEW server_vms
 as

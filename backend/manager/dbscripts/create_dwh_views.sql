@@ -300,7 +300,7 @@ FROM       vm_interface_statistics;
 CREATE OR REPLACE VIEW dwh_vm_disk_configuration_history_view
 AS
 SELECT i.image_guid AS vm_disk_id,
-       i.storage_id as storage_domain_id,
+       image_storage_domain_map.storage_domain_id as storage_domain_id,
        cast(d.internal_drive_mapping as smallint) as vm_internal_drive_mapping,
        i.description as vm_disk_description,
        cast(i.size / 1048576 as int) as vm_disk_size_mb,
@@ -320,6 +320,8 @@ FROM   images as i
 		                  vm_static ON vm_static.vm_guid = map.vm_id
            INNER JOIN
                disks as d ON i.image_group_id = d.disk_id
+           INNER JOIN
+               image_storage_domain_map ON image_storage_domain_map.image_id = i.image_guid
 WHERE     map.active = true AND
                  vm_static.entity_type = 'VM' AND
           (i._create_date >

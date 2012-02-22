@@ -16,7 +16,6 @@ Create or replace FUNCTION InsertImage(v_creation_date TIMESTAMP WITH TIME ZONE,
     v_imageStatus INTEGER ,
     v_lastModified TIMESTAMP WITH TIME ZONE,
 	v_app_list VARCHAR(4000) ,
-	v_storage_id UUID ,
 	v_vm_snapshot_id UUID ,
 	v_volume_type INTEGER,
 	v_volume_format INTEGER,
@@ -26,9 +25,9 @@ RETURNS VOID
    AS $procedure$
 BEGIN
 INSERT INTO images(creation_date, description, image_guid, it_guid, size, ParentId,imageStatus,lastModified, app_list,
-    storage_id, vm_snapshot_id, volume_type, image_group_id, volume_format, boot)
+    vm_snapshot_id, volume_type, image_group_id, volume_format, boot)
 	VALUES(v_creation_date, v_description, v_image_guid, v_it_guid, v_size, v_ParentId, v_imageStatus, v_lastModified,v_app_list,
-	v_storage_id, v_vm_snapshot_id, v_volume_type, v_image_group_id, v_volume_format, v_boot);
+	v_vm_snapshot_id, v_volume_type, v_image_group_id, v_volume_format, v_boot);
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -45,7 +44,6 @@ Create or replace FUNCTION UpdateImage(v_creation_date TIMESTAMP WITH TIME ZONE,
     v_imageStatus INTEGER ,
     v_lastModified TIMESTAMP WITH TIME ZONE,
 	v_app_list VARCHAR(4000) ,
-	v_storage_id UUID ,
 	v_vm_snapshot_id UUID ,
 	v_volume_type INTEGER,
 	v_volume_format INTEGER,
@@ -60,7 +58,7 @@ BEGIN
       SET creation_date = v_creation_date,description = v_description,
       it_guid = v_it_guid,size = v_size, 
       ParentId = v_ParentId,imageStatus = v_imageStatus,lastModified = v_lastModified, 
-      app_list = v_app_list,storage_id = v_storage_id, 
+      app_list = v_app_list, 
       vm_snapshot_id = v_vm_snapshot_id,volume_type = v_volume_type,image_group_id = v_image_group_id, 
       volume_format = v_volume_format,
       boot = v_boot,

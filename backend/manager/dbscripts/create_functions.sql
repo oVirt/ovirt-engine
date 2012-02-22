@@ -198,7 +198,7 @@ BEGIN
 		-- get image id first
 		v_image_id := ( SELECT image_id FROM image_vm_map WHERE vm_id = v_entity_id limit 1);
 		-- get the storage id from images
-		v_storage_id := ( SELECT storage_id FROM images WHERE image_guid = v_image_id );
+		v_storage_id := ( SELECT storage_domain_id FROM image_storage_domain_map WHERE image_id = v_image_id limit 1);
 		-- finally get data center id
 		ds_id := ( SELECT storage_pool_id FROM storage_pool_iso_map WHERE storage_id = v_storage_id );
 
@@ -254,11 +254,11 @@ DECLARE
 
 BEGIN
 	mult := ( SELECT
-	    		COALESCE(SUM(images.size - disk_image_dynamic.actual_size),0)
-				FROM images JOIN
-	    			disk_image_dynamic ON ( images.image_guid = disk_image_dynamic.image_id )
+	    		COALESCE(SUM(images_storage_domain_view.size - disk_image_dynamic.actual_size),0)
+				FROM images_storage_domain_view JOIN
+	    			disk_image_dynamic ON ( images_storage_domain_view.image_guid = disk_image_dynamic.image_id )
 				WHERE
-   					images.storage_id = v_storage_domain_id );
+   					images_storage_domain_view.storage_id = v_storage_domain_id );
         -- convert to GB from bytes
 	mult := CAST((mult * 0.000000000931322574615478515625) AS bigint);
     result := CAST(mult as integer);
@@ -481,23 +481,23 @@ DECLARE
 BEGIN
 	-- Summarize size of all disks that are active.
     SELECT COALESCE(sum(size) / (1024 * 1024 * 1024),0) INTO v_virtual_size
-	FROM disk_image_dynamic, images
+	FROM disk_image_dynamic, images_storage_domain_view
 	WHERE image_guid = disk_image_dynamic.image_id
     AND image_guid in (SELECT image_guid
                        FROM image_vm_map ivm,images
                        WHERE ivm.image_id = images.image_guid and active = 't')
 	AND quota_id = v_quota_id
-    AND (v_storage_id = images.storage_id or v_storage_id IS NULL);
+    AND (v_storage_id = images_storage_domain_view.storage_id or v_storage_id IS NULL);
 
 	-- Summarize the actual size of all the rest disks that are read only disks such as snapshots, not active, template disks.
-	SELECT COALESCE(sum(actual_size) / (1024 * 1024 * 1024),0) INTO v_actual_size
-	FROM disk_image_dynamic, images
+	SELECT COALESCE(sum(disk_image_dynamic.actual_size) / (1024 * 1024 * 1024),0) INTO v_actual_size
+	FROM disk_image_dynamic, images_storage_domain_view
 	WHERE image_guid = disk_image_dynamic.image_id
     AND image_guid not in (SELECT image_guid
                            FROM image_vm_map ivm,images
                            WHERE ivm.image_id = images.image_guid and active = 't')
 	AND quota_id = v_quota_id
-	AND (v_storage_id = images.storage_id or v_storage_id IS NULL);
+	AND (v_storage_id = images_storage_domain_view.storage_id or v_storage_id IS NULL);
 	RETURN v_actual_size + v_virtual_size;
 END; $function$
 LANGUAGE plpgsql;

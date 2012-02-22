@@ -856,10 +856,8 @@ BEGIN
       RETURN QUERY SELECT DISTINCT vms.*
       FROM vms
       inner join image_vm_map on vms.vm_guid = image_vm_map.vm_id
-      inner join images on image_vm_map.image_id = images.image_guid
-      and images.image_guid in(select image_guid
-         from images where storage_id = v_storage_domain_id)
-      WHERE status <> 0;
+      inner join image_storage_domain_map on image_vm_map.image_id = image_storage_domain_map.image_id
+      WHERE status <> 0 and image_storage_domain_map.storage_domain_id = v_storage_domain_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -873,9 +871,8 @@ BEGIN
       RETURN QUERY SELECT DISTINCT vms.*
       FROM vms
       inner join image_vm_map on vms.vm_guid = image_vm_map.vm_id
-      inner join images on image_vm_map.image_id = images.image_guid
-      and images.image_guid in(select image_guid
-         from images where storage_id = v_storage_domain_id);
+      inner join image_storage_domain_map on image_vm_map.image_id = image_storage_domain_map.image_id
+      where image_storage_domain_map.storage_domain_id = v_storage_domain_id;
 END; $procedure$
 LANGUAGE plpgsql;
 

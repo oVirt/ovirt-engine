@@ -268,8 +268,7 @@ BEGIN
       RETURN QUERY SELECT DISTINCT vm_templates.*
       FROM vm_templates_view vm_templates
       inner join image_vm_map AS vm_template_image_map on vm_templates.vmt_guid = vm_template_image_map.vm_id
-      where vm_template_image_map.image_id in(select image_guid from images where storage_id = v_storage_domain_id or image_group_id in(select image_group_id from image_group_storage_domain_map
-            where image_group_storage_domain_map.storage_domain_id = v_storage_domain_id));
+      where vm_template_image_map.image_id in(select image_id from image_storage_domain_map where storage_domain_id = v_storage_domain_id);
 END; $procedure$
 LANGUAGE plpgsql;
 

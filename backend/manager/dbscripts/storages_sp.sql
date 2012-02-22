@@ -465,16 +465,16 @@ RETURNS VOID
    AS $procedure$
 BEGIN
 	
-	-- delete the map between the domain to templates that was copied to it
-   delete FROM image_group_storage_domain_map where storage_domain_id = v_storage_domain_id;
-
-	-- update images that their first storage domain was this and are on other domains (set the storage_id field to any other domain)
-   update images set storage_id =(select  storage_domain_id from image_group_storage_domain_map map where images.image_group_id = map.image_group_id LIMIT 1)
-   where storage_id = v_storage_domain_id and image_group_id in(select image_group_id from image_group_storage_domain_map);
-
-	-- delete relations that are now duplicate because of the previous update action
-   delete FROM image_group_storage_domain_map where image_group_id in(select images.image_group_id from images, image_group_storage_domain_map imap
-   where images.image_group_id = imap.image_group_id and images.storage_id = imap.storage_domain_id);
+   BEGIN
+      CREATE GLOBAL TEMPORARY TABLE tt_TEMPSTORAGEDOMAINMAPTABLE AS select image_id
+         from image_storage_domain_map where storage_domain_id = v_storage_domain_id;
+      exception when others then
+         truncate table tt_TEMPSTORAGEDOMAINMAPTABLE;
+         insert into tt_TEMPSTORAGEDOMAINMAPTABLE select image_id
+         from image_storage_domain_map where storage_domain_id = v_storage_domain_id;
+   END;
+   
+   delete FROM image_storage_domain_map where storage_domain_id = v_storage_domain_id;
 	
    BEGIN
       CREATE GLOBAL TEMPORARY TABLE tt_TEMPTEMPLATESTABLE AS select vm_guid
@@ -498,7 +498,7 @@ BEGIN
 
    delete FROM permissions where object_id in (select vm_guid from vm_images_view where storage_id = v_storage_domain_id);
    delete FROM snapshots WHERE vm_id in (select vm_guid from vm_images_view where storage_id  = v_storage_domain_id);
-   delete FROM images where storage_id = v_storage_domain_id;
+   delete FROM images where image_guid in (select image_id from tt_TEMPSTORAGEDOMAINMAPTABLE);
    delete FROM image_vm_map where vm_id in(select vm_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM vm_interface where vmt_guid in(select vm_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM permissions where object_id in (select vm_guid from tt_TEMPTEMPLATESTABLE);
@@ -510,21 +510,6 @@ BEGIN
     
 END; $procedure$
 LANGUAGE plpgsql;
-
-
-Create or replace FUNCTION Getstorage_domains_By_imageGroupId(v_image_group_id UUID)
-RETURNS SETOF storage_domains
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT storage_domains.*
-   FROM storage_domains
-   INNER JOIN image_group_storage_domain_map as map on storage_domains.id = map.storage_domain_id
-   WHERE map.image_group_id = v_image_group_id;
-
-END; $procedure$
-LANGUAGE plpgsql;
-
-
 
 Create or replace FUNCTION Getstorage_domains_List_By_storageDomainId(v_storage_domain_id UUID)
 RETURNS SETOF storage_domains
@@ -543,12 +528,11 @@ Create or replace FUNCTION Getstorage_domainsId_By_imageGroupId(v_image_group_id
 RETURNS SETOF Getstorage_domainsId_By_imageGroupId_rs
    AS $procedure$
 BEGIN
-   RETURN QUERY SELECT 
-   images.storage_id AS storage_id FROM images
-   WHERE  images.image_group_id = v_image_group_id
-   UNION
-   SELECT image_group_storage_domain_map.storage_domain_id AS storage_id FROM image_group_storage_domain_map
-   WHERE image_group_storage_domain_map.image_group_id = v_image_group_id;
+   RETURN QUERY SELECT DISTINCT
+   image_storage_domain_map.storage_domain_id AS storage_id 
+   FROM image_storage_domain_map
+   JOIN images ON images.image_guid = image_storage_domain_map.image_id
+   WHERE images.image_group_id = v_image_group_id;
 
 
 END; $procedure$
