@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.bookmarks;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -25,6 +29,21 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 @SuppressWarnings("unused")
 public class BookmarkListModel extends SearchableListModel
 {
+
+    private static class BookmarksComparator implements Comparator<bookmarks> {
+
+        @Override
+        public int compare(bookmarks o1, bookmarks o2) {
+            String name1 = o1.getbookmark_name();
+            String name2 = o2.getbookmark_name();
+            if (name1 == null || name2 == null) {
+                throw new IllegalArgumentException("Bookmark name cannot be null");
+            }
+            return name1.compareTo(name2);
+        }
+    }
+
+    private static final BookmarksComparator COMPARATOR = new BookmarksComparator();
 
     public static EventDefinition NavigatedEventDefinition;
     private Event privateNavigatedEvent;
@@ -107,7 +126,9 @@ public class BookmarkListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel bookmarkListModel = (BookmarkListModel) model;
-                bookmarkListModel.setItems((Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                List<bookmarks> resultList = (List<bookmarks>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                Collections.sort(resultList, COMPARATOR);
+                bookmarkListModel.setItems(resultList);
             }
         };
 
