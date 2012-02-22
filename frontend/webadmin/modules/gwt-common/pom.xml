@@ -96,12 +96,6 @@
 	<build>
 		<resources>
 			<resource>
-				<directory>${project.build.directory}/${generatedSourcesDirectory}</directory>
-				<includes>
-					<include>**/*.java</include>
-				</includes>
-			</resource>
-			<resource>
 				<directory>src/main/java</directory>
 				<includes>
 					<include>**/*.ui.xml</include>
@@ -144,7 +138,26 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>${build-helper-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>add-apt-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/${generatedSourcesDirectory}</source>
+								<source>${project.build.directory}/generated-sources/gwt</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 			</plugin>
