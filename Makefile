@@ -70,7 +70,7 @@ install_without_maven: create_dirs install_brew_ear common_install
 common_install: install_quartz install_tools install_image_uploader\
 	install_config install_log_collector install_iso_uploader \
 	install_sysprep install_notification_service install_db_scripts \
-	install_setup install_misc install_sec
+	install_setup install_misc install_sec install_aio_plugin
 
 # Brew compatibility hack
 # We want both env (local and brew) to work the same
@@ -173,8 +173,8 @@ install_setup:
 	install -m 644 packaging/fedora/setup/output_messages.py $(PREFIX)/usr/share/ovirt-engine/scripts
 	install -m 644 packaging/fedora/setup/post_upgrade.py $(PREFIX)/usr/share/ovirt-engine/scripts
 
-	# Plugins:
-	install -m 644 packaging/fedora/setup/plugins/* $(PREFIX)/usr/share/ovirt-engine/scripts/plugins/
+	# Example Plugin:
+	install -m 644 packaging/fedora/setup/plugins/example_plugin_000.py $(PREFIX)/usr/share/ovirt-engine/scripts/plugins
 
 	# Main programs and links:
 	install -m 755 packaging/fedora/setup/engine-setup.py $(PREFIX)/usr/share/ovirt-engine/scripts
@@ -199,6 +199,8 @@ install_setup:
 	ln -s /usr/share/ovirt-engine/resources/jboss/modules/org/postgresql $(PREFIX)$(JBOSS_HOME)/modules/org/postgresql
 	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RELEASE_VERSION)/" $(PREFIX)/usr/share/ovirt-engine/resources/jboss/ROOT.war/engineVersion.js
 
+install_aio_plugin:
+	install -m 755 packaging/fedora/setup/plugins/all_in_one_100.py $(PREFIX)/usr/share/ovirt-engine/scripts/plugins
 
 install_sec:
 	# Build and install the tool to convert public keys to SSH

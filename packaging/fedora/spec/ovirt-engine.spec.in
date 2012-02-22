@@ -199,6 +199,16 @@ Requires: %{name}-tools-common = %{version}-%{release}
 %description config
 The configuration tool for oVirt Engine
 
+%package setup-plugin-allinone
+Summary: All-in-one plugin for oVirt Engine's setup
+Group: Virtualization/Management
+Requires: %{name}-setup
+Requires: %{name}-sdk
+Requires: vdsm
+
+%description setup-plugin-allinone
+All-in-one plugin for oVirt Engine's setup
+
 %prep
 %if %mead_build
 %setup -q -T -b 0 -n ovirt-engine
@@ -335,11 +345,15 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %attr (755,root,root) %{_datadir}/%{name}/scripts/engine-cleanup.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/engine-upgrade.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/post_upgrade.py*
-%attr (755,root,root) %{_datadir}/%{name}/scripts/plugins
+%dir %attr (755,root,root) %{_datadir}/%{name}/scripts/plugins
+%attr (755,root,root) %{_datadir}/%{name}/scripts/plugins/example_plugin_000.py
 %attr (750,root,root) %{_bindir}/engine-setup
 %attr (750,root,root) %{_bindir}/engine-upgrade
 %attr (750,root,root) %{_bindir}/engine-check-update
 %attr (750,root,root) %{_bindir}/engine-cleanup
+
+%files setup-plugin-allinone
+%attr(755,root,root) %{_datadir}/%{name}/scripts/plugins/all_in_one_100.py
 
 %files dbscripts
 %attr (755,root,root) %{_datadir}/%{name}/dbscripts

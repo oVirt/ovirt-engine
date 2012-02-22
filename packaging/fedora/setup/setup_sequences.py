@@ -3,6 +3,7 @@ Base class for steps & sequences
 """
 import logging
 import sys
+import re
 import basedefs
 import output_messages
 import common_utils as utils
@@ -40,8 +41,12 @@ class Step(object):
         return self.__FUNCTIONS
 
     def run(self):
-        #keep relative space
-        spaceLen = basedefs.SPACE_LEN - len(self.getTitle())
+        # keep relative space
+        # allow newline chars in title. This is useful for plugins
+        alignedTitle = self.getTitle()
+        if re.search('\n', alignedTitle):
+            alignedTitle = self.getTitle().split('\n')[-1]
+        spaceLen = basedefs.SPACE_LEN - len(alignedTitle)
         print "%s..."%(self.getTitle()),
         sys.stdout.flush()
         for function in self.getFunctions():
