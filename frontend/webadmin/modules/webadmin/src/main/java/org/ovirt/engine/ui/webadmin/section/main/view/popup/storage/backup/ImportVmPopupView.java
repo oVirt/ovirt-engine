@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -59,22 +61,13 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 
 public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel> implements ImportVmPopupPresenterWidget.ViewDef {
-
-    private static final String ALLOCATION_MODIFIED_SINGLE_VM =
-            "Allocation can be modified only when importing a single VM";
-
-    private static final String PREALLOCATED = "Preallocated";
-
-    private static final String THIN_PROVISION = "Thin Provision";
-
-    private static final String MODIFIED_COLLAPSE_MGS =
-            "Allocation can be modified only when 'Collapse All Snapshots' is check";
 
     interface Driver extends SimpleBeanEditorDriver<ImportVmModel, ImportVmPopupView> {
         Driver driver = GWT.create(Driver.class);
@@ -95,9 +88,13 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
     @Path(value = "destinationStorage.selectedItem")
     ListModelListBoxEditor<Object> destStorageEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "collapseSnapshots.entity")
     EntityModelCheckBoxEditor collapseSnapshotEditor;
+
+    @UiField(provided = true)
+    @Path(value = "isSingleDestStorage.entity")
+    EntityModelCheckBoxEditor isSingleDestStorageEditor;
 
     @UiField
     SplitLayoutPanel splitLayoutPanel;
@@ -133,25 +130,33 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
 
     private boolean numOfVmsGreaterThan1;
 
+    private CustomSelectionCell customSelectionCellStorageDomain;
+
+    private Column<DiskImage, String> storageDomainsColumn;
+
+    private final ApplicationConstants constants;
+
     @Inject
     public ImportVmPopupView(ClientGinjector ginjector,
             EventBus eventBus,
             ApplicationResources resources,
             ApplicationConstants constants) {
         super(eventBus, resources);
-        initListBoxEditors();
+        this.constants = constants;
 
+        initListBoxEditors();
+        initCheckboxes();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         Driver.driver.initialize(this);
         initTables();
         initSubTabLayoutPanel();
-        setContentWidth();
+        addStyles();
     }
 
-    private void setContentWidth() {
-        collapseSnapshotEditor.addContentWidgetStyleName(style.contentWidth());
-
+    private void addStyles() {
+        collapseSnapshotEditor.addContentWidgetStyleName(style.collapseEditor());
+        isSingleDestStorageEditor.addContentWidgetStyleName(style.checkboxEditor());
     }
 
     private void initSubTabLayoutPanel() {
@@ -341,14 +346,6 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
         };
         diskTable.addColumn(typeColumn, "Type", "60px");
 
-        TextColumnWithTooltip<DiskImage> formatColumn = new TextColumnWithTooltip<DiskImage>() {
-            @Override
-            public String getValue(DiskImage object) {
-                return object.getvolume_format().toString();
-            }
-        };
-        diskTable.addColumn(formatColumn, "Format", "60px");
-
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
             protected Date getRawValue(DiskImage object) {
@@ -357,13 +354,15 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
         };
         diskTable.addColumn(dateCreatedColumn, "Date Created", "100px");
 
+        diskTable.setSelectionModel(new NoSelectionModel<DiskImage>());
+
         ArrayList<String> allocationTypes = new ArrayList<String>();
-        allocationTypes.add(THIN_PROVISION);
-        allocationTypes.add(PREALLOCATED);
+        allocationTypes.add(constants.thisAllocation());
+        allocationTypes.add(constants.preallocatedAllocation());
 
         customSelectionCell = new CustomSelectionCell(allocationTypes);
-        customSelectionCell.setEnabledWithToolTip(false,
-                MODIFIED_COLLAPSE_MGS);
+        customSelectionCell.setEnabledWithToolTip(false, constants.importAllocationModifiedCollapse());
+        customSelectionCell.setStyle(style.cellSelectBox());
 
         Column<DiskImage, String> allocationColumn = new Column<DiskImage, String>(
                 customSelectionCell) {
@@ -378,9 +377,9 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
             @Override
             public void update(int index, DiskImage disk, String value) {
                 VolumeType tempVolumeType = VolumeType.Sparse;
-                if (value.equals(THIN_PROVISION)) {
+                if (value.equals(constants.thisAllocation())) {
                     tempVolumeType = VolumeType.Sparse;
-                } else if (value.equals(PREALLOCATED)) {
+                } else if (value.equals(constants.preallocatedAllocation())) {
                     tempVolumeType = VolumeType.Preallocated;
                 }
                 object.VolumeType_SelectedItemChanged(disk,
@@ -388,8 +387,47 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
             }
         });
 
-        diskTable.addColumn(allocationColumn, "Allocation", "60px");
+        diskTable.addColumn(allocationColumn, "Allocation", "80px");
         diskTable.getElement().getStyle().setPosition(Position.RELATIVE);
+    }
+
+    private void addStorageDomainsColumn(final ImportVmModel object) {
+        ArrayList<String> storageDomains = new ArrayList<String>();
+        for (Object storageDomain : object.getAllDestinationStorage().getItems()) {
+            storageDomains.add(((storage_domains) storageDomain).getstorage_name());
+        }
+        Collections.sort(storageDomains);
+
+        customSelectionCellStorageDomain = new CustomSelectionCell(storageDomains);
+        customSelectionCellStorageDomain.setEnabledWithToolTip(false,
+                constants.importVmTemplateSingleStorageCheckedLabel());
+        customSelectionCellStorageDomain.setStyle(style.cellSelectBox());
+
+        if (storageDomainsColumn != null) {
+            diskTable.removeColumn(storageDomainsColumn);
+        }
+
+        storageDomainsColumn = new Column<DiskImage, String>(customSelectionCellStorageDomain) {
+            @Override
+            public String getValue(DiskImage disk) {
+                ArrayList<String> storageDomains =
+                        object.getAvailableStorageDomainsByDiskId(disk.getId());
+                if (storageDomains != null && !(Boolean) object.getCollapseSnapshots().getEntity()) {
+                    ((CustomSelectionCell) getCell()).setOptions(storageDomains);
+                }
+                return object.getStorageNameById(disk.getstorage_ids().get(0));
+            }
+        };
+
+        storageDomainsColumn.setFieldUpdater(new FieldUpdater<DiskImage, String>() {
+
+            @Override
+            public void update(int index, DiskImage disk, String value) {
+                object.DestinationStorage_SelectedItemChanged(disk, value);
+            }
+        });
+
+        diskTable.addColumn(storageDomainsColumn, "Storage Domain", "100px");
     }
 
     private void initListBoxEditors() {
@@ -407,9 +445,14 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
         });
     }
 
+    private void initCheckboxes() {
+        collapseSnapshotEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isSingleDestStorageEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+    }
+
     private void localize(ApplicationConstants constants) {
         destClusterEditor.setLabel(constants.importVm_destCluster());
-        destStorageEditor.setLabel(constants.importVm_destStorage());
+        destStorageEditor.setLabel(constants.singleDestinationStorage());
         collapseSnapshotEditor.setLabel(constants.importVm_collapseSnapshots());
     }
 
@@ -417,6 +460,15 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
     @Override
     public void edit(final ImportVmModel object) {
         this.object = object;
+        object.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if ("IsMissingStorages".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                    message.getElement().setInnerHTML(
+                            object.getIsMissingStorages() ? constants.importMissingStorages() : "");
+                }
+            }
+        });
 
         image.setVisible(false);
         object.getCollapseSnapshots().getPropertyChangedEvent().addListener(new IEventListener() {
@@ -433,8 +485,7 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
                     table.edit(object);
                 }
                 if (!numOfVmsGreaterThan1 && ((ArrayList<IVdcQueryable>) object.getItems()).size() > 1) {
-                    customSelectionCell.setEnabledWithToolTip(false,
-                            ALLOCATION_MODIFIED_SINGLE_VM);
+                    customSelectionCell.setEnabledWithToolTip(false, constants.importAllocationModifiedSingleVM());
                     numOfVmsGreaterThan1 = true;
                     diskTable.flush();
                     diskTable.edit((VmImportDiskListModel) object.getDetailModels().get(2));
@@ -445,8 +496,7 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
                         diskTable.flush();
                         diskTable.edit((VmImportDiskListModel) object.getDetailModels().get(2));
                     } else {
-                        customSelectionCell.setEnabledWithToolTip(false,
-                                MODIFIED_COLLAPSE_MGS);
+                        customSelectionCell.setEnabledWithToolTip(false, constants.importAllocationModifiedCollapse());
                         diskTable.flush();
                         diskTable.edit((VmImportDiskListModel) object.getDetailModels().get(2));
                     }
@@ -457,7 +507,43 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
         table.addColumnAt(new IsProblematicImportVmColumn(object.getProblematicItems()), "", "30px", 0);
 
         table.edit(object);
-        // object.setActiveDetailModel(object.getDetailModels().get(0));
+
+        object.getAllDestinationStorage().getItemsChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                addStorageDomainsColumn(object);
+            }
+        });
+
+        object.getIsSingleDestStorage().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                Boolean isSingleDestStorage = (Boolean) object.getIsSingleDestStorage().getEntity();
+                object.getDestinationStorage().setIsChangable(isSingleDestStorage);
+                diskTable.edit((VmImportDiskListModel) object.getDetailModels().get(2));
+            }
+        });
+
+        object.getDestinationStorage().getPropertyChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                UpdateStorageDomainCells();
+            }
+        });
+
+        object.getImportDiskListModel().getPropertyChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if ("DiskStorageMap".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                    UpdateStorageDomainCells();
+                }
+            }
+        });
+
         SingleSelectionModel<IVdcQueryable> selectionModel =
                 (SingleSelectionModel<IVdcQueryable>) table.getSelectionModel();
         selectionModel.addSelectionChangeHandler(new Handler() {
@@ -484,6 +570,17 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
 
     }
 
+    private void UpdateStorageDomainCells() {
+        Boolean isSingleDestStorage = (Boolean) object.getIsSingleDestStorage().getEntity();
+        String toolTip = isSingleDestStorage ? "" : constants.importVmTemplateSingleStorageCheckedLabel();
+
+        if (customSelectionCellStorageDomain != null) {
+            customSelectionCellStorageDomain.setEnabledWithToolTip(!isSingleDestStorage, toolTip);
+        }
+
+        diskTable.edit(object.getImportDiskListModel());
+    }
+
     @Override
     public ImportVmModel flush() {
         table.flush();
@@ -494,6 +591,10 @@ public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel
     }
 
     interface WidgetStyle extends CssResource {
-        String contentWidth();
+        String checkboxEditor();
+
+        String collapseEditor();
+
+        String cellSelectBox();
     }
 }

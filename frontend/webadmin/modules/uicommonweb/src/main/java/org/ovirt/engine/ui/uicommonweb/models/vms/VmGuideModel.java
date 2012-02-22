@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -49,7 +48,6 @@ public class VmGuideModel extends GuideModel
     private java.util.ArrayList<DiskImage> disks;
     private java.util.ArrayList<network> networks;
     private java.util.ArrayList<storage_domains> attachedStorageDomains;
-    private boolean storage_available;
     private storage_domains storage;
     private VDSGroup cluster;
 
@@ -162,7 +160,6 @@ public class VmGuideModel extends GuideModel
         disks = null;
         networks = null;
         attachedStorageDomains = null;
-        storage_available = false;
         storage = null;
         cluster = null;
     }
@@ -307,32 +304,17 @@ public class VmGuideModel extends GuideModel
     }
 
     private void AddDiskUpdateData() {
-        AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        VmGuideModel vmGuideModel = (VmGuideModel) target;
-                        java.util.ArrayList<DiskImage> disks = (java.util.ArrayList<DiskImage>) returnValue;
-                        vmGuideModel.disks = disks;
-
-                        if (!disks.isEmpty()) {
-                            Guid storageDomainId = disks.get(0).getstorage_ids().get(0);
-
-                            AsyncDataProvider.GetStorageDomainById(new AsyncQuery(vmGuideModel,
-                                    new INewAsyncCallback() {
-                                        @Override
-                                        public void OnSuccess(Object target, Object returnValue) {
-                                            VmGuideModel vmGuideModel = (VmGuideModel) target;
-                                            vmGuideModel.storage = (storage_domains) returnValue;
-                                            vmGuideModel.AddDiskPostData();
-                                        }
-                                    }), storageDomainId);
-                        }
-                        else {
+        if (!disks.isEmpty()) {
+            AsyncDataProvider.GetStorageDomainById(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
+                            VmGuideModel vmGuideModel = (VmGuideModel) target;
+                            vmGuideModel.storage = (storage_domains) returnValue;
                             vmGuideModel.AddDiskPostData();
                         }
-                    }
-                }), getEntity().getId());
+                    }), disks.get(0).getstorage_ids().get(0));
+        }
 
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -380,24 +362,8 @@ public class VmGuideModel extends GuideModel
         }
         model.getStorageDomain().setItems(storageDomains);
 
-        boolean hasDisks = !disks.isEmpty();
-        if (hasDisks)
-        {
-            // the StorageDomain value should be the one that all other Disks are on
-            // (although this field is not-available, we use its value in the 'OnSave' method):
-            if (storage != null && Linq.IsSDItemExistInList(storageDomains, storage.getId()))
-            {
-                storage_available = true;
-            }
-        }
-        else // first disk -> just choose the first from the list of available storage-domains:
-        {
-            storage = Linq.<storage_domains> FirstOrDefault(storageDomains);
-            storage_available = true;
-        }
-
+        storage = Linq.<storage_domains> FirstOrDefault(storageDomains);
         model.getStorageDomain().setSelectedItem(storage);
-        model.getStorageDomain().setIsAvailable(!hasDisks);
 
         if (model.getStorageDomain() != null && model.getStorageDomain().getSelectedItem() != null)
         {
@@ -457,7 +423,7 @@ public class VmGuideModel extends GuideModel
             model.getIsBootable().getChangeProhibitionReasons().add("There can be only one bootable disk defined.");
         }
 
-        if (storage == null || storage_available == false)
+        if (storage == null)
         {
             String cantCreateMessage =
                     "There is no active Storage Domain to create the Disk in. Please activate a Storage Domain.";

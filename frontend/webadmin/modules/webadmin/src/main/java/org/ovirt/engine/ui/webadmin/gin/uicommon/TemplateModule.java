@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -25,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListMod
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateVmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
@@ -120,8 +120,8 @@ public class TemplateModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<DiskImage, TemplateListModel, TemplateDiskListModel> getTemplateDiskListProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<DiskImage, TemplateListModel, TemplateDiskListModel>(ginjector,
+    public SearchableDetailModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel> getTemplateDiskListProvider(ClientGinjector ginjector) {
+        return new SearchableDetailTabModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel>(ginjector,
                 TemplateListModel.class,
                 TemplateDiskListModel.class);
     }

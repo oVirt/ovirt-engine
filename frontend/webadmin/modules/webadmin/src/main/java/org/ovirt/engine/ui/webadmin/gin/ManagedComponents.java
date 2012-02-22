@@ -67,6 +67,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserGroup;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
@@ -430,7 +431,7 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabTemplateDiskPresenter> getSubTabTemplateDiskPresenter();
 
-    SearchableDetailModelProvider<DiskImage, TemplateListModel, TemplateDiskListModel> getSubTabTemplateDiskModelProvider();
+    SearchableDetailModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel> getSubTabTemplateDiskModelProvider();
 
     AsyncProvider<SubTabTemplateStoragePresenter> getSubTabTemplateStoragePresenter();
 

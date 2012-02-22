@@ -47,7 +47,7 @@ public class VMsTree extends AbstractSubTabTree<StorageVmListModel, VM, DiskImag
 
     @Override
     protected ArrayList<DiskImage> getNodeObjects(VM vm) {
-        return vm.getDiskList();
+        return new ArrayList<DiskImage>(vm.getDiskMap().values());
     }
 
     @Override

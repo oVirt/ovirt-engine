@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -11,8 +13,14 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -29,8 +37,10 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.editor.IVdcQueryableCellTable;
+import org.ovirt.engine.ui.webadmin.widget.table.column.CustomSelectionCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DiskSizeColumn;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -38,12 +48,15 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -59,6 +72,9 @@ public class ImportTemplatePopupView extends WebAdminModelBoundPopupView<ImportT
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    @UiField
+    WidgetStyle style;
+
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
     ListModelListBoxEditor<Object> destClusterEditor;
@@ -66,6 +82,10 @@ public class ImportTemplatePopupView extends WebAdminModelBoundPopupView<ImportT
     @UiField(provided = true)
     @Path(value = "destinationStorage.selectedItem")
     ListModelListBoxEditor<Object> destStorageEditor;
+
+    @UiField(provided = true)
+    @Path(value = "isSingleDestStorage.entity")
+    EntityModelCheckBoxEditor isSingleDestStorageEditor;
 
     @UiField
     SplitLayoutPanel splitLayoutPanel;
@@ -92,19 +112,32 @@ public class ImportTemplatePopupView extends WebAdminModelBoundPopupView<ImportT
 
     boolean firstSelection = false;
 
+    private CustomSelectionCell customSelectionCell;
+
+    private final ApplicationConstants constants;
+
+    private Column<DiskImage, String> storageDomainsColumn;
+
     @Inject
     public ImportTemplatePopupView(ClientGinjector ginjector,
             EventBus eventBus,
             ApplicationResources resources,
             ApplicationConstants constants) {
         super(eventBus, resources);
-        initListBoxEditors();
+        this.constants = constants;
 
+        initListBoxEditors();
+        initCheckboxes();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         Driver.driver.initialize(this);
         initTables();
         initSubTabLayoutPanel();
+        addStyles();
+    }
+
+    private void addStyles() {
+        isSingleDestStorageEditor.addContentWidgetStyleName(style.checkboxEditor());
     }
 
     private void initSubTabLayoutPanel() {
@@ -274,14 +307,6 @@ public class ImportTemplatePopupView extends WebAdminModelBoundPopupView<ImportT
         };
         diskTable.addColumn(typeColumn, "Type", "60px");
 
-        TextColumnWithTooltip<DiskImage> formatColumn = new TextColumnWithTooltip<DiskImage>() {
-            @Override
-            public String getValue(DiskImage object) {
-                return object.getvolume_format().toString();
-            }
-        };
-        diskTable.addColumn(formatColumn, "Format", "60px");
-
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
             protected Date getRawValue(DiskImage object) {
@@ -296,9 +321,55 @@ public class ImportTemplatePopupView extends WebAdminModelBoundPopupView<ImportT
                 return VolumeType.forValue(object.getvolume_type().getValue());
             }
         };
-        diskTable.addColumn(allocationColumn, "Allocation", "60px");
+        diskTable.addColumn(allocationColumn, "Allocation", "80px");
 
         diskTable.getElement().getStyle().setPosition(Position.RELATIVE);
+
+        diskTable.setSelectionModel(new NoSelectionModel<DiskImage>());
+    }
+
+    private void addStorageDomainsColumn(final ImportTemplateModel object) {
+        ArrayList<String> storageDomains = new ArrayList<String>();
+        for (Object storageDomain : object.getDestinationStorage().getItems()) {
+            storageDomains.add(((storage_domains) storageDomain).getstorage_name());
+        }
+        Collections.sort(storageDomains);
+
+        customSelectionCell = new CustomSelectionCell(storageDomains);
+        customSelectionCell.setEnabledWithToolTip(false, constants.importVmTemplateSingleStorageCheckedLabel());
+        customSelectionCell.setStyle(style.cellSelectBox());
+
+        if (storageDomainsColumn != null) {
+            diskTable.removeColumn(storageDomainsColumn);
+        }
+
+        storageDomainsColumn = new Column<DiskImage, String>(customSelectionCell) {
+            @Override
+            public String getValue(DiskImage object) {
+                return getStorageNameById(object.getstorage_ids().get(0));
+            }
+        };
+
+        storageDomainsColumn.setFieldUpdater(new FieldUpdater<DiskImage, String>() {
+
+            @Override
+            public void update(int index, DiskImage disk, String value) {
+                object.DestinationStorage_SelectedItemChanged(disk, value);
+            }
+        });
+
+        diskTable.addColumn(storageDomainsColumn, "Storage Domain", "100px");
+    }
+
+    private String getStorageNameById(NGuid storageId) {
+        String storageName = "";
+        for (Object storageDomain : object.getDestinationStorage().getItems()) {
+            storage_domains storage = (storage_domains) storageDomain;
+            if (storage.getId().equals(storageId)) {
+                storageName = storage.getstorage_name();
+            }
+        }
+        return storageName;
     }
 
     private void initListBoxEditors() {
@@ -316,9 +387,13 @@ public class ImportTemplatePopupView extends WebAdminModelBoundPopupView<ImportT
         });
     }
 
+    private void initCheckboxes() {
+        isSingleDestStorageEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+    }
+
     private void localize(ApplicationConstants constants) {
         destClusterEditor.setLabel(constants.importVm_destCluster());
-        destStorageEditor.setLabel(constants.importVm_destStorage());
+        destStorageEditor.setLabel(constants.singleDestinationStorage());
     }
 
     @Override
@@ -326,7 +401,7 @@ public class ImportTemplatePopupView extends WebAdminModelBoundPopupView<ImportT
         this.object = object;
 
         table.edit(object);
-        // object.setActiveDetailModel(object.getDetailModels().get(0));
+
         SingleSelectionModel<IVdcQueryable> selectionModel =
                 (SingleSelectionModel<IVdcQueryable>) table.getSelectionModel();
         selectionModel.addSelectionChangeHandler(new Handler() {
@@ -349,6 +424,26 @@ public class ImportTemplatePopupView extends WebAdminModelBoundPopupView<ImportT
         nicTable.edit((TemplateImportInterfaceListModel) object.getDetailModels().get(1));
         diskTable.edit((TemplateImportDiskListModel) object.getDetailModels().get(2));
         Driver.driver.edit(object);
+
+        object.getDestinationStorage().getItemsChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                addStorageDomainsColumn(object);
+            }
+        });
+
+        object.getIsSingleDestStorage().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                Boolean isSingleDestStorage = (Boolean) object.getIsSingleDestStorage().getEntity();
+                object.getDestinationStorage().setIsChangable(isSingleDestStorage);
+                String toolTip = isSingleDestStorage ? "" : constants.importVmTemplateSingleStorageCheckedLabel();
+                customSelectionCell.setEnabledWithToolTip(!isSingleDestStorage, toolTip);
+                diskTable.edit((TemplateImportDiskListModel) object.getDetailModels().get(2));
+            }
+        });
     }
 
     @Override
@@ -357,5 +452,11 @@ public class ImportTemplatePopupView extends WebAdminModelBoundPopupView<ImportT
         nicTable.flush();
         diskTable.flush();
         return Driver.driver.flush();
+    }
+
+    interface WidgetStyle extends CssResource {
+        String checkboxEditor();
+
+        String cellSelectBox();
     }
 }

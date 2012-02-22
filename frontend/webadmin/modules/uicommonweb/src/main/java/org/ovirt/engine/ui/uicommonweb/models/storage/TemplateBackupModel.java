@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -132,14 +134,11 @@ public class TemplateBackupModel extends ManageBackupModel
                 TemplateBackupModel templateBackupModel = (TemplateBackupModel) returnModel;
                 java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
 
-                ImportTemplateModel iTemplateModel = (ImportTemplateModel) templateBackupModel
-                        .getWindow();
+                ImportTemplateModel iTemplateModel = (ImportTemplateModel) templateBackupModel.getWindow();
                 iTemplateModel.getCluster().setItems(clusters);
-                iTemplateModel.getCluster().setSelectedItem(
-                        Linq.FirstOrDefault(clusters));
+                iTemplateModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
 
-                iTemplateModel.setSourceStorage(templateBackupModel.getEntity()
-                        .getStorageStaticData());
+                iTemplateModel.setSourceStorage(templateBackupModel.getEntity().getStorageStaticData());
 
                 AsyncQuery _asyncQuery1 = new AsyncQuery();
                 _asyncQuery1.Model = templateBackupModel;
@@ -153,8 +152,7 @@ public class TemplateBackupModel extends ManageBackupModel
                             pool = pools.get(0);
                         }
                         TemplateBackupModel tempalteBackupModel1 = (TemplateBackupModel) returnModel1;
-                        ImportTemplateModel iTemplateModel1 = (ImportTemplateModel) tempalteBackupModel1
-                                .getWindow();
+                        ImportTemplateModel iTemplateModel1 = (ImportTemplateModel) tempalteBackupModel1.getWindow();
                         iTemplateModel1.setStoragePool(pool);
 
                         AsyncQuery _asyncQuery2 = new AsyncQuery();
@@ -242,14 +240,26 @@ public class TemplateBackupModel extends ManageBackupModel
             return;
         }
         java.util.ArrayList<VdcActionParametersBase> prms = new java.util.ArrayList<VdcActionParametersBase>();
-        for (Object a : getSelectedItems())
+        for (Object object : getSelectedItems())
         {
-            VmTemplate item = (VmTemplate) a;
-            prms.add(new ImprotVmTemplateParameters(model.getStoragePool().getId(),
-                    model.getSourceStorage().getId(),
-                    ((storage_domains) model.getDestinationStorage().getSelectedItem()).getId(),
-                    ((VDSGroup) model.getCluster().getSelectedItem()).getId(),
-                    item));
+            VmTemplate template = (VmTemplate) object;
+            storage_domains destinationStorage = ((storage_domains) model.getDestinationStorage().getSelectedItem());
+            boolean isSingleDestStorage = (Boolean) model.getIsSingleDestStorage().getEntity();
+            Guid destinationStorageId = destinationStorage != null && isSingleDestStorage ?
+                    destinationStorage.getId() : Guid.Empty;
+
+            ImprotVmTemplateParameters improtVmTemplateParameters =
+                    new ImprotVmTemplateParameters(model.getStoragePool().getId(),
+                            model.getSourceStorage().getId(), destinationStorageId,
+                            ((VDSGroup) model.getCluster().getSelectedItem()).getId(),
+                            template);
+
+            if (!(Boolean) model.getIsSingleDestStorage().getEntity()) {
+                HashMap<Guid, Guid> map = model.getDiskStorageMap().get(template.getId());
+                improtVmTemplateParameters.setImageToDestinationDomainMap(map);
+            }
+
+            prms.add(improtVmTemplateParameters);
         }
 
         model.StartProgress(null);

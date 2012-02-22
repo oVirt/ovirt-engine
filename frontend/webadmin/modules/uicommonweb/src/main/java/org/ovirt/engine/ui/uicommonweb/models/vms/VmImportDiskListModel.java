@@ -1,12 +1,20 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
 @SuppressWarnings("unused")
@@ -24,7 +32,7 @@ public class VmImportDiskListModel extends VmDiskListModel
         if (collapseSnapshots != value)
         {
             collapseSnapshots = value;
-            OnCollapseSnapshotsChanged();
+            // OnCollapseSnapshotsChanged();
             OnPropertyChanged(new PropertyChangedEventArgs("CollapseSnapshots"));
         }
     }
@@ -46,8 +54,23 @@ public class VmImportDiskListModel extends VmDiskListModel
         SetDisksVolumeTypeAvailability();
     }
 
+    private HashMap<Guid, ArrayList<Guid>> diskStorageMap;
+
+    public HashMap<Guid, ArrayList<Guid>> getDiskStorageMap()
+    {
+        return diskStorageMap;
+    }
+
+    public void setDiskStorageMap(HashMap<Guid, ArrayList<Guid>> value)
+    {
+        diskStorageMap = value;
+        OnPropertyChanged(new PropertyChangedEventArgs("DiskStorageMap"));
+    }
+
     public VmImportDiskListModel() {
         setIsTimerDisabled(true);
+
+        setDiskStorageMap(new HashMap<Guid, ArrayList<Guid>>());
     }
 
     @Override
@@ -86,6 +109,31 @@ public class VmImportDiskListModel extends VmDiskListModel
             setItems(null);
         }
         // SetDisksVolumeTypeAvailability();
+
+        Guid templateGuid = vm.getvmt_guid();
+        if (!templateGuid.equals(NGuid.Empty)) {
+            AsyncDataProvider.GetTemplateDiskList(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
+                            VmImportDiskListModel vmImportDiskListModel = (VmImportDiskListModel) target;
+                            ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
+
+                            for (DiskImage diskImage : (ArrayList<DiskImage>) vmImportDiskListModel.getItems())
+                            {
+                                for (DiskImage disk : disks) {
+                                    if (disk.getId().equals(diskImage.getParentId())) {
+                                        ArrayList<Guid> storageIds = disk.getstorage_ids();
+                                        diskStorageMap.put(diskImage.getId(), storageIds);
+                                        break;
+                                    }
+                                }
+                            }
+
+                            setDiskStorageMap(diskStorageMap);
+                        }
+                    }), templateGuid);
+        }
     }
 
     @Override
@@ -174,4 +222,7 @@ public class VmImportDiskListModel extends VmDiskListModel
     {
     }
 
+    public ArrayList<Guid> getAvailableStorageDomainsByDiskId(Guid diskId) {
+        return diskStorageMap.get(diskId);
+    }
 }

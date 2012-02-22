@@ -212,6 +212,8 @@ public class VmDiskListModel extends SearchableListModel
         model.setHashName("new_virtual_disk");
         model.setIsNew(true);
 
+        model.StartProgress(null);
+
         AsyncQuery _asyncQuery1 = new AsyncQuery();
         _asyncQuery1.setModel(this);
         _asyncQuery1.asyncCallback = new INewAsyncCallback() {
@@ -222,7 +224,7 @@ public class VmDiskListModel extends SearchableListModel
                 DiskModel diskModel = (DiskModel) vmDiskListModel.getWindow();
                 java.util.ArrayList<DiskImage> disks =
                         getItems() != null ? Linq.<DiskImage> Cast(getItems()) : new java.util.ArrayList<DiskImage>();
-                boolean hasDisks = disks.size() > 0;
+
                 java.util.ArrayList<storage_domains> storageDomains = new java.util.ArrayList<storage_domains>();
                 for (storage_domains a : (java.util.ArrayList<storage_domains>) result1)
                 {
@@ -235,33 +237,9 @@ public class VmDiskListModel extends SearchableListModel
                 }
 
                 diskModel.getStorageDomain().setItems(storageDomains);
-                diskModel.getStorageDomain().setIsAvailable(!hasDisks);
 
-                if (hasDisks)
-                {
-                    // the StorageDomain value should be the one that all other Disks are on
-                    // (although this field is not-available, we use its value in the 'OnSave' method):
-                    AsyncQuery _asyncQuery2 = new AsyncQuery();
-                    _asyncQuery2.setModel(model1);
-                    _asyncQuery2.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object model2, Object result2)
-                        {
-                            VmDiskListModel vmDiskListModel2 = (VmDiskListModel) model2;
-                            DiskModel diskModel2 = (DiskModel) vmDiskListModel2.getWindow();
-                            java.util.ArrayList<storage_domains> storageDomains2 =
-                                    (java.util.ArrayList<storage_domains>) diskModel2.getStorageDomain().getItems();
-                            storage_domains storage2 = (storage_domains) result2;
-                            vmDiskListModel2.StepA(storage2 != null
-                                    && Linq.IsSDItemExistInList(storageDomains2, storage2.getId()) ? storage2 : null);
-                        }
-                    };
-                    AsyncDataProvider.GetStorageDomainById(_asyncQuery2, disks.get(0).getstorage_ids().get(0));
-                }
-                else // first disk -> just choose the first from the list of available storage-domains:
-                {
-                    vmDiskListModel.StepA(Linq.FirstOrDefault(storageDomains));
-                }
+                diskModel.getStorageDomain().setSelectedItem(Linq.FirstOrDefault(storageDomains));
+                vmDiskListModel.StepA();
             }
         };
         AsyncDataProvider.GetStorageDomainList(_asyncQuery1, vm.getstorage_pool_id());
@@ -280,7 +258,7 @@ public class VmDiskListModel extends SearchableListModel
         setWindow(model);
         model.setTitle("Edit Virtual Disk");
         model.setHashName("edit_virtual_disk");
-        model.getStorageDomain().setIsAvailable(false);
+        model.getStorageDomain().setIsChangable(false);
         model.getSize().setEntity(disk.getSizeInGigabytes());
         model.getSize().setIsChangable(false);
 
@@ -689,12 +667,12 @@ public class VmDiskListModel extends SearchableListModel
         }
     }
 
-    public void StepA(storage_domains storage)
+    public void StepA()
     {
         DiskModel model = (DiskModel) getWindow();
         VM vm = (VM) getEntity();
 
-        model.getStorageDomain().setSelectedItem(storage);
+        storage_domains storage = (storage_domains) model.getStorageDomain().getSelectedItem();
 
         if (storage != null)
         {
@@ -791,6 +769,7 @@ public class VmDiskListModel extends SearchableListModel
                     vmModel.getCommands().add(tempVar3);
                 }
 
+                vmModel.StopProgress();
             }
         };
         AsyncDataProvider.GetDiskPresetList(_asyncQuery1,
@@ -831,7 +810,8 @@ public class VmDiskListModel extends SearchableListModel
             return;
         }
         VM vm = (VM) getEntity();
-        Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version();
+        Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version() != null
+                ? vm.getvds_group_compatibility_version() : new Version();
 
         AsyncDataProvider.IsDiskHotPlugAvailable(new AsyncQuery(this,
                 new INewAsyncCallback() {

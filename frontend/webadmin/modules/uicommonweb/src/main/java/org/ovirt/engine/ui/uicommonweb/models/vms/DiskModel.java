@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -193,6 +195,18 @@ public class DiskModel extends Model
         privateIsPlugged = value;
     }
 
+    private DiskImage privateDiskImage;
+
+    public DiskImage getDiskImage()
+    {
+        return privateDiskImage;
+    }
+
+    public void setDiskImage(DiskImage value)
+    {
+        privateDiskImage = value;
+    }
+
     public DiskModel()
     {
         setSize(new EntityModel());
@@ -252,7 +266,9 @@ public class DiskModel extends Model
 
     private void Preset_SelectedItemChanged()
     {
-        DiskImageBase preset = (DiskImageBase) getPreset().getSelectedItem();
+        DiskImageBase preset = (DiskImageBase) getPreset().getSelectedItem() != null ?
+                (DiskImageBase) getPreset().getSelectedItem()
+                : (DiskImageBase) Linq.<DiskImageBase> FirstOrDefault(getPreset().getItems());
         setVolumeFormat(preset.getvolume_format());
         getVolumeType().setSelectedItem(preset.getvolume_type());
         getIsPlugged().setIsChangable(preset.getdisk_type() != DiskType.System);

@@ -1,12 +1,16 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map.Entry;
 
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.DiskImageList;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -85,10 +89,35 @@ public class ImportTemplateModel extends ListWithDetailsModel
         }
     }
 
+    private EntityModel privateIsSingleDestStorage;
+
+    public EntityModel getIsSingleDestStorage() {
+        return privateIsSingleDestStorage;
+    }
+
+    public void setIsSingleDestStorage(EntityModel value) {
+        privateIsSingleDestStorage = value;
+    }
+
+    private HashMap<Guid, HashMap<Guid, Guid>> privateDiskStorageMap;
+
+    public HashMap<Guid, HashMap<Guid, Guid>> getDiskStorageMap()
+    {
+        return privateDiskStorageMap;
+    }
+
+    public void setDiskStorageMap(HashMap<Guid, HashMap<Guid, Guid>> value)
+    {
+        privateDiskStorageMap = value;
+    }
+
     public ImportTemplateModel()
     {
         setDestinationStorage(new ListModel());
         setCluster(new ListModel());
+        setDiskStorageMap(new HashMap<Guid, HashMap<Guid, Guid>>());
+        setIsSingleDestStorage(new EntityModel());
+        getIsSingleDestStorage().setEntity(true);
     }
 
     @Override
@@ -113,25 +142,32 @@ public class ImportTemplateModel extends ListWithDetailsModel
         return getDestinationStorage().getIsValid() && getCluster().getIsValid();
     }
 
+    public void setItems(Iterable value)
+    {
+        super.setItems(value);
+
+        for (Object vmTemplate : getItems()) {
+            getDiskStorageMap().put(((VmTemplate) vmTemplate).getId(), new HashMap<Guid, Guid>());
+        }
+
+        initDiskStorageMap();
+    }
+
+    private void initDiskStorageMap() {
+        ArrayList<storage_domains> allDestStorages = (ArrayList<storage_domains>) getDestinationStorage().getItems();
+        for (Object item : getItems()) {
+            VmTemplate vmTemplate = (VmTemplate) item;
+            for (DiskImage disk : vmTemplate.getDiskList()) {
+                Guid storageId = !allDestStorages.isEmpty() ? allDestStorages.get(0).getId() : new Guid();
+                addToDiskStorageMap(vmTemplate.getId(), disk, storageId);
+            }
+        }
+    }
+
     @Override
     protected void OnSelectedItemChanged()
     {
         super.OnSelectedItemChanged();
-        if (getSelectedItem() != null)
-        {
-            //            java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> selectedItem =
-            //                    (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>) getSelectedItem();
-            //            VmTemplate template = selectedItem.getKey();
-            //            setNameAndDescription(StringFormat.format("%1$s%2$s",
-            //                    template.getname(),
-            //                    !StringHelper.isNullOrEmpty(template.getdescription()) ? " [" + template.getdescription() + "]"
-            //                            : ""));
-        }
-        else
-        {
-            //            setNameAndDescription("");
-        }
-
     }
 
     @Override
@@ -141,5 +177,26 @@ public class ImportTemplateModel extends ListWithDetailsModel
 
     public void setExtendedItems(ArrayList<Entry<VmTemplate, DiskImageList>> arrayList) {
         templateImportDiskListModel.setExtendedItems(arrayList);
+    }
+
+    public void DestinationStorage_SelectedItemChanged(DiskImage disk, String storageDomainName) {
+        VmTemplate item = (VmTemplate) getSelectedItem();
+        addToDiskStorageMap(item.getId(), disk, getStorageDomainByName(storageDomainName).getId());
+    }
+
+    public void addToDiskStorageMap(Guid vmId, DiskImage disk, Guid storageId) {
+        HashMap<Guid, Guid> vmDiskStorageMap = getDiskStorageMap().get(vmId);
+        vmDiskStorageMap.put(disk.getId(), storageId);
+    }
+
+    private storage_domains getStorageDomainByName(String storageDomainName) {
+        storage_domains storage = null;
+        for (Object storageDomain : getDestinationStorage().getItems()) {
+            storage = (storage_domains) storageDomain;
+            if (storageDomainName.equals(storage.getstorage_name())) {
+                break;
+            }
+        }
+        return storage;
     }
 }

@@ -31,11 +31,13 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
 
     private final HashMap<String, Integer> indexForOption = new HashMap<String, Integer>();
 
-    private final List<String> options;
+    private List<String> options;
 
     private boolean isEnabled = true;
 
     private String tooltip;
+
+    private String style;
 
     /**
      * Construct a new {@link com.google.gwt.cell.client.SelectionCell} with the specified options.
@@ -84,9 +86,9 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
 
         int selectedIndex = getSelectedIndex(viewData == null ? value : viewData);
         if (isEnabled) {
-            sb.appendHtmlConstant("<select tabindex=\"-1\">");
+            sb.appendHtmlConstant("<select class='" + style + "' tabindex=\"-1\">");
         } else {
-            sb.appendHtmlConstant("<select tabindex=\"-1\" title=\"" + tooltip + "\" disabled>");
+            sb.appendHtmlConstant("<select class='" + style + "' tabindex=\"-1\" title=\"" + tooltip + "\" disabled>");
         }
         int index = 0;
         for (String option : options) {
@@ -112,4 +114,15 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
         this.tooltip = tooltip;
     }
 
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public void setOptions(List<String> options) {
+        this.options = new ArrayList<String>(options);
+        int index = 0;
+        for (String option : options) {
+            indexForOption.put(option, index++);
+        }
+    }
 }

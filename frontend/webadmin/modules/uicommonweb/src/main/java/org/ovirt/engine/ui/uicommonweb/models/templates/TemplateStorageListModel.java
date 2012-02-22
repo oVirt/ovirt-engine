@@ -1,7 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -11,11 +14,15 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
 
 @SuppressWarnings("unused")
 public class TemplateStorageListModel extends SearchableListModel
@@ -33,6 +40,9 @@ public class TemplateStorageListModel extends SearchableListModel
         privateRemoveCommand = value;
     }
 
+    ArrayList<StorageDomainModel> storageDomainModels;
+    Iterable value;
+
     public TemplateStorageListModel()
     {
         setTitle("Storage");
@@ -40,6 +50,8 @@ public class TemplateStorageListModel extends SearchableListModel
         setRemoveCommand(new UICommand("Remove", this));
 
         UpdateActionAvailability();
+
+        setIsTimerDisabled(true);
     }
 
     @Override
@@ -80,6 +92,44 @@ public class TemplateStorageListModel extends SearchableListModel
         VmTemplate template = (VmTemplate) getEntity();
         super.SyncSearch(VdcQueryType.GetStorageDomainsByVmTemplateId,
                 new GetStorageDomainsByVmTemplateIdQueryParameters(template.getId()));
+    }
+
+    @Override
+    public void setItems(Iterable value)
+    {
+        if (storageDomainModels != null) {
+            super.setItems(storageDomainModels);
+            storageDomainModels = null;
+        }
+        else
+        {
+            this.value = value;
+
+            VmTemplate template = (VmTemplate) getEntity();
+            AsyncDataProvider.GetTemplateDiskList(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
+                            TemplateStorageListModel templateStorageListModel = (TemplateStorageListModel) target;
+                            ArrayList<DiskImage> diskImages = (ArrayList<DiskImage>) returnValue;
+
+                            ArrayList<storage_domains> storageDomains =
+                                    Linq.<storage_domains> Cast(templateStorageListModel.value);
+                            ArrayList<StorageDomainModel> storageDomainModels = new ArrayList<StorageDomainModel>();
+
+                            for (storage_domains storageDomain : storageDomains) {
+                                StorageDomainModel storageDomainModel = new StorageDomainModel();
+                                storageDomainModel.setStorageDomain(storageDomain);
+                                storageDomainModel.setDisks(diskImages);
+                                storageDomainModels.add(storageDomainModel);
+                            }
+
+                            templateStorageListModel.storageDomainModels = storageDomainModels;
+                            setItems(templateStorageListModel.value);
+                        }
+                    }),
+                    template.getId());
+        }
     }
 
     private void remove()

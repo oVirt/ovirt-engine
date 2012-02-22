@@ -3,9 +3,9 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
-	<ui:with field='resources'
-		type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
-	<ui:style>
+	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+	
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportTemplatePopupView.WidgetStyle">
 		@external .gwt-TabLayoutPanel;
 		@external .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs;
 			.gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
@@ -41,15 +41,27 @@
 			line-height: 25px;
 			margin-left: 5px;
 		}
+		
+		.checkboxEditor {
+			width: 25px;
+			padding: 0px;
+		}
+		
+		.cellSelectBox {
+			width: 100%;
+		}
 	</ui:style>
 	<d:SimpleDialogPanel height="600px" width="1000px">
 		<d:content>
 			<g:VerticalPanel>
 				<g:SplitLayoutPanel ui:field="splitLayoutPanel"
 					height="400px" addStyleNames="{style.splitLayoutPanelStyle}" />
-				<g:VerticalPanel width="400px">
+				<g:VerticalPanel width="450px">
 					<e:ListModelListBoxEditor ui:field="destClusterEditor" />
-					<e:ListModelListBoxEditor ui:field="destStorageEditor" />
+					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
+						<e:EntityModelCheckBoxEditor ui:field="isSingleDestStorageEditor" />
+						<e:ListModelListBoxEditor ui:field="destStorageEditor" />
+					</g:HorizontalPanel>	
 					<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
 				</g:VerticalPanel>
 			</g:VerticalPanel>

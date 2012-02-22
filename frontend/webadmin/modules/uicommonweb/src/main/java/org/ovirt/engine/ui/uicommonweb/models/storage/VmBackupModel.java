@@ -2,6 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
@@ -19,6 +22,10 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -163,6 +170,14 @@ public class VmBackupModel extends ManageBackupModel {
         setWindow(model);
         model.setTitle("Import Virtual Machine(s)");
         model.setHashName("import_virtual_machine");
+
+        model.getDestinationStorage().getItemsChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                OnDestinationStorageItemsChanged();
+            }
+        });
+
         AsyncQuery _AsyncQuery = new AsyncQuery();
         _AsyncQuery.Model = this;
         _AsyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -171,14 +186,10 @@ public class VmBackupModel extends ManageBackupModel {
             public void OnSuccess(Object returnModel, Object returnValue) {
                 VmBackupModel vmBackupModel = (VmBackupModel) returnModel;
                 java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
-                ImportVmModel iVmModel = (ImportVmModel) vmBackupModel
-                        .getWindow();
+                ImportVmModel iVmModel = (ImportVmModel) vmBackupModel.getWindow();
                 iVmModel.getCluster().setItems(clusters);
-                iVmModel.getCluster().setSelectedItem(
-                        Linq.FirstOrDefault(clusters));
-
-                iVmModel.setSourceStorage(vmBackupModel.getEntity()
-                        .getStorageStaticData());
+                iVmModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+                iVmModel.setSourceStorage(vmBackupModel.getEntity().getStorageStaticData());
 
                 AsyncQuery _asyncQuery1 = new AsyncQuery();
                 _asyncQuery1.Model = vmBackupModel;
@@ -193,73 +204,11 @@ public class VmBackupModel extends ManageBackupModel {
                             pool = pools.get(0);
                         }
                         VmBackupModel vmBackupModel1 = (VmBackupModel) returnModel1;
-                        ImportVmModel iVmModel1 = (ImportVmModel) vmBackupModel1
-                                .getWindow();
+                        ImportVmModel iVmModel1 = (ImportVmModel) vmBackupModel1.getWindow();
                         iVmModel1.setStoragePool(pool);
 
                         iVmModel1.setItems(vmBackupModel1.getSelectedItems());
-                        iVmModel1
-                                .setSelectedVMsCount(((java.util.List) vmBackupModel1
-                                        .getItems()).size());
-                        iVmModel1.OnCollapseSnapshotsChanged(new AsyncQuery(
-                                vmBackupModel1, new INewAsyncCallback() {
-
-                                    @Override
-                                    public void OnSuccess(Object returnModel2,
-                                            Object returnValue2) {
-                                        VmBackupModel vmBackupModel2 = (VmBackupModel) returnModel2;
-                                        ImportVmModel iVmModel2 = (ImportVmModel) vmBackupModel2
-                                                .getWindow();
-                                        if (((java.util.List) iVmModel2
-                                                .getDestinationStorage()
-                                                .getItems()).size() == 0) {
-                                            iVmModel2.getDestinationStorage()
-                                                    .setIsChangable(false);
-                                            iVmModel2
-                                                    .getDestinationStorage()
-                                                    .getChangeProhibitionReasons()
-                                                    .add("Cannot import Virtual Machine.");
-
-                                            iVmModel2
-                                                    .setMessage("There is no target Data Storage Domain that contains all the Templates which the selected VMs are based on."
-                                                            + "\r\n"
-                                                            + "Suggested solutions:"
-                                                            + "\r\n"
-                                                            + "1. Preserving Template-Based structure:"
-                                                            + "\r\n"
-                                                            + "   a. Make sure the relevant Templates (on which the VMs are based) exist on the relevant Data-Center."
-                                                            + "\r\n"
-                                                            + "   b. Import the VMs one by one"
-                                                            + "\r\n"
-                                                            + "2. Using non-Template-Based structure (less optimal storage-wise):"
-                                                            + "\r\n"
-                                                            + "   a. Export the VMs again using the Collapse Snapshots option"
-                                                            + "\r\n"
-                                                            + "   b. Import the VMs.");
-
-                                            UICommand tempVar = new UICommand(
-                                                    "Cancel", vmBackupModel2);
-                                            tempVar.setTitle("Close");
-                                            tempVar.setIsDefault(true);
-                                            tempVar.setIsCancel(true);
-                                            iVmModel2.getCommands()
-                                                    .add(tempVar);
-                                        } else {
-                                            UICommand tempVar2 = new UICommand(
-                                                    "OnRestore", vmBackupModel2);
-                                            tempVar2.setTitle("OK");
-                                            tempVar2.setIsDefault(true);
-                                            iVmModel2.getCommands().add(
-                                                    tempVar2);
-                                            UICommand tempVar3 = new UICommand(
-                                                    "Cancel", vmBackupModel2);
-                                            tempVar3.setTitle("Cancel");
-                                            tempVar3.setIsCancel(true);
-                                            iVmModel2.getCommands().add(
-                                                    tempVar3);
-                                        }
-                                    }
-                                }));
+                        iVmModel1.setSelectedVMsCount(((java.util.List) vmBackupModel1.getItems()).size());
                     }
 
                 };
@@ -270,6 +219,42 @@ public class VmBackupModel extends ManageBackupModel {
 
         AsyncDataProvider.GetClusterListByStorageDomain(_AsyncQuery,
                 getEntity().getId());
+    }
+
+    private void OnDestinationStorageItemsChanged() {
+        ImportVmModel iVmModel = (ImportVmModel) getWindow();
+
+        if (((List) iVmModel.getItems()).size() == 0) {
+            return;
+        }
+
+        iVmModel.getCommands().clear();
+
+        if (((java.util.List) iVmModel.getDestinationStorage().getItems()).size() == 0) {
+            iVmModel.getDestinationStorage().setIsChangable(false);
+            iVmModel.getIsSingleDestStorage().setIsChangable(false);
+            iVmModel.getIsSingleDestStorage().setEntity(false);
+        }
+        else {
+            iVmModel.getIsSingleDestStorage().setIsChangable(true);
+        }
+
+        if (iVmModel.getIsMissingStorages()) {
+            UICommand tempVar = new UICommand("Cancel", this);
+            tempVar.setTitle("Close");
+            tempVar.setIsDefault(true);
+            tempVar.setIsCancel(true);
+            iVmModel.getCommands().add(tempVar);
+        } else {
+            UICommand tempVar2 = new UICommand("OnRestore", this);
+            tempVar2.setTitle("OK");
+            tempVar2.setIsDefault(true);
+            iVmModel.getCommands().add(tempVar2);
+            UICommand tempVar3 = new UICommand("Cancel", this);
+            tempVar3.setTitle("Cancel");
+            tempVar3.setIsCancel(true);
+            iVmModel.getCommands().add(tempVar3);
+        }
     }
 
     public void OnRestore() {
@@ -287,36 +272,39 @@ public class VmBackupModel extends ManageBackupModel {
 
         for (Object item : model.getItems()) {
             VM vm = (VM) item;
-            ImportVmParameters tempVar = new ImportVmParameters(vm, model
-                    .getSourceStorage().getId(), ((storage_domains) model
-                    .getDestinationStorage().getSelectedItem()).getId(), model
-                    .getStoragePool().getId(), ((VDSGroup) model.getCluster()
-                    .getSelectedItem()).getId());
+
+            storage_domains destinationStorage = ((storage_domains) model.getDestinationStorage().getSelectedItem());
+            boolean isSingleDestStorage = (Boolean) model.getIsSingleDestStorage().getEntity();
+            Guid destinationStorageId = destinationStorage != null && isSingleDestStorage ?
+                    destinationStorage.getId() : Guid.Empty;
+
+            ImportVmParameters tempVar = new ImportVmParameters(vm, model.getSourceStorage().getId(),
+                    destinationStorageId, model.getStoragePool().getId(),
+                    ((VDSGroup) model.getCluster().getSelectedItem()).getId());
             tempVar.setForceOverride(true);
             ImportVmParameters prm = tempVar;
 
-            prm.setCopyCollapse((Boolean) model.getCollapseSnapshots()
-                    .getEntity());
-            java.util.HashMap<String, DiskImageBase> diskDictionary = new java.util.HashMap<String, DiskImageBase>();
+            prm.setCopyCollapse((Boolean) model.getCollapseSnapshots().getEntity());
+            HashMap<String, DiskImageBase> diskDictionary = new java.util.HashMap<String, DiskImageBase>();
 
-            // vm.DiskMap.Each(a => prm.DiskInfoList.Add(a.getKey(), a.Value));
-            for (java.util.Map.Entry<String, DiskImage> a : vm.getDiskMap()
-                    .entrySet()) {
-                diskDictionary.put(a.getKey(), a.getValue());
+            for (Map.Entry<String, DiskImage> entry : vm.getDiskMap().entrySet()) {
+                String key = entry.getKey();
+                DiskImage disk = entry.getValue();
+
+                HashMap<Guid, Guid> map = model.getDiskStorageMap().get(vm.getId());
+                storage_domains domain = (Boolean) model.getIsSingleDestStorage().getEntity() ?
+                                (storage_domains) model.getDestinationStorage().getSelectedItem()
+                        : model.getStorageById(map.get(disk.getId()));
+                disk.setvolume_format(DataProvider.GetDiskVolumeFormat(disk.getvolume_type(), domain.getstorage_type()));
+
+                diskDictionary.put(key, disk);
             }
 
             prm.setDiskInfoList(diskDictionary);
 
-            // prm.DiskInfoList.Each(a=>a.Value.volume_format =
-            // DataProvider.GetDiskVolumeFormat(a.Value.volume_type,
-            // model.DestinationStorage.ValueAs<storage_domains>().storage_type));
-            for (java.util.Map.Entry<String, DiskImageBase> a : prm
-                    .getDiskInfoList().entrySet()) {
-                DiskImageBase disk = a.getValue();
-                storage_domains domain = (storage_domains) model
-                        .getDestinationStorage().getSelectedItem();
-                disk.setvolume_format(DataProvider.GetDiskVolumeFormat(
-                        disk.getvolume_type(), domain.getstorage_type()));
+            if (!(Boolean) model.getIsSingleDestStorage().getEntity()) {
+                HashMap<Guid, Guid> map = model.getDiskStorageMap().get(vm.getId());
+                prm.setImageToDestinationDomainMap(map);
             }
 
             prms.add(prm);
@@ -353,7 +341,8 @@ public class VmBackupModel extends ManageBackupModel {
                                 }
                                 counter++;
                             }
-                            // show the confirm window only if the import has been successfully started for at least one VM
+                            // show the confirm window only if the import has been successfully started for at least one
+                            // VM
                             if (toShowConfirmWindow) {
                                 ConfirmationModel confirmModel = new ConfirmationModel();
                                 vmBackupModel.setConfirmWindow(confirmModel);

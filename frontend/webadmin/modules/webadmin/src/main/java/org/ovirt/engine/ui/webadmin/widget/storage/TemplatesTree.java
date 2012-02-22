@@ -50,4 +50,8 @@ public class TemplatesTree extends AbstractSubTabTree<StorageTemplateListModel, 
         return new ArrayList<DiskImage>(template.getDiskImageMap().values());
     }
 
+    @Override
+    protected boolean getIsNodeEnabled(DiskImage disk) {
+        return disk.getstorage_ids().contains(listModel.getEntity().getId());
+    }
 }

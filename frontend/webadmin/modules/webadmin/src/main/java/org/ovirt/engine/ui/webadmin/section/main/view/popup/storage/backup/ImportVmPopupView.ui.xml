@@ -39,34 +39,51 @@
 		.labelStyle {
 			color: red;
 			vertical-align: bottom;
-			height: 30px;
+			height: 100px;
 			line-height: 25px;
 			margin-left: 5px;
 		}
-		.contentWidth {
-			width: 30px;
+
+		.checkboxEditor {
+			width: 20px;
+			padding: 0px;
+		}		
+				
+		.collapseEditor {
+			padding: 0px;
+ 		}
+		
+		.isSingleDestStorageEditorStyle {
+			display: none;	
 		}
+
 		.imageStyle {
 			vertical-align: bottom;
 			height: 30px;
 			line-height: 25px;
 			margin-left: 10px;
 		}
+		
+		.cellSelectBox {
+			width: 100%;
+		}
 	</ui:style>
-	<d:SimpleDialogPanel height="600px" width="1000px">
+	<d:SimpleDialogPanel height="650px" width="1000px">
 		<d:content>
 			<g:VerticalPanel>
 				<g:SplitLayoutPanel ui:field="splitLayoutPanel"
 					height="400px" addStyleNames="{style.splitLayoutPanelStyle}" />
 				<g:VerticalPanel>
-					<g:VerticalPanel width="400px">
+					<g:VerticalPanel width="445px">
 						<e:ListModelListBoxEditor ui:field="destClusterEditor" />
-						<e:ListModelListBoxEditor ui:field="destStorageEditor" />
+						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
+							<e:EntityModelCheckBoxEditor ui:field="isSingleDestStorageEditor" />
+							<e:ListModelListBoxEditor ui:field="destStorageEditor" />
+						</g:HorizontalPanel>
 					</g:VerticalPanel>
 					<g:HorizontalPanel>
 						<e:EntityModelCheckBoxEditor ui:field="collapseSnapshotEditor" />
-						<g:Image ui:field="image" resource='{resources.alertImage}'
-							addStyleNames="{style.imageStyle}" />
+						<g:Image ui:field="image" resource='{resources.alertImage}'	addStyleNames="{style.imageStyle}" />
 						<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
 					</g:HorizontalPanel>
 				</g:VerticalPanel>

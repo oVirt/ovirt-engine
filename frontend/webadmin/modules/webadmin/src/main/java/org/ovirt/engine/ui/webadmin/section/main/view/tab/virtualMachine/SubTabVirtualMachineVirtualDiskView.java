@@ -114,10 +114,10 @@ public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableView
         TextColumnWithTooltip<DiskImage> formatColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return object.getvolume_format().toString();
+                return object.getStoragesNames().get(0);
             }
         };
-        getTable().addColumn(formatColumn, "Format");
+        getTable().addColumn(formatColumn, "Storage Domain");
 
         TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override

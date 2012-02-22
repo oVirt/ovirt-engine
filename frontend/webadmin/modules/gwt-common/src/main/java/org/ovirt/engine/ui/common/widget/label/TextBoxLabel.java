@@ -11,14 +11,13 @@ public class TextBoxLabel extends TextBox {
     private String unAvailablePropertyLabel = "";
 
     public TextBoxLabel() {
-        super();
         setReadOnly(true);
         getElement().getStyle().setBorderWidth(0, Unit.PX);
         getElement().getStyle().setWidth(100, Unit.PCT);
     }
 
     public TextBoxLabel(String text) {
-        super();
+        this();
         setText(text);
     }
 

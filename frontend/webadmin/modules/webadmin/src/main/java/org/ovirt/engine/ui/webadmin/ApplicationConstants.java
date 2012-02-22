@@ -664,9 +664,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Destination Cluster")
     String importVm_destCluster();
 
-    @DefaultStringValue("Destination Storage")
-    String importVm_destStorage();
-
     @DefaultStringValue("Collapse All Snapshots")
     String importVm_collapseSnapshots();
 
@@ -720,4 +717,32 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Close")
     String closeText();
+
+    @DefaultStringValue("Storage domain can be modified only when 'Single Destination Domain' is unchecked")
+    String importVmTemplateSingleStorageCheckedLabel();
+
+    @DefaultStringValue("Single Destination Storage")
+    String singleDestinationStorage();
+
+    @DefaultStringValue("Some Templates' disks which the selected VMs are based on are missing from the Data-Center.<br/>"
+            + "Suggested solutions: "
+            + "1. Preserving Template-Based structure: "
+            + "a. Make sure the relevant Templates (on which the VMs are based) exist on the relevant Data-Center. "
+            + "b. Import the VMs one by one. "
+            + "2. Using non-Template-Based structure (less optimal storage-wise): "
+            + "a. Export the VMs again using the Collapse Snapshots option. "
+            + "b. Import the VMs.")
+    String importMissingStorages();
+
+    @DefaultStringValue("Allocation can be modified only when importing a single VM")
+    String importAllocationModifiedSingleVM();
+
+    @DefaultStringValue("Allocation can be modified only when 'Collapse All Snapshots' is checked")
+    String importAllocationModifiedCollapse();
+
+    @DefaultStringValue("Preallocated")
+    String preallocatedAllocation();
+
+    @DefaultStringValue("Thin Provision")
+    String thisAllocation();
 }

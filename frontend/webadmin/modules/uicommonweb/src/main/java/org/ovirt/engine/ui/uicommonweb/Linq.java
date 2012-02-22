@@ -233,6 +233,27 @@ public final class Linq
 
     }
 
+    public static class DiskImageByCreationDateComparer implements java.util.Comparator<DiskImage>
+    {
+
+        @Override
+        public int compare(DiskImage x, DiskImage y)
+        {
+            if (x.getcreation_date().before(y.getcreation_date()))
+            {
+                return -1;
+            }
+
+            if (x.getcreation_date().after(y.getcreation_date()))
+            {
+                return 1;
+            }
+
+            return 0;
+        }
+
+    }
+
     public static boolean IsHostBelongsToAnyOfClusters(java.util.ArrayList<VDSGroup> clusters, VDS host)
     {
         for (VDSGroup cluster : clusters)
@@ -824,6 +845,44 @@ public final class Linq
         for (java.util.List list : lists)
         {
             for (Object item : list)
+            {
+                result.add(item);
+            }
+        }
+
+        return result;
+    }
+
+    public static java.util.ArrayList Disjoint(java.util.ArrayList list1, java.util.ArrayList list2)
+    {
+        java.util.ArrayList result = new java.util.ArrayList<Object>();
+        if (list1.isEmpty())
+        {
+            result = list2;
+        }
+        if (list2.isEmpty())
+        {
+            result = list1;
+        }
+        for (Object item : list1)
+        {
+            if (list2.contains(item))
+            {
+                result.add(item);
+            }
+        }
+
+        return result;
+    }
+
+    public static java.util.ArrayList Union(java.util.ArrayList list1, java.util.ArrayList list2)
+    {
+        java.util.ArrayList result = new java.util.ArrayList<Object>();
+        result.addAll(list1);
+
+        for (Object item : list2)
+        {
+            if (!result.contains(item))
             {
                 result.add(item);
             }
