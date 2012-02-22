@@ -26,12 +26,12 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.UpdateSpmHostNameVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.CommandParametersInitializer;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -151,6 +151,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
             tempVar.setIsReinstallOrUpgrade(getParameters().getIsReinstallOrUpgrade());
             tempVar.setoVirtIsoFile(getParameters().getoVirtIsoFile());
             tempVar.setOverrideFirewall(getParameters().getOverrideFirewall());
+            tempVar.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
             ArrayList<VdcReturnValueBase> resultList = Backend.getInstance().runInternalMultipleActions(
                     VdcActionType.InstallVds,
                     new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays

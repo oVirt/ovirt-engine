@@ -79,15 +79,17 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
     @Override
     protected void executeCommand() {
         if (getVds() != null) {
+            T parameters = getParameters();
             if (getVds().getvds_type() == VDSType.VDS) {
                 _vdsInstaller =
                         new VdsInstaller(getVds(),
-                                getParameters().getRootPassword(),
-                                getParameters().getOverrideFirewall());
+                                parameters.getRootPassword(),
+                                parameters.getOverrideFirewall(),
+                                parameters.isRebootAfterInstallation());
             } else if (getVds().getvds_type() == VDSType.PowerClient || getVds().getvds_type() == VDSType.oVirtNode) {
                 log.infoFormat("Before Installation {0}, Powerclient/oVirtNode case: setting status to installing",
                                Thread.currentThread().getName());
-                if (getParameters().getOverrideFirewall()) {
+                if (parameters.getOverrideFirewall()) {
                     log.warnFormat("Installation of Host {0} will ignore Firewall Override option, since it is not supported for Host type {1}",
                             getVds().getvds_name(),
                             getVds().getvds_type().name());
@@ -97,7 +99,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 .RunVdsCommand(VDSCommandType.SetVdsStatus,
                                new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Installing));
                 if (isOvirtReInstallOrUpgrade()) {
-                    _vdsInstaller = new OVirtInstaller(getVds(), getParameters().getoVirtIsoFile());
+                    _vdsInstaller = new OVirtInstaller(getVds(), parameters.getoVirtIsoFile());
                 } else {
                     _vdsInstaller = new CBCInstaller(getVds());
                 }
@@ -130,7 +132,8 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.SetVdsStatus,
                                new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Reboot));
-                if (getVds().getvds_type() == VDSType.VDS || isOvirtReInstallOrUpgrade()) {
+                if ((getVds().getvds_type() == VDSType.VDS && getParameters().isRebootAfterInstallation())
+                        || isOvirtReInstallOrUpgrade()) {
                     RunSleepOnReboot();
                 } else if (getVds().getvds_type() == VDSType.PowerClient || getVds().getvds_type() == VDSType.oVirtNode) {
                     ThreadPoolUtil.execute(new Runnable() {

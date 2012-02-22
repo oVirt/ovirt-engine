@@ -132,6 +132,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             final InstallVdsParameters installVdsParameters = new InstallVdsParameters(getVdsId(),
                     getParameters().getRootPassword());
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
+            installVdsParameters.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
             Map<String, String> values = new HashMap<String, String>();
             values.put(VdcObjectType.VDS.name().toLowerCase(), getParameters().getvds().getvds_name());
             Step installStep = ExecutionHandler.addSubStep(getExecutionContext(),

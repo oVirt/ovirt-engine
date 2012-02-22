@@ -58,7 +58,7 @@ public class VdsInstaller implements IVdsInstallCallBack {
     private final VDS _vds;
     private String serverInstallationTime;
     private String _bootStrapInitialCommand =
-            "chmod +x {vdsInstaller}; {vdsInstaller} -c 'ssl={server_SSL_enabled};management_port={management_port}' -O '{OrganizationName}' {NetConsolePort} -t {utc_time} -u False {OverrideFirewall} {EnginePort} {URL1} {URL1} {vds-server} {GUID} {RunFlag}";
+            "chmod +x {vdsInstaller}; {vdsInstaller} -c 'ssl={server_SSL_enabled};management_port={management_port}' -O '{OrganizationName}' {NetConsolePort} -t {utc_time} -u False {OverrideFirewall} {EnginePort} -b {URL1} {URL1} {vds-server} {GUID} {RunFlag}";
 
     protected String _finishCommand = "";
 
@@ -91,6 +91,10 @@ public class VdsInstaller implements IVdsInstallCallBack {
     }
 
     public VdsInstaller(VDS vds, String rootPassword, boolean overrideFirewall) {
+        this(vds, rootPassword, overrideFirewall, true);
+    }
+
+    public VdsInstaller(VDS vds, String rootPassword, boolean overrideFirewall, boolean rebootAfterInstallation) {
         super();
         _vds = vds;
         this.overrideFirewall = overrideFirewall;
@@ -119,6 +123,9 @@ public class VdsInstaller implements IVdsInstallCallBack {
         _finishCommand = _bootStrapInitialCommand;
         _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{RunFlag}", "False");
         _finishCommand = _finishCommand.replace("{RunFlag}", "True");
+        if (!rebootAfterInstallation) {
+            _finishCommand = _finishCommand.replace("-b", "");
+        }
 
         _serverName = vds.gethost_name();
         _rootPassword = rootPassword;
@@ -157,7 +164,6 @@ public class VdsInstaller implements IVdsInstallCallBack {
 
         initialCommand = initialCommand.replace("{OverrideFirewall}", isOverrideFirewallAllowed() ?
                 "-f " + remoteFwRulesFilePath : "");
-
         return initialCommand;
     }
 
