@@ -38,7 +38,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
 
 
 
-    private static final int TOTAL_DISK_IMAGES = 5;
+    private static final int TOTAL_DISK_IMAGES = 6;
     private DiskImageDynamicDAO diskImageDynamicDao;
     private DiskDao diskDao;
     private DiskImage newImage;
@@ -307,6 +307,26 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         }
     }
 
+    @Test
+    public void testGetImagesWithNoDisk() {
+        List<DiskImage> result = dao.getImagesWithNoDisk(FixturesTool.VM_RHEL5_POOL_57);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+
+        for (DiskImage image : result) {
+            assertFalse(diskDao.exists(image.getimage_group_id()));
+        }
+    }
+
+    @Test
+    public void testGetImagesWithNoDiskReturnsEmptyList() {
+        List<DiskImage> result = dao.getImagesWithNoDisk(Guid.NewGuid());
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
     /**
      * Asserts the result of {@link DiskImageDAO#getAllForVm(Guid)} contains the correct disks.
      * @param disks The result to check
@@ -314,5 +334,4 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
     private static void assertFullGetAllForVMResult(List<DiskImage> disks) {
         assertEquals("VM should have two disks", 2, disks.size());
     }
-
 }

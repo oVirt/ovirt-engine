@@ -98,6 +98,15 @@ public interface DiskImageDAO extends GenericDao<DiskImage, Guid> {
      */
     DiskImage getAncestor(Guid id);
 
+    /**
+     * Return all images that don't have a Disk entity in the DB and are part of a snapshot of the given VM ID.
+     *
+     * @param vmId
+     *            The VM to look up snapshots for.
+     * @return List of images (empty if none found).
+     */
+    List<DiskImage> getImagesWithNoDisk(Guid vmId);
+
     // TODO mapping methods moved out of DbFacade that will be removed when we have Hibernate
     List<DiskImage> getAllForQuotaId(Guid quotaId);
 

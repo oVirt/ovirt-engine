@@ -273,6 +273,14 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 parameterSource);
     }
 
+    @Override
+    public List<DiskImage> getImagesWithNoDisk(Guid vmId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmId);
+
+        return getCallsHandler().executeReadList("GetImagesWhichHaveNoDisk", diskImageRowMapper, parameterSource);
+    }
+
     private static class DiskImageRowMapper implements
             ParameterizedRowMapper<DiskImage> {
 

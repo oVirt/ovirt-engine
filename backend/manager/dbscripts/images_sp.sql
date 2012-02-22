@@ -267,3 +267,19 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetImagesWhichHaveNoDisk(v_vm_id UUID)
+RETURNS SETOF images_storage_domain_view
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT i.*
+      FROM   images_storage_domain_view i
+      JOIN   snapshots s ON (i.vm_snapshot_id = s.snapshot_id)
+      WHERE  s.vm_id = v_vm_id
+      AND    NOT EXISTS (
+          SELECT 1
+          FROM   disks d
+          WHERE  d.disk_id = i.image_group_id);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
