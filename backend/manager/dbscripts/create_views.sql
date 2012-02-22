@@ -41,23 +41,26 @@ SELECT DISTINCT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
     images.volume_format as volume_format,
     images.boot as boot,
     images.imageStatus as imageStatus,
-    disks.disk_id as image_group_id,
+    images.image_group_id as image_group_id,
     vm_static.entity_type as entity_type,
     CAST (disks.internal_drive_mapping AS VARCHAR(50)) as internal_drive_mapping,
-    CASE WHEN disks.disk_type = 'System' THEN 1
+    CASE WHEN disks.disk_type = 'Unassigned' THEN 0
+         WHEN disks.disk_type = 'System' THEN 1
          WHEN disks.disk_type = 'Data' THEN 2
          WHEN disks.disk_type = 'Shared' THEN 3
          WHEN disks.disk_type = 'Swap' THEN 4
          WHEN disks.disk_type = 'Temp' THEN 5
-         ELSE 0
+         ELSE NULL
     END AS disk_type,
-    CASE WHEN disks.disk_interface = 'SCSI' THEN 1
+    CASE WHEN disks.disk_interface = 'IDE' THEN 0
+         WHEN disks.disk_interface = 'SCSI' THEN 1
          WHEN disks.disk_interface = 'VirtIO' THEN 2
-         ELSE 0
+         ELSE NULL
     END AS disk_interface,
     disks.wipe_after_delete as wipe_after_delete,
-    CASE WHEN disks.propagate_errors = 'On' THEN 1
-         ELSE 0
+    CASE WHEN disks.propagate_errors = 'Off' THEN 0
+         WHEN disks.propagate_errors = 'On' THEN 1
+         ELSE NULL
     END AS propagate_errors,
     images.quota_id as quota_id,
     disk_image_dynamic.actual_size as actual_size,
@@ -66,9 +69,10 @@ SELECT DISTINCT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
 FROM
 images
 left outer join disk_image_dynamic on images.image_guid = disk_image_dynamic.image_id
-JOIN disks ON images.image_group_id = disks.disk_id left outer JOIN vm_device on vm_device.device_id = images.image_group_id left outer join vm_static on vm_static.vm_guid = vm_device.vm_id
+LEFT OUTER JOIN disks ON images.image_group_id = disks.disk_id left outer JOIN vm_device on vm_device.device_id = images.image_group_id left outer join vm_static on vm_static.vm_guid = vm_device.vm_id
 LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
-LEFT OUTER JOIN storage_domain_static_view ON image_storage_domain_map.storage_domain_id = storage_domain_static_view.id;
+LEFT OUTER JOIN storage_domain_static_view ON image_storage_domain_map.storage_domain_id = storage_domain_static_view.id
+WHERE images.image_guid != '00000000-0000-0000-0000-000000000000';
 
 
 CREATE OR REPLACE VIEW storage_domain_file_repos

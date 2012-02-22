@@ -91,7 +91,9 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
     }
 
     public void setinternal_drive_mapping(String value) {
-        disk.setInternalDriveMapping(Integer.parseInt(value));
+        if (value != null) {
+            disk.setInternalDriveMapping(Integer.parseInt(value));
+        }
     }
 
     /**
