@@ -16,6 +16,11 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     private boolean overrideFirewall;
 
+    /**
+     * reboot the installed Host when done
+     */
+    private boolean rebootAfterInstallation = true;
+
     public VdsOperationActionParameters(VdsStatic vdsStatic, String rootPassword) {
         super(vdsStatic.getId());
         if (StringHelper.EqOp(vdsStatic.getManagmentIp(), "")) {
@@ -61,4 +66,13 @@ public class VdsOperationActionParameters extends VdsActionParameters {
     public boolean getOverrideFirewall() {
         return overrideFirewall;
     }
+
+    public boolean isRebootAfterInstallation() {
+        return rebootAfterInstallation;
+    }
+
+    public void setRebootAfterInstallation(boolean rebootAfterInstallation) {
+        this.rebootAfterInstallation = rebootAfterInstallation;
+    }
+
 }
