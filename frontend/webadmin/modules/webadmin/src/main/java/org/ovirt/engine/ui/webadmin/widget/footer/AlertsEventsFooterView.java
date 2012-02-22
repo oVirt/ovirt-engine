@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
+import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -20,10 +21,9 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider.TaskCountChangeHandler;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AuditLogSeverityColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ImageResourceColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TaskStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.WebadminAuditLogSeverityColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
@@ -340,7 +340,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     }
 
     void initTable(SimpleActionTable<AuditLog> table) {
-        table.addColumn(new AuditLogSeverityColumn(), "", "30px");
+        table.addColumn(new WebadminAuditLogSeverityColumn(), "", "30px");
 
         TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
             @Override

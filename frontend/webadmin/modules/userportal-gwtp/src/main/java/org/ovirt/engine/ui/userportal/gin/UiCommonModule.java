@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateDiskListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateEventListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateGeneralModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateInterfaceListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.UserPortalTemplateListProvider;
@@ -38,6 +39,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(TemplateGeneralModelProvider.class).asEagerSingleton();
         bind(TemplateInterfaceListModelProvider.class).asEagerSingleton();
         bind(TemplateDiskListModelProvider.class).asEagerSingleton();
+        bind(TemplateEventListModelProvider.class).asEagerSingleton();
     }
 
     void bindIntegration() {

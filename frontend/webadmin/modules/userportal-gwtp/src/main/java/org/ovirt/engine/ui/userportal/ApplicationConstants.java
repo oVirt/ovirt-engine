@@ -83,4 +83,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Virtual Disks")
     String extendedTemplateVirtualDisksSubTabLabel();
+
+    @DefaultStringValue("Events")
+    String extendedTemplateEventsSubTabLabel();
 }

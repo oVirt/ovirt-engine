@@ -105,4 +105,18 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/icon_help_rollover.png")
     ImageResource dialogIconHelpRollover();
 
+    // messages
+
+    @Source("images/log_normal.gif")
+    ImageResource logNormalImage();
+
+    @Source("images/log_warning.gif")
+    ImageResource logWarningImage();
+
+    @Source("images/log_error.gif")
+    ImageResource logErrorImage();
+
+    @Source("images/icon_alert_configure.png")
+    ImageResource alertConfigureImage();
+
 }

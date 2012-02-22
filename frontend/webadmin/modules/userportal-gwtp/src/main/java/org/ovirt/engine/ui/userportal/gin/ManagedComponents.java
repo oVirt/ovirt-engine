@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTa
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedTemplatePresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedVirtualMachinePresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.ExtendedTemplateSubTabPanelPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateEventsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateGeneralPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateNetworkInterfacesPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateVirtualDisksPresenter;
@@ -87,5 +88,7 @@ public interface ManagedComponents {
     AsyncProvider<SubTabExtendedTemplateNetworkInterfacesPresenter> getSubTabExtendedTemplateNetworkInterfacesPresenter();
 
     AsyncProvider<SubTabExtendedTemplateVirtualDisksPresenter> getSubTabExtendedTemplateVirtualDisksPresenter();
+
+    AsyncProvider<SubTabExtendedTemplateEventsPresenter> getSubTabExtendedTemplateEventsPresenter();
 
 }

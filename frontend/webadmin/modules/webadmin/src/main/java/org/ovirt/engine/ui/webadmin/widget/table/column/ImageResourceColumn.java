@@ -1,18 +1,16 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import org.ovirt.engine.ui.common.widget.table.column.BaseImageResourceColumn;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.cellview.client.Column;
-
 /**
- * Column for displaying {@link ImageResource} instances.
+ * Column for displaying {@link StyledImageResourceCell} instances.
  *
  * @param <T>
  *            Table row data type.
  */
-public abstract class ImageResourceColumn<T> extends Column<T, ImageResource> {
+public abstract class ImageResourceColumn<T> extends BaseImageResourceColumn<T> {
 
     public ImageResourceColumn() {
         super(new StyledImageResourceCell());

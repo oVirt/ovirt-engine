@@ -12,12 +12,12 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.webadmin.widget.storage.AbstractTaskSubTabTree;
-import org.ovirt.engine.ui.webadmin.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TaskStatusColumn;
 
 import com.google.gwt.core.client.GWT;

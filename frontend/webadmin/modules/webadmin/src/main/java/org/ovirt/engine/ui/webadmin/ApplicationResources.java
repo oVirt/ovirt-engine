@@ -9,12 +9,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/admin.png")
     ImageResource adminImage();
 
-    @Source("images/icon_alert_configure.png")
-    ImageResource alertConfigureImage();
-
-    @Source("images/icon_alert_configure.png")
-    ImageResource alertsImage();
-
     @Source("images/bg.png")
     ImageResource bgImage();
 
@@ -111,9 +105,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/Lock.png")
     ImageResource lockImage();
 
-    @Source("images/log_error.gif")
-    ImageResource logErrorImage();
-
     /* Login popup resources */
     @Source("images/login/login_page_header_image.png")
     ImageResource loginPopupHeaderImage();
@@ -124,14 +115,8 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/login/login_page_header_title.png")
     ImageResource loginPopupHeaderTitleImage();
 
-    @Source("images/log_normal.gif")
-    ImageResource logNormalImage();
-
     @Source("images/logo.png")
     ImageResource logoImage();
-
-    @Source("images/log_warning.gif")
-    ImageResource logWarningImage();
 
     @Source("images/host_maintenance.png")
     ImageResource maintenanceImage();

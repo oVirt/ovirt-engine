@@ -41,4 +41,7 @@ public class ApplicationPlaces {
     public static final String extendedTempplateVirtualDisksSubTabPlace = extendedTemplateSideTabPlace
             + SUB_TAB_PREFIX + "virtual_disks";
 
+    public static final String extendedTempplateEventsSubTabPlace = extendedTemplateSideTabPlace
+            + SUB_TAB_PREFIX + "events";
+
 }

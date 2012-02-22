@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainModelSelectionChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.event.shared.EventBus;
@@ -12,6 +11,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.ovirt.engine.ui.common.uicommon.model.MainModelSelectionChangeEvent;
 
 /**
  * Base class for main tab presenters.
