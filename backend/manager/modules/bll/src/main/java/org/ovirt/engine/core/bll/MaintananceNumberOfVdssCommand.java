@@ -36,8 +36,10 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssParameters> extends CommandBase<T> {
-    private java.util.ArrayList<Guid> _vdsGroupIds;
-
+    private static final long serialVersionUID = -5691756067222085075L;
+    private static Log log = LogFactory.getLog(MaintananceNumberOfVdssCommand.class);
+    private final HashMap<Guid, VDS> vdssToMaintenance = new HashMap<Guid, VDS>();
+    private ArrayList<Guid> _vdsGroupIds;
     private final Map<Guid, VdcObjectType> inspectedEntitiesMap;
 
     public MaintananceNumberOfVdssCommand(T parameters) {
@@ -89,12 +91,10 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
         setSucceeded(true);
     }
 
-    private final java.util.HashMap<Guid, VDS> vdssToMaintenance = new java.util.HashMap<Guid, VDS>();
-
     @Override
     protected boolean canDoAction() {
         boolean result = true;
-        _vdsGroupIds = new java.util.ArrayList<Guid>();
+        _vdsGroupIds = new ArrayList<Guid>();
         Set<Guid> vdsWithRunningVMs = new HashSet<Guid>();
         List<String> hostNotRespondingList = new ArrayList<String>();
         List<String> hostsWithNonMigratableVms = new ArrayList<String>();
@@ -109,7 +109,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                 addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
                 result = false;
             } else {
-            List<VM> vms = DbFacade.getInstance().getVmDAO().getAllRunningForVds(vdsId);
+                List<VM> vms = getVmDAO().getAllRunningForVds(vdsId);
                 if (vms.size() > 0) {
                     vdsWithRunningVMs.add(vdsId);
                 }
@@ -143,8 +143,9 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_SPM);
                 } else if (vds.getspm_status() == VdsSpmStatus.SPM && vds.getstatus() == VDSStatus.Up) {
                     try {
-                        java.util.HashMap<Guid, AsyncTaskStatus> taskStatuses =
-                                (java.util.HashMap<Guid, AsyncTaskStatus>) Backend
+                        @SuppressWarnings("unchecked")
+                        HashMap<Guid, AsyncTaskStatus> taskStatuses =
+                                (HashMap<Guid, AsyncTaskStatus>) Backend
                                         .getInstance()
                                         .getResourceManager()
                                         .RunVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
@@ -197,7 +198,6 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
             List<String> problematicClusters = new ArrayList<String>();
             List<String> allHostsWithRunningVms = new ArrayList<String>();
             for (Guid clusterID : clustersAsSet) {
-                boolean candidateForProblematicCluster = false;
                 List<VDS> vdsList = DbFacade.getInstance().getVdsDAO().getAllForVdsGroup(clusterID);
                 boolean vdsForMigrationExists =
                         checkIfThereIsVDSToHoldMigratedVMs(getParameters().getVdsIdList(), vdsList);
@@ -291,8 +291,6 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
             }
         }
     }
-
-    private static Log log = LogFactory.getLog(MaintananceNumberOfVdssCommand.class);
 
     @Override
     public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
