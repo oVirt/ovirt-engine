@@ -1,8 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetPermissionsByAdElementIdQuery<P extends MultilevelAdministrationByAdElementIdParameters>
         extends QueriesCommandBase<P> {
