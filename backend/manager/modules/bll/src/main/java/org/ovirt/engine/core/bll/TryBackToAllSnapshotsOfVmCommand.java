@@ -109,10 +109,19 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         result = result && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()));
 
         if (vmDisk != null) {
-            result = result &&
-                    ImagesHandler.PerformImagesChecks(getVmId(), getReturnValue().getCanDoActionMessages(), getVm()
-                    .getstorage_pool_id(), vmDisk.getstorage_id().getValue(), true, true, false, false, true, true,
-                    true);
+            result =
+                    result
+                            && ImagesHandler.PerformImagesChecks(getVmId(),
+                                    getReturnValue().getCanDoActionMessages(),
+                                    getVm().getstorage_pool_id(),
+                                    vmDisk.getstorage_ids().get(0),
+                                    true,
+                                    true,
+                                    false,
+                                    false,
+                                    true,
+                                    true,
+                                    true);
         }
         // check that not trying to preview current images (leaf)
         // LINQ 29456

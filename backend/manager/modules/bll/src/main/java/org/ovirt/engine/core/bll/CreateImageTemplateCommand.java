@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -57,7 +58,6 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
 
         setDiskImage(getDiskImage().getSnapshots().get(getDiskImage().getSnapshots().size() - 1));
         DiskImage newImage = CloneDiskImage(getDestinationImageId());
-        newImage.setstorage_id(getParameters().getDestinationStorageDomainId());
         fillVolumeInformation(newImage);
 
         VDSReturnValue vdsReturnValue = Backend
@@ -84,6 +84,10 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         DbFacade.getInstance().getDiskImageDAO().save(newImage);
         DbFacade.getInstance().getDiskDao().save(newImage.getDisk());
         DbFacade.getInstance().getImageVmMapDAO().save(imageVmMap);
+        DbFacade.getInstance()
+                .getStorageDomainDAO()
+                .addImageStorageDomainMap(new image_storage_domain_map(newImage.getId(),
+                        getParameters().getDestinationStorageDomainId()));
 
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(newImage.getId());

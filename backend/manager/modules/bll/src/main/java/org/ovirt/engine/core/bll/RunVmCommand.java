@@ -668,14 +668,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                         message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK.toString());
                         retValue = false;
                     } else if (vmImages.size() > 0) {
-                        Guid storageDomainId = vmImages.get(0).getstorage_id().getValue();
+                        Guid storageDomainId = vmImages.get(0).getstorage_ids().get(0);
                         ValidationResult vmDuringSnapshotResult =
                                 snapshotsValidator.vmNotDuringSnapshot(vm.getId());
                         if (!vmDuringSnapshotResult.isValid()) {
                             message.add(vmDuringSnapshotResult.getMessage().name());
                             retValue = false;
                         }
-
                         // check isValid, storageDomain and diskSpace only
                         // if VM is not HA VM
                         if (retValue && !ImagesHandler

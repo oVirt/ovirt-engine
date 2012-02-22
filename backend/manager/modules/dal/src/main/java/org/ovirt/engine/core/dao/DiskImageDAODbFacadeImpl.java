@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -61,8 +62,8 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setlastModified(DbFacadeUtils.fromDate(rs
                         .getTimestamp("lastModified")));
                 entity.setappList(rs.getString("app_list"));
-                entity.setstorage_id(NGuid.createGuidFromString(rs
-                        .getString("storage_id")));
+                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
+                        .getString("storage_id")))));
                 entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
                         .getString("vm_snapshot_id")));
                 entity.setvolume_type(VolumeType.forValue(rs
@@ -128,8 +129,8 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setlastModified(DbFacadeUtils.fromDate(rs
                         .getTimestamp("lastModified")));
                 entity.setappList(rs.getString("app_list"));
-                entity.setstorage_id(NGuid.createGuidFromString(rs
-                        .getString("storage_id")));
+                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
+                        .getString("storage_id")))));
                 entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
                         .getString("vm_snapshot_id")));
                 entity.setvolume_type(VolumeType.forValue(rs
@@ -195,8 +196,8 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setlastModified(DbFacadeUtils.fromDate(rs
                         .getTimestamp("lastModified")));
                 entity.setappList(rs.getString("app_list"));
-                entity.setstorage_id(NGuid.createGuidFromString(rs
-                        .getString("storage_id")));
+                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
+                        .getString("storage_id")))));
                 entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
                         .getString("vm_snapshot_id")));
                 entity.setimage_group_id(Guid.createGuidFromString(rs
@@ -254,8 +255,8 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setlastModified(DbFacadeUtils.fromDate(rs
                         .getTimestamp("lastModified")));
                 entity.setappList(rs.getString("app_list"));
-                entity.setstorage_id(NGuid.createGuidFromString(rs
-                        .getString("storage_id")));
+                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
+                        .getString("storage_id")))));
                 entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
                         .getString("vm_snapshot_id")));
                 entity.setvolume_type(VolumeType.forValue(rs
@@ -313,8 +314,8 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setlastModified(DbFacadeUtils.fromDate(rs
                         .getTimestamp("lastModified")));
                 entity.setappList(rs.getString("app_list"));
-                entity.setstorage_id(NGuid.createGuidFromString(rs
-                        .getString("storage_id")));
+                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
+                        .getString("storage_id")))));
                 entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
                         .getString("vm_snapshot_id")));
                 entity.setvolume_type(VolumeType.forValue(rs
@@ -372,8 +373,8 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setlastModified(DbFacadeUtils.fromDate(rs
                         .getTimestamp("lastModified")));
                 entity.setappList(rs.getString("app_list"));
-                entity.setstorage_id(NGuid.createGuidFromString(rs
-                        .getString("storage_id")));
+                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
+                        .getString("storage_id")))));
                 entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
                         .getString("vm_snapshot_id")));
                 entity.setvolume_type(VolumeType.forValue(rs
@@ -431,8 +432,8 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setlastModified(DbFacadeUtils.fromDate(rs
                         .getTimestamp("lastModified")));
                 entity.setappList(rs.getString("app_list"));
-                entity.setstorage_id(NGuid.createGuidFromString(rs
-                        .getString("storage_id")));
+                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
+                        .getString("storage_id")))));
                 entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
                         .getString("vm_snapshot_id")));
                 entity.setvolume_type(VolumeType.forValue(rs
@@ -489,8 +490,8 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setlastModified(DbFacadeUtils.fromDate(rs
                         .getTimestamp("lastModified")));
                 entity.setappList(rs.getString("app_list"));
-                entity.setstorage_id(NGuid.createGuidFromString(rs
-                        .getString("storage_id")));
+                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
+                        .getString("storage_id")))));
                 entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
                         .getString("vm_snapshot_id")));
                 entity.setvolume_type(VolumeType.forValue(rs
@@ -534,7 +535,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 .addValue("imageStatus", image.getimageStatus())
                 .addValue("lastModified", image.getlastModified())
                 .addValue("app_list", image.getappList())
-                .addValue("storage_id", image.getstorage_id())
                 .addValue("vm_snapshot_id", image.getvm_snapshot_id())
                 .addValue("volume_type", image.getvolume_type())
                 .addValue("volume_format", image.getvolume_format())
@@ -562,7 +562,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 .addValue("imageStatus", image.getimageStatus())
                 .addValue("lastModified", image.getlastModified())
                 .addValue("app_list", image.getappList())
-                .addValue("storage_id", image.getstorage_id())
                 .addValue("vm_snapshot_id", image.getvm_snapshot_id())
                 .addValue("volume_type", image.getvolume_type())
                 .addValue("volume_format", image.getvolume_format())
@@ -733,8 +732,8 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setlastModified(DbFacadeUtils.fromDate(rs
                         .getTimestamp("lastModified")));
                 entity.setappList(rs.getString("app_list"));
-                entity.setstorage_id(NGuid.createGuidFromString(rs
-                        .getString("storage_id")));
+                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
+                        .getString("storage_id")))));
                 entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
                         .getString("vm_snapshot_id")));
                 entity.setvolume_type(VolumeType.forValue(rs

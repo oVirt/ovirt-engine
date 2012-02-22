@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -33,7 +36,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     @Override
     protected DiskImage CloneDiskImage(Guid newImageGuid) {
         DiskImage returnValue = super.CloneDiskImage(newImageGuid);
-        returnValue.setstorage_id(getDestinationStorageDomainId());
+        returnValue.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
         // override to have no template
         returnValue.setParentId(VmTemplateHandler.BlankVmTemplateId);
         returnValue.setit_guid(VmTemplateHandler.BlankVmTemplateId);
@@ -65,8 +68,8 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.CopyImage,
-                            new CopyImageVDSCommandParameters(storagePoolID, getDiskImage().getstorage_id().getValue(),
-                                    getVmTemplateId(), getDiskImage().getimage_group_id().getValue(),getImage()
+                            new CopyImageVDSCommandParameters(storagePoolID, getDiskImage().getstorage_ids().get(0),
+                                    getVmTemplateId(), getDiskImage().getimage_group_id().getValue(), getImage()
                                             .getId(), getImageGroupId(), getDestinationImageId(),
                                     CalculateImageDescription(), getDestinationStorageDomainId(),
                                     CopyVolumeType.LeafVol, mNewCreatedDiskImage.getvolume_format(),

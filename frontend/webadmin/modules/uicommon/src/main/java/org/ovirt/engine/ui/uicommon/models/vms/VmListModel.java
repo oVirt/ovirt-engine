@@ -841,7 +841,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 			list = new java.util.ArrayList<storage_domains>();
 			for (storage_domains a : storageDomains)
 			{
-				if (!a.getId().equals(disks.get(0).getstorage_id().getValue()))
+				if (!a.getId().equals(disks.get(0).getstorage_ids().get(0)))
 				{
 					list.add(a);
 				}

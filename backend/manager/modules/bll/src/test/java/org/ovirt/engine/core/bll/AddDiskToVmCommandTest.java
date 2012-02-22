@@ -34,6 +34,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -335,7 +336,7 @@ public class AddDiskToVmCommandTest {
      */
     private void mockVmWithDisk(Guid storageId) {
         DiskImage image = new DiskImage();
-        image.setstorage_id(storageId);
+        image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(storageId)));
         mockVm().addDriveToImageMap(RandomUtils.instance().nextNumericString(1), image);
     }
 

@@ -1569,7 +1569,6 @@
         <column>imageStatus</column>
         <column>lastModified</column>
         <column>app_list</column>
-        <column>storage_id</column>
         <column>vm_snapshot_id</column>
         <column>volume_type</column>
         <column>volume_format</column>
@@ -1594,7 +1593,6 @@
             <value>1</value>
             <value>2010-11-18 11:03:50</value>
             <value></value>
-            <null />
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
@@ -1619,7 +1617,6 @@
             <value>1</value>
             <value>2010-11-18 11:03:50</value>
             <value></value>
-            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
@@ -1644,7 +1641,6 @@
             <value>1</value>
             <value>2010-11-18 11:03:50</value>
             <value></value>
-            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
@@ -1670,7 +1666,6 @@
             <value>1</value>
             <value>2010-11-18 11:03:50</value>
             <value></value>
-            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
@@ -1695,7 +1690,6 @@
             <value>1</value>
             <value>2010-11-18 11:03:50</value>
             <value></value>
-            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
@@ -1720,7 +1714,6 @@
             <value>1</value>
             <value>2010-11-18 11:03:50</value>
             <value></value>
-            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
@@ -2319,16 +2312,28 @@
         </row>
     </table>
 
-    <table name="image_group_storage_domain_map">
-        <column>image_group_id</column>
+    <table name="image_storage_domain_map">
+        <column>image_id</column>
         <column>storage_domain_id</column>
+        <row>
+            <value>52058975-3d5e-484a-80c1-01c31207f578</value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+        </row>
         <row>
             <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
         </row>
         <row>
-            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
+            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+        </row>
+        <row>
+            <value>42058975-3d5e-484a-80c1-01c31207f579</value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+        </row>
+        <row>
+           <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+           <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
         </row>
     </table>
 

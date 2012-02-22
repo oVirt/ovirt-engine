@@ -6,8 +6,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.image_group_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.image_group_storage_domain_map_id;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -20,8 +19,6 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
     StorageDomainStaticDAOHibernateImpl staticDAO = new StorageDomainStaticDAOHibernateImpl();
     StorageDomainDynamicDAOHibernateImpl dynamicDAO = new StorageDomainDynamicDAOHibernateImpl();
     StoragePoolIsoMapDAOHibernateImpl storagePoolIsoMapDAO = new StoragePoolIsoMapDAOHibernateImpl();
-    ImageGroupStorageDomainMapDAOHibernateImpl imageGroupStorageDomainMapDAO =
-            new ImageGroupStorageDomainMapDAOHibernateImpl();
 
     @Override
     public void setSession(Session session) {
@@ -29,7 +26,6 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
         staticDAO.setSession(session);
         dynamicDAO.setSession(session);
         storagePoolIsoMapDAO.setSession(session);
-        imageGroupStorageDomainMapDAO.setSession(session);
     }
 
     @Override
@@ -132,11 +128,6 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
     }
 
     @Override
-    public List<storage_domains> getAllForImageGroup(NGuid imageGroup) {
-        return createDomains(staticDAO.getAllForImageGroup(imageGroup));
-    }
-
-    @Override
     public List<storage_domains> getAllForStorageDomain(Guid id) {
         return createDomains(staticDAO.getAllForStorageDomain(id));
     }
@@ -170,34 +161,38 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
     }
 
     @Override
-    public image_group_storage_domain_map getImageGroupStorageDomainMapForImageGroupAndStorageDomain(image_group_storage_domain_map map) {
-        return imageGroupStorageDomainMapDAO.get(new image_group_storage_domain_map_id(map.getimage_group_id(),
-                map.getstorage_domain_id()));
+    public void addImageStorageDomainMap(image_storage_domain_map map) {
+
     }
 
     @Override
-    public void addImageGroupStorageDomainMap(image_group_storage_domain_map map) {
-        imageGroupStorageDomainMapDAO.save(map);
+    public void removeImageStorageDomainMap(image_storage_domain_map map) {
     }
 
     @Override
-    public void removeImageGroupStorageDomainMap(image_group_storage_domain_map map) {
-        imageGroupStorageDomainMapDAO.remove(new image_group_storage_domain_map_id(map.getimage_group_id(),
-                map.getstorage_domain_id()));
+    public List<image_storage_domain_map> getAllImageStorageDomainMapsForStorageDomain(Guid storage_domain_id) {
+        return null;
     }
 
     @Override
-    public List<image_group_storage_domain_map> getAllImageGroupStorageDomainMapsForStorageDomain(Guid storage_domain_id) {
-        return imageGroupStorageDomainMapDAO.findAllForStorageDomain(storage_domain_id);
-    }
-
-    @Override
-    public List<image_group_storage_domain_map> getAllImageGroupStorageDomainMapsForImage(Guid image_group_id) {
-        return imageGroupStorageDomainMapDAO.getAllForImage(image_group_id);
+    public List<image_storage_domain_map> getAllImageStorageDomainMapsForImage(Guid image_group_id) {
+        return null;
     }
 
     @Override
     public List<storage_domains> getAllByStoragePoolAndConnection(Guid storagePoolId, String connection) {
+        return null;
+    }
+
+    @Override
+    public void removeImageStorageDomainMap(Guid imageId) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public ArrayList<Guid> getAllImageStorageDomainIdsForImage(Guid image_id) {
+        // TODO Auto-generated method stub
         return null;
     }
 }

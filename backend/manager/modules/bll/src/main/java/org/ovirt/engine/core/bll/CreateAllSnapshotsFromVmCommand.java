@@ -110,7 +110,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     && ImagesHandler.PerformImagesChecks(getVmId(),
                             getReturnValue().getCanDoActionMessages(),
                             getVm().getstorage_pool_id(),
-                            getDisksList().get(0).getstorage_id().getValue(),
+                            getDisksList().get(0).getstorage_ids().get(0),
                             true,
                             getParameters().getParentCommand() != VdcActionType.RunVm,
                             true,

@@ -14,7 +14,6 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
     private VolumeFormat volumeFormat = VolumeFormat.UNUSED0;
     private VolumeType volumeType = VolumeType.Unassigned;
     private CopyVolumeType copyVolumeType = CopyVolumeType.SharedVol;
-    private boolean addImageDomainMapping;
     private boolean postZero;
     private boolean forceOverride;
     private NGuid sourceDomainId;
@@ -73,14 +72,6 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
 
     public void setCopyVolumeType(CopyVolumeType value) {
         copyVolumeType = value;
-    }
-
-    public boolean getAddImageDomainMapping() {
-        return addImageDomainMapping;
-    }
-
-    public void setAddImageDomainMapping(boolean value) {
-        addImageDomainMapping = value;
     }
 
     public boolean getPostZero() {

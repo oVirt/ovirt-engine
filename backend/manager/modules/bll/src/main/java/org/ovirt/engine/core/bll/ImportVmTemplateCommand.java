@@ -102,7 +102,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
                     break;
                 } else {
                     image.setstorage_pool_id(getParameters().getStoragePoolId());
-                    image.setstorage_id(getParameters().getSourceDomainId());
+                    image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getSourceDomainId())));
                     imageMap.put(image.getId().toString(), image);
                 }
             }

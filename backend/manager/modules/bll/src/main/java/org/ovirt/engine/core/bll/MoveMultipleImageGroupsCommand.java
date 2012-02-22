@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.vdscommands.MoveMultipleImageGroupsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -75,7 +76,11 @@ public class MoveMultipleImageGroupsCommand<T extends MoveMultipleImageGroupsPar
 
             // unlock and change to new domain
             for (DiskImage snapshot : snapshots) {
-                snapshot.setstorage_id(getParameters().getStorageDomainId());
+                DbFacade.getInstance().getStorageDomainDAO().removeImageStorageDomainMap(snapshot.getId());
+                DbFacade.getInstance()
+                        .getStorageDomainDAO()
+                        .addImageStorageDomainMap(new image_storage_domain_map(snapshot.getId(),
+                                getParameters().getStorageDomainId()));
                 SetImageStatus(snapshot, ImageStatus.OK);
             }
         }
@@ -91,7 +96,7 @@ public class MoveMultipleImageGroupsCommand<T extends MoveMultipleImageGroupsPar
                 VDSCommandType.MoveMultipleImageGroups,
                 new MoveMultipleImageGroupsVDSCommandParameters(getParameters().getImagesList().get(0)
                         .getstorage_pool_id().getValue(), getParameters().getImagesList().get(0)
-                        .getstorage_id().getValue(), getParameters().getImagesList(), getParameters()
+                        .getstorage_ids().get(0), getParameters().getImagesList(), getParameters()
                         .getStorageDomainId(), getParameters().getContainerId()));
         return vdsReturnValue;
 

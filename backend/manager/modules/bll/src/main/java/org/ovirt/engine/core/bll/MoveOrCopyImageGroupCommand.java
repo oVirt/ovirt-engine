@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
-import org.ovirt.engine.core.common.businessentities.image_group_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MoveImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -75,7 +75,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                                     new CopyImageVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
                                             getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
                                                     .getValue()
-                                                    : snapshots.get(0).getstorage_id().getValue(),
+                                                    : snapshots.get(0).getstorage_ids().get(0),
                                             getParameters()
                                                     .getContainerId(),
                                             getParameters().getImageGroupID(),
@@ -103,7 +103,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                             VDSCommandType.MoveImageGroup,
                             new MoveImageGroupVDSCommandParameters(snapshots.get(0).getstorage_pool_id().getValue(),
                                     getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
-                                            .getValue() : snapshots.get(0).getstorage_id().getValue(), snapshots.get(0)
+                                            .getValue() : snapshots.get(0).getstorage_ids().get(0), snapshots.get(0)
                                             .getimage_group_id().getValue(), getParameters().getStorageDomainId(),
                                     getParameters().getContainerId(), getParameters().getOperation(), getParameters()
                                             .getPostZero(), getParameters().getForceOverride(), getStoragePool()
@@ -120,14 +120,18 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                     || getParameters().getParentCommand() == VdcActionType.ImportVm
                     || getParameters().getParentCommand() == VdcActionType.ImportVmTemplate) {
                 for (DiskImage snapshot : snapshots) {
-                    snapshot.setstorage_id(getParameters().getStorageDomainId());
-                    DbFacade.getInstance().getDiskImageDAO().update(snapshot);
+                    DbFacade.getInstance()
+                            .getStorageDomainDAO()
+                            .removeImageStorageDomainMap(new image_storage_domain_map(snapshot.getId(),
+                                    snapshot.getstorage_ids().get(0)));
+                    DbFacade.getInstance()
+                            .getStorageDomainDAO()
+                            .addImageStorageDomainMap(new image_storage_domain_map(snapshot.getId(),
+                                    getParameters().getStorageDomainId()));
                 }
-            }
-
-            if (getParameters().getAddImageDomainMapping()) {
-                DbFacade.getInstance().getStorageDomainDAO().addImageGroupStorageDomainMap(
-                        new image_group_storage_domain_map(getParameters().getImageGroupID(), getParameters()
+            } else if (getParameters().getOperation() == ImageOperation.Copy) {
+                DbFacade.getInstance().getStorageDomainDAO().addImageStorageDomainMap(
+                        new image_storage_domain_map(getParameters().getImageId(), getParameters()
                                 .getStorageDomainId()));
             }
 
@@ -153,8 +157,8 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
             UnLockImage();
 
             // remove iamge-storage mapping
-            DbFacade.getInstance().getStorageDomainDAO().removeImageGroupStorageDomainMap(
-                    new image_group_storage_domain_map(getParameters().getImageGroupID(), getParameters()
+            DbFacade.getInstance().getStorageDomainDAO().removeImageStorageDomainMap(
+                    new image_storage_domain_map(getParameters().getImageId(), getParameters()
                             .getStorageDomainId()));
         }
 

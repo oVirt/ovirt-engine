@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
@@ -69,14 +71,14 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     }
 
     protected Guid getDestinationStorageDomainId() {
-        return mNewCreatedDiskImage.getstorage_id() != null ? mNewCreatedDiskImage.getstorage_id().getValue()
+        return mNewCreatedDiskImage.getstorage_ids() != null ? mNewCreatedDiskImage.getstorage_ids().get(0).getValue()
                 : Guid.Empty;
     }
 
     protected VDSReturnValue performImageVdsmOperation() {
         setDestinationImageId(Guid.NewGuid());
         mNewCreatedDiskImage = CloneDiskImage(getDestinationImageId());
-        mNewCreatedDiskImage.setstorage_id(getDestinationStorageDomainId());
+        mNewCreatedDiskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
         setStoragePoolId(mNewCreatedDiskImage.getstorage_pool_id() != null ? mNewCreatedDiskImage.getstorage_pool_id()
                 .getValue() : Guid.Empty);
         getParameters().setStoragePoolId(getStoragePoolId().getValue());

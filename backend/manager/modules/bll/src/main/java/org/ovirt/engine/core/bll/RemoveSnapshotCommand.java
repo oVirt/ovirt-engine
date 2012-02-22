@@ -45,6 +45,11 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                     .getDiskImageDAO()
                     .getAllSnapshotsForVmSnapshot(
                             getParameters().getSnapshotId());
+            for (DiskImage image : _sourceImages) {
+                image.setstorage_ids(DbFacade.getInstance()
+                        .getStorageDomainDAO()
+                        .getAllImageStorageDomainIdsForImage(image.getId()));
+            }
         }
         return _sourceImages;
     }
@@ -93,7 +98,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         getReturnValue().setCanDoAction(validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId())));
 
         if (!ImagesHandler.PerformImagesChecks(getParameters().getVmId(), getReturnValue().getCanDoActionMessages(),
-                        getVm().getstorage_pool_id(), getSourceImages().get(0).getstorage_id().getValue(), true, true,
+                        getVm().getstorage_pool_id(), getSourceImages().get(0).getstorage_ids().get(0), true, true,
                         true, true, true, true, true)) {
             getReturnValue().setCanDoAction(false);
         }

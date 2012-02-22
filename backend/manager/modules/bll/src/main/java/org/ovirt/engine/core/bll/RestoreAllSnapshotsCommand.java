@@ -104,7 +104,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
         } else {
             result = ImagesHandler.PerformImagesChecks(getVmId(), getReturnValue().getCanDoActionMessages(), getVm()
-                    .getstorage_pool_id(), getImagesList().get(0).getstorage_id().getValue(), true, true, false, !isInternalExecution(),
+                    .getstorage_pool_id(), getImagesList().get(0).getstorage_ids().get(0), true, true, false, !isInternalExecution(),
                     false, false, true);
             if (result && (getVm().getstatus() != VMStatus.Down)) {
                 result = false;

@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -30,8 +31,6 @@ import org.ovirt.engine.core.dao.DiskDao;
 
 /**
  * Base class for all image handling commands
- *
- *
  */
 public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> extends StorageDomainCommandBase<T> {
     private DiskImage _destinationImage;
@@ -121,14 +120,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected DiskImage getDestinationDiskImage() {
         if (_destinationImage == null) {
-            DiskImage image = DbFacade.getInstance().getDiskImageDAO().get(getDestinationImageId());
-            if (image != null) {
-                _destinationImage = image;
-            } else {
-                image = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(getDestinationImageId());
-                if (image != null) {
-                    _destinationImage = image;
-                }
+            _destinationImage = DbFacade.getInstance().getDiskImageDAO().get(getDestinationImageId());
+            if (_destinationImage == null) {
+                _destinationImage = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(getDestinationImageId());
             }
         }
         return _destinationImage;
@@ -177,12 +171,15 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             if (diskImage == null) {
                 diskImage = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(getImage().getId());
             }
+
             Guid storagePoolId = diskImage.getstorage_pool_id() != null ? diskImage.getstorage_pool_id().getValue()
                     : Guid.Empty;
             Guid storageDomainId =
                     getStorageDomainId() != null && !getStorageDomainId().getValue().equals(Guid.Empty) ? getStorageDomainId()
                             .getValue()
-                            : diskImage.getstorage_id() != null ? diskImage.getstorage_id().getValue() : Guid.Empty;
+                            : diskImage.getstorage_ids() != null && diskImage.getstorage_ids().size() > 0 ? diskImage.getstorage_ids()
+                                    .get(0)
+                                    : Guid.Empty;
             Guid imageGroupId = diskImage.getimage_group_id() != null ? diskImage.getimage_group_id().getValue()
                     : Guid.Empty;
 
@@ -236,7 +233,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     /**
      * Returns first found image in database that assigned to Image's parent Vm and mapped to same drive
-     *
      * @return m
      */
     protected DiskImage GetOtherImageMappedToSameDrive() {
@@ -254,7 +250,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     /**
      * Creates a copy of the source disk image ('DiskImage').
-     *
      * @param newImageGuid
      *            the image id of the cloned disk image.
      * @return the cloned disk image. Note that the cloned image's status is 'Locked'.
@@ -326,7 +321,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     /**
      * Overrides the relevant fields of the destination disk image ('DestinationDiskImage') with some values of the IRS
      * disk image.
-     *
      * @param fromIRS
      *            the IRS disk image.
      */
@@ -345,7 +339,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     /**
      * Building the label name for volume.
-     *
      * @return - Calculated label name.
      */
     protected String CalculateImageDescription() {
@@ -382,6 +375,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             diskDynamic.setId(image.getId());
             diskDynamic.setactual_size(image.getactual_size());
             DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
+            DbFacade.getInstance()
+                    .getStorageDomainDAO()
+                    .addImageStorageDomainMap(new image_storage_domain_map(image.getId(),
+                            image.getstorage_ids().get(0)));
             saveDiskIfNotExists(image);
         } catch (RuntimeException ex) {
             log.error("AddDiskImageToDB::Failed adding new created snapshot into the db", ex);
@@ -392,7 +389,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     /**
      * Save the disk from the given image info, only if the disk doesn't exist already.
-     *
      * @param image
      *            The image to take the disk's details from.
      */
@@ -437,8 +433,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             Guid newImageGroupId = getDestinationDiskImage().getimage_group_id() != null ? getDestinationDiskImage()
                     .getimage_group_id().getValue() : Guid.Empty;
             Guid newImageId = getDestinationDiskImage().getId();
-            Guid newStorageDomainID = getDestinationDiskImage().getstorage_id() != null ? getDestinationDiskImage()
-                    .getstorage_id().getValue() : Guid.Empty;
+            Guid newStorageDomainID = getDestinationDiskImage().getstorage_ids().get(0);
 
             // complete IRS data to DB disk image:
             DiskImage newImageIRS = (DiskImage) Backend

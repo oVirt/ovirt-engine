@@ -231,7 +231,7 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
      * @return The ID of the storage domain where the VM's disks reside.
      */
     private Guid getDisksStorageDomainId() {
-        return getVm().getDiskMap().values().iterator().next().getstorage_id().getValue();
+        return getVm().getDiskMap().values().iterator().next().getstorage_ids().get(0);
     }
 
     @Override

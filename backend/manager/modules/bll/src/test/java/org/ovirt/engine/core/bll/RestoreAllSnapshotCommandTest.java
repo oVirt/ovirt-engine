@@ -8,6 +8,7 @@ import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.mockito.Matchers.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -147,7 +148,7 @@ public class RestoreAllSnapshotCommandTest {
     private List<DiskImage> createDiskImageList() {
         DiskImage disk = new DiskImage();
         disk.setId(diskImageId);
-        disk.setstorage_id(storageDomainId);
+        disk.setstorage_ids(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
         List<DiskImage> diskImageList = new ArrayList<DiskImage>();
         diskImageList.add(disk);
         return diskImageList;
@@ -204,7 +205,7 @@ public class RestoreAllSnapshotCommandTest {
     private void mockDiskImageDao() {
         List<DiskImage> diskImageList = new ArrayList<DiskImage>();
         DiskImage diskImage = new DiskImage();
-        diskImage.setstorage_id(Guid.NewGuid());
+        diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.NewGuid())));
         diskImageList.add(diskImage);
         when(dbFacade.getDiskImageDAO()).thenReturn(diskImageDAO);
         when(diskImageDAO.getAllForVm(vmId)).thenReturn(diskImageList);

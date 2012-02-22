@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.image_group_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
@@ -25,8 +25,6 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     private StorageDomainDAO dao;
     private storage_domains existingDomain;
     private storage_domain_static newStaticDomain;
-    private image_group_storage_domain_map existingImageGroupStorageDomainMap;
-    private image_group_storage_domain_map newImageGroupStorageDomainMap;
 
     @Override
     public void setUp() throws Exception {
@@ -37,11 +35,6 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
 
         newStaticDomain = new storage_domain_static();
         newStaticDomain.setstorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
-
-        existingImageGroupStorageDomainMap =
-                dao.getImageGroupStorageDomainMapForImageGroupAndStorageDomain(new image_group_storage_domain_map(EXISTING_IMAGE_GROUP_ID,
-                        existingDomain.getId()));
-        newImageGroupStorageDomainMap = new image_group_storage_domain_map(new Guid(), existingDomain.getId());
     }
 
     /**
@@ -151,29 +144,6 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAll() {
         List<storage_domains> result = dao.getAll();
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-    }
-
-    /**
-     * Ensures an empty collection is returned when the image group is invalid.
-     */
-    @Test
-    public void testGetAllForImageGroupWithInvalidImageGroup() {
-        List<storage_domains> result = dao.getAllForImageGroup(Guid.NewGuid());
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    /**
-     * Ensures that the right domains are returned.
-     */
-    @Test
-    public void testGetAllForImageGroup() {
-        List<storage_domains> result = dao.getAllForImageGroup(new Guid(
-                "c9a559d9-8666-40d1-9967-759502b19f0b"));
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -348,56 +318,26 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     }
 
     @Test
-    public void testGetImageGroupStorageDomainMap() {
-        image_group_storage_domain_map result =
-                dao.getImageGroupStorageDomainMapForImageGroupAndStorageDomain(existingImageGroupStorageDomainMap);
-
-        assertNotNull(result);
-        assertEquals(existingImageGroupStorageDomainMap, result);
-    }
-
-    @Test
-    public void testAddImageGroupStorageDomainMap() {
-        dao.addImageGroupStorageDomainMap(newImageGroupStorageDomainMap);
-
-        image_group_storage_domain_map result =
-                dao.getImageGroupStorageDomainMapForImageGroupAndStorageDomain(newImageGroupStorageDomainMap);
-
-        assertNotNull(result);
-        assertEquals(newImageGroupStorageDomainMap, result);
-    }
-
-    @Test
-    public void testRemoveImageGroupStorageDomainMap() {
-        dao.removeImageGroupStorageDomainMap(existingImageGroupStorageDomainMap);
-
-        image_group_storage_domain_map result =
-                dao.getImageGroupStorageDomainMapForImageGroupAndStorageDomain(existingImageGroupStorageDomainMap);
-
-        assertNull(result);
-    }
-
-    @Test
     public void testGetAllImageGroupStorageDomainMapsForStorageDomain() {
-        List<image_group_storage_domain_map> result =
-                dao.getAllImageGroupStorageDomainMapsForStorageDomain(existingDomain.getId());
+        List<image_storage_domain_map> result =
+                dao.getAllImageStorageDomainMapsForStorageDomain(existingDomain.getId());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (image_group_storage_domain_map mapping : result) {
+        for (image_storage_domain_map mapping : result) {
             assertEquals(existingDomain.getId(), mapping.getstorage_domain_id());
         }
     }
 
     @Test
     public void testGetAllImageGroupStorageDomainMapsForImageGroup() {
-        List<image_group_storage_domain_map> result =
-                dao.getAllImageGroupStorageDomainMapsForImage(EXISTING_IMAGE_GROUP_ID);
+        List<image_storage_domain_map> result =
+                dao.getAllImageStorageDomainMapsForImage(EXISTING_IMAGE_GROUP_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (image_group_storage_domain_map mapping : result) {
-            assertEquals(EXISTING_IMAGE_GROUP_ID, mapping.getimage_group_id());
+        for (image_storage_domain_map mapping : result) {
+            assertEquals(EXISTING_IMAGE_GROUP_ID, mapping.getimage_id());
         }
     }
 }

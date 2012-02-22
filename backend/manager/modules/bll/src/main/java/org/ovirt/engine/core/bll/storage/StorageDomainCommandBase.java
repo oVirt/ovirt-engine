@@ -135,7 +135,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 .size() != 0
                 || DbFacade.getInstance()
                         .getStorageDomainDAO()
-                        .getAllImageGroupStorageDomainMapsForStorageDomain(getStorageDomain().getId())
+                        .getAllImageStorageDomainMapsForStorageDomain(getStorageDomain().getId())
                         .size() != 0;
     }
 

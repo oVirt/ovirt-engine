@@ -139,7 +139,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 returnValue = false;
             } else {
                 List<DiskImage> vmImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId);
-                Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_id().getValue() : Guid.Empty;
+                Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_ids().get(0) : Guid.Empty;
                 returnValue = ImagesHandler.PerformImagesChecks(vmId, messages,
                         DbFacade.getInstance().getVmDAO().getById(vmId).getstorage_pool_id(), storageDomainId, false, true,
                         false, false, true, false, !storageDomainId.equals(Guid.Empty));

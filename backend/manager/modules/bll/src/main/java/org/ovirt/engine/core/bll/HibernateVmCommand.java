@@ -66,7 +66,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                 // LINQ 29456
                 // _storageDomainId =
                 // Vm.DiskMap.Values.First().storage_id.Value;
-                _storageDomainId = LinqUtils.first(getVm().getDiskMap().values()).getstorage_id().getValue();
+                _storageDomainId = LinqUtils.first(getVm().getDiskMap().values()).getstorage_ids().get(0);
             } else {
                 List<storage_domain_static> domainsInPool = DbFacade.getInstance()
                         .getStorageDomainStaticDAO().getAllForStoragePool(getVm().getstorage_pool_id());

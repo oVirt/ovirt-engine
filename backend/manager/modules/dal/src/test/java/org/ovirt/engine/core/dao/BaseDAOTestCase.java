@@ -42,7 +42,7 @@ import org.ovirt.engine.core.common.businessentities.event_map;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
 import org.ovirt.engine.core.common.businessentities.event_notification_methods;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
-import org.ovirt.engine.core.common.businessentities.image_group_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.network;
@@ -216,7 +216,7 @@ public abstract class BaseDAOTestCase {
                             .addAnnotatedClass(event_notification_hist.class)
                             .addAnnotatedClass(event_notification_methods.class)
                             .addAnnotatedClass(event_subscriber.class)
-                            .addAnnotatedClass(image_group_storage_domain_map.class)
+                            .addAnnotatedClass(image_storage_domain_map.class)
                             .addAnnotatedClass(image_vm_map.class)
                             .addAnnotatedClass(image_vm_pool_map.class)
                             .addAnnotatedClass(LUN_storage_server_connection_map.class)

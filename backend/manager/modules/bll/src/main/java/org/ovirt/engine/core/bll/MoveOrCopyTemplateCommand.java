@@ -172,7 +172,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                             getMoveOrCopyImageOperation());
                     tempVar.setParentCommand(getActionType());
                     tempVar.setEntityId(getParameters().getEntityId());
-                    tempVar.setAddImageDomainMapping(getMoveOrCopyImageOperation() == ImageOperation.Copy);
                     MoveOrCopyImageGroupParameters p = tempVar;
                     // if copying template then AddImageDomainMapping should be true
                     if (getSourceDomain() != null) {

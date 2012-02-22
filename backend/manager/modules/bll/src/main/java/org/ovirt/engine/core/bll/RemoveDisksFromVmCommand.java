@@ -50,10 +50,11 @@ public class RemoveDisksFromVmCommand<T extends RemoveDisksFromVmParameters> ext
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
                 break;
             }
+            disk.setstorage_ids(DbFacade.getInstance().getStorageDomainDAO().getAllImageStorageDomainIdsForImage(imageId));
             retValue = retValue
                     && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
                     && ImagesHandler.PerformImagesChecks(getVmId(), getReturnValue().getCanDoActionMessages(), getVm()
-                            .getstorage_pool_id(), disk.getstorage_id().getValue(), false, true, false, false, true,
+                            .getstorage_pool_id(), disk.getstorage_ids().get(0), false, true, false, false, true,
                             true, true);
             if (!retValue) {
                 break;

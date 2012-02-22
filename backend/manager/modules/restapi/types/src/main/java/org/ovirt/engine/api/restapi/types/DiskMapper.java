@@ -100,9 +100,9 @@ public class DiskMapper {
         model.setBootable(entity.getboot());
         model.setPropagateErrors(PropagateErrors.On == entity.getpropagate_errors());
         model.setWipeAfterDelete(entity.getwipe_after_delete());
-        if(entity.getstorage_id()!=null){
+        if(entity.getstorage_ids()!=null && entity.getstorage_ids().size() > 0){
             StorageDomain storageDomain = new StorageDomain();
-            storageDomain.setId(entity.getstorage_id().toString());
+            storageDomain.setId(entity.getstorage_ids().get(0).toString());
             if (!model.isSetStorageDomains()) {
                 model.setStorageDomains(new StorageDomains());
             }

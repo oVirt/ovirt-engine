@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -171,7 +173,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 retVal = false;
             }
             if (retVal) {
-                SetSourceDomainId(image.getstorage_id().getValue());
+                SetSourceDomainId(image.getstorage_ids().get(0));
                 if (getSourceDomain() == null) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
                     retVal = false;
@@ -250,7 +252,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             for (DiskImage disk : vm.getDiskMap().values()) {
                 disk.setParentId(VmTemplateHandler.BlankVmTemplateId);
                 disk.setit_guid(VmTemplateHandler.BlankVmTemplateId);
-                disk.setstorage_id(storageDomainId);
+                disk.setstorage_ids(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
                 DiskImage diskForVolumeInfo = getDiskForVolumeInfo(disk);
                 disk.setvolume_format(diskForVolumeInfo.getvolume_format());
                 disk.setvolume_type(diskForVolumeInfo.getvolume_type());

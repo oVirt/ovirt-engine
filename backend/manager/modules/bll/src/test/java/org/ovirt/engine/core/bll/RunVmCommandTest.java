@@ -9,6 +9,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -307,7 +308,7 @@ public class RunVmCommandTest {
     public void canRunVmFailVmRunning() {
         final ArrayList<DiskImage> disks = new ArrayList<DiskImage>();
         final DiskImage diskImage = new DiskImage();
-        diskImage.setstorage_id(new Guid());
+        diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid())));
         disks.add(diskImage);
         final VmDevice vmDevice = new VmDevice();
         vmDevice.setIsPlugged(true);
@@ -327,7 +328,7 @@ public class RunVmCommandTest {
     public void canRunVmFailVmDuringSnapshot() {
         final ArrayList<DiskImage> disks = new ArrayList<DiskImage>();
         final DiskImage diskImage = new DiskImage();
-        diskImage.setstorage_id(new Guid());
+        diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid())));
         disks.add(diskImage);
         final VmDevice vmDevice = new VmDevice();
         vmDevice.setIsPlugged(true);
@@ -351,7 +352,7 @@ public class RunVmCommandTest {
             boolean shouldPass) {
         final ArrayList<DiskImage> disks = new ArrayList<DiskImage>();
         final DiskImage diskImage = new DiskImage();
-        diskImage.setstorage_id(new Guid());
+        diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList((new Guid()))));
         disks.add(diskImage);
         final VmDevice vmDevice = new VmDevice();
         vmDevice.setIsPlugged(true);

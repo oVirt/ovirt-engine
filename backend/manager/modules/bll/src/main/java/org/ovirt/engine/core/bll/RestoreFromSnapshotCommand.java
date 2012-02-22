@@ -183,8 +183,10 @@ public class RestoreFromSnapshotCommand<T extends ImagesContainterParametersBase
         try {
             Guid storagePoolId = getDiskImage().getstorage_pool_id() != null ? getDiskImage().getstorage_pool_id()
                     .getValue() : Guid.Empty;
-            Guid storageDomainId = getDiskImage().getstorage_id() != null ? getDiskImage().getstorage_id().getValue()
-                    : Guid.Empty;
+            Guid storageDomainId =
+                    getDiskImage().getstorage_ids() != null && !getDiskImage().getstorage_ids().isEmpty() ? getDiskImage().getstorage_ids()
+                            .get(0)
+                            : Guid.Empty;
             Guid imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id()
                     .getValue() : Guid.Empty;
 

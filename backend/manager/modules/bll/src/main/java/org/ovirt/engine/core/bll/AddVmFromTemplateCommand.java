@@ -50,7 +50,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 CreateCloneOfTemplateParameters tempVar = new CreateCloneOfTemplateParameters(dit.getId(),
                         getParameters().getVmStaticData().getId(), diskInfo);
                 DiskImage img = DbFacade.getInstance().getDiskImageDAO().get(dit.getId());
-                tempVar.setStorageDomainId(img.getstorage_id().getValue());
+                tempVar.setStorageDomainId(img.getstorage_ids().get(0));
                 tempVar.setVmSnapshotId(getVmSnapshotId());
                 tempVar.setParentCommand(VdcActionType.AddVmFromTemplate);
                 tempVar.setEntityId(getParameters().getEntityId());

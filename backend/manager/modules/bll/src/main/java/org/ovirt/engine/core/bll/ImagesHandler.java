@@ -30,6 +30,17 @@ public final class ImagesHandler {
     public static final Guid BlankImageTemplateId = new Guid("00000000-0000-0000-0000-000000000000");
     public static final String DefaultDriveName = "1";
 
+    public static List<DiskImage> retrieveImagesByVm(Guid vmId) {
+        List<DiskImage> disks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId);
+        for (DiskImage disk : disks) {
+            List<Guid> domainsIds = DbFacade.getInstance()
+                    .getStorageDomainDAO()
+                    .getAllImageStorageDomainIdsForImage(disk.getId());
+            disk.setstorage_ids(new ArrayList<Guid>(domainsIds));
+        }
+        return disks;
+    }
+
     /**
      * This function was developed especially for GUI needs.
      * It returns a list of all the snapshots of current image of a specific VM.
@@ -104,7 +115,9 @@ public final class ImagesHandler {
         for (DiskImage image : images) {
             DiskImage fromIrs;
             try {
-                Guid storageDomainId = image.getstorage_id() != null ? image.getstorage_id().getValue() : domainId;
+                Guid storageDomainId =
+                        image.getstorage_ids() != null && !image.getstorage_ids().isEmpty() ? image.getstorage_ids()
+                                .get(0) : domainId;
                 Guid imageGroupId = image.getimage_group_id() != null ? image.getimage_group_id().getValue()
                         : Guid.Empty;
                 fromIrs = (DiskImage) Backend
@@ -232,8 +245,8 @@ public final class ImagesHandler {
             List<DiskImage> images = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmGuid);
             if (images.size() > 0) {
                 java.util.ArrayList<DiskImage> irsImages = null;
-                Guid domainId = !storageDomainId.equals(Guid.Empty) ? storageDomainId : images.get(0)
-                        .getstorage_id().getValue();
+                Guid domainId = !Guid.Empty.equals(storageDomainId) ? storageDomainId : images.get(0)
+                        .getstorage_ids().get(0);
 
                 if (checkImagesExist) {
                     RefObject<java.util.ArrayList<DiskImage>> tempRefObject =

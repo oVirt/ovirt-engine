@@ -76,7 +76,7 @@ public class BackendVmPoolResource
                                                             new GetVmTemplatesDisksParameters(templateId),
                                                             templateId.toString()));
             if (images != null && images.size() > 0) {
-                storageDomainId = images.get(0).getstorage_id().getValue();
+                storageDomainId = images.get(0).getstorage_ids().get(0);
             }
         }
         return storageDomainId;

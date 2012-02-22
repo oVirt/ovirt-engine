@@ -148,7 +148,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         .RunVdsCommand(
                 VDSCommandType.DeleteImageGroup,
                 new DeleteImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
-                        getDiskImage().getstorage_id().getValue(), getDiskImage().getimage_group_id()
+                        getDiskImage().getstorage_ids().get(0), getDiskImage().getimage_group_id()
                                 .getValue(), getDiskImage().getwipe_after_delete(), getParameters()
                                 .getForceDelete(), getStoragePool().getcompatibility_version().toString()));
     }

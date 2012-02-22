@@ -147,7 +147,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                         // ok
                         // we fix it to DestDomainId in
                         // MoveOrCopyAllImageGroups();
-                        image.setstorage_id(getParameters().getSourceDomainId());
+                        image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getSourceDomainId())));
                     }
                 }
                 if (retVal) {

@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -83,7 +86,7 @@ public class OvfTemplateReader extends OvfReader {
                 }
                 image.setappList(node.SelectSingleNode("rasd:ApplicationList", _xmlNS).InnerText);
                 if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:StorageId", _xmlNS).InnerText)) {
-                    image.setstorage_id(new Guid(node.SelectSingleNode("rasd:StorageId", _xmlNS).InnerText));
+                    image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid(node.SelectSingleNode("rasd:StorageId", _xmlNS).InnerText))));
                 }
                 if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText)) {
                     image.setstorage_pool_id(new Guid(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText));

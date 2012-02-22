@@ -108,7 +108,7 @@ public class AddVmTemplateFromImportCommand<T extends AddVmTemplateFromImportPar
                         Guid imageGUID = image.getId();
                         Guid storagePoolId = image.getstorage_pool_id() != null ? image.getstorage_pool_id().getValue()
                                 : Guid.Empty;
-                        Guid storageDomainId = image.getstorage_id() != null ? image.getstorage_id().getValue()
+                        Guid storageDomainId = image.getstorage_ids() != null ? image.getstorage_ids().get(0)
                                 : Guid.Empty;
                         Guid imageGroupId = image.getimage_group_id() != null ? image.getimage_group_id().getValue()
                                 : Guid.Empty;

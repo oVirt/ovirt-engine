@@ -180,7 +180,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         for (DiskImage disk : diskImages) {
             if (pluggedDiskIds.contains(disk.getDisk().getId())) {
                 Map drive = new HashMap();
-                drive.put("domainID", disk.getstorage_id().toString());
+                drive.put("domainID", disk.getstorage_ids().get(0).toString());
                 drive.put("poolID", disk.getstorage_pool_id().toString());
                 drive.put("volumeID", disk.getId().toString());
                 drive.put("imageID", disk.getimage_group_id().toString());

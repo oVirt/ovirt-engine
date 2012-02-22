@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.image_group_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -87,15 +88,6 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains> {
     List<storage_domains> getAllForStoragePool(Guid pool, Guid userID, boolean isFiltered);
 
     /**
-     * Retrieves all storage domains for the specified image group.
-     *
-     * @param imageGroup
-     *            the image group
-     * @return the list of storage domains
-     */
-    List<storage_domains> getAllForImageGroup(NGuid imageGroup);
-
-    /**
      * Retrieves all storage domains for the specified storage domain id.
      *
      * @param id
@@ -127,20 +119,20 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains> {
      */
     void remove(Guid id);
 
-    // TODO the following APIs will be removed when we migrate to Hibernate
+    void addImageStorageDomainMap(image_storage_domain_map image_group_storage_domain_map);
 
-    image_group_storage_domain_map getImageGroupStorageDomainMapForImageGroupAndStorageDomain(
-            image_group_storage_domain_map image_group_storage_domain_map);
+    void removeImageStorageDomainMap(image_storage_domain_map image_group_storage_domain_map);
 
-    void addImageGroupStorageDomainMap(image_group_storage_domain_map image_group_storage_domain_map);
+    void removeImageStorageDomainMap(Guid image_id);
 
-    void removeImageGroupStorageDomainMap(image_group_storage_domain_map image_group_storage_domain_map);
-
-    List<image_group_storage_domain_map> getAllImageGroupStorageDomainMapsForStorageDomain(
+    List<image_storage_domain_map> getAllImageStorageDomainMapsForStorageDomain(
             Guid storage_domain_id);
 
-    List<image_group_storage_domain_map> getAllImageGroupStorageDomainMapsForImage(
-            Guid image_group_id);
+    List<image_storage_domain_map> getAllImageStorageDomainMapsForImage(
+            Guid image_id);
+
+    ArrayList<Guid> getAllImageStorageDomainIdsForImage(
+            Guid image_id);
 
     /**
      * Retrieves all storage domains for the specified connection.

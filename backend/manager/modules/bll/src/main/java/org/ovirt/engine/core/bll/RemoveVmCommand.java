@@ -150,7 +150,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 List<DiskImage> vmImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId);
                 if (vmImages.size() > 0
                         && !ImagesHandler.PerformImagesChecks(vmId, imagesMessages, vm.getstorage_pool_id(), vmImages
-                                .get(0).getstorage_id().getValue(), false, !getParameters().getForce(), false, false,
+                                .get(0).getstorage_ids().get(0), false, !getParameters().getForce(), false, false,
                                 getParameters().getForce(), false, true)) {
                     message.addAll(imagesMessages);
                     returnValue = false;

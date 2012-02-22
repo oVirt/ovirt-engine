@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -8,9 +10,9 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
@@ -102,7 +104,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
                 newImage.setlast_modified_date(MakeDTFromCTime(secsSinceEpoch));
             }
             if (xmlRpcStruct.contains("domain")) {
-                newImage.setstorage_id(new Guid(xmlRpcStruct.getItem("domain").toString()));
+                newImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid(xmlRpcStruct.getItem("domain").toString()))));
             }
             if (xmlRpcStruct.contains("image")) {
                 newImage.setimage_group_id(new Guid(xmlRpcStruct.getItem("image").toString()));

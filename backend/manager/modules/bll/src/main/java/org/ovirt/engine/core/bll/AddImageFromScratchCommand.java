@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
@@ -44,7 +46,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             mNewCreatedDiskImage.setvm_guid(getVmId());
             mNewCreatedDiskImage.setimage_group_id(getImageGroupId());
             mNewCreatedDiskImage.setstorage_pool_id(getVm().getstorage_pool_id());
-            mNewCreatedDiskImage.setstorage_id(getParameters().getStorageDomainId());
+            mNewCreatedDiskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getStorageDomainId())));
             mNewCreatedDiskImage.setsize(getParameters().getDiskInfo().getsize());
             mNewCreatedDiskImage.setvolume_type(getParameters().getDiskInfo().getvolume_type());
             mNewCreatedDiskImage.setvolume_format(getParameters().getDiskInfo().getvolume_format());

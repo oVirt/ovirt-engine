@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.image_group_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -111,7 +110,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             } else {
                 List<DiskImage> vmDIsks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
                 if (vmDIsks != null && !vmDIsks.isEmpty()
-                        && storageDomainsList.contains(vmDIsks.get(0).getstorage_id())) {
+                        && storageDomainsList.contains(vmDIsks.get(0).getstorage_ids().get(0))) {
                     problematicVmNames.add(vm.getvm_name());
                 }
             }
@@ -129,18 +128,14 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
      * Get a list of all domains id that the template is on
      */
     private List<Guid> getAllTemplateDoamins() {
-        ArrayList<Guid> domainsList = new ArrayList<Guid>();
+        List<Guid> domainsList = new ArrayList<Guid>();
         List<DiskImage> imageTemplates =
                 DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVmTemplateId());
         if (imageTemplates != null && !imageTemplates.isEmpty()) {
-            DiskImage disk = imageTemplates.get(0);
             // populate storages list
-            domainsList.add(disk.getstorage_id().getValue());
-            for (image_group_storage_domain_map map : DbFacade.getInstance()
+            domainsList = DbFacade.getInstance()
                     .getStorageDomainDAO()
-                    .getAllImageGroupStorageDomainMapsForImage(disk.getimage_group_id().getValue())) {
-                domainsList.add(map.getstorage_domain_id());
-            }
+                    .getAllImageStorageDomainIdsForImage(imageTemplates.get(0).getId());
         }
         return domainsList;
     }

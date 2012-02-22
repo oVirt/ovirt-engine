@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.ovirt.engine.core.compat.Guid;
@@ -87,7 +88,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         result = prime * result + mReadRateKbPerSec;
         result = prime * result + mWriteRateKbPerSec;
         result = prime * result
-                + ((storageId == null) ? 0 : storageId.hashCode());
+                + ((storageIds == null) ? 0 : storageIds.hashCode());
         result = prime * result
                 + ((mstorage_path == null) ? 0 : mstorage_path.hashCode());
         result = prime * result
@@ -163,10 +164,10 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
             return false;
         if (mWriteRateKbPerSec != other.mWriteRateKbPerSec)
             return false;
-        if (storageId == null) {
-            if (other.storageId != null)
+        if (storageIds == null) {
+            if (other.storageIds != null)
                 return false;
-        } else if (!storageId.equals(other.storageId))
+        } else if (!storageIds.equals(other.storageIds))
             return false;
         if (mstorage_path == null) {
             if (other.mstorage_path != null)
@@ -352,15 +353,14 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         OnPropertyChanged(new PropertyChangedEventArgs("lastModified"));
     }
 
-    private NGuid storageId;
+    private ArrayList<Guid> storageIds;
 
-    public NGuid getstorage_id() {
-        return storageId;
+    public ArrayList<Guid> getstorage_ids() {
+        return storageIds;
     }
 
-    public void setstorage_id(NGuid value) {
-        storageId = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("storage_id"));
+    public void setstorage_ids(ArrayList<Guid> value) {
+        storageIds = value;
     }
 
     private NGuid vmSnapshotId;
@@ -538,7 +538,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         di.parentId = new Guid(diskImage.parentId.getUuid());
         di.status = diskImage.status;
         di.lastModified = new Date(diskImage.lastModified.getTime());
-        di.storageId = new NGuid(diskImage.storageId.getUuid());
+        di.storageIds = new ArrayList<Guid>(diskImage.storageIds);
         di.vmSnapshotId = new NGuid(diskImage.vmSnapshotId.getUuid());
         di.mstorage_path = diskImage.mstorage_path;
         Disk otherDisk = diskImage.getDisk();

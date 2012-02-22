@@ -15,23 +15,23 @@ import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.*;
 
 @Entity
-@Table(name = "image_group_storage_domain_map")
+@Table(name = "image_storage_domain_map")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class image_group_storage_domain_map implements Serializable {
+public class image_storage_domain_map implements Serializable {
     private static final long serialVersionUID = 8459502119344718863L;
 
     @EmbeddedId
     @AttributeOverrides({
-            @AttributeOverride(name = "imageGroupId", column = @Column(name = "image_group_id")),
+            @AttributeOverride(name = "imageId", column = @Column(name = "image_id")),
             @AttributeOverride(name = "storageDomainId", column = @Column(name = "storage_domain_id")) })
-    private image_group_storage_domain_map_id id = new image_group_storage_domain_map_id();
+    private image_storage_domain_map_id id = new image_storage_domain_map_id();
 
 
-    public image_group_storage_domain_map() {
+    public image_storage_domain_map() {
     }
 
-    public image_group_storage_domain_map(Guid image_group_id, Guid storage_domain_id) {
-        this.id.imageGroupId = image_group_id;
+    public image_storage_domain_map(Guid image_id, Guid storage_domain_id) {
+        this.id.imageId = image_id;
         this.id.storageDomainId = storage_domain_id;
     }
 
@@ -43,19 +43,19 @@ public class image_group_storage_domain_map implements Serializable {
         this.id.storageDomainId = value;
     }
 
-    public Guid getimage_group_id() {
-        return this.id.imageGroupId;
+    public Guid getimage_id() {
+        return this.id.imageId;
     }
 
-    public void setimage_group_id(Guid value) {
-        this.id.imageGroupId = value;
+    public void setimage_id(Guid value) {
+        this.id.imageId = value;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id.imageGroupId == null) ? 0 : id.imageGroupId.hashCode());
+        result = prime * result + ((id.imageId == null) ? 0 : id.imageId.hashCode());
         result = prime * result + ((id.storageDomainId == null) ? 0 : id.storageDomainId.hashCode());
         return result;
     }
@@ -68,11 +68,11 @@ public class image_group_storage_domain_map implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        image_group_storage_domain_map other = (image_group_storage_domain_map) obj;
-        if (id.imageGroupId == null) {
-            if (other.id.imageGroupId != null)
+        image_storage_domain_map other = (image_storage_domain_map) obj;
+        if (id.imageId == null) {
+            if (other.id.imageId != null)
                 return false;
-        } else if (!id.imageGroupId.equals(other.id.imageGroupId))
+        } else if (!id.imageId.equals(other.id.imageId))
             return false;
         if (id.storageDomainId == null) {
             if (other.id.storageDomainId != null)

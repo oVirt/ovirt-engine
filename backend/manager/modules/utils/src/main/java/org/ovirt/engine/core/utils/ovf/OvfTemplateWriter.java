@@ -172,9 +172,9 @@ public class OvfTemplateWriter extends OvfWriter {
             _writer.WriteStartElement("rasd:ApplicationList");
             _writer.WriteRaw(image.getappList());
             _writer.WriteEndElement();
-            if (image.getstorage_id() != null) {
+            if (image.getstorage_ids() != null && image.getstorage_ids().size() > 0) {
                 _writer.WriteStartElement("rasd:StorageId");
-                _writer.WriteRaw(image.getstorage_id().getValue().toString());
+                _writer.WriteRaw(image.getstorage_ids().get(0).toString());
                 _writer.WriteEndElement();
             }
             if (image.getstorage_pool_id() != null) {

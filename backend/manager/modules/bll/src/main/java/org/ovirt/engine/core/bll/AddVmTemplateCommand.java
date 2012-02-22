@@ -140,7 +140,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        Guid srcStorageDomainId = mImages.get(0).getstorage_id().getValue();
+        Guid srcStorageDomainId = mImages.get(0).getstorage_ids().get(0);
         // get storage from parameters
         // or populate storage domain id from the vm domain (of the first disk)
         if (getParameters().getDestinationStorageDomainId() != null) {
@@ -280,14 +280,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     protected void AddVmTemplateImages() {
-        Guid srcStorageDomain = mImages.get(0).getstorage_id().getValue();
+        Guid srcStorageDomain = mImages.get(0).getstorage_ids().get(0);
         Guid vmSnapshotId = Guid.NewGuid();
 
         for (DiskImage diskImage : mImages) {
             CreateImageTemplateParameters createParams = new CreateImageTemplateParameters(diskImage.getId(),
                         getVmTemplateId(), getVmTemplateName(), getVmId());
-            if (!diskImage.getstorage_id().equals(Guid.Empty)) {
-                createParams.setStorageDomainId(diskImage.getstorage_id().getValue());
+            if (!Guid.Empty.equals(diskImage.getstorage_ids().get(0))) {
+                createParams.setStorageDomainId(diskImage.getstorage_ids().get(0));
             } else {
                 createParams.setStorageDomainId(srcStorageDomain);
             }
