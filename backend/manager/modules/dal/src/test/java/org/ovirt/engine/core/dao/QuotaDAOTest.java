@@ -323,7 +323,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetQuotaByExistingName() throws Exception {
         setUp();
-        Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Quota General", FixturesTool.STORAGE_POOL_NFS);
+        Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Quota General");
         assertEquals(dao.getById(FixturesTool.QUOTA_GENERAL)
                 .getQuotaName()
                 .equals(quotaGeneralToSpecific.getQuotaName()),
@@ -411,7 +411,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetQuotaByExistingNameWIthNoMatchingStoragePool() throws Exception {
         setUp();
-        Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Quota General", FixturesTool.STORAGE_POOL_RHEL6_ISCSI);
+        Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Quota General2");
         assertEquals(null, quotaGeneralToSpecific);
     }
 
@@ -423,7 +423,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetQuotaWithNoExistingName() throws Exception {
         setUp();
-        Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Any name", FixturesTool.STORAGE_POOL_NFS);
+        Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Any name");
         assertEquals(null, quotaGeneralToSpecific);
     }
 

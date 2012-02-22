@@ -143,13 +143,13 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetQuotaByQuotaName(v_quota_name VARCHAR, v_storage_pool_id UUID)
+Create or replace FUNCTION GetQuotaByQuotaName(v_quota_name VARCHAR)
 RETURNS SETOF quota_global_view
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
    FROM quota_global_view
-   WHERE quota_name = v_quota_name and storage_pool_id = v_storage_pool_id;
+   WHERE quota_name = v_quota_name;
 END; $procedure$
 LANGUAGE plpgsql;
 

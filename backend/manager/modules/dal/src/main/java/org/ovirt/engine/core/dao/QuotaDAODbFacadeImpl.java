@@ -31,7 +31,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     }
 
     /**
-     * Get <code>Quota</code> by name and storage pool id.
+     * Get <code>Quota</code> by name.
      *
      * @param quotaName
      *            - The quota name to find.
@@ -39,9 +39,9 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
      *            - The storage pool id that the quota is being searched in.
      * @return The quota entity that was found.
      */
-    public Quota getQuotaByQuotaName(String quotaName, Guid storagePoolId) {
+    public Quota getQuotaByQuotaName(String quotaName) {
         MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
-        quotaParameterSource.addValue("storage_pool_id", storagePoolId).addValue("quota_name", quotaName);
+        quotaParameterSource.addValue("quota_name", quotaName);
         Quota quotaEntity =
                 getCallsHandler().executeRead("GetQuotaByQuotaName", getQuotaFromResultSet(), quotaParameterSource);
         return quotaEntity;

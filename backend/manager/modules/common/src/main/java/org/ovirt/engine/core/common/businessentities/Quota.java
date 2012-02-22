@@ -8,6 +8,9 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.validation.annotation.ValidName;
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
@@ -50,6 +53,7 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
      * The quota name.
      */
     @Size(min = 1, max = BusinessEntitiesDefinitions.QUOTA_NAME_SIZE)
+    @ValidName(message = "VALIDATION.QUOTA.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String quotaName;
 
     /**

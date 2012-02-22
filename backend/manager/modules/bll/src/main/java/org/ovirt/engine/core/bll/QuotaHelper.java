@@ -133,6 +133,17 @@ public class QuotaHelper {
             return false;
         }
 
+        // Check if quota name exists.
+        if (!checkQuotaNameExisting(quota, messages)) {
+            return false;
+        }
+
+        // Check quota added is not default quota.
+        if (quota.getIsDefaultQuota()) {
+            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_CAN_NOT_HAVE_DEFAULT_INDICATION.toString());
+            return false;
+        }
+
         // If specific Quota for storage is specified
         if (!validateQuotaStorageLimitation(quota, messages)) {
             return false;
@@ -141,6 +152,17 @@ public class QuotaHelper {
             return false;
         }
 
+        return true;
+    }
+
+    public boolean checkQuotaNameExisting(Quota quota, List<String> messages) {
+        Quota quotaByName = getQuotaDAO().getQuotaByQuotaName(quota.getQuotaName());
+
+        // Check if there is no quota with the same name that already exists.
+        if ((quotaByName != null) && (!quotaByName.getId().equals(quota.getId()))) {
+            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_NAME_ALREADY_EXISTS.toString());
+            return false;
+        }
         return true;
     }
 

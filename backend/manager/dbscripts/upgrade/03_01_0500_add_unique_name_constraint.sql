@@ -1,0 +1,1 @@
+ALTER TABLE quota ADD CONSTRAINT quota_quota_name_unique UNIQUE(quota_name);

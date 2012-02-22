@@ -68,7 +68,7 @@ public interface QuotaDAO extends DAO {
     public List<QuotaStorage> getQuotaStorageByStorageGuid(Guid storageId, Guid quotaId);
 
     /**
-     * Get <code>Quota</code> by name and storage pool id.
+     * Get <code>Quota</code> by name.
      *
      * @param quotaName
      *            - The quota name to find.
@@ -76,7 +76,7 @@ public interface QuotaDAO extends DAO {
      *            - The storage pool id that the quota is being searched in.
      * @return The quota entity that was found.
      */
-    public Quota getQuotaByQuotaName(String quotaName, Guid storagePoolId);
+    public Quota getQuotaByQuotaName(String quotaName);
 
     /**
      * Get all quota storages which belong to quota with quotaId.

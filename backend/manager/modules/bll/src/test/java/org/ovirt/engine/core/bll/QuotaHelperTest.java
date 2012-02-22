@@ -302,6 +302,28 @@ public class QuotaHelperTest {
         Assert.assertTrue(isQuotaValid);
     }
 
+    @Test
+    public void testUpdateSameQuotaWithoutChangingName() throws Exception {
+        QuotaHelper quotaHelper = getQuotaHelper();
+        List<String> messages = new ArrayList<String>();
+        Quota mockQuota = mockGeneralStorageQuota();
+        when(quotaDAO.getQuotaByQuotaName(quotaName)).thenReturn(mockQuota);
+        boolean isQuotaValid = quotaHelper.checkQuotaNameExisting(mockQuota, messages);
+        Assert.assertTrue(isQuotaValid);
+    }
+
+    @Test
+    public void testQuotaWithSameNameExists() throws Exception {
+        QuotaHelper quotaHelper = getQuotaHelper();
+        List<String> messages = new ArrayList<String>();
+        Quota mockQuota = mockGeneralStorageQuota();
+        when(quotaDAO.getQuotaByQuotaName(quotaName)).thenReturn(mockQuota);
+        Quota sameMockedQuotaWithDifferentId = mockGeneralStorageQuota();
+        boolean isQuotaValid = quotaHelper.checkQuotaNameExisting(sameMockedQuotaWithDifferentId, messages);
+        Assert.assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_NAME_ALREADY_EXISTS.toString()));
+        Assert.assertFalse(isQuotaValid);
+    }
+
     private QuotaHelper getQuotaHelper() {
         QuotaHelper quotaHelper = QuotaHelper.getInstance();
         return spy(quotaHelper);
