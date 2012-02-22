@@ -84,8 +84,46 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
     public void testGet() {
         VDSGroup result = dao.get(existingVdsGroup.getId());
 
-        assertNotNull(result);
-        assertEquals(existingVdsGroup, result);
+        assertCorrectVDSGroup(result);
+    }
+
+    /**
+     * Ensures that retrieving a group works as expected with a privileged user and optional filtering.
+     */
+    @Test
+    public void testGetFilteredWithPermissions() {
+        VDSGroup result = dao.get(existingVdsGroup.getId(), PRIVILEGED_USER_ID, true);
+
+        assertCorrectVDSGroup(result);
+    }
+
+    /**
+     * Ensures that retrieving a group works as expected with an unprivileged user and optional filtering disabled.
+     */
+    @Test
+    public void testGetFilteredWithNoPermissionsAndNoFilter() {
+        VDSGroup result = dao.get(existingVdsGroup.getId(), UNPRIVILEGED_USER_ID, false);
+
+        assertCorrectVDSGroup(result);
+    }
+
+    /**
+     * Ensures that retrieving a group works as expected with an unprivileged user.
+     */
+    @Test
+    public void testGetFilteredWithNoPermissions() {
+        VDSGroup result = dao.get(existingVdsGroup.getId(), UNPRIVILEGED_USER_ID, true);
+
+        assertNull(result);
+    }
+
+    /**
+     * Asserts that the given {@link VDSGroup} is indeed the existing VDS Group the test uses.
+     * @param group The group to check
+     */
+    private void assertCorrectVDSGroup(VDSGroup group) {
+        assertNotNull(group);
+        assertEquals(existingVdsGroup, group);
     }
 
     /**
@@ -105,8 +143,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
     public void testGetByName() {
         VDSGroup result = dao.getByName(existingVdsGroup.getname());
 
-        assertNotNull(result);
-        assertEquals(existingVdsGroup, result);
+        assertCorrectVDSGroup(result);
     }
 
     /**
@@ -171,8 +208,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
 
         VDSGroup result = dao.get(existingVdsGroup.getId());
 
-        assertNotNull(result);
-        assertEquals(existingVdsGroup, result);
+        assertCorrectVDSGroup(result);
 
         result = dao.getByName(oldName);
 

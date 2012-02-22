@@ -103,12 +103,16 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsGroupByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vds_groups
+Create or replace FUNCTION GetVdsGroupByVdsGroupId(v_vds_group_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds_groups
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vds_groups.*
       FROM vds_groups
-      WHERE vds_group_id = v_vds_group_id;
+      WHERE vds_group_id = v_vds_group_id
+      AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                        FROM   user_vds_groups_permissions_view
+                                        WHERE  user_id = v_user_id AND entity_id = v_vds_group_id));
+
 END; $procedure$
 LANGUAGE plpgsql;
 

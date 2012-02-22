@@ -21,6 +21,19 @@ public interface VdsGroupDAO extends DAO, SearchDAO<VDSGroup> {
     VDSGroup get(Guid id);
 
     /**
+     * Gets the group with the specified id, with optional permission filtering.
+     *
+     * @param id
+     *            the group id
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the group
+     */
+    VDSGroup get(Guid id, Guid userID, boolean isFiltered);
+
+    /**
      * Returns the specified VDS group if it has running VMs.
      *
      * @param id

@@ -7,6 +7,7 @@ import org.hibernate.criterion.Restrictions;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NotImplementedException;
 
 /**
  * <code>VdsGroupDAOHibernateImpl</code> provides an implementation of {@link VdsGroupDAO} based on Hibernate.
@@ -15,6 +16,11 @@ import org.ovirt.engine.core.compat.Guid;
 public class VdsGroupDAOHibernateImpl extends BaseDAOHibernateImpl<VDSGroup, Guid> implements VdsGroupDAO {
     public VdsGroupDAOHibernateImpl() {
         super(VDSGroup.class);
+    }
+
+    @Override
+    public VDSGroup get(Guid id, Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
     }
 
     @Override
