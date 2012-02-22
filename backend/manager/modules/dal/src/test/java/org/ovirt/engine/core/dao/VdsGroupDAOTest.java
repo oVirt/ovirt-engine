@@ -9,15 +9,13 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
-
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 
-public class VdsGroupDAOTestCase extends BaseDAOTestCase {
+public class VdsGroupDAOTest extends BaseDAOTestCase {
     private static final int NUMBER_OF_GROUPS = 6;
 
     private VdsGroupDAO dao;
@@ -33,17 +31,16 @@ public class VdsGroupDAOTestCase extends BaseDAOTestCase {
 
         VdsDAO vdsDAO = prepareDAO(dbFacade.getVdsDAO());
 
-        existingVds = vdsDAO
-                .get(new NGuid("afce7a39-8e8c-4819-ba9c-796d316592e7"));
+        existingVds = vdsDAO.get(FixturesTool.VDS_RHEL6_NFS_SPM);
 
         StoragePoolDAO storagePoolDAO = prepareDAO(dbFacade.getStoragePoolDAO());
 
-        storagePool = storagePoolDAO.get(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
+        storagePool = storagePoolDAO.get(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
 
         dao = prepareDAO(dbFacade.getVdsGroupDAO());
 
         existingVdsGroup = dao.get(existingVds.getvds_group_id());
-        groupWithNoRunningVms = dbFacade.getVdsGroupDAO().get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3"));
+        groupWithNoRunningVms = dbFacade.getVdsGroupDAO().get(FixturesTool.VDS_GROUP_NO_RUNNING_VMS);
 
         newGroup = new VDSGroup();
         newGroup.setname("New VDS Group");

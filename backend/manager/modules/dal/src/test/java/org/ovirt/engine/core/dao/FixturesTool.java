@@ -3,7 +3,7 @@ package org.ovirt.engine.core.dao;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * A util class for DAO testing which maps the fixtures entities to constants, for easy testing.
+ * A utility class for DAO testing which maps the fixtures entities to constants, for easy testing.
  */
 public class FixturesTool {
     /**
@@ -15,6 +15,11 @@ public class FixturesTool {
      * Predefined ISCSI storage pool.
      */
     protected static final Guid STORAGE_POOL_RHEL6_ISCSI = new Guid("6d849ebf-755f-4552-ad09-9a090cda105");
+
+    /**
+     * Another predefined ISCSI storage pool.
+     */
+    protected static final Guid STORAGE_POOL_RHEL6_ISCSI_OTHER = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
 
     /**
      * Predefined NFS master storage domain.
@@ -35,6 +40,16 @@ public class FixturesTool {
      * Predefined vds group.
      */
     protected static final Guid VDS_GROUP_RHEL6_NFS = new Guid("0e57070e-2469-4b38-84a2-f111aaabd49d");
+
+    /**
+     * Predefined vds group with no running VMs
+     */
+    protected static final Guid VDS_GROUP_NO_RUNNING_VMS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3");
+
+    /**
+     * Predefined NFS storage pool.
+     */
+    protected static final Guid VDS_RHEL6_NFS_SPM = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
 
     /**
      * Predefined quota with general limitations. Its GUID is 88296e00-0cad-4e5a-9291-008a7b7f4399.<BR/>
