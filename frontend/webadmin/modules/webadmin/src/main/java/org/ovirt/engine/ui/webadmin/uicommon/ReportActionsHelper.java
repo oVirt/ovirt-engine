@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
-import org.ovirt.engine.ui.uicommonweb.ReportInit.Category;
-import org.ovirt.engine.ui.uicommonweb.ReportInit.Resource;
-import org.ovirt.engine.ui.uicommonweb.ReportInit.URI;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ReportParser.Category;
+import org.ovirt.engine.ui.uicompat.ReportParser.Resource;
+import org.ovirt.engine.ui.uicompat.ReportParser.URI;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 

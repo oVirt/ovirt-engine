@@ -2,6 +2,7 @@
         "http://google-web-toolkit.googlecode.com/svn/releases/1.6/distro-source/core/src/gwt-module.dtd">
 <module>
 	<inherits name='org.ovirt.engine.SharedGwt' />
+	<inherits name="com.google.gwt.xml.XML" />
 
 	<source path="uicompat">
 	</source>

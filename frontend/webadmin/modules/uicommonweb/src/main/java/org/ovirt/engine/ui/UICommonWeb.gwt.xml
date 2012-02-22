@@ -4,7 +4,6 @@
     <inherits name='org.ovirt.engine.SharedGwt'/>
 	<inherits name='org.ovirt.engine.ui.UiCompat'/>
 	<inherits name='org.ovirt.engine.ui.Frontend'/>
-	<inherits name="com.google.gwt.xml.XML" />
 
     <source path="uicommonweb"/>
 </module>
