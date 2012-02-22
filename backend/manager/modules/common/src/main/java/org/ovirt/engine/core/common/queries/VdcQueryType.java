@@ -185,7 +185,7 @@ public enum VdcQueryType implements Serializable {
     GetRolesForDelegationByUser,
     GetPermissionsForObject,
     GetDataCentersWithPermittedActionOnClusters,
-    GetClustersWithPermittedAction,
+    GetClustersWithPermittedAction(VdcQueryAuthType.User),
     GetVmTemplatesWithPermittedAction,
 
     // Storage
