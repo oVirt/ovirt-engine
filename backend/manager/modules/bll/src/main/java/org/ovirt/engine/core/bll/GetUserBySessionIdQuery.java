@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class GetUserBySessionIdQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
@@ -11,8 +10,7 @@ public class GetUserBySessionIdQuery<P extends VdcQueryParametersBase> extends Q
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(
-                SessionDataContainer.getInstance().getUser(getParameters().getSessionId()));
+        getQueryReturnValue().setReturnValue(getUser());
     }
 
 }
