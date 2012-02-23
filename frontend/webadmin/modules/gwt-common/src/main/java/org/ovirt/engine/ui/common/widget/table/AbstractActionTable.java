@@ -79,7 +79,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
     private boolean multiSelectionDisabled;
     protected boolean showDefaultHeader;
 
-    private int[] mousePosition = new int[2];
+    private final int[] mousePosition = new int[2];
 
     public AbstractActionTable(SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerRresources, EventBus eventBus) {
@@ -264,14 +264,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
                 final T value = event.getValue();
 
                 if (!selectionModel.isSelected(value)) {
-                    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                        @Override
-                        public void execute() {
-                            selectionModel.setMultiSelectEnabled(false);
-                            selectionModel.setMultiRangeSelectEnabled(false);
-                            selectionModel.setSelected(value, true);
-                        }
-                    });
+                    selectionModel.setMultiSelectEnabled(false);
+                    selectionModel.setMultiRangeSelectEnabled(false);
+                    selectionModel.setSelected(value, true);
                 }
             }
         });
