@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.table"
+	>
+
+	<ui:style>
+		.vmTable {
+			width: 100%;
+			height: 100%;
+			float: left;
+			padding-top: 10px;
+		}
+		
+		.vmTableHeader {
+			width: 100%;
+			height: 25px;
+		}
+		
+		.vmTableContent {
+			width: 100%;
+			min-height: 400px;
+		}
+				
+		.vmTableContent table {
+			width: 100%;
+			overflow: auto;
+		}
+		
+		.vmTableContent td:first-of-type {
+			width: 2px;
+		}
+		
+		.vmTableContentHolder {
+			overflow-y: auto;
+			height: 100%;
+		}
+	</ui:style>
+
+	<g:FlowPanel addStyleNames="{style.vmTable}" >
+		<t:ActionCellTable ui:field="tableHeader" addStyleNames="{style.vmTableHeader}" />
+		<g:FlowPanel addStyleNames="{style.vmTableContentHolder}">
+			<g:Tree ui:field="vmTree" addStyleNames="{style.vmTableContent}" />
+		</g:FlowPanel>
+	</g:FlowPanel>
+
+</ui:UiBinder>

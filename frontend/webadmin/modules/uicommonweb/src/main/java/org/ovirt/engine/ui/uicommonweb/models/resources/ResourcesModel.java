@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.resources;
 
+import java.util.Collections;
+import java.util.Comparator;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
@@ -14,6 +17,18 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 @SuppressWarnings("unused")
 public class ResourcesModel extends SearchableListModel
 {
+
+    private static class ResourceComparator implements Comparator<VM> {
+
+        @Override
+        public int compare(VM o1, VM o2) {
+            String name1 = o1.getvm_name() == null ? "" : o1.getvm_name();
+            String name2 = o2.getvm_name() == null ? "" : o2.getvm_name();
+            return name1.compareTo(name2);
+        }
+    }
+
+    private static final ResourceComparator COMPARATOR = new ResourceComparator();
 
     private EntityModel privateDefinedVMs;
 
@@ -269,6 +284,7 @@ public class ResourcesModel extends SearchableListModel
                 getTotalSnapshotsSize().setEntity(totalSnapshotsSize >= 1 ? totalSnapshotsSize + "GB" : "<1GB");
                 getNumOfSnapshots().setEntity(numOfSnapshots);
 
+                Collections.sort(list, COMPARATOR);
                 resourcesModel.setItems(list);
             }
         };

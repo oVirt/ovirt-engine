@@ -84,4 +84,22 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/status/WAITING.png")
     ImageResource vmStatusWaiting();
 
+    // resources tab
+    @Source("images/general/vm_icon.png")
+    ImageResource vmIcon();
+
+    @Source("images/general/memory_icon.png")
+    ImageResource memoryIcon();
+
+    @Source("images/general/cpu_icon.png")
+    ImageResource cpuIcon();
+
+    @Source("images/general/storage_icon.png")
+    ImageResource storageIcon();
+
+    @Source("images/general/vm_icon_with_vm_text_inside.gif")
+    ImageResource vmIconWithVmTextInside();
+
+    @Source("images/general/disk_icon.gif")
+    ImageResource vmDiskIcon();
 }

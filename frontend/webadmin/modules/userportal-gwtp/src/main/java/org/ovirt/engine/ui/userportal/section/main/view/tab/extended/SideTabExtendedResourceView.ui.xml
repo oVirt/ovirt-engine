@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:w="urn:import:org.ovirt.engine.ui.userportal.widget"
+	xmlns:r="urn:import:org.ovirt.engine.ui.userportal.widget.resources"
+	xmlns:e="urn:import:org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget"
+	>
+
+	<ui:with field='resources'
+		type='org.ovirt.engine.ui.userportal.ApplicationResources' />
+
+	<ui:style>
+		.mainPanel {
+			width: 95%;
+			float: left;
+			margin-left: 15px;
+		}		
+		
+		.infoContainerLeft, .infoContainerMiddle, .infoContainerRight {
+			float: left;
+			padding-top: 15px;
+			min-width: 290px;
+		}
+		
+		.infoContainerLeft {
+			width: 34%;
+		}
+		
+		.infoContainerMiddle {
+			width: 32%;
+		}
+		
+		.infoContainerRight {
+			width: 34%;
+		}
+		
+		.infoContainerContainer {
+			overflow: hidden;
+			width: 100%;
+			float: left;
+			min-width: 910px
+		}
+		
+		.infoBoxLeft, .infoBoxMiddle, .infoBoxRight {
+			width: 280px;
+			height: 92px;
+			border-style: solid;
+			border-width: 1px;
+			border-color: #e3eaf2;
+			padding-top: 8px;
+			padding-left: 8px;
+		}
+		
+		.infoBoxMiddle {
+			margin: 0 auto;
+		}
+		
+		.infoBoxLeft {
+			float: left;
+		}
+
+		.infoBoxRight {
+			float: right;
+		}
+				
+		.iconImageContainer {
+			float: left;
+		}
+		
+		.infoBoxDetailsRowLabel, .infoBoxDetailsRowValue, .detailsBoxRowLabel, .detailsBoxRowValue {
+			float: left;
+			padding-top: 7px;
+		}
+		
+		.infoBoxDetailsRowLabel, .detailsBoxRowLabel {
+			color: #3A5F7D;
+			font-family: Arial,sans-serif;
+			font-size: 13px;
+			text-align: left;
+			width: 50%;
+		}
+		
+		.infoBoxDetailsRowValue, .detailsBoxRowValue {
+			color: black;
+			font-family: Arial,sans-serif;
+			font-size: 13px;
+			padding-left: 7px;
+			text-align: left;
+			width: 30%;
+		}
+		
+		.resourcesGeneralLabel {
+    		color: black;
+    		font-family: Arial,sans-serif;
+    		font-size: 14px;
+    		font-weight: bold;
+		}
+
+		.infoBoxDetailsRow {
+			width: 100%;
+		}
+		
+		.infoBoxDetails {
+			float: left;
+			width: 85%;
+			padding-left: 8px;
+		}
+		
+		.bottomBorder {
+			border-width: 1px;
+			border-color: #e3eaf2;
+			border-style: solid;
+			width: 100%;
+			min-width: 600px;
+			height: 80%;
+			margin-top: 15px;
+			float: left;
+		}
+		
+		.storageBox {
+			padding-top: 8px;
+			padding-left: 15px;
+			width: 350px;
+			float: left;
+		}
+		
+		.storageDetailsRow {
+			width: 100%;
+		}
+		
+		.detailsBoxRowLabel {
+			width: 60%;
+		}
+		
+		.detailsBoxRowValue {
+			width: 30%;
+		}
+		
+		
+	</ui:style>
+
+	<g:FlowPanel addStyleNames="{style.mainPanel}">
+
+		<g:FlowPanel addStyleNames="{style.infoContainerContainer}">
+			<g:FlowPanel addStyleNames="{style.infoContainerLeft}">
+				<g:FlowPanel addStyleNames="{style.infoBoxLeft}">
+					<g:FlowPanel>
+						<g:FlowPanel addStyleNames="{style.iconImageContainer}">
+							<g:Image resource='{resources.vmIcon}' />
+						</g:FlowPanel>
+						<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
+							<g:Label text="Virtual Machines:" addStyleNames="{style.resourcesGeneralLabel}" />
+							<w:PercentageProgressBar ui:field="vmsProgressBar" />
+	
+							<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
+								<g:Label text="Defined VMs:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+								<e:UserPortalEntityModelLabel
+									ui:field="definedVms" addStyleNames="{style.infoBoxDetailsRowValue}" />
+							</g:FlowPanel>
+	
+							<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
+								<g:Label text="Running VMs:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+								<e:UserPortalEntityModelLabel
+									ui:field="runningVms" addStyleNames="{style.infoBoxDetailsRowValue}" />
+							</g:FlowPanel>
+						</g:FlowPanel>
+	
+					</g:FlowPanel>
+				</g:FlowPanel>
+			</g:FlowPanel>
+	
+			<g:FlowPanel addStyleNames="{style.infoContainerMiddle}">
+				<g:FlowPanel addStyleNames="{style.infoBoxMiddle}">
+					<g:FlowPanel>
+						<g:FlowPanel addStyleNames="{style.iconImageContainer}">
+							<g:Image resource='{resources.cpuIcon}' />
+						</g:FlowPanel>
+						<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
+							<g:Label text="Virtual CPUs:" addStyleNames="{style.resourcesGeneralLabel}" />
+							<w:PercentageProgressBar ui:field="cpusProgressBar" />
+	
+							<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
+								<g:Label text="Defined vCPUs:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+								<e:UserPortalEntityModelLabel
+									ui:field="definedCpus" addStyleNames="{style.infoBoxDetailsRowValue}" />
+							</g:FlowPanel>
+	
+							<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
+								<g:Label text="Used vCPUs: " addStyleNames="{style.infoBoxDetailsRowLabel}" />
+								<e:UserPortalEntityModelLabel
+									ui:field="usedCpus" addStyleNames="{style.infoBoxDetailsRowValue}" />
+							</g:FlowPanel>
+						</g:FlowPanel>
+	
+					</g:FlowPanel>
+				</g:FlowPanel>
+			</g:FlowPanel>
+	
+			<g:FlowPanel addStyleNames="{style.infoContainerRight}">
+				<g:FlowPanel addStyleNames="{style.infoBoxRight}">
+					<g:FlowPanel>
+						<g:FlowPanel addStyleNames="{style.iconImageContainer}">
+							<g:Image resource='{resources.vmIcon}' />
+						</g:FlowPanel>
+						<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
+							<g:Label text="Memory:" addStyleNames="{style.resourcesGeneralLabel}" />
+							<w:PercentageProgressBar ui:field="memoryProgressBar" />
+	
+							<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
+								<g:Label text="Defined Memory:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+								<e:UserPortalEntityModelLabel
+									ui:field="definedMemory" addStyleNames="{style.infoBoxDetailsRowValue}" />
+							</g:FlowPanel>
+	
+							<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
+								<g:Label text="Memory Usage:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+								<e:UserPortalEntityModelLabel
+									ui:field="memoryUsage" addStyleNames="{style.infoBoxDetailsRowValue}" />
+							</g:FlowPanel>
+						</g:FlowPanel>
+	
+					</g:FlowPanel>
+				</g:FlowPanel>
+			</g:FlowPanel>
+		</g:FlowPanel>
+	
+		<g:FlowPanel addStyleNames="{style.bottomBorder}">
+			<g:FlowPanel addStyleNames="{style.storageBox}">
+				<g:FlowPanel addStyleNames="{style.iconImageContainer}">
+					<g:Image resource='{resources.storageIcon}' />
+				</g:FlowPanel>
+				<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
+					<g:Label text="Storage:" addStyleNames="{style.resourcesGeneralLabel}" />
+	
+					<g:FlowPanel addStyleNames="{style.storageDetailsRow}">
+						<g:Label text="Total Size:" addStyleNames="{style.detailsBoxRowLabel}" />
+						<e:UserPortalEntityModelLabel
+							ui:field="totalSize" addStyleNames="{style.detailsBoxRowValue}" />
+					</g:FlowPanel>
+	
+					<g:FlowPanel addStyleNames="{style.storageDetailsRow}">
+						<g:Label text="Number of Snapshots:" addStyleNames="{style.detailsBoxRowLabel}" />
+						<e:UserPortalEntityModelLabel
+							ui:field="numOfSnapshots" addStyleNames="{style.detailsBoxRowValue}" />
+					</g:FlowPanel>
+	
+					<g:FlowPanel addStyleNames="{style.storageDetailsRow}">
+						<g:Label text="Total Size of Snapshots:" addStyleNames="{style.detailsBoxRowLabel}" />
+						<e:UserPortalEntityModelLabel
+							ui:field="totalSizeOfSnapshots" addStyleNames="{style.detailsBoxRowValue}" />
+					</g:FlowPanel>
+				</g:FlowPanel>
+			</g:FlowPanel>
+			
+			<r:VmTable ui:field="vmTable" />
+	
+		</g:FlowPanel>
+	</g:FlowPanel>
+
+</ui:UiBinder>
