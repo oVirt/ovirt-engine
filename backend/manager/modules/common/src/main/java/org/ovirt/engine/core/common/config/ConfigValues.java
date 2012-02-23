@@ -1095,6 +1095,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("5")
     VmPoolMonitorBatchSize(345),
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("0 0/5 * * * ?")
+    AutoRecoverySchedule(346),
+
     Invalid(65535);
 
     private int intValue;

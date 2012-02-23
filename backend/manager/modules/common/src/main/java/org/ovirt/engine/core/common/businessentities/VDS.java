@@ -1245,4 +1245,12 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
     public void setLocalDisksUsage(Map<String, Long> localDiskUsage) {
         this.localDisksUsage = localDiskUsage;
     }
+
+    public boolean isAutoRecoverable() {
+        return mVdsStatic.isAutoRecoverable();
+    }
+
+    public void setAutoRecoverable(boolean autoRecoverable) {
+        mVdsStatic.setAutoRecoverable(autoRecoverable);
+    }
 }

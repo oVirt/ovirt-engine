@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlType;
 public class VdsActionParameters extends VdcActionParametersBase {
     private static final long serialVersionUID = 3959465593772384532L;
 
+    boolean runSilent;
+
     public VdsActionParameters(Guid vdsId) {
         _vdsId = vdsId;
     }
@@ -27,5 +29,13 @@ public class VdsActionParameters extends VdcActionParametersBase {
     }
 
     public VdsActionParameters() {
+    }
+
+    public boolean isRunSilent() {
+        return runSilent;
+    }
+
+    public void setRunSilent(boolean runSilent) {
+        this.runSilent = runSilent;
     }
 }

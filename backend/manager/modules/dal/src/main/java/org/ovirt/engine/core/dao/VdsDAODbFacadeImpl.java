@@ -34,7 +34,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public VDS get(NGuid id, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeRead("GetVdsByVdsId",
-                new VdsRowMapper(),
+                VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_id", id)
                         .addValue("user_id", userID)
@@ -44,7 +44,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAllWithName(String name) {
         return getCallsHandler().executeReadList("GetVdsByName",
-                new VdsRowMapper(),
+                VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_name", name));
     }
@@ -52,7 +52,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAllForHostname(String hostname) {
         return getCallsHandler().executeReadList("GetVdsByHostName",
-                new VdsRowMapper(),
+                VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("host_name", hostname));
     }
@@ -60,7 +60,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAllWithIpAddress(String address) {
         return getCallsHandler().executeReadList("GetVdsByIp",
-                new VdsRowMapper(),
+                VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("ip", address));
     }
@@ -68,7 +68,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAllWithUniqueId(String id) {
         return getCallsHandler().executeReadList("GetVdsByUniqueID",
-                new VdsRowMapper(),
+                VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_unique_id", id));
     }
@@ -85,7 +85,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAllOfType(VDSType type) {
         return getCallsHandler().executeReadList("GetVdsByType",
-                new VdsRowMapper(),
+                VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_type", type));
     }
@@ -93,27 +93,27 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAllForVdsGroupWithoutMigrating(Guid id) {
         return getCallsHandler().executeReadList("GetVdsWithoutMigratingVmsByVdsGroupId",
-                new VdsRowMapper(),
+                VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_group_id", id));
     }
 
     @Override
     public List<VDS> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, new VdsRowMapper());
+        return new SimpleJdbcTemplate(jdbcTemplate).query(query, VdsRowMapper.instance);
     }
 
     @Override
     public List<VDS> getAll() {
         return getCallsHandler().executeReadList("GetAllFromVds",
-                new VdsRowMapper(),
+                VdsRowMapper.instance,
                 getCustomMapSqlParameterSource());
     }
 
     @Override
     public List<VDS> getAllForVdsGroup(Guid vdsGroupID) {
         return getCallsHandler().executeReadList("GetVdsByVdsGroupId",
-                new VdsRowMapper(),
+                VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_group_id", vdsGroupID));
     }
@@ -121,11 +121,17 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getListForSpmSelection(Guid storagePoolId) {
         return getCallsHandler().executeReadList("GetUpAndPrioritizedVds",
-                new VdsRowMapper(),
+                VdsRowMapper.instance,
                 getCustomMapSqlParameterSource().addValue("storage_pool_id", storagePoolId));
     }
 
+    public List<VDS> listFailedAutorecoverables() {
+        return getCallsHandler().executeReadList("GetFailingVdss", VdsRowMapper.instance, null);
+    }
+
     static final class VdsRowMapper implements ParameterizedRowMapper<VDS> {
+        //single instance
+        public final static VdsRowMapper instance = new VdsRowMapper();
         @Override
         public VDS mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             final VDS entity = new VDS();
@@ -237,6 +243,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
                     .getInt("non_operational_reason")));
             entity.setOtpValidity(rs.getLong("otp_validity"));
             entity.setVdsSpmPriority(rs.getInt("vds_spm_priority"));
+            entity.setAutoRecoverable(rs.getBoolean("recoverable"));
             return entity;
         }
     }

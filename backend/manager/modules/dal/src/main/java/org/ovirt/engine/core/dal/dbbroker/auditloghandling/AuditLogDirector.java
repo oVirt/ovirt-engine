@@ -233,6 +233,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.VDS_LOW_DISK_SPACE_ERROR, AuditLogSeverity.ERROR);
     }
 
+    @SuppressWarnings("deprecation")
     private static void initStorageSeverities() {
         mSeverities.put(AuditLogType.USER_ADD_STORAGE_POOL, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_ADD_STORAGE_POOL_FAILED, AuditLogSeverity.ERROR);
@@ -687,10 +688,8 @@ public final class AuditLogDirector {
      *            the log type which determine if timeout is used for it
      */
     private static void updateTimeoutLogableObject(AuditLogableBase auditLogable, AuditLogType logType) {
-        int seconds = logType.getDuplicateEventsIntervalValue();
-        if (seconds > 0) {
-            DateTime now = DateTime.getNow();
-            auditLogable.setEndTime(now.AddSeconds(seconds));
+        if (logType.getDuplicateEventsIntervalValue() > 0) {
+            auditLogable.setEndTime(DateTime.getNow().AddSeconds(logType.getDuplicateEventsIntervalValue()));
             auditLogable.setTimeoutObjectId(ComposeObjectId(auditLogable, logType));
         }
     }

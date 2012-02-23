@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
@@ -42,32 +41,27 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
 
     @Override
     public storage_domains get(Guid id, Guid userID, boolean isFiltered) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
-
-        ParameterizedRowMapper<storage_domains> mapper = new StorageDomainRowMapper();
-        return getCallsHandler().executeRead("Getstorage_domains_By_id", mapper, parameterSource);
+        return getCallsHandler().executeRead("Getstorage_domains_By_id",
+                StorageDomainRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("id", id)
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered));
     }
 
     @Override
     public storage_domains getForStoragePool(Guid id, NGuid storagepool) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", id).addValue("storage_pool_id", storagepool);
-
-        ParameterizedRowMapper<storage_domains> mapper = new StorageDomainRowMapper();
-        return getCallsHandler().executeRead("Getstorage_domains_By_id_and_by_storage_pool_id", mapper
-                , parameterSource);
+        return getCallsHandler().executeRead("Getstorage_domains_By_id_and_by_storage_pool_id",
+                StorageDomainRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("id", id).addValue("storage_pool_id", storagepool));
     }
 
     @Override
     public List<storage_domains> getAllForConnection(String connection) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("connection", connection);
-
-        ParameterizedRowMapper<storage_domains> mapper = new StorageDomainRowMapper();
-
-        return getCallsHandler().executeReadList("Getstorage_domains_By_connection", mapper,
-                parameterSource);
+        return getCallsHandler().executeReadList("Getstorage_domains_By_connection", StorageDomainRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("connection", connection));
     }
 
     @Override
@@ -77,98 +71,82 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
 
     @Override
     public List<storage_domains> getAllForStoragePool(Guid pool, Guid userID, boolean isFiltered) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("storage_pool_id", pool).addValue("user_id", userID).addValue("is_filtered", isFiltered);
-
-        ParameterizedRowMapper<storage_domains> mapper = new StorageDomainRowMapper();
-
-        return getCallsHandler().executeReadList("Getstorage_domains_By_storagePoolId", mapper,
-                parameterSource);
+        return getCallsHandler().executeReadList("Getstorage_domains_By_storagePoolId",
+                StorageDomainRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("storage_pool_id", pool)
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered));
     }
 
     @Override
     public List<storage_domains> getAllForStorageDomain(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("storage_domain_id", id);
-
-        ParameterizedRowMapper<storage_domains> mapper = new StorageDomainRowMapper();
         return getCallsHandler().executeReadList("Getstorage_domains_List_By_storageDomainId",
-                mapper, parameterSource);
+                StorageDomainRowMapper.instance, getCustomMapSqlParameterSource()
+                        .addValue("storage_domain_id", id));
     }
 
     @Override
     public List<storage_domains> getAllWithQuery(String query) {
-        ParameterizedRowMapper<storage_domains> mapper = new StorageDomainRowMapper();
-
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, mapper);
+        return new SimpleJdbcTemplate(jdbcTemplate).query(query, StorageDomainRowMapper.instance);
     }
 
     @Override
     public List<storage_domains> getAll() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
-        ParameterizedRowMapper<storage_domains> mapper = new StorageDomainRowMapper();
-
-        return getCallsHandler().executeReadList("GetAllFromstorage_domains", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromstorage_domains",
+                StorageDomainRowMapper.instance,
+                getCustomMapSqlParameterSource());
     }
 
     @Override
     public List<Guid> getAllStorageDomainsByImageGroup(Guid imageGroupId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("image_group_id", imageGroupId);
-
-        ParameterizedRowMapper<Guid> mapper = new ParameterizedRowMapper<Guid>() {
-            @Override
-            public Guid mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                return Guid.createGuidFromString(rs.getString("storage_id"));
-            }
-        };
-
-        return getCallsHandler().executeReadList("Getstorage_domainsId_By_imageGroupId", mapper, parameterSource);
+        return getCallsHandler().executeReadList("Getstorage_domainsId_By_imageGroupId",
+                new ParameterizedRowMapper<Guid>() {
+                    @Override
+                    public Guid mapRow(ResultSet rs, int rowNum)
+                            throws SQLException {
+                        return Guid.createGuidFromString(rs.getString("storage_id"));
+                    }
+                },
+                getCustomMapSqlParameterSource()
+                        .addValue("image_group_id", imageGroupId));
     }
 
     @Override
     public void remove(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("storage_domain_id", id);
-        getCallsHandler().executeModification("Force_Delete_storage_domain", parameterSource);
+        getCallsHandler().executeModification("Force_Delete_storage_domain", getCustomMapSqlParameterSource()
+                .addValue("storage_domain_id", id));
     }
 
     @Override
     public void addImageStorageDomainMap(image_storage_domain_map image_group_storage_domain_map) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("image_id",
-                image_group_storage_domain_map.getimage_id()).addValue("storage_domain_id",
-                image_group_storage_domain_map.getstorage_domain_id());
-
-        getCallsHandler().executeModification("Insertimage_storage_domain_map", parameterSource);
+        getCallsHandler().executeModification("Insertimage_storage_domain_map",
+                getCustomMapSqlParameterSource().addValue("image_id",
+                        image_group_storage_domain_map.getimage_id()).addValue("storage_domain_id",
+                        image_group_storage_domain_map.getstorage_domain_id()));
     }
 
     @Override
     public void removeImageStorageDomainMap(image_storage_domain_map image_group_storage_domain_map) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("image_id",
-                image_group_storage_domain_map.getimage_id()).addValue("storage_domain_id",
-                image_group_storage_domain_map.getstorage_domain_id());
-
-        getCallsHandler().executeModification("Deleteimage_storage_domain_map", parameterSource);
+        getCallsHandler().executeModification("Deleteimage_storage_domain_map",
+                getCustomMapSqlParameterSource().addValue("image_id",
+                        image_group_storage_domain_map.getimage_id()).addValue("storage_domain_id",
+                        image_group_storage_domain_map.getstorage_domain_id()));
     }
 
     @Override
     public List<image_storage_domain_map> getAllImageStorageDomainMapsForStorageDomain(Guid storage_domain_id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_domain_id",
-                storage_domain_id);
-
         return getCallsHandler().executeReadList("Getimage_storage_domain_mapBystorage_domain_id",
                 new ImageStorageDomainRowMapper(),
-                parameterSource);
+                getCustomMapSqlParameterSource().addValue("storage_domain_id",
+                        storage_domain_id));
     }
 
     @Override
     public void removeImageStorageDomainMap(Guid image_id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("image_id",
-                image_id);
-
-        getCallsHandler().executeModification("Deleteimage_storage_domain_map_by_image_id", parameterSource);
+        getCallsHandler().executeModification("Deleteimage_storage_domain_map_by_image_id",
+                getCustomMapSqlParameterSource().addValue("image_id",
+                        image_id));
     }
 
     @Override
@@ -183,11 +161,10 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
 
     @Override
     public List<image_storage_domain_map> getAllImageStorageDomainMapsForImage(Guid image_id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("image_id",
-                image_id);
         return getCallsHandler().executeReadList("Getimage_storage_domain_mapByimage_id",
                 new ImageStorageDomainRowMapper(),
-                parameterSource);
+                getCustomMapSqlParameterSource().addValue("image_id",
+                        image_id));
     }
 
     /**
@@ -207,11 +184,14 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     /**
      * Row mapper to map a returned row to a {@link storage_domains} object.
      */
-    private final class StorageDomainRowMapper implements ParameterizedRowMapper<storage_domains> {
+    private static final class StorageDomainRowMapper implements ParameterizedRowMapper<storage_domains> {
+        // single instance
+        public static final StorageDomainRowMapper instance = new StorageDomainRowMapper();
+
         @Override
-        public storage_domains mapRow(ResultSet rs, int rowNum)
+        public storage_domains mapRow(final ResultSet rs, final int rowNum)
                 throws SQLException {
-            storage_domains entity = new storage_domains();
+            final storage_domains entity = new storage_domains();
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
             entity.setstorage(rs.getString("storage"));
             entity.setstorage_name(rs.getString("storage_name"));
@@ -226,22 +206,23 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
             entity.setstatus(StorageDomainStatus.forValue(rs.getInt("status")));
             entity.setstorage_domain_shared_status(
                     StorageDomainSharedStatus.forValue(rs.getInt("storage_domain_shared_status")));
+            entity.setAutoRecoverable(rs.getBoolean("recoverable"));
             return entity;
         }
     }
 
     @Override
     public List<storage_domains> getAllByStoragePoolAndConnection(Guid storagePoolId, String connection) {
-        MapSqlParameterSource parameterSource =
+        return getCallsHandler().executeReadList("Getstorage_domains_By_storage_pool_id_and_connection",
+                StorageDomainRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", storagePoolId)
-                        .addValue("connection", connection);
+                        .addValue("connection", connection));
+    }
 
-        ParameterizedRowMapper<storage_domains> mapper = new StorageDomainRowMapper();
-
-        return getCallsHandler().executeReadList("Getstorage_domains_By_storage_pool_id_and_connection",
-                mapper,
-                parameterSource);
+    @Override
+    public List<storage_domains> listFailedAutorecoverables() {
+        return getCallsHandler().executeReadList("GetFailingStorage_domains", StorageDomainRowMapper.instance, null);
     }
 
     /**

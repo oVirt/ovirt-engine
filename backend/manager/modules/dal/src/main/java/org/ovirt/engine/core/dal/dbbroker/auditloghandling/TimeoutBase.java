@@ -43,6 +43,10 @@ public abstract class TimeoutBase implements java.io.Serializable {
         timeoutObjectId = value;
     }
 
+    /**
+     * Checks if timeout is used and if it is, checks the timeout. If no timeout set, then it will set this object as timeout.
+     * @return should the action be logged again
+     */
     public boolean getLegal() {
         boolean returnValue = true;
         if (getUseTimout()) {

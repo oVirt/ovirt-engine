@@ -203,6 +203,10 @@ public class Backend implements BackendInternal, BackendRemote {
         log.infoFormat("JobRepositoryCleanupManager: {0}", new Date());
         JobRepositoryCleanupManager.getInstance().initialize();
 
+        // initialize the AutoRecoveryManager
+        log.infoFormat("AutoRecoveryManager: {0}", new Date());
+        AutoRecoveryManager.getInstance().initialize();
+
         log.infoFormat("ExecutionMessageDirector: {0}", new Date());
         initExecutionMessageDirector();
 

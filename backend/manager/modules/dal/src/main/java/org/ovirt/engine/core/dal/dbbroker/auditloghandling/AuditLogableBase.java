@@ -55,6 +55,7 @@ public class AuditLogableBase extends TimeoutBase {
     private VDSGroup mVdsGroup;
     private String correlationId;
     private NGuid jobId;
+    private boolean isInternalExecution = false;
 
     public AuditLogableBase() {
     }
@@ -513,5 +514,14 @@ public class AuditLogableBase extends TimeoutBase {
         return jobId;
     }
 
+    public boolean isInternalExecution() {
+        return isInternalExecution;
+    }
+
+    public void setInternalExecution(boolean isInternalExecution) {
+        this.isInternalExecution = isInternalExecution;
+    }
+
     private static Log log = LogFactory.getLog(AuditLogableBase.class);
+
 }

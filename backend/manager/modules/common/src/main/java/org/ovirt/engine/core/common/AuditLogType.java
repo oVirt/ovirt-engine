@@ -527,8 +527,17 @@ public enum AuditLogType {
     TASK_STOPPING_ASYNC_TASK(9500, AuditLogTimeInterval.MINUTE.getValue()),
     TASK_CLEARING_ASYNC_TASK(9501, AuditLogTimeInterval.MINUTE.getValue()),
 
+    VDS_ACTIVATE_ASYNC(9502, AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is reactivated by autorecovery
+    VDS_ACTIVATE_FAILED_ASYNC(9503, AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is reactivated
+    STORAGE_ACTIVATE_ASYNC(9504, AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is reactivated by autorecovery
+
+    USER_ACTIVATED_STORAGE_DOMAIN_ASYNC(9505, AuditLogTimeInterval.HOUR.getValue() * 3),
+    USER_ACTIVATE_STORAGE_DOMAIN_FAILED_ASYNC(9506, AuditLogTimeInterval.HOUR.getValue() * 3),
+
     IMPORTEXPORT_IMPORT_VM_INTERFACES_ON_NON_VM_NETWORKS(9600, AuditLogTimeInterval.MINUTE.getValue()),
-    VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS(9601, AuditLogTimeInterval.MINUTE.getValue());
+    VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS(9601, AuditLogTimeInterval.MINUTE.getValue()),
+
+    ;
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are supressed.

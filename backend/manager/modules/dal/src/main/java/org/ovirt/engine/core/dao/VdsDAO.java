@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.NGuid;
  *
  *
  */
-public interface VdsDAO extends DAO, SearchDAO<VDS> {
+public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
     /**
      * Retrieves the instance with the given id.
      *

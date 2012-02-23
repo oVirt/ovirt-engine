@@ -91,7 +91,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private VdcReturnValueBase _returnValue;
     private final IBackendCallBackServer _backendCallBack = CallbackServer.Instance;
     private CommandActionState _actionState = CommandActionState.EXECUTE;
-    private boolean isInternalExecution = false;
     private VdcActionType actionType;
     private final List<Class<?>> validationGroups =
             new ArrayList<Class<?>>(Arrays.asList(new Class<?>[] { Default.class }));
@@ -530,7 +529,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected boolean IsUserAutorizedToRunAction() {
         // Skip check if this is an internal action:
-        if (isInternalExecution) {
+        if (isInternalExecution()) {
             if (log.isDebugEnabled()) {
                 log.debugFormat("Permission check skipped for internal action {0}.", getActionType());
             }
@@ -721,7 +720,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // Set start of log for running command.
         StringBuilder logInfo = new StringBuilder("Running command: ")
                 .append(getClass().getSimpleName()).append(" internal: ")
-                .append(isInternalExecution).append(".");
+                .append(isInternalExecution()).append(".");
 
         // Get permissions of object ,to get object id.
         List<PermissionSubject> permissionSubjectList = getPermissionCheckSubjects();
@@ -915,7 +914,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @param description A message which describes the task
      * @return Guid of the created task.
      */
-    protected Guid CreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand, String description) {
+    protected Guid CreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand,
+            String description) {
         Guid retValue = Guid.Empty;
 
         Transaction transaction = TransactionSupport.suspend();
@@ -939,7 +940,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return retValue;
     }
 
-    @SuppressWarnings("unused")
     protected Guid ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
         throw new NotImplementedException();
     }
@@ -1070,14 +1070,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             endActionInTransactionScope();
         }
         return null;
-    }
-
-    protected boolean isInternalExecution() {
-        return isInternalExecution;
-    }
-
-    public void setInternalExecution(boolean isInternalExecution) {
-        this.isInternalExecution = isInternalExecution;
     }
 
     /**

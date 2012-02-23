@@ -103,8 +103,13 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_ACTIVATED_STORAGE_DOMAIN
-                : AuditLogType.USER_ACTIVATE_STORAGE_DOMAIN_FAILED;
+        if(getParameters().isRunSilent()) {
+            return getSucceeded() ? AuditLogType.USER_ACTIVATED_STORAGE_DOMAIN_ASYNC
+                    : AuditLogType.USER_ACTIVATE_STORAGE_DOMAIN_FAILED_ASYNC;
+        } else {
+            return getSucceeded() ? AuditLogType.USER_ACTIVATED_STORAGE_DOMAIN
+                    : AuditLogType.USER_ACTIVATE_STORAGE_DOMAIN_FAILED;
+        }
     }
 
     private boolean storageDomainStatusIsValid() {

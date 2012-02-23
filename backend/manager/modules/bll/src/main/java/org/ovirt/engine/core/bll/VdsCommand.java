@@ -43,7 +43,6 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
 
     public VdsCommand(T parameters) {
         super(parameters);
-        Guid vdsId = parameters.getVdsId();
         setVdsId(parameters.getVdsId());
     }
 

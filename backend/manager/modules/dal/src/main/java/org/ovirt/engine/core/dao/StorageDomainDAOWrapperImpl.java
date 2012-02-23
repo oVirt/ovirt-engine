@@ -204,4 +204,10 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
         }
         return returnValue;
     }
+
+    @Override
+    public List<storage_domains> listFailedAutorecoverables() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

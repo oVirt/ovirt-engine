@@ -152,4 +152,10 @@ public class VdsDAOWrapperImpl extends BaseDAOWrapperImpl implements VdsDAO {
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public List<VDS> listFailedAutorecoverables() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

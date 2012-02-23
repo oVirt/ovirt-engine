@@ -83,6 +83,8 @@ public class storage_domain_static implements BusinessEntity<Guid> {
     @Column(name = "storage_domain_format_type")
     private StorageFormatType storageFormat = StorageFormatType.V1;
 
+    private boolean autoRecoverable = true;
+
     @Transient
     private String storagePoolName;
 
@@ -212,5 +214,13 @@ public class storage_domain_static implements BusinessEntity<Guid> {
         if (storageType != other.storageType)
             return false;
         return true;
+    }
+
+    public boolean isAutoRecoverable() {
+        return autoRecoverable;
+    }
+
+    public void setAutoRecoverable(boolean autoRecoverable) {
+        this.autoRecoverable = autoRecoverable;
     }
 }

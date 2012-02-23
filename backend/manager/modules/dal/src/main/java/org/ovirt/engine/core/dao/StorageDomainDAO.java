@@ -13,7 +13,7 @@ import org.ovirt.engine.core.compat.NGuid;
  *
  *
  */
-public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains> {
+public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoRecoverDAO<storage_domains> {
     /**
      * Retrieves the master storage domain for the specified pool.
      *

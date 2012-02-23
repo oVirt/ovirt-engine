@@ -38,16 +38,16 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 @Table(name = "vds_static")
 @TypeDef(name = "guid", typeClass = GuidType.class)
 @NamedQueries(
-              value = {
-                      @NamedQuery(name = "all_vds_static_for_vds_group_without_migration",
-                                  query = "select s from VdsStatic s, VdsDynamic d, VmDynamic v where " +
-                                  "(s.vdsGroupId = :vds_group_id) and " +
-                                  "(d.id = s.id) and " +
-                                  "(d.status = 3) and " +
-                                  "(v.status in (5, 6, 11, 12)) and " +
-                      "(s.id != v.run_on_vds)")
-              })
-              public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
+        value = {
+                @NamedQuery(name = "all_vds_static_for_vds_group_without_migration",
+                        query = "select s from VdsStatic s, VdsDynamic d, VmDynamic v where " +
+                                "(s.vdsGroupId = :vds_group_id) and " +
+                                "(d.id = s.id) and " +
+                                "(d.status = 3) and " +
+                                "(v.status in (5, 6, 11, 12)) and " +
+                                "(s.id != v.run_on_vds)")
+        })
+public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -1425566208615075937L;
     private final int HOST_DEFAULT_SPM_PRIORITY = 5;
@@ -73,7 +73,7 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
     private String uniqueId;
 
     @HostnameOrIp(message = "VALIDATION.VDS.HOSTNAME.HOSTNAME_OR_IP",
-                  groups = { CreateEntity.class, UpdateEntity.class })
+            groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.HOST_HOSTNAME_SIZE)
     @Column(name = "host_name", length = BusinessEntitiesDefinitions.HOST_HOSTNAME_SIZE)
     private String hostname;
@@ -134,6 +134,16 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
     @Column(name = "vds_spm_priority")
     private int vdsSpmPriority;
 
+    private boolean autoRecoverable = true;
+
+    public boolean isAutoRecoverable() {
+        return autoRecoverable;
+    }
+
+    public void setAutoRecoverable(boolean autoRecoverable) {
+        this.autoRecoverable = autoRecoverable;
+    }
+
     public VdsStatic() {
         serverSslEnabled = false;
         vdsStrength = 100;
@@ -142,7 +152,7 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
     }
 
     public VdsStatic(String host_name, String ip, String uniqueId, int port, Guid vds_group_id, Guid vds_id,
-                     String vds_name, boolean server_SSL_enabled, VDSType vds_type) {
+            String vds_name, boolean server_SSL_enabled, VDSType vds_type) {
         serverSslEnabled = false;
         vdsStrength = 100;
         this.hostname = host_name;
@@ -355,7 +365,7 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
      * @return
      */
     public static ValueObjectMap PmOptionsStringToMap(String pmOptions) {
-        if(pmOptions.equals("")) {
+        if (pmOptions.equals("")) {
             return new ValueObjectMap();
         }
         HashMap<String, String> map = new HashMap<String, String>();

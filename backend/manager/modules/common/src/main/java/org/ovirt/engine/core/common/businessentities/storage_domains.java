@@ -369,4 +369,12 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         return true;
     }
 
+    public boolean isAutoRecoverable() {
+        return _staticData.isAutoRecoverable();
+    }
+
+    public void setAutoRecoverable(boolean autoRecoverable) {
+        _staticData.setAutoRecoverable(autoRecoverable);
+    }
+
 }
