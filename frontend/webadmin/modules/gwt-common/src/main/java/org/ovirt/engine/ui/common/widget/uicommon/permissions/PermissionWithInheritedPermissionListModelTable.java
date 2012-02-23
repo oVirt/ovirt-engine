@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.common.widget.uicommon.template;
+package org.ovirt.engine.ui.common.widget.uicommon.permissions;
 
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.system.ClientStorage;

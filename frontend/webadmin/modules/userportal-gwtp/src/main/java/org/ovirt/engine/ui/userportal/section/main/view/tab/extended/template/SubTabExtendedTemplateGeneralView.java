@@ -9,14 +9,13 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.templa
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateGeneralModelProvider;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.Editor;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 public class SubTabExtendedTemplateGeneralView extends AbstractSubTabFormView<VmTemplate, UserPortalTemplateListModel, TemplateGeneralModel>
-        implements SubTabExtendedTemplateGeneralPresenter.ViewDef, Editor<TemplateGeneralModel> {
+        implements SubTabExtendedTemplateGeneralPresenter.ViewDef {
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabExtendedTemplateGeneralView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);

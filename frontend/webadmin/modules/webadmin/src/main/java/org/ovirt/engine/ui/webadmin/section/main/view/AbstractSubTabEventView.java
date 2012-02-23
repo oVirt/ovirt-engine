@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
-import org.ovirt.engine.ui.common.widget.uicommon.template.AuditLogModelTable;
+import org.ovirt.engine.ui.common.widget.uicommon.events.EventListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.webadmin.widget.table.column.WebadminAuditLogSeverityColumn;
@@ -26,7 +26,7 @@ public abstract class AbstractSubTabEventView<I, M extends ListWithDetailsModel,
     public AbstractSubTabEventView(SearchableDetailModelProvider<AuditLog, M, D> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage) {
-        super(new AuditLogModelTable<D>(modelProvider, eventBus, clientStorage, new WebadminAuditLogSeverityColumn()));
+        super(new EventListModelTable<D>(modelProvider, eventBus, clientStorage, new WebadminAuditLogSeverityColumn()));
         generateIds();
         initTable();
         initWidget(getModelBoundTableWidget());

@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.common.widget.uicommon.template;
+package org.ovirt.engine.ui.common.widget.uicommon.events;
 
 import java.util.Date;
 
@@ -14,16 +14,16 @@ import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import com.google.gwt.event.shared.EventBus;
 
 /**
- * Table rendering ({@link AuditLog}s).
+ * Table rendering ({@link AuditLog}s) from event list.
  *
  * @param <T>
  *            Detail model type.
  */
-public class AuditLogModelTable<T extends EventListModel> extends AbstractModelBoundTableWidget<AuditLog, T> {
+public class EventListModelTable<T extends EventListModel> extends AbstractModelBoundTableWidget<AuditLog, T> {
 
     private final BaseAuditLogSeverityColumn auditLogCoulmn;
 
-    public AuditLogModelTable(
+    public EventListModelTable(
             SearchableTableModelProvider<AuditLog, T> modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
             BaseAuditLogSeverityColumn auditLogCoulmn) {

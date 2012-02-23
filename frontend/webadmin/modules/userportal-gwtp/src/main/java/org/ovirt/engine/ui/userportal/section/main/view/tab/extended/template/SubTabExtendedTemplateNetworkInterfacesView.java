@@ -12,12 +12,11 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.templa
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateInterfaceListModelProvider;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
 public class SubTabExtendedTemplateNetworkInterfacesView extends AbstractSubTabTableWidgetView<VmTemplate, VmNetworkInterface, UserPortalTemplateListModel, TemplateInterfaceListModel>
-        implements SubTabExtendedTemplateNetworkInterfacesPresenter.ViewDef, Editor<TemplateInterfaceListModel> {
+        implements SubTabExtendedTemplateNetworkInterfacesPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabExtendedTemplateNetworkInterfacesView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);

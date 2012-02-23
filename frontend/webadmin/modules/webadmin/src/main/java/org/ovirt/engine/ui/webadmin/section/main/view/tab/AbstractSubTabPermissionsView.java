@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
-import org.ovirt.engine.ui.common.widget.uicommon.template.PermissionWithInheritedPermissionListModelTable;
+import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionWithInheritedPermissionListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminPermissionTypeColumn;

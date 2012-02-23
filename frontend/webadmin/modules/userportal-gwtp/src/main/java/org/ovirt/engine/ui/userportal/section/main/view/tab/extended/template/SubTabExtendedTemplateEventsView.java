@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
-import org.ovirt.engine.ui.common.widget.uicommon.template.AuditLogModelTable;
+import org.ovirt.engine.ui.common.widget.uicommon.events.EventListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateEventsPresenter;
@@ -13,13 +13,12 @@ import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateEventListM
 import org.ovirt.engine.ui.userportal.widget.table.column.UserPortalAuditLogSeverityColumn;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
 public class SubTabExtendedTemplateEventsView
         extends AbstractSubTabTableWidgetView<VmTemplate, AuditLog, UserPortalTemplateListModel, TemplateEventListModel>
-        implements SubTabExtendedTemplateEventsPresenter.ViewDef, Editor<TemplateEventListModel> {
+        implements SubTabExtendedTemplateEventsPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabExtendedTemplateEventsView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -29,7 +28,7 @@ public class SubTabExtendedTemplateEventsView
     public SubTabExtendedTemplateEventsView(TemplateEventListModelProvider modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage) {
-        super(new AuditLogModelTable<TemplateEventListModel>(modelProvider,
+        super(new EventListModelTable<TemplateEventListModel>(modelProvider,
                 eventBus,
                 clientStorage,
                 new UserPortalAuditLogSeverityColumn()));

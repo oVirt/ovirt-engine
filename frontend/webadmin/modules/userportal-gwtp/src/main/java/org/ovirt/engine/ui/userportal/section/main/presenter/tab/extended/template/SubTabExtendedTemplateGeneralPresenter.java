@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
-import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.ExtendedTemplateSelectionChangeEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateGeneralModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -15,14 +14,11 @@ import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.TabDataBasic;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabExtendedTemplateGeneralPresenter extends AbstractSubTabPresenter<VmTemplate, UserPortalTemplateListModel, TemplateGeneralModel, SubTabExtendedTemplateGeneralPresenter.ViewDef, SubTabExtendedTemplateGeneralPresenter.ProxyDef> {
+public class SubTabExtendedTemplateGeneralPresenter extends BasicSubTabExtendedTemplatePresenter<UserPortalTemplateListModel, TemplateGeneralModel, SubTabExtendedTemplateGeneralPresenter.ViewDef, SubTabExtendedTemplateGeneralPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.extendedTempplateGeneralSubTabPlace)
@@ -42,21 +38,6 @@ public class SubTabExtendedTemplateGeneralPresenter extends AbstractSubTabPresen
     public SubTabExtendedTemplateGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, TemplateGeneralModelProvider modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, ExtendedTemplateSubTabPanelPresenter.TYPE_SetTabContent, this);
-    }
-
-    @Override
-    protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.extendedTemplateSideTabPlace);
-    }
-
-    @ProxyEvent
-    public void onExtendedTemplateSelectionChange(ExtendedTemplateSelectionChangeEvent event) {
-        updateMainTabSelection(event.getSelectedItems());
     }
 
     @Override
