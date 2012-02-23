@@ -36,7 +36,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         case END_FAILURE:
             if (_diskImage == null) {
                 List<DiskImage> diskImages =
-                        DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(getImageGroupId());
+                        DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
                 _diskImage = (diskImages.isEmpty()) ? null : diskImages.get(0);
             }
 
