@@ -210,12 +210,13 @@ AS
                       AS storage_pool_name,		
 	                  vm_templates.default_boot_sequence, vm_templates.default_display_type, vm_templates.priority, vm_templates.auto_startup,		
 	                  vm_templates.is_stateless, vm_templates.iso_path, vm_templates.origin, vm_templates.initrd_url, vm_templates.kernel_url,		
-	                  vm_templates.kernel_params, images.storage_id		
+	                  vm_templates.kernel_params, image_storage_domain_map.storage_domain_id AS storage_id	
 FROM                  vm_static AS vm_templates INNER JOIN		
 	                  vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN		
                       storage_pool ON storage_pool.id = vds_groups.storage_pool_id INNER JOIN		
                       image_vm_map AS vm_template_image_map ON vm_template_image_map.vm_id = vm_templates.vm_guid LEFT JOIN		
-	                  images ON images.image_guid = vm_template_image_map.image_id		
+	                  images ON images.image_guid = vm_template_image_map.image_id	
+	                  LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid	
 WHERE      entity_type = 'TEMPLATE'		
 UNION
 SELECT                vm_templates_1.vm_guid AS vmt_guid, vm_templates_1.vm_name AS name, vm_templates_1.mem_size_mb, vm_templates_1.os, vm_templates_1.creation_date,
