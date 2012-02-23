@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.userportal.uicommon.model.template.UserPortalTemplate
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmDiskListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmGeneralModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmInterfaceListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmSnapshotListModelProvider;
 
 import com.google.inject.Singleton;
 
@@ -38,6 +39,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(VmGeneralModelProvider.class).asEagerSingleton();
         bind(VmInterfaceListModelProvider.class).asEagerSingleton();
         bind(VmDiskListModelProvider.class).asEagerSingleton();
+        bind(VmSnapshotListModelProvider.class).asEagerSingleton();
 
         // Extended tab: Template
         bind(UserPortalTemplateListProvider.class).asEagerSingleton();

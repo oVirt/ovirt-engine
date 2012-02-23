@@ -13,6 +13,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Base class for widgets that use {@link SimpleActionTable} to represent UiCommon list models.
@@ -37,13 +38,20 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
         this.eventBus = eventBus;
         this.useMainTableResources = useMainTableResources;
         this.table = createActionTable(eventBus, clientStorage);
-        initWidget(table);
+        initWidget(getWrappedWidget());
     }
 
     SimpleActionTable<T> createActionTable(EventBus eventBus, ClientStorage clientStorage) {
         return new SimpleActionTable<T>(modelProvider,
                 getTableHeaderlessResources(), getTableResources(),
                 eventBus, clientStorage);
+    }
+
+    /**
+     * @return Widget passed to the {@linkplain Composite#initWidget initWidget} method.
+     */
+    protected Widget getWrappedWidget() {
+        return table;
     }
 
     private Resources getTableResources() {

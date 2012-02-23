@@ -56,6 +56,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Virtual Disks")
     String extendedVirtualMachineVirtualDiskSubTabLabel();
 
+    @DefaultStringValue("Snapshots")
+    String extendedVirtualMachineSnapshotSubTabLabel();
+
     // console popup view
     @DefaultStringValue("Spice")
     String spice();

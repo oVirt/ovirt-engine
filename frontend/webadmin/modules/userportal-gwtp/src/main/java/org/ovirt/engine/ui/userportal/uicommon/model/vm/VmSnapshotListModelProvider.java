@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
@@ -10,18 +10,18 @@ import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailM
 
 import com.google.inject.Inject;
 
-public class VmInterfaceListModelProvider extends UserPortalSearchableDetailModelProvider<VmNetworkInterface, UserPortalListModel, VmInterfaceListModel> {
+public class VmSnapshotListModelProvider extends UserPortalSearchableDetailModelProvider<SnapshotModel, UserPortalListModel, VmSnapshotListModel> {
 
     @Inject
-    public VmInterfaceListModelProvider(ClientGinjector ginjector,
+    public VmSnapshotListModelProvider(ClientGinjector ginjector,
             UserPortalListProvider parentModelProvider,
             UserPortalModelResolver resolver) {
-        super(ginjector, parentModelProvider, VmInterfaceListModel.class, resolver);
+        super(ginjector, parentModelProvider, VmSnapshotListModel.class, resolver);
     }
 
     @Override
-    protected VmInterfaceListModel createModel() {
-        return new VmInterfaceListModel();
+    protected VmSnapshotListModel createModel() {
+        return new VmSnapshotListModel();
     }
 
 }
