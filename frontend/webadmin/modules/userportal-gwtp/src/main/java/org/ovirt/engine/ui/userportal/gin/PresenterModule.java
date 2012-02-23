@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.templa
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.ExtendedVmSubTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGeneralPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmNetworkInterfacePresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmVirtualDiskPresenter;
 import org.ovirt.engine.ui.userportal.section.main.view.HeaderView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainTabPanelView;
@@ -48,6 +49,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.Su
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.ExtendedVmSubTabPanelView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmGeneralView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmNetworkInterfaceView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmVirtualDiskView;
 import org.ovirt.engine.ui.userportal.view.ErrorPopupView;
 
 /**
@@ -121,6 +123,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabExtendedVmNetworkInterfacePresenter.ViewDef.class,
                 SubTabExtendedVmNetworkInterfaceView.class,
                 SubTabExtendedVmNetworkInterfacePresenter.ProxyDef.class);
+        bindPresenter(SubTabExtendedVmVirtualDiskPresenter.class,
+                SubTabExtendedVmVirtualDiskPresenter.ViewDef.class,
+                SubTabExtendedVmVirtualDiskView.class,
+                SubTabExtendedVmVirtualDiskPresenter.ProxyDef.class);
 
         // Template
         bindPresenter(ExtendedTemplateSubTabPanelPresenter.class,

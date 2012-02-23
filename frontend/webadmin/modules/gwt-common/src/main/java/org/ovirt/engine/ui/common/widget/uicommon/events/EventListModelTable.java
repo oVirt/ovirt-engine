@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import com.google.gwt.event.shared.EventBus;
 
 /**
- * Table rendering ({@link AuditLog}s) from event list.
+ * Table used to render {@link AuditLog} items of an {@link EventListModel}.
  *
  * @param <T>
  *            Detail model type.

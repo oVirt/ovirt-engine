@@ -85,6 +85,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
         ModelBoundPresenterWidget<?> modelBoundPresenterWidget = getModelBoundWidget(lastExecutedCommand);
         ((ModelBoundPresenterWidget<Model>) modelBoundPresenterWidget).init(getModel().getWidgetModel());
     }
+
     @SuppressWarnings("unchecked")
     void handleWindowModelChange(AbstractModelBoundPopupPresenterWidget<?, ?> popup, boolean isConfirm) {
         Model windowModel = isConfirm ? getModel().getConfirmWindow() : getModel().getWindow();

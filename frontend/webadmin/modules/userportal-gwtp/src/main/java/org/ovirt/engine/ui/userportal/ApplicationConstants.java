@@ -53,6 +53,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network Interfaces")
     String extendedVirtualMachineNetworkInterfaceSubTabLabel();
 
+    @DefaultStringValue("Virtual Disks")
+    String extendedVirtualMachineVirtualDiskSubTabLabel();
+
     // console popup view
     @DefaultStringValue("Spice")
     String spice();

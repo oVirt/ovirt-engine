@@ -23,10 +23,8 @@ public class SubTabExtendedVmNetworkInterfaceView extends AbstractSubTabTableWid
     }
 
     @Inject
-    public SubTabExtendedVmNetworkInterfaceView(
-            VmInterfaceListModelProvider modelProvider,
-            EventBus eventBus,
-            ClientStorage clientStorage) {
+    public SubTabExtendedVmNetworkInterfaceView(VmInterfaceListModelProvider modelProvider,
+            EventBus eventBus, ClientStorage clientStorage) {
         super(new VmInterfaceListModelTable(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();

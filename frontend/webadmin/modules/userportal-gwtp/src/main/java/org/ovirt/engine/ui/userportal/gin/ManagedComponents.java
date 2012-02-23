@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.templa
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.ExtendedVmSubTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGeneralPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmNetworkInterfacePresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmVirtualDiskPresenter;
 
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.inject.Provider;
@@ -82,6 +83,8 @@ public interface ManagedComponents {
     AsyncProvider<SubTabExtendedVmGeneralPresenter> getSubTabExtendedVmGeneralPresenter();
 
     AsyncProvider<SubTabExtendedVmNetworkInterfacePresenter> getSubTabExtendedVmNetworkInterfacePresenter();
+
+    AsyncProvider<SubTabExtendedVmVirtualDiskPresenter> getSubTabExtendedVmVirtualDiskPresenter();
 
     // Template
 

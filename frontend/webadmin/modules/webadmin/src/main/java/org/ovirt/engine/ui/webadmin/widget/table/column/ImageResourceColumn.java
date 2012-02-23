@@ -4,12 +4,6 @@ import org.ovirt.engine.ui.common.widget.table.column.BaseImageResourceColumn;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
-/**
- * Column for displaying {@link StyledImageResourceCell} instances.
- *
- * @param <T>
- *            Table row data type.
- */
 public abstract class ImageResourceColumn<T> extends BaseImageResourceColumn<T> {
 
     public ImageResourceColumn() {

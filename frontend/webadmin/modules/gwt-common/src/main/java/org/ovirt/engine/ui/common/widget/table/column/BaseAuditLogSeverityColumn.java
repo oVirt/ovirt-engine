@@ -32,4 +32,5 @@ public class BaseAuditLogSeverityColumn extends BaseImageResourceColumn<AuditLog
             return resources.alertConfigureImage();
         }
     }
+
 }

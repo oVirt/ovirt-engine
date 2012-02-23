@@ -8,7 +8,11 @@ import com.google.gwt.resources.client.ImageResource;
 
 public class VmImageColumn<T> extends ImageResourceColumn<T> {
 
-    private OsTypeExtractor<T> extractor;
+    public interface OsTypeExtractor<T> {
+        VmOsType extractOsType(T item);
+    }
+
+    private final OsTypeExtractor<T> extractor;
 
     public VmImageColumn(OsTypeExtractor<T> extractor) {
         super();
@@ -17,6 +21,7 @@ public class VmImageColumn<T> extends ImageResourceColumn<T> {
 
     @Override
     public ImageResource getValue(T item) {
+        // TODO(vszocs) use WithLookup method instead of big switch
         switch (extractor.extractOsType(item)) {
         case WindowsXP:
             return getApplicationResources().WindowsXPSmallImage();
@@ -64,7 +69,4 @@ public class VmImageColumn<T> extends ImageResourceColumn<T> {
         return ClientGinjectorProvider.instance().getApplicationResourcesWithLookup();
     }
 
-    public interface OsTypeExtractor<T> {
-        VmOsType extractOsType(T item);
-    }
 }

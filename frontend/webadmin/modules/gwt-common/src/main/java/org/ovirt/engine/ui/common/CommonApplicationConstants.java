@@ -21,4 +21,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("<< Prev")
     String actionTablePrevPageButtonLabel();
 
+    // Table columns
+
+    @DefaultStringValue("Disk Activate/Deactivate while VM is running, is supported only for Clusters of version 3.1 and above")
+    String diskHotPlugNotSupported();
+
 }

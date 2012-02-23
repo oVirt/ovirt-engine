@@ -105,7 +105,7 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/icon_help_rollover.png")
     ImageResource dialogIconHelpRollover();
 
-    // messages
+    // Table image columns
 
     @Source("images/log_normal.gif")
     ImageResource logNormalImage();
@@ -119,7 +119,18 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/icon_alert_configure.png")
     ImageResource alertConfigureImage();
 
-    // permissions
+    @Source("images/up.gif")
+    ImageResource upImage();
+
+    @Source("images/up_disabled.gif")
+    ImageResource upDisabledImage();
+
+    @Source("images/down.gif")
+    ImageResource downImage();
+
+    @Source("images/down_disabled.gif")
+    ImageResource downDisabledImage();
+
     @Source("images/admin.png")
     ImageResource adminImage();
 

@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider.TaskCountChangeHandler;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ImageResourceColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TaskStatusColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.WebadminAuditLogSeverityColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminAuditLogSeverityColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
@@ -340,7 +340,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     }
 
     void initTable(SimpleActionTable<AuditLog> table) {
-        table.addColumn(new WebadminAuditLogSeverityColumn(), "", "30px");
+        table.addColumn(new WebAdminAuditLogSeverityColumn(), "", "30px");
 
         TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
             @Override

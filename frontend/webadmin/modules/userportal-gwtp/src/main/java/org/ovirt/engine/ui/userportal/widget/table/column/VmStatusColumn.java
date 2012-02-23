@@ -11,7 +11,6 @@ public class VmStatusColumn extends ImageResourceColumn<UserPortalItemModel> {
     @Override
     public ImageResource getValue(UserPortalItemModel item) {
         switch (item.getStatus()) {
-
         case Up:
             return getApplicationResources().vmStatusRunning();
         case WaitForLaunch:

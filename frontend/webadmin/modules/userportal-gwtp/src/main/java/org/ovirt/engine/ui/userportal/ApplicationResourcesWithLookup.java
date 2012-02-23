@@ -131,4 +131,5 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
 
     @Source("images/vmtypes/server_vm_icon.png")
     ImageResource serverVmIcon();
+
 }
