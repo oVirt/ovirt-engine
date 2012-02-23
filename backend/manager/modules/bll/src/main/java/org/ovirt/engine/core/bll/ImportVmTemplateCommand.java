@@ -317,7 +317,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         DbFacade.getInstance().getVmTemplateDAO().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         for (DiskImage image : getParameters().getImages()) {
-            DbFacade.getInstance().getDiskImageDAO().save(image);
+            BaseImagesCommand.saveDiskImage(image);
             getCompensationContext().snapshotNewEntity(image);
             if (!DbFacade.getInstance().getDiskDao().exists(image.getimage_group_id())) {
                 Disk disk = image.getDisk();

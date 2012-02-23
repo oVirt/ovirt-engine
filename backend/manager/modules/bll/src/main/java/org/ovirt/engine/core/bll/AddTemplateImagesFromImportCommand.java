@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -35,7 +34,7 @@ public class AddTemplateImagesFromImportCommand<T extends AddImagesFromImportPar
             {
                 try {
                     importedImage.setimageStatus(ImageStatus.LOCKED);
-                    DbFacade.getInstance().getDiskImageDAO().save(importedImage);
+                    saveDiskImage(importedImage);
                     saveDiskIfNotExists(importedImage);
                 }
 

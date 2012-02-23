@@ -12,12 +12,11 @@ import org.ovirt.engine.core.common.vdscommands.ImportCandidateVDSCommandParamet
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 @InternalCommandAttribute
 public class AddImagesFromImportCommand<T extends AddImagesFromImportParameters> extends AddImageFromImportCommand<T> {
@@ -64,7 +63,7 @@ public class AddImagesFromImportCommand<T extends AddImagesFromImportParameters>
 
             for (DiskImage image : rest) {
                 try {
-                    DbFacade.getInstance().getDiskImageDAO().save(image);
+                    saveDiskImage(image);
                 } catch (RuntimeException e) {
                     log.error(
                             String.format(

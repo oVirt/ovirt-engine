@@ -9,8 +9,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -503,7 +502,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                             .getvolume_type());
                 }
 
-                DbFacade.getInstance().getDiskImageDAO().save(disk);
+                BaseImagesCommand.saveDiskImage(disk);
                 DbFacade.getInstance().getDiskDao().save(disk.getDisk());
                 VmDeviceUtils.addManagedDevice(new VmDeviceId(disk.getDisk().getId(), getVmId()),
                         VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
@@ -518,11 +517,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
         } else {
             for (DiskImage disk : getVm().getImages()) {
-                DbFacade.getInstance().getDiskImageDAO().save(disk);
-                DbFacade.getInstance()
-                        .getStorageDomainDAO()
-                        .addImageStorageDomainMap(new image_storage_domain_map(disk.getId(), disk.getstorage_ids()
-                                .get(0)));
+                BaseImagesCommand.saveDiskImage(disk);
 
                 DiskImageDynamic diskDynamic = new DiskImageDynamic();
                 diskDynamic.setId(disk.getId());

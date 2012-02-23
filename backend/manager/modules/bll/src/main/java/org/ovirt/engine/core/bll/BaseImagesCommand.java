@@ -523,4 +523,18 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             RemoveSnapshot(DbFacade.getInstance().getDiskImageDAO().getSnapshotById(child));
         }
     }
+
+    /**
+     * The following method unify saving of image, it will be also saved with its storage
+     * mapping.
+     * @param diskImage
+     */
+    static public void saveDiskImage(DiskImage diskImage) {
+        DbFacade.getInstance().getDiskImageDAO().save(diskImage);
+        DbFacade.getInstance()
+                .getStorageDomainDAO()
+                .addImageStorageDomainMap(new image_storage_domain_map(diskImage.getId(),
+                        diskImage.getstorage_ids()
+                                .get(0)));
+    }
 }
