@@ -1,13 +1,11 @@
 package org.ovirt.engine.core.bll.context;
 
-import java.io.Serializable;
-
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 
 /**
  * Holds the context for execution of the command.
  */
-public class CommandContext implements Serializable{
+public class CommandContext {
 
     /**
      * Automatic generated serial version ID
