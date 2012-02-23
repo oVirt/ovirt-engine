@@ -8,34 +8,26 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.bll.session.SessionDataContainer;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.utils.RandomUtils;
 
 /**
  * A test case for {@link GetClustersWithPermittedActionQuery}.
  * This test mocks away all the DAOs, and just tests the flow of the query itself.
  */
-public class GetClustersWithPermittedActionQueryTest extends AbstractUserQueryTest<GetEntitiesWithPermittedActionParameters, GetClustersWithPermittedActionQuery<GetEntitiesWithPermittedActionParameters>> {
+public class GetClustersWithPermittedActionQueryTest
+        extends AbstractGetEntitiesWithPermittedActionParametersQueryTest
+        <GetEntitiesWithPermittedActionParameters, GetClustersWithPermittedActionQuery<GetEntitiesWithPermittedActionParameters>> {
 
     @Test
     public void testQueryExecution() {
         // Set up the expected data
         VDSGroup expected = new VDSGroup();
 
-        // Set up the parameters
-        ActionGroup actionGroup = RandomUtils.instance().pickRandom(ActionGroup.values());
-        when(getQueryParameters().getActionGroup()).thenReturn(actionGroup);
-        String sessionID = RandomUtils.instance().nextString(10);
-        when(getQueryParameters().getSessionId()).thenReturn(sessionID);
-        SessionDataContainer.getInstance().SetData(sessionID, "VdcUser", getUser());
-
         // Mock the DAO
         VdsGroupDAO vdsGroupDAOMock = mock(VdsGroupDAO.class);
-        when(vdsGroupDAOMock.getClustersWithPermittedAction(getUser().getUserId(), actionGroup)).thenReturn(Collections.singletonList(expected));
+        when(vdsGroupDAOMock.getClustersWithPermittedAction(getUser().getUserId(), getActionGroup())).thenReturn(Collections.singletonList(expected));
         when(getDbFacadeMockInstance().getVdsGroupDAO()).thenReturn(vdsGroupDAOMock);
 
         getQuery().executeQueryCommand();
