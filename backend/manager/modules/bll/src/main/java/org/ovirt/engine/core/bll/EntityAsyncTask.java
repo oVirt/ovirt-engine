@@ -9,6 +9,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.asynctasks.SetTaskGroupStatusVisitor;
+import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -119,8 +121,9 @@ public class EntityAsyncTask extends SPMAsyncTask {
         }
 
         // set all task to success/fail
+        async_tasks dbAsyncTask = getParameters().getDbAsyncTask();
         for (EndedTaskInfo taskInfo : entityInfo.getEndedTasksInfo().getTasksInfo()) {
-            this.getParameters().getDbAsyncTask().getaction_parameters()
+            dbAsyncTask.getaction_parameters()
                     .Accept(taskInfo, new SetTaskGroupStatusVisitor(success));
         }
 
@@ -132,11 +135,14 @@ public class EntityAsyncTask extends SPMAsyncTask {
                 /**
                  * Creates context for the job which monitors the action
                  */
-                context = ExecutionHandler.createJobFinlalizingContext(getParameters().getDbAsyncTask().getStepId());
+                NGuid stepId = dbAsyncTask.getStepId();
+                if (stepId != null) {
+                    context = ExecutionHandler.createJobFinlalizingContext(stepId.getValue());
+                }
 
                 vdcReturnValue =
                         Backend.getInstance().endAction(entityInfo.getActionType(),
-                                this.getParameters().getDbAsyncTask().getaction_parameters(),
+                                dbAsyncTask.getaction_parameters(),
                                 new CommandContext(context));
             } catch (RuntimeException Ex) {
                 String errorMessage =

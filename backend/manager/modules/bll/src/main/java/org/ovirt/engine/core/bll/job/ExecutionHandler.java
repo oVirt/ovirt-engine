@@ -468,20 +468,18 @@ public class ExecutionHandler {
      * step exists, it must be part of a job, therefore the {@code Job} entity is being set as part of the context.
      *
      * @param stepId
-     *            The unique identifier of the step or {@code null} if no such step.
+     *            The unique identifier of the step. Must not be {@code null}.
      * @return The context for monitoring the finalizing step of the job, or {@code null} if no such step.
      */
-    public static ExecutionContext createJobFinlalizingContext(NGuid stepId) {
+    public static ExecutionContext createJobFinlalizingContext(Guid stepId) {
         ExecutionContext context = null;
         try {
-            if (stepId != null) {
-                Step step = JobRepositoryFactory.getJobRepository().getStep(stepId.getValue());
-                if (step != null) {
-                    context = new ExecutionContext();
-                    context.setJob(JobRepositoryFactory.getJobRepository().getJobWithSteps(step.getJobId()));
-                    context.setExecutionMethod(ExecutionMethod.AsJob);
-                    context.setMonitored(true);
-                }
+            Step step = JobRepositoryFactory.getJobRepository().getStep(stepId);
+            if (step != null) {
+                context = new ExecutionContext();
+                context.setJob(JobRepositoryFactory.getJobRepository().getJobWithSteps(step.getJobId()));
+                context.setExecutionMethod(ExecutionMethod.AsJob);
+                context.setMonitored(true);
             }
         } catch (Exception e) {
             log.error(e);
