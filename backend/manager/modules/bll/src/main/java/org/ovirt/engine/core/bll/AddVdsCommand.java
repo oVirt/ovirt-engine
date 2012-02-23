@@ -429,14 +429,16 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     @Override
     public Map<String, String> getJobMessageProperties() {
-        Map<String, String> jobMessageProperties = super.getJobMessageProperties();
-        VDS vds = getParameters().getvds();
-        if (vds != null && vds.getvds_name() != null) {
-            jobMessageProperties.put(VdcObjectType.VDS.name().toLowerCase(), vds.getvds_name());
-        } else {
-            jobMessageProperties.put(VdcObjectType.VDS.name(), "");
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            VDS vds = getParameters().getvds();
+            if (vds != null && vds.getvds_name() != null) {
+                jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), vds.getvds_name());
+            } else {
+                jobProperties.put(VdcObjectType.VDS.name(), "");
+            }
         }
-        return jobMessageProperties;
+        return jobProperties;
     }
 
 }
