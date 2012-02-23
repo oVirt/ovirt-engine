@@ -7,8 +7,22 @@
 		.form {
 			padding-top: 10px;
 		}
+
+ 		.alertsPanel {
+			padding-top: 5px;
+			padding-right: 16px;
+			padding-left: 16px;
+		}
 	</ui:style>
 
-	<f:VmGeneralModelForm ui:field="form" addStyleNames="{style.form}" />
+	<g:FlowPanel>
+		<f:VmGeneralModelForm ui:field="form" addStyleNames="{style.form}" />
+		<g:HTMLPanel ui:field="alertsPanel" addStyleNames="{style.alertsPanel}">
+			<div>
+				<b>Alerts</b>
+			</div>
+			<g:FlowPanel ui:field="alertsList"/>
+		</g:HTMLPanel>
+	</g:FlowPanel>
 
 </ui:UiBinder>

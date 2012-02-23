@@ -86,4 +86,10 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<li>{0}</li>")
     SafeHtml listItem(SafeHtml item);
 
+    @Template("<div style=\"text-align: center; padding-top: 6px;\">{0}{1}</div>")
+    SafeHtml statusWithAlertTemplate(SafeHtml statusImage, SafeHtml alertImage);
+
+    @Template("<div style=\"text-align: center; padding-top: 6px;\">{0}</div>")
+    SafeHtml statusTemplate(SafeHtml statusImage);
+
 }
