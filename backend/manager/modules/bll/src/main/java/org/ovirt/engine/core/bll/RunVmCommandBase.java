@@ -53,7 +53,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     private VdsSelector privateVdsSelector;
     protected boolean _isRerun = false;
     protected VDS _destinationVds;
-    private SnapshotsValidator snapshotsValidator;
+    private SnapshotsValidator snapshotsValidator=new SnapshotsValidator();
 
     protected RunVmCommandBase(Guid commandId) {
         super(commandId);
