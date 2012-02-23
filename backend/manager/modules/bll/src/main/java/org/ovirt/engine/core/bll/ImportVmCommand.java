@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -518,6 +519,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         } else {
             for (DiskImage disk : getVm().getImages()) {
                 DbFacade.getInstance().getDiskImageDAO().save(disk);
+                DbFacade.getInstance()
+                        .getStorageDomainDAO()
+                        .addImageStorageDomainMap(new image_storage_domain_map(disk.getId(), disk.getstorage_ids()
+                                .get(0)));
 
                 DiskImageDynamic diskDynamic = new DiskImageDynamic();
                 diskDynamic.setId(disk.getId());
