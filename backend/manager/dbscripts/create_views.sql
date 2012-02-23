@@ -200,7 +200,24 @@ WHERE entity_type = 'TEMPLATE';
 
 CREATE OR REPLACE VIEW vm_templates_storage_domain
 AS
-
+	SELECT            vm_templates.vm_guid AS vmt_guid, vm_templates.vm_name AS name, vm_templates.mem_size_mb,
+                      vm_templates.os, vm_templates.creation_date,		
+                      vm_templates.child_count, vm_templates.num_of_sockets, vm_templates.cpu_per_socket,		
+	                  vm_templates.num_of_sockets*vm_templates.cpu_per_socket AS num_of_cpus, vm_templates.description,		
+	                  vm_templates.vds_group_id, vm_templates.domain, vm_templates.num_of_monitors, vm_templates.template_status AS status,		
+	                  vm_templates.usb_policy, vm_templates.time_zone, vm_templates.is_auto_suspend, vm_templates.fail_back,		
+	                  vds_groups.name AS vds_group_name, vm_templates.vm_type, vm_templates.hypervisor_type, vm_templates.operation_mode,		                      vm_templates.nice_level, storage_pool.id AS storage_pool_id, storage_pool.name
+                      AS storage_pool_name,		
+	                  vm_templates.default_boot_sequence, vm_templates.default_display_type, vm_templates.priority, vm_templates.auto_startup,		
+	                  vm_templates.is_stateless, vm_templates.iso_path, vm_templates.origin, vm_templates.initrd_url, vm_templates.kernel_url,		
+	                  vm_templates.kernel_params, images.storage_id		
+FROM                  vm_static AS vm_templates INNER JOIN		
+	                  vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN		
+                      storage_pool ON storage_pool.id = vds_groups.storage_pool_id INNER JOIN		
+                      image_vm_map AS vm_template_image_map ON vm_template_image_map.vm_id = vm_templates.vm_guid LEFT JOIN		
+	                  images ON images.image_guid = vm_template_image_map.image_id		
+WHERE      entity_type = 'TEMPLATE'		
+UNION
 SELECT                vm_templates_1.vm_guid AS vmt_guid, vm_templates_1.vm_name AS name, vm_templates_1.mem_size_mb, vm_templates_1.os, vm_templates_1.creation_date,
                       vm_templates_1.child_count, vm_templates_1.num_of_sockets, vm_templates_1.cpu_per_socket,
                       vm_templates_1.num_of_sockets*vm_templates_1.cpu_per_socket AS num_of_cpus, vm_templates_1.description, vm_templates_1.vds_group_id,
