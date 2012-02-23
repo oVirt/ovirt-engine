@@ -492,6 +492,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected void RemoveSnapshotFromDB(DiskImage snapshot) {
+        DbFacade.getInstance().getStorageDomainDAO().removeImageStorageDomainMap(snapshot.getId());
         DbFacade.getInstance().getDiskImageDAO().remove(snapshot.getId());
         List<DiskImage> imagesForDisk =
                 DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(snapshot.getimage_group_id());

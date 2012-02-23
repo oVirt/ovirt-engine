@@ -129,7 +129,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                             .addImageStorageDomainMap(new image_storage_domain_map(snapshot.getId(),
                                     getParameters().getStorageDomainId()));
                 }
-            } else if (getParameters().getOperation() == ImageOperation.Copy) {
+            } else if (getParameters().getAddImageDomainMapping()) {
                 DbFacade.getInstance().getStorageDomainDAO().addImageStorageDomainMap(
                         new image_storage_domain_map(getParameters().getImageId(), getParameters()
                                 .getStorageDomainId()));
