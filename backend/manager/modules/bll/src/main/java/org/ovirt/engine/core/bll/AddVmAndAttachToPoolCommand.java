@@ -39,7 +39,10 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
             tempVar2.setStorageDomainId(getParameters().getStorageDomainId());
             tempVar2.setDontCheckTemplateImages(true);
             tempVar2.setDontAttachToDefaultTag(true);
-            returnValueFromAddVm = Backend.getInstance().runInternalAction(VdcActionType.AddVm, tempVar2);
+            returnValueFromAddVm =
+                    Backend.getInstance().runInternalAction(VdcActionType.AddVm,
+                            tempVar2,
+                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         }
         vmAddedSuccessfully = returnValueFromAddVm.getSucceeded();
 

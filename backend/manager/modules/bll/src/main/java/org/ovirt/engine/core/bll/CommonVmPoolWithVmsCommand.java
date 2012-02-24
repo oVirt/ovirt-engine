@@ -1,6 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -16,6 +23,8 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -28,6 +37,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
+import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.linq.All;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 
@@ -110,8 +120,10 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                     getStorageDomainId().getValue());
             tempVar2.setSessionId(getParameters().getSessionId());
             tempVar2.setParentCommand(VdcActionType.AddVmPoolWithVms);
-            VdcReturnValueBase returnValue = Backend.getInstance().runInternalAction(
-                    VdcActionType.AddVmAndAttachToPool, tempVar2);
+            VdcReturnValueBase returnValue =
+                    Backend.getInstance().runInternalAction(VdcActionType.AddVmAndAttachToPool,
+                            tempVar2,
+                            createAddVmStepContext(currentVmName));
             if (returnValue != null && !returnValue.getSucceeded() && returnValue.getCanDoActionMessages().size() > 0) {
                 for (String msg : returnValue.getCanDoActionMessages()) {
                     if (!getReturnValue().getCanDoActionMessages().contains(msg)) {
@@ -127,6 +139,29 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         setSucceeded(!isAtLeastOneVMCreationFailed);
         VmTemplateHandler.UnLockVmTemplate(getParameters().getVmStaticData().getvmt_guid());
         getCompensationContext().resetCompensation();
+    }
+
+    private CommandContext createAddVmStepContext(String currentVmName) {
+        CommandContext commandCtx = null;
+
+        try {
+            Map<String, String> values = new HashMap<String, String>();
+            values.put(VdcObjectType.VM.name().toLowerCase(), currentVmName);
+            Step addVmStep = ExecutionHandler.addSubStep(getExecutionContext(),
+                    getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
+                    StepEnum.ADD_VM_TO_POOL,
+                    ExecutionMessageDirector.resolveStepMessage(StepEnum.ADD_VM_TO_POOL, values));
+            ExecutionContext ctx = new ExecutionContext();
+            ctx.setStep(addVmStep);
+            ctx.setMonitored(true);
+            commandCtx = new CommandContext(ctx);
+        } catch (RuntimeException e) {
+            log.errorFormat("Failed to create command context of adding VM {0} to Pool {1}",
+                    currentVmName,
+                    getParameters().getVmPool().getvm_pool_name(),
+                    e);
+        }
+        return commandCtx;
     }
 
     public static boolean CanAddVmPoolWithVms(Object vmTemplateId, java.util.ArrayList<String> reasons, int vmsCount,
