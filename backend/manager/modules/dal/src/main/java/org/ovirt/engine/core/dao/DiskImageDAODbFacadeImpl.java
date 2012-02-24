@@ -74,6 +74,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setimage_group_id(Guid.createGuidFromString(rs
                         .getString("image_group_id")));
                 entity.setstorage_path(rs.getString("storage_path"));
+                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
                 entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                         .getString("storage_pool_id")));
                 entity.setdisk_interface(DiskInterface.forValue(rs
@@ -141,6 +142,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setimage_group_id(Guid.createGuidFromString(rs
                         .getString("image_group_id")));
                 entity.setstorage_path(rs.getString("storage_path"));
+                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
                 entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                         .getString("storage_pool_id")));
                 entity.setdisk_interface(DiskInterface.forValue(rs
@@ -208,6 +210,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                         .getInt("volume_format")));
                 entity.setdisk_type(DiskType.forValue(rs.getInt("disk_type")));
                 entity.setstorage_path(rs.getString("storage_path"));
+                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
                 entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                         .getString("storage_pool_id")));
                 entity.setdisk_interface(DiskInterface.forValue(rs
@@ -267,6 +270,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setimage_group_id(Guid.createGuidFromString(rs
                         .getString("image_group_id")));
                 entity.setstorage_path(rs.getString("storage_path"));
+                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
                 entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                         .getString("storage_pool_id")));
                 entity.setdisk_interface(DiskInterface.forValue(rs
@@ -326,6 +330,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setimage_group_id(Guid.createGuidFromString(rs
                         .getString("image_group_id")));
                 entity.setstorage_path(rs.getString("storage_path"));
+                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
                 entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                         .getString("storage_pool_id")));
                 entity.setdisk_interface(DiskInterface.forValue(rs
@@ -385,6 +390,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setimage_group_id(Guid.createGuidFromString(rs
                         .getString("image_group_id")));
                 entity.setstorage_path(rs.getString("storage_path"));
+                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
                 entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                         .getString("storage_pool_id")));
                 entity.setdisk_interface(DiskInterface.forValue(rs
@@ -444,6 +450,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setimage_group_id(Guid.createGuidFromString(rs
                         .getString("image_group_id")));
                 entity.setstorage_path(rs.getString("storage_path"));
+                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
                 entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                         .getString("storage_pool_id")));
                 entity.setdisk_interface(DiskInterface.forValue(rs
@@ -502,6 +509,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setimage_group_id(Guid.createGuidFromString(rs
                         .getString("image_group_id")));
                 entity.setstorage_path(rs.getString("storage_path"));
+                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
                 entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                         .getString("storage_pool_id")));
                 entity.setdisk_interface(DiskInterface.forValue(rs

@@ -25,7 +25,8 @@ AS
 
 -- TODO: Change code to treat disks values directly instead of through this view.
 SELECT DISTINCT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
-storage_domain_static_view.storage as storage_path,
+    storage_domain_static_view.storage_name as storage_name,
+    storage_domain_static_view.storage as storage_path,
 	storage_domain_static_view.storage_pool_id as storage_pool_id,
 	images.creation_date as creation_date,
     images.size as size,
@@ -93,7 +94,7 @@ LEFT OUTER JOIN repo_file_meta_data ON storage_pool_iso_map.storage_id = repo_fi
 
 CREATE OR REPLACE VIEW vm_images_view
 AS
-SELECT     images_storage_domain_view.storage_path as storage_path, images_storage_domain_view.storage_pool_id as storage_pool_id, images_storage_domain_view.image_guid as image_guid,
+SELECT     images_storage_domain_view.storage_path as storage_path, images_storage_domain_view.storage_name as storage_name, images_storage_domain_view.storage_pool_id as storage_pool_id, images_storage_domain_view.image_guid as image_guid,
                       images_storage_domain_view.creation_date as creation_date, disk_image_dynamic.actual_size as actual_size, disk_image_dynamic.read_rate as read_rate, disk_image_dynamic.write_rate as write_rate,
                       images_storage_domain_view.size as size, images_storage_domain_view.it_guid as it_guid,
                       images_storage_domain_view.internal_drive_mapping as internal_drive_mapping, images_storage_domain_view.description as description,

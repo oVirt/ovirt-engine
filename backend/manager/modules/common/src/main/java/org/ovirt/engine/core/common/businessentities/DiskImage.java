@@ -50,6 +50,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     // TODO comes from image_vm_map
     private Boolean activeField;
+    private ArrayList<String> storagesNames;
 
     @Override
     public int hashCode() {
@@ -386,7 +387,13 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         OnPropertyChanged(new PropertyChangedEventArgs("storage_path"));
     }
 
-    private Guid imageGroupId = null;
+    public ArrayList<String> getStoragesNames() {
+        return storagesNames;
+    }
+
+    public void setStoragesNames(ArrayList<String>  value) {
+        storagesNames = value;
+    }
 
     public Guid getimage_group_id() {
         return getDisk().getId();
