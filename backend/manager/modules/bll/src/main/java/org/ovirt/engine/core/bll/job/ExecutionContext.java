@@ -156,6 +156,8 @@ public class ExecutionContext implements Serializable{
         if (parentTasksStep == null) {
             if (job != null) {
                 parentTasksStep = job.getStep(StepEnum.EXECUTING);
+            } else if (step != null) {
+                parentTasksStep = step.getStep(StepEnum.EXECUTING);
             }
         }
         return parentTasksStep;

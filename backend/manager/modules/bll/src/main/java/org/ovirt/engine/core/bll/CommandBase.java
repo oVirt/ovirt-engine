@@ -106,7 +106,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     /**
      * A map contains the properties for describing the job
      */
-    private Map<String, String> jobProperties;
+    protected Map<String, String> jobProperties;
 
     protected CommandActionState getActionState() {
         return _actionState;

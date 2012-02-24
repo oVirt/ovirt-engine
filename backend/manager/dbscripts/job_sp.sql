@@ -375,7 +375,8 @@ AS $procedure$
 BEGIN
     RETURN QUERY SELECT step.*
     FROM step
-    WHERE parent_step_id = v_parent_step_id;
+    WHERE parent_step_id = v_parent_step_id
+    ORDER BY step_number;
 END; $procedure$
 LANGUAGE plpgsql;
 

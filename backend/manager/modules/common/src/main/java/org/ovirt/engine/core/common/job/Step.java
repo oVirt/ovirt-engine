@@ -252,6 +252,17 @@ public class Step extends IVdcQueryable implements BusinessEntity<Guid> {
         return steps;
     }
 
+    public Step getStep(StepEnum stepType) {
+        Step stepByType = null;
+        for (Step step : steps) {
+            if (step.getStepType() == stepType) {
+                stepByType = step;
+                break;
+            }
+        }
+        return stepByType;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
