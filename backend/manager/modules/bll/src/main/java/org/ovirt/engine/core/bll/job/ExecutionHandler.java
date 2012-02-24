@@ -195,7 +195,7 @@ public class ExecutionHandler {
                 context.setExecutionMethod(ExecutionMethod.AsJob);
                 context.setJob(job);
                 command.setExecutionContext(context);
-                context.setMonitored(isMonitored);
+                context.setMonitored(true);
             }
         } catch (Exception e) {
             log.errorFormat("Failed to prepare command of type {0} for monitoring due to error {1}",
