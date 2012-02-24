@@ -150,6 +150,8 @@
 		<include name="core/common/queries/GetQuotaByQuotaIdQueryParameters.java"/>
 		<include name="core/common/queries/GetQuotaVdsGroupByQuotaIdQueryParameters.java"/>
 		<include name="core/common/queries/GetQuotaStorageByQuotaIdQueryParameters.java"/>
+		<include name="core/common/queries/GetEntitiesRelatedToQuotaIdParameters.java"/>
+		<include name="core/common/queries/GetDisksByQuotaIdParameters.java"/>
 		
 		
 		<!-- Misc -->

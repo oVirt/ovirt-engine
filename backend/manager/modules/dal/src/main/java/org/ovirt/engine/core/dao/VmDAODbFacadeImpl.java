@@ -140,6 +140,14 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
+    public List<VM> getAllVmsRelatedToQuotaId(Guid quotaId) {
+        return getCallsHandler().executeReadList("getAllVmsRelatedToQuotaId",
+                new VMRowMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("quota_id", quotaId));
+    }
+
+    @Override
     public List<VM> getAllRunningForStorageDomain(Guid id) {
         return getCallsHandler().executeReadList("GetRunningVmsByStorageDomainId",
                 new VMRowMapper(),

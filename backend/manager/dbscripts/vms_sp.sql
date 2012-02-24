@@ -879,6 +879,20 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION getAllVmsRelatedToQuotaId(v_quota_id UUID) RETURNS SETOF vms
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT vms.*
+      FROM vms
+      WHERE quota_id = v_quota_id
+      UNION
+      SELECT DISTINCT vms.*
+      FROM vms, image_vm_map, images
+      WHERE vms.vm_guid = image_vm_map.vm_id
+        AND images.image_guid = image_vm_map.image_id
+        AND images.quota_id = v_quota_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 

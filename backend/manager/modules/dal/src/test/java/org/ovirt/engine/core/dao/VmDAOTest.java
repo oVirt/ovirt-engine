@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -138,6 +139,23 @@ public class VmDAOTest extends BaseDAOTestCase {
     public void testGetAllForAdGroupByName() {
         List<VM> result = dao.getAllForAdGroupByName("philosophers");
 
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+    /**
+     * Ensures that getting all VMs for a storage domain works as expected.
+     */
+    @Test
+    public void testGetAllVmsRelatedToQuotaIdWithNoVmsRelated() {
+        List<VM> result = dao.getAllVmsRelatedToQuotaId(FixturesTool.QUOTA_SPECIFIC);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetAllVmsRelatedToQuotaId() {
+        List<VM> result = dao.getAllVmsRelatedToQuotaId(FixturesTool.QUOTA_GENERAL);
         assertNotNull(result);
         assertFalse(result.isEmpty());
     }

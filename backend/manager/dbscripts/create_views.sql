@@ -337,7 +337,7 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_dynamic.run_on_vds as run_on_vds, vm_dynamic.migrating_to_vds as migrating_to_vds, vm_dynamic.app_list as app_list, vm_dynamic.display as display, vm_dynamic.hibernation_vol_handle as hibernation_vol_handle,
                       vm_pool_map_view.vm_pool_name as vm_pool_name, vm_pool_map_view.vm_pool_id as vm_pool_id, vm_static.vm_guid as vm_guid, vm_static.num_of_monitors as num_of_monitors, vm_static.is_initialized as is_initialized,
                       vm_static.is_auto_suspend as is_auto_suspend, vm_static.num_of_sockets as num_of_sockets, vm_static.cpu_per_socket as cpu_per_socket, vm_static.usb_policy as usb_policy, vm_dynamic.acpi_enable as acpi_enable, vm_dynamic.session as session,
-                      vm_static.num_of_sockets*vm_static.cpu_per_socket as num_of_cpus,
+                      vm_static.num_of_sockets*vm_static.cpu_per_socket as num_of_cpus, vm_static.quota_id as quota_id,
                       vm_dynamic.display_ip as display_ip, vm_dynamic.display_type as display_type, vm_dynamic.kvm_enable as kvm_enable, vm_dynamic.boot_sequence as boot_sequence,
                       vm_dynamic.display_secure_port as display_secure_port, vm_dynamic.utc_diff as utc_diff, vm_dynamic.last_vds_run_on as last_vds_run_on,
 					  vm_dynamic.client_ip as client_ip,vm_dynamic.guest_requested_memory as guest_requested_memory, vm_static.time_zone as time_zone, vm_statistics.cpu_user as cpu_user, vm_statistics.cpu_sys as cpu_sys,
