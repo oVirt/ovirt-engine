@@ -39,4 +39,5 @@ public class ExtendedTemplateSubTabPanelPresenter extends TabContainerPresenter<
     protected void revealInParent() {
         RevealContentEvent.fire(this, SideTabExtendedTemplatePresenter.TYPE_SetSubTabPanelContent, this);
     }
+
 }

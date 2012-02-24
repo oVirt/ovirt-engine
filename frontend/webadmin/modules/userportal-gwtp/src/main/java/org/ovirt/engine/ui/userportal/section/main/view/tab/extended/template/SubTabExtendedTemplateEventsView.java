@@ -16,8 +16,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabExtendedTemplateEventsView
-        extends AbstractSubTabTableWidgetView<VmTemplate, AuditLog, UserPortalTemplateListModel, TemplateEventListModel>
+public class SubTabExtendedTemplateEventsView extends AbstractSubTabTableWidgetView<VmTemplate, AuditLog, UserPortalTemplateListModel, TemplateEventListModel>
         implements SubTabExtendedTemplateEventsPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabExtendedTemplateEventsView> {
@@ -26,12 +25,9 @@ public class SubTabExtendedTemplateEventsView
 
     @Inject
     public SubTabExtendedTemplateEventsView(TemplateEventListModelProvider modelProvider,
-            EventBus eventBus,
-            ClientStorage clientStorage) {
-        super(new EventListModelTable<TemplateEventListModel>(modelProvider,
-                eventBus,
-                clientStorage,
-                new UserPortalAuditLogSeverityColumn()));
+            EventBus eventBus, ClientStorage clientStorage) {
+        super(new EventListModelTable<TemplateEventListModel>(modelProvider, eventBus,
+                clientStorage, new UserPortalAuditLogSeverityColumn()));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());

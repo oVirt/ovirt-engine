@@ -59,7 +59,26 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Snapshots")
     String extendedVirtualMachineSnapshotSubTabLabel();
 
-    // console popup view
+    @DefaultStringValue("Permissions")
+    String extendedVirtualMachinePermissionSubTabLabel();
+
+    @DefaultStringValue("General")
+    String extendedTemplateGeneralSubTabLabel();
+
+    @DefaultStringValue("Network Interfaces")
+    String extendedTemplateNetworkInterfacesSubTabLabel();
+
+    @DefaultStringValue("Virtual Disks")
+    String extendedTemplateVirtualDisksSubTabLabel();
+
+    @DefaultStringValue("Events")
+    String extendedTemplateEventsSubTabLabel();
+
+    @DefaultStringValue("Permissions")
+    String extendedTemplatePermissionsSubTabLabel();
+
+    // Console popup view
+
     @DefaultStringValue("Spice")
     String spice();
 
@@ -84,18 +103,4 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Console Options")
     String consoleOptions();
 
-    @DefaultStringValue("General")
-    String extendedTemplateGeneralSubTabLabel();
-
-    @DefaultStringValue("Network Interfaces")
-    String extendedTemplateNetworkInterfacesSubTabLabel();
-
-    @DefaultStringValue("Virtual Disks")
-    String extendedTemplateVirtualDisksSubTabLabel();
-
-    @DefaultStringValue("Events")
-    String extendedTemplateEventsSubTabLabel();
-
-    @DefaultStringValue("Permissions")
-    String extendedTemplatePermissionsSubTabLabel();
 }

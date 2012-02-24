@@ -35,11 +35,8 @@ public class SubTabExtendedTemplateVirtualDisksPresenter
     }
 
     @Inject
-    public SubTabExtendedTemplateVirtualDisksPresenter(EventBus eventBus,
-            ViewDef view,
-            ProxyDef proxy,
-            PlaceManager placeManager,
-            TemplateDiskListModelProvider modelProvider) {
+    public SubTabExtendedTemplateVirtualDisksPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+            PlaceManager placeManager, TemplateDiskListModelProvider modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

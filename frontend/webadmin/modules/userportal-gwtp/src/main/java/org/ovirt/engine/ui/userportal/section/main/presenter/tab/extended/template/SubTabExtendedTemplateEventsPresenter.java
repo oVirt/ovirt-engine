@@ -35,11 +35,8 @@ public class SubTabExtendedTemplateEventsPresenter
     }
 
     @Inject
-    public SubTabExtendedTemplateEventsPresenter(EventBus eventBus,
-            ViewDef view,
-            ProxyDef proxy,
-            PlaceManager placeManager,
-            TemplateEventListModelProvider modelProvider) {
+    public SubTabExtendedTemplateEventsPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+            PlaceManager placeManager, TemplateEventListModelProvider modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

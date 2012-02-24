@@ -23,10 +23,8 @@ public class SubTabExtendedTemplateNetworkInterfacesView extends AbstractSubTabT
     }
 
     @Inject
-    public SubTabExtendedTemplateNetworkInterfacesView(
-            TemplateInterfaceListModelProvider modelProvider,
-            EventBus eventBus,
-            ClientStorage clientStorage) {
+    public SubTabExtendedTemplateNetworkInterfacesView(TemplateInterfaceListModelProvider modelProvider,
+            EventBus eventBus, ClientStorage clientStorage) {
         super(new TemplateInterfaceListModelTable(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();

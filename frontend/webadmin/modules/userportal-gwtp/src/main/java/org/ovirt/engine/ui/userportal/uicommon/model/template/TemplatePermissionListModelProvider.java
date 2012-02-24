@@ -9,11 +9,11 @@ import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailM
 
 import com.google.inject.Inject;
 
-public class PermissionListModelProvider
+public class TemplatePermissionListModelProvider
         extends UserPortalSearchableDetailModelProvider<permissions, UserPortalTemplateListModel, PermissionListModel> {
 
     @Inject
-    public PermissionListModelProvider(ClientGinjector ginjector,
+    public TemplatePermissionListModelProvider(ClientGinjector ginjector,
             UserPortalTemplateListProvider parentProvider,
             UserPortalModelResolver resolver) {
         super(ginjector, parentProvider, PermissionListModel.class, resolver);
@@ -23,4 +23,5 @@ public class PermissionListModelProvider
     protected PermissionListModel createModel() {
         return new PermissionListModel();
     }
+
 }

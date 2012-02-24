@@ -6,15 +6,16 @@ import org.ovirt.engine.ui.userportal.uicommon.UserPortalConfigurator;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
-import org.ovirt.engine.ui.userportal.uicommon.model.template.PermissionListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateDiskListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateEventListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateGeneralModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateInterfaceListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplatePermissionListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.UserPortalTemplateListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmDiskListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmGeneralModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmInterfaceListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmPermissionListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmSnapshotListModelProvider;
 
 import com.google.inject.Singleton;
@@ -40,6 +41,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(VmInterfaceListModelProvider.class).asEagerSingleton();
         bind(VmDiskListModelProvider.class).asEagerSingleton();
         bind(VmSnapshotListModelProvider.class).asEagerSingleton();
+        bind(VmPermissionListModelProvider.class).asEagerSingleton();
 
         // Extended tab: Template
         bind(UserPortalTemplateListProvider.class).asEagerSingleton();
@@ -47,7 +49,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(TemplateInterfaceListModelProvider.class).asEagerSingleton();
         bind(TemplateDiskListModelProvider.class).asEagerSingleton();
         bind(TemplateEventListModelProvider.class).asEagerSingleton();
-        bind(PermissionListModelProvider.class).asEagerSingleton();
+        bind(TemplatePermissionListModelProvider.class).asEagerSingleton();
     }
 
     void bindIntegration() {

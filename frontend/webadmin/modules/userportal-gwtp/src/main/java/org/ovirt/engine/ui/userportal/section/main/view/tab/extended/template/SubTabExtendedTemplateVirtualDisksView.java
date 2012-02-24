@@ -15,8 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabExtendedTemplateVirtualDisksView
-        extends AbstractSubTabTableWidgetView<VmTemplate, DiskImage, UserPortalTemplateListModel, TemplateDiskListModel>
+public class SubTabExtendedTemplateVirtualDisksView extends AbstractSubTabTableWidgetView<VmTemplate, DiskImage, UserPortalTemplateListModel, TemplateDiskListModel>
         implements SubTabExtendedTemplateVirtualDisksPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabExtendedTemplateVirtualDisksView> {
@@ -24,13 +23,12 @@ public class SubTabExtendedTemplateVirtualDisksView
     }
 
     @Inject
-    public SubTabExtendedTemplateVirtualDisksView(
-            TemplateDiskListModelProvider modelProvider,
-            EventBus eventBus,
-            ClientStorage clientStorage) {
+    public SubTabExtendedTemplateVirtualDisksView(TemplateDiskListModelProvider modelProvider,
+            EventBus eventBus, ClientStorage clientStorage) {
         super(new TemplateDiskListModelTable(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());
     }
+
 }

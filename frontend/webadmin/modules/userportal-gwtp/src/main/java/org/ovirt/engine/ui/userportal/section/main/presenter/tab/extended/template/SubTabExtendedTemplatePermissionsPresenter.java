@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
-import org.ovirt.engine.ui.userportal.uicommon.model.template.PermissionListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplatePermissionListModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -35,11 +35,8 @@ public class SubTabExtendedTemplatePermissionsPresenter
     }
 
     @Inject
-    public SubTabExtendedTemplatePermissionsPresenter(EventBus eventBus,
-            ViewDef view,
-            ProxyDef proxy,
-            PlaceManager placeManager,
-            PermissionListModelProvider modelProvider) {
+    public SubTabExtendedTemplatePermissionsPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+            PlaceManager placeManager, TemplatePermissionListModelProvider modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

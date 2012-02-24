@@ -39,6 +39,9 @@ public class ApplicationPlaces {
     public static final String extendedVirtualMachineSnapshotSubTabPlace = extendedVirtualMachineSideTabPlace
             + SUB_TAB_PREFIX + "snapshots";
 
+    public static final String extendedVirtualMachinePermissionSubTabPlace = extendedVirtualMachineSideTabPlace
+            + SUB_TAB_PREFIX + "permissions";
+
     // Templates
 
     public static final String extendedTempplateGeneralSubTabPlace = extendedTemplateSideTabPlace
@@ -55,4 +58,5 @@ public class ApplicationPlaces {
 
     public static final String extendedTempplatePersmissionsSubTabPlace = extendedTemplateSideTabPlace
             + SUB_TAB_PREFIX + "permissions";
+
 }

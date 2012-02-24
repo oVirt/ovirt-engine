@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template;
 
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -13,7 +14,6 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 
 public abstract class BasicSubTabExtendedTemplatePresenter<M extends ListWithDetailsModel, D extends EntityModel, V extends AbstractSubTabPresenter.ViewDef<VmTemplate>, P extends TabContentProxyPlace<?>>
         extends AbstractSubTabPresenter<VmTemplate, M, D, V, P> {
@@ -37,4 +37,5 @@ public abstract class BasicSubTabExtendedTemplatePresenter<M extends ListWithDet
     public void onExtendedTemplateSelectionChange(ExtendedTemplateSelectionChangeEvent event) {
         updateMainTabSelection(event.getSelectedItems());
     }
+
 }
