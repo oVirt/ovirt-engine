@@ -122,6 +122,12 @@ public class JobDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Job, Guid> imp
 
     }
 
+    @Override
+    public boolean checkIfJobHasTasks(Guid jobId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("job_id", jobId);
+        return getCallsHandler().executeRead("CheckIfJobHasTasks", createBooleanMapper(), parameterSource);
+    }
+
     private static class JobRowMapper implements ParameterizedRowMapper<Job> {
 
         @Override

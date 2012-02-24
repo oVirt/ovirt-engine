@@ -473,3 +473,21 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+-------------------------------------
+-- Checks if a Job has step for tasks
+-------------------------------------
+Create or replace FUNCTION CheckIfJobHasTasks(
+    v_job_id UUID)
+RETURNS SETOF booleanResultType
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT EXISTS(
+        SELECT *
+        FROM   step
+        WHERE  job_id = v_job_id
+        AND    external_id is not null
+        AND    external_system_type = 'VDSM');
+END; $procedure$
+LANGUAGE plpgsql;
+

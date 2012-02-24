@@ -79,4 +79,13 @@ public interface JobDao extends GenericDao<Job, Guid> {
      *            the date which failed jobs with older end time will be deleted.
      */
     void deleteCompletedJobs(Date succeededJobs, Date failedJobs);
+
+    /**
+     * Checks if a job has step associated with VDSM task
+     *
+     * @param jobId
+     *            The job id to search by
+     * @return true if the job contains a step associated with VDSM task, else false
+     */
+    boolean checkIfJobHasTasks(Guid jobId);
 }
