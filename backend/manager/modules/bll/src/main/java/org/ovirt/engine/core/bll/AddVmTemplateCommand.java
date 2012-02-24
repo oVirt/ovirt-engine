@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -403,10 +403,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
      * in case of non-existing cluster the backend query will return a null
      */
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        VDSGroup vdsGroup = getVdsGroup();
-        return Collections.singletonMap(vdsGroup == null || vdsGroup.getstorage_pool_id() == null ? null : vdsGroup
-                .getstorage_pool_id().getValue(), VdcObjectType.StoragePool);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(getVdsGroup() == null
+                || getVdsGroup().getstorage_pool_id() == null ? null : getVdsGroup()
+                .getstorage_pool_id().getValue(), VdcObjectType.StoragePool,
+                getActionType().getActionGroup()));
     }
 
     private void addPermission() {

@@ -1,20 +1,20 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.SetConfigurationValueParametes;
 import org.ovirt.engine.core.common.businessentities.VdcOption;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class SetConfigurationValueCommand<T extends SetConfigurationValueParametes> extends ConfigCommandBase<T> {
     public SetConfigurationValueCommand(T parameters) {
@@ -64,8 +64,9 @@ public class SetConfigurationValueCommand<T extends SetConfigurationValueParamet
     private static Log log = LogFactory.getLog(SetConfigurationValueCommand.class);
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID, VdcObjectType.System);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
+                VdcObjectType.System,
+                getActionType().getActionGroup()));
     }
-
 }

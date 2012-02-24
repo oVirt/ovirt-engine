@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,7 +42,9 @@ public class AddRoleCommand<T extends RolesOperationsParameters> extends RolesOp
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID, VdcObjectType.System);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
+                VdcObjectType.System,
+                getActionType().getActionGroup()));
     }
 }

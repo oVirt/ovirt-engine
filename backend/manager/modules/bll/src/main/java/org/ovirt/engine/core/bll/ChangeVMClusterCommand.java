@@ -1,12 +1,11 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.annotations.common.util.StringHelper;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -15,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
@@ -173,11 +171,10 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        Map<Guid, VdcObjectType> map = new HashMap<Guid, VdcObjectType>(2);
-        map.put(getParameters().getVmId(), VdcObjectType.VM);
-        map.put(getParameters().getClusterId(), VdcObjectType.VdsGroups);
-        return Collections.unmodifiableMap(map);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        permissionList.add(new PermissionSubject(getParameters().getVmId(), VdcObjectType.VM, getActionType().getActionGroup()));
+        permissionList.add(new PermissionSubject(getParameters().getClusterId(), VdcObjectType.VdsGroups, getActionType().getActionGroup()));
+        return permissionList;
     }
-
 }

@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
@@ -78,7 +79,10 @@ public class RemoveUserCommand<T extends AdElementParametersBase> extends UserCo
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID, VdcObjectType.System);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        // Not needed for admin operations.
+        return Collections.singletonList(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
+                VdcObjectType.System,
+                getActionType().getActionGroup()));
     }
 }

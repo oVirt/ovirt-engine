@@ -6,13 +6,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -73,16 +73,11 @@ public class ExecutionHandler {
         return job;
     }
 
-    private static Map<Guid, VdcObjectType> getSubjectEntities(Map<Guid, VdcObjectType> subjects) {
+    private static Map<Guid, VdcObjectType> getSubjectEntities(List<PermissionSubject> permSubjectList) {
         Map<Guid, VdcObjectType> entities = new HashMap<Guid, VdcObjectType>();
-        VdcObjectType entityType;
         Guid entityId;
-        for (Entry<Guid, VdcObjectType> entry : subjects.entrySet()) {
-            entityType = entry.getValue();
-            entityId = entry.getKey();
-            if (entityType != null && entityId != null) {
-                entities.put(entityId, entityType);
-            }
+        for (PermissionSubject permSubj : permSubjectList) {
+            entities.put(permSubj.getObjectId(), permSubj.getObjectType());
         }
         return entities;
     }

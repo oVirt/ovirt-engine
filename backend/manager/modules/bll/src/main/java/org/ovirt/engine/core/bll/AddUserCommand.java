@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.businessentities.AdUser;
@@ -75,7 +76,9 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
     }
 
     @Override
-    public Map getPermissionCheckSubjects() {
-        return Collections.singletonMap(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID, VdcObjectType.System);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
+                VdcObjectType.System,
+                getActionType().getActionGroup()));
     }
 }

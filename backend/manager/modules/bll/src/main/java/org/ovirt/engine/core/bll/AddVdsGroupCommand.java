@@ -2,10 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -168,9 +167,11 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(getVdsGroup().getstorage_pool_id() == null ? null
-                : getVdsGroup().getstorage_pool_id().getValue(), VdcObjectType.StoragePool);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(getVdsGroup().getstorage_pool_id() == null ? null
+                : getVdsGroup().getstorage_pool_id().getValue(),
+                VdcObjectType.StoragePool,
+                getActionType().getActionGroup()));
     }
 
     @Override

@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachAdGroupTimeLeasedPoolCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -33,7 +34,8 @@ public class AttachAdGroupTimeLeasedPoolCommand<T extends AttachAdGroupTimeLease
 
     // TODO this command should be removed - AI Ofrenkel
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(Guid.Empty, VdcObjectType.Unknown);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(Guid.Empty, VdcObjectType.Unknown,
+                getActionType().getActionGroup()));
     }
 }

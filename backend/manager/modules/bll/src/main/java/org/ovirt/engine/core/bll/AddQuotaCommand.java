@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -38,9 +39,11 @@ public class AddQuotaCommand<T extends QuotaCRUDParameters> extends CommandBase<
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(getStoragePoolId() == null ? null : getStoragePoolId().getValue(),
-                VdcObjectType.StoragePool);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(getStoragePoolId() == null ? null
+                : getStoragePoolId().getValue(),
+                VdcObjectType.StoragePool,
+                getActionType().getActionGroup()));
     }
 
     protected void setActionMessageParameters() {

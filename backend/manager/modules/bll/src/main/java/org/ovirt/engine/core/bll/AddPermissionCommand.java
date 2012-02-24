@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -141,8 +142,10 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
+    public List<PermissionSubject> getPermissionCheckSubjects() {
         permissions permission = getParameters().getPermission();
-        return Collections.singletonMap(permission.getObjectId(), permission.getObjectType());
+        return Collections.singletonList(new PermissionSubject(permission.getObjectId(),
+                permission.getObjectType(),
+                getActionType().getActionGroup()));
     }
 }

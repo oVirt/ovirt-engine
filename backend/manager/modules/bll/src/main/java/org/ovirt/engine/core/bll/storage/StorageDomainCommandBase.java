@@ -3,10 +3,10 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -326,8 +326,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(getParameters().getStorageDomainId(), VdcObjectType.Storage);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(getParameters().getStorageDomainId(), VdcObjectType.Storage,
+                getActionType().getActionGroup()));
     }
 
     protected void changeStorageDomainStatusInTransaction(final storage_pool_iso_map map,

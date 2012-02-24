@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
@@ -44,7 +44,11 @@ public abstract class VdsGroupCommandBase<T extends VdsGroupParametersBase> exte
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(getParameters().getVdsGroupId(), VdcObjectType.VdsGroups);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        permissionList.add(new PermissionSubject(getParameters().getVdsGroupId(),
+                VdcObjectType.VdsGroups,
+                getActionType().getActionGroup()));
+        return permissionList;
     }
 }

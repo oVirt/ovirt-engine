@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -223,7 +224,8 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     private static Log log = LogFactory.getLog(FenceVdsManualyCommand.class);
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(getParameters().getVdsId(), VdcObjectType.VDS);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(getParameters().getVdsId(), VdcObjectType.VDS,
+                getActionType().getActionGroup()));
     }
 }

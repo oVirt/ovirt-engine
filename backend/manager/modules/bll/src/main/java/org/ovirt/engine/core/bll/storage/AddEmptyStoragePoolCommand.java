@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.bll.AddVdsGroupCommand;
 import org.ovirt.engine.core.bll.Backend;
@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.PredefinedRoles;
 import org.ovirt.engine.core.bll.QuotaHelper;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
@@ -106,7 +107,9 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID, VdcObjectType.System);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
+                VdcObjectType.System,
+                getActionType().getActionGroup()));
     }
 }

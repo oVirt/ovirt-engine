@@ -2,15 +2,14 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -589,11 +588,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        Map<Guid, VdcObjectType> map = new HashMap<Guid, VdcObjectType>();
-        map.put(getVdsGroupId(), VdcObjectType.VdsGroups);
-        map.put(getVmTemplateId(), VdcObjectType.VmTemplate);
-        return map;
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        permissionList.add(new PermissionSubject(getVdsGroupId(), VdcObjectType.VdsGroups, getActionType().getActionGroup()));
+        permissionList.add(new PermissionSubject(getVmTemplateId(), VdcObjectType.VmTemplate, getActionType().getActionGroup()));
+        return permissionList;
     }
 
     protected void addVmPermission() {

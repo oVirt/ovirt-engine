@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
@@ -173,8 +173,11 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 .getAllForVmPools((getParameters().getVmPoolId()).toString());
     }
 
-    @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(getVmPoolId() == null ? null : getVmPoolId().getValue(), VdcObjectType.VmPool);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        permissionList.add(new PermissionSubject(getVmPoolId() == null ? null : getVmPoolId().getValue(),
+                VdcObjectType.VmPool,
+                getActionType().getActionGroup()));
+        return permissionList;
     }
 }

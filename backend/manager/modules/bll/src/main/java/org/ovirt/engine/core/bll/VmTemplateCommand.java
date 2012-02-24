@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -243,7 +243,9 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(getVmTemplateId(), VdcObjectType.VmTemplate);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(getVmTemplateId(),
+                VdcObjectType.VmTemplate,
+                getActionType().getActionGroup()));
     }
 }

@@ -2,12 +2,11 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
-import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -141,9 +140,9 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
+    public List<PermissionSubject> getPermissionCheckSubjects() {
         // Not needed for admin operations.
-        return Collections.emptyMap();
+        return Collections.emptyList();
     }
 
 }

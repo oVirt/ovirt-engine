@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
@@ -90,8 +90,12 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
     // TODO - this code is shared with addPermissionCommand - check if
     // addPermission can extend this command
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(getParameters().getPermission().getObjectId(), getParameters().getPermission()
-                .getObjectType());
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        permissions permission = getParameters().getPermission();
+        permissionList.add(new PermissionSubject(permission.getObjectId(),
+                permission.getObjectType(),
+                getActionType().getActionGroup()));
+        return permissionList;
     }
 }

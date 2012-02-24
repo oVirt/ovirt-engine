@@ -2,9 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -195,7 +195,9 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
     private static Log log = LogFactory.getLog(AddVmFromScratchCommand.class);
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(getVdsGroupId(), VdcObjectType.VdsGroups);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(getVdsGroupId(),
+                VdcObjectType.VdsGroups,
+                getActionType().getActionGroup()));
     }
 }

@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.QuotaDAO;
@@ -47,9 +47,10 @@ public class UpdateQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(getQuotaId() == null ? null : getQuotaId().getValue(),
-                VdcObjectType.Quota);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(getQuotaId() == null ? null
+                : getQuotaId().getValue(),
+                VdcObjectType.Quota, getActionType().getActionGroup()));
     }
 
     protected void setActionMessageParameters() {

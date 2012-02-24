@@ -2,9 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DetachAdGroupFromTimeLeasedPoolParameters;
 import org.ovirt.engine.core.common.action.DetachUserFromTimeLeasedPoolParameters;
@@ -79,7 +79,9 @@ public class DetachAdGroupFromTimeLeasedPoolCommand<T extends DetachAdGroupFromT
 
     // TODO this command should be removed - AI Ofrenkel
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(Guid.Empty, VdcObjectType.Unknown);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(Guid.Empty,
+                VdcObjectType.Unknown,
+                getActionType().getActionGroup()));
     }
 }

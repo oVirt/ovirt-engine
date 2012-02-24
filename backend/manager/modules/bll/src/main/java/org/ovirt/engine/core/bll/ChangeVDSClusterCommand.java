@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -126,11 +127,11 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        Map<Guid, VdcObjectType> map = new HashMap<Guid, VdcObjectType>(2);
-        map.put(getParameters().getVdsId(), VdcObjectType.VDS);
-        map.put(getParameters().getClusterId(), VdcObjectType.VdsGroups);
-        Map<Guid, VdcObjectType> unmodifiableMap = Collections.unmodifiableMap(map);
-        return unmodifiableMap;
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>(2);
+        permissionList.add(new PermissionSubject(getParameters().getVdsId(), VdcObjectType.VDS, getActionType().getActionGroup()));
+        permissionList.add(new PermissionSubject(getParameters().getClusterId(), VdcObjectType.VdsGroups, getActionType().getActionGroup()));
+        List<PermissionSubject> unmodifiableList = Collections.unmodifiableList(permissionList);
+        return unmodifiableList;
     }
 }

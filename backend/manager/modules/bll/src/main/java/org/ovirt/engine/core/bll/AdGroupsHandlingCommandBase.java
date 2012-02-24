@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
@@ -65,7 +66,8 @@ public abstract class AdGroupsHandlingCommandBase<T extends AdElementParametersB
 
     // TODO to be removed
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(getGroupId(), VdcObjectType.User);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(getGroupId(), VdcObjectType.User,
+                getActionType().getActionGroup()));
     }
 }

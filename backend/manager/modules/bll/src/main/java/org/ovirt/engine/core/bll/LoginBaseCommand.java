@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.BrokerUtils;
@@ -14,7 +13,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapSearchByUserNameParameters;
 import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.LoginResult;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
@@ -24,7 +23,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.users.VdcUser;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -216,9 +214,9 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
+    public List<PermissionSubject> getPermissionCheckSubjects() {
         // Not needed for admin operations.
-        return Collections.emptyMap();
+        return Collections.emptyList();
     }
 
     private void updateUserData() {

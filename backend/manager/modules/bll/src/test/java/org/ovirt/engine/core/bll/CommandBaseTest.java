@@ -5,14 +5,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
-import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
@@ -36,8 +36,8 @@ public class CommandBaseTest {
         }
 
         @Override
-        public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-            return Collections.emptyMap();
+        public List<PermissionSubject> getPermissionCheckSubjects() {
+            return Collections.emptyList();
         }
     }
 

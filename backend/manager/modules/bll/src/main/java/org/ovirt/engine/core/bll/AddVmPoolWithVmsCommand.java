@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -62,11 +65,15 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        Map<Guid, VdcObjectType> map = new HashMap<Guid, VdcObjectType>();
-        map.put(getParameters().getVmStaticData().getvds_group_id(), VdcObjectType.VdsGroups);
-        map.put(getVmTemplateId(), VdcObjectType.VmTemplate);
-        return map;
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        permissionList.add(new PermissionSubject(getParameters().getVmStaticData().getvds_group_id(),
+                VdcObjectType.VdsGroups,
+                getActionType().getActionGroup()));
+        permissionList.add(new PermissionSubject(getVmTemplateId(), VdcObjectType.VmTemplate,
+                getActionType().getActionGroup()));
+
+        return permissionList;
     }
 
     @Override

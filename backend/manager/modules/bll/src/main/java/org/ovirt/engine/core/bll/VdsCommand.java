@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -183,8 +184,9 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(getVdsId(), VdcObjectType.VDS);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(getVdsId(), VdcObjectType.VDS,
+                getActionType().getActionGroup()));
     }
 
     private static Log log = LogFactory.getLog(VdsCommand.class);

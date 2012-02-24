@@ -5,11 +5,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MaintananceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.MaintananceVdsParameters;
@@ -41,14 +41,16 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
     private static Log log = LogFactory.getLog(MaintananceNumberOfVdssCommand.class);
     private final HashMap<Guid, VDS> vdssToMaintenance = new HashMap<Guid, VDS>();
     private ArrayList<Guid> _vdsGroupIds;
-    private final Map<Guid, VdcObjectType> inspectedEntitiesMap;
+    private final List<PermissionSubject> inspectedEntitiesMap;
 
     public MaintananceNumberOfVdssCommand(T parameters) {
         super(parameters);
         Iterable<Guid> vdsIdList = getParameters().getVdsIdList();
-        inspectedEntitiesMap = new HashMap<Guid, VdcObjectType>();
+        inspectedEntitiesMap = new ArrayList<PermissionSubject>();
         for (Guid g : vdsIdList) {
-            inspectedEntitiesMap.put(g, VdcObjectType.VDS);
+            inspectedEntitiesMap.add(new PermissionSubject(g,
+                    VdcObjectType.VDS,
+                    getActionType().getActionGroup()));
         }
     }
 
@@ -297,7 +299,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.unmodifiableMap(inspectedEntitiesMap);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.unmodifiableList(inspectedEntitiesMap);
     }
 }

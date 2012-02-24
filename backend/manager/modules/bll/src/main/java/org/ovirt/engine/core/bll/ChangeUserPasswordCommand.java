@@ -1,15 +1,14 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapChangeUserPasswordParameters;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.ChangeUserPasswordParameters;
-import org.ovirt.engine.core.compat.Guid;
 
 public class ChangeUserPasswordCommand<T extends ChangeUserPasswordParameters> extends CommandBase<T> {
     public ChangeUserPasswordCommand(T parameters) {
@@ -37,8 +36,8 @@ public class ChangeUserPasswordCommand<T extends ChangeUserPasswordParameters> e
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
+    public List<PermissionSubject> getPermissionCheckSubjects() {
         // Not needed for admin operations.
-        return Collections.emptyMap();
+        return Collections.emptyList();
     }
 }

@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -68,7 +69,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     private static VmStatic vmStaticForDefaultValues;
     private Map<Guid,Guid> imageToDestinationDomainMap;
     private List<DiskImage> imageList;
-    private transient Map<Guid, VdcObjectType> permissionCheckSubject;
+    private transient List<PermissionSubject> permissionCheckSubject;
 
     static {
         vmStaticForDefaultValues = new VmStatic();
@@ -778,11 +779,11 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
+    public List<PermissionSubject> getPermissionCheckSubjects() {
         if (permissionCheckSubject == null) {
-            permissionCheckSubject = new HashMap<Guid, VdcObjectType>();
+            permissionCheckSubject = new ArrayList<PermissionSubject>();
             for (Guid storageId : imageToDestinationDomainMap.values()) {
-                permissionCheckSubject.put(storageId, VdcObjectType.Storage);
+                permissionCheckSubject.add(new PermissionSubject(storageId, VdcObjectType.Storage, getActionType().getActionGroup()));
             }
 
         }

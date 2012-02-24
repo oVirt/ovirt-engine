@@ -6,11 +6,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -364,9 +364,10 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return parameters;
     }
 
+
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(getStoragePoolId() == null ? null : getStoragePoolId().getValue(),
-                VdcObjectType.StoragePool);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(getStoragePoolId() == null ? null : getStoragePoolId().getValue(),
+                VdcObjectType.StoragePool, getActionType().getActionGroup()));
     }
 }

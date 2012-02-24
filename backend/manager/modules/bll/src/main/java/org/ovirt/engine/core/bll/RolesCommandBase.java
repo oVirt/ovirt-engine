@@ -1,10 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -54,8 +53,10 @@ public abstract class RolesCommandBase<T extends RolesParameterBase> extends Com
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(getParameters().getRoleId(), VdcObjectType.Role);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        permissionList.add(new PermissionSubject(getParameters().getRoleId(), VdcObjectType.Role, getActionType().getActionGroup()));
+        return permissionList;
     }
 
     protected ArrayList<ActionGroup> getActionGroupsByRoleId(Guid roleId) {

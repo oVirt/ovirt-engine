@@ -4,11 +4,11 @@ import static org.ovirt.engine.core.bll.MultiLevelAdministrationHandler.SYSTEM_O
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.SANState;
@@ -212,8 +212,9 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     protected abstract boolean CanAddDomain();
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
-        return Collections.singletonMap(SYSTEM_OBJECT_ID, VdcObjectType.System);
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(SYSTEM_OBJECT_ID, VdcObjectType.System,
+                getActionType().getActionGroup()));
     }
 
     @Override

@@ -1,16 +1,15 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
-import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 /**
  * This class implements IsUserAutorizedToRunAction() so only admin users can
@@ -63,9 +62,9 @@ public abstract class AdminOperationCommandBase<T extends VdcActionParametersBas
     }
 
     @Override
-    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
+    public List<PermissionSubject> getPermissionCheckSubjects() {
         // Not needed for admin operations.
-        return Collections.emptyMap();
+        return Collections.emptyList();
     }
 
 }

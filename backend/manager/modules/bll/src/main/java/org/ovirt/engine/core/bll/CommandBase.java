@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.ejb.TransactionRolledbackLocalException;
 import javax.transaction.Status;
@@ -23,6 +22,7 @@ import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -487,7 +487,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             }
         } else if (getCurrentUser() != null) {
             // get subjects to check permissions on
-            Map<Guid, VdcObjectType> permSubjects = getPermissionCheckSubjects();
+            List<PermissionSubject> permSubjects = getPermissionCheckSubjects();
             if (permSubjects == null || permSubjects.isEmpty()) {
                 returnValue = false;
                 if (log.isDebugEnabled()) {
@@ -496,9 +496,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                             getActionType());
                 }
             } else {
-                for (Map.Entry<Guid, VdcObjectType> entry : permSubjects.entrySet()) {
+                for (PermissionSubject permSubject : permSubjects) {
                     // if objectId is null we can't check permission
-                    if (entry.getKey() == null) {
+                    if (permSubject.getObjectId() == null) {
                         returnValue = false;
                         if (log.isDebugEnabled()) {
                             log.debugFormat(
@@ -508,15 +508,15 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         break;
                     }
                     NGuid permId = DbFacade.getInstance().getEntityPermissions(getCurrentUser().getUserId(),
-                            getActionType().getActionGroup(), entry.getKey(), entry.getValue());
+                            permSubject.getActionGroup(), permSubject.getObjectId(), permSubject.getObjectType());
                     if (permId != null) {
                         if (log.isDebugEnabled()) {
                             log.debugFormat(
                                     "IsUserAutorizedToRunAction: found permission {0} for user when running {1}, on {2} with id {3}",
                                     permId,
                                     getActionType(),
-                                    entry.getValue().getVdcObjectTranslation(),
-                                    entry.getKey());
+                                    permSubject.getObjectType().getVdcObjectTranslation(),
+                                    permSubject.getObjectId());
                         }
                     } else {
                         returnValue = false;
@@ -524,8 +524,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                             log.debugFormat(
                                     "IsUserAutorizedToRunAction: no permission found for user when running {0}, on {1} with id {2}",
                                     getActionType(),
-                                    entry.getValue().getVdcObjectTranslation(),
-                                    entry.getKey());
+                                    permSubject.getObjectType().getVdcObjectTranslation(),
+                                    permSubject.getObjectId());
                         }
                         break;
                     }
@@ -671,24 +671,23 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 .append(isInternalExecution).append(".");
 
         // Get permissions of object ,to get object id.
-        Map<Guid, VdcObjectType> permSubjects = getPermissionCheckSubjects();
+        List<PermissionSubject> permissionSubjectList = getPermissionCheckSubjects();
 
         // Log if there is entry in the permission map.
-        if (permSubjects != null && !permSubjects.isEmpty()) {
+        if (permissionSubjectList != null && !permissionSubjectList.isEmpty()) {
             // Build entities string for entities affected by this operation.
             StringBuilder logEntityIdsInfo = new StringBuilder();
 
             // Iterate all over the entities , which should be affected.
-            for (Map.Entry<Guid, VdcObjectType> entry : permSubjects
-                    .entrySet()) {
-                if (entry.getKey() != null) {
+            for (PermissionSubject permSubject : permissionSubjectList) {
+                if (permSubject.getObjectId() != null) {
                     // Add comma when there are more then one entity
                     // affected.
                     if (logEntityIdsInfo.length() != 0) {
                         logEntityIdsInfo.append(", ");
                     }
-                    logEntityIdsInfo.append(" ID: ").append(entry.getKey())
-                            .append(" Type: ").append(entry.getValue());
+                    logEntityIdsInfo.append(" ID: ").append(permSubject.getObjectId())
+                            .append(" Type: ").append(permSubject.getObjectType());
                 }
             }
 
@@ -1096,7 +1095,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *
      * @return Map of GUIDs to Object types
      */
-    public abstract Map<Guid, VdcObjectType> getPermissionCheckSubjects();
+    public abstract List<PermissionSubject> getPermissionCheckSubjects();
 
     /**
      * Returns the properties which used to populate the job message. The default properties resolving will use
@@ -1109,14 +1108,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = new HashMap<String, String>();
-            Map<Guid, VdcObjectType> subjects = getPermissionCheckSubjects();
+            List<PermissionSubject> subjects = getPermissionCheckSubjects();
             if (!subjects.isEmpty()) {
                 VdcObjectType entityType;
                 Guid entityId;
                 String value;
-                for (Entry<Guid, VdcObjectType> entry : subjects.entrySet()) {
-                    entityType = entry.getValue();
-                    entityId = entry.getKey();
+                for (PermissionSubject permSubject : subjects) {
+                    entityType = permSubject.getObjectType();
+                    entityId = permSubject.getObjectId();
                     if (entityType != null && entityId != null) {
                         value = DbFacade.getInstance().getEntityNameByIdAndType(entityId, entityType);
                         if (value == null) {
