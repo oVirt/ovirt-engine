@@ -597,4 +597,34 @@ public class ExecutionHandler {
         }
         return returnValue;
     }
+    /**
+     * Checks if a Job has any Step associated with VDSM task
+     *
+     * @param context
+     *            The context of the execution stores the Job
+     * @return true if Job has any Step for VDSM Task, else false.
+     */
+    public static boolean checkIfJobHasTasks(ExecutionContext context) {
+        if (context == null || !context.isMonitored()) {
+            return false;
+        }
+
+        try {
+            Guid jobId = null;
+            if (context.getExecutionMethod() == ExecutionMethod.AsJob && context.getJob() != null) {
+                jobId = context.getJob().getId();
+            } else if (context.getExecutionMethod() == ExecutionMethod.AsStep && context.getStep() != null) {
+                jobId = context.getStep().getId();
+            }
+
+            if (jobId != null) {
+                return DbFacade.getInstance().getJobDao().checkIfJobHasTasks(jobId);
+            }
+        } catch (RuntimeException e) {
+            log.error(e);
+        }
+
+        return false;
+    }
+
 }

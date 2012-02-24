@@ -739,11 +739,15 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                     StartPollingAsyncTasks();
                 }
             } finally {
-                if (getReturnValue().getTaskIdList().isEmpty()) {
+                if (!hasTasks() && !ExecutionHandler.checkIfJobHasTasks(getExecutionContext())) {
                     ExecutionHandler.endJob(getExecutionContext(), getSucceeded());
                 }
             }
         }
+    }
+
+    private boolean hasTasks() {
+        return !getReturnValue().getTaskIdList().isEmpty();
     }
 
     private boolean getForceCompensation() {
@@ -904,7 +908,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private void cancelTasks() {
-        if (!getReturnValue().getTaskIdList().isEmpty()) {
+        if (hasTasks()) {
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
