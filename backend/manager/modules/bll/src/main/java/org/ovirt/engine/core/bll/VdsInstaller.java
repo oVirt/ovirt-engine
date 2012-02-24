@@ -124,7 +124,7 @@ public class VdsInstaller implements IVdsInstallCallBack {
         _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{RunFlag}", "False");
         _finishCommand = _finishCommand.replace("{RunFlag}", "True");
         if (!rebootAfterInstallation) {
-            _finishCommand = _finishCommand.replace("-b", "");
+            _finishCommand = _finishCommand.replace(" -b ", " ");
         }
 
         _serverName = vds.gethost_name();

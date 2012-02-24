@@ -18,7 +18,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 @NonTransactiveCommandAttribute
 public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsCommand<T> {
@@ -117,38 +116,42 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             }
             setSucceeded(installResult);
             log.infoFormat("After Installation {0}", Thread.currentThread().getName());
-            if (!getSucceeded()) {
-                AddCustomValue("FailedInstallMessage", getErrorMessage(_vdsInstaller.getErrorMessage()));
-                Backend.getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.SetVdsStatus,
-                               new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.InstallFailed));
-            } else {
+
+            if (getSucceeded()) {
                 if (_vdsInstaller.isAddOvirtFlow()) {
                     log.debugFormat("Add manual oVirt flow ended successfully for {0}.", getVds().getvds_name());
                     return;
                 }
-                Backend.getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.SetVdsStatus,
-                               new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Reboot));
-                if ((getVds().getvds_type() == VDSType.VDS && getParameters().isRebootAfterInstallation())
-                        || isOvirtReInstallOrUpgrade()) {
-                    RunSleepOnReboot();
-                } else if (getVds().getvds_type() == VDSType.PowerClient || getVds().getvds_type() == VDSType.oVirtNode) {
-                    ThreadPoolUtil.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            CBCSetStatus();
+
+                switch (getVds().getvds_type()) {
+                    case VDS:
+                        if (getParameters().isRebootAfterInstallation()) {
+                            setHostStatus(VDSStatus.Reboot);
+                            RunSleepOnReboot();
                         }
-                    });
+                        else {
+                            setHostStatus(VDSStatus.NonResponsive);
+                        }
+                        break;
+                    case oVirtNode:
+                        if (getParameters().getIsReinstallOrUpgrade()) {
+                            setHostStatus(VDSStatus.Reboot);
+                            RunSleepOnReboot();
+                        }
+                        else {
+                            setHostStatus(VDSStatus.NonResponsive);
+                        }
+                        break;
+                    case PowerClient:
+                        setHostStatus(VDSStatus.NonResponsive);
+                        break;
                 }
             }
+            else {
+                AddCustomValue("FailedInstallMessage", getErrorMessage(_vdsInstaller.getErrorMessage()));
+                setHostStatus(VDSStatus.InstallFailed);
+            }
         }
-    }
-
-    private boolean isOvirtReInstallOrUpgrade() {
-        return getParameters().getIsReinstallOrUpgrade() && getVds().getvds_type() == VDSType.oVirtNode;
     }
 
     /**
@@ -180,11 +183,15 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         return retValue;
     }
 
-    private void CBCSetStatus() {
+    private boolean isOvirtReInstallOrUpgrade() {
+        return getParameters().getIsReinstallOrUpgrade() && getVds().getvds_type() == VDSType.oVirtNode;
+    }
+
+    private void setHostStatus(VDSStatus stat) {
         Backend.getInstance()
         .getResourceManager()
         .RunVdsCommand(VDSCommandType.SetVdsStatus,
-                       new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.NonResponsive));
+                       new SetVdsStatusVDSCommandParameters(getVdsId(), stat));
     }
 
     protected String getErrorMessage(String msg)
