@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -37,18 +36,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         IVdsAsyncCommand {
 
     private static Log log = LogFactory.getLog(RunVmCommandBase.class);
-    private static VdsSelectionAlgorithm _defaultSelectionAlgorithm = VdsSelectionAlgorithm.EvenlyDistribute;
     protected static final HashMap<Guid, Integer> _vds_pending_vm_count = new HashMap<Guid, Integer>();
-
-    static {
-        try {
-            _defaultSelectionAlgorithm =
-                    VdsSelectionAlgorithm.valueOf(Config.<String> GetValue(ConfigValues.VdsSelectionAlgorithm));
-        } catch (Exception e) {
-            // todo
-        }
-    }
-
     private final Object _decreaseLock = new Object();
     private VdsSelector privateVdsSelector;
     protected boolean _isRerun = false;
@@ -86,10 +74,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      */
     private ArrayList<Guid> getRunVdssList() {
         return getVdsSelector().getRunVdssList();
-    }
-
-    public static VdsSelectionAlgorithm getDefaultSelectionAlgorithm() {
-        return _defaultSelectionAlgorithm;
     }
 
     /**

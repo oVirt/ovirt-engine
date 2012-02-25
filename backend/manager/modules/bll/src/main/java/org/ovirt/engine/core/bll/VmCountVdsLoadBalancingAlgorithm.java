@@ -7,6 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,6 +16,18 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
+
+    private static VdsSelectionAlgorithm defaultSelectionAlgorithm;
+
+    static {
+        try {
+            defaultSelectionAlgorithm =
+                    VdsSelectionAlgorithm.valueOf(Config.<String> GetValue(ConfigValues.VdsSelectionAlgorithm));
+        } catch (Exception e) {
+            defaultSelectionAlgorithm = VdsSelectionAlgorithm.EvenlyDistribute;
+        }
+    }
+
     public VmCountVdsLoadBalancingAlgorithm(VDSGroup group) {
         super(group);
     }
@@ -22,7 +35,7 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
     @Override
     protected void InitOverUtilizedList() {
         int vmCount = 0;
-        switch (RunVmCommandBase.getDefaultSelectionAlgorithm()) {
+        switch (defaultSelectionAlgorithm) {
         case EvenlyDistribute: {
             vmCount = Config.<Integer> GetValue(ConfigValues.HighUtilizationForEvenlyDistribute);
             break;
@@ -62,7 +75,7 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
     @Override
     protected void InitUnderUtilizedList() {
         int vmCount = 0;
-        switch (RunVmCommandBase.getDefaultSelectionAlgorithm()) {
+        switch (defaultSelectionAlgorithm) {
         case EvenlyDistribute: {
             vmCount = Config.<Integer> GetValue(ConfigValues.LowUtilizationForEvenlyDistribute);
             break;
@@ -105,7 +118,7 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
         int lowVdsCount = 0;
         int afterThreasholdInPercent = Config.<Integer> GetValue(ConfigValues.UtilizationThresholdInPercent);
 
-        switch (RunVmCommandBase.getDefaultSelectionAlgorithm()) {
+        switch (defaultSelectionAlgorithm) {
         case EvenlyDistribute: {
             highVdsCount = Math.min(
                     afterThreasholdInPercent
@@ -149,4 +162,5 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
     protected VM getBestVmToMigrate(List<VM> vms, Guid vdsId) {
         return vms.get(0);
     }
+
 }
