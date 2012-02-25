@@ -103,18 +103,19 @@ public class ExecutionHandler {
             return;
         }
         if (context.isMonitored()) {
-            context.setCompleted(true);
             Job job = context.getJob();
             try {
                 if (context.getExecutionMethod() == ExecutionMethod.AsJob && job != null) {
 
                     if (exitStatus) {
                         if (step != null) {
+                            context.setCompleted(true);
                             step.markStepEnded(exitStatus);
                             JobRepositoryFactory.getJobRepository().updateStep(step);
                         }
                     } else {
                         // step failure will cause the job to be marked as failed
+                        context.setCompleted(true);
                         job.markJobEnded(false);
                         JobRepositoryFactory.getJobRepository().updateCompletedJobAndSteps(job);
                     }
@@ -123,6 +124,7 @@ public class ExecutionHandler {
                     if (context.getExecutionMethod() == ExecutionMethod.AsStep && parentStep != null) {
                         if (exitStatus) {
                             if (step != null) {
+                                context.setCompleted(true);
                                 step.markStepEnded(exitStatus);
                                 JobRepositoryFactory.getJobRepository().updateStep(step);
                             }
@@ -392,9 +394,9 @@ public class ExecutionHandler {
 
         try {
             if (context.isMonitored()) {
-                context.setCompleted(true);
                 if (context.getExecutionMethod() == ExecutionMethod.AsJob && job != null) {
                     if (!(job.isAsyncJob() && exitStatus)) {
+                        context.setCompleted(true);
                         endJob(exitStatus, job);
                     }
                 } else {
@@ -406,6 +408,7 @@ public class ExecutionHandler {
                             }
 
                             if (job != null) {
+                                context.setCompleted(true);
                                 endJob(exitStatus, job);
                             }
                         }
