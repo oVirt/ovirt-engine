@@ -242,6 +242,12 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
     }
 
     @Test
+    public void testGetAllForQuotaId() {
+        List<DiskImage> disks = dao.getAllForQuotaId(FixturesTool.QUOTA_GENERAL);
+        assertEquals("VM should have five disks", 4, disks.size());
+    }
+
+    @Test
     public void testGetAllForVMFilteredWithPermissions() {
         // test user 3 - has permissions
         List<DiskImage> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, PRIVILEGED_USER_ID, true);

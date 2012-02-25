@@ -107,6 +107,8 @@ public interface DiskImageDAO extends GenericDao<DiskImage, Guid> {
 
     void removeImageVmPoolMap(Guid imageId);
 
+    List<DiskImage> getAllForQuotaId(Guid quotaId);
+
     List<image_vm_pool_map> getImageVmPoolMapByVmId(Guid vmId);
 
     stateless_vm_image_map getStatelessVmImageMapForImageId(Guid imageId);

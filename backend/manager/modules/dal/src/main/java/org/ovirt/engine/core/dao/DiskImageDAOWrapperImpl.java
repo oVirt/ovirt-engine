@@ -52,6 +52,11 @@ public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskI
     }
 
     @Override
+    public List<DiskImage> getAllForQuotaId(Guid quotaId) {
+        throw new NotImplementedException("This method is not implemented for Hibernate yet");
+    }
+
+    @Override
     public List<DiskImage> getAllForVm(Guid id, Guid userID, boolean isFiltered) {
         throw new NotImplementedException("This method is not implemented for Hibernate yet");
     }
