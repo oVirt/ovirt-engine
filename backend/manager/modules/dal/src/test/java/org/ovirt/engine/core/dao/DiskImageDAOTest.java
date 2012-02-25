@@ -26,7 +26,6 @@ import org.ovirt.engine.core.compat.Guid;
  *
  */
 public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, DiskImageDAO> {
-    private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid FREE_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
     private static final Guid EXISTING_IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
     private static final Guid FREE_IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f579");
@@ -88,7 +87,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
 
         newImage = new DiskImage();
         newImage.setactive(true);
-        newImage.setvm_guid(EXISTING_VM_ID);
+        newImage.setvm_guid(FixturesTool.VM_RHEL5_POOL_57);
         newImage.setit_guid(EXISTING_IMAGE_DISK_TEMPLATE);
         newImage.setId(Guid.NewGuid());
         newImage.setinternal_drive_mapping("4");
@@ -116,7 +115,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         // TODO this call is only necessary when we have a DbFacade implementation
         if (dao instanceof BaseDAODbFacade) {
             dbFacade.getImageVmMapDAO().save(new image_vm_map(true, newImage.getId(),
-                    EXISTING_VM_ID));
+                    FixturesTool.VM_RHEL5_POOL_57));
         }
         DiskImageDynamic dynamic = new DiskImageDynamic();
         dynamic.setId(newImage.getId());
@@ -173,12 +172,12 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
 
     @Test
     public void testGetImageVmPoolMapByVmId() {
-        List<image_vm_pool_map> result = dao.getImageVmPoolMapByVmId(EXISTING_VM_ID);
+        List<image_vm_pool_map> result = dao.getImageVmPoolMapByVmId(FixturesTool.VM_RHEL5_POOL_57);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (image_vm_pool_map map : result) {
-            assertEquals(EXISTING_VM_ID, map.getvm_guid());
+            assertEquals(FixturesTool.VM_RHEL5_POOL_57, map.getvm_guid());
         }
     }
 
@@ -211,12 +210,12 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
 
     @Test
     public void testGetAllStatelessDiskImagesForVm() {
-        List<stateless_vm_image_map> result = dao.getAllStatelessVmImageMapsForVm(EXISTING_VM_ID);
+        List<stateless_vm_image_map> result = dao.getAllStatelessVmImageMapsForVm(FixturesTool.VM_RHEL5_POOL_57);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (stateless_vm_image_map mapping : result) {
-            assertEquals(EXISTING_VM_ID, mapping.getvm_guid());
+            assertEquals(FixturesTool.VM_RHEL5_POOL_57, mapping.getvm_guid());
         }
     }
 
@@ -238,28 +237,28 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
 
     @Test
     public void testGetAllForVM() {
-        List<DiskImage> disks = dao.getAllForVm(EXISTING_VM_ID);
+        List<DiskImage> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57);
         assertFullGetAllForVMResult(disks);
     }
 
     @Test
     public void testGetAllForVMFilteredWithPermissions() {
         // test user 3 - has permissions
-        List<DiskImage> disks = dao.getAllForVm(EXISTING_VM_ID, PRIVILEGED_USER_ID, true);
+        List<DiskImage> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, PRIVILEGED_USER_ID, true);
         assertFullGetAllForVMResult(disks);
     }
 
     @Test
     public void testGetAllForVMFilteredWithPermissionsNoPermissions() {
         // test user 2 - hasn't got permissions
-        List<DiskImage> disks = dao.getAllForVm(EXISTING_VM_ID, UNPRIVILEGED_USER_ID, true);
+        List<DiskImage> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, UNPRIVILEGED_USER_ID, true);
         assertTrue("VM should have no disks viewable to the user", disks.isEmpty());
     }
 
     @Test
     public void testGetAllForVMFilteredWithPermissionsNoPermissionsAndNoFilter() {
         // test user 2 - hasn't got permissions, but no filtering was requested
-        List<DiskImage> disks = dao.getAllForVm(EXISTING_VM_ID, UNPRIVILEGED_USER_ID, false);
+        List<DiskImage> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, UNPRIVILEGED_USER_ID, false);
         assertFullGetAllForVMResult(disks);
     }
 
