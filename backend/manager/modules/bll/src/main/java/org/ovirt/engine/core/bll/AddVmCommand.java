@@ -450,13 +450,17 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
             addVmPermission();
             if (AddVmImages()) {
-                VmDeviceUtils.copyVmDevices(getVmTemplateId(), getVmId());
+                copyVmDevices();
                 setActionReturnValue(getVm().getId());
                 setSucceeded(true);
             }
         } else {
             log.errorFormat("Failed to add vm . The reasons are: {0}", StringUtils.join(errorMessages, ','));
         }
+    }
+
+    protected void copyVmDevices() {
+        VmDeviceUtils.copyVmDevices(getVmTemplateId(), getVmId());
     }
 
     protected static boolean IsLegalClusterId(Guid clusterId, java.util.ArrayList<String> reasons) {
