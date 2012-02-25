@@ -137,7 +137,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
                  */
                 NGuid stepId = dbAsyncTask.getStepId();
                 if (stepId != null) {
-                    context = ExecutionHandler.createJobFinlalizingContext(stepId.getValue());
+                    context = ExecutionHandler.createFinlalizingContext(stepId.getValue());
                 }
 
                 vdcReturnValue =
@@ -194,7 +194,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
                      * The operation will end also the FINALIZING step.
                      */
                     if (context != null) {
-                        ExecutionHandler.endJob(context, vdcReturnValue.getSucceeded());
+                        ExecutionHandler.endTaskJob(context, vdcReturnValue.getSucceeded());
                     }
 
                     entityInfo.ClearTasks();
