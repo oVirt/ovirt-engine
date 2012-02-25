@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskType;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -259,10 +260,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                     // check if vm has stateless images in db in case vm was run once as stateless
                     // (then is_stateless is false)
                     if (getVm().getis_stateless() ||
-                            !DbFacade.getInstance()
-                                    .getDiskImageDAO()
-                                    .getAllStatelessVmImageMapsForVm(getVmId())
-                                    .isEmpty()) {
+                            DbFacade.getInstance().getSnapshotDao().exists(getVmId(), SnapshotType.STATELESS)) {
                         retValue = false;
                         addCanDoActionMessage(VdcBllMessages.VM_CANNOT_SUSPEND_STATELESS_VM);
                     } else if (DbFacade.getInstance().getVmPoolDAO().getVmPoolMapByVmGuid(getVmId()) != null) {

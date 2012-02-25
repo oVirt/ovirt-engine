@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -44,7 +45,7 @@ public class VmPoolHandler {
     }
 
     public static void removeVmStatelessImages(Guid vmId, CommandContext context) {
-        if (DbFacade.getInstance().getDiskImageDAO().getAllStatelessVmImageMapsForVm(vmId).size() > 0) {
+        if (DbFacade.getInstance().getSnapshotDao().exists(vmId, SnapshotType.STATELESS)) {
             log.infoFormat("VdcBll.VmPoolHandler.ProcessVmPoolOnStopVm - Deleting snapshot for stateless vm {0}", vmId);
             Backend.getInstance().runInternalAction(VdcActionType.RestoreStatelessVm,
                     new VmOperationParameterBase(vmId),

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -10,11 +11,15 @@ import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 
@@ -22,24 +27,53 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     private static final long serialVersionUID = 2636628918352438919L;
 
+    private SnapshotsManager snapshotsManager = new SnapshotsManager();
+
     public TryBackToAllSnapshotsOfVmCommand(T parameters) {
         super(parameters);
         parameters.setEntityId(getVmId());
+    }
 
+    @Override
+    protected void EndWithFailure() {
+        Guid previouslyActiveSnapshotId =
+                getSnapshotDao().getId(getVmId(), SnapshotType.PREVIEW, SnapshotStatus.LOCKED);
+        getSnapshotDao().remove(previouslyActiveSnapshotId);
+        getSnapshotDao().remove(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
+
+        snapshotsManager.addActiveSnapshot(previouslyActiveSnapshotId, getVm(), getCompensationContext());
+
+        super.EndWithFailure();
+    }
+
+    protected SnapshotDao getSnapshotDao() {
+        return DbFacade.getInstance().getSnapshotDao();
     }
 
     @Override
     protected void EndSuccessfully() {
-        super.EndSuccessfully();
-        List<DiskImage> images = DbFacade
-                .getInstance()
-                .getDiskImageDAO()
-                .getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId());
-        if (images.size() != 0) {
-            setVm(null);
-            getVm().setapp_list(images.get(0).getappList());
-            DbFacade.getInstance().getVmDynamicDAO().update(getVm().getDynamicData());
+        EndActionOnDisks();
+
+        if (getVm() != null) {
+            VmHandler.unlockVm(getVm().getDynamicData(), getCompensationContext());
+
+            getSnapshotDao().updateStatus(getParameters().getDstSnapshotId(), SnapshotStatus.IN_PREVIEW);
+            getSnapshotDao().updateStatus(getSnapshotDao().getId(getVm().getId(),
+                    SnapshotType.PREVIEW,
+                    SnapshotStatus.LOCKED),
+                    SnapshotStatus.OK);
+
+            snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
+                    getSnapshotDao().get(getParameters().getDstSnapshotId()),
+                    getCompensationContext());
+            UpdateVmInSpm(getVm().getstorage_pool_id(),
+                    new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { getVm() })));
+        } else {
+            setCommandShouldBeLogged(false);
+            log.warn("VmCommand::EndVmCommand: Vm is null - not performing EndAction on Vm");
         }
+
+        setSucceeded(true);
     }
 
     @Override
@@ -48,15 +82,23 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 .getInstance()
                 .getDiskImageDAO()
                 .getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId());
-        Guid vmSnapshotId = Guid.NewGuid();
-        VmHandler.checkStatusAndLockVm(getVmId(), getCompensationContext());
+        Guid previousActiveSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
+        getSnapshotDao().remove(previousActiveSnapshotId);
+        snapshotsManager.addSnapshot(previousActiveSnapshotId,
+                "Active VM before the preview",
+                        SnapshotType.PREVIEW,
+                        getVm(),
+                        getCompensationContext());
+        Guid newActiveSnapshotId = Guid.NewGuid();
+        snapshotsManager.addActiveSnapshot(newActiveSnapshotId, getVm(), getCompensationContext());
 
         if (images.size() > 0) {
+            VmHandler.checkStatusAndLockVm(getVmId(), getCompensationContext());
             for (DiskImage image : images) {
                 ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(image.getId(),
                         image.getinternal_drive_mapping(), getVmId());
                 tempVar.setParentCommand(VdcActionType.TryBackToAllSnapshotsOfVm);
-                tempVar.setVmSnapshotId(vmSnapshotId);
+                tempVar.setVmSnapshotId(newActiveSnapshotId);
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setParentParemeters(getParameters());
                 ImagesContainterParametersBase p = tempVar;
@@ -77,6 +119,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                     throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
                 }
             }
+        } else {
+            getSnapshotDao().updateStatus(previousActiveSnapshotId, SnapshotStatus.OK);
         }
 
         setSucceeded(true);

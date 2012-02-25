@@ -11,7 +11,6 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
     private Guid imageId = new Guid();
     private Guid destinationImageId = new Guid();
     private String description;
-    private String oldDescription;
     private Date oldLastModifiedValue;
     private Guid vmSnapshotId = new Guid();
     private Guid imageGroupID = new Guid();
@@ -42,14 +41,6 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
 
     public void setDescription(String value) {
         description = value;
-    }
-
-    public String getOldDescription() {
-        return oldDescription;
-    }
-
-    public void setOldDescription(String oldDescription) {
-        this.oldDescription = oldDescription;
     }
 
     public void setOldLastModifiedValue(Date oldLastModifiedValue) {

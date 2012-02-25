@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -15,6 +14,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskType;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -30,6 +30,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
@@ -225,6 +226,10 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
         return DbFacade.getInstance().getStorageDomainDAO();
     }
 
+    protected SnapshotDao getSnapshotDao() {
+        return DbFacade.getInstance().getSnapshotDao();
+    }
+
     /**
      * @return The ID of the storage domain where the VM's disks reside.
      */
@@ -284,11 +289,10 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
                 getParameters().getDiskInfo());
         parameters.setQuotaId(getParameters().getQuotaId());
         parameters.setStorageDomainId(getStorageDomainId().getValue());
-        parameters.setVmSnapshotId(calculateSnapshotId());
+        parameters.setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
         parameters.setParentCommand(VdcActionType.AddDiskToVm);
         parameters.setEntityId(getParameters().getEntityId());
         getParameters().getImagesParameters().add(parameters);
-        getParameters().setVmSnapshotId(parameters.getVmSnapshotId());
         parameters.setParentParemeters(getParameters());
         VdcReturnValueBase tmpRetValue =
                 Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch,
@@ -298,25 +302,6 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
         getReturnValue().setActionReturnValue(tmpRetValue.getActionReturnValue());
         getReturnValue().setFault(tmpRetValue.getFault());
         setSucceeded(tmpRetValue.getSucceeded());
-    }
-
-    /**
-     * Calculate the correct snapshot id: If the VM already has a disk then take from it, otherwise create a new one.
-     *
-     * @return The snapshot id from a disk or new id.
-     */
-    private Guid calculateSnapshotId() {
-        final Map<String, DiskImage> disks = getVm().getDiskMap();
-        if (disks == null || disks.isEmpty()) {
-            return Guid.NewGuid();
-        }
-
-        final DiskImage vmDisk = disks.values().iterator().next();
-        if (vmDisk.getvm_snapshot_id() == null) {
-            return Guid.NewGuid();
-        }
-
-        return new Guid(vmDisk.getvm_snapshot_id().getUuid());
     }
 
     @Override

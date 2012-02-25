@@ -64,7 +64,8 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
 
     @Override
     protected void updateExistingEntity() {
-        existingEntity.setdescription("This is a new description");
+        existingEntity.setvolume_type(VolumeType.Preallocated);
+        existingEntity.setvolume_format(VolumeFormat.RAW);
     }
 
     @Override

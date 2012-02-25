@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
@@ -59,7 +60,7 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
     }
 
     private void RestoreVmFromBaseSnapshot(VM vm) {
-        if (getDiskImageDAO().getAllStatelessVmImageMapsForVm(vm.getId()).size() > 0) {
+        if (DbFacade.getInstance().getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS)) {
             log.infoFormat("Deleting snapshots for stateless vm {0}", vm.getId());
             Backend.getInstance().runInternalAction(VdcActionType.RestoreStatelessVm,
                     new VmOperationParameterBase(vm.getId()),

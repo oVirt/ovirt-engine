@@ -2,10 +2,12 @@ package org.ovirt.engine.core.bll;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.spy;
-import static org.mockito.Matchers.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,12 +16,14 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -36,6 +40,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
@@ -65,6 +70,9 @@ public class RestoreAllSnapshotCommandTest {
     private StorageDomainDAO storageDomainDAO;
 
     @Mock
+    private SnapshotDao snapshotDao;
+
+    @Mock
     private DbFacade dbFacade;
 
     private Guid vmId = Guid.NewGuid();
@@ -73,6 +81,7 @@ public class RestoreAllSnapshotCommandTest {
     private Guid dstSnapshotId = Guid.NewGuid();
     private VmDynamic mockDynamicVm;
     private VM mockVm;
+    private Snapshot mockSnapshot;
     private RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters> spyCommand;
 
     public RestoreAllSnapshotCommandTest() {
@@ -86,9 +95,9 @@ public class RestoreAllSnapshotCommandTest {
     public void setupCommand() {
         when(Backend.getInstance()).thenReturn(backend);
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
-        mockDaos();
         mockConfig();
         initSpyCommand();
+        mockDaos();
         mockVm(spyCommand);
 
         mockIsValidVdsCommand();
@@ -101,6 +110,8 @@ public class RestoreAllSnapshotCommandTest {
      */
     @Test
     public void validateInternalCommandWithValidImage() throws Exception {
+        mockSnapshotExists();
+        mockSnapshotFromDb();
         spyCommand.setInternalExecution(true);
         mockGetImageInfoVdsCommand(new DiskImage());
         assertTrue(spyCommand.canDoAction());
@@ -113,6 +124,8 @@ public class RestoreAllSnapshotCommandTest {
      */
     @Test
     public void validateNotInternalCommandWithValidImage() throws Exception {
+        mockSnapshotExists();
+        mockSnapshotFromDb();
         spyCommand.setInternalExecution(false);
         mockGetImageInfoVdsCommand(new DiskImage());
         assertTrue(spyCommand.canDoAction());
@@ -125,6 +138,8 @@ public class RestoreAllSnapshotCommandTest {
      */
     @Test
     public void validateInternalCommandWithInInValidImage() throws Exception {
+        mockSnapshotExists();
+        mockSnapshotFromDb();
         spyCommand.setInternalExecution(true);
         mockGetImageInfoVdsCommand(null);
         assertTrue(spyCommand.canDoAction());
@@ -137,12 +152,36 @@ public class RestoreAllSnapshotCommandTest {
      */
     @Test
     public void validateNotInternalCommandWithInValidImage() throws Exception {
+        mockSnapshotExists();
+        mockSnapshotFromDb();
         spyCommand.setInternalExecution(false);
         mockGetImageInfoVdsCommand(null);
         assertFalse(spyCommand.canDoAction());
         assertTrue(spyCommand.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST.toString()));
+    }
+
+    @Test
+    public void canDoActionFailsOnSnapshotNotExists() {
+        when(snapshotDao.exists(any(Guid.class), any(Guid.class))).thenReturn(false);
+        assertFalse(spyCommand.canDoAction());
+        assertTrue(spyCommand.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST.toString()));
+    }
+
+    @Test
+    public void canDoActionFailsOnSnapshotTypeRegularNotInPreview() {
+        mockSnapshotExists();
+        mockSnapshotFromDb();
+        mockSnapshot.setType(SnapshotType.REGULAR);
+        mockSnapshot.setStatus(SnapshotStatus.OK);
+        mockGetImageInfoVdsCommand(new DiskImage());
+        assertFalse(spyCommand.canDoAction());
+        assertTrue(spyCommand.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW.toString()));
     }
 
     private List<DiskImage> createDiskImageList() {
@@ -152,6 +191,16 @@ public class RestoreAllSnapshotCommandTest {
         List<DiskImage> diskImageList = new ArrayList<DiskImage>();
         diskImageList.add(disk);
         return diskImageList;
+    }
+
+    private void mockSnapshotExists() {
+        when(snapshotDao.exists(any(Guid.class), any(Guid.class))).thenReturn(true);
+    }
+
+    private void mockSnapshotFromDb() {
+        mockSnapshot = new Snapshot();
+        mockSnapshot.setType(SnapshotType.STATELESS);
+        when(snapshotDao.get(any(Guid.class))).thenReturn(mockSnapshot);
     }
 
     /**
@@ -191,6 +240,7 @@ public class RestoreAllSnapshotCommandTest {
         mockDiskImageDao();
         mockStorageDomainDao();
         mockDynamicVmDao();
+        doReturn(snapshotDao).when(spyCommand).getSnapshotDao();
     }
 
     private void mockDynamicVmDao() {

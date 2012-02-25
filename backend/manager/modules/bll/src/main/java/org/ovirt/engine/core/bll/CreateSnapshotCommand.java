@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParamete
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -155,14 +154,6 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
      * By default old image must be replaced by new one
      */
     protected void ProcessOldImageFromDb() {
-        // removing the old C drive from image table
-        /**
-         * Vitaly TODO: check if can use Image variable
-         */
-        if (!StringHelper.EqOp(mDescription, "")) {
-            getParameters().setOldDescription(getImage().getdescription());
-            getImage().setdescription(mDescription);
-        }
         getParameters().setOldLastModifiedValue(getDiskImage().getlastModified());
         getDiskImage().setlastModified(new Date());
         DbFacade.getInstance().getDiskImageDAO().update(getDiskImage());
@@ -189,11 +180,9 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                                 .getcontainer_guid()));
                 if (!getDestinationDiskImage().getParentId().equals(getDestinationDiskImage().getit_guid())) {
                     // If the old description of the snapshot got overriden, we should restore the previous description
-                    if (getParameters().getOldDescription() != null
-                            && !getParameters().getDescription().equals(getParameters().getOldDescription())) {
+                    if (getParameters().getOldLastModifiedValue() != null) {
                         DiskImage previousSnapshot =
                                 DbFacade.getInstance().getDiskImageDAO().get(getDestinationDiskImage().getParentId());
-                        previousSnapshot.setdescription(getParameters().getOldDescription());
                         previousSnapshot.setlastModified(getParameters().getOldLastModifiedValue());
                         DbFacade.getInstance().getDiskImageDAO().update(previousSnapshot);
                     }

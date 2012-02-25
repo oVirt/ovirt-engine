@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -33,24 +33,18 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
     @Override
     protected void executeCommand() {
         boolean returnVal = true;
-        List<stateless_vm_image_map> statelessMap = DbFacade.getInstance().getDiskImageDAO().getAllStatelessVmImageMapsForVm(
-                getVmId());
-        List<DiskImage> imagesList = new java.util.ArrayList<DiskImage>(statelessMap.size());
+        Guid snapshotId = DbFacade.getInstance().getSnapshotDao().getId(getVmId(), SnapshotType.STATELESS);
+        List<DiskImage> imagesList = null;
 
-        for (stateless_vm_image_map sMap : statelessMap) {
-            imagesList.add(DbFacade.getInstance().getDiskImageDAO().getSnapshotById(sMap.getimage_guid()));
-
-            /**
-             * remove from db
-             */
-            DbFacade.getInstance().getDiskImageDAO().removeStatelessVmImageMap(sMap.getimage_guid());
+        if (snapshotId != null) {
+            imagesList = DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForVmSnapshot(snapshotId);
         }
 
-        if (imagesList.size() > 0) {
+        if (imagesList != null && imagesList.size() > 0) {
             /**
              * restore all snapshots
              */
-            RestoreAllSnapshotsParameters tempVar = new RestoreAllSnapshotsParameters(getVm().getId(), Guid.Empty);
+            RestoreAllSnapshotsParameters tempVar = new RestoreAllSnapshotsParameters(getVm().getId(), snapshotId);
             tempVar.setShouldBeLogged(false);
             tempVar.setImagesList(imagesList);
             VdcReturnValueBase vdcReturn =

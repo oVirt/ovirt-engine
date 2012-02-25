@@ -201,6 +201,7 @@ public class VmHandler {
             @Override
             public Void runInTransaction() {
                 compensationContext.snapshotEntityStatus(vm, vm.getstatus());
+                vm.setstatus(VMStatus.Down);
                 UnLockVm(vm.getId());
                 compensationContext.stateChanged();
                 return null;

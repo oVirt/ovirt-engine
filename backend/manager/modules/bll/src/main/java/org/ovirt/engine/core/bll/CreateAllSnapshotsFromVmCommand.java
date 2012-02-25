@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
@@ -11,11 +13,15 @@ import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -54,18 +60,28 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void ExecuteVmCommand() {
-        if (getDisksList().size() > 0) {
-            if (getParameters().getParentCommand() != VdcActionType.RunVm) {
-                lockVmWithCompensationIfNeeded();
-                freeLock();
-            }
+        Guid newActiveSnapshotId = Guid.NewGuid();
+        Guid createdSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
+        getParameters().setSnapshotType(determineSnapshotType());
 
-            Guid vmSnapshotId = Guid.NewGuid();
+        getSnapshotDao().updateId(createdSnapshotId, newActiveSnapshotId);
+        new SnapshotsManager().addSnapshot(createdSnapshotId,
+                getParameters().getDescription(),
+                getParameters().getSnapshotType(),
+                getVm(),
+                getCompensationContext());
+
+        freeLock();
+
+        if (getDisksList().isEmpty()) {
+            getParameters().setTaskGroupSuccess(true);
+            EndSuccessfully();
+        } else {
             for (DiskImage image : getDisksList()) {
                 ImagesActionsParametersBase tempVar = new ImagesActionsParametersBase(image.getId());
                 tempVar.setDescription(getParameters().getDescription());
                 tempVar.setSessionId(getParameters().getSessionId());
-                tempVar.setVmSnapshotId(vmSnapshotId);
+                tempVar.setVmSnapshotId(newActiveSnapshotId);
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setParentCommand(getParameters().getParentCommand() != VdcActionType.Unknown ? getParameters()
                         .getParentCommand() : VdcActionType.CreateAllSnapshotsFromVm);
@@ -85,9 +101,38 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                             "CreateAllSnapshotsFromVmCommand::ExecuteVmCommand: Failed to create snapshot!");
                 }
             }
+
+            setSucceeded(true);
+        }
+    }
+
+    /**
+     * @return For internal execution, return the type from parameters, otherwise return {@link SnapshotType#REGULAR}.
+     */
+    protected SnapshotType determineSnapshotType() {
+        return isInternalExecution() ? getParameters().getSnapshotType() : SnapshotType.REGULAR;
+    }
+
+    @Override
+    protected void EndVmCommand() {
+        EndActionOnDisks();
+
+        Guid createdSnapshotId =
+                getSnapshotDao().getId(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
+        if (getParameters().getTaskGroupSuccess()) {
+            getSnapshotDao().updateStatus(createdSnapshotId, SnapshotStatus.OK);
+        } else {
+            getSnapshotDao().remove(createdSnapshotId);
+            getSnapshotDao().updateId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE), createdSnapshotId);
         }
 
+        UpdateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(new VM[] { getVm() }));
+
         setSucceeded(true);
+    }
+
+    protected SnapshotDao getSnapshotDao() {
+        return DbFacade.getInstance().getSnapshotDao();
     }
 
     @Override
@@ -137,7 +182,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                             getVm().getstorage_pool_id(),
                             getDisksList().get(0).getstorage_ids().get(0),
                             true,
-                            getParameters().getParentCommand() != VdcActionType.RunVm,
+                            true,
                             true,
                             true,
                             true,

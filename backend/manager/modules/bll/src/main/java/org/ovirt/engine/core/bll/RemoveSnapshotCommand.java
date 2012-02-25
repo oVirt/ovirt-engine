@@ -90,6 +90,15 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     @Override
+    protected void EndVmCommand() {
+        if (getParameters().getTaskGroupSuccess()) {
+            DbFacade.getInstance().getSnapshotDao().remove(getParameters().getSnapshotId());
+        }
+
+        super.EndVmCommand();
+    }
+
+    @Override
     protected boolean canDoAction() {
         initializeObjectState();
         // Since 'VmId' is overriden, 'Vm' should be retrieved manually.

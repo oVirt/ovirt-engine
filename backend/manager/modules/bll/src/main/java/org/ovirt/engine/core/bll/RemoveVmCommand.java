@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
@@ -205,6 +206,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         RemoveVmNetwork();
         // \\RemoveVmStatistics();
         // \\RemoveVmDynamic();
+        new SnapshotsManager().removeSnapshots(getVmId());
         RemoveVmStatic();
     }
 

@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -27,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -243,10 +243,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                     StatelessVmTreatment();
                 } else if (!getParameters().getIsInternal() && !_isRerun
                         && getVm().getstatus() != VMStatus.Suspended
-                        && DbFacade.getInstance()
-                                .getDiskImageDAO()
-                                .getAllStatelessVmImageMapsForVm(getVm().getId())
-                                .size() > 0) {
+                        && statelessSnapshotExistsForVm()) {
                     removeVmStatlessImages();
                 } else {
                     RunVm();
@@ -255,6 +252,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         } else {
             setActionReturnValue(getVm().getstatus());
         }
+    }
+
+    private boolean statelessSnapshotExistsForVm() {
+        return DbFacade.getInstance().getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS);
     }
 
     /**
@@ -285,20 +286,21 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     }
 
     private void StatelessVmTreatment() {
-        /**
-         * if one of vm's images is in the DB dont do anything.
-         */
-        if (DbFacade.getInstance().getDiskImageDAO().getAllStatelessVmImageMapsForVm(getVm().getId()).size() == 0) {
+        if (statelessSnapshotExistsForVm()) {
+            log.errorFormat(
+                    "RunVmAsStateless - {0} - found existing vm images in stateless_vm_image_map table - skipped creating snapshots.",
+                    getVm().getvm_name());
+            removeVmStatlessImages();
+        } else {
             log.infoFormat("VdcBll.RunVmCommand.RunVmAsStateless - Creating snapshot for stateless vm {0} - {1}",
                     getVm().getvm_name(), getVm().getId());
-            lockVmWithCompensationIfNeeded();
-
             CreateAllSnapshotsFromVmParameters tempVar = new CreateAllSnapshotsFromVmParameters(getVm().getId(),
                     "stateless snapshot");
             tempVar.setShouldBeLogged(false);
             tempVar.setParentCommand(VdcActionType.RunVm);
             tempVar.setEntityId(getParameters().getEntityId());
             CreateAllSnapshotsFromVmParameters p = tempVar;
+            p.setSnapshotType(SnapshotType.STATELESS);
 
             VdcReturnValueBase vdcReturnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
@@ -307,17 +309,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
             setSucceeded(vdcReturnValue.getSucceeded());
             if (vdcReturnValue.getSucceeded()) {
-                // saving all vm images in order to return to them (not using
-                // RestoreAllSnapshots)
-                for (DiskImage disk : getVm().getDiskMap().values()) {
-                    /**
-                     * add new stateless vm image to db
-                     */
-                    DbFacade.getInstance().getDiskImageDAO().addStatelessVmImageMap(
-                            new stateless_vm_image_map(disk.getId(), disk.getinternal_drive_mapping(), getVm()
-                                    .getId()));
-                }
-
                 getParameters().getImagesParameters().add(p);
 
                 getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
@@ -333,11 +324,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 }
                 log.errorFormat("RunVmAsStateless - {0} - failed to create snapshots", getVm().getvm_name());
             }
-        } else {
-            log.errorFormat(
-                    "RunVmAsStateless - {0} - found existing vm images in stateless_vm_image_map table - skipped creating snapshots.",
-                    getVm().getvm_name());
-            removeVmStatlessImages();
         }
     }
 
@@ -896,20 +882,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             VdcReturnValueBase vdcReturnValue = Backend.getInstance().endAction(VdcActionType.CreateAllSnapshotsFromVm,
                     getParameters().getImagesParameters().get(0), new CommandContext(getCompensationContext()));
 
-            if (getVm() != null) {
-                VmHandler.updateDisksFromDb(getVm());
-
-                for (DiskImage disk : getVm().getDiskMap().values()) {
-                    /**
-                     * remove stateless vm image from db:
-                     */
-                    DbFacade.getInstance().getDiskImageDAO().removeStatelessVmImageMap(disk.getId());
-                }
-            } else {
-                setCommandShouldBeLogged(false);
-                log.warn("RunVmCommand::EndWithFailure [stateless]: Vm is null - not performing full EndAction");
-            }
-
             setSucceeded(vdcReturnValue.getSucceeded());
             // we are not running the VM, of course,
             // since we couldn't create a snpashot.
@@ -921,9 +893,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     }
 
     private void SetIsVmRunningStateless() {
-        List<stateless_vm_image_map> list = DbFacade.getInstance().getDiskImageDAO().getAllStatelessVmImageMapsForVm(
-                getVmId());
-        _isVmRunningStateless = (list != null && list.size() > 0);
+        _isVmRunningStateless = statelessSnapshotExistsForVm();
     }
 
     /**

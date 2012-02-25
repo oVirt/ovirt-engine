@@ -31,10 +31,10 @@ SELECT DISTINCT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
 	images.creation_date as creation_date,
     images.size as size,
     images.it_guid as it_guid,
-    images.description as description,
+    snapshots.description as description,
     images.ParentId as ParentId,
     images.lastModified as lastModified,
-    images.app_list as app_list,
+    snapshots.app_list as app_list,
     image_storage_domain_map.storage_domain_id as storage_id,
     images.vm_snapshot_id as vm_snapshot_id,
     images.volume_type as volume_type,
@@ -72,6 +72,7 @@ left outer join disk_image_dynamic on images.image_guid = disk_image_dynamic.ima
 LEFT OUTER JOIN disks ON images.image_group_id = disks.disk_id left outer JOIN vm_device on vm_device.device_id = images.image_group_id left outer join vm_static on vm_static.vm_guid = vm_device.vm_id
 LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
 LEFT OUTER JOIN storage_domain_static_view ON image_storage_domain_map.storage_domain_id = storage_domain_static_view.id
+LEFT OUTER JOIN snapshots ON images.vm_snapshot_id = snapshots.snapshot_id
 WHERE images.image_guid != '00000000-0000-0000-0000-000000000000';
 
 

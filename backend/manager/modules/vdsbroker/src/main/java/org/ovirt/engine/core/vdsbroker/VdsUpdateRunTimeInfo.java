@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
@@ -1446,13 +1445,6 @@ public class VdsUpdateRunTimeInfo {
             if (vmNewDynamicData.getstatus() != VMStatus.Up) {
                 props.remove("app_list");
                 vmNewDynamicData.setapp_list(vmToUpdate.argvalue.getapp_list());
-                List<DiskImage> vmsImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(
-                        vmNewDynamicData.getId());
-                for (DiskImage image : vmsImages) {
-                    image.setappList(vmToUpdate.argvalue.getapp_list());
-                    DbFacade.getInstance().getDiskImageDAO().update(image);
-                }
-
             } else if (props.contains("status")
                     && vmToUpdate.argvalue.getDynamicData().getstatus() == VMStatus.SavingState) {
                 vmNewDynamicData.setstatus(VMStatus.SavingState);

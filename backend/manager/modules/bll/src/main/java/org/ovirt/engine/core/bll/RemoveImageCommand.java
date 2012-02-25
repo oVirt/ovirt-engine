@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -96,6 +97,10 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 DiskImage image = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(currentGuid);
                 if (image != null) {
                     RemoveSnapshot(image);
+                    if (image.getvm_snapshot_id() != null) {
+                        new SnapshotsManager().markBroken(image.getvm_snapshot_id().getValue());
+                    }
+
                     currentGuid = image.getParentId();
                 }
 

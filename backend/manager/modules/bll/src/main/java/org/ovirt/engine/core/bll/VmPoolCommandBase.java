@@ -9,11 +9,11 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -158,13 +158,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     private static boolean vmIsRunningStateless(Guid vmId, ArrayList<String> messages) {
-        List<stateless_vm_image_map> list = DbFacade.getInstance().getDiskImageDAO()
-                .getAllStatelessVmImageMapsForVm(vmId);
-        if (list != null && list.size() > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return DbFacade.getInstance().getSnapshotDao().exists(vmId, SnapshotType.STATELESS);
     }
 
     /**

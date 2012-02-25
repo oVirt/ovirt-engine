@@ -197,7 +197,8 @@ public class SnapshotsManager {
             Snapshot snapshot,
             CompensationContext compensationContext) {
         if (snapshot.getVmConfiguration() == null || !updateVmFromConfiguration(vm, snapshot.getVmConfiguration())) {
-            return;
+            vm.setImages(new ArrayList<DiskImage>(getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshot.getId())));
+            vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
         }
 
         vm.setapp_list(snapshot.getAppList());

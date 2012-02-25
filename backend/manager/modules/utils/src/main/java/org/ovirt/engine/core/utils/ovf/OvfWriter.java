@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.ovf;
 import java.io.File;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -60,7 +61,7 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteAttributeString("ovf", "href", null, OvfParser.CreateImageFile(image));
             _writer.WriteAttributeString("ovf", "id", null, image.getId().toString());
             _writer.WriteAttributeString("ovf", "size", null, (new Long(image.getsize())).toString());
-            _writer.WriteAttributeString("ovf", "description", null, image.getdescription());
+            _writer.WriteAttributeString("ovf", "description", null, StringUtils.defaultString(image.getdescription()));
             _writer.WriteEndElement();
 
         }

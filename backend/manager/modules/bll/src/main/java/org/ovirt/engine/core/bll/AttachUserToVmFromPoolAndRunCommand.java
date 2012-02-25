@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.permissions;
@@ -162,7 +163,7 @@ VmPoolUserCommandBase<T> {
     @Override
     protected void EndSuccessfully() {
         if (getVm() != null) {
-            if (DbFacade.getInstance().getDiskImageDAO().getAllStatelessVmImageMapsForVm(getVm().getId()).size() > 0) {
+            if (DbFacade.getInstance().getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS)) {
                 setSucceeded(Backend.getInstance().endAction(VdcActionType.RunVm,
                         getParameters().getImagesParameters().get(0), new CommandContext(getCompensationContext())).getSucceeded());
 

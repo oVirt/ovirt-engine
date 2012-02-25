@@ -1,24 +1,49 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
+/**
+ * Restores the given snapshot, including all the VM configuration that was stored in it.<br>
+ * Any obsolete snapshots will be deleted:<br>
+ * * If the restore is done to the {@link SnapshotType#STATELESS} snapshot then the stateless snapshot data is restored
+ * into the active snapshot, and the "old" active snapshot is deleted & replaced by the stateless snapshot.<br>
+ * * If the restore is done to a branch of a snapshot which is {@link SnapshotStatus#IN_PREVIEW}, then the other branch
+ * will be deleted (ie if the {@link SnapshotType#ACTIVE} snapshot is kept, then the branch of
+ * {@link SnapshotType#PREVIEW} is deleted up to the previewed snapshot, otherwise the active one is deleted).<br>
+ * <br>
+ * <b>Note:</b> It is <b>NOT POSSIBLE</b> to restore to a snapshot of any other type other than those stated above,
+ * since this command can only handle the aforementioned cases.
+ */
 public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters> extends VmCommand<T> {
 
     private static final long serialVersionUID = -461387501474222174L;
+
+    private List<Guid> snapshotsToRemove = new ArrayList<Guid>();
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -38,6 +63,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     protected void ExecuteVmCommand() {
         if (getImagesList().size() > 0) {
             lockVmWithCompensationIfNeeded();
+            restoreSnapshotAndRemoveObsoleteSnapshots();
 
             VdcReturnValueBase returnValue = null;
             for (DiskImage image : getImagesList()) {
@@ -52,9 +78,32 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 log.errorFormat("Can't restore snapshot for VM, since no destroyImage task could be established in the VDSM.");
                 if (returnValue != null) {
                     getReturnValue().setFault(returnValue.getFault());
+                    return;
                 }
             } else {
                 setSucceeded(true);
+            }
+
+            boolean noImagesRemovedYet = getTaskIdList().isEmpty();
+            List<Guid> deletedDisksIds = new ArrayList<Guid>();
+            for (DiskImage image : getDiskImageDAO().getImagesWithNoDisk(getVm().getId())) {
+                if (!deletedDisksIds.contains(image.getimage_group_id())) {
+                    deletedDisksIds.add(image.getimage_group_id());
+
+                    returnValue = runAsyncTask(VdcActionType.RemoveImage,
+                            new RemoveImageParameters(image.getId(), null, getVmId()));
+                    if (!returnValue.getSucceeded() && noImagesRemovedYet) {
+                        setSucceeded(false);
+                        getReturnValue().setFault(returnValue.getFault());
+                        return;
+                    }
+
+                    noImagesRemovedYet = false;
+                }
+            }
+
+            for (Guid snapshotId : snapshotsToRemove) {
+                getSnapshotDao().remove(snapshotId);
             }
         } else {
             setSucceeded(true);
@@ -90,6 +139,94 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         return returnValue;
     }
 
+    /**
+     * Restore the snapshot - if it is not the active snapshot, then the VM configuration will be restored.<br>
+     * Additionally, remove all obsolete snapshots (The one after stateless, or the preview chain which was not chosen).
+     */
+    protected void restoreSnapshotAndRemoveObsoleteSnapshots() {
+        Snapshot targetSnapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+
+        if (targetSnapshot == null) {
+            throw new VdcBLLException(VdcBllErrors.ENGINE, "Can't find target snapshot by id: "
+                    + getParameters().getDstSnapshotId());
+        }
+
+        switch(targetSnapshot.getType()) {
+        case PREVIEW:
+            getSnapshotDao().updateStatus(getSnapshotDao().getId(getVmId(),
+                    SnapshotType.REGULAR,
+                    SnapshotStatus.IN_PREVIEW),
+                    SnapshotStatus.OK);
+        case STATELESS:
+            restoreConfiguration(targetSnapshot);
+            break;
+
+        // Currently UI sends the "in preview" snapshot to restore when "Commit" is pressed.
+        case REGULAR:
+            if (SnapshotStatus.IN_PREVIEW == targetSnapshot.getStatus()) {
+                prepareToDeletePreviewBranch();
+                break;
+            }
+        default:
+            throw new VdcBLLException(VdcBllErrors.ENGINE, "No support for restoring to snapshot type: "
+                    + targetSnapshot.getType());
+        }
+    }
+
+    /**
+     * Prepare to remove the active snapshot & restore the given snapshot to be the active one, including the
+     * configuration.
+     *
+     * @param targetSnapshot
+     *            The snapshot to restore to.
+     */
+    private void restoreConfiguration(Snapshot targetSnapshot) {
+        SnapshotsManager snapshotsManager = new SnapshotsManager();
+        snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
+                targetSnapshot,
+                getCompensationContext());
+
+        snapshotsToRemove.add(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
+        getSnapshotDao().remove(targetSnapshot.getId());
+        snapshotsManager.addActiveSnapshot(targetSnapshot.getId(), getVm(), getCompensationContext());
+    }
+
+    /**
+     * All snapshots who derive from the snapshot which is {@link SnapshotStatus#IN_PREVIEW}, up to it (excluding), will
+     * be queued for deletion.<br>
+     * The traversal between snapshots is done according to the {@link DiskImage} level.
+     */
+    protected void prepareToDeletePreviewBranch() {
+        Guid removedSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.PREVIEW);
+        Guid previewedSnapshotId =
+                getSnapshotDao().getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW);
+        getSnapshotDao().updateStatus(previewedSnapshotId, SnapshotStatus.OK);
+        snapshotsToRemove.add(removedSnapshotId);
+        List<DiskImage> images = getDiskImageDAO().getAllSnapshotsForVmSnapshot(removedSnapshotId);
+
+        for (DiskImage image : images) {
+            DiskImage parentImage = getDiskImageDAO().getSnapshotById(image.getParentId());
+            NGuid snapshotToRemove = (parentImage == null) ? null : parentImage.getvm_snapshot_id();
+
+            while (parentImage != null && snapshotToRemove != null && !snapshotToRemove.equals(previewedSnapshotId)) {
+                if (snapshotToRemove != null && !snapshotsToRemove.contains(snapshotToRemove.getValue())) {
+                    snapshotsToRemove.add(snapshotToRemove.getValue());
+                }
+
+                parentImage = getDiskImageDAO().getSnapshotById(parentImage.getParentId());
+                snapshotToRemove = (parentImage == null) ? null : parentImage.getvm_snapshot_id();
+            }
+        }
+    }
+
+    protected DiskImageDAO getDiskImageDAO() {
+        return DbFacade.getInstance().getDiskImageDAO();
+    }
+
+    protected SnapshotDao getSnapshotDao() {
+        return DbFacade.getInstance().getSnapshotDao();
+    }
+
     @Override
     protected VdcActionType getChildActionType() {
         return VdcActionType.RestoreFromSnapshot;
@@ -98,9 +235,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     private List<DiskImage> getImagesList() {
         if (getParameters().getImagesList() == null && !getParameters().getDstSnapshotId().equals(Guid.Empty)) {
             getParameters().setImagesList(
-                    DbFacade.getInstance()
-                            .getDiskImageDAO()
-                            .getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId()));
+                    getDiskImageDAO().getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId()));
         }
         return getParameters().getImagesList();
     }
@@ -119,7 +254,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     @Override
     protected boolean canDoAction() {
         boolean result = false;
-        if (getImagesList() == null || getImagesList().isEmpty()) {
+        if (getImagesList() == null || getImagesList().isEmpty()
+                || !getSnapshotDao().exists(getVmId(), getParameters().getDstSnapshotId())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
         } else {
             result = ImagesHandler.PerformImagesChecks(getVmId(), getReturnValue().getCanDoActionMessages(), getVm()
@@ -130,27 +266,21 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             }
         }
+
+        if (result) {
+            Snapshot snapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+            if (snapshot.getType() == SnapshotType.REGULAR
+                    && snapshot.getStatus() != SnapshotStatus.IN_PREVIEW) {
+                result = false;
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW);
+            }
+        }
+
         if (!result) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REVERT_TO);
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
         }
         return result;
-    }
-
-    @Override
-    protected void EndSuccessfully() {
-        super.EndSuccessfully();
-        if (getImagesList() != null) {
-            for (DiskImage image : getImagesList()) {
-                DiskImage imageFromDb = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(image.getId());
-                if (imageFromDb != null) {
-                    setVm(null);
-                    getVm().setapp_list(imageFromDb.getappList());
-                    DbFacade.getInstance().getVmDynamicDAO().update(getVm().getDynamicData());
-                    break;
-                }
-            }
-        }
     }
 
     private static Log log = LogFactory.getLog(RemoveAllVmImagesCommand.class);
