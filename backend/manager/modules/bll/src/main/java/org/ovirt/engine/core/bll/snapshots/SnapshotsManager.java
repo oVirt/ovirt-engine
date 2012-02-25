@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -14,25 +15,32 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
+import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.ImageVmMapDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
+import org.ovirt.engine.core.dao.VmTemplateDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
 
 /**
  * The {@link Snapshot} manager is used to easily add/update/remove snapshots.
@@ -94,9 +102,7 @@ public class SnapshotsManager {
      * @param snapshotType
      *            The snapshot type.
      * @param vm
-     *            The VM to link to & save configuration for (if necessary). {@link VM#getImages()} should return the
-     *            images to save and {@link VM#getInterfaces()} should return the NICs to save, if configuration saving
-     *            is requested.
+     *            The VM to link to & save configuration for (if necessary).
      * @param saveVmConfiguration
      *            Should VM configuration be generated and saved?
      * @param compensationContext
@@ -118,26 +124,32 @@ public class SnapshotsManager {
                 new Date(),
                 vm.getapp_list());
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                getSnapshotDao().save(snapshot);
-                compensationContext.snapshotNewEntity(snapshot);
-                return null;
-            }
-        });
+        getSnapshotDao().save(snapshot);
+        compensationContext.snapshotNewEntity(snapshot);
     }
 
     /**
-     * Generate a string containing the given VM's configuration. The VM needs to contain all images & NICs.
+     * Generate a string containing the given VM's configuration.
      *
      * @param vm
      *            The VM to generate configuration from.
      * @return A String containing the VM configuration.
      */
     protected String generateVmConfiguration(VM vm) {
+        ArrayList<DiskImage> allVmImages = new java.util.ArrayList<DiskImage>();
+        if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
+            vm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
+        }
+        for (DiskImage diskImage : getDiskImageDao().getAllForVm(vm.getId())) {
+            allVmImages.addAll(ImagesHandler.getAllImageSnapshots(diskImage.getId(), diskImage.getit_guid()));
+        }
+        if (StringHelper.isNullOrEmpty(vm.getvmt_name())) {
+            VmTemplate t = getVmTemplateDao().get(vm.getvmt_guid());
+            vm.setvmt_name(t.getname());
+        }
+
         RefObject<String> tempRefObject = new RefObject<String>("");
-        new OvfManager().ExportVm(tempRefObject, vm, vm.getImages());
+        new OvfManager().ExportVm(tempRefObject, vm, allVmImages);
         return tempRefObject.argvalue;
     }
 
@@ -208,12 +220,20 @@ public class SnapshotsManager {
     public boolean updateVmFromConfiguration(VM vm, String configuration) {
 
         try {
+            VmStatic oldVmStatic = vm.getStaticData();
             RefObject<VM> vmRef = new RefObject<VM>();
             RefObject<ArrayList<DiskImage>> imagesRef = new RefObject<ArrayList<DiskImage>>();
             new OvfManager().ImportVm(configuration, vmRef, imagesRef);
+            new VMStaticOvfLogHandler(vmRef.argvalue.getStaticData()).resetDefaults(oldVmStatic);
 
             vm.setStaticData(vmRef.argvalue.getStaticData());
             vm.setImages(imagesRef.argvalue);
+            vm.setInterfaces(vmRef.argvalue.getInterfaces());
+
+            // These fields are not saved in the OVF, so get them from the current VM.
+            vm.setdedicated_vm_for_vds(oldVmStatic.getdedicated_vm_for_vds());
+            vm.setiso_path(oldVmStatic.getiso_path());
+            vm.setvds_group_id(oldVmStatic.getvds_group_id());
             return true;
         } catch (OvfReaderException e) {
             log.errorFormat("Failed to update VM from the configuration: {0}).", configuration, e);
@@ -234,6 +254,10 @@ public class SnapshotsManager {
 
         vmInterfaceManager.removeAll(true, vmId);
         for (VmNetworkInterface vmInterface : nics) {
+            // These fields are not saved in the OVF, so fill them with reasonable values.
+            vmInterface.setId(Guid.NewGuid());
+            vmInterface.setVmId(vmId);
+
             vmInterfaceManager.add(vmInterface, compensationContext);
         }
     }
@@ -258,20 +282,23 @@ public class SnapshotsManager {
      */
     protected void synchronizeDisksFromSnapshot(Guid vmId, Guid snapshotId, List<DiskImage> imagesFromSnapshot) {
         List<DiskImage> disksFromSnapshot = new ArrayList<DiskImage>();
+        List<Guid> diskIdsFromSnapshot = new ArrayList<Guid>();
         for (DiskImage image : imagesFromSnapshot) {
             if (snapshotId.equals(image.getvm_snapshot_id())) {
+                diskIdsFromSnapshot.add(image.getimage_group_id());
                 disksFromSnapshot.add(image);
             }
         }
 
+        // Sync disks that exist or existed in the snapshot.
         for (DiskImage diskImage : disksFromSnapshot) {
             Disk disk = diskImage.getDisk();
             if (getDiskDao().exists(disk.getId())) {
                 getDiskDao().update(disk);
             } else {
-                if (getDiskImageDao().get(diskImage.getId()) == null) {
+                if (getDiskImageDao().getSnapshotById(diskImage.getId()) == null) {
                     // TODO: Set disk status to broken, for now mark image as illegal for further references.
-                    diskImage.setimageStatus(ImageStatus.INVALID);
+                    diskImage.setimageStatus(ImageStatus.ILLEGAL);
                 } else {
                     VmDeviceUtils.addManagedDevice(new VmDeviceId(disk.getId(), vmId),
                             VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
@@ -281,6 +308,23 @@ public class SnapshotsManager {
                 getDiskDao().save(disk);
             }
         }
+
+        // Remove all disks that didn't exist in the snapshot.
+        for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmId(vmId)) {
+            if (VmDeviceType.getName(VmDeviceType.DISK).equals(vmDevice.getType())
+                    && !diskIdsFromSnapshot.contains(vmDevice.getDeviceId())) {
+                for (DiskImage diskImage : getDiskImageDao().getAllSnapshotsForImageGroup(vmDevice.getDeviceId())) {
+                    getImageVmMapDao().remove(new image_vm_map_id(diskImage.getId(), vmId));
+                }
+
+                getDiskDao().remove(vmDevice.getDeviceId());
+                getVmDeviceDao().remove(vmDevice.getId());
+            }
+        }
+    }
+
+    protected VmDeviceDAO getVmDeviceDao() {
+        return DbFacade.getInstance().getVmDeviceDAO();
     }
 
     protected ImageVmMapDAO getImageVmMapDao() {
@@ -305,5 +349,13 @@ public class SnapshotsManager {
 
     protected DiskImageDAO getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDAO();
+    }
+
+    protected VmTemplateDAO getVmTemplateDao() {
+        return DbFacade.getInstance().getVmTemplateDAO();
+    }
+
+    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDao() {
+        return DbFacade.getInstance().getVmNetworkInterfaceDAO();
     }
 }
