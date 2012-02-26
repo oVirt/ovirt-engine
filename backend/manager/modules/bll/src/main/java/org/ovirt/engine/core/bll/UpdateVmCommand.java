@@ -60,7 +60,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             if (mOldVmStatic != null) {
                 UpdateVmNetworks();
                 UpdateVmData();
-                VmDeviceUtils.updateVmDevices(mOldVmStatic);
+                VmDeviceUtils.updateVmDevices(getVm().getStaticData(), mOldVmStatic);
                 if (((Boolean) Backend
                         .getInstance()
                         .getResourceManager()
