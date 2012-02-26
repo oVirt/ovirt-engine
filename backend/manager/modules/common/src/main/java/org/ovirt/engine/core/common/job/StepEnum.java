@@ -15,6 +15,7 @@ public enum StepEnum {
     INSTALLING_HOST,
     TEST_POWER_MANAGEMENT,
     ADD_VM_TO_POOL,
+    MIGRATE_VM,
 
     /**
      * Maps VDSM tasks type to {@code StepEnum} so it can be resolvable as readable description

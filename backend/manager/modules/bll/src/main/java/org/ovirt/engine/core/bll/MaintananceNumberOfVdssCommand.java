@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MaintananceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.MaintananceVdsParameters;
@@ -69,7 +70,10 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
             // ParametersCurrentUser = CurrentUser
             MaintananceVdsParameters tempVar = new MaintananceVdsParameters(vdsId, getParameters().getIsInternal());
             tempVar.setSessionId(getParameters().getSessionId());
-            VdcReturnValueBase result = Backend.getInstance().runInternalAction(VdcActionType.MaintananceVds, tempVar);
+            VdcReturnValueBase result =
+                    Backend.getInstance().runInternalAction(VdcActionType.MaintananceVds,
+                            tempVar,
+                            ExecutionHandler.createInternalJobContext());
             if (!result.getCanDoAction()) {
                 getReturnValue().getCanDoActionMessages().addAll(result.getCanDoActionMessages());
                 getReturnValue().setCanDoAction(false);

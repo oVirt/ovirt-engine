@@ -63,6 +63,7 @@ public class VdsEventListener implements IVdsEventListener {
     public void VdsMovedToMaintanance(Guid vdsId) {
         VDS vds = DbFacade.getInstance().getVdsDAO().get(vdsId);
         MaintananceVdsCommand.ProcessStorageOnVdsInactive(vds);
+        ExecutionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintananceVds, true);
     }
 
     @Override
@@ -93,6 +94,7 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void VdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, boolean saveToDb,
                                   Guid domainId) {
+        ExecutionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintananceVds, false);
         SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(vdsId, reason);
         tempVar.setSaveToDb(saveToDb);
         tempVar.setStorageDomainId(domainId);
@@ -102,6 +104,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void VdsNotResponding(final VDS vds) {
+        ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintananceVds, false);
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {

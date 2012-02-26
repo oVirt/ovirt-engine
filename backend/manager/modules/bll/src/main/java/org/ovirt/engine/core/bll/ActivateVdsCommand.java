@@ -2,7 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network;
@@ -41,6 +43,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
         if (getVds() == null) {
             setSucceeded(false);
         } else {
+            ExecutionHandler.updateSpecificActionJobCompleted(getVds().getId(), VdcActionType.MaintananceVds, false);
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
                 @Override

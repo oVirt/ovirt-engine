@@ -58,7 +58,7 @@ public enum VdcActionType {
     RestartVds(104, ActionGroup.MANIPUTLATE_HOST),
     VdsNotRespondingTreatment(105),
     MaintananceVds(106),
-    MaintananceNumberOfVdss(107, ActionGroup.MANIPUTLATE_HOST),
+    MaintananceNumberOfVdss(107, ActionGroup.MANIPUTLATE_HOST, false),
     ActivateVds(108, ActionGroup.MANIPUTLATE_HOST),
     InstallVds(109),
     ClearNonResponsiveVdsVms(110),

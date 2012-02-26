@@ -1,9 +1,15 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MaintananceVdsParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
@@ -16,6 +22,8 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmsComparer;
+import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -23,11 +31,15 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 
 public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends VdsCommand<T> {
+
+    private static final long serialVersionUID = -7604781532599945079L;
+    private static Log log = LogFactory.getLog(MaintananceVdsCommand.class);
     private final boolean _isInternal;
     private List<VM> vms;
 
@@ -56,6 +68,9 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
                                 new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Maintenance));
             }
         }
+        if (vms != null && !vms.isEmpty()) {
+            ExecutionHandler.setAsyncJob(getExecutionContext(), true);
+        }
     }
 
     protected void orderListOfRunningVmsOnVds(Guid vdsId) {
@@ -78,8 +93,11 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
             if (vm.getstatus() != VMStatus.MigratingFrom && (!HAOnly || (HAOnly && vm.getauto_startup()))) {
                 MigrateVmParameters tempVar = new MigrateVmParameters(false, vm.getId());
                 tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-                VdcReturnValueBase result = Backend.getInstance().runInternalAction(VdcActionType.InternalMigrateVm,
-                        tempVar);
+                ExecutionContext ctx = createMigrateVmContext(vm);
+                VdcReturnValueBase result =
+                        Backend.getInstance().runInternalAction(VdcActionType.InternalMigrateVm,
+                                tempVar,
+                                new CommandContext(ctx));
                 if (!result.getCanDoAction() || !(((Boolean) result.getActionReturnValue()).booleanValue())) {
                     succeeded = false;
                     AppendCustomValue("failedVms", vm.getvm_name(), ",");
@@ -88,6 +106,24 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
             }
         }
         return succeeded;
+    }
+
+    private ExecutionContext createMigrateVmContext(VM vm) {
+        ExecutionContext ctx = new ExecutionContext();
+        try {
+            Map<String, String> values = new HashMap<String, String>();
+            values.put(VdcObjectType.VM.name().toLowerCase(), vm.getvm_name());
+            values.put(VdcObjectType.VDS.name().toLowerCase(), vm.getrun_on_vds_name());
+            Step step = ExecutionHandler.addSubStep(getExecutionContext(),
+                    getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
+                    StepEnum.MIGRATE_VM,
+                    ExecutionMessageDirector.resolveStepMessage(StepEnum.MIGRATE_VM, values));
+            ctx.setStep(step);
+            ctx.setMonitored(true);
+        } catch (RuntimeException e) {
+            log.error(e);
+        }
+        return ctx;
     }
 
     @Override
@@ -161,5 +197,4 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
         }
     }
 
-    private static Log log = LogFactory.getLog(MaintananceVdsCommand.class);
 }
