@@ -227,6 +227,20 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION getAllVmTemplatesRelatedToQuotaId(v_quota_id UUID) RETURNS SETOF vm_templates_view
+   AS $procedure$
+BEGIN
+	RETURN QUERY SELECT vm_templates.*
+      FROM vm_templates_view vm_templates
+      WHERE quota_id = v_quota_id
+      UNION
+      SELECT DISTINCT vm_templates.*
+      FROM vm_templates_view vm_templates, image_vm_map, images
+      WHERE vm_templates.vmt_guid = image_vm_map.vm_id
+        AND images.image_guid = image_vm_map.image_id
+        AND images.quota_id = v_quota_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmTemplateByVmtGuid(v_vmt_guid UUID) RETURNS SETOF vm_templates_view

@@ -189,7 +189,8 @@ vm_templates.vm_guid as vmt_guid,
        vm_templates.origin as origin,
        vm_templates.initrd_url as initrd_url,
        vm_templates.kernel_url as kernel_url,
-       vm_templates.kernel_params as kernel_params
+       vm_templates.kernel_params as kernel_params,
+       vm_templates.quota_id as quota_id
 
 FROM       vm_static AS vm_templates  INNER JOIN
 vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id

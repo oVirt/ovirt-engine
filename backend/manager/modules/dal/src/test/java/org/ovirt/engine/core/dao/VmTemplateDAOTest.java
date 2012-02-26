@@ -82,6 +82,18 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
     }
 
     /**
+     * Ensures the right set of templates are returned.
+     */
+    @Test
+    public void testGetAllTemplatesRelatedToQuotaId() {
+        List<VmTemplate> result = dao.getAllTemplatesRelatedToQuotaId(FixturesTool.QUOTA_GENERAL);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+
+    /**
      * Ensures that the templates for the given vds group are returned.
      */
     @Test
