@@ -16,10 +16,8 @@ import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOp
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
-import org.ovirt.engine.core.common.validation.group.DesktopVM;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -40,11 +38,6 @@ public class VmStatic extends VmBase {
     @Column(name = "vmt_guid")
     @Type(type = "guid")
     private Guid vmt_guid = new Guid();
-
-    @Column(name = "num_of_monitors")
-    @IntegerContainedInConfigValueList(configValue = ConfigValues.ValidNumOfMonitors, groups = DesktopVM.class,
-            message = "VALIDATION.VM.NUM_OF_MONITORS.EXCEEDED")
-    private int num_of_monitors;
 
     @Column(name = "is_initialized")
     private boolean is_initialized;
@@ -85,7 +78,7 @@ public class VmStatic extends VmBase {
     private String customProperties;
 
     public VmStatic() {
-        num_of_monitors = 1;
+        setnum_of_monitors(1);
         is_initialized = false;
         setis_auto_suspend(false);
         setnice_level(0);
@@ -106,6 +99,7 @@ public class VmStatic extends VmBase {
                 vmStatic.getmem_size_mb(),
                 vmStatic.getnum_of_sockets(),
                 vmStatic.getcpu_per_socket(),
+                vmStatic.getnum_of_monitors(),
                 vmStatic.getdomain(),
                 vmStatic.gettime_zone(),
                 vmStatic.getvm_type(),
@@ -136,7 +130,11 @@ public class VmStatic extends VmBase {
 
     public VmStatic(String description, int mem_size_mb, VmOsType os, Guid vds_group_id, Guid vm_guid, String vm_name,
             Guid vmt_guid, String domain, java.util.Date creation_date, int num_of_monitors, boolean is_initialized,
-            boolean is_auto_suspend, Guid dedicated_vm_for_vds, int num_of_sockets, int cpu_per_socket,
+            boolean is_auto_suspend,
+            Guid dedicated_vm_for_vds,
+            int num_of_sockets,
+            int cpu_per_socket,
+            int numOfMonitors,
             UsbPolicy usb_policy, String time_zone, boolean auto_startup, boolean is_stateless, boolean fail_back,
             BootSequence default_boot_sequence, VmType vm_type, HypervisorType hypervisor_type,
             OperationMode operation_mode, int minAllocatedMem) {
@@ -148,6 +146,7 @@ public class VmStatic extends VmBase {
                 mem_size_mb,
                 num_of_sockets,
                 cpu_per_socket,
+                numOfMonitors,
                 domain,
                 time_zone,
                 vm_type,
@@ -242,15 +241,6 @@ public class VmStatic extends VmBase {
     }
 
     @XmlElement
-    public int getnum_of_monitors() {
-        return num_of_monitors;
-    }
-
-    public void setnum_of_monitors(int value) {
-        num_of_monitors = value;
-    }
-
-    @XmlElement
     public boolean getis_initialized() {
         return is_initialized;
     }
@@ -314,7 +304,6 @@ public class VmStatic extends VmBase {
         result = prime * result + m_nDiskSize;
         result = prime * result + ((migrationSupport == null) ? 0 : migrationSupport.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + num_of_monitors;
         result = prime * result + ((predefinedProperties == null) ? 0 : predefinedProperties.hashCode());
         result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
         result = prime * result + ((vmt_guid == null) ? 0 : vmt_guid.hashCode());
@@ -357,9 +346,6 @@ public class VmStatic extends VmBase {
                 return false;
             }
         } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (num_of_monitors != other.num_of_monitors) {
             return false;
         }
         if (predefinedProperties == null) {

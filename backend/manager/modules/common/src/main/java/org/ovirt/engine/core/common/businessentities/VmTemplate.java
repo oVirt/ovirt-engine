@@ -60,9 +60,6 @@ public class VmTemplate extends VmBase {
     @Column(name = "name", length = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE, nullable = false)
     private String name;
 
-    @Column(name = "num_of_monitors", nullable = false)
-    private int numOfMonitors;
-
     @Column(name = "status", nullable = false)
     @Enumerated
     private VmTemplateStatus status = VmTemplateStatus.OK;
@@ -118,6 +115,7 @@ public class VmTemplate extends VmBase {
                 mem_size_mb,
                 num_of_sockets,
                 cpu_per_socket,
+                num_of_monitors,
                 domain,
                 time_zone,
                 vm_type,
@@ -175,15 +173,6 @@ public class VmTemplate extends VmBase {
      * empty setters to fix CXF issue
      */
     public void setnum_of_cpus(int val) {
-    }
-
-    @XmlElement
-    public int getnum_of_monitors() {
-        return numOfMonitors;
-    }
-
-    public void setnum_of_monitors(int value) {
-        numOfMonitors = value;
     }
 
     @XmlElement

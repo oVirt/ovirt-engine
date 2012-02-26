@@ -15,8 +15,11 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.validation.group.DesktopVM;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
@@ -57,6 +60,11 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
 
     @Column(name = "cpu_per_socket", nullable = false)
     private int cpusPerSocket = 1;
+
+    @Column(name = "num_of_monitors")
+    @IntegerContainedInConfigValueList(configValue = ConfigValues.ValidNumOfMonitors, groups = DesktopVM.class,
+            message = "VALIDATION.VM.NUM_OF_MONITORS.EXCEEDED")
+    private int numOfMonitors;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_DOMAIN_SIZE)
     @Column(name = "domain", length = BusinessEntitiesDefinitions.GENERAL_DOMAIN_SIZE)
@@ -141,6 +149,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
             int memSizeMB,
             int numOfSockets,
             int cpusPerSocket,
+            int numOfMonitors,
             String domain,
             String timezone,
             VmType vmType,
@@ -168,6 +177,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         this.memSizeMB = memSizeMB;
         this.numOfSockets = numOfSockets;
         this.cpusPerSocket = cpusPerSocket;
+        this.numOfMonitors = numOfMonitors;
         this.domain = domain;
         this.timezone = timezone;
         this.vmType = vmType;
@@ -268,6 +278,15 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
 
     public void setcpu_per_socket(int value) {
         this.cpusPerSocket = value;
+    }
+
+    @XmlElement
+    public int getnum_of_monitors() {
+        return numOfMonitors;
+    }
+
+    public void setnum_of_monitors(int value) {
+        numOfMonitors = value;
     }
 
     @XmlElement
@@ -448,6 +467,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         result = prime * result + memSizeMB;
         result = prime * result + niceLevel;
         result = prime * result + numOfSockets;
+        result = prime * result + numOfMonitors;
         result = prime * result + ((operationMode == null) ? 0 : operationMode.hashCode());
         result = prime * result + ((origin == null) ? 0 : origin.hashCode());
         result = prime * result + priority;
@@ -555,6 +575,9 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
             return false;
         }
         if (numOfSockets != other.numOfSockets) {
+            return false;
+        }
+        if (numOfMonitors != other.numOfMonitors) {
             return false;
         }
         if (operationMode != other.operationMode) {
