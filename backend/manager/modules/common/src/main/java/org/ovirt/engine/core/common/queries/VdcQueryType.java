@@ -79,7 +79,7 @@ public enum VdcQueryType implements Serializable {
     GetImagesByStorageDomainAndTemplate,
 
     // Users queries
-    GetUserVmsByUserIdAndGroups,
+    GetUserVmsByUserIdAndGroups(VdcQueryAuthType.User),
     GetTimeLeasedUsersByVmPoolId,
     GetDbUserByUserId,
     GetUsersByVmid,
