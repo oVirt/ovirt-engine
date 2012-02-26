@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -14,7 +15,9 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -59,6 +62,9 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             mNewCreatedDiskImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
 
             AddDiskImageToDb(mNewCreatedDiskImage);
+            // add disk to vm device
+            VmDeviceUtils.addManagedDevice(new VmDeviceId(mNewCreatedDiskImage.getDisk().getId(), getVmId()),
+                    VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
             getReturnValue().setActionReturnValue(mNewCreatedDiskImage.getId());
             setSucceeded(true);
         }
