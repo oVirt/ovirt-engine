@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.UUID;
 
 import org.junit.Test;
-import org.ovirt.engine.core.bll.AbstractQueryTest;
+import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -18,7 +18,7 @@ import org.ovirt.engine.core.dao.StoragePoolDAO;
  * A test case for {@link GetStoragePoolByIdQuery}.
  * It does not test database implementation, but rather tests that the right delegations to the DAO occur.
  */
-public class GetStoragePoolByIdQueryTest extends AbstractQueryTest<StoragePoolQueryParametersBase, GetStoragePoolByIdQuery<StoragePoolQueryParametersBase>> {
+public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<StoragePoolQueryParametersBase, GetStoragePoolByIdQuery<StoragePoolQueryParametersBase>> {
 
     @Test
     public void testExecuteQuery() {

@@ -34,7 +34,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
  * This test mocks away all the DAOs, and just tests the flow of the query itself.
  */
 @PrepareForTest(ImagesHandler.class)
-public class GetAllDisksByVmIdQueryTest extends AbstractQueryTest<GetAllDisksByVmIdParameters, GetAllDisksByVmIdQuery<GetAllDisksByVmIdParameters>> {
+public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisksByVmIdParameters, GetAllDisksByVmIdQuery<GetAllDisksByVmIdParameters>> {
     private static final int NUM_DISKS_OF_EACH_KIND = 3;
 
     /** The {@link DiskImageDAO} mocked for the test */

@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.bll.AbstractQueryTest;
+import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -16,7 +16,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 
 /** A test case for the {@link GetStorageDomainsByStoragePoolIdQuery} class. */
-public class GetStorageDomainsByStoragePoolIdQueryTest extends AbstractQueryTest<StoragePoolQueryParametersBase, GetStorageDomainsByStoragePoolIdQuery<StoragePoolQueryParametersBase>> {
+public class GetStorageDomainsByStoragePoolIdQueryTest extends AbstractUserQueryTest<StoragePoolQueryParametersBase, GetStorageDomainsByStoragePoolIdQuery<StoragePoolQueryParametersBase>> {
 
     @Test
     public void testExecuteQuery() {

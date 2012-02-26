@@ -18,7 +18,7 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class GetAllVmSnapshotsByDriveQueryTest extends
-        AbstractQueryTest<GetAllVmSnapshotsByDriveParameters, GetAllVmSnapshotsByDriveQuery<GetAllVmSnapshotsByDriveParameters>> {
+        AbstractUserQueryTest<GetAllVmSnapshotsByDriveParameters, GetAllVmSnapshotsByDriveQuery<GetAllVmSnapshotsByDriveParameters>> {
 
     @Test
     public void testExecuteQuery() {

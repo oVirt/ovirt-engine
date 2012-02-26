@@ -1,0 +1,66 @@
+package org.ovirt.engine.core.bll;
+
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.UUID;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ovirt.engine.core.common.interfaces.IVdcUser;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+/** An abstract test class for query classes that handles common mocking requirements */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(DbFacade.class)
+public abstract class AbstractUserQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>>
+        extends AbstractQueryTest<P, Q> {
+
+    private IVdcUser user;
+    private Guid userID;
+
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        setUpMockUser();
+        setUpMockQueryParameters();
+        setUpSpyQuery();
+    }
+
+    /** Sets up a mock for {@link #user} */
+    private void setUpMockUser() {
+        userID = new Guid(UUID.randomUUID());
+        user = mock(IVdcUser.class);
+        when(user.getUserId()).thenReturn(userID);
+    }
+
+    /** Sets up a mock for {@link #params} */
+    private void setUpMockQueryParameters() {
+        when(getQueryParameters().isFiltered()).thenReturn(true);
+    }
+
+    /** Sets up a mock for {@link #query} */
+    private void setUpSpyQuery() throws Exception {
+        when(getQuery().getUser()).thenReturn(user);
+        when(getQuery().getUserID()).thenReturn(userID);
+    }
+
+    /** @return The mocked user to use in the test */
+    protected IVdcUser getUser() {
+        return user;
+    }
+
+    /** Verify that all queries tested in this manner were flagged as user queries in the {@link org.ovirt.engine.core.common.queries.VdcQueryType} enum */
+    @Test
+    public void testQueryIsAUserQuery() throws IllegalArgumentException, IllegalAccessException {
+        assertFalse("A query tested for filtered access should not be an admin query",
+                TestHelperQueriesCommandType.getQueryTypeFieldValue(getQuery()).isAdmin());
+    }
+}

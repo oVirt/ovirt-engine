@@ -11,7 +11,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 
 /** A test case for {@link GetVmInterfacesByVmIdQuery} */
-public class GetVmInterfacesByVmIdQueryTest extends AbstractQueryTest<GetVmByVmIdParameters, GetVmInterfacesByVmIdQuery<GetVmByVmIdParameters> > {
+public class GetVmInterfacesByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParameters, GetVmInterfacesByVmIdQuery<GetVmByVmIdParameters> > {
 
     /** A test that checked that all the parameters are passed properly to the DAO */
     @Test

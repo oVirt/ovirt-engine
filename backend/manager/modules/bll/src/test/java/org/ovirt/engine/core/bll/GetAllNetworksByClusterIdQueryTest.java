@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.NetworkDAO;
 
-public class GetAllNetworksByClusterIdQueryTest extends AbstractQueryTest<VdsGroupQueryParamenters, GetAllNetworksByClusterIdQuery<? extends VdsGroupQueryParamenters>> {
+public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<VdsGroupQueryParamenters, GetAllNetworksByClusterIdQuery<? extends VdsGroupQueryParamenters>> {
 
     /** Tests that {@link GetAllNetworksByClusterIdQuery#executeQueryCommand()} delegated to the correct DAOs, using mock objects */
     @Test
