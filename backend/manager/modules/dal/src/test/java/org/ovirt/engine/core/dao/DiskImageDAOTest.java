@@ -239,6 +239,26 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
     }
 
     @Test
+    public void testGetImagesByStorageIdAndTempleteNull() {
+        List<DiskImage> result =
+                dao.getImagesByStorageIdAndTemplateId(Guid.createGuidFromString("72e3a666-89e1-4005-a7ca-f7548004a9ab"),
+                        null);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    public void testGetImagesByStorageIdAndTempleteId() {
+        List<DiskImage> result =
+                dao.getImagesByStorageIdAndTemplateId(Guid.createGuidFromString("72e3a666-89e1-4005-a7ca-f7548004a9ab"),
+                        Guid.createGuidFromString("1b85420c-b84c-4f29-997e-0eb674b40b79"));
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
     public void testGetAllForVM() {
         List<DiskImage> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57);
         assertFullGetAllForVMResult(disks);

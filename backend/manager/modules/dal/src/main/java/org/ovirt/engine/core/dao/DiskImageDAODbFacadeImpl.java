@@ -32,143 +32,30 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskImageDAO {
 
+    private static DiskImageRowMapper diskImageRowMapper = new DiskImageRowMapper();
+    private static FullDiskImageRowMapper fullDiskImageRowMapper = new FullDiskImageRowMapper();
 
     @Override
     public DiskImage get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("image_guid", id);
 
-        ParameterizedRowMapper<DiskImage> mapper = new ParameterizedRowMapper<DiskImage>() {
-            @Override
-            public DiskImage mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                DiskImage entity = new DiskImage();
-                entity.setactive((Boolean) rs.getObject("active"));
-                entity.setvm_guid(Guid.createGuidFromString(rs
-                        .getString("vm_guid")));
-                entity.setcreation_date(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("creation_date")));
-                entity.setactual_size(rs.getLong("actual_size"));
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs
-                        .getString("image_guid")));
-                entity.setinternal_drive_mapping(rs
-                        .getString("internal_drive_mapping"));
-                entity.setit_guid(Guid.createGuidFromString(rs
-                        .getString("it_guid")));
-                entity.setsize(rs.getLong("size"));
-                entity.setParentId(Guid.createGuidFromString(rs
-                        .getString("ParentId")));
-                entity.setimageStatus(ImageStatus.forValue(rs
-                        .getInt("imageStatus")));
-                entity.setlastModified(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("lastModified")));
-                entity.setappList(rs.getString("app_list"));
-                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
-                        .getString("storage_id")))));
-                entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
-                        .getString("vm_snapshot_id")));
-                entity.setvolume_type(VolumeType.forValue(rs
-                        .getInt("volume_type")));
-                entity.setvolume_format(VolumeFormat.forValue(rs
-                        .getInt("volume_format")));
-                entity.setdisk_type(DiskType.forValue(rs.getInt("disk_type")));
-                entity.setimage_group_id(Guid.createGuidFromString(rs
-                        .getString("image_group_id")));
-                entity.setstorage_path(rs.getString("storage_path"));
-                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
-                entity.setstorage_pool_id(NGuid.createGuidFromString(rs
-                        .getString("storage_pool_id")));
-                entity.setdisk_interface(DiskInterface.forValue(rs
-                        .getInt("disk_interface")));
-                entity.setboot(rs.getBoolean("boot"));
-                entity.setwipe_after_delete(rs.getBoolean("wipe_after_delete"));
-                entity.setpropagate_errors(PropagateErrors.forValue(rs
-                        .getInt("propagate_errors")));
-                entity.setread_rate(rs.getInt("read_rate"));
-                entity.setwrite_rate(rs.getInt("write_rate"));
-                String entityType = rs.getString("entity_type");
-                handleEntityType(entityType, entity);
-                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
-                return entity;
-            }
-        };
-
         List<DiskImage> images =
-                groupImagesStorage(getCallsHandler().executeReadList("GetImageByImageGuid", mapper, parameterSource));
+                groupImagesStorage(getCallsHandler().executeReadList("GetImageByImageGuid",
+                        fullDiskImageRowMapper,
+                        parameterSource));
         if (images == null || images.isEmpty()) {
             return null;
         }
         return images.get(0);
     }
 
-    private void handleEntityType(String entityType, DiskImage entity) {
-        if (entityType != null && !entityType.isEmpty()) {
-            VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
-            entity.setVmEntityType(vmEntityType);
-        }
-    }
-
-
     @Override
     public DiskImage getSnapshotById(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("image_guid", id);
 
-        ParameterizedRowMapper<DiskImage> mapper = new ParameterizedRowMapper<DiskImage>() {
-            @Override
-            public DiskImage mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                DiskImage entity = new DiskImage();
-                entity.setcreation_date(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("creation_date")));
-                entity.setactual_size(rs.getLong("actual_size"));
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs
-                        .getString("image_guid")));
-                entity.setinternal_drive_mapping(rs
-                        .getString("internal_drive_mapping"));
-                entity.setit_guid(Guid.createGuidFromString(rs
-                        .getString("it_guid")));
-                entity.setsize(rs.getLong("size"));
-                entity.setParentId(Guid.createGuidFromString(rs
-                        .getString("ParentId")));
-                entity.setimageStatus(ImageStatus.forValue(rs
-                        .getInt("imageStatus")));
-                entity.setlastModified(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("lastModified")));
-                entity.setappList(rs.getString("app_list"));
-                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
-                        .getString("storage_id")))));
-                entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
-                        .getString("vm_snapshot_id")));
-                entity.setvolume_type(VolumeType.forValue(rs
-                        .getInt("volume_type")));
-                entity.setvolume_format(VolumeFormat.forValue(rs
-                        .getInt("volume_format")));
-                entity.setdisk_type(DiskType.forValue(rs.getInt("disk_type")));
-                entity.setimage_group_id(Guid.createGuidFromString(rs
-                        .getString("image_group_id")));
-                entity.setstorage_path(rs.getString("storage_path"));
-                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
-                entity.setstorage_pool_id(NGuid.createGuidFromString(rs
-                        .getString("storage_pool_id")));
-                entity.setdisk_interface(DiskInterface.forValue(rs
-                        .getInt("disk_interface")));
-                entity.setboot(rs.getBoolean("boot"));
-                entity.setwipe_after_delete(rs.getBoolean("wipe_after_delete"));
-                entity.setpropagate_errors(PropagateErrors.forValue(rs
-                        .getInt("propagate_errors")));
-                entity.setread_rate(rs.getInt("read_rate"));
-                entity.setwrite_rate(rs.getInt("write_rate"));
-                String entityType = rs.getString("entity_type");
-                handleEntityType(entityType, entity);
-                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeRead("GetSnapshotByGuid", mapper, parameterSource);
+        return getCallsHandler().executeRead("GetSnapshotByGuid", diskImageRowMapper, parameterSource);
     }
 
     @Override
@@ -189,63 +76,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
-        ParameterizedRowMapper<DiskImage> mapper = new ParameterizedRowMapper<DiskImage>() {
-            @Override
-            public DiskImage mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                DiskImage entity = new DiskImage();
-                entity.setactive((Boolean) rs.getObject("active"));
-                entity.setcreation_date(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("creation_date")));
-                entity.setactual_size(rs.getLong("actual_size"));
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs
-                        .getString("image_guid")));
-                entity.setinternal_drive_mapping(rs
-                        .getString("internal_drive_mapping"));
-                entity.setit_guid(Guid.createGuidFromString(rs
-                        .getString("it_guid")));
-                entity.setsize(rs.getLong("size"));
-                entity.setvm_guid(Guid.createGuidFromString(rs
-                        .getString("vm_guid")));
-                entity.setParentId(Guid.createGuidFromString(rs
-                        .getString("ParentId")));
-                entity.setimageStatus(ImageStatus.forValue(rs
-                        .getInt("imageStatus")));
-                entity.setlastModified(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("lastModified")));
-                entity.setappList(rs.getString("app_list"));
-                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
-                        .getString("storage_id")))));
-                entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
-                        .getString("vm_snapshot_id")));
-                entity.setimage_group_id(Guid.createGuidFromString(rs
-                        .getString("image_group_id")));
-                entity.setvolume_type(VolumeType.forValue(rs
-                        .getInt("volume_type")));
-                entity.setvolume_format(VolumeFormat.forValue(rs
-                        .getInt("volume_format")));
-                entity.setdisk_type(DiskType.forValue(rs.getInt("disk_type")));
-                entity.setstorage_path(rs.getString("storage_path"));
-                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
-                entity.setstorage_pool_id(NGuid.createGuidFromString(rs
-                        .getString("storage_pool_id")));
-                entity.setdisk_interface(DiskInterface.forValue(rs
-                        .getInt("disk_interface")));
-                entity.setboot(rs.getBoolean("boot"));
-                entity.setwipe_after_delete(rs.getBoolean("wipe_after_delete"));
-                entity.setpropagate_errors(PropagateErrors.forValue(rs
-                        .getInt("propagate_errors")));
-                entity.setread_rate(rs.getInt("read_rate"));
-                entity.setwrite_rate(rs.getInt("write_rate"));
-                String entityType = rs.getString("entity_type");
-                handleEntityType(entityType, entity);
-                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
-                return entity;
-            }
-        };
-
-        return groupImagesStorage(getCallsHandler().executeReadList("GetImagesByVmGuid", mapper, parameterSource));
+        return groupImagesStorage(getCallsHandler().executeReadList("GetImagesByVmGuid",
+                fullDiskImageRowMapper,
+                parameterSource));
     }
 
     @Override
@@ -253,60 +86,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("parent_guid", id);
 
-        ParameterizedRowMapper<DiskImage> mapper = new ParameterizedRowMapper<DiskImage>() {
-            @Override
-            public DiskImage mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                DiskImage entity = new DiskImage();
-                entity.setcreation_date(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("creation_date")));
-                entity.setactual_size(rs.getLong("actual_size"));
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs
-                        .getString("image_guid")));
-                entity.setinternal_drive_mapping(rs
-                        .getString("internal_drive_mapping"));
-                entity.setit_guid(Guid.createGuidFromString(rs
-                        .getString("it_guid")));
-                entity.setsize(rs.getLong("size"));
-                entity.setParentId(Guid.createGuidFromString(rs
-                        .getString("ParentId")));
-                entity.setimageStatus(ImageStatus.forValue(rs
-                        .getInt("imageStatus")));
-                entity.setlastModified(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("lastModified")));
-                entity.setappList(rs.getString("app_list"));
-                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
-                        .getString("storage_id")))));
-                entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
-                        .getString("vm_snapshot_id")));
-                entity.setvolume_type(VolumeType.forValue(rs
-                        .getInt("volume_type")));
-                entity.setvolume_format(VolumeFormat.forValue(rs
-                        .getInt("volume_format")));
-                entity.setdisk_type(DiskType.forValue(rs.getInt("disk_type")));
-                entity.setimage_group_id(Guid.createGuidFromString(rs
-                        .getString("image_group_id")));
-                entity.setstorage_path(rs.getString("storage_path"));
-                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
-                entity.setstorage_pool_id(NGuid.createGuidFromString(rs
-                        .getString("storage_pool_id")));
-                entity.setdisk_interface(DiskInterface.forValue(rs
-                        .getInt("disk_interface")));
-                entity.setboot(rs.getBoolean("boot"));
-                entity.setwipe_after_delete(rs.getBoolean("wipe_after_delete"));
-                entity.setpropagate_errors(PropagateErrors.forValue(rs
-                        .getInt("propagate_errors")));
-                entity.setread_rate(rs.getInt("read_rate"));
-                entity.setwrite_rate(rs.getInt("write_rate"));
-                String entityType = rs.getString("entity_type");
-                handleEntityType(entityType, entity);
-                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("GetSnapshotByParentGuid", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetSnapshotByParentGuid", diskImageRowMapper, parameterSource);
     }
 
     @Override
@@ -314,60 +94,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_domain_id", id);
 
-        ParameterizedRowMapper<DiskImage> mapper = new ParameterizedRowMapper<DiskImage>() {
-            @Override
-            public DiskImage mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                DiskImage entity = new DiskImage();
-                entity.setcreation_date(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("creation_date")));
-                entity.setactual_size(rs.getLong("actual_size"));
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs
-                        .getString("image_guid")));
-                entity.setinternal_drive_mapping(rs
-                        .getString("internal_drive_mapping"));
-                entity.setit_guid(Guid.createGuidFromString(rs
-                        .getString("it_guid")));
-                entity.setsize(rs.getLong("size"));
-                entity.setParentId(Guid.createGuidFromString(rs
-                        .getString("ParentId")));
-                entity.setimageStatus(ImageStatus.forValue(rs
-                        .getInt("imageStatus")));
-                entity.setlastModified(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("lastModified")));
-                entity.setappList(rs.getString("app_list"));
-                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
-                        .getString("storage_id")))));
-                entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
-                        .getString("vm_snapshot_id")));
-                entity.setvolume_type(VolumeType.forValue(rs
-                        .getInt("volume_type")));
-                entity.setvolume_format(VolumeFormat.forValue(rs
-                        .getInt("volume_format")));
-                entity.setdisk_type(DiskType.forValue(rs.getInt("disk_type")));
-                entity.setimage_group_id(Guid.createGuidFromString(rs
-                        .getString("image_group_id")));
-                entity.setstorage_path(rs.getString("storage_path"));
-                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
-                entity.setstorage_pool_id(NGuid.createGuidFromString(rs
-                        .getString("storage_pool_id")));
-                entity.setdisk_interface(DiskInterface.forValue(rs
-                        .getInt("disk_interface")));
-                entity.setboot(rs.getBoolean("boot"));
-                entity.setwipe_after_delete(rs.getBoolean("wipe_after_delete"));
-                entity.setpropagate_errors(PropagateErrors.forValue(rs
-                        .getInt("propagate_errors")));
-                entity.setread_rate(rs.getInt("read_rate"));
-                entity.setwrite_rate(rs.getInt("write_rate"));
-                String entityType = rs.getString("entity_type");
-                handleEntityType(entityType, entity);
-                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("GetSnapshotsByStorageDomainId", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetSnapshotsByStorageDomainId", diskImageRowMapper, parameterSource);
     }
 
     @Override
@@ -375,60 +102,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_snapshot_id", id);
 
-        ParameterizedRowMapper<DiskImage> mapper = new ParameterizedRowMapper<DiskImage>() {
-            @Override
-            public DiskImage mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                DiskImage entity = new DiskImage();
-                entity.setcreation_date(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("creation_date")));
-                entity.setactual_size(rs.getLong("actual_size"));
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs
-                        .getString("image_guid")));
-                entity.setinternal_drive_mapping(rs
-                        .getString("internal_drive_mapping"));
-                entity.setit_guid(Guid.createGuidFromString(rs
-                        .getString("it_guid")));
-                entity.setsize(rs.getLong("size"));
-                entity.setParentId(Guid.createGuidFromString(rs
-                        .getString("ParentId")));
-                entity.setimageStatus(ImageStatus.forValue(rs
-                        .getInt("imageStatus")));
-                entity.setlastModified(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("lastModified")));
-                entity.setappList(rs.getString("app_list"));
-                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
-                        .getString("storage_id")))));
-                entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
-                        .getString("vm_snapshot_id")));
-                entity.setvolume_type(VolumeType.forValue(rs
-                        .getInt("volume_type")));
-                entity.setvolume_format(VolumeFormat.forValue(rs
-                        .getInt("volume_format")));
-                entity.setdisk_type(DiskType.forValue(rs.getInt("disk_type")));
-                entity.setimage_group_id(Guid.createGuidFromString(rs
-                        .getString("image_group_id")));
-                entity.setstorage_path(rs.getString("storage_path"));
-                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
-                entity.setstorage_pool_id(NGuid.createGuidFromString(rs
-                        .getString("storage_pool_id")));
-                entity.setdisk_interface(DiskInterface.forValue(rs
-                        .getInt("disk_interface")));
-                entity.setboot(rs.getBoolean("boot"));
-                entity.setwipe_after_delete(rs.getBoolean("wipe_after_delete"));
-                entity.setpropagate_errors(PropagateErrors.forValue(rs
-                        .getInt("propagate_errors")));
-                entity.setread_rate(rs.getInt("read_rate"));
-                entity.setwrite_rate(rs.getInt("write_rate"));
-                String entityType = rs.getString("entity_type");
-                handleEntityType(entityType, entity);
-                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("GetSnapshotsByVmSnapshotId", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetSnapshotsByVmSnapshotId", diskImageRowMapper, parameterSource);
     }
 
     @Override
@@ -436,120 +110,16 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("image_group_id", id);
 
-        ParameterizedRowMapper<DiskImage> mapper = new ParameterizedRowMapper<DiskImage>() {
-            @Override
-            public DiskImage mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                DiskImage entity = new DiskImage();
-                entity.setcreation_date(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("creation_date")));
-                entity.setactual_size(rs.getLong("actual_size"));
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs
-                        .getString("image_guid")));
-                entity.setinternal_drive_mapping(rs
-                        .getString("internal_drive_mapping"));
-                entity.setit_guid(Guid.createGuidFromString(rs
-                        .getString("it_guid")));
-                entity.setsize(rs.getLong("size"));
-                entity.setParentId(Guid.createGuidFromString(rs
-                        .getString("ParentId")));
-                entity.setimageStatus(ImageStatus.forValue(rs
-                        .getInt("imageStatus")));
-                entity.setlastModified(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("lastModified")));
-                entity.setappList(rs.getString("app_list"));
-                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
-                        .getString("storage_id")))));
-                entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
-                        .getString("vm_snapshot_id")));
-                entity.setvolume_type(VolumeType.forValue(rs
-                        .getInt("volume_type")));
-                entity.setvolume_format(VolumeFormat.forValue(rs
-                        .getInt("volume_format")));
-                entity.setdisk_type(DiskType.forValue(rs.getInt("disk_type")));
-                entity.setimage_group_id(Guid.createGuidFromString(rs
-                        .getString("image_group_id")));
-                entity.setstorage_path(rs.getString("storage_path"));
-                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
-                entity.setstorage_pool_id(NGuid.createGuidFromString(rs
-                        .getString("storage_pool_id")));
-                entity.setdisk_interface(DiskInterface.forValue(rs
-                        .getInt("disk_interface")));
-                entity.setboot(rs.getBoolean("boot"));
-                entity.setwipe_after_delete(rs.getBoolean("wipe_after_delete"));
-                entity.setpropagate_errors(PropagateErrors.forValue(rs
-                        .getInt("propagate_errors")));
-                entity.setread_rate(rs.getInt("read_rate"));
-                entity.setwrite_rate(rs.getInt("write_rate"));
-                String entityType = rs.getString("entity_type");
-                handleEntityType(entityType, entity);
-                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("GetSnapshotsByImageGroupId", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetSnapshotsByImageGroupId", diskImageRowMapper, parameterSource);
     }
 
     @Override
     public List<DiskImage> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
-        ParameterizedRowMapper<DiskImage> mapper = new ParameterizedRowMapper<DiskImage>() {
-            @Override
-            public DiskImage mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                DiskImage entity = new DiskImage();
-                entity.setcreation_date(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("creation_date")));
-                entity.setactual_size(rs.getLong("actual_size"));
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs
-                        .getString("image_guid")));
-                entity.setinternal_drive_mapping(rs
-                        .getString("internal_drive_mapping"));
-                entity.setit_guid(Guid.createGuidFromString(rs
-                        .getString("it_guid")));
-                entity.setsize(rs.getLong("size"));
-                entity.setParentId(Guid.createGuidFromString(rs
-                        .getString("ParentId")));
-                entity.setimageStatus(ImageStatus.forValue(rs
-                        .getInt("imageStatus")));
-                entity.setlastModified(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("lastModified")));
-                entity.setappList(rs.getString("app_list"));
-                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
-                        .getString("storage_id")))));
-                entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
-                        .getString("vm_snapshot_id")));
-                entity.setvolume_type(VolumeType.forValue(rs
-                        .getInt("volume_type")));
-                entity.setvolume_format(VolumeFormat.forValue(rs
-                        .getInt("volume_format")));
-                entity.setdisk_type(DiskType.forValue(rs.getInt("disk_type")));
-                entity.setimage_group_id(Guid.createGuidFromString(rs
-                        .getString("image_group_id")));
-                entity.setstorage_path(rs.getString("storage_path"));
-                entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
-                entity.setstorage_pool_id(NGuid.createGuidFromString(rs
-                        .getString("storage_pool_id")));
-                entity.setdisk_interface(DiskInterface.forValue(rs
-                        .getInt("disk_interface")));
-                entity.setboot(rs.getBoolean("boot"));
-                entity.setwipe_after_delete(rs.getBoolean("wipe_after_delete"));
-                entity.setpropagate_errors(PropagateErrors.forValue(rs
-                        .getInt("propagate_errors")));
-                entity.setread_rate(rs.getInt("read_rate"));
-                entity.setwrite_rate(rs.getInt("write_rate"));
-                String entityType = rs.getString("entity_type");
-                handleEntityType(entityType, entity);
-                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
-                return entity;
-            }
-        };
-
-        return groupImagesStorage(getCallsHandler().executeReadList("GetAllFromImages", mapper, parameterSource));
+        return groupImagesStorage(getCallsHandler().executeReadList("GetAllFromImages",
+                diskImageRowMapper,
+                parameterSource));
     }
 
     @Override
@@ -742,78 +312,36 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("image_guid", id);
 
-        ParameterizedRowMapper<DiskImage> mapper = new ParameterizedRowMapper<DiskImage>() {
-            @Override
-            public DiskImage mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                DiskImage entity = new DiskImage();
-                entity.setcreation_date(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("creation_date")));
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs
-                        .getString("image_guid")));
-                entity.setinternal_drive_mapping(rs
-                        .getString("internal_drive_mapping"));
-                entity.setit_guid(Guid.createGuidFromString(rs
-                        .getString("it_guid")));
-                entity.setsize(rs.getLong("size"));
-                entity.setParentId(Guid.createGuidFromString(rs
-                        .getString("ParentId")));
-                entity.setimageStatus(ImageStatus.forValue(rs
-                        .getInt("imageStatus")));
-                entity.setlastModified(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("lastModified")));
-                entity.setappList(rs.getString("app_list"));
-                entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
-                        .getString("storage_id")))));
-                entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
-                        .getString("vm_snapshot_id")));
-                entity.setvolume_type(VolumeType.forValue(rs
-                        .getInt("volume_type")));
-                entity.setvolume_format(VolumeFormat.forValue(rs
-                        .getInt("volume_format")));
-                entity.setdisk_type(DiskType.forValue(rs.getInt("disk_type")));
-                entity.setimage_group_id(Guid.createGuidFromString(rs
-                        .getString("image_group_id")));
-                entity.setdisk_interface(DiskInterface.forValue(rs
-                        .getInt("disk_interface")));
-                entity.setboot(rs.getBoolean("boot"));
-                entity.setwipe_after_delete(rs.getBoolean("wipe_after_delete"));
-                entity.setpropagate_errors(PropagateErrors.forValue(rs
-                        .getInt("propagate_errors")));
-                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeRead("GetAncestralImageByImageGuid", mapper, parameterSource);
+        return getCallsHandler().executeRead("GetAncestralImageByImageGuid", diskImageRowMapper, parameterSource);
     }
 
-    private List<DiskImage> groupImagesStorage(List<DiskImage> images) {
-        if (images != null && images.size() > 1) {
-            Map<Guid, DiskImage> imagesMap = new HashMap<Guid, DiskImage>();
-            for (DiskImage image : images) {
-                if (!imagesMap.containsKey(image.getId())) {
-                    imagesMap.put(image.getId(), image);
-                } else {
-                    imagesMap.get(image.getId()).getstorage_ids().addAll(image.getstorage_ids());
-                    imagesMap.get(image.getId()).getStoragesNames().addAll(image.getStoragesNames());
-                }
-            }
-            return new ArrayList<DiskImage>(imagesMap.values());
-        }
-        return images;
+    @Override
+    public List<DiskImage> getImagesByStorageIdAndTemplateId(Guid storageId, Guid templateId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("storage_id", storageId)
+                .addValue("template_id", templateId);
 
+        return getCallsHandler().executeReadList("GetImageByStorageIdAndTemplateId",
+                diskImageRowMapper,
+                parameterSource);
     }
 
-    static final class DiskImageRowMapper implements ParameterizedRowMapper<DiskImage> {
+    private static class DiskImageRowMapper implements
+            ParameterizedRowMapper<DiskImage> {
 
         @Override
         public DiskImage mapRow(ResultSet rs, int rowNum) throws SQLException {
-
             DiskImage entity = new DiskImage();
+            mapEntity(rs, entity);
+            return entity;
+        }
+
+        protected void mapEntity(ResultSet rs, DiskImage entity) throws SQLException {
+            entity.setvm_guid(Guid.createGuidFromString(rs
+                    .getString("vm_guid")));
             entity.setcreation_date(DbFacadeUtils.fromDate(rs
                     .getTimestamp("creation_date")));
+            entity.setactual_size(rs.getLong("actual_size"));
             entity.setdescription(rs.getString("description"));
             entity.setId(Guid.createGuidFromString(rs
                     .getString("image_guid")));
@@ -840,14 +368,55 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setdisk_type(DiskType.forValue(rs.getInt("disk_type")));
             entity.setimage_group_id(Guid.createGuidFromString(rs
                     .getString("image_group_id")));
+            entity.setstorage_path(rs.getString("storage_path"));
+            entity.setstorage_pool_id(NGuid.createGuidFromString(rs
+                    .getString("storage_pool_id")));
             entity.setdisk_interface(DiskInterface.forValue(rs
                     .getInt("disk_interface")));
             entity.setboot(rs.getBoolean("boot"));
             entity.setwipe_after_delete(rs.getBoolean("wipe_after_delete"));
             entity.setpropagate_errors(PropagateErrors.forValue(rs
                     .getInt("propagate_errors")));
-            entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
+            entity.setread_rate(rs.getInt("read_rate"));
+            entity.setwrite_rate(rs.getInt("write_rate"));
+            String entityType = rs.getString("entity_type");
+            handleEntityType(entityType, entity);
+        }
+
+        private void handleEntityType(String entityType, DiskImage entity) {
+            if (entityType != null && !entityType.isEmpty()) {
+                VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
+                entity.setVmEntityType(vmEntityType);
+            }
+        }
+    }
+
+    private static class FullDiskImageRowMapper extends DiskImageRowMapper {
+
+        @Override
+        public DiskImage mapRow(ResultSet rs, int rowNum) throws SQLException {
+            DiskImage entity = new DiskImage();
+            mapEntity(rs, entity);
+            entity.setactive((Boolean) rs.getObject("active"));
             return entity;
         }
+
+    }
+
+    private List<DiskImage> groupImagesStorage(List<DiskImage> images) {
+        if (images != null && images.size() > 1) {
+            Map<Guid, DiskImage> imagesMap = new HashMap<Guid, DiskImage>();
+            for (DiskImage image : images) {
+                if (!imagesMap.containsKey(image.getId())) {
+                    imagesMap.put(image.getId(), image);
+                } else {
+                    imagesMap.get(image.getId()).getstorage_ids().addAll(image.getstorage_ids());
+                    imagesMap.get(image.getId()).getStoragesNames().addAll(image.getStoragesNames());
+                }
+            }
+            return new ArrayList<DiskImage>(imagesMap.values());
+        }
+        return images;
+
     }
 }

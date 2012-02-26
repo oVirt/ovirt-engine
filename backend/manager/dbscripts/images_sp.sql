@@ -246,3 +246,24 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetImageByStorageIdAndTemplateId(v_storage_id UUID, v_template_id UUID)
+RETURNS SETOF images_storage_domain_view
+   AS $procedure$
+BEGIN
+	  IF v_template_id IS NULL then
+           RETURN QUERY SELECT images_storage_domain_view.*
+           FROM images_storage_domain_view 
+           INNER JOIN image_vm_map ON image_vm_map.image_id = images_storage_domain_view.image_guid
+           INNER JOIN vm_static ON vm_static.vm_guid = image_vm_map.vm_id
+           WHERE images_storage_domain_view.storage_id = v_storage_id AND vm_static.entity_type::text = 'TEMPLATE'::text;
+      ELSE
+           RETURN QUERY SELECT images_storage_domain_view.*
+           FROM images_storage_domain_view 
+           INNER JOIN image_vm_map ON image_vm_map.image_id = images_storage_domain_view.image_guid
+           INNER JOIN vm_static ON vm_static.vm_guid = image_vm_map.vm_id
+           WHERE images_storage_domain_view.storage_id = v_storage_id AND vm_static.vm_guid = v_template_id AND vm_static.entity_type::text = 'TEMPLATE'::text;
+      END IF;     
+END; $procedure$
+LANGUAGE plpgsql;
+
+
