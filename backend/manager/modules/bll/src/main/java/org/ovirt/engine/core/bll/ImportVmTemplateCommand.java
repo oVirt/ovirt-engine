@@ -248,6 +248,20 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         }
     }
 
+    @Override
+    protected boolean validateQuota() {
+        // Set default quota id if storage pool enforcement is disabled.
+        getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getVmTemplate().getQuotaId(),
+                getStoragePool()));
+        for (DiskImage di : getParameters().getImages()) {
+            di.setQuotaId(QuotaHelper.getInstance()
+                    .getQuotaIdToConsume(getVmTemplate().getQuotaId(),
+                            getStoragePool()));
+        }
+        // TODO: Validate quota for import VM.
+        return true;
+    }
+
     protected StorageDomainStaticDAO getStorageDomainStaticDAO() {
         return DbFacade.getInstance().getStorageDomainStaticDAO();
     }
@@ -313,6 +327,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
     protected void AddVmTemplateToDb() {
         getVmTemplate().setvds_group_id(getParameters().getVdsGroupId());
         getVmTemplate().setstatus(VmTemplateStatus.Locked);
+        getVmTemplate().setQuotaId(getParameters().getQuotaId());
         DbFacade.getInstance().getVmTemplateDAO().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         for (DiskImage image : getParameters().getImages()) {

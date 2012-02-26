@@ -302,6 +302,20 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         return retVal;
     }
 
+    @Override
+    protected boolean validateQuota() {
+        // Set default quota id if storage pool enforcement is disabled.
+        getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getVm().getStaticData().getQuotaId(),
+                getStoragePool()));
+        for (DiskImage dit : getVm().getDiskMap().values()) {
+            dit.setQuotaId(QuotaHelper.getInstance()
+                    .getQuotaIdToConsume(getVm().getStaticData().getQuotaId(),
+                            getStoragePool()));
+        }
+        // TODO: Validate quota for import VM.
+        return true;
+    }
+
     private void ensureDomainMap() {
         if (imageToDestinationDomainMap == null) {
             imageToDestinationDomainMap = new HashMap<Guid, Guid>();
@@ -615,6 +629,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         getVm().getStaticData().setcreation_date(new Date());
         getVm().getStaticData().setvds_group_id(getParameters().getVdsGroupId());
         getVm().getStaticData().setMinAllocatedMem(ComputeMinAllocatedMem());
+        getVm().getStaticData().setQuotaId(getParameters().getQuotaId());
         if (getParameters().getCopyCollapse()) {
             getVm().setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
         }
