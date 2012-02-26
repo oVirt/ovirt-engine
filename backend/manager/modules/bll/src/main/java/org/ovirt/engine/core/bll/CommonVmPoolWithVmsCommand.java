@@ -89,18 +89,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 getCompensationContext());
 
         String vmName = getParameters().getVmStaticData().getvm_name();
-        int numChars = (Integer.toString(getParameters().getVmsCount())).length();
-        for (int i = 1, j = 1; i <= getParameters().getVmsCount(); i++, j++) {
+        for (int i = 1, number = 1; i <= getParameters().getVmsCount(); i++, number++) {
             String currentVmName;
-            j--;
+            number--;
             do {
-                j++;
-                int curChars = ((Integer) j).toString().length();
-                StringBuilder number = new StringBuilder();
-                for (int k = 0; k < numChars - curChars; k++) {
-                    number.append('0');
-                }
-                number.append(j);
+                number++;
                 currentVmName = String.format("%1$s-%2$s", vmName, number);
             } while ((Boolean) Backend
                     .getInstance()
