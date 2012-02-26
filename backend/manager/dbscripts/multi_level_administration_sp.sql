@@ -57,7 +57,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
+Create or replace FUNCTION GetConsumedPermissionsForQuotaId(v_quota_id UUID)
+RETURNS SETOF permissions_view
+   AS $procedure$
+BEGIN
+   RETURN QUERY    SELECT *
+   FROM permissions_view
+   WHERE role_id in (SELECT role_id FROM ROLES_groups where action_group_id = 901)
+     AND object_id in(select id from  fn_get_entity_parents(v_quota_id,17));
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetPermissionsByAdElementId(v_ad_element_id UUID)

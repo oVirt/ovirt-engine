@@ -108,6 +108,12 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         assertEquals(VM_ENTITY_ID, result.getObjectId());
     }
 
+    @Test
+    public void testGetAllForQuotaId() {
+        permissions result = dao.getConsumedPermissionsForQuotaId(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL);
+        assertNull(result);
+    }
+
     /**
      * Ensures that an empty collection is returned.
      */

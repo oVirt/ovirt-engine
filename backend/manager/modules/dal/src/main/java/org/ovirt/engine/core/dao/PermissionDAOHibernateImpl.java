@@ -294,4 +294,9 @@ public class PermissionDAOHibernateImpl extends BaseDAOHibernateImpl<permissions
     public List<permissions> getAllDirectPermissionsForAdElement(Guid id) {
         throw new NotImplementedException();
     }
+
+    @Override
+    public permissions getConsumedPermissionsForQuotaId(Guid quotaId) {
+        throw new NotImplementedException("This method is not implemented for Hibernate yet");
+    }
 }
