@@ -8,17 +8,11 @@ import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /** An abstract test class for query classes that handles common mocking requirements */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(DbFacade.class)
 public abstract class AbstractUserQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>>
         extends AbstractQueryTest<P, Q> {
 

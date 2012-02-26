@@ -9,9 +9,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 
 import org.junit.Before;
+import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(DbFacade.class)
 public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> {
 
     private P params;
