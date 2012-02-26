@@ -45,6 +45,11 @@ public class RemoveQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
         if (quotaList.size() <= 1) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DATA_CENTER_MUST_HAVE_AT_LEAST_ONE_QUOTA);
         }
+
+        if (getVmDAO().getAllVmsRelatedToQuotaId(quota.getId()) != null && !getVmDAO().getAllVmsRelatedToQuotaId(quota.getId()).isEmpty()) {
+            // TODO : Add an appropriate message.
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
+        }
         return true;
     }
 
