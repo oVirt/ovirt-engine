@@ -105,7 +105,6 @@ public class ExecutionHandler {
 
                     if (exitStatus) {
                         if (step != null) {
-                            context.setCompleted(true);
                             step.markStepEnded(exitStatus);
                             JobRepositoryFactory.getJobRepository().updateStep(step);
                         }
