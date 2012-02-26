@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -267,7 +266,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         });
 
         MoveOrCopyAllImageGroups(getVmTemplateId(), getParameters().getImages());
-
+        VmDeviceUtils.addImportedDevices(getVmTemplate(), getVmTemplate().getId());
         setSucceeded(true);
     }
 
@@ -321,13 +320,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
             getCompensationContext().snapshotNewEntity(image);
             if (!DbFacade.getInstance().getDiskDao().exists(image.getimage_group_id())) {
                 Disk disk = image.getDisk();
-                VmDeviceUtils.addManagedDevice(getCompensationContext(),
-                        new VmDeviceId((Guid) image.getDisk().getId(), image.getvm_guid()),
-                        VmDeviceType.DISK,
-                        VmDeviceType.DISK,
-                        "",
-                        true,
-                        false);
                 DbFacade.getInstance().getDiskDao().save(disk);
                 getCompensationContext().snapshotNewEntity(disk);
                 image_vm_map imageVmMap = new image_vm_map(true, image.getId(), image.getvm_guid());
@@ -346,11 +338,14 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
     protected void AddVmInterfaces() {
         List<VmNetworkInterface> interfaces = getVmTemplate().getInterfaces();
         for (VmNetworkInterface iface : interfaces) {
+            Guid newId = Guid.NewGuid();
+            iface.setId(newId);
+            iface.setVmId(getVmTemplateId());
             VmNetworkInterface iDynamic = new VmNetworkInterface();
             VmNetworkStatistics iStat = new VmNetworkStatistics();
             iDynamic.setStatistics(iStat);
-            iDynamic.setId(Guid.NewGuid());
-            iStat.setId(iDynamic.getId());
+            iDynamic.setId(newId);
+            iStat.setId(newId);
             iDynamic.setVmTemplateId(getVmTemplateId());
             iDynamic.setName(iface.getName());
             iDynamic.setNetworkName(iface.getNetworkName());
