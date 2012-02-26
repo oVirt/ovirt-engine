@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -22,7 +23,7 @@ public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGro
             VmHandler.UpdateVmGuestAgentVersion(vm);
             if (getParameters().getIncludeDiskData()) {
                 VmHandler.updateDisksFromDb(vm);
-                java.util.Collections.sort(vm.getDiskList(), new ImagesComparerByName());
+                Collections.sort(vm.getDiskList(), new ImagesComparerByName());
                 for (DiskImage diskImage : vm.getDiskMap().values()) {
                     diskImage.getSnapshots().addAll(
                             ImagesHandler.getAllImageSnapshots(diskImage.getId(), diskImage.getit_guid()));
