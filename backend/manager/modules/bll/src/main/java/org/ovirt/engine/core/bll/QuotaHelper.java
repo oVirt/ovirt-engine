@@ -216,14 +216,8 @@ public class QuotaHelper {
     private boolean validateQuotaStorageLimitation(Quota quota, List<String> messages) {
         boolean isValid = true;
         List<QuotaStorage> quotaStorageList = quota.getQuotaStorages();
-        if (quotaStorageList != null && !quotaStorageList.isEmpty()) {
-            if (isGlobalLimitExist(quota.getStorageSizeGB())) {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString());
-                isValid = false;
-            }
-            // If global limit is null and specific limit is null add can do action message
-        } else if (quota.getStorageSizeGB() == null) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_NOT_SPECIFIC_OR_GENERAL.toString());
+        if (quotaStorageList != null && !quotaStorageList.isEmpty() && isGlobalLimitExist(quota.getStorageSizeGB())) {
+            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString());
             isValid = false;
         }
         return isValid;
@@ -258,13 +252,6 @@ public class QuotaHelper {
             if ((isGlobalLimitExist(quota.getMemSizeMB()) && isSpecificVirtualRam)
                     || (isGlobalLimitExist(quota.getVirtualCpu()) && isSpecificVirtualCpu)) {
                 messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString());
-                isValid = false;
-            }
-
-            // Global limitation or specific limitation should be specified.
-            if (!isSpecificVirtualCpu && !isGlobalLimitExist(quota.getVirtualCpu()) ||
-                    !isSpecificVirtualRam && !isGlobalLimitExist(quota.getMemSizeMB())) {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_NOT_SPECIFIC_OR_GENERAL.toString());
                 isValid = false;
             }
         }

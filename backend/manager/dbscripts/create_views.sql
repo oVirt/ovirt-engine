@@ -733,9 +733,9 @@ SELECT q_limit.quota_id as quota_id,
     CalculateStorageUsage(quota_id,null) as storage_size_gb_usage,
     storage_pool.quota_enforcement_type as quota_enforcement_type,
     is_default_quota
-FROM  quota_limitation q_limit, quota q, storage_pool
-WHERE q_limit.quota_id = q.id
-AND storage_pool.id = q.storage_pool_id
+FROM  storage_pool, quota q LEFT OUTER JOIN
+quota_limitation q_limit on q_limit.quota_id = q.id
+WHERE storage_pool.id = q.storage_pool_id
 AND q_limit.vds_group_id IS NULL
 AND q_limit.storage_id IS NULL;
 

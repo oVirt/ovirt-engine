@@ -160,15 +160,14 @@ public class QuotaHelperTest {
     }
 
     @Test
-    public void testGlobalAndSpecificNullStorage() throws Exception {
+    public void testStorageEmptyQuota() throws Exception {
         QuotaHelper quotaHelper = getQuotaHelper();
         List<String> messages = new ArrayList<String>();
         Quota quota = mockGeneralStorageQuota();
         quota.setIsDefaultQuota(false);
         quota.setStorageSizeGB(null);
         boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
-        Assert.assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_NOT_SPECIFIC_OR_GENERAL.toString()));
-        Assert.assertFalse(isQuotaValid);
+        Assert.assertTrue(isQuotaValid);
     }
 
     @Test
@@ -203,7 +202,7 @@ public class QuotaHelperTest {
     }
 
     @Test
-    public void testCpuGlobalAndSpecificWithNullValue() throws Exception {
+    public void testCpuEmptyQuota() throws Exception {
         QuotaHelper quotaHelper = getQuotaHelper();
         List<String> messages = new ArrayList<String>();
         Quota quota = mockSpecificVdsGroupQuota();
@@ -212,12 +211,11 @@ public class QuotaHelperTest {
         }
         quota.setVirtualCpu(null);
         boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
-        Assert.assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_NOT_SPECIFIC_OR_GENERAL.toString()));
-        Assert.assertFalse(isQuotaValid);
+        Assert.assertTrue(isQuotaValid);
     }
 
     @Test
-    public void testRamGlobalAndSpecificWithNullValue() throws Exception {
+    public void testRamEmptyQuota() throws Exception {
         QuotaHelper quotaHelper = getQuotaHelper();
         List<String> messages = new ArrayList<String>();
         Quota quota = mockSpecificVdsGroupQuota();
@@ -226,8 +224,7 @@ public class QuotaHelperTest {
         }
         quota.setMemSizeMB(null);
         boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
-        Assert.assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_NOT_SPECIFIC_OR_GENERAL.toString()));
-        Assert.assertFalse(isQuotaValid);
+        Assert.assertTrue(isQuotaValid);
     }
 
     @Test
