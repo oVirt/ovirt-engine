@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.GetVmTemplatesDisksQuery;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -18,7 +21,7 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
 
     @Override
     protected void executeQueryCommand() {
-        java.util.ArrayList<storage_domains> result = new java.util.ArrayList<storage_domains>();
+        ArrayList<storage_domains> result = new ArrayList<storage_domains>();
         VmTemplate vmTemplate = DbFacade.getInstance().getVmTemplateDAO()
                 .get(getParameters().getId());
         if (vmTemplate != null && vmTemplate.getstorage_pool_id() != null) {
@@ -26,10 +29,10 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
 
             if (templateDisks.size() > 0) {
 
-                List<Guid> domains =
-                        (List<Guid>) DbFacade.getInstance()
-                                .getStorageDomainDAO()
-                                .getAllStorageDomainsByImageGroup(templateDisks.get(0).getimage_group_id().getValue());
+                Set<Guid> domains = new HashSet<Guid>();
+                for (DiskImage templateDisk : templateDisks) {
+                    domains.addAll(templateDisk.getstorage_ids());
+                }
 
                 for (Guid domainId : domains) {
                     storage_domains domain = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(domainId,
