@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -44,7 +43,6 @@ import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQuery
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -443,6 +441,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                     public Void runInTransaction() {
                         AddVmImages();
                         MoveOrCopyAllImageGroups();
+                VmDeviceUtils.addImportedDevices(getVm().getStaticData(), getVm().getId());
                         VmHandler.LockVm(getVm().getId());
                         return null;
 
@@ -512,9 +511,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
                 BaseImagesCommand.saveDiskImage(disk);
                 DbFacade.getInstance().getDiskDao().save(disk.getDisk());
-                VmDeviceUtils.addManagedDevice(new VmDeviceId(disk.getDisk().getId(), getVmId()),
-                        VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
-
                 DiskImageDynamic diskDynamic = new DiskImageDynamic();
                 diskDynamic.setId(disk.getId());
                 diskDynamic.setactual_size(disk.getactual_size());
@@ -539,8 +535,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 DbFacade.getInstance().getImageVmMapDAO().save(
                         new image_vm_map(true, disk.getId(), getVm().getId()));
                 DbFacade.getInstance().getDiskDao().save(disk.getDisk());
-                VmDeviceUtils.addManagedDevice(new VmDeviceId(disk.getDisk().getId(), getVmId()),
-                        VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
             }
         }
     }
