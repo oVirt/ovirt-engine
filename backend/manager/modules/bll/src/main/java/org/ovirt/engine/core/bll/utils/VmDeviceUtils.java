@@ -1,18 +1,22 @@
 package org.ovirt.engine.core.bll.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.image_vm_map;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -22,23 +26,25 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 public class VmDeviceUtils {
     private final static String LOW_VIDEO_MEM = "32768";
     private final static String HIGH_VIDEO_MEM = "65536";
-    private static VM vm;
+    private static VmBase vmBaseInstance;
+    private static VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDAO();
     /**
      * Update the vm devices according to changes made in vm static for existing VM
      */
-    public static void updateVmDevices(VmStatic oldVmStatic) {
-        VmStatic newVmStatic = DbFacade.getInstance().getVmDAO()
-                .get(oldVmStatic.getId()).getStaticData();
-        if (!oldVmStatic.getiso_path().equals(newVmStatic.getiso_path())) {
-            updateCdInVmDevice(oldVmStatic, newVmStatic);
-        }
-        if (oldVmStatic.getdefault_boot_sequence() != newVmStatic
-                .getdefault_boot_sequence()) {
-            updateBootOrderInVmDevice(newVmStatic);
-        }
-        if (oldVmStatic.getnum_of_monitors() != newVmStatic
-                .getnum_of_monitors()) {
-            updateNumOfMonitorsInVmDevice(oldVmStatic, newVmStatic);
+    public static <T extends VmBase> void updateVmDevices(T entity, VmBase oldVmBase) {
+        VmBase newVmBase = getBaseObject(entity, oldVmBase.getId());
+        if (newVmBase != null) {
+            if (!oldVmBase.getiso_path().equals(newVmBase.getiso_path())) {
+                updateCdInVmDevice(oldVmBase, newVmBase);
+            }
+            if (oldVmBase.getdefault_boot_sequence() != newVmBase
+                    .getdefault_boot_sequence()) {
+                updateBootOrderInVmDevice(newVmBase);
+            }
+            if (oldVmBase.getnum_of_monitors() != newVmBase
+                    .getnum_of_monitors()) {
+                updateNumOfMonitorsInVmDevice(oldVmBase, newVmBase);
+            }
         }
     }
 
@@ -46,12 +52,13 @@ public class VmDeviceUtils {
      * Update the vm devices according to changes made in vm static for new VM
      */
 
-    public static void updateVmDevices(Guid newVmId) {
-        vm = DbFacade.getInstance().getVmDAO().get(newVmId);
-        VmStatic newVmStatic = vm.getStaticData();
-        updateCdInVmDevice(newVmStatic);
-        updateBootOrderInVmDevice(newVmStatic);
-        updateNumOfMonitorsInVmDevice(newVmStatic);
+    public static <T extends VmBase> void updateVmDevices(T entity, Guid newId) {
+        VmBase newVmBase = getBaseObject(entity, newId);
+        if (newVmBase != null) {
+            updateCdInVmDevice(newVmBase);
+            updateBootOrderInVmDevice(newVmBase);
+            updateNumOfMonitorsInVmDevice(null, newVmBase);
+        }
     }
 
     /**
@@ -61,28 +68,31 @@ public class VmDeviceUtils {
      */
     public static  void copyVmDevices(Guid srcId, Guid dstId) {
         Guid id;
-        VmStatic vmStatic = DbFacade.getInstance().getVmStaticDAO().get(dstId);
-        List<image_vm_map> disks = DbFacade.getInstance().getImageVmMapDAO().getByVmId(dstId);
+        VmBase VmBase = DbFacade.getInstance().getVmStaticDAO().get(dstId);
+        List<DiskImage> disks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(dstId);
         List<VmNetworkInterface> ifaces;
         int diskCount=0;
         int ifaceCount=0;
-        boolean isVm = (vmStatic != null);
+        boolean isVm = (VmBase != null);
         if (isVm) {
             ifaces = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(dstId);
         }
         else {
             ifaces = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(dstId);
         }
-        VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDAO();
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
         for (VmDevice device : devices) {
             id = Guid.NewGuid();
             if (srcId.equals(Guid.Empty)) {
+                // only update number of monitors if this is a desktop
+                if (VmBase.getvm_type() == VmType.Desktop) {
+                    updateNumOfMonitorsInVmDevice(null, VmBase);
+                }
                 continue; // skip Blank template devices
             }
             if (device.getType().equalsIgnoreCase(VmDeviceType.DISK.name()) && device.getDevice().equalsIgnoreCase(VmDeviceType.DISK.name())) {
                 if (diskCount < disks.size()) {
-                    id = disks.get(diskCount++).getimage_id();
+                    id = (disks.get(diskCount++)).getimage_group_id();
                 }
             }
             else if (device.getType().equalsIgnoreCase(VmDeviceType.INTERFACE.name())) {
@@ -95,8 +105,7 @@ public class VmDeviceUtils {
         }
         // if destination is a VM , update devices boot order
         if (isVm) {
-            updateNumOfMonitorsInVmDevice(null, vmStatic);
-            updateBootOrderInVmDevice(vmStatic);
+            updateBootOrderInVmDevice(VmBase);
         }
     }
 
@@ -117,7 +126,7 @@ public class VmDeviceUtils {
                     true,
                     is_plugged,
                     isReadOnly);
-        DbFacade.getInstance().getVmDeviceDAO().save(managedDevice);
+        dao.save(managedDevice);
     }
 
     public static void addManagedDevice(CompensationContext ctx,VmDeviceId id, VmDeviceType type, VmDeviceType device, String specParams, boolean is_plugged, boolean isReadOnly) {
@@ -131,146 +140,179 @@ public class VmDeviceUtils {
                     true,
                     is_plugged,
                     isReadOnly);
-        DbFacade.getInstance().getVmDeviceDAO().save(managedDevice);
+        dao.save(managedDevice);
         if (ctx != null) {
             ctx.snapshotNewEntity(managedDevice);
         }
     }
 
     /**
+     * adds imported VM or Template devices
+     * @param entity
+     * @param id
+     */
+    public static <T extends VmBase> void addImportedDevices(T entity, Guid id) {
+        addImportedDisks(entity);
+        addImportedInterfaces(entity);
+        updateVmDevices(entity, id);
+    }
+
+    /**
+     * set device Id in special parameters
+     *
+     * @param deviceId
+     * @param specParams
+     * @return
+     */
+    public static String appendDeviceIdToSpecParams(Guid deviceId, String specParams) {
+        final String SEP = ",";
+        StringBuilder sb = new StringBuilder();
+        if (specParams.length() > 0) {
+            sb.append(specParams);
+            sb.append(SEP);
+        }
+        sb.append("deviceId=");
+        sb.append(deviceId);
+        return sb.toString();
+    }
+
+    /**
      * updates existing VM CD ROM in vm_device
-     * @param oldVmStatic
-     * @param newVmStatic
+     *
+     * @param oldVmBase
+     * @param newVmBase
      *            NOTE : Only one CD is currently supported.
      */
-    private static void updateCdInVmDevice(VmStatic oldVmStatic,
-            VmStatic newVmStatic) {
-        if (oldVmStatic.getiso_path().isEmpty()
-                && !newVmStatic.getiso_path().isEmpty()) {
+    private static void updateCdInVmDevice(VmBase oldVmBase,
+            VmBase newVmBase) {
+        if (oldVmBase.getiso_path().isEmpty()
+                && !newVmBase.getiso_path().isEmpty()) {
             // new CD was added
             VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
-                    newVmStatic.getId()),
+                    newVmBase.getId()),
                     VmDeviceType.getName(VmDeviceType.DISK),
                     VmDeviceType.getName(VmDeviceType.CDROM), "", 0,
-                    newVmStatic.getiso_path(), true, false, false);
-            DbFacade.getInstance().getVmDeviceDAO().save(cd);
-        } else if (!oldVmStatic.getiso_path().isEmpty()
-                && newVmStatic.getiso_path().isEmpty()) {
+                    newVmBase.getiso_path(), true, false, false);
+            dao.save(cd);
+        } else if (!oldVmBase.getiso_path().isEmpty()
+                && newVmBase.getiso_path().isEmpty()) {
             // existing CD was removed
             List<VmDevice> list = DbFacade
                     .getInstance()
                     .getVmDeviceDAO()
-                    .getVmDeviceByVmIdTypeAndDevice(newVmStatic.getId(),
+                    .getVmDeviceByVmIdTypeAndDevice(newVmBase.getId(),
                             VmDeviceType.getName(VmDeviceType.DISK),
                             VmDeviceType.getName(VmDeviceType.CDROM));
-            DbFacade.getInstance().getVmDeviceDAO().remove(list.get(0).getId());
-        } else {
+            dao.remove(list.get(0).getId());
+        } else if (!oldVmBase.getiso_path().isEmpty()
+                && !newVmBase.getiso_path().isEmpty()) {
             // CD was changed
             List<VmDevice> list = DbFacade
                     .getInstance()
                     .getVmDeviceDAO()
-                    .getVmDeviceByVmIdTypeAndDevice(newVmStatic.getId(),
+                    .getVmDeviceByVmIdTypeAndDevice(newVmBase.getId(),
                             VmDeviceType.getName(VmDeviceType.DISK),
                             VmDeviceType.getName(VmDeviceType.CDROM));
             VmDevice cd = list.get(0);
-            cd.setSpecParams(newVmStatic.getiso_path());
-            DbFacade.getInstance().getVmDeviceDAO().update(cd);
+            cd.setSpecParams(newVmBase.getiso_path());
+            dao.update(cd);
         }
     }
 
     /**
      * updates new VM CD ROM in vm_device
-     * @param newVmStatic
+     * @param newVmBase
      */
 
-    private static void updateCdInVmDevice(VmStatic newVmStatic) {
-        if (!StringUtils.isEmpty(newVmStatic.getiso_path())) {
+    private static void updateCdInVmDevice(VmBase newVmBase) {
+        if (!StringUtils.isEmpty(newVmBase.getiso_path())) {
             // new CD was added
             VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
-                    newVmStatic.getId()), VmDeviceType.getName(VmDeviceType.DISK),
+                    newVmBase.getId()), VmDeviceType.getName(VmDeviceType.DISK),
                     VmDeviceType.getName(VmDeviceType.CDROM), "", 0,
-                    newVmStatic.getiso_path(), true, false, false);
-            DbFacade.getInstance().getVmDeviceDAO().save(cd);
+                    newVmBase.getiso_path(), true, false, false);
+            dao.save(cd);
         }
     }
 
     /**
      * Updates VM boot order in vm device according to the BootSequence enum value.
-     * @param newStatic
+     * @param vmBase
      */
-    private static void updateBootOrderInVmDevice(VmStatic newStatic) {
-        vm = DbFacade.getInstance().getVmDAO().get(newStatic.getId());
-        List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDAO()
-                .getVmDeviceByVmId(newStatic.getId());
-        int bootOrder = 1;
-        switch (newStatic.getdefault_boot_sequence()) {
-        case C:
-            bootOrder = setDiskBootOrder(devices, bootOrder);
-            break;
-        case CD:
-            bootOrder = setDiskBootOrder(devices, bootOrder);
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            break;
-        case CDN:
-            bootOrder = setDiskBootOrder(devices, bootOrder);
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
-            break;
-        case CN:
-            bootOrder = setDiskBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
-            break;
-        case CND:
-            bootOrder = setDiskBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            break;
-        case D:
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            break;
-        case DC:
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(devices, bootOrder);
-            break;
-        case DCN:
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
-            break;
-        case DN:
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
-            break;
-        case DNC:
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(devices, bootOrder);
-            break;
-        case N:
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
-            break;
-        case NC:
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(devices, bootOrder);
-            break;
-        case NCD:
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(devices, bootOrder);
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            break;
-        case ND:
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            break;
-        case NDC:
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
-            bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(devices, bootOrder);
-            break;
-        }
-        // update boot order in vm device
-        for (VmDevice device : devices) {
-            DbFacade.getInstance().getVmDeviceDAO().update(device);
+    private static void updateBootOrderInVmDevice(VmBase vmBase) {
+        if (vmBase instanceof VmStatic) {
+            vmBaseInstance = vmBase;
+            List<VmDevice> devices = dao.getVmDeviceByVmId(vmBase.getId());
+            int bootOrder = 1;
+            switch (vmBase.getdefault_boot_sequence()) {
+            case C:
+                bootOrder = setDiskBootOrder(devices, bootOrder);
+                break;
+            case CD:
+                bootOrder = setDiskBootOrder(devices, bootOrder);
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                break;
+            case CDN:
+                bootOrder = setDiskBootOrder(devices, bootOrder);
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                bootOrder = setNetworkBootOrder(devices, bootOrder);
+                break;
+            case CN:
+                bootOrder = setDiskBootOrder(devices, bootOrder);
+                bootOrder = setNetworkBootOrder(devices, bootOrder);
+                break;
+            case CND:
+                bootOrder = setDiskBootOrder(devices, bootOrder);
+                bootOrder = setNetworkBootOrder(devices, bootOrder);
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                break;
+            case D:
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                break;
+            case DC:
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                bootOrder = setDiskBootOrder(devices, bootOrder);
+                break;
+            case DCN:
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                bootOrder = setDiskBootOrder(devices, bootOrder);
+                bootOrder = setNetworkBootOrder(devices, bootOrder);
+                break;
+            case DN:
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                bootOrder = setNetworkBootOrder(devices, bootOrder);
+                break;
+            case DNC:
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                bootOrder = setNetworkBootOrder(devices, bootOrder);
+                bootOrder = setDiskBootOrder(devices, bootOrder);
+                break;
+            case N:
+                bootOrder = setNetworkBootOrder(devices, bootOrder);
+                break;
+            case NC:
+                bootOrder = setNetworkBootOrder(devices, bootOrder);
+                bootOrder = setDiskBootOrder(devices, bootOrder);
+                break;
+            case NCD:
+                bootOrder = setNetworkBootOrder(devices, bootOrder);
+                bootOrder = setDiskBootOrder(devices, bootOrder);
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                break;
+            case ND:
+                bootOrder = setNetworkBootOrder(devices, bootOrder);
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                break;
+            case NDC:
+                bootOrder = setNetworkBootOrder(devices, bootOrder);
+                bootOrder = setCDBootOrder(devices, bootOrder);
+                bootOrder = setDiskBootOrder(devices, bootOrder);
+                break;
+            }
+            // update boot order in vm device
+            for (VmDevice device : devices) {
+                dao.update(device);
+            }
         }
     }
 
@@ -318,6 +360,7 @@ public class VmDeviceUtils {
      * @return
      */
     private static int setDiskBootOrder(List<VmDevice> devices, int bootOrder) {
+        VM vm = DbFacade.getInstance().getVmDAO().get(vmBaseInstance.getId());
         boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm);
         for (VmDevice device : devices) {
             if (device.getType()
@@ -344,26 +387,32 @@ public class VmDeviceUtils {
 
     /**
      * updates existing VM video cards in vm device
-     * @param oldVmStatic
+     * @param oldVmBase
      * @param newStatic
      */
-    private static void updateNumOfMonitorsInVmDevice(VmStatic oldVmStatic,
-            VmStatic newStatic) {
+    private static void updateNumOfMonitorsInVmDevice(VmBase oldVmBase,
+            VmBase newStatic) {
         int prevNumOfMonitors=0;
-        if (oldVmStatic != null) {
-            prevNumOfMonitors = oldVmStatic.getnum_of_monitors();
+        if (oldVmBase != null) {
+            prevNumOfMonitors = oldVmBase.getnum_of_monitors();
         }
         if (newStatic.getnum_of_monitors() > prevNumOfMonitors) {
+            Guid newId = Guid.NewGuid();
             String mem = (newStatic.getnum_of_monitors() > 2 ? LOW_VIDEO_MEM
                     : HIGH_VIDEO_MEM);
+            StringBuilder sb = new StringBuilder();
+            sb.append("vram=");
+            sb.append(mem);
+            sb.append(",deviceId=");
+            sb.append(newId);
             // monitors were added
             for (int i = prevNumOfMonitors; i < newStatic
                     .getnum_of_monitors(); i++) {
-                VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
+                VmDevice cd = new VmDevice(new VmDeviceId(newId,
                         newStatic.getId()),
                         VmDeviceType.getName(VmDeviceType.VIDEO),
-                        DisplayType.qxl.name(), "", 0, mem, true, false, false);
-                DbFacade.getInstance().getVmDeviceDAO().save(cd);
+                        DisplayType.qxl.name(), "", 0, sb.toString(), true, false, false);
+                dao.save(cd);
             }
         } else { // delete video cards
             List<VmDevice> list = DbFacade
@@ -373,28 +422,68 @@ public class VmDeviceUtils {
                             VmDeviceType.getName(VmDeviceType.VIDEO));
             for (int i = 0; i < (prevNumOfMonitors - newStatic
                     .getnum_of_monitors()); i++) {
-                DbFacade.getInstance().getVmDeviceDAO()
-                        .remove(list.get(i).getId());
+                dao.remove(list.get(i).getId());
             }
         }
     }
 
     /**
-     * updates new VM video cards in vm device
-     * @param newStatic
+     * Returns a VmBase object for the given entity and passed id.
+     * @param entity
+     *            the entity, may be VmStatic or VmTemplate
+     * @param newId
+     *            entity Guid
+     * @return
      */
-    private static void updateNumOfMonitorsInVmDevice(VmStatic newStatic) {
-        if (newStatic.getnum_of_monitors() > 0) {
-            String mem = (newStatic.getnum_of_monitors() > 2 ? LOW_VIDEO_MEM
-                    : HIGH_VIDEO_MEM);
-            // monitors were added
-            for (int i = 1; i <= newStatic.getnum_of_monitors(); i++) {
-                VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
-                        newStatic.getId()),
-                        VmDeviceType.getName(VmDeviceType.VIDEO),
-                        DisplayType.qxl.name(), "", 0, mem, true, false, false);
-                DbFacade.getInstance().getVmDeviceDAO().save(cd);
-            }
+    private static <T extends VmBase> VmBase getBaseObject(T entity, Guid newId) {
+        VmBase newVmBase = null;
+        if (entity instanceof VmStatic) {
+            newVmBase = DbFacade.getInstance().getVmDAO().get(newId).getStaticData();
+        } else if (entity instanceof VmTemplate) {
+            newVmBase = DbFacade.getInstance().getVmTemplateDAO().get(newId);
+        }
+        return newVmBase;
+    }
+
+    /**
+     * Adds imported disks to VM devices
+     * @param entity
+     */
+    private static <T extends VmBase> void addImportedDisks(T entity) {
+        Guid id=Guid.Empty;
+        List<DiskImage> disks = new ArrayList<DiskImage>();
+        id = entity.getId();
+        if (entity instanceof VmStatic) {
+            disks = DbFacade.getInstance().getVmDAO().get(id).getDiskList();
+        }
+        else if (entity instanceof VmTemplate) {
+            disks = ((VmTemplate)entity).getDiskList();
+        }
+        for (DiskImage disk : disks) {
+            Guid deviceId = disk.getDisk().getId();
+            String specParams = appendDeviceIdToSpecParams(deviceId, "");
+            addManagedDevice(new VmDeviceId(deviceId,id) , VmDeviceType.DISK, VmDeviceType.DISK, specParams, true, false);
+        }
+    }
+
+    /**
+     * Adds imported interfaces to VM devices
+     * @param entity
+     */
+    private static <T extends VmBase> void addImportedInterfaces(T entity) {
+        Guid id=Guid.Empty;
+        List<VmNetworkInterface> ifaces = new ArrayList<VmNetworkInterface>();
+        id = entity.getId();
+        if (entity instanceof VmStatic) {
+            ifaces = DbFacade.getInstance().getVmDAO().get(id).getInterfaces();
+        }
+        else if (entity instanceof VmTemplate) {
+            ifaces = ((VmTemplate)entity).getInterfaces();
+        }
+        for (VmNetworkInterface iface : ifaces) {
+            Guid deviceId = iface.getId();
+            String specParams = appendDeviceIdToSpecParams(deviceId, "");
+            addManagedDevice(new VmDeviceId(deviceId,id) , VmDeviceType.INTERFACE, VmDeviceType.BRIDGE, specParams, true, false);
         }
     }
 }
