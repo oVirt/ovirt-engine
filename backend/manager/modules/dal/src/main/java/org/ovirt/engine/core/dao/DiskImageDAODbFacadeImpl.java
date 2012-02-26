@@ -4,7 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
@@ -86,12 +88,17 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setread_rate(rs.getInt("read_rate"));
                 entity.setwrite_rate(rs.getInt("write_rate"));
                 String entityType = rs.getString("entity_type");
-                handleEntityType(entityType,entity);
+                handleEntityType(entityType, entity);
                 return entity;
             }
         };
 
-        return getCallsHandler().executeRead("GetImageByImageGuid", mapper, parameterSource);
+        List<DiskImage> images =
+                groupImagesStorage(getCallsHandler().executeReadList("GetImageByImageGuid", mapper, parameterSource));
+        if (images == null || images.isEmpty()) {
+            return null;
+        }
+        return images.get(0);
     }
 
     private void handleEntityType(String entityType, DiskImage entity) {
@@ -227,7 +234,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             }
         };
 
-        return getCallsHandler().executeReadList("GetImagesByVmGuid", mapper, parameterSource);
+        return groupImagesStorage(getCallsHandler().executeReadList("GetImagesByVmGuid", mapper, parameterSource));
     }
 
     @Override
@@ -526,7 +533,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             }
         };
 
-        return getCallsHandler().executeReadList("GetAllFromImages", mapper, parameterSource);
+        return groupImagesStorage(getCallsHandler().executeReadList("GetAllFromImages", mapper, parameterSource));
     }
 
     @Override
@@ -762,5 +769,22 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         };
 
         return getCallsHandler().executeRead("GetAncestralImageByImageGuid", mapper, parameterSource);
+    }
+
+    private List<DiskImage> groupImagesStorage(List<DiskImage> images) {
+        if (images != null && images.size() > 1) {
+            Map<Guid, DiskImage> imagesMap = new HashMap<Guid, DiskImage>();
+            for (DiskImage image : images) {
+                if (!imagesMap.containsKey(image.getId())) {
+                    imagesMap.put(image.getId(), image);
+                } else {
+                    imagesMap.get(image.getId()).getstorage_ids().addAll(image.getstorage_ids());
+                    imagesMap.get(image.getId()).getStoragesNames().addAll(image.getStoragesNames());
+                }
+            }
+            return new ArrayList<DiskImage>(imagesMap.values());
+        }
+        return images;
+
     }
 }
