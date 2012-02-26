@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -37,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
@@ -68,6 +70,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     private static VmStatic vmStaticForDefaultValues;
     private Map<Guid,Guid> imageToDestinationDomainMap;
     private List<DiskImage> imageList;
+    private transient Map<Guid, VdcObjectType> permissionCheckSubject;
 
     static {
         vmStaticForDefaultValues = new VmStatic();
@@ -301,8 +304,11 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     private void ensureDomainMap() {
-        for(DiskImage image : imageList) {
-            if(imageToDestinationDomainMap.get(image.getId()) == null) {
+        if (imageToDestinationDomainMap == null) {
+            imageToDestinationDomainMap = new HashMap<Guid, Guid>();
+        }
+        for (DiskImage image : imageList) {
+            if (imageToDestinationDomainMap.get(image.getId()) == null) {
                 imageToDestinationDomainMap.put(image.getId(), getParameters().getDestDomainId());
             }
         }
@@ -452,18 +458,16 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     @Override
     protected void MoveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         for (DiskImage disk : disks) {
-            Guid destinationDomain = (imageToDestinationDomainMap.get(disk.getId()) != null) ? imageToDestinationDomainMap.get(disk.getId())
-                    : getParameters().getStorageDomainId();
-            MoveOrCopyImageGroupParameters tempVar = new MoveOrCopyImageGroupParameters(containerID, disk
+            Guid destinationDomain = imageToDestinationDomainMap.get(disk.getId());
+            MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID, disk
                     .getimage_group_id().getValue(), disk.getId(), destinationDomain,
                     getMoveOrCopyImageOperation());
-            tempVar.setParentCommand(getActionType());
-            tempVar.setEntityId(getParameters().getEntityId());
-            tempVar.setUseCopyCollapse(getParameters().getCopyCollapse());
-            tempVar.setCopyVolumeType(CopyVolumeType.LeafVol);
-            tempVar.setPostZero(disk.getwipe_after_delete());
-            tempVar.setForceOverride(true);
-            MoveOrCopyImageGroupParameters p = tempVar;
+            p.setParentCommand(getActionType());
+            p.setEntityId(getParameters().getEntityId());
+            p.setUseCopyCollapse(getParameters().getCopyCollapse());
+            p.setCopyVolumeType(CopyVolumeType.LeafVol);
+            p.setPostZero(disk.getwipe_after_delete());
+            p.setForceOverride(true);
             if (getParameters().getDiskInfoList() != null
                     && getParameters().getDiskInfoList().containsKey(disk.getinternal_drive_mapping())) {
                 p.setVolumeType(getParameters().getDiskInfoList().get(disk.getinternal_drive_mapping())
@@ -476,6 +480,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                             VdcActionType.MoveOrCopyImageGroup,
                             p,
                             ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            if (!vdcRetValue.getSucceeded()) {
+                throw new VdcBLLException(vdcRetValue.getFault().getError(),
+                        "ImportVmCommand::MoveOrCopyAllImageGroups: Failed to copy disk!");
+            }
             getParameters().getImagesParameters().add(p);
 
             getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
@@ -773,6 +781,18 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             return AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED;
         }
         return super.getAuditLogTypeValue();
+    }
+
+    @Override
+    public Map<Guid, VdcObjectType> getPermissionCheckSubjects() {
+        if (permissionCheckSubject == null) {
+            permissionCheckSubject = new HashMap<Guid, VdcObjectType>();
+            for (Guid storageId : imageToDestinationDomainMap.values()) {
+                permissionCheckSubject.put(storageId, VdcObjectType.Storage);
+            }
+
+        }
+        return permissionCheckSubject;
     }
 
     private static Log log = LogFactory.getLog(ImportVmCommand.class);

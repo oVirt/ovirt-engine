@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import java.util.HashMap;
+import java.io.Serializable;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -14,10 +14,10 @@ import org.ovirt.engine.core.compat.Guid;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "MoveOrCopyParameters")
-public class MoveOrCopyParameters extends StorageDomainParametersBase implements java.io.Serializable {
+public class MoveOrCopyParameters extends StorageDomainParametersBase implements Serializable {
     private static final long serialVersionUID = 1051590893103934441L;
 
-    private Map<Guid, Guid> imageToDestinationDomainMap = new HashMap<Guid, Guid>();
+    private Map<Guid, Guid> imageToDestinationDomainMap;
 
     public MoveOrCopyParameters(Guid containerId, Guid storageDomainId) {
         super(storageDomainId);
