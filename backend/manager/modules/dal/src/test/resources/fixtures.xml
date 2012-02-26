@@ -2331,10 +2331,6 @@
             <value>42058975-3d5e-484a-80c1-01c31207f579</value>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
         </row>
-        <row>
-           <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
-           <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
-        </row>
     </table>
 
     <table name="time_lease_vm_pool_map">
