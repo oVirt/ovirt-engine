@@ -705,4 +705,26 @@ public class ExecutionHandler {
         return false;
     }
 
+    /**
+     * Updates Job for the same entity for a specific action as completed with a given exit status.
+     *
+     * @param entityId
+     *            The entity to search for its jobs
+     * @param actionType
+     *            The action type to search for
+     * @param status
+     *            The exist status to be set for the job
+     */
+    public static void updateSpecificActionJobCompleted(Guid entityId, VdcActionType actionType, boolean status) {
+        try {
+            List<Job> jobs = JobRepositoryFactory.getJobRepository().getJobsByEntityAndAction(entityId, actionType);
+            for (Job job : jobs) {
+                if (job.getStatus() == JobExecutionStatus.STARTED)
+                    job.markJobEnded(status);
+                JobRepositoryFactory.getJobRepository().updateCompletedJobAndSteps(job);
+            }
+        } catch (RuntimeException e) {
+            log.error(e);
+        }
+    }
 }
