@@ -30,15 +30,12 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
 
     @Override
     public Guid getMasterStorageDomainIdForPool(Guid pool) {
-        Guid returnValue = Guid.Empty;
-        List<storage_domains> domains = getAllForStoragePool(pool);
-        for (storage_domains domain : domains) {
-            if (domain.getstorage_domain_type() == StorageDomainType.Master) {
-                returnValue = domain.getId();
-                break;
-            }
-        }
-        return returnValue;
+        return getStorageDomainIdForPoolByType(pool, StorageDomainType.Master);
+    }
+
+    @Override
+    public Guid getIsoStorageDomainIdForPool(Guid pool) {
+        return getStorageDomainIdForPoolByType(pool, StorageDomainType.ISO);
     }
 
     @Override
@@ -194,5 +191,17 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
     public ArrayList<Guid> getAllImageStorageDomainIdsForImage(Guid image_id) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public Guid getStorageDomainIdForPoolByType(Guid pool, StorageDomainType type) {
+        Guid returnValue = Guid.Empty;
+        List<storage_domains> domains = getAllForStoragePool(pool);
+        for (storage_domains domain : domains) {
+            if (domain.getstorage_domain_type() == type) {
+                returnValue = domain.getId();
+                break;
+            }
+        }
+        return returnValue;
     }
 }

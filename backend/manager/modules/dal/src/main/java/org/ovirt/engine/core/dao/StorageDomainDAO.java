@@ -24,6 +24,15 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains> {
     Guid getMasterStorageDomainIdForPool(Guid pool);
 
     /**
+     * Retrieves the master storage domain for the specified pool.
+     *
+     * @param pool
+     *            the storage pool
+     * @return the master storage domain
+     */
+    Guid getIsoStorageDomainIdForPool(Guid pool);
+
+    /**
      * Retrieves the storage domain with specified id.
      *
      * @param id

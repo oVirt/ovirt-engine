@@ -27,15 +27,12 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
 
     @Override
     public Guid getMasterStorageDomainIdForPool(Guid pool) {
-        Guid returnValue = Guid.Empty;
-        List<storage_domains> domains = getAllForStoragePool(pool);
-        for (storage_domains domain : domains) {
-            if (domain.getstorage_domain_type() == StorageDomainType.Master) {
-                returnValue = domain.getId();
-                break;
-            }
-        }
-        return returnValue;
+        return getStorageDomainIdForPoolByType(pool, StorageDomainType.Master);
+    }
+
+    @Override
+    public Guid getIsoStorageDomainIdForPool(Guid pool) {
+        return getStorageDomainIdForPoolByType(pool, StorageDomainType.ISO);
     }
 
     @Override
@@ -245,5 +242,24 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
         return getCallsHandler().executeReadList("Getstorage_domains_By_storage_pool_id_and_connection",
                 mapper,
                 parameterSource);
+    }
+
+    /**
+     * Gets the storage domain id of the given type for the given storage pool
+     *
+     * @param pool
+     * @param type
+     * @return
+     */
+    private Guid getStorageDomainIdForPoolByType(Guid pool, StorageDomainType type) {
+        Guid returnValue = Guid.Empty;
+        List<storage_domains> domains = getAllForStoragePool(pool);
+        for (storage_domains domain : domains) {
+            if (domain.getstorage_domain_type() == type) {
+                returnValue = domain.getId();
+                break;
+            }
+        }
+        return returnValue;
     }
 }
