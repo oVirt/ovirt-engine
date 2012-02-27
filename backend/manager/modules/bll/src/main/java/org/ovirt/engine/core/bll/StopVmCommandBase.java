@@ -1,9 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -73,6 +77,19 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
                 || !StringHelper.isNullOrEmpty(getVm().gethibernation_vol_handle())) {
             setSuspendedVm(true);
             setSucceeded(StopSuspendedVm());
+            if (getSucceeded() && getVm().getis_stateless()) {
+                // remove all unmanaged devices of a stateless VM
+                List<VmDevice> vmDevices =
+                    DbFacade.getInstance()
+                            .getVmDeviceDAO()
+                            .getUnmanagedDevicesByVmId(getVm().getId());
+                for (VmDevice device : vmDevices) {
+                    // do not remoce device if appears in white list
+                    if (! VmDeviceCommonUtils.isInWhiteList(device.getType(), device.getDevice())) {
+                        DbFacade.getInstance().getVmDeviceDAO().remove(device.getId());
+                    }
+                }
+            }
         } else {
             super.ExecuteVmCommand();
         }
