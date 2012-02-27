@@ -256,7 +256,6 @@ done
 # in order to make the script less dependent on the version of oVirt Engine
 # installed:
 jar_names='
-    activation
     stax-api
     jaxb-api
     slf4j-api
