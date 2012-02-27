@@ -1037,6 +1037,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     DocsURL(335),
 
+    // This value indicates devices that although are given to us by VDSM
+    // are still treated as managed devices
+    // This should be a [device=<device> type=<type>[,]]* string
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    ManagedDevicesWhiteList(336),
+
     /**
      * The origin type to be used for VM and VM template creation
      */
