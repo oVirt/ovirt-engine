@@ -108,4 +108,11 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
                 dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID, "disk", "disk", PRIVILEGED_USER_ID, false);
         assertGetVMDeviceByIdTypeAndDeviceFullResult(devices);
     }
+
+    @Test
+    public void testGetUnmanagedDeviceByVmId() {
+        List<VmDevice> devices =
+                dao.getUnmanagedDevicesByVmId(EXISTING_VM_ID);
+        assertTrue(devices.isEmpty());
+    }
 }

@@ -135,3 +135,14 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+create or replace FUNCTION GetVmUnmanagedDevicesByVmId(v_vm_id UUID)
+RETURNS SETOF vm_device
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    select vm_device.* from vm_device
+    where vm_id = v_vm_id and
+          is_managed = false;
+END; $procedure$
+LANGUAGE plpgsql;
+

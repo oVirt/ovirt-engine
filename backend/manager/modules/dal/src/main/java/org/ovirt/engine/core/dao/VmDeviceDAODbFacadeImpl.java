@@ -124,4 +124,12 @@ public class VmDeviceDAODbFacadeImpl extends
         return getCallsHandler().executeReadList("GetVmDeviceByVmIdTypeAndDevice",
                 createEntityRowMapper(), parameterSource);
     }
+
+    @Override
+    public List<VmDevice> getUnmanagedDevicesByVmId(Guid vmId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmId);
+        return getCallsHandler().executeReadList("GetVmUnmanagedDevicesByVmId",
+                createEntityRowMapper(), parameterSource);
+    }
 }
