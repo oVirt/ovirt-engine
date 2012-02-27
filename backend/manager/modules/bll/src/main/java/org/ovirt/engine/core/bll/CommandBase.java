@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.CommandExecutionReason;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -135,6 +137,55 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
+     * Checks if possible to perform rollback using command, and if so performs it
+     *
+     * @param commandType
+     *            command type for the rollback
+     * @param params
+     *            parameters for the rollback
+     * @param context
+     *            command context for the rollback
+     * @return result of the command execution
+     */
+    protected VdcReturnValueBase attemptRollback(VdcActionType commandType,
+            VdcActionParametersBase params,
+            CommandContext context) {
+        if (canPerformRollbackUsingCommand(commandType, params)) {
+            params.setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
+            params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+            return Backend.getInstance().runInternalAction(commandType, params, context);
+        }
+        return new VdcReturnValueBase();
+    }
+
+    /**
+     * Checks if possible to perform rollback using command, and if so performs it
+     *
+     * @param commandType
+     *            command type for the rollback
+     * @param params
+     *            parameters for the rollback
+     * @return result of the command execution
+     */
+    protected VdcReturnValueBase checkAndPerformRollbackUsingCommand(VdcActionType commandType,
+            VdcActionParametersBase params) {
+        return attemptRollback(commandType, params, null);
+    }
+
+    /**
+     * Checks if it is possible to rollback the command using a command (and not VDSM)
+     *
+     * @param commandType
+     *            the rollback command to be executed
+     * @param params
+     *            parameters for the rollback command
+     * @return true if it is possible to run rollback using command
+     */
+    protected boolean canPerformRollbackUsingCommand(VdcActionType commandType, VdcActionParametersBase params) {
+        return true;
+    }
+
+    /**
      * Create an appropriate compensation context. The default is one that does nothing for command that don't run in a
      * transaction, and a real one for commands that run in a transaction.
      *
@@ -189,6 +240,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     public VdcReturnValueBase ExecuteAction() {
+        determineExecutionReason();
         _actionState = CommandActionState.EXECUTE;
         String tempVar = getDescription();
         getReturnValue().setDescription((tempVar != null) ? tempVar : getReturnValue().getDescription());
@@ -213,6 +265,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             freeLock();
         }
         return getReturnValue();
+    }
+
+    private void determineExecutionReason() {
+        if (getParameters().getExecutionReason() == null) {
+            getParameters().setExecutionReason(CommandExecutionReason.REGULAR_FLOW);
+        }
     }
 
     /**
@@ -331,17 +389,26 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private void SetActionState() {
-        if (getParameters().getTaskGroupSuccess()) {
+        // This mechanism should change,
+        // And for ROLLBACK_FLOW we should
+        // introduce a new actionState.
+        // Currently it was decided that ROLLBACK_FLOW will cause endWithFailure
+        if (isEndSuccessfully()) {
             _actionState = CommandActionState.END_SUCCESS;
         } else {
             _actionState = CommandActionState.END_FAILURE;
         }
     }
 
+    protected boolean isEndSuccessfully() {
+        return getParameters().getTaskGroupSuccess()
+                && getParameters().getExecutionReason() == CommandExecutionReason.REGULAR_FLOW;
+    }
+
     public void endActionInTransactionScope() {
         boolean exceptionOccurred = false;
         try {
-            if (getParameters().getTaskGroupSuccess()) {
+            if (isEndSuccessfully()) {
                 InternalEndSuccessfully();
             } else {
                 InternalEndWithFailure();
@@ -662,6 +729,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             log.error(msg);
             throw new VdcBLLException(VdcBllErrors.NO_PARAMETERS_FOR_TASK, msg);
         }
+        // The parent parameters are the ones that are kept for the task.
+        // In order to make sure that in case of rollback-by-command, the ROLLBACK
+        // flow will be called, the execution reason of the child command is set
+        // to the one of the parent command (if its REGULAR_FLOW, the execution
+        // reason of the parent command remains REGULAR_FLOW).
+        parentParameters.setExecutionReason(parameters.getExecutionReason());
         return parentParameters;
     }
 
@@ -950,11 +1023,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    private void StartPollingAsyncTasks() {
-
-        for (Guid taskID : getReturnValue().getTaskIdList()) {
+    protected void startPollingAsyncTasks(Collection<Guid> taskIds) {
+        for (Guid taskID : taskIds) {
             AsyncTaskManager.getInstance().StartPollingTask(taskID);
         }
+    }
+
+    protected void StartPollingAsyncTasks() {
+        startPollingAsyncTasks(getReturnValue().getTaskIdList());
     }
 
     protected ArrayList<Guid> getTaskIdList() {

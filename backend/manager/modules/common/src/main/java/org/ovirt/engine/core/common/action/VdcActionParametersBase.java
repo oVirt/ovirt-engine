@@ -24,6 +24,8 @@ public class VdcActionParametersBase implements java.io.Serializable {
     private VdcUser parametersCurrentUser;
     private TransactionScopeOption transctionOption;
 
+    private transient CommandExecutionReason executionReason = CommandExecutionReason.REGULAR_FLOW;
+
     /**
      * Indicates if the command should use the compensation mechanism or not.
      */
@@ -37,7 +39,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
     private VdcActionType commandType = VdcActionType.Unknown;
 
     private transient VdcActionParametersBase parentParameters;
-
     // this flag marks if the command ran with MultipleAction for ProcessExceptionToClient
     private boolean multipleAction;
 
@@ -101,6 +102,14 @@ public class VdcActionParametersBase implements java.io.Serializable {
 
     public void setShouldBeLogged(boolean value) {
         shouldbelogged = value;
+    }
+
+    public CommandExecutionReason getExecutionReason() {
+        return executionReason;
+    }
+
+    public void setExecutionReason(CommandExecutionReason executionReason) {
+        this.executionReason = executionReason;
     }
 
     public TransactionScopeOption getTransactionScopeOption() {
@@ -289,4 +298,13 @@ public class VdcActionParametersBase implements java.io.Serializable {
             return false;
         return true;
     }
+
+    /**
+     * Enum for determining the execution reason of the command.
+     */
+    public enum CommandExecutionReason {
+        REGULAR_FLOW,
+        ROLLBACK_FLOW;
+    }
+
 }
