@@ -183,6 +183,15 @@ public class VdsBrokerObjectsBuilder {
             }
         }
 
+        if (xmlRpcStruct.contains(VdsProperties.hash)) {
+            String hash = (String) xmlRpcStruct.getItem(VdsProperties.hash);
+            try {
+                vm.setHash(hash);
+            } catch (java.lang.Exception e) {
+                log.errorFormat("vm hash value illegal : {0}", hash);
+            }
+        }
+
         /**
          * vm disks
          */

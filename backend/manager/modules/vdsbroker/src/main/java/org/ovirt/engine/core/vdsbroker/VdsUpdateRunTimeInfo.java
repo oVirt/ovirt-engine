@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,8 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -34,12 +37,12 @@ import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVmStatsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -51,11 +54,14 @@ import org.ovirt.engine.core.dao.MassOperationsDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.Pair;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DestroyVDSCommand;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.FullListVdsCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.GetAllVmStatsVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.GetStatsVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.GetVmStatsVDSCommand;
@@ -65,6 +71,8 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSProtocolException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class VdsUpdateRunTimeInfo {
     private static final Integer LOW_SPACE_THRESHOLD = Config.<Integer> GetValue(ConfigValues.VdsLocalDisksLowFreeSpace);
@@ -79,6 +87,9 @@ public class VdsUpdateRunTimeInfo {
             new java.util.HashMap<Guid, List<VmNetworkInterface>>();
     private final java.util.HashMap<Guid, DiskImageDynamic> _vmDiskImageDynamicToSave =
             new java.util.HashMap<Guid, DiskImageDynamic>();
+    private final HashMap<VmDeviceId, VmDevice> vmDeviceToSave = new HashMap<VmDeviceId, VmDevice>();
+    private final List<VmDevice> newVmDevices = new ArrayList<VmDevice>();
+    private final List<VmDeviceId> removedDeviceIds = new ArrayList<VmDeviceId>();
     private final java.util.HashMap<VM, VmDynamic> _vmsClientIpChanged = new java.util.HashMap<VM, VmDynamic>();
     private final java.util.ArrayList<VmDynamic> _poweringUpVms = new java.util.ArrayList<VmDynamic>();
     private final java.util.ArrayList<Guid> _vmsToRerun = new java.util.ArrayList<Guid>();
@@ -142,6 +153,36 @@ public class VdsUpdateRunTimeInfo {
 
         updateAllInTransaction(allVmInterfaceStatistics, DbFacade.getInstance().getVmNetworkStatisticsDAO());
         updateAllInTransaction(_vmDiskImageDynamicToSave.values(), DbFacade.getInstance().getDiskImageDynamicDAO());
+        saveVmDevicesToDb();
+    }
+
+    private void saveVmDevicesToDb() {
+
+        updateAllInTransaction(vmDeviceToSave.values(), DbFacade.getInstance().getVmDeviceDAO());
+
+        if (!removedDeviceIds.isEmpty()) {
+            TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                    new TransactionMethod<Void>() {
+
+                @Override
+                public Void runInTransaction() {
+                    DbFacade.getInstance().getVmDeviceDAO().removeAll(removedDeviceIds);
+                    return null;
+                }
+            });
+        }
+
+        if (!newVmDevices.isEmpty()) {
+            TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                    new TransactionMethod<Void>() {
+
+                @Override
+                public Void runInTransaction() {
+                    DbFacade.getInstance().getVmDeviceDAO().saveAll(newVmDevices);
+                    return null;
+                }
+            });
+        }
     }
 
     /**
@@ -754,6 +795,10 @@ public class VdsUpdateRunTimeInfo {
                     vdsm.forceRefreshRunTimeInfo();
                 }
             }
+            // Handle VM devices were changed (for 3.1 cluster and above)
+            if (!VmDeviceCommonUtils.isOldClusterVersion(_vds.getvds_group_compatibility_version())) {
+                handleVmDeviceChange();
+            }
         } else if (command.getVDSReturnValue().getExceptionObject() != null) {
             if (command.getVDSReturnValue().getExceptionObject() instanceof VDSErrorException) {
                 log.errorFormat("Failed vds listing,  vds = {0} : {1}, error = {2}", _vds.getId(),
@@ -774,6 +819,175 @@ public class VdsUpdateRunTimeInfo {
         } else {
             log.errorFormat("refreshCapabilities:GetCapabilitiesVDSCommand failed with no exception!");
         }
+    }
+
+    /**
+     * Handle changes in all VM devices
+     */
+    private void handleVmDeviceChange() {
+        List<String> vmsToUpdate = new ArrayList<String>();
+        for (Map.Entry<VmDynamic, VmStatistics> vmHelper : _runningVms.values()) {
+            VmDynamic vmDynamic = vmHelper.getKey();
+            if (vmDynamic != null) {
+                VM vm = _vmDict.get(vmDynamic.getId());
+                if (vm != null) {
+                    String dbHash = vm.getHash();
+                    if ((dbHash == null && vmDynamic.getHash() != null) || !dbHash.equals(vmDynamic.getHash())) {
+                        vmsToUpdate.add(vmDynamic.getId().toString());
+                        // update new hash value
+                        if (_vmDynamicToSave.containsKey(vm.getId())) {
+                            _vmDynamicToSave.get(vm.getId()).setHash(vmDynamic.getHash());
+                        } else {
+                            AddVmDynamicToList(vmDynamic);
+                        }
+                    }
+                }
+            }
+        }
+        if (vmsToUpdate.size() > 0) {
+            updateVmDevices(vmsToUpdate);
+        }
+    }
+
+    /**
+     * Update the given list of VMs properties in DB
+     *
+     * @param vmsToUpdate
+     */
+    private void updateVmDevices(List<String> vmsToUpdate) {
+        XmlRpcStruct[] vms = getVmInfo(vmsToUpdate);
+        updateVmDevices(vms);
+    }
+
+    /**
+     * gets VM full information for the given list of VMs
+     * @param vmIds
+     * @return
+     */
+    private XmlRpcStruct[] getVmInfo(List<String> vmsToUpdate) {
+        return (XmlRpcStruct[]) (new FullListVdsCommand<FullListVDSCommandParameters>(
+                new FullListVDSCommandParameters(_vds.getId(), vmsToUpdate)).ExecuteWithReturnValue());
+    }
+
+    /**
+     * Update VMs devices
+     * @param vms
+     */
+    private void updateVmDevices(XmlRpcStruct[] vms) {
+        for (XmlRpcStruct vm : vms) {
+            processVmDevices(vm);
+        }
+    }
+
+    /**
+     * Actually process the VM device update in DB.
+     * @param vm
+     */
+    private void processVmDevices(XmlRpcStruct vm) {
+        if (vm == null || vm.getItem(VdsProperties.vm_guid) == null) {
+            log.errorFormat("Recieved NULL VM or VM id when processing VM devices, abort.");
+            return;
+        }
+        Guid vmId = new Guid((String) vm.getItem(VdsProperties.vm_guid));
+        HashSet<Guid> processedDevices = new HashSet<Guid>();
+        Object[] objects = (Object[]) vm.getItem(VdsProperties.Devices);
+        List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmId(vmId);
+        Map<VmDeviceId, VmDevice> deviceMap = new HashMap<VmDeviceId, VmDevice>();
+        for (VmDevice device : devices) {
+            deviceMap.put(device.getId(), device);
+        }
+        for (Object o : objects) {
+            XmlRpcStruct device = new XmlRpcStruct((Map<String, Object>) o);
+            Guid deviceId = getDeviceId(device);
+            if ((device.getItem(VdsProperties.Address)) == null) {
+                log.infoFormat("Recieved a Device without an address when processing VM {0} devices, skipping device: {1}.",
+                        vmId,
+                        device.getInnerMap().toString());
+                continue;
+            }
+            VmDevice vmDevice = deviceMap.get(new VmDeviceId(deviceId, vmId));
+            if (deviceId == null || vmDevice == null) {
+                deviceId = addNewVmDevice(vmId, device);
+            } else {
+                vmDevice.setAddress(((Map<String, String>) device.getItem(VdsProperties.Address)).toString());
+                addVmDeviceToList(vmDevice);
+            }
+            processedDevices.add(deviceId);
+        }
+        handleRemovedDevices(vmId, processedDevices, devices);
+    }
+
+    /**
+     * Removes unmanaged devices from DB if were removed by libvirt. Empties device address with isPlugged = false
+     * @param vmId
+     * @param processedDevices
+     */
+    private void handleRemovedDevices(Guid vmId, HashSet<Guid> processedDevices, List<VmDevice> devices) {
+        for (VmDevice device : devices) {
+            if (!processedDevices.contains(device.getDeviceId())) {
+                if (device.getIsManaged()) {
+                    if (device.getIsPlugged()) {
+                        log.errorFormat("VM {0} managed non plugable device was removed unexpetedly from libvirt: {1}",
+                                vmId, device.toString());
+                    } else {
+                        device.setAddress("");
+                        addVmDeviceToList(device);
+                        log.debugFormat("VM {0} unmanaged pluggable device was unplugged : {1}",
+                                vmId,
+                                device.toString());
+                    }
+                } else {
+                    removedDeviceIds.add(device.getId());
+                    log.debugFormat("VM {0} unmanaged device was marked for remove : {1}", vmId, device.toString());
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds new devices recognized by libvirt
+     * @param vmId
+     * @param device
+     */
+    private Guid addNewVmDevice(Guid vmId, XmlRpcStruct device) {
+        Guid newDeviceId = Guid.Empty;
+        String typeName = (String) device.getItem(VdsProperties.Type);
+        String deviceName = (String) device.getItem(VdsProperties.Device);
+        // do not allow null or empty device or type values
+        if (!StringUtils.isEmpty(typeName) && !StringUtils.isEmpty(deviceName)) {
+            String address = ((Map<String, String>) device.getItem(VdsProperties.Address)).toString();
+            String specParams = "";
+            Object o = device.getItem(VdsProperties.SpecParams);
+            newDeviceId = Guid.NewGuid();
+            if (o != null) {
+                specParams = org.ovirt.engine.core.utils.StringUtils.map2String((Map<String, String>) o);
+            }
+            VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
+            VmDevice newDevice = new VmDevice(id, typeName, deviceName, address,
+                        0,
+                        specParams,
+                        false,
+                        true,
+                        false);
+            newVmDevices.add(newDevice);
+            log.debugFormat("New device was marked for adding to VM {0} Devices : {1}", vmId, newDevice.toString());
+        } else {
+            log.errorFormat("Empty or NULL values were passed for a VM {0} device, Device is skipped", vmId);
+        }
+        return newDeviceId;
+    }
+
+    /**
+     * gets the device id from the structure returned by VDSM device ids are stored in specParams map
+     * @param device
+     * @return
+     */
+    private Guid getDeviceId(XmlRpcStruct device) {
+        Map<String, String> specParams = (Map<String, String>) device.getItem("specParams");
+        if (specParams == null)
+            return null;
+        else
+            return new Guid(specParams.get("deviceId"));
     }
 
     // if not statistics check if status changed and add to running list
@@ -1068,8 +1282,8 @@ public class VdsUpdateRunTimeInfo {
         removeVmsFromCache(running);
     }
 
+    // del from cache all vms that not in vdsm
     private void removeVmsFromCache(java.util.List<VM> running) {
-        // del from cache all vms that not in vdsm
         // LINQ 29456 - fixed
         // foreach (VM vmToRemove in _vmDict.Values.Except(running).ToList())
         Guid vmGuid;
@@ -1365,6 +1579,15 @@ public class VdsUpdateRunTimeInfo {
             return;
         }
         _vmInterfaceStatisticsToSave.put(list.get(0).getVmId().getValue(), list);
+    }
+
+    /**
+     * Add or update vmDynamic to save list
+     *
+     * @param vmDynamic
+     */
+    private void addVmDeviceToList(VmDevice vmDevice) {
+        vmDeviceToSave.put(vmDevice.getId(), vmDevice);
     }
 
     private void clearVm(VM vm) {

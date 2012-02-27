@@ -138,8 +138,8 @@ public final class VdsProperties {
     public static final String num_of_cpus = "smp";
     public static final String cores_per_socket = "smpCoresPerSocket";
     public static final String vm_name = "vmName";
-    // vm configuration (i.e. VmDynamic)
     public static final String vm_guid = "vmId";
+    // vm configuration (i.e. VmDynamic)
     public static final String guest_cur_user_name = "username";
     public static final String vm_ip = "guestIPs";
     public static final String vm_usage_mem_percent = "memUsage";
@@ -192,6 +192,7 @@ public final class VdsProperties {
     public static final String Custom = "custom";
     public static final String Type = "type";
     public static final String Device = "device";
+    public static final String Devices = "devices";
     public static final String Index = "index";
     public static final String Iface = "iface";
     public static final String PoolId = "poolID";
