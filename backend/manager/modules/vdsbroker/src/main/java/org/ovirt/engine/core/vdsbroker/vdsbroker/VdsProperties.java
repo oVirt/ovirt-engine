@@ -190,8 +190,25 @@ public final class VdsProperties {
     public static final String KernelUrl = "kernel";
     public static final String KernelParams = "kernelArgs";
     public static final String Custom = "custom";
+    public static final String Type = "type";
+    public static final String Device = "device";
+    public static final String Index = "index";
+    public static final String Iface = "iface";
+    public static final String PoolId = "poolID";
+    public static final String DomainId = "domainID";
+    public static final String ImageId = "imageID";
+    public static final String VolumeId = "volumeID";
+    public static final String Format = "format";
+    public static final String SpecParams = "specParams";
+    public static final String Address = "address";
+    public static final String PropagateErrors = "propagateErrors";
+    public static final String Optional = "optional";
+    public static final String ReadOnly = "readonly";
+    public static final String Virtio = "virtio";
+    public static final String Path = "path";
 
     public static final String clientIp = "clientIp";
+    public static final String hash = "hash";
     // migration
     public static final String src = "src";
     public static final String dst = "dst";
@@ -200,7 +217,6 @@ public final class VdsProperties {
     public static final String online = "online";
     public static final String domains = "storageDomains";
     public static final String hooks = "hooks";
-
 
     // storage domains
     public static final String code = "code";
