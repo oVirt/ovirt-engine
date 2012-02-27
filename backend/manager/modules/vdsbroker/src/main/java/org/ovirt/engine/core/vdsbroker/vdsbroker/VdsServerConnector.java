@@ -24,6 +24,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> list();
 
+    public Map<String, Object> list(String isFull, String[] vmIds);
+
     public Map<String, Object> getVdsCapabilities();
 
     @FutureCall(delegeteTo = "getVdsCapabilities")

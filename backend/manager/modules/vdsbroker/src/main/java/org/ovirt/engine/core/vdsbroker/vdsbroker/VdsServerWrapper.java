@@ -146,6 +146,16 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public VMListReturnForXmlRpc list(String mode, String[] vmIds) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.list(mode, vmIds);
+            VMListReturnForXmlRpc wrapper = new VMListReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
     public VDSInfoReturnForXmlRpc getCapabilities() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getVdsCapabilities();
