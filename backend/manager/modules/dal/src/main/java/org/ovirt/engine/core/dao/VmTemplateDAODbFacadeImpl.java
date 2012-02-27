@@ -144,7 +144,6 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setchild_count(rs.getInt("child_count"));
             entity.setmem_size_mb(rs.getInt("mem_size_mb"));
             entity.setname(rs.getString("name"));
-            entity.setnum_of_sockets(rs.getInt("num_of_sockets"));
             // entity.setnum_of_cpus(rs.getInt("num_of_cpus"));
             entity.setos(VmOsType.forValue(rs.getInt("os")));
             entity.setvds_group_id(Guid.createGuidFromString(rs.getString("vds_group_id")));

@@ -220,7 +220,6 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             entity.setdomain(rs.getString("domain"));
             entity.setnum_of_monitors(rs.getInt("num_of_monitors"));
             entity.setis_initialized(rs.getBoolean("is_initialized"));
-            entity.setcpu_per_socket(rs.getInt("cpu_per_socket"));
             entity.setdedicated_vm_for_vds(NGuid.createGuidFromString(rs.getString("dedicated_vm_for_vds")));
             entity.setdefault_display_type(DisplayType.forValue(rs.getInt("default_display_type")));
             entity.setMigrationSupport(MigrationSupport.forValue(rs.getInt("migration_support")));

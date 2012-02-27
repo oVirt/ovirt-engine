@@ -24,6 +24,7 @@ public abstract class AbstractVmRowMapper<T extends VmBase> implements Parameter
         entity.setdescription(rs.getString("description"));
         entity.setcreation_date(DbFacadeUtils.fromDate(rs.getTimestamp("creation_date")));
         entity.setnum_of_sockets(rs.getInt("num_of_sockets"));
+        entity.setcpu_per_socket(rs.getInt("cpu_per_socket"));
         entity.settime_zone(rs.getString("time_zone"));
         entity.setvm_type(VmType.forValue(rs.getInt("vm_type")));
         entity.setusb_policy(UsbPolicy.forValue(rs.getInt("usb_policy")));

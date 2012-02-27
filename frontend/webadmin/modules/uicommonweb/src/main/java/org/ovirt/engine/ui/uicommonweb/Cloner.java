@@ -353,6 +353,7 @@ public final class Cloner
         obj.setvds_group_name(instance.getvds_group_name());
         obj.setvm_type(instance.getvm_type());
         obj.setId(instance.getId());
+        obj.setDiskList(instance.getDiskList());
 
         return obj;
     }
