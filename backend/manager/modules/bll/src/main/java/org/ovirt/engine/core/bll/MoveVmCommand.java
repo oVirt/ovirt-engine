@@ -30,8 +30,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.Helper;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplateCommand<T> {
@@ -78,6 +76,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         setStoragePoolId(getVm().getstorage_pool_id());
 
         VmHandler.updateDisksFromDb(getVm());
+        ensureDomainMap();
 
         retValue = retValue && CheckTemplateInStorageDomain();
 
@@ -120,8 +119,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     protected boolean CheckTemplateInStorageDomain() {
         boolean retValue = CheckStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active)
-                // LINQ 32934 && CheckIfDisksExist(Vm.DiskMap.Values.ToList());
-                && CheckIfDisksExist(getVm().getDiskMap().values());
+                && checkIfDisksExist(getVm().getDiskMap().values());
         if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getvmt_guid())) {
             List<storage_domains> domains = (List) Backend
                     .getInstance()
@@ -240,5 +238,11 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         return VdcActionType.MoveMultipleImageGroups;
     }
 
-    private static Log log = LogFactory.getLog(MoveVmCommand.class);
+    protected void ensureDomainMap() {
+        for (DiskImage image : getVm().getDiskMap().values()) {
+            if (imageToDestinationDomainMap.get(image.getId()) == null) {
+                imageToDestinationDomainMap.put(image.getId(), getParameters().getStorageDomainId());
+            }
+        }
+    }
 }

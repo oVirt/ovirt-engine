@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,9 +12,8 @@ import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.PermissionSubject;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -34,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -66,14 +64,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameters> {
     private static final long serialVersionUID = -5500615685812075744L;
-    private static VmStatic vmStaticForDefaultValues;
-    private Map<Guid,Guid> imageToDestinationDomainMap;
-    private List<DiskImage> imageList;
-    private transient List<PermissionSubject> permissionCheckSubject;
 
-    static {
-        vmStaticForDefaultValues = new VmStatic();
-    }
+    private static VmStatic vmStaticForDefaultValues = new VmStatic();
+    private List<DiskImage> imageList;
 
     public ImportVmCommand(ImportVmParameters parameters) {
         super(parameters);
@@ -81,13 +74,11 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         parameters.setEntityId(getVmId());
         setVm(parameters.getVm());
         parameters.setEntityId(getVm().getId());
-        // we save the images for the EndAction
-        getParameters().setImages(new ArrayList<DiskImage>(getVm().getDiskMap().values()));
-        setStoragePoolId(parameters.getStoragePoolId());
         setVdsGroupId(parameters.getVdsGroupId());
-        imageList = getParameters().getImages();
-        imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
-        ensureDomainMap();
+        if (parameters.getVm() != null && getVm().getDiskMap() != null) {
+            imageList = new ArrayList<DiskImage>(getVm().getDiskMap().values());
+        }
+        ensureDomainMap(imageList, getParameters().getDestDomainId());
     }
 
     protected ImportVmCommand(Guid commandId) {
@@ -99,95 +90,101 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         if (getVm() != null) {
             setDescription(getVmName());
         }
-        boolean retVal;
+        ArrayList<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
+        boolean retVal = ImportExportCommon.checkStoragePool(getStoragePool(), canDoActionMessages);
 
-        // Load images from Import/Export domain
-        GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(getParameters()
-                .getStoragePoolId(), getParameters().getSourceDomainId());
-        tempVar.setGetAll(true);
-        VdcQueryReturnValue qretVal = getBackend().runInternalQuery(VdcQueryType.GetVmsFromExportDomain,
-                tempVar);
-
-        retVal = qretVal.getSucceeded();
+        Map<Guid, storage_domains> domainsMap = null;
         if (retVal) {
-            List<VM> vms = (List) qretVal.getReturnValue();
-            VM vm = LinqUtils.firstOrNull(vms, new Predicate<VM>() {
-                @Override
-                public boolean eval(VM vm) {
-                    return vm.getId().equals(getParameters().getVm().getId());
+            domainsMap = new HashMap<Guid, storage_domains>();
+            for (Guid destGuid : imageToDestinationDomainMap.values()) {
+                storage_domains storageDomain = getStorageDomain(destGuid);
+                StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
+                if (!validator.isDomainExistAndActive(canDoActionMessages)
+                        || !validator.domainIsValidDestination(canDoActionMessages)) {
+                    retVal = false;
+                    break;
+                } else {
+                    domainsMap.put(destGuid, storageDomain);
                 }
-            });
+            }
+        }
 
-            if (vm != null) {
-                storage_domain_static destinationStorageDomainStatic = getStorageDomainStaticDAO().get(getParameters().getDestDomainId());
-                // At this point we should work with the VM that was read from
-                // the OVF
-                setVm(vm);
-                for (DiskImage image : getVm().getImages()) {
-                    // copy the new disk volume format/type if provided,
-                    // only if requested by the user
-                    if (getParameters().getCopyCollapse()) {
-                        for (DiskImage p : imageList) {
-                            if (p.getId().equals(image.getId())) {
-                                if (p.getvolume_format() != null) {
-                                    image.setvolume_format(p.getvolume_format());
-                                }
-                                if (p.getvolume_type() != null) {
-                                    image.setvolume_type(p.getvolume_type());
-                                }
-                            }
-                        }
-                    }
-                    retVal = ImagesHandler.CheckImageConfiguration(destinationStorageDomainStatic, image,
-                            getReturnValue().getCanDoActionMessages());
-                    if (!retVal) {
-                        break;
-                    } else {
-                        image.setstorage_pool_id(getParameters().getStoragePoolId());
-                        // we put the source domain id in order that copy will
-                        // work
-                        // ok
-                        // we fix it to DestDomainId in
-                        // MoveOrCopyAllImageGroups();
-                        image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getSourceDomainId())));
-                    }
-                }
-                if (retVal) {
-                    Map<String, List<DiskImage>> images = GetImagesLeaf(getVm().getImages());
-                    for (String drive : images.keySet()) {
-                        List<DiskImage> list = images.get(drive);
-                        getVm().addDriveToImageMap(drive, list.get(list.size() - 1));
-                    }
-                }
-            } else {
+        if (retVal) {
+            SetSourceDomainId(getParameters().getSourceDomainId());
+            StorageDomainValidator validator = new StorageDomainValidator(getSourceDomain());
+            retVal =
+                    validator.isDomainExistAndActive(canDoActionMessages);
+            if (retVal && getSourceDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                 retVal = false;
             }
         }
 
         if (retVal) {
-            retVal = ImportExportCommon.CheckStorageDomain(getParameters().getSourceDomainId(), getReturnValue()
-                    .getCanDoActionMessages());
-        }
-        if (retVal) {
-            retVal = ImportExportCommon.CheckStorageDomain(getParameters().getDestDomainId(), getReturnValue()
-                    .getCanDoActionMessages());
-        }
-        //TODO: checking disk target domains
-        if (retVal) {
-            if (!imageToDestinationDomainMap.isEmpty()) {
-                for(Guid destGuid : imageToDestinationDomainMap.values()) {
-                    retVal = ImportExportCommon.CheckStorageDomain(destGuid, getReturnValue().getCanDoActionMessages());
-                    if (retVal && !domainIsValidDestination(getStorageDomain(destGuid))) {
-                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-                        retVal = false;
+            // Load images from Import/Export domain
+            GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(getParameters()
+                    .getStoragePoolId(), getParameters().getSourceDomainId());
+            tempVar.setGetAll(true);
+            VdcQueryReturnValue qretVal = getBackend().runInternalQuery(VdcQueryType.GetVmsFromExportDomain,
+                    tempVar);
+
+            retVal = qretVal.getSucceeded();
+            if (retVal) {
+                List<VM> vms = (List<VM>) qretVal.getReturnValue();
+                VM vm = LinqUtils.firstOrNull(vms, new Predicate<VM>() {
+                    @Override
+                    public boolean eval(VM vm) {
+                        return vm.getId().equals(getParameters().getVm().getId());
                     }
-                    if(!retVal) break;
+                });
+
+                if (vm != null) {
+                    // At this point we should work with the VM that was read from
+                    // the OVF
+                    setVm(vm);
+                    for (DiskImage image : getVm().getImages()) {
+                        // copy the new disk volume format/type if provided,
+                        // only if requested by the user
+                        if (getParameters().getCopyCollapse()) {
+                            for (DiskImage p : imageList) {
+                                if (p.getId().equals(image.getId())) {
+                                    if (p.getvolume_format() != null) {
+                                        image.setvolume_format(p.getvolume_format());
+                                    }
+                                    if (p.getvolume_type() != null) {
+                                        image.setvolume_type(p.getvolume_type());
+                                    }
+                                }
+                            }
+                        }
+                        retVal =
+                                ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(image.getId()))
+                                        .getStorageStaticData(),
+                                        image,
+                                        canDoActionMessages);
+                        if (!retVal) {
+                            break;
+                        } else {
+                            image.setstorage_pool_id(getParameters().getStoragePoolId());
+                            // we put the source domain id in order that copy will
+                            // work
+                            // ok
+                            // we fix it to DestDomainId in
+                            // MoveOrCopyAllImageGroups();
+                            image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getSourceDomainId())));
+                        }
+                    }
+                    if (retVal) {
+                        Map<String, List<DiskImage>> images = GetImagesLeaf(getVm().getImages());
+                        for (String drive : images.keySet()) {
+                            List<DiskImage> list = images.get(drive);
+                            getVm().addDriveToImageMap(drive, list.get(list.size() - 1));
+                        }
+                    }
+                } else {
+                    retVal = false;
                 }
             }
-        }
-        if (retVal) {
-            retVal = ImportExportCommon.CheckStoragePool(getParameters().getStoragePoolId(), getReturnValue()
-                    .getCanDoActionMessages());
         }
 
         // check that the imported vm guid is not in engine
@@ -195,7 +192,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             VmStatic duplicateVm = getVmStaticDAO().get(getParameters().getVm().getId());
             if (duplicateVm != null) {
                 addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS);
-                getReturnValue().getCanDoActionMessages().add(String.format("$VmName %1$s", duplicateVm.getvm_name()));
+                addCanDoActionMessage(String.format("$VmName %1$s", duplicateVm.getvm_name()));
                 retVal = false;
             }
         }
@@ -205,16 +202,14 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             List<VmStatic> dupVmNames = getVmStaticDAO().getAllByName(getParameters().getVm().getvm_name());
             if (dupVmNames.size() >= 1) {
                 addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS);
-                getReturnValue().getCanDoActionMessages().add(String.format("$VmName %1$s", getVm().getvm_name()));
+                addCanDoActionMessage(String.format("$VmName %1$s", getVm().getvm_name()));
                 retVal = false;
             }
         }
 
         setVmTemplateId(getVm().getvmt_guid());
         if (retVal) {
-            if (!IsDomainActive(getParameters().getSourceDomainId(), getParameters().getStoragePoolId())
-                    || !IsDomainActive(getParameters().getDestDomainId(), getParameters().getStoragePoolId())
-                    || !TemplateExists() || !CheckTemplateInStorageDomain() || !CheckImagesGUIDsLegal() || !CanAddVm()) {
+            if (!TemplateExists() || !CheckTemplateInStorageDomain() || !CheckImagesGUIDsLegal() || !CanAddVm()) {
                 retVal = false;
             }
         }
@@ -224,37 +219,32 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             retVal = false;
         }
         if (retVal && getParameters().getCopyCollapse() && getParameters().getDiskInfoList() != null) {
-            retVal = ImagesHandler.CheckImagesConfiguration(getParameters().getStorageDomainId(),
-                    new ArrayList<DiskImageBase>(getParameters().getDiskInfoList().values()),
-                    getReturnValue().getCanDoActionMessages());
+            for (DiskImageBase imageBase : getParameters().getDiskInfoList().values()) {
+                DiskImage key = getVm().getDiskMap()
+                        .get(imageBase.getinternal_drive_mapping());
+                if (key != null) {
+                    retVal =
+                            ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(key.getId()))
+                                    .getStorageStaticData(),
+                                    imageBase,
+                                    canDoActionMessages);
+                    if (!retVal) {
+                        break;
+                    }
+                }
+            }
         }
         // if collapse true we check that we have the template on source
         // (backup) domain
         if (retVal && getParameters().getCopyCollapse() && !TemplateExistsOnExportDomain()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMPORTED_TEMPLATE_IS_MISSING);
-            getReturnValue().getCanDoActionMessages().add(
+            addCanDoActionMessage(
                     String.format("$DomainName %1$s",
                             getStorageDomainStaticDAO().get(getParameters().getSourceDomainId())
                                     .getstorage_name()));
             retVal = false;
         }
-        if (retVal) {
-            if (!domainIsValidDestination(getStorageDomain())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-                retVal = false;
-            }
-        }
-        if (retVal) {
-            SetSourceDomainId(getParameters().getSourceDomainId());
-            if (getSourceDomain() == null) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
-                retVal = false;
-            }
-            if (getSourceDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-                retVal = false;
-            }
-        }
+
         if (retVal) {
             boolean inCluster = false;
             List<VDSGroup> groups = getVdsGroupDAO().getAllForStoragePool(
@@ -276,7 +266,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 domainMap.put(getStorageDomain(), (int) getVm().getDiskSize());
             }
 
-            for(Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
+            for (Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
                 retVal = StorageDomainSpaceChecker.hasSpaceForRequest(entry.getKey(), entry.getValue());
                 if (!retVal) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
@@ -316,17 +306,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         return true;
     }
 
-    private void ensureDomainMap() {
-        if (imageToDestinationDomainMap == null) {
-            imageToDestinationDomainMap = new HashMap<Guid, Guid>();
-        }
-        for (DiskImage image : imageList) {
-            if (imageToDestinationDomainMap.get(image.getId()) == null) {
-                imageToDestinationDomainMap.put(image.getId(), getParameters().getDestDomainId());
-            }
-        }
-    }
-
     protected StorageDomainStaticDAO getStorageDomainStaticDAO() {
         return DbFacade.getInstance().getStorageDomainStaticDAO();
     }
@@ -358,8 +337,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     protected boolean CheckTemplateInStorageDomain() {
-        boolean retValue = CheckStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active)
-                && CheckIfDisksExist(new ArrayList(getVm().getDiskMap().values()));
+        boolean retValue = checkIfDisksExist(imageList);
         if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getvmt_guid())
                 && !getParameters().getCopyCollapse()) {
             List<storage_domains> domains = (List<storage_domains>) Backend
@@ -373,7 +351,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 }
             });
 
-            if (!domainsId.contains(getParameters().getStorageDomainId())) {
+            if (Collections.disjoint(domainsId, imageToDestinationDomainMap.values())) {
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }
@@ -405,9 +383,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                             new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
                                     imageGUID));
 
-            if (retValue == null || retValue.getReturnValue() == null
-                    || !(retValue.getReturnValue() instanceof Boolean)
-                    || ((Boolean) (retValue.getReturnValue()) == false)) {
+            if (Boolean.FALSE.equals(retValue.getReturnValue())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
                 return false;
             }
@@ -791,18 +767,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             return AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED;
         }
         return super.getAuditLogTypeValue();
-    }
-
-    @Override
-    public List<PermissionSubject> getPermissionCheckSubjects() {
-        if (permissionCheckSubject == null) {
-            permissionCheckSubject = new ArrayList<PermissionSubject>();
-            for (Guid storageId : imageToDestinationDomainMap.values()) {
-                permissionCheckSubject.add(new PermissionSubject(storageId, VdcObjectType.Storage, getActionType().getActionGroup()));
-            }
-
-        }
-        return permissionCheckSubject;
     }
 
     private static Log log = LogFactory.getLog(ImportVmCommand.class);

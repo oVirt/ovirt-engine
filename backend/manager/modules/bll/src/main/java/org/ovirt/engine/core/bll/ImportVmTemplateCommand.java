@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Set;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -50,15 +52,12 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmTemplateParameters> {
 
-    public Map<Guid,Guid> imageToDestinationDomainMap;
-
     public ImportVmTemplateCommand(ImprotVmTemplateParameters parameters) {
         super(parameters);
         setVmTemplate(parameters.getVmTemplate());
         parameters.setEntityId(getVmTemplate().getId());
         setStoragePoolId(parameters.getStoragePoolId());
         setVdsGroupId(parameters.getVdsGroupId());
-        imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
     }
 
     protected ImportVmTemplateCommand(Guid commandId) {
@@ -74,7 +73,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         VdcQueryReturnValue qretVal = getBackend().runInternalQuery(
                 VdcQueryType.GetTemplatesFromExportDomain, tempVar);
         boolean retVal = qretVal.getSucceeded();
-        Set<Guid> targetDomains = getTargetDomains();
+        Set<Guid> targetDomains = Collections.emptySet();
         if (retVal) {
             Map<VmTemplate, DiskImageList> templates = (Map) qretVal.getReturnValue();
             DiskImageList images = templates.get(LinqUtils.firstOrNull(templates.keySet(),
@@ -86,7 +85,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
                     }));
             List<DiskImage> list = Arrays.asList(images.getDiskImages());
             getParameters().setImages(list);
-            ensureDomainMap();
+            ensureDomainMap(getParameters().getImages(), getParameters().getDestDomainId());
+            targetDomains = getTargetDomains();
             storage_domain_static storageDomain =
                     getStorageDomainStaticDAO().get(getParameters().getDestDomainId());
             Map<String, DiskImage> imageMap = new HashMap<String, DiskImage>();
@@ -149,7 +149,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
 
         // check that the storage pool is valid
         if (retVal) {
-            retVal = ImportExportCommon.CheckStoragePool(getParameters().getStoragePoolId(), getReturnValue()
+            retVal = ImportExportCommon.checkStoragePool(getStoragePool(), getReturnValue()
                     .getCanDoActionMessages());
         }
 
@@ -176,15 +176,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         }
         // check that the destination domain is not ISO and not Export domain
         if (retVal) {
-            if (!domainIsValidDestination(getStorageDomain())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-                retVal = false;
-            }
-        }
-
-        if (retVal) {
             for(Guid domainId : targetDomains) {
-                retVal = domainIsValidDestination(getStorageDomain(domainId));
+                StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain(domainId));
+                retVal = validator.domainIsValidDestination(getReturnValue().getCanDoActionMessages());
                 if (!retVal) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                     break;
@@ -430,13 +424,5 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
                     : AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FAILED;
         }
         return super.getAuditLogTypeValue();
-    }
-
-     private void ensureDomainMap() {
-        for(DiskImage image : getParameters().getImages()) {
-            if(imageToDestinationDomainMap.get(image.getId()) == null) {
-                imageToDestinationDomainMap.put(image.getId(), getParameters().getDestDomainId());
-            }
-        }
     }
 }

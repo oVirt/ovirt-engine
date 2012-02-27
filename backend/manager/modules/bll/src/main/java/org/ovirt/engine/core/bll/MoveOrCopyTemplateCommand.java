@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +14,8 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -30,12 +34,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends StorageDomainCommandBase<T> {
+
+    protected Map<Guid, Guid> imageToDestinationDomainMap;
+    private  List<PermissionSubject> permissionCheckSubject;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -50,16 +55,17 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         super(parameters);
         setVmTemplateId(parameters.getContainerId());
         parameters.setEntityId(getVmTemplateId());
+        imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
     }
 
     private storage_domains _sourceDomain;
-    private Guid _sourceDomainId = new Guid();
+    private Guid _sourceDomainId = Guid.Empty;
 
     protected storage_domains getSourceDomain() {
-        if (_sourceDomain == null && !_sourceDomainId.equals(Guid.Empty)) {
+        if (_sourceDomain == null && !Guid.Empty.equals(_sourceDomainId)) {
             _sourceDomain = getStorageDomainDAO().getForStoragePool(_sourceDomainId, getStoragePool().getId());
         } else if (_sourceDomain == null) {
-            java.util.ArrayList<storage_domains> result = (java.util.ArrayList<storage_domains>) getBackend()
+            ArrayList<storage_domains> result = (ArrayList<storage_domains>) getBackend()
                     .runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
                             new GetStorageDomainsByVmTemplateIdQueryParameters(getVmTemplateId())).getReturnValue();
             if (result != null) {
@@ -104,38 +110,42 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         } else if (getTemplateDisks() == null || getTemplateDisks().size() <= 0) {
             addCanDoActionMessage(VdcBllMessages.TEMPLATE_IMAGE_NOT_EXIST);
             retValue = false;
-        }
-        // check that images are ok
-        if (retValue && getSourceDomain() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
-            retValue = false;
-        }
-        retValue = retValue
-                && VmTemplateCommand.isVmTemplateImagesReady(getVmTemplateId(), getSourceDomain().getId(),
-                        getReturnValue().getCanDoActionMessages(), true, true, true, false);
-        if (retValue) {
-            setStoragePoolId(getVmTemplate().getstorage_pool_id());
-            retValue = CheckStorageDomain()
-                    && checkStorageDomainStatus(StorageDomainStatus.Active)
-                    && CheckIfDisksExist(getTemplateDisks())
-                    && checkFreeSpaceOnDestinationDomain(getStorageDomain(), (int) getVmTemplate().getActualDiskSize());
-        }
-        if (retValue
-                && DbFacade.getInstance()
-                        .getStoragePoolIsoMapDAO()
-                        .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
-                                getVmTemplate().getstorage_pool_id().getValue())) == null) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
-        }
-
-        if (!retValue) {
-            if (getMoveOrCopyImageOperation() == ImageOperation.Move) {
-                addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MOVE);
-            } else {
-                addCanDoActionMessage(VdcBllMessages.VAR__ACTION__COPY);
+        } else {
+            ensureDomainMap(getTemplateDisks(), getParameters().getStorageDomainId());
+            // check that images are ok
+            if (retValue && getSourceDomain() == null) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+                retValue = false;
             }
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
+            retValue = retValue
+                    && VmTemplateCommand.isVmTemplateImagesReady(getVmTemplateId(), getSourceDomain().getId(),
+                            getReturnValue().getCanDoActionMessages(), true, true, true, false);
+            if (retValue) {
+                setStoragePoolId(getVmTemplate().getstorage_pool_id());
+                retValue =
+                        CheckStorageDomain()
+                                && checkStorageDomainStatus(StorageDomainStatus.Active)
+                                && checkIfDisksExist(getTemplateDisks())
+                                && checkFreeSpaceOnDestinationDomain(getStorageDomain(),
+                                        (int) getVmTemplate().getActualDiskSize());
+            }
+            if (retValue
+                    && DbFacade.getInstance()
+                            .getStoragePoolIsoMapDAO()
+                            .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
+                                    getVmTemplate().getstorage_pool_id().getValue())) == null) {
+                retValue = false;
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+            }
+
+            if (!retValue) {
+                if (getMoveOrCopyImageOperation() == ImageOperation.Move) {
+                    addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MOVE);
+                } else {
+                    addCanDoActionMessage(VdcBllMessages.VAR__ACTION__COPY);
+                }
+                addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
+            }
         }
         return retValue;
     }
@@ -213,15 +223,15 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         }
     }
 
-    protected boolean CheckIfDisksExist(Iterable<DiskImage> disksList) {
+    protected boolean checkIfDisksExist(Iterable<DiskImage> disksList) {
         for (DiskImage disk : disksList) {
-            java.util.ArrayList<Guid> domains = (java.util.ArrayList<Guid>) getBackend()
+            ArrayList<Guid> domains = (ArrayList<Guid>) getBackend()
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.GetImageDomainsList,
                             new GetImageDomainsListVDSCommandParameters(disk.getstorage_pool_id().getValue(), disk
                                     .getimage_group_id().getValue())).getReturnValue();
-            if (domains.contains(getParameters().getStorageDomainId())) {
+            if (domains.contains(imageToDestinationDomainMap.get(disk.getId()))) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
                 return false;
             }
@@ -270,20 +280,12 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         return VdcActionType.MoveOrCopyImageGroup;
     }
 
-    private static Log log = LogFactory.getLog(MoveOrCopyTemplateCommand.class);
-
-    protected boolean domainIsValidDestination(storage_domains domain) {
-        StorageDomainValidator validator = new StorageDomainValidator(domain);
-        return validator.domainIsValidDestination();
-    }
-
     protected storage_domains getStorageDomain(Guid domainId) {
-        return getStorageDomainDAO().getForStoragePool(domainId.getValue(), getStoragePool().getId());
+        return getStorageDomainDAO().getForStoragePool(domainId, getStoragePool().getId());
     }
 
     protected Map<storage_domains, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images) {
         Map<DiskImage, storage_domains> spaceMap = new HashMap<DiskImage,storage_domains>();
-        Map<Guid, Guid> imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
         for(DiskImage image : images) {
             storage_domains domain = getStorageDomain(imageToDestinationDomainMap.get(image.getId()));
             spaceMap.put(image, domain);
@@ -293,9 +295,43 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected Set<Guid> getTargetDomains() {
         Set<Guid> retVal = new HashSet<Guid>();
-        for(Guid guid : getParameters().getImageToDestinationDomainMap().values()) {
+        for (Guid guid : imageToDestinationDomainMap.values()) {
             retVal.add(guid);
         }
         return retVal;
+    }
+
+    protected void ensureDomainMap(List<DiskImage> images, Guid defaultDomainId) {
+        if (imageToDestinationDomainMap == null) {
+            imageToDestinationDomainMap = new HashMap<Guid, Guid>();
+        }
+        if (imageToDestinationDomainMap.isEmpty() && images != null && defaultDomainId != null
+                && !Guid.Empty.equals(defaultDomainId)) {
+            for (DiskImage image : images) {
+                if (imageToDestinationDomainMap.get(image.getId()) == null) {
+                    imageToDestinationDomainMap.put(image.getId(), defaultDomainId);
+                }
+            }
+        }
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        if (permissionCheckSubject == null) {
+            if (imageToDestinationDomainMap == null || imageToDestinationDomainMap.isEmpty()) {
+                permissionCheckSubject = super.getPermissionCheckSubjects();
+            } else {
+                permissionCheckSubject = new ArrayList<PermissionSubject>();
+                Set<PermissionSubject> permissionSet = new HashSet<PermissionSubject>();
+                for (Guid storageId : imageToDestinationDomainMap.values()) {
+                    permissionSet.add(new PermissionSubject(storageId,
+                            VdcObjectType.Storage,
+                            getActionType().getActionGroup()));
+                }
+                permissionCheckSubject.addAll(permissionSet);
+            }
+
+        }
+        return permissionCheckSubject;
     }
 }

@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -9,9 +12,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Config.class, ImportExportCommon.class })
@@ -62,7 +62,6 @@ public class ImportVmCommandTest {
 
     protected static void mockImportExportCommonAlwaysTrue() {
         ImportExportCommonMocker mocker = new ImportExportCommonMocker();
-        mocker.mockCheckStorageDomain(true);
         mocker.mockCheckStoragePool(true);
     }
 }

@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
@@ -42,7 +41,6 @@ import org.ovirt.engine.core.dao.VmTemplateDAO;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Config.class, ImportExportCommon.class, VmTemplateCommand.class })
 public class ImportVmTemplateCommandTest {

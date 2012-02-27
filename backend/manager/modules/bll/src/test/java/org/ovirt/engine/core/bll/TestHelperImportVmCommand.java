@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -98,6 +99,7 @@ public class TestHelperImportVmCommand extends ImportVmCommand {
     public StorageDomainDAO getStorageDomainDAO() {
         final storage_domains sd = new storage_domains();
         sd.setstorage_domain_type(StorageDomainType.ImportExport);
+        sd.setstatus(StorageDomainStatus.Active);
         final StorageDomainDAO d = mock(StorageDomainDAO.class);
         when(d.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(sd);
         return d;
@@ -112,6 +114,7 @@ public class TestHelperImportVmCommand extends ImportVmCommand {
     @Override
     public storage_domains getStorageDomain() {
         storage_domains sd = new storage_domains();
+        sd.setstatus(StorageDomainStatus.Active);
         sd.setavailable_disk_size(10);
         return sd;
     }
