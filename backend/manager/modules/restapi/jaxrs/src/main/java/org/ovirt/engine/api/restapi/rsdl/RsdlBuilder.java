@@ -348,14 +348,14 @@ public class RsdlBuilder {
                                 Parameter mandatory_param = new Parameter();
                                 mandatory_param.setName(mandatoryKeyValuePair.getKey().toString());
                                 mandatory_param.setType(mandatoryKeyValuePair.getValue().toString());
-                                mandatory_param.setMandatory(true);
+                                mandatory_param.setRequired(true);
                                 ps.getParameters().add(mandatory_param);
                             }
                             for (Entry<Object, Object> optionalKeyValuePair : signature.getOptionalArguments().entrySet()) {
                                 Parameter optional_param = new Parameter();
                                 optional_param.setName(optionalKeyValuePair.getKey().toString());
                                 optional_param.setType(optionalKeyValuePair.getValue().toString());
-                                optional_param.setMandatory(false);
+                                optional_param.setRequired(false);
                                 ps.getParameters().add(optional_param);
                             }
                             link.getRequest().getBody().getParametersSets().add(ps);
