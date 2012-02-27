@@ -1122,7 +1122,9 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     private java.util.Map<String, DiskImage> mDiskMap = new java.util.HashMap<String, DiskImage>();
 
     @XmlElement(name = "DiskList")
-    private final java.util.ArrayList<DiskImage> _diskList = new java.util.ArrayList<DiskImage>();
+    // even this field has no setter, it can not have the final modifier because the GWT serialization mechanizm
+    // ignores the final fields
+    private java.util.ArrayList<DiskImage> _diskList = new java.util.ArrayList<DiskImage>();
     private String mCdPath = "";
     private String mFloppyPath = "";
     private boolean mRunAndPause = false;
