@@ -42,6 +42,9 @@ public class ApplicationPlaces {
     public static final String extendedVirtualMachinePermissionSubTabPlace = extendedVirtualMachineSideTabPlace
             + SUB_TAB_PREFIX + "permissions";
 
+    public static final String extendedVirtualMachineEventSubTabPlace = extendedVirtualMachineSideTabPlace
+            + SUB_TAB_PREFIX + "events";
+
     // Templates
 
     public static final String extendedTempplateGeneralSubTabPlace = extendedTemplateSideTabPlace

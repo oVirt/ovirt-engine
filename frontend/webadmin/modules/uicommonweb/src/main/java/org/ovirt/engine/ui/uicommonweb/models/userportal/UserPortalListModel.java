@@ -366,7 +366,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         {
             ItemsChanging(value, items);
             items = value;
-            ItemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
             OnPropertyChanged(new PropertyChangedEventArgs("Items"));
         }

@@ -13,7 +13,9 @@ public class TemplateDiskListModelProvider
         extends UserPortalSearchableDetailModelProvider<DiskImage, UserPortalTemplateListModel, TemplateDiskListModel> {
 
     @Inject
-    public TemplateDiskListModelProvider(ClientGinjector ginjector, UserPortalTemplateListProvider parentProvider, UserPortalModelResolver resolver) {
+    public TemplateDiskListModelProvider(ClientGinjector ginjector,
+            UserPortalTemplateListProvider parentProvider,
+            UserPortalModelResolver resolver) {
         super(ginjector, parentProvider, TemplateDiskListModel.class, resolver);
     }
 
@@ -21,4 +23,5 @@ public class TemplateDiskListModelProvider
     protected TemplateDiskListModel createModel() {
         return new TemplateDiskListModel();
     }
+
 }

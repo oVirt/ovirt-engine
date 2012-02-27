@@ -23,4 +23,5 @@ public class TemplateEventListModelProvider
     protected TemplateEventListModel createModel() {
         return new TemplateEventListModel();
     }
+
 }

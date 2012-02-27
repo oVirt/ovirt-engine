@@ -14,7 +14,6 @@ public class UserPortalTemplateListProvider extends UserPortalDataBoundModelProv
         super(ginjector);
     }
 
-    // TODO check if getKey is correct from the parent
     @Override
     protected UserPortalTemplateListModel createModel() {
         return new UserPortalTemplateListModel();

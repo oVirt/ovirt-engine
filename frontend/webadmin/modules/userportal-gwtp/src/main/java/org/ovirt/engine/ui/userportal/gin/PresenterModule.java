@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.templa
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplatePermissionsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateVirtualDisksPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.ExtendedVmSubTabPanelPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmEventPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGeneralPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmNetworkInterfacePresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmPermissionPresenter;
@@ -49,6 +50,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.Su
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.SubTabExtendedTemplatePermissionsView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.SubTabExtendedTemplateVirtualDisksView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.ExtendedVmSubTabPanelView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmEventView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmGeneralView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmNetworkInterfaceView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmPermissionView;
@@ -139,6 +141,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabExtendedVmPermissionPresenter.ViewDef.class,
                 SubTabExtendedVmPermissionView.class,
                 SubTabExtendedVmPermissionPresenter.ProxyDef.class);
+        bindPresenter(SubTabExtendedVmEventPresenter.class,
+                SubTabExtendedVmEventPresenter.ViewDef.class,
+                SubTabExtendedVmEventView.class,
+                SubTabExtendedVmEventPresenter.ProxyDef.class);
 
         // Template
         bindPresenter(ExtendedTemplateSubTabPanelPresenter.class,
