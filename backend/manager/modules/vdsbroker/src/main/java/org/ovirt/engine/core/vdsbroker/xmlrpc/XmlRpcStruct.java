@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.xmlrpc;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class XmlRpcStruct {
 
@@ -49,6 +52,16 @@ public class XmlRpcStruct {
 
     public void add(String key, Map[] drives) {
         innerMap.put(key, drives);
+    }
+
+    public void add(String key, XmlRpcStruct[] devices) {
+        int i = 0;
+        // TODO work with typed collection
+        Map[] map = new Map[devices.length];
+        for (XmlRpcStruct device : devices) {
+            map[i++] = device.getInnerMap();
+        }
+        this.add(key, map);
     }
 
     public int getCount() {
