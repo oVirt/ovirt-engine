@@ -677,6 +677,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_HOST_NOT_EXIST();
 
+    String ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW();
+
     String TAGS_SPECIFY_TAG_IS_IN_USE();
 
     String NETWROK_NET_EXISTS_IN_CLUSTER();
