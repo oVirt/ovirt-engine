@@ -36,12 +36,13 @@ public abstract class AbstractUserQueryTest<P extends VdcQueryParametersBase, Q 
     }
 
     /** Sets up a mock for {@link #params} */
-    private void setUpMockQueryParameters() {
+    protected void setUpMockQueryParameters() {
         when(getQueryParameters().isFiltered()).thenReturn(true);
     }
 
     /** Sets up a mock for {@link #query} */
-    private void setUpSpyQuery() throws Exception {
+    protected void setUpSpyQuery() throws Exception {
+        super.setUpSpyQuery();
         when(getQuery().getUser()).thenReturn(user);
         when(getQuery().getUserID()).thenReturn(userID);
     }

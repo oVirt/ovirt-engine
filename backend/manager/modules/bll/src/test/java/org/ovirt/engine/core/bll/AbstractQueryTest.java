@@ -19,7 +19,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest(DbFacade.class)
 public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> {
 
-    private P params;
+    protected P params;
     private Q query;
 
     /** Sets up a mock user a spy query with it, and the generic query parameters */
@@ -35,9 +35,14 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
     }
 
     /** Sets up a mock for {@link #query} */
-    private void setUpSpyQuery() throws Exception {
+    protected void setUpSpyQuery() throws Exception {
+        setUpSpyQuery(getQueryParameters());
+    }
+
+    protected Q setUpSpyQuery(P parameters) throws Exception {
         Constructor<? extends Q> con = getQueryType().getConstructor(getParameterType());
-        query = spy(con.newInstance(getQueryParameters()));
+        query = spy(con.newInstance(parameters));
+        return query;
     }
 
     /** Extract the {@link Class} object for the P generic parameter */
