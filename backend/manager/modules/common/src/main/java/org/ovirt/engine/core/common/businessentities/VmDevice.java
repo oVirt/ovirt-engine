@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -22,15 +23,6 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
      * Device id and Vm id pair as a compound key
      */
     private VmDeviceId id;
-    /**
-     * The VmDevice ID uniquely identifies a VM device in the system.
-     */
-    private Guid deviceId;
-
-    /**
-     * The VM id associated with the device
-     */
-    private Guid vmId;
 
     /**
      * The device name.
@@ -65,7 +57,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     /**
      * The device plugged flag
      */
-    private boolean isPlugged = false;
+    private Boolean isPlugged = false;
 
     /**
      * The device read-only flag
@@ -80,12 +72,10 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
             int bootOrder,
             String specParams,
             boolean isManaged,
-            boolean isPlugged,
+            Boolean isPlugged,
             boolean isReadOnly) {
         super();
         this.id = id;
-        this.deviceId = id.getDeviceId();
-        this.vmId = id.getVmId();
         this.type = type;
         this.device = device;
         this.address = address;
@@ -123,6 +113,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     public void setDeviceId(Guid deviceId) {
         id.setDeviceId(deviceId);
     }
+
     public Guid getVmId() {
         return id.getVmId();
     }
@@ -146,6 +137,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     public void setType(String type) {
         this.type = type;
     }
+
     public String getAddress() {
         return address;
     }
@@ -163,7 +155,8 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     }
 
     public String getSpecParams() {
-        return specParams;
+        specParams = VmDeviceCommonUtils.appendDeviceIdToSpecParams(this.getId().getDeviceId(), specParams);
+        return this.specParams;
     }
 
     public void setSpecParams(String specParams) {
@@ -178,11 +171,11 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         this.isManaged = isManaged;
     }
 
-    public boolean getIsPlugged() {
-        return isPlugged;
+    public Boolean getIsPlugged() {
+        return isPlugged == null ? Boolean.FALSE : isPlugged;
     }
 
-    public void setIsPlugged(boolean isPlugged) {
+    public void setIsPlugged(Boolean isPlugged) {
         this.isPlugged = isPlugged;
     }
 

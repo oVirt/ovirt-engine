@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskType;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -28,6 +26,7 @@ public class VmDeviceUtils {
     private final static String HIGH_VIDEO_MEM = "65536";
     private static VmBase vmBaseInstance;
     private static VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDAO();
+    private final static String VRAM = "vram";
     /**
      * Update the vm devices according to changes made in vm static for existing VM
      */
@@ -99,6 +98,7 @@ public class VmDeviceUtils {
                 }
             }
             device.setId(new VmDeviceId(id, dstId));
+            device.setSpecParams(appendDeviceIdToSpecParams(id, ""));
             dao.save(device);
         }
         // if destination is a VM , update devices boot order
@@ -125,23 +125,6 @@ public class VmDeviceUtils {
                     is_plugged,
                     isReadOnly);
         dao.save(managedDevice);
-    }
-
-    public static void addManagedDevice(CompensationContext ctx,VmDeviceId id, VmDeviceType type, VmDeviceType device, String specParams, boolean is_plugged, boolean isReadOnly) {
-        VmDevice managedDevice =
-            new VmDevice(id,
-                    VmDeviceType.getName(type),
-                    VmDeviceType.getName(device),
-                    "",
-                    0,
-                    specParams,
-                    true,
-                    is_plugged,
-                    isReadOnly);
-        dao.save(managedDevice);
-        if (ctx != null) {
-            ctx.snapshotNewEntity(managedDevice);
-        }
     }
 
     /**
@@ -192,7 +175,7 @@ public class VmDeviceUtils {
                     newVmBase.getId()),
                     VmDeviceType.getName(VmDeviceType.DISK),
                     VmDeviceType.getName(VmDeviceType.CDROM), "", 0,
-                    newIsoPath, true, false, false);
+                    newIsoPath, true, null, false);
             dao.save(cd);
         } else {
             if (StringUtils.isNotEmpty(oldIsoPath) && StringUtils.isEmpty(newIsoPath)) {
@@ -231,7 +214,7 @@ public class VmDeviceUtils {
             VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
                     newVmBase.getId()), VmDeviceType.getName(VmDeviceType.DISK),
                     VmDeviceType.getName(VmDeviceType.CDROM), "", 0,
-                    newVmBase.getiso_path(), true, false, false);
+                    newVmBase.getiso_path(), true, null, false);
             dao.save(cd);
         }
     }
@@ -361,8 +344,7 @@ public class VmDeviceUtils {
      * @return
      */
     private static int setDiskBootOrder(List<VmDevice> devices, int bootOrder) {
-        VM vm = DbFacade.getInstance().getVmDAO().get(vmBaseInstance.getId());
-        boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm);
+        boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version());
         for (VmDevice device : devices) {
             if (device.getType()
                     .equals(VmDeviceType.getName(VmDeviceType.DISK))
@@ -387,7 +369,7 @@ public class VmDeviceUtils {
     }
 
     /**
-     * updates existing VM video cards in vm device
+     * updates new/existing VM video cards in vm device
      * @param oldVmBase
      * @param newStatic
      */
@@ -402,18 +384,19 @@ public class VmDeviceUtils {
             String mem = (newStatic.getnum_of_monitors() > 2 ? LOW_VIDEO_MEM
                     : HIGH_VIDEO_MEM);
             StringBuilder sb = new StringBuilder();
-            sb.append("vram=");
+            sb.append(VRAM);
+            sb.append("=");
             sb.append(mem);
-            sb.append(",deviceId=");
-            sb.append(newId);
+            sb = new StringBuilder(appendDeviceIdToSpecParams(newId, sb.toString()));
             // monitors were added
             for (int i = prevNumOfMonitors; i < newStatic
                     .getnum_of_monitors(); i++) {
-                VmDevice cd = new VmDevice(new VmDeviceId(newId,
-                        newStatic.getId()),
-                        VmDeviceType.getName(VmDeviceType.VIDEO),
-                        DisplayType.qxl.name(), "", 0, sb.toString(), true, false, false);
-                dao.save(cd);
+                VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), newStatic.getId()),
+                        VmDeviceType.VIDEO,
+                        VmDeviceType.QXL,
+                        sb.toString(),
+                        true,
+                        false);
             }
         } else { // delete video cards
             List<VmDevice> list = DbFacade
