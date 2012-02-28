@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetUserVmsByUserIdAndGroupsParameters extends VdcQueryParametersBase {
+public class GetUserVmsByUserIdAndGroupsParameters extends VdcUserQueryParametersBase {
 
     private static final long serialVersionUID = 98112763182708327L;
 
@@ -10,10 +10,8 @@ public class GetUserVmsByUserIdAndGroupsParameters extends VdcQueryParametersBas
     }
 
     public GetUserVmsByUserIdAndGroupsParameters(Guid id) {
-        _id = id;
+        super(id);
     }
-
-    private Guid _id = new Guid();
 
     private boolean includeDiskData;
 
@@ -25,7 +23,9 @@ public class GetUserVmsByUserIdAndGroupsParameters extends VdcQueryParametersBas
         this.includeDiskData = includeDiskData;
     }
 
+    /** Deprecated, use {@link #getUserId()} instead. */
+    @Deprecated
     public Guid getId() {
-        return _id;
+        return getUserId();
     }
 }

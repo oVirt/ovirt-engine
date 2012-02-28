@@ -128,7 +128,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
      * @param includeDiskData Whether or not to include disk data
      */
     private void mockQueryParameters(Guid requestedUser, boolean includeDiskData) {
-        when(getQueryParameters().getId()).thenReturn(requestedUser);
+        when(getQueryParameters().getUserId()).thenReturn(requestedUser);
         when(getQueryParameters().getIncludeDiskData()).thenReturn(includeDiskData);
     }
 

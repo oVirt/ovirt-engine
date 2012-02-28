@@ -15,6 +15,10 @@ public abstract class AbstractVdcUserQueryParametersBaseTestCase<P extends VdcUs
     /** The {@link VdcUserQueryParametersBase} being tested */
     private P param;
 
+    protected P getParamObject() {
+        return param;
+    }
+
     @SuppressWarnings("unchecked")
     private Class<P> getTypeParameterClass() {
         Type type = getClass().getGenericSuperclass();
