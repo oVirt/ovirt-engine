@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +27,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     private VmStatic mVmStatic;
     private VmDynamic mVmDynamic;
     private VmStatistics mVmStatistics;
-    private java.util.ArrayList<DiskImage> mImages;
-    private List<VmNetworkInterface> mInterfaces;
 
     public String getUserDefinedProperties() {
         return mVmStatic.getUserDefinedProperties();
@@ -58,8 +57,8 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatic = new VmStatic();
         mVmDynamic = new VmDynamic();
         mVmStatistics = new VmStatistics();
-        mImages = new java.util.ArrayList<DiskImage>();
-        mInterfaces = new java.util.ArrayList<VmNetworkInterface>();
+        setImages(new ArrayList<DiskImage>());
+        setInterfaces(new ArrayList<VmNetworkInterface>());
         mDiskMap = new java.util.HashMap<String, DiskImage>();
         mCdPath = "";
         mFloppyPath = "";
@@ -68,8 +67,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public VM(VmStatic vmStatic, VmDynamic vmDynamic, VmStatistics vmStatistics) {
-        mImages = new java.util.ArrayList<DiskImage>();
-        mInterfaces = new java.util.ArrayList<VmNetworkInterface>();
         mDiskMap = new java.util.HashMap<String, DiskImage>();
         mCdPath = "";
         mFloppyPath = "";
@@ -79,6 +76,8 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatic = vmStatic;
         mVmDynamic = vmDynamic;
         mVmStatistics = vmStatistics;
+        setImages(new ArrayList<DiskImage>());
+        setInterfaces(new ArrayList<VmNetworkInterface>());
     }
 
     public VM(Guid vm_guid, String vm_name, int vm_mem_size_mb, Guid vmt_guid, VmOsType vm_os, String vm_description,
@@ -103,8 +102,8 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatic = new VmStatic();
         mVmDynamic = new VmDynamic();
         mVmStatistics = new VmStatistics();
-        mImages = new java.util.ArrayList<DiskImage>();
-        mInterfaces = new java.util.ArrayList<VmNetworkInterface>();
+        setImages(new ArrayList<DiskImage>());
+        setInterfaces(new ArrayList<VmNetworkInterface>());
         mDiskMap = new java.util.HashMap<String, DiskImage>();
         mCdPath = "";
         mFloppyPath = "";
@@ -1095,19 +1094,31 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     @XmlElement(name = "Interfaces")
     public List<VmNetworkInterface> getInterfaces() {
-        return mInterfaces;
+        if (mVmStatic == null) {
+            mVmStatic = new VmStatic();
+        }
+        return mVmStatic.getInterfaces();
     }
 
     public void setInterfaces(List<VmNetworkInterface> value) {
-        mInterfaces = value;
+        if (mVmStatic == null) {
+            mVmStatic = new VmStatic();
+        }
+        mVmStatic.setInterfaces(value);
     }
 
-    public java.util.ArrayList<DiskImage> getImages() {
-        return mImages;
+    public ArrayList<DiskImage> getImages() {
+        if (mVmStatic == null) {
+            mVmStatic = new VmStatic();
+        }
+        return mVmStatic.getImages();
     }
 
-    public void setImages(java.util.ArrayList<DiskImage> value) {
-        mImages = value;
+    public void setImages(ArrayList<DiskImage> value) {
+        if (mVmStatic == null) {
+            mVmStatic = new VmStatic();
+        }
+        mVmStatic.setImages(value);
     }
 
     // public event PropertyChangedEventHandler PropertyChanged;
@@ -1124,7 +1135,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     @XmlElement(name = "DiskList")
     // even this field has no setter, it can not have the final modifier because the GWT serialization mechanizm
     // ignores the final fields
-    private java.util.ArrayList<DiskImage> _diskList = new java.util.ArrayList<DiskImage>();
     private String mCdPath = "";
     private String mFloppyPath = "";
     private boolean mRunAndPause = false;
@@ -1331,7 +1341,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     // TO CONSIDER removing this function
     public void addDriveToImageMap(String drive, DiskImage image) {
         mDiskMap.put(drive, image);
-        _diskList.add(image);
+        getDiskList().add(image);
     }
 
     public String getCdPath() {
@@ -1606,8 +1616,11 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("IsConfigured"));
     }
 
-    public java.util.ArrayList<DiskImage> getDiskList() {
-        return _diskList;
+    public ArrayList<DiskImage> getDiskList() {
+        if (mVmStatic == null) {
+            mVmStatic = new VmStatic();
+        }
+        return mVmStatic.getDiskList();
     }
 
 }

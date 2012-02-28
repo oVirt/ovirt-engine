@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Enumerated;
@@ -28,6 +30,9 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 @XmlType(name = "VmBase")
 public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
     private static final long serialVersionUID = 1078548170257965614L;
+    private ArrayList<DiskImage> images;
+    private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
+    private List<VmNetworkInterface> interfaces;
 
     @Id
     @GeneratedValue(generator = "system-uuid")
@@ -43,7 +48,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     private VmOsType mOs = VmOsType.Unassigned;
 
     @Column(name = "creation_date", nullable = false)
-    private java.util.Date creationDate = new java.util.Date(0);
+    private Date creationDate = new Date(0);
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "description", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
@@ -202,6 +207,26 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         this.setQuotaId(quotaId);
     }
 
+    public List<VmNetworkInterface> getInterfaces() {
+        return interfaces;
+    }
+
+    public void setInterfaces(List<VmNetworkInterface> value) {
+        interfaces = value;
+    }
+
+    public ArrayList<DiskImage> getImages() {
+        return images;
+    }
+
+    public void setImages(java.util.ArrayList<DiskImage> value) {
+        images = value;
+    }
+
+    public ArrayList<DiskImage> getDiskList() {
+        return diskList;
+    }
+
     @XmlElement(name = "Id")
     public Guid getId() {
         return this.id;
@@ -240,7 +265,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     }
 
     @XmlElement
-    public java.util.Date getcreation_date() {
+    public Date getcreation_date() {
         return this.creationDate;
     }
 

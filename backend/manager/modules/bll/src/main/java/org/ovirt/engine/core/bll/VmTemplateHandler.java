@@ -7,10 +7,10 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -31,7 +31,7 @@ public class VmTemplateHandler {
                 "is_auto_suspend", "interfaces", "mem_size_mb", "num_of_sockets", "cpu_per_socket", "num_of_cpus",
                 "vds_group_id", "num_of_monitors", "usb_policy", "time_zone", "diskMap", "default_boot_sequence",
                 "iso_path", "diskImageMap", "default_display_type", "priority", "auto_startup", "is_stateless",
-                "initrd_url", "kernel_url", "kernel_params" });
+                "initrd_url", "kernel_url", "kernel_params", "images", "interfaces" });
     }
 
     public static List<DiskImage> UpdateDisksFromDb(VmTemplate vmt) {
