@@ -360,7 +360,17 @@ public class CommonModel extends ListModel
         SignedOutEventDefinition = new EventDefinition("SingedOut", CommonModel.class);
     }
 
-    public CommonModel()
+    private static CommonModel instance = null;
+
+    public static CommonModel newInstance() {
+            instance = new CommonModel();
+        return instance;
+    }
+
+    public static CommonModel getInstance() {
+        return instance;
+    }
+    private CommonModel()
     {
         setSignedOutEvent(new Event(SignedOutEventDefinition));
 
@@ -562,7 +572,7 @@ public class CommonModel extends ListModel
         ListModel oldSelectedItem = getSelectedItem();
 
         // Do not Change Tab if the Selection is the Reports
-        if (getSelectedItem() != reportsList) {
+        if (!reportsList.getIsAvailable() || getSelectedItem() != reportsList) {
             switch (model.getType())
             {
             case DataCenter:
@@ -595,7 +605,7 @@ public class CommonModel extends ListModel
                 break;
             }
         } else {
-            reportsList.OnSystemTreeChanged(model);
+            reportsList.refreshReportModel();
         }
 
         // Update search string if selected item was not changed. If it is,

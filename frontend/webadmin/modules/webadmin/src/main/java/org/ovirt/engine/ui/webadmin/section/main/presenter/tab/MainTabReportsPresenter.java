@@ -6,13 +6,9 @@ import java.util.Map;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
@@ -41,8 +37,8 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
         /**
          * POST the Frame Data
          */
-        void updateReportsPanel(SystemTreeItemType type, String url, Map<String, List<String>> params);
-
+        void updateReportsPanel(String url,
+                Map<String, List<String>> params);
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
@@ -55,32 +51,24 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
     public MainTabReportsPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<Void, ReportsListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
-        getModel().getEntityChangedEvent().addListener(new IEventListener() {
+        getModel().getReportModelRefreshEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                EntityModel senderEntityModel = (EntityModel) sender;
-                updateReportsPanel(((SystemTreeItemModel) senderEntityModel.getEntity()).getType());
+                getView().updateReportsPanel(getModel().getUrl(), getModel().getParams());
             }
         });
     }
 
     @Override
-    protected void onReveal() {
-        super.onReveal();
-        SystemTreeItemModel selectedItem =
-                ((SystemTreeItemModel) CommonModelManager.instance().getSystemTree().getSelectedItem());
-        SystemTreeItemType type = (selectedItem == null ? null : selectedItem.getType());
-        updateReportsPanel(type);
+    protected void onReset() {
+        super.onReset();
         setSubTabPanelVisible(false);
+        getModel().refreshReportModel();
     }
 
     @Override
     protected PlaceRequest getMainTabRequest() {
         return new PlaceRequest(ApplicationPlaces.reportsMainTabPlace);
-    }
-
-    private void updateReportsPanel(SystemTreeItemType type) {
-        getView().updateReportsPanel(type, getModel().getCommonUrl(), getModel().getCommonParams());
     }
 }

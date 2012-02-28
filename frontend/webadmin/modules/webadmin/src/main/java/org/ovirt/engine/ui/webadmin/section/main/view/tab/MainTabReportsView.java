@@ -2,34 +2,45 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import java.util.List;
 import java.util.Map;
-
-import javax.inject.Inject;
+import java.util.Map.Entry;
 
 import org.ovirt.engine.ui.common.view.AbstractView;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabReportsPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.dashboard.ReportsPanelManager;
+import org.ovirt.engine.ui.webadmin.widget.form.PostableFrame;
 
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Widget;
 
 public class MainTabReportsView extends AbstractView implements MainTabReportsPresenter.ViewDef {
+    private static MainTabReportsViewUiBinder uiBinder = GWT.create(MainTabReportsViewUiBinder.class);
 
-    private final SimplePanel mainPanel = new SimplePanel();
+    @UiField(provided = true)
+    PostableFrame reportPostableFrame;
 
-    @Inject
+    interface MainTabReportsViewUiBinder extends UiBinder<Widget, MainTabReportsView> {
+    }
+
     public MainTabReportsView() {
-        initWidget(mainPanel);
+        reportPostableFrame = new PostableFrame("dashboard");
+        initWidget(uiBinder.createAndBindUi(this));
+
     }
 
     @Override
-    public void updateReportsPanel(SystemTreeItemType type, String url, Map<String, List<String>> params) {
-        ReportsPanel reportsPanel = ReportsPanelManager.getInstance().getReportsPanel(type);
-        mainPanel.clear();
-        mainPanel.add(reportsPanel);
-        if (reportsPanel != null) {
-            reportsPanel.setCommonUrl(url);
-            reportsPanel.setParams(params);
-            reportsPanel.post();
+    public void updateReportsPanel(String url,
+            Map<String, List<String>> params) {
+        reportPostableFrame.setUrl(url);
+
+        // Set parameters
+        reportPostableFrame.removeOldParams();
+        for (Entry<String, List<String>> entry : params.entrySet()) {
+            for (String param : entry.getValue()) {
+                reportPostableFrame.addParameter(entry.getKey(), param);
+            }
         }
+
+        reportPostableFrame.post();
     }
 }

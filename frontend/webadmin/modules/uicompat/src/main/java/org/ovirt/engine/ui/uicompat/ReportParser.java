@@ -18,23 +18,53 @@ public class ReportParser {
     private final Map<String, Resource> resourceMap =
             new HashMap<String, Resource>();
 
+    private final Map<String, Dashboard> dashboardMap = new HashMap<String, Dashboard>();
+
+    private boolean isCommunityEdition = false;
+
     public static ReportParser getInstance() {
         return INSTANCE;
     }
 
+    public boolean isCommunityEdition() {
+        return isCommunityEdition;
+    }
+
     public Map<String, Resource> getResourceMap() {
         return resourceMap;
+    }
+
+    public Map<String, Dashboard> getDashboardMap() {
+        return dashboardMap;
     }
     public void parseReport(String xmlPath) {
         // parse the XML document into a DOM
         Document messageDom = XMLParser.parse(xmlPath);
 
         Element reportsElement = (Element) messageDom.getElementsByTagName("reports").item(0);
+        NodeList dashboradsNodeList = reportsElement.getElementsByTagName("dashboard");
+        initDashboards(dashboradsNodeList);
         NodeList resourcesNodeList = reportsElement.getElementsByTagName("resource");
 
         initResources(resourcesNodeList);
     }
 
+    private void initDashboards(NodeList dashboardNodeList) {
+        Node dashboardNode = dashboardNodeList.item(0);
+        Element dashboardElement = ((Element) dashboardNode);
+        isCommunityEdition = Boolean.valueOf(dashboardElement.getAttribute("is_ce"));
+
+        NodeList resourcesNodeList = dashboardElement.getElementsByTagName("resource");
+        Node resourceNode;
+        int i = 0;
+
+        while ((resourceNode = resourcesNodeList.item(i)) != null) {
+            Element resourceElement = ((Element) resourceNode);
+            dashboardMap.put(resourceElement.getAttribute("type"), new Dashboard(resourceElement.getFirstChild()
+                    .getNodeValue()));
+            i++;
+        }
+    }
     private void initResources(NodeList nodeList) {
         Node resourceNode;
         int i = 0;
@@ -174,6 +204,18 @@ public class ReportParser {
 
         public boolean isMultiple() {
             return multiple;
+        }
+    }
+
+    public static class Dashboard {
+        String uri;
+
+        private Dashboard(String uri) {
+            this.uri = uri;
+        }
+
+        public String getUri() {
+            return uri;
         }
     }
 }

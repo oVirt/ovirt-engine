@@ -7,10 +7,11 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicompat.BaseUrlUtil;
 import org.ovirt.engine.ui.uicompat.ReportParser;
+import org.ovirt.engine.ui.uicompat.ReportParser.Dashboard;
 import org.ovirt.engine.ui.uicompat.ReportParser.Resource;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -26,11 +27,17 @@ public class ReportInit {
     private boolean urlInitialized = false;
     private final Event reportsInitEvent = new Event("ReportsInitialize", ReportInit.class);
     private String reportBaseUrl = "";
+    private boolean isCommunityEdition = false;
 
     private Map<String, Resource> resourceMap = new HashMap<String, Resource>();
+    private Map<String, Dashboard> dashboardMap = new HashMap<String, Dashboard>();
 
     public static ReportInit getInstance() {
         return INSTANCE;
+    }
+
+    public boolean isCommunityEdition() {
+        return isCommunityEdition;
     }
 
     public void init() {
@@ -56,10 +63,14 @@ public class ReportInit {
         return resourceMap.get(type);
     }
 
+    public Dashboard getDashboard(String type) {
+        return dashboardMap.get(type);
+    }
+
     private void parseReportsXML() {
 
         RequestBuilder requestBuilder =
-                new RequestBuilder(RequestBuilder.GET, GWT.getModuleBaseURL() + "Reports.xml");
+                new RequestBuilder(RequestBuilder.GET, BaseUrlUtil.getBaseUrl() + "Reports.xml");
         try {
             requestBuilder.sendRequest(null, new RequestCallback() {
                 @Override
@@ -72,6 +83,8 @@ public class ReportInit {
                     try {
                         ReportParser.getInstance().parseReport(response.getText());
                         resourceMap = ReportParser.getInstance().getResourceMap();
+                        dashboardMap = ReportParser.getInstance().getDashboardMap();
+                        isCommunityEdition = ReportParser.getInstance().isCommunityEdition();
                     } catch (DOMParseException e) {
                     } finally {
                         setXmlInitialized();
