@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +34,7 @@ import org.ovirt.engine.api.model.HostNICStates;
 import org.ovirt.engine.api.model.HostNonOperationalDetails;
 import org.ovirt.engine.api.model.HostStates;
 import org.ovirt.engine.api.model.HostStatus;
+import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.NetworkStates;
 import org.ovirt.engine.api.model.NetworkStatus;
 import org.ovirt.engine.api.model.NicInterface;
@@ -49,41 +49,39 @@ import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.PowerManagementStates;
 import org.ovirt.engine.api.model.PowerManagementStatus;
 import org.ovirt.engine.api.model.PowerManagers;
-import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.SchedulingPolicies;
+import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.StorageDomainStates;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageDomainTypes;
-import org.ovirt.engine.api.model.TemplateStates;
-import org.ovirt.engine.api.model.TemplateStatus;
-import org.ovirt.engine.api.model.VmPauseDetails;
-import org.ovirt.engine.api.model.VmStates;
-import org.ovirt.engine.api.model.VmStatus;
-
-import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.model.StorageFormats;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.StorageTypes;
+import org.ovirt.engine.api.model.TemplateStates;
+import org.ovirt.engine.api.model.TemplateStatus;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.model.VersionCaps;
 import org.ovirt.engine.api.model.VmAffinities;
 import org.ovirt.engine.api.model.VmAffinity;
+import org.ovirt.engine.api.model.VmPauseDetails;
+import org.ovirt.engine.api.model.VmStates;
+import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.model.VmTypes;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
-import org.ovirt.engine.core.common.businessentities.ServerCpu;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.util.FencingOptionsParser;
 import org.ovirt.engine.api.restapi.util.ServerCpuParser;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.VersionUtils;
+import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
-import org.ovirt.engine.api.model.MigrateOnError;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 
 public class BackendCapabilitiesResource extends BackendResource implements CapabilitiesResource {
 
@@ -449,12 +447,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         for (StorageDomainStatus status : values) {
             version.getStorageDomainStates().getStorageDomainStates().add(status.value());
         }
-    }
-
-    private static final String VERSION_FORMAT = "{0}.{1}";
-
-    private String asString(Version version) {
-        return MessageFormat.format(VERSION_FORMAT, version.getMajor(), version.getMinor());
     }
 
 }

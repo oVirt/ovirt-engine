@@ -1,31 +1,21 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Queue;
-
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
-import org.ovirt.engine.core.common.action.MaintananceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.compat.DateTime;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters> extends RestartVdsCommand<T> {
-    private static Queue<Date> mFencingAttempts = new LinkedList<Date>();
     /**
      * use this member to determine if fencing failed but vms moved to unknown mode (for the audit log type)
      */
@@ -112,28 +102,6 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             break;
         }
         return result;
-    }
-
-    private boolean fenceVds() {
-
-        mFencingAttempts.offer(new java.util.Date());
-
-        java.util.Date timeOutAgo = DateTime.getNow().AddSeconds(
-                -1 * Config.<Integer> GetValue(ConfigValues.VdsFailTimeout));
-        while (mFencingAttempts.size() > 0 && mFencingAttempts.peek().before(timeOutAgo)) {
-            mFencingAttempts.poll();
-        }
-
-        if (mFencingAttempts.size() > 3) {
-            // mark vds as maintenens
-            java.util.ArrayList<Guid> list = new java.util.ArrayList<Guid>();
-            list.add(getVdsId());
-            // Backend.getInstance().vdsMaintenance(list);
-            Backend.getInstance().runInternalAction(VdcActionType.MaintananceNumberOfVdss,
-                    new MaintananceNumberOfVdssParameters(list, false));
-            return false;
-        }
-        return true;
     }
 
     private void MoveVMsToUnknown() {

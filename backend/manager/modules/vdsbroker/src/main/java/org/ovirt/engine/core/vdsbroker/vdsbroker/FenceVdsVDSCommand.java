@@ -24,18 +24,6 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
      *
      * @param logType
      *            Type of the log.
-     */
-    private void Alert(AuditLogType logType) {
-        AuditLogableBase alert = new AuditLogableBase();
-        alert.setVdsId(getParameters().getTargetVdsID());
-        AlertDirector.Alert(alert, logType);
-    }
-
-    /**
-     * Alerts the specified log type.
-     *
-     * @param logType
-     *            Type of the log.
      * @param reason
      *            The reason.
      */

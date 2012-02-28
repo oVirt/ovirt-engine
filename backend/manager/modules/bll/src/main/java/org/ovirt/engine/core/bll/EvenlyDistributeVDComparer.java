@@ -18,19 +18,6 @@ public class EvenlyDistributeVDComparer extends VdsComparer {
         return returnValue;
     }
 
-    private boolean isVdsGoingToBeOverCommited(VDS vds, VM vm) {
-        Integer mem_commited = vds.getmem_commited();
-        Integer guest_overhead = vds.getguest_overhead();
-        Integer reserved_mem = vds.getreserved_mem();
-        Integer physical_mem_mb = vds.getphysical_mem_mb();
-
-        if (mem_commited == null || guest_overhead == null || reserved_mem == null || physical_mem_mb == null) {
-            return false;
-        }
-
-        return (mem_commited + vm.getvm_mem_size_mb() + guest_overhead + reserved_mem) > physical_mem_mb;
-    }
-
     @Override
     public void BestVdsProcedure(VDS x) {
         x.setvm_count(x.getvm_count() + 1);

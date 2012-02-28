@@ -27,15 +27,6 @@ public class MoveMultipleImageGroupsVDSCommand<P extends MoveMultipleImageGroups
                         .getStoragePoolId()));
     }
 
-    private String BuildImageDictString() {
-        StringBuilder sb = new StringBuilder();
-        for (DiskImage disk : getParameters().getImagesList()) {
-            sb.append("'").append(disk.getimage_group_id().toString()).append("'").append(": ").append("'")
-                    .append((new Boolean(disk.getwipe_after_delete())).toString()).append("'").append(", ");
-        }
-        return StringHelper.trimEnd(sb.toString(), ' ', ',');
-    }
-
     private XmlRpcStruct BuildImageDict() {
         XmlRpcStruct imagesDict = new XmlRpcStruct();
         for (DiskImage disk : getParameters().getImagesList()) {
