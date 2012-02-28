@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,9 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class StorageDomainValidator {
 
@@ -39,19 +42,33 @@ public class StorageDomainValidator {
         return true;
     }
 
+    public static Map<storage_domains, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images,
+            Map<Guid, storage_domains> storageDomains, Map<Guid, Guid> imageToDestinationDomainMap) {
+        Map<DiskImage, storage_domains> spaceMap = new HashMap<DiskImage, storage_domains>();
+        for (DiskImage image : images) {
+            Guid storageId = imageToDestinationDomainMap.get(image.getId());
+            storage_domains domain = storageDomains.get(storageId);
+            if (domain == null) {
+                domain = DbFacade.getInstance().getStorageDomainDAO().get(storageId);
+            }
+            spaceMap.put(image, domain);
+        }
+        return StorageDomainValidator.getSpaceRequirementsForStorageDomains(spaceMap);
+    }
+
     public static Map<storage_domains, Integer> getSpaceRequirementsForStorageDomains(Map<DiskImage, storage_domains> imageToDomainMap) {
-            Map<storage_domains, Integer> map = new HashMap<storage_domains, Integer>();
-            if (!imageToDomainMap.isEmpty()) {
-                for(Map.Entry<DiskImage, storage_domains> entry : imageToDomainMap.entrySet()) {
-                    storage_domains domain = entry.getValue();
-                    int size = (int) entry.getKey().getActualDiskWithSnapshotsSize();
-                    if (map.containsKey(domain)) {
-                        map.put(domain, map.get(domain) + size);
-                    } else {
-                        map.put(domain, size);
-                    }
+        Map<storage_domains, Integer> map = new HashMap<storage_domains, Integer>();
+        if (!imageToDomainMap.isEmpty()) {
+            for (Map.Entry<DiskImage, storage_domains> entry : imageToDomainMap.entrySet()) {
+                storage_domains domain = entry.getValue();
+                int size = (int) entry.getKey().getActualDiskWithSnapshotsSize();
+                if (map.containsKey(domain)) {
+                    map.put(domain, map.get(domain) + size);
+                } else {
+                    map.put(domain, size);
                 }
             }
-            return map;
         }
+        return map;
+    }
 }

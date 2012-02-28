@@ -1,11 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.HashMap;
+
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -15,30 +13,26 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "AddVmTemplateParameters")
-public class AddVmTemplateParameters extends VmTemplateParametersBase implements java.io.Serializable {
+public class AddVmTemplateParameters extends VmTemplateParametersBase {
+
     private static final long serialVersionUID = 2114985552063499069L;
 
     public AddVmTemplateParameters() {
     }
 
     private VmStatic _masterVm;
-
-    @XmlElement(name = "DestinationStorageDomainId")
+    private Guid privateVmTemplateID = Guid.Empty;
     private Guid destinationStorageDomainId;
+    private HashMap<Guid, Guid> imageToDestinationDomainMap;
 
-    @XmlElement(name = "Name")
     @Size(max = 40, message = "VALIDATION.VM_TEMPLATE.NAME.MAX", groups = { CreateEntity.class, UpdateEntity.class })
     @ValidName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS")
     private String _name;
 
-    @XmlElement
     @Pattern(regexp = ValidationUtils.ONLY_ASCII_OR_NONE,
             message = "ACTION_TYPE_FAILED_DESCRIPTION_MAY_NOT_CONTAIN_SPECIAL_CHARS")
     private String _description;
 
-    @XmlElement(name = "PublicUse")
     private boolean publicUse = false;
 
     public AddVmTemplateParameters(VmStatic masterVm, String name, String description) {
@@ -65,9 +59,6 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase implements
         return _description;
     }
 
-    @XmlElement(name = "VmTemplateID")
-    private Guid privateVmTemplateID = new Guid();
-
     @Override
     public Guid getVmTemplateId() {
         return privateVmTemplateID;
@@ -77,7 +68,6 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase implements
         privateVmTemplateID = value;
     }
 
-    @XmlElement(name = "vm")
     public VM getVm() {
         VM vm = new VM();
         vm.setStaticData(_masterVm);
@@ -102,5 +92,13 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase implements
 
     public Guid getDestinationStorageDomainId() {
         return destinationStorageDomainId;
+    }
+
+    public HashMap<Guid, Guid> getImageToDestinationDomainMap() {
+        return imageToDestinationDomainMap;
+    }
+
+    public void setImageToDestinationDomainMap(HashMap<Guid, Guid> imageToDestinationDomainMap) {
+        this.imageToDestinationDomainMap = imageToDestinationDomainMap;
     }
 }

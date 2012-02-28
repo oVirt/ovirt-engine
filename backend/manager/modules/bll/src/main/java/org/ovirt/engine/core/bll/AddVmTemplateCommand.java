@@ -3,13 +3,16 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -21,7 +24,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
@@ -37,16 +39,16 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.Pair;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-//TODO: revisit - need to be able to specify where the disks will go for the template.
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateCommand<T> {
-    private final java.util.ArrayList<DiskImage> mImages = new java.util.ArrayList<DiskImage>();
+
+    private List<DiskImage> mImages = new ArrayList<DiskImage>();
     private Map<Pair<Guid, Guid>, Double> quotaForStorageConsumption;
+    private List<PermissionSubject> permissionCheckSubject;
+    protected Map<Guid, Guid> imageToDestinationDomainMap;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -66,6 +68,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             VmHandler.updateDisksFromDb(getVm());
             setStoragePoolId(getVm().getstorage_pool_id());
         }
+        imageToDestinationDomainMap = parameters.getImageToDestinationDomainMap();
         setQuotaId(parameters.getQuotaId());
     }
 
@@ -178,35 +181,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        Guid srcStorageDomainId = mImages.get(0).getstorage_ids().get(0);
-        // get storage from parameters
-        // or populate storage domain id from the vm domain (of the first disk)
-        if (getParameters().getDestinationStorageDomainId() != null) {
-            setStorageDomainId(getParameters().getDestinationStorageDomainId());
-        } else {
-            setStorageDomainId(srcStorageDomainId);
-        }
-
         if (!validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))) {
             return false;
         }
 
-        if (!ImagesHandler.PerformImagesChecks(getParameters().getMasterVm().getId(),
-                getReturnValue().getCanDoActionMessages(),
-                getVm().getstorage_pool_id(),
-                srcStorageDomainId,
-                true,
-                true,
-                true,
-                true,
-                true,
-                false,
-                true)) {
-            return false;
-        }
-        VM vm = DbFacade.getInstance().getVmDAO().getById(getParameters().getMasterVm().getId());
-
-        if (vm.getstatus() != VMStatus.Down) {
+        if (getVm().getstatus() != VMStatus.Down) {
             addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM.toString());
             return false;
         }
@@ -216,25 +195,60 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        if (getStorageDomainId() != null) {
+        Map<Guid, List<DiskImage>> sourceImageDomainsImageMap = new HashMap<Guid, List<DiskImage>>();
+        if (imageToDestinationDomainMap == null) {
+            imageToDestinationDomainMap = new HashMap<Guid, Guid>();
+        }
+        for (DiskImage image : mImages) {
+            List<DiskImage> diskImageList = sourceImageDomainsImageMap.get(image.getstorage_ids().get(0));
+            if(diskImageList == null) {
+                diskImageList = new ArrayList<DiskImage>();
+                sourceImageDomainsImageMap.put(image.getstorage_ids().get(0), diskImageList);
+            }
+            diskImageList.add(image);
+            if (!imageToDestinationDomainMap.containsKey(image.getId())) {
+                Guid destImageId =
+                        getParameters().getDestinationStorageDomainId() != null ? getParameters().getDestinationStorageDomainId()
+                                : image.getstorage_ids().get(0);
+                imageToDestinationDomainMap.put(image.getId(), destImageId);
+            }
+        }
+
+        for (Guid srcStorageDomainId : sourceImageDomainsImageMap.keySet()) {
+            if (!ImagesHandler.PerformImagesChecks(getParameters().getMasterVm().getId(),
+                    getReturnValue().getCanDoActionMessages(),
+                    getVm().getstorage_pool_id(),
+                    srcStorageDomainId,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    false,
+                    true, true, sourceImageDomainsImageMap.get(srcStorageDomainId))) {
+                return false;
+            }
+        }
+
+        Map<Guid, storage_domains> storageDomains = new HashMap<Guid, storage_domains>();
+        Set<Guid> destImageDomains = new HashSet<Guid>(imageToDestinationDomainMap.values());
+        destImageDomains.removeAll(sourceImageDomainsImageMap.keySet());
+        for (Guid destImageDomain : destImageDomains) {
             storage_domains storage = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
-                            getStorageDomainId().getValue(), getVm().getstorage_pool_id());
-            // if source and destination domains are different we need to check destination domain also
-            if (!srcStorageDomainId.equals(getStorageDomainId().getValue())) {
-                if (storage == null) {
-                    // if storage is null then we need to check if it doesn't exist or
-                    // domain is not in the same storage pool as the vm
-                    if (DbFacade.getInstance().getStorageDomainStaticDAO().get(getStorageDomainId().getValue()) == null) {
-                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST.toString());
-                    } else {
-                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_IN_STORAGE_POOL);
-                    }
-                    return false;
+                    destImageDomain, getVm().getstorage_pool_id());
+            if (storage == null) {
+                // if storage is null then we need to check if it doesn't exist or
+                // domain is not in the same storage pool as the vm
+                if (DbFacade.getInstance().getStorageDomainStaticDAO().get(destImageDomain) == null) {
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST.toString());
+                } else {
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_IN_STORAGE_POOL);
                 }
-                if (storage.getstatus() == null || storage.getstatus() != StorageDomainStatus.Active) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString());
-                    return false;
-                }
+                return false;
+            }
+            if (storage.getstatus() == null || storage.getstatus() != StorageDomainStatus.Active) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString());
+                return false;
             }
 
             if (storage.getstorage_domain_type() == StorageDomainType.ImportExport
@@ -243,24 +257,29 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                 return false;
             }
-            // update vm snapshots for storage free space check
-            for (DiskImage diskImage : getVm().getDiskMap().values()) {
-                diskImage.getSnapshots().addAll(
+            storageDomains.put(destImageDomain, storage);
+        }
+        // update vm snapshots for storage free space check
+        for (DiskImage diskImage : getVm().getDiskMap().values()) {
+            diskImage.getSnapshots().addAll(
                                     ImagesHandler.getAllImageSnapshots(diskImage.getId(),
                                             diskImage.getit_guid()));
-            }
-            if (!StorageDomainSpaceChecker.hasSpaceForRequest(storage, (int) getVm().getActualDiskWithSnapshotsSize())) {
+        }
+
+        Map<storage_domains, Integer> domainMap =
+                StorageDomainValidator.getSpaceRequirementsForStorageDomains(
+                                        getVmTemplate().getDiskImageMap().values(),
+                        storageDomains,
+                        imageToDestinationDomainMap);
+        for (Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
+            if (!StorageDomainSpaceChecker.hasSpaceForRequest(entry.getKey(), entry.getValue())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
                 return false;
             }
         }
-        if (!AddVmCommand.CheckCpuSockets(getParameters().getMasterVm().getnum_of_sockets(),
+        return AddVmCommand.CheckCpuSockets(getParameters().getMasterVm().getnum_of_sockets(),
                     getParameters().getMasterVm().getcpu_per_socket(), getVdsGroup()
-                            .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages())) {
-            return false;
-        }
-
-        return true;
+                            .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
     }
 
     protected void AddVmTemplateToDb() {
@@ -299,40 +318,27 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getId());
         for (VmNetworkInterface iface : interfaces) {
             VmNetworkInterface iDynamic = new VmNetworkInterface();
-            // \\interface_statistics iStat = new interface_statistics();
             iDynamic.setId(Guid.NewGuid());
             iDynamic.setVmTemplateId(getVmTemplateId());
-            // TODO why is a VM interface getting VDS details?
-            // iDynamic.setAddress(iface.getInterfaceDynamic().getAddress());
-            // iDynamic.setBondName(iface.getInterfaceDynamic().getBondName());
-            // iDynamic.setBondType(iface.getInterfaceDynamic().getBondType());
-            // iDynamic.setGateway(iface.getInterfaceDynamic().getGateway());
             iDynamic.setName(iface.getName());
             iDynamic.setNetworkName(iface.getNetworkName());
             iDynamic.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());
-            // iDynamic.setSubnet(iface.getInterfaceDynamic().getSubnet());
             iDynamic.setType(iface.getType());
 
             DbFacade.getInstance().getVmNetworkInterfaceDAO().save(iDynamic);
-            // \\DbFacade.Instance.addInterfaceStatistics(iStat);
         }
     }
 
     protected void AddVmTemplateImages() {
-        Guid srcStorageDomain = mImages.get(0).getstorage_ids().get(0);
         Guid vmSnapshotId = Guid.NewGuid();
 
         for (DiskImage diskImage : mImages) {
             CreateImageTemplateParameters createParams = new CreateImageTemplateParameters(diskImage.getId(),
                         getVmTemplateId(), getVmTemplateName(), getVmId());
-            if (!Guid.Empty.equals(diskImage.getstorage_ids().get(0))) {
-                createParams.setStorageDomainId(diskImage.getstorage_ids().get(0));
-            } else {
-                createParams.setStorageDomainId(srcStorageDomain);
-            }
+            createParams.setStorageDomainId(diskImage.getstorage_ids().get(0));
             createParams.setVmSnapshotId(vmSnapshotId);
             createParams.setEntityId(getParameters().getEntityId());
-            createParams.setDestinationStorageDomainId(getStorageDomainId().getValue());
+            createParams.setDestinationStorageDomainId(imageToDestinationDomainMap.get(diskImage.getId()));
             createParams.setParentParemeters(getParameters());
             getParameters().getImagesParameters().add(createParams);
             // The return value of this action is the 'copyImage' task GUID:
@@ -378,7 +384,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // statement.
         // (a template without images doesn't exist in the 'vm_template_view').
         setVmTemplateId(getParameters().getVmTemplateId());
-        VmTemplate template = getVmTemplate();
 
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             Backend.getInstance().EndAction(VdcActionType.CreateImageTemplate, p);
@@ -398,22 +403,24 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         setSucceeded(true);
     }
 
-    private static Log log = LogFactory.getLog(AddVmTemplateCommand.class);
-
     /**
      * in case of non-existing cluster the backend query will return a null
      */
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> list = new ArrayList<PermissionSubject>();
-        Guid storagePoolId = getVdsGroup() == null || getVdsGroup().getstorage_pool_id() == null ? null
-                : getVdsGroup().getstorage_pool_id().getValue();
-        list.add(new PermissionSubject(storagePoolId, VdcObjectType.StoragePool, getActionType().getActionGroup()));
-        list = QuotaHelper.getInstance().addQuotaPermissionSubject(list,
-                getStoragePool(),
-                getVm().getStaticData().getQuotaId());
-        list = setPermissionListForDiskImage(list);
-        return list;
+        if (permissionCheckSubject == null) {
+            permissionCheckSubject = new ArrayList<PermissionSubject>();
+            Guid storagePoolId = getVdsGroup() == null || getVdsGroup().getstorage_pool_id() == null ? null
+                    : getVdsGroup().getstorage_pool_id().getValue();
+            permissionCheckSubject.add(new PermissionSubject(storagePoolId,
+                    VdcObjectType.StoragePool,
+                    getActionType().getActionGroup()));
+            permissionCheckSubject = QuotaHelper.getInstance().addQuotaPermissionSubject(permissionCheckSubject,
+                    getStoragePool(),
+                    getVm().getStaticData().getQuotaId());
+            permissionCheckSubject = setPermissionListForDiskImage(permissionCheckSubject);
+        }
+        return permissionCheckSubject;
     }
 
     private List<PermissionSubject> setPermissionListForDiskImage(List<PermissionSubject> list) {

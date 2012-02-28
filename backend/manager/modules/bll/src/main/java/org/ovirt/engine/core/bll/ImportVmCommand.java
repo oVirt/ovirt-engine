@@ -5,8 +5,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -96,7 +98,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         Map<Guid, storage_domains> domainsMap = null;
         if (retVal) {
             domainsMap = new HashMap<Guid, storage_domains>();
-            for (Guid destGuid : imageToDestinationDomainMap.values()) {
+            Set<Guid> destGuids = new HashSet<Guid>(imageToDestinationDomainMap.values());
+            for (Guid destGuid : destGuids) {
                 storage_domains storageDomain = getStorageDomain(destGuid);
                 StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
                 if (!validator.isDomainExistAndActive(canDoActionMessages)

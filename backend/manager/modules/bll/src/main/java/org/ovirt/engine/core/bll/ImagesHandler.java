@@ -195,7 +195,7 @@ public final class ImagesHandler {
     }
 
     public static boolean PerformImagesChecks(Guid vmGuid,
-            java.util.ArrayList<String> messages,
+            ArrayList<String> messages,
             Guid storagePoolId,
             Guid storageDomainId,
             boolean diskSpaceCheck,
@@ -206,6 +206,23 @@ public final class ImagesHandler {
             boolean checkVmIsDown,
             boolean checkStorageDomain,
             boolean checkIsValid) {
+        return PerformImagesChecks(vmGuid, messages, storagePoolId, storageDomainId, diskSpaceCheck,
+                checkImagesLocked, checkImagesIllegal, checkImagesExist, checkVmInPreview,
+                checkVmIsDown, checkStorageDomain, checkIsValid, null);
+    }
+
+    public static boolean PerformImagesChecks(Guid vmGuid,
+            java.util.ArrayList<String> messages,
+            Guid storagePoolId,
+            Guid storageDomainId,
+            boolean diskSpaceCheck,
+            boolean checkImagesLocked,
+            boolean checkImagesIllegal,
+            boolean checkImagesExist,
+            boolean checkVmInPreview,
+            boolean checkVmIsDown,
+            boolean checkStorageDomain,
+            boolean checkIsValid, List<DiskImage> diskImageList) {
 
         boolean returnValue = true;
         boolean isValid = checkIsValid
@@ -236,15 +253,20 @@ public final class ImagesHandler {
                 messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.toString());
             }
         } else if (returnValue && isValid) {
-            List<DiskImage> images = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmGuid);
+            List<DiskImage> images;
+            if (diskImageList == null) {
+                images = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmGuid);
+            } else {
+                images = diskImageList;
+            }
             if (images.size() > 0) {
-                java.util.ArrayList<DiskImage> irsImages = null;
+                ArrayList<DiskImage> irsImages = null;
                 Guid domainId = !Guid.Empty.equals(storageDomainId) ? storageDomainId : images.get(0)
                         .getstorage_ids().get(0);
 
                 if (checkImagesExist) {
-                    RefObject<java.util.ArrayList<DiskImage>> tempRefObject =
-                            new RefObject<java.util.ArrayList<DiskImage>>();
+                    RefObject<ArrayList<DiskImage>> tempRefObject =
+                            new RefObject<ArrayList<DiskImage>>();
                     boolean isImagesExist = isImagesExists(images, storagePoolId, domainId, tempRefObject);
                     irsImages = tempRefObject.argvalue;
                     if (!isImagesExist) {

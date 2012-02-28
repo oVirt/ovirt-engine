@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -14,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -80,14 +82,11 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         newImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
         newImage.setParentId(ImagesHandler.BlankImageTemplateId);
         newImage.setit_guid(ImagesHandler.BlankImageTemplateId);
+        newImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getDestinationStorageDomainId())));
         image_vm_map imageVmMap = new image_vm_map(true, newImage.getId(), getImageContainerId());
-        DbFacade.getInstance().getDiskImageDAO().save(newImage);
+        saveDiskImage(newImage);
         DbFacade.getInstance().getDiskDao().save(newImage.getDisk());
         DbFacade.getInstance().getImageVmMapDAO().save(imageVmMap);
-        DbFacade.getInstance()
-                .getStorageDomainDAO()
-                .addImageStorageDomainMap(new image_storage_domain_map(newImage.getId(),
-                        getParameters().getDestinationStorageDomainId()));
 
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(newImage.getId());
@@ -134,7 +133,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         setVmTemplate(DbFacade.getInstance().getVmTemplateDAO()
                 .get(getVmTemplateId()));
         if (getDestinationDiskImage() != null) {
-            DbFacade.getInstance().getImageVmMapDAO().remove(new image_vm_map_id(getDestinationDiskImage().getId(),getDestinationDiskImage().getvm_guid()));
+            DbFacade.getInstance().getImageVmMapDAO().remove(new image_vm_map_id(getDestinationDiskImage().getId(), getDestinationDiskImage().getvm_guid()));
             DbFacade.getInstance().getDiskDao().remove(getDestinationDiskImage().getimage_group_id());
             if (DbFacade.getInstance().getDiskImageDynamicDAO().get(getDestinationDiskImage().getId()) != null) {
                 DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getId());
