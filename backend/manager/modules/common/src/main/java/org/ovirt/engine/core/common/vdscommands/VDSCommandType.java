@@ -122,7 +122,8 @@ public enum VDSCommandType {
     ExtendStorageDomain("org.ovirt.engine.core.vdsbroker.irsbroker"),
     UpdateSpmHostName("org.ovirt.engine.core.vdsbroker.irsbroker"),
     HotPlugDisk("org.ovirt.engine.core.vdsbroker.vdsbroker"),
-    HotUnPlugDisk("org.ovirt.engine.core.vdsbroker.vdsbroker");
+    HotUnPlugDisk("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    Snapshot("org.ovirt.engine.core.vdsbroker.vdsbroker");
 
     String packageName;
 
