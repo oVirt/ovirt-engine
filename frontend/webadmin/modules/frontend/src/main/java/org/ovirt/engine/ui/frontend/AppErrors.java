@@ -865,6 +865,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VALIDATION_BOOKMARKS_NAME_NOT_NULL();
 
+    String VALIDATION_QUOTA_NAME_INVALID();
+
     String VALIDATION_VDS_GROUP_NAME_NOT_NULL();
 
     String VALIDATION_VDS_GROUP_NAME_MAX();
