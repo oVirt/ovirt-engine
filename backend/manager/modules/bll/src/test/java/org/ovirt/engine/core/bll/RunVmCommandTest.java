@@ -442,8 +442,8 @@ public class RunVmCommandTest {
 
         final VmDeviceDAO vmDeviceDao = Mockito.mock(VmDeviceDAO.class);
         Mockito.when(vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(guid,
-                VmDeviceType.getName(VmDeviceType.DISK),
-                VmDeviceType.getName(VmDeviceType.DISK))).thenReturn(vmDevices);
+                VmDeviceType.DISK.getName(),
+                VmDeviceType.DISK.getName())).thenReturn(vmDevices);
 
         final DbFacade facadeMock = new DbFacade() {
             @Override

@@ -85,8 +85,8 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
         vmDeviceDAOMock = mock(VmDeviceDAO.class);
         when(dbFacadeMock.getVmDeviceDAO()).thenReturn(vmDeviceDAOMock);
         when(vmDeviceDAOMock.getVmDeviceByVmIdTypeAndDevice(vmID,
-                VmDeviceType.getName(VmDeviceType.DISK),
-                VmDeviceType.getName(VmDeviceType.DISK),
+                VmDeviceType.DISK.getName(),
+                VmDeviceType.DISK.getName(),
                 getUser().getUserId(),
                 getQueryParameters().isFiltered())).
                 thenReturn(Collections.singletonList(pluggedDevice));
@@ -101,8 +101,8 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
 
     private static VmDevice createVMDevice(Guid vmID, DiskImage disk) {
         return new VmDevice(new VmDeviceId(disk.getId(), vmID),
-                VmDeviceType.getName(VmDeviceType.DISK),
-                VmDeviceType.getName(VmDeviceType.DISK),
+                VmDeviceType.DISK.getName(),
+                VmDeviceType.DISK.getName(),
                 "",
                 1,
                 "",

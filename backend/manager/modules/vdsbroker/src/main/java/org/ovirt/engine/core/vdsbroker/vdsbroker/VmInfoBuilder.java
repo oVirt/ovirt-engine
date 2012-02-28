@@ -40,7 +40,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         List<VmDevice> vmDevices =
                 DbFacade.getInstance()
                         .getVmDeviceDAO()
-                        .getVmDeviceByVmIdAndType(vm.getId(), VmDeviceType.getName(VmDeviceType.VIDEO));
+                        .getVmDeviceByVmIdAndType(vm.getId(), VmDeviceType.VIDEO.getName());
         for (VmDevice vmDevice : vmDevices) {
             XmlRpcStruct struct = new XmlRpcStruct();
             struct.add(VdsProperties.Type, vmDevice.getType());
@@ -59,8 +59,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 DbFacade.getInstance()
                         .getVmDeviceDAO()
                         .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceType.getName(VmDeviceType.DISK),
-                                VmDeviceType.getName(VmDeviceType.CDROM));
+                                VmDeviceType.DISK.getName(),
+                                VmDeviceType.CDROM.getName());
         for (VmDevice vmDevice : vmDevices) {
             String file = StringUtils.string2Map(vmDevice.getSpecParams()).get("path");
             if (!(file == null) && !(file.isEmpty())) {
@@ -95,8 +95,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 DbFacade.getInstance()
                         .getVmDeviceDAO()
                         .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceType.getName(VmDeviceType.DISK),
-                                VmDeviceType.getName(VmDeviceType.FLOPPY));
+                                VmDeviceType.DISK.getName(),
+                                VmDeviceType.FLOPPY.getName());
         for (VmDevice vmDevice : vmDevices) {
             XmlRpcStruct struct = new XmlRpcStruct();
             struct.add(VdsProperties.Type, vmDevice.getType());
@@ -224,7 +224,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     DbFacade.getInstance()
                             .getVmDeviceDAO()
                             .getVmDeviceByVmIdAndType(vm.getId(),
-                                    VmDeviceType.getName(VmDeviceType.SOUND));
+                                    VmDeviceType.SOUND.getName());
             for (VmDevice vmDevice : vmDevices) {
                 XmlRpcStruct struct = new XmlRpcStruct();
                 struct.add(VdsProperties.Type, vmDevice.getType());

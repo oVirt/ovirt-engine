@@ -116,8 +116,8 @@ public class VmDeviceUtils {
     public static void addManagedDevice(VmDeviceId id, VmDeviceType type, VmDeviceType device, String specParams, boolean is_plugged, boolean isReadOnly) {
         VmDevice managedDevice =
             new VmDevice(id,
-                    VmDeviceType.getName(type),
-                    VmDeviceType.getName(device),
+                        type.getName(),
+                        device.getName(),
                     "",
                     0,
                     specParams,
@@ -173,8 +173,8 @@ public class VmDeviceUtils {
             // new CD was added
             VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
                     newVmBase.getId()),
-                    VmDeviceType.getName(VmDeviceType.DISK),
-                    VmDeviceType.getName(VmDeviceType.CDROM), "", 0,
+                    VmDeviceType.DISK.getName(),
+                    VmDeviceType.CDROM.getName(), "", 0,
                     newIsoPath, true, null, false);
             dao.save(cd);
         } else {
@@ -184,8 +184,8 @@ public class VmDeviceUtils {
                         .getInstance()
                         .getVmDeviceDAO()
                         .getVmDeviceByVmIdTypeAndDevice(newVmBase.getId(),
-                                VmDeviceType.getName(VmDeviceType.DISK),
-                                VmDeviceType.getName(VmDeviceType.CDROM));
+                                VmDeviceType.DISK.getName(),
+                                VmDeviceType.CDROM.getName());
                 dao.remove(list.get(0).getId());
             } else if (StringUtils.isNotEmpty(oldIsoPath) && StringUtils.isNotEmpty(newIsoPath)
                     && !oldIsoPath.equals(newIsoPath)) {
@@ -194,8 +194,8 @@ public class VmDeviceUtils {
                         .getInstance()
                         .getVmDeviceDAO()
                         .getVmDeviceByVmIdTypeAndDevice(newVmBase.getId(),
-                                VmDeviceType.getName(VmDeviceType.DISK),
-                                VmDeviceType.getName(VmDeviceType.CDROM));
+                                VmDeviceType.DISK.getName(),
+                                VmDeviceType.CDROM.getName());
                 VmDevice cd = list.get(0);
                 cd.setSpecParams(newIsoPath);
                 dao.update(cd);
@@ -212,8 +212,8 @@ public class VmDeviceUtils {
         if (StringUtils.isNotEmpty(newVmBase.getiso_path())) {
             // new CD was added
             VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
-                    newVmBase.getId()), VmDeviceType.getName(VmDeviceType.DISK),
-                    VmDeviceType.getName(VmDeviceType.CDROM), "", 0,
+                    newVmBase.getId()), VmDeviceType.DISK.getName(),
+                    VmDeviceType.CDROM.getName(), "", 0,
                     newVmBase.getiso_path(), true, null, false);
             dao.save(cd);
         }
@@ -309,9 +309,9 @@ public class VmDeviceUtils {
     private static int setNetworkBootOrder(List<VmDevice> devices, int bootOrder) {
         for (VmDevice device : devices) {
             if (device.getType().equals(
-                    VmDeviceType.getName(VmDeviceType.INTERFACE))
+                    VmDeviceType.INTERFACE.getName())
                     && device.getDevice().equals(
-                            VmDeviceType.getName(VmDeviceType.BRIDGE))) {
+                            VmDeviceType.BRIDGE.getName())) {
                 device.setBootOrder(bootOrder++);
             }
         }
@@ -327,9 +327,9 @@ public class VmDeviceUtils {
     private static int setCDBootOrder(List<VmDevice> devices, int bootOrder) {
         for (VmDevice device : devices) {
             if (device.getType()
-                    .equals(VmDeviceType.getName(VmDeviceType.DISK))
+                    .equals(VmDeviceType.DISK.getName())
                     && device.getDevice().equals(
-                            VmDeviceType.getName(VmDeviceType.CDROM))) {
+                            VmDeviceType.CDROM.getName())) {
                 device.setBootOrder(bootOrder++);
                 break; // only one CD is currently supported.
             }
@@ -347,9 +347,9 @@ public class VmDeviceUtils {
         boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version());
         for (VmDevice device : devices) {
             if (device.getType()
-                    .equals(VmDeviceType.getName(VmDeviceType.DISK))
+                    .equals(VmDeviceType.DISK.getName())
                     && device.getDevice().equals(
-                            VmDeviceType.getName(VmDeviceType.DISK))) {
+                            VmDeviceType.DISK.getName())) {
                 Guid id = device.getDeviceId();
                 Disk disk = DbFacade.getInstance().getDiskDao().get(id);
                 if (id != null && !id.equals(Guid.Empty)) {
@@ -403,7 +403,7 @@ public class VmDeviceUtils {
                     .getInstance()
                     .getVmDeviceDAO()
                     .getVmDeviceByVmIdAndType(newStatic.getId(),
-                            VmDeviceType.getName(VmDeviceType.VIDEO));
+                            VmDeviceType.VIDEO.getName());
             for (int i = 0; i < (prevNumOfMonitors - newStatic
                     .getnum_of_monitors()); i++) {
                 dao.remove(list.get(i).getId());

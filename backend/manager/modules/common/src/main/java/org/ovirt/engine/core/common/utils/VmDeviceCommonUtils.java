@@ -17,15 +17,17 @@ public class VmDeviceCommonUtils {
     public final static String CDROM_IMAGE_ID = "11111111-1111-1111-1111-111111111111";
 
     public static boolean isNetwork(VmDevice device) {
-        return (device.getType().equals(VmDeviceType.getName(VmDeviceType.INTERFACE)));
+        return (device.getType().equals(VmDeviceType.INTERFACE.getName()));
     }
 
     public static boolean isDisk(VmDevice device) {
-        return (device.getType().equals(VmDeviceType.getName(VmDeviceType.DISK)) && device.getDevice().equals(VmDeviceType.getName(VmDeviceType.DISK)));
+        return (device.getType().equals(VmDeviceType.DISK.getName()) && device.getDevice()
+                .equals(VmDeviceType.DISK.getName()));
     }
 
     public static boolean isCD(VmDevice device) {
-        return (device.getType().equals(VmDeviceType.getName(VmDeviceType.DISK)) && device.getDevice().equals(VmDeviceType.getName(VmDeviceType.CDROM)));
+        return (device.getType().equals(VmDeviceType.DISK.getName()) && device.getDevice()
+                .equals(VmDeviceType.CDROM.getName()));
     }
 
     /**

@@ -44,8 +44,8 @@ public class GetAllDisksByVmIdQuery<P extends GetAllDisksByVmIdParameters> exten
                 DbFacade.getInstance()
                         .getVmDeviceDAO()
                         .getVmDeviceByVmIdTypeAndDevice(getParameters().getVmId(),
-                                VmDeviceType.getName(VmDeviceType.DISK),
-                                VmDeviceType.getName(VmDeviceType.DISK),
+                                VmDeviceType.DISK.getName(),
+                                VmDeviceType.DISK.getName(),
                                 getUserID(),
                                 getParameters().isFiltered());
         Set<Guid> pluggedDiskIds = new HashSet<Guid>();
