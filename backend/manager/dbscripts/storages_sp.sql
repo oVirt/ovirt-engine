@@ -52,6 +52,7 @@ Create or replace FUNCTION Updatestorage_pool_partial(v_description VARCHAR(4000
 	v_id UUID,
 	v_name VARCHAR(40),
 	v_storage_pool_type INTEGER,
+	v_storage_pool_format_type VARCHAR(50),
 	v_compatibility_version VARCHAR(40),
 	v_quota_enforcement_type INTEGER)
 RETURNS VOID
@@ -60,7 +61,8 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE storage_pool
-      SET description = v_description,name = v_name,storage_pool_type = v_storage_pool_type,compatibility_version = v_compatibility_version, 
+      SET description = v_description,name = v_name,storage_pool_type = v_storage_pool_type,
+      storage_pool_format_type = v_storage_pool_format_type,compatibility_version = v_compatibility_version,
       _update_date = LOCALTIMESTAMP,quota_enforcement_type = v_quota_enforcement_type
       WHERE id = v_id;
 END; $procedure$

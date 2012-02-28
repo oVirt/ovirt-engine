@@ -333,6 +333,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("id", pool.getId())
                 .addValue("name", pool.getname())
                 .addValue("storage_pool_type", pool.getstorage_pool_type())
+                .addValue("storage_pool_format_type", pool.getStoragePoolFormatType())
                 .addValue("compatibility_version",
                         pool.getcompatibility_version())
                 .addValue("quota_enforcement_type",

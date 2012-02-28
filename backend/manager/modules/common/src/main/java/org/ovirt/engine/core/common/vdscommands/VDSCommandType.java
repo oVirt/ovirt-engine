@@ -41,6 +41,7 @@ public enum VDSCommandType {
     DiscoverSendTargets("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     RefreshStoragePool("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     CreateStoragePool("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    UpgradeStoragePool("org.ovirt.engine.core.vdsbroker.irsbroker"),
     ReconstructMaster("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SpmStart("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SpmStop("org.ovirt.engine.core.vdsbroker.vdsbroker"),

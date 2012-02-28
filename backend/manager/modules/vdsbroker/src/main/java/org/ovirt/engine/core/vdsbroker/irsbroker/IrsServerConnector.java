@@ -96,4 +96,6 @@ public interface IrsServerConnector {
 
     public Map<String, Object> getVmsList(String storagePoolId, String storageDomainId);
 
+    public Map<String, Object> upgradeStoragePool(String storagePoolId, String targetVersion);
+
 }

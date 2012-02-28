@@ -242,4 +242,9 @@ public class IrsServerWrapper implements IIrsServer {
         GetVmsListReturnForXmlRpc wrapper = new GetVmsListReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
     }
+
+    public StatusOnlyReturnForXmlRpc upgradeStoragePool(String storagePoolId, String targetVersion) {
+        Map<String, Object> xmlRpcReturnValue = irsServer.upgradeStoragePool(storagePoolId, targetVersion);
+        return new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+    }
 }

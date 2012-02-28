@@ -83,4 +83,6 @@ public interface IIrsServer {
     GetVmsInfoReturnForXmlRpc getVmsInfo(String storagePoolId, String storageDomainId, String[] VMIDList);
 
     GetVmsListReturnForXmlRpc getVmsList(String storagePoolId, String storageDomainId);
+
+    StatusOnlyReturnForXmlRpc upgradeStoragePool(String storagePoolId, String targetVersion);
 }
