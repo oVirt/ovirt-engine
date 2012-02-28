@@ -31,8 +31,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.SearchReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.DateTime;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -47,26 +45,11 @@ import org.ovirt.engine.core.utils.list.ListUtils.Filter;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
     private static java.util.HashMap<String, QueryData2> mQueriesCache = new java.util.HashMap<String, QueryData2>();
-    private static ISyntaxChecker _defaultSyntaxChecker;
-    static {
-        // Dictionary<string, string> dictionary =
-        // LicenseManager.LicenseManager.Instance.GetLicenseProperties();
-        // if (dictionary.ContainsKey("ProductTypeProperty") &&
-        // dictionary["ProductTypeProperty"].Contains("Desktop"))
-        // {
-        _defaultSyntaxChecker = SyntaxCheckerFactory.CreateBackendSyntaxChecker(Config
-                .<String> GetValue(ConfigValues.AuthenticationMethod));
-        // }
-        // else
-        // {
-        // _defaultSyntaxChecker =
-        // SyntaxCheckerFactory.CreateBackendSyntaxCheckerServersOnly();
-        // }
-    }
+    private static ISyntaxChecker _defaultSyntaxChecker =
+            SyntaxCheckerFactory.CreateBackendSyntaxChecker(Config.<String> GetValue(ConfigValues.AuthenticationMethod));
 
     public SearchQuery(P parameters) {
         super(parameters);
-
     }
 
     private SearchReturnValue getSearchReturnValue() {
@@ -147,9 +130,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         } else {
             returnValue = DbFacade.getInstance().getVmDAO().getAllUsingQuery(data.getQuery());
             for (VM vm : returnValue) {
-                // VmHandler.updateDisksFromDb(vm);
-                // vm.Interfaces =
-                // DbFacade.Instance.getIterfacesByVmId(vm.vm_guid);
                 VmHandler.UpdateVmGuestAgentVersion(vm);
             }
         }
@@ -158,6 +138,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     private List<VDS> searchVDSsByDb() {
         return genericSearch(DbFacade.getInstance().getVdsDAO(), true, new Filter<VDS>() {
+            @Override
             public List<VDS> filter(List<VDS> data) {
                 for (VDS vds : data) {
                     vds.setCpuName(CpuFlagsManagerHandler.FindMaxServerCpuByFlags(vds.getcpu_flags(),
@@ -173,19 +154,19 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
         if (data == null) {
             return new ArrayList<AdUser>();
-        } else {
-            LdapQueryData ldapQueryData = new LdapQueryDataImpl();
-            ldapQueryData.setLdapQueryType(LdapQueryType.searchUsers);
-            ldapQueryData.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
-            ldapQueryData.setDomain(data.getDomain());
-            @SuppressWarnings("unchecked")
-            List<AdUser> result = (List<AdUser>) LdapFactory
-                    .getInstance(data.getDomain())
-                    .RunAdAction(AdActionType.SearchUserByQuery,
-                            new LdapSearchByQueryParameters(data.getDomain(), ldapQueryData))
-                    .getReturnValue();
-            return (result != null) ? result : new ArrayList<AdUser>();
         }
+
+        LdapQueryData ldapQueryData = new LdapQueryDataImpl();
+        ldapQueryData.setLdapQueryType(LdapQueryType.searchUsers);
+        ldapQueryData.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
+        ldapQueryData.setDomain(data.getDomain());
+        @SuppressWarnings("unchecked")
+        List<AdUser> result = (List<AdUser>) LdapFactory
+                .getInstance(data.getDomain())
+                .RunAdAction(AdActionType.SearchUserByQuery,
+                        new LdapSearchByQueryParameters(data.getDomain(), ldapQueryData))
+                .getReturnValue();
+        return (result != null) ? result : new ArrayList<AdUser>();
     }
 
     private List<DbUser> searchDbUsers() {
@@ -197,20 +178,20 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
         if (data == null) {
             return new ArrayList<ad_groups>();
-        } else {
-            LdapQueryData ldapQueryData = new LdapQueryDataImpl();
-            ldapQueryData.setLdapQueryType(LdapQueryType.searchGroups);
-            ldapQueryData.setDomain(data.getDomain());
-            ldapQueryData.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
-
-            @SuppressWarnings("unchecked")
-            ArrayList<ad_groups> result = (ArrayList<ad_groups>) LdapFactory
-                    .getInstance(data.getDomain())
-                    .RunAdAction(AdActionType.SearchGroupsByQuery,
-                            new LdapSearchByQueryParameters(data.getDomain(), ldapQueryData))
-                    .getReturnValue();
-            return (result != null) ? result : new ArrayList<ad_groups>();
         }
+
+        LdapQueryData ldapQueryData = new LdapQueryDataImpl();
+        ldapQueryData.setLdapQueryType(LdapQueryType.searchGroups);
+        ldapQueryData.setDomain(data.getDomain());
+        ldapQueryData.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
+
+        @SuppressWarnings("unchecked")
+        ArrayList<ad_groups> result = (ArrayList<ad_groups>) LdapFactory
+                .getInstance(data.getDomain())
+                .RunAdAction(AdActionType.SearchGroupsByQuery,
+                        new LdapSearchByQueryParameters(data.getDomain(), ldapQueryData))
+                .getReturnValue();
+        return (result != null) ? result : new ArrayList<ad_groups>();
     }
 
     private List<VmTemplate> searchVMTemplates() {
@@ -226,16 +207,15 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         });
     }
 
-
     private final <T extends IVdcQueryable> List<T> genericSearch(final SearchDAO<T> dao,
             final boolean useCache,
             final Filter<T> filter) {
         final QueryData2 data = InitQueryData(useCache);
         if (data == null) {
             return new ArrayList<T>();
-        } else {
-            return ListUtils.filter(dao.getAllWithQuery(data.getQuery()), filter);
         }
+
+        return ListUtils.filter(dao.getAllWithQuery(data.getQuery()), filter);
     }
 
     private List<AuditLog> searchAuditLogEvents() {
@@ -276,9 +256,11 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             if (useCache) {
                 // first lets check the cache of queries.
                 searchKey = String.format("%1$s,%2$s", searchText, getParameters().getMaxCount());
-                isExistsValue = (data = mQueriesCache.get(searchKey)) != null;
+                data = mQueriesCache.get(searchKey);
+                isExistsValue = (data != null);
 
                 if (isExistsValue) {
+                    @SuppressWarnings("null")
                     TimeSpan span = DateTime.getNow().Subtract(data.getDate());
                     if (span.Days >= 1) {
                         IsFromYesterday = true;
@@ -322,8 +304,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     getSearchReturnValue().setIsSearchValid(false);
                     log.warnFormat("ResourceManager::searchBusinessObjects - erroneous search text - ''{0}''",
                             searchText);
-                    // throw new
-                    // VdcBLLException(VdcBllErrors.SEARCH_ERRORNOUS_SEARCH_TEXT);
                     int startPos = searchObj.getErrorStartPos();
                     int endPos = searchObj.getErrorEndPos();
                     int length = endPos - startPos;
@@ -344,8 +324,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 if (searchObj.getvalid() != true) {
                     getSearchReturnValue().setIsSearchValid(false);
                     log.warnFormat("ResourceManager::searchBusinessObjects - Invalid search text - ''{0}''", searchText);
-                    // throw new
-                    // VdcBLLException(VdcBllErrors.SEARCH_INVALID_SEARCH_TEXT);
                     return null;
                 }
                 // An expression is considered safe if matches a trivial search.
@@ -375,11 +353,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return data;
     }
 
-    private boolean containsStaticInValues(String query) {
+    private static boolean containsStaticInValues(String query) {
         final String MATCH_IN_TAG_ID_CLAUSE = "with_tags.tag_id in";
         return query.toLowerCase().contains(MATCH_IN_TAG_ID_CLAUSE);
     }
-
-    private static final Log log = LogFactory.getLog(SearchQuery.class);
-
 }
