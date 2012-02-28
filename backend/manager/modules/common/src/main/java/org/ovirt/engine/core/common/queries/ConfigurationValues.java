@@ -71,6 +71,29 @@ public enum ConfigurationValues {
     DocsURL,
     HotPlugEnabled;
 
+    public static enum ConfigAuthType {
+        Admin,
+        User
+    }
+
+    private ConfigAuthType authType;
+
+    private ConfigurationValues(ConfigAuthType authType) {
+        this.authType = authType;
+    }
+
+    private ConfigurationValues() {
+        this(ConfigAuthType.Admin);
+    }
+
+    public ConfigAuthType getConfigAuthType() {
+        return authType;
+    }
+
+    public boolean isAdmin() {
+        return ConfigAuthType.Admin == authType;
+    }
+
     public int getValue() {
         return ordinal();
     }
