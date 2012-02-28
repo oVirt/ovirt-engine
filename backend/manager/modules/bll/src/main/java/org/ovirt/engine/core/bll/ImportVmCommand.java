@@ -428,16 +428,16 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     private void processImages() {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
-                    @Override
-                    public Void runInTransaction() {
-                        AddVmImages();
-                        MoveOrCopyAllImageGroups();
+            @Override
+            public Void runInTransaction() {
+                AddVmImages();
+                MoveOrCopyAllImageGroups();
                 VmDeviceUtils.addImportedDevices(getVm().getStaticData(), getVm().getId());
-                        VmHandler.LockVm(getVm().getId());
-                        return null;
+                VmHandler.LockVm(getVm().getId());
+                return null;
 
-                    }
-                });
+            }
+        });
     }
 
     @Override
