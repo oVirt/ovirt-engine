@@ -75,7 +75,7 @@ public class VdsManager {
     private final Object _lockObj = new Object();
     private static Map<Guid, String> recoveringJobIdMap = new ConcurrentHashMap<Guid, String>();
     private boolean isSetNonOperationalExecuted;
-
+    private MonitoringStrategy monitoringStrategy;
     public Object getLockObj() {
         return _lockObj;
     }
@@ -137,6 +137,7 @@ public class VdsManager {
     private VdsManager(VDS vds) {
         _vds = vds;
         _vdsId = vds.getId();
+        monitoringStrategy = MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
         mUnrespondedAttempts = new AtomicInteger();
         mFailedToRunVmAttempts = new AtomicInteger();
         log.info("Eneterd VdsManager:constructor");
@@ -232,14 +233,7 @@ public class VdsManager {
                                 } else {
                                     _refreshIteration++;
                                 }
-                                if ((_vds.getstatus() != VDSStatus.NonOperational || (_vds.getvm_count() > 0))
-                                        && (_vds.getstatus() != VDSStatus.Installing
-                                                && _vds.getstatus() != VDSStatus.InstallFailed
-                                                && _vds.getstatus() != VDSStatus.Reboot
-                                                && _vds.getstatus() != VDSStatus.Maintenance
-                                                && _vds.getstatus() != VDSStatus.PendingApproval
-                                                && _vds.getstatus() != VDSStatus.Down)) {
-
+                                if (isMonitoringNeeded()) {
                                     _vdsUpdater = new VdsUpdateRunTimeInfo(VdsManager.this, _vds);
                                     _vdsUpdater.Refresh();
                                     mUnrespondedAttempts.set(0);
@@ -313,6 +307,16 @@ public class VdsManager {
         } catch (Exception e) {
             log.error("Timer update runtimeinfo failed. Exception:", e);
         }
+    }
+
+    public boolean isMonitoringNeeded() {
+        return ( monitoringStrategy.isMonitoringNeeded(_vds) &&
+                 _vds.getstatus() != VDSStatus.Installing &&
+                 _vds.getstatus() != VDSStatus.InstallFailed &&
+                 _vds.getstatus() != VDSStatus.Reboot &&
+                 _vds.getstatus() != VDSStatus.Maintenance &&
+                 _vds.getstatus() != VDSStatus.PendingApproval &&
+                 _vds.getstatus() != VDSStatus.Down );
     }
 
     private static void logException(final RuntimeException ex) {
@@ -420,8 +424,12 @@ public class VdsManager {
         } finally {
             if (vds != null) {
                 UpdateDynamicData(vds.getDynamicData());
-                // always check flags in case host cluster changed
-                ResourceManager.getInstance().getEventListener().processOnCpuFlagsChange(vds.getId());
+
+                // Update VDS after testing special hardware capabilities
+                monitoringStrategy.processHardwareCapabilities(vds);
+
+                // Always check VdsVersion
+                ResourceManager.getInstance().getEventListener().handleVdsVersion(vds.getId());
             }
         }
     }
@@ -536,6 +544,7 @@ public class VdsManager {
 
     public VDSStatus refreshCapabilities(RefObject<Boolean> cpuFlagsHasChanged, VDS vds) {
         log.debug("refreshCapabilities:GetCapabilitiesVDSCommand started method");
+        MonitoringStrategy vdsMonitoringStrategy = MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
         String oldFlags = vds.getcpu_flags();
         GetCapabilitiesVDSCommand vdsBrokerCommand = new GetCapabilitiesVDSCommand(
                 new VdsIdAndVdsVDSCommandParametersBase(vds));
@@ -559,20 +568,12 @@ public class VdsManager {
                 returnStatus = vds.getstatus();
             }
 
-            if (vds.getkvm_enabled() != null && vds.getkvm_enabled().equals(false)
-                    && vds.getstatus() != VDSStatus.NonOperational) {
-                if (log.isDebugEnabled()) {
-                    log.debugFormat(
-                            "refreshCapabilities:GetCapabilitiesVDSCommand vds {0} has not kvm, vds will be moved to NonOperational",
-                            vds.getStaticData().getId());
-                }
-                ResourceManager
-                        .getInstance()
-                        .getEventListener()
-                        .vdsNonOperational(vds.getId(), NonOperationalReason.KVM_NOT_RUNNING, true, true,
-                                Guid.Empty);
-                vds.setstatus(VDSStatus.NonOperational);
-                returnStatus = vds.getstatus();
+            // We process the software capabilities.
+            VDSStatus oldStatus = vds.getstatus();
+            vdsMonitoringStrategy.processSoftwareCapabilities(vds);
+            returnStatus = vds.getstatus();
+
+            if (returnStatus != oldStatus && returnStatus == VDSStatus.NonOperational) {
                 setIsSetNonOperationalExecuted(true);
             }
 

@@ -101,9 +101,11 @@ public class VdsUpdateRunTimeInfo {
     private boolean _saveVdsStatistics;
     private java.util.ArrayList<Guid> _vdssToRefresh;
     private VdsManager _vdsManager;
+    private MonitoringStrategy monitoringStrategy;
     private VDS _vds;
     private Map<Guid, VM> _vmDict;
     private boolean _cpuFlagsChanged;
+    private boolean refreshedCapabilities = false;
     private static Map<Guid, Long> hostDownTimes = new HashMap<Guid, Long>();
     private int runningVmsInTransition = 0;
 
@@ -232,7 +234,7 @@ public class VdsUpdateRunTimeInfo {
         _vdsManager = vdsManager;
         _vds = vds;
         _firstStatus = _vds.getstatus();
-
+        monitoringStrategy = MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
         _vmDict =
                 TransactionSupport.executeInScope(TransactionScopeOption.Suppress,
                         new TransactionMethod<Map<Guid, VM>>() {
@@ -294,8 +296,14 @@ public class VdsUpdateRunTimeInfo {
 
     public void AfterRefreshTreatment() {
         try {
+            // NOTE: There is an issue with this test. We need to somehow encapsulate it inside the processing of the hardware capabilities
             if (_cpuFlagsChanged) {
-                ResourceManager.getInstance().getEventListener().processOnCpuFlagsChange(_vds.getId());
+                monitoringStrategy.processHardwareCapabilities(_vds);
+                markIsSetNonOperationalExecuted();
+            }
+
+            if (refreshedCapabilities) {
+                ResourceManager.getInstance().getEventListener().handleVdsVersion(_vds.getId());
                 markIsSetNonOperationalExecuted();
             }
 
@@ -404,6 +412,7 @@ public class VdsUpdateRunTimeInfo {
                 RefObject<Boolean> tempRefObj = new RefObject<Boolean>(_cpuFlagsChanged);
                 VDSStatus refreshReturnStatus = _vdsManager.refreshCapabilities(tempRefObj, _vds);
                 _cpuFlagsChanged = tempRefObj.argvalue;
+                refreshedCapabilities = true;
                 if (refreshReturnStatus != VDSStatus.NonOperational) {
                     _vdsManager.setStatus(VDSStatus.Up, _vds);
                 }
@@ -744,6 +753,7 @@ public class VdsUpdateRunTimeInfo {
             _vdsManager.refreshCapabilities(tempRefObject, _vds);
             flagsChanged = tempRefObject.argvalue;
             _vdsManager.setbeforeFirstRefresh(false);
+            refreshedCapabilities = true;
             _saveVdsDynamic = true;
             // change the _cpuFlagsChanged flag only if it was false,
             // because get capabilities is called twice on a new server in same
@@ -1395,7 +1405,7 @@ public class VdsUpdateRunTimeInfo {
 
     private void MoveVDSToMaintenanceIfNeeded() {
         if ((_vds.getstatus() == VDSStatus.PreparingForMaintenance)
-                && _vds.getvm_count() == 0) {
+                && monitoringStrategy.canMoveToMaintenance(_vds)) {
             try {
                 _vdsManager.setStatus(VDSStatus.Maintenance, _vds);
                 _saveVdsDynamic = true;

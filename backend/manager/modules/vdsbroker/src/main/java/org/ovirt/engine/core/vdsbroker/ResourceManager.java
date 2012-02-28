@@ -544,4 +544,9 @@ public class ResourceManager implements IVdsEventListener {
     public boolean isDomainReportedInProblem(Guid storagePoolId, Guid domainId) {
         return IrsBrokerCommand.isDomainReportedInProblem(storagePoolId, domainId);
     }
+
+    @Override
+    public void handleVdsVersion(Guid vdsId) {
+        log.info("handleVdsVersion - no event listener defined, nothing done.");
+    }
 }

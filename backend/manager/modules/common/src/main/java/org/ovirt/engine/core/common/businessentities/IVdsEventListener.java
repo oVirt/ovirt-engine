@@ -32,6 +32,8 @@ public interface IVdsEventListener {
 
     void processOnVmPoweringUp(Guid vds_id, Guid vmid, String display_ip, int display_port);
 
+    void handleVdsVersion(Guid vdsId);
+
     void rerun(Guid vmId);
 
     void runningSucceded(Guid vmId);
