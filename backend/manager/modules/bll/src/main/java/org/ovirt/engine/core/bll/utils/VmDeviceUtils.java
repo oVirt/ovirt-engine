@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -434,14 +433,12 @@ public class VmDeviceUtils {
      * @param entity
      */
     private static <T extends VmBase> void addImportedDisks(T entity) {
-        Guid id=Guid.Empty;
-        List<DiskImage> disks = new ArrayList<DiskImage>();
-        id = entity.getId();
-        if (entity instanceof VmStatic) {
-            disks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(id);
-        }
-        else if (entity instanceof VmTemplate) {
-            disks = ((VmTemplate)entity).getDiskList();
+        final Guid id = entity.getId();
+        List<DiskImage> disks;
+        if (entity instanceof VmTemplate) {
+            disks = entity.getDiskList();
+        } else {
+            disks = entity.getImages();
         }
         for (DiskImage disk : disks) {
             Guid deviceId = disk.getDisk().getId();
@@ -455,16 +452,8 @@ public class VmDeviceUtils {
      * @param entity
      */
     private static <T extends VmBase> void addImportedInterfaces(T entity) {
-        Guid id=Guid.Empty;
-        List<VmNetworkInterface> ifaces = new ArrayList<VmNetworkInterface>();
-        id = entity.getId();
-        if (entity instanceof VmStatic) {
-            ifaces = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(id);
-        }
-        else if (entity instanceof VmTemplate) {
-            ifaces = ((VmTemplate)entity).getInterfaces();
-        }
-        for (VmNetworkInterface iface : ifaces) {
+        final Guid id = entity.getId();
+        for (VmNetworkInterface iface : entity.getInterfaces()) {
             Guid deviceId = iface.getId();
             String specParams = appendDeviceIdToSpecParams(deviceId, "");
             addManagedDevice(new VmDeviceId(deviceId,id) , VmDeviceType.INTERFACE, VmDeviceType.BRIDGE, specParams, true, false);
