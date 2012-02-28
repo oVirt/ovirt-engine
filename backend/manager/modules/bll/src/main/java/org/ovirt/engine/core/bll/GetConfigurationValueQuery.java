@@ -3,10 +3,6 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-
-//CanUpdateFieldVds
 
 public class GetConfigurationValueQuery<P extends GetConfigurationValueParameters> extends QueriesCommandBase<P> {
     public GetConfigurationValueQuery(P parameters) {
@@ -28,9 +24,6 @@ public class GetConfigurationValueQuery<P extends GetConfigurationValueParameter
         } catch (Exception e) {
             log.error("Unable to return config parameter: " + getParameters(), e);
             getQueryReturnValue().setReturnValue(null);
-
         }
     }
-
-    private static Log log = LogFactory.getLog(GetConfigurationValueQuery.class);
 }
