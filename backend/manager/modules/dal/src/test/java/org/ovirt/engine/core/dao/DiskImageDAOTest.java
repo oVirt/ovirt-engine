@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
-import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -42,10 +40,6 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
     private DiskImageDynamicDAO diskImageDynamicDao;
     private DiskDao diskDao;
     private DiskImage newImage;
-    private stateless_vm_image_map existingStatelessMapping;
-    private stateless_vm_image_map newImageVmPoolMapping;
-    private stateless_vm_image_map existingStatelessDiskImageMap;
-    private stateless_vm_image_map newStatelessVmImageMap;
 
     @Override
     protected Guid generateNonExistingId() {
@@ -85,8 +79,6 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         diskImageDynamicDao = prepareDAO(dbFacade.getDiskImageDynamicDAO());
         diskDao = prepareDAO(dbFacade.getDiskDao());
 
-        existingStatelessMapping = dao.getStatelessVmImageMapForImageId(EXISTING_IMAGE_ID);
-
         newImage = new DiskImage();
         newImage.setactive(true);
         newImage.setvm_guid(FixturesTool.VM_RHEL5_POOL_57);
@@ -100,9 +92,6 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         newImage.setimage_group_id(Guid.NewGuid());
         newImage.setQuotaId(Guid.NewGuid());
         newImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.Empty)));
-        newImageVmPoolMapping = new stateless_vm_image_map(FREE_IMAGE_ID, "z", FREE_VM_ID);
-        existingStatelessDiskImageMap = dao.getStatelessVmImageMapForImageId(existingEntity.getId());
-        newStatelessVmImageMap = new stateless_vm_image_map(FREE_IMAGE_ID, "q", FREE_VM_ID);
         existingTemplate = dao.get(EXISTING_IMAGE_DISK_TEMPLATE );
     }
 
@@ -136,89 +125,6 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         assertTrue(mapping.getactive());
         assertEquals(newImage.getId(), mapping.getimage_id());
         assertEquals(newImage.getvm_guid(), mapping.getvm_id());
-    }
-
-    @Test
-    public void testGetStatelessImageMapByImageIdWithWrongImage() {
-        stateless_vm_image_map result = dao.getStatelessVmImageMapForImageId(Guid.NewGuid());
-
-        assertNull(result);
-    }
-
-    @Test
-    public void testGetStatelessImageMapByImageId() {
-        stateless_vm_image_map result = dao.getStatelessVmImageMapForImageId(EXISTING_IMAGE_ID);
-
-        assertNotNull(result);
-        assertEquals(existingStatelessMapping, result);
-    }
-
-    @Test
-    public void testAddStatelessImageMap() {
-        dao.addStatelessVmImageMap(newImageVmPoolMapping);
-
-        stateless_vm_image_map result = dao.getStatelessVmImageMapForImageId(newImageVmPoolMapping.getimage_guid());
-
-        assertNotNull(result);
-        assertEquals(newImageVmPoolMapping, result);
-    }
-
-    @Test
-    public void testRemoveStatelessImageMap() {
-        dao.removeStatelessVmImageMap(existingStatelessMapping.getimage_guid());
-
-        stateless_vm_image_map result = dao.getStatelessVmImageMapForImageId(existingStatelessMapping.getimage_guid());
-
-        assertNull(result);
-    }
-
-    @Test
-    public void testGetStatelessImageMapByVmId() {
-        List<stateless_vm_image_map> result = dao.getAllStatelessVmImageMapsForVm(FixturesTool.VM_RHEL5_POOL_57);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (stateless_vm_image_map map : result) {
-            assertEquals(FixturesTool.VM_RHEL5_POOL_57, map.getvm_guid());
-        }
-    }
-
-    @Test
-    public void testGetStatelessDiskImageForImageId() {
-        stateless_vm_image_map result = dao.getStatelessVmImageMapForImageId(EXISTING_IMAGE_ID);
-
-        assertNotNull(result);
-        assertEquals(existingStatelessDiskImageMap, result);
-    }
-
-    @Test
-    public void testAddStatelessDiskImage() {
-        dao.addStatelessVmImageMap(newStatelessVmImageMap);
-
-        stateless_vm_image_map result = dao.getStatelessVmImageMapForImageId(FREE_IMAGE_ID);
-
-        assertNotNull(result);
-        assertEquals(newStatelessVmImageMap, result);
-    }
-
-    @Test
-    public void testRemoveStatelessDiskImage() {
-        dao.removeStatelessVmImageMap(existingStatelessDiskImageMap.getimage_guid());
-
-        stateless_vm_image_map result = dao.getStatelessVmImageMapForImageId(EXISTING_IMAGE_ID);
-
-        assertNull(result);
-    }
-
-    @Test
-    public void testGetAllStatelessDiskImagesForVm() {
-        List<stateless_vm_image_map> result = dao.getAllStatelessVmImageMapsForVm(FixturesTool.VM_RHEL5_POOL_57);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (stateless_vm_image_map mapping : result) {
-            assertEquals(FixturesTool.VM_RHEL5_POOL_57, mapping.getvm_guid());
-        }
     }
 
     @Test

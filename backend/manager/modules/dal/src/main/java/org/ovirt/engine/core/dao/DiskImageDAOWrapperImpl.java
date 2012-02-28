@@ -4,14 +4,11 @@ import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.images.DiskImageDAOHibernateImpl;
 import org.ovirt.engine.core.dao.images.DiskImageDynamicDAOHibernateImpl;
 import org.ovirt.engine.core.dao.images.ImageVmMapDAOHibernateImpl;
-import org.ovirt.engine.core.dao.images.StatelessImageVmMapDAOHibernateImpl;
 
 /**
  * <code>DiskImageDAOWrapperImpl</code> provides an implementation of {@link DiskImageDAO} that wraps underlying
@@ -22,7 +19,6 @@ public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskI
     private DiskImageDAOHibernateImpl imageDAO = new DiskImageDAOHibernateImpl();
     private DiskImageDynamicDAOHibernateImpl dynamicDAO = new DiskImageDynamicDAOHibernateImpl();
     private ImageVmMapDAOHibernateImpl imageVmMapDAO = new ImageVmMapDAOHibernateImpl();
-    private StatelessImageVmMapDAOHibernateImpl statelessImageVmMapDAO = new StatelessImageVmMapDAOHibernateImpl();
 
     @Override
     public void setSession(Session session) {
@@ -101,26 +97,6 @@ public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskI
     @Override
     public void removeAllForVmId(Guid id) {
         imageDAO.removeAllForVmId(id);
-    }
-
-    @Override
-    public stateless_vm_image_map getStatelessVmImageMapForImageId(Guid imageId) {
-        return statelessImageVmMapDAO.get(imageId);
-    }
-
-    @Override
-    public void addStatelessVmImageMap(stateless_vm_image_map map) {
-        statelessImageVmMapDAO.save(map);
-    }
-
-    @Override
-    public void removeStatelessVmImageMap(Guid imageId) {
-        statelessImageVmMapDAO.remove(imageId);
-    }
-
-    @Override
-    public List<stateless_vm_image_map> getAllStatelessVmImageMapsForVm(Guid vmId) {
-        return statelessImageVmMapDAO.findByCriteria(Restrictions.eq("vmId", vmId));
     }
 
     @Override

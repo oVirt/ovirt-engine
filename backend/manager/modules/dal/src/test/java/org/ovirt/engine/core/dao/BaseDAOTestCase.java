@@ -48,7 +48,6 @@ import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
-import org.ovirt.engine.core.common.businessentities.stateless_vm_image_map;
 import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -225,7 +224,6 @@ public abstract class BaseDAOTestCase {
                             .addAnnotatedClass(RoleGroupMap.class)
                             .addAnnotatedClass(roles.class)
                             .addAnnotatedClass(RoleGroupMap.class)
-                            .addAnnotatedClass(stateless_vm_image_map.class)
                             .addAnnotatedClass(storage_domain_dynamic.class)
                             .addAnnotatedClass(storage_domain_static.class)
                             .addAnnotatedClass(storage_pool.class)

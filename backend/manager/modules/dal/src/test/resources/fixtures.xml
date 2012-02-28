@@ -2340,17 +2340,6 @@
         </row>
     </table>
 
-    <table name="stateless_vm_image_map">
-        <column>vm_guid</column>
-        <column>image_guid</column>
-        <column>internal_drive_mapping</column>
-        <row>
-            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
-            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
-            <value>q</value>
-        </row>
-    </table>
-
     <table name="image_storage_domain_map">
         <column>image_id</column>
         <column>storage_domain_id</column>
