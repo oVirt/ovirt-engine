@@ -3,11 +3,6 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -15,8 +10,6 @@ import org.ovirt.engine.core.compat.NGuid;
  * <code>VdsNetworkInterface</code> defines a type of {@link BaseNetworkInterface} for instances of {@link VDS}.
  *
  */
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VdsNetworkInterface")
 @ValidNetworkConfiguration
 public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> {
     private static final long serialVersionUID = -6347816237220936283L;
@@ -28,45 +21,30 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                     "BondOptions"
             }));
 
-    @XmlElement(name = "VdsId", nillable = true)
     private NGuid vdsId;
 
-    @XmlElement(name = "VdsName")
     private String vdsName;
 
-    @XmlElement(name = "BootProtocol")
     private NetworkBootProtocol bootProtocol;
 
-    @XmlElement(name = "Address")
     private String address;
 
-    @XmlElement(name = "Subnet")
     private String subnet;
 
-    @XmlElement(name = "Gateway")
     private String gateway;
 
-    @XmlElement(name = "VlanId", nillable = true)
     private Integer vlanId;
 
-    @XmlElement(name = "Bonded", nillable = true)
     private Boolean bonded;
 
-    @XmlElement(name = "BondName")
     private String bondName;
 
-    @XmlElement(name = "BondType", nillable = true)
     private Integer bondType;
 
-    @XmlElement(name = "BondOptions", nillable = true)
     private String bondOptions;
 
     public VdsNetworkInterface() {
         super(new VdsNetworkStatistics(), VdsInterfaceType.None.getValue());
-    }
-
-    public void setIsManagement(boolean isManagement) {
-        // TODO this method is to avoid xml errors
     }
 
     /**
@@ -74,7 +52,6 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      *
      * @return <code>true</code> if this is the management interface
      */
-    @XmlElement(name = "IsManagement")
     public boolean getIsManagement() {
         return getType() != null && ((getType() & 2) > 0);
     }

@@ -12,11 +12,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -27,15 +22,12 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "network")
 @Entity
 @Table(name = "network")
 @TypeDef(name = "guid", typeClass = GuidType.class)
 public class network extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid> {
     private static final long serialVersionUID = 7357288865938773402L;
 
-    @XmlElement(name = "Id")
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
@@ -45,44 +37,35 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
 
     @Pattern(regexp = "^[_a-zA-Z0-9]{1,15}$", message = "NETWORK_ILEGAL_NETWORK_NAME", groups = { CreateEntity.class,
             UpdateEntity.class })
-    @XmlElement(name = "name")
     @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
     @Column(name = "name")
     private String name;
 
-    @XmlElement(name = "description")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "description")
     private String description;
 
-    @XmlElement(name = "type", nillable = true)
     @Column(name = "type")
     private Integer type;
 
-    @XmlElement(name = "addr")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NETWORK_ADDR_SIZE)
     @Column(name = "addr")
     private String addr;
 
-    @XmlElement(name = "subnet")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_SUBNET_SIZE)
     @Column(name = "subnet")
     private String subnet;
 
-    @XmlElement(name = "gateway")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_GATEWAY_SIZE)
     @Column(name = "gateway")
     private String gateway;
 
-    @XmlElement(name = "vlan_id", nillable = true)
     @Column(name = "vlan_id")
     private Integer vlan_id;
 
-    @XmlElement(name = "stp")
     @Column(name = "stp")
     private boolean stp = false;
 
-    @XmlElement(name = "storage_pool_id")
     @Column(name = "storage_pool_id")
     @Type(type = "guid")
     private NGuid storage_pool_id;
@@ -179,7 +162,6 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
         this.vlan_id = value;
     }
 
-    @XmlElement(name = "Status")
     public NetworkStatus getStatus() {
         return NetworkStatus.forValue(cluster.getstatus());
     }
@@ -204,7 +186,6 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
         this.storage_pool_id = value;
     }
 
-    @XmlElement(name="is_display",nillable=true)
     public Boolean getis_display() {
         return cluster.getis_display();
     }
