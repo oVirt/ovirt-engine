@@ -131,7 +131,7 @@ public enum VdcQueryType implements Serializable {
     CanUpdateFieldGeneric,
 
     // Configuration values
-    GetConfigurationValue,
+    GetConfigurationValue(VdcQueryAuthType.User),
     GetTimeZones,
     GetDefualtTimeZone,
     GetDiskConfigurationList,
