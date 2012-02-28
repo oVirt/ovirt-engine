@@ -34,9 +34,7 @@ public class VmDeviceUtils {
     public static <T extends VmBase> void updateVmDevices(T entity, VmBase oldVmBase) {
         VmBase newVmBase = getBaseObject(entity, oldVmBase.getId());
         if (newVmBase != null) {
-            if (!oldVmBase.getiso_path().equals(newVmBase.getiso_path())) {
-                updateCdInVmDevice(oldVmBase, newVmBase);
-            }
+            updateCdInVmDevice(oldVmBase, newVmBase);
             if (oldVmBase.getdefault_boot_sequence() != newVmBase
                     .getdefault_boot_sequence()) {
                 updateBootOrderInVmDevice(newVmBase);
@@ -185,37 +183,40 @@ public class VmDeviceUtils {
      */
     private static void updateCdInVmDevice(VmBase oldVmBase,
             VmBase newVmBase) {
-        if (oldVmBase.getiso_path().isEmpty()
-                && !newVmBase.getiso_path().isEmpty()) {
+        String newIsoPath = newVmBase.getiso_path();
+        String oldIsoPath = oldVmBase.getiso_path();
+
+        if (StringUtils.isEmpty(oldIsoPath) && StringUtils.isNotEmpty(newIsoPath)) {
             // new CD was added
             VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
                     newVmBase.getId()),
                     VmDeviceType.getName(VmDeviceType.DISK),
                     VmDeviceType.getName(VmDeviceType.CDROM), "", 0,
-                    newVmBase.getiso_path(), true, false, false);
+                    newIsoPath, true, false, false);
             dao.save(cd);
-        } else if (!oldVmBase.getiso_path().isEmpty()
-                && newVmBase.getiso_path().isEmpty()) {
-            // existing CD was removed
-            List<VmDevice> list = DbFacade
-                    .getInstance()
-                    .getVmDeviceDAO()
-                    .getVmDeviceByVmIdTypeAndDevice(newVmBase.getId(),
-                            VmDeviceType.getName(VmDeviceType.DISK),
-                            VmDeviceType.getName(VmDeviceType.CDROM));
-            dao.remove(list.get(0).getId());
-        } else if (!oldVmBase.getiso_path().isEmpty()
-                && !newVmBase.getiso_path().isEmpty()) {
-            // CD was changed
-            List<VmDevice> list = DbFacade
-                    .getInstance()
-                    .getVmDeviceDAO()
-                    .getVmDeviceByVmIdTypeAndDevice(newVmBase.getId(),
-                            VmDeviceType.getName(VmDeviceType.DISK),
-                            VmDeviceType.getName(VmDeviceType.CDROM));
-            VmDevice cd = list.get(0);
-            cd.setSpecParams(newVmBase.getiso_path());
-            dao.update(cd);
+        } else {
+            if (StringUtils.isNotEmpty(oldIsoPath) && StringUtils.isEmpty(newIsoPath)) {
+                // existing CD was removed
+                List<VmDevice> list = DbFacade
+                        .getInstance()
+                        .getVmDeviceDAO()
+                        .getVmDeviceByVmIdTypeAndDevice(newVmBase.getId(),
+                                VmDeviceType.getName(VmDeviceType.DISK),
+                                VmDeviceType.getName(VmDeviceType.CDROM));
+                dao.remove(list.get(0).getId());
+            } else if (StringUtils.isNotEmpty(oldIsoPath) && StringUtils.isNotEmpty(newIsoPath)
+                    && !oldIsoPath.equals(newIsoPath)) {
+                // CD was changed
+                List<VmDevice> list = DbFacade
+                        .getInstance()
+                        .getVmDeviceDAO()
+                        .getVmDeviceByVmIdTypeAndDevice(newVmBase.getId(),
+                                VmDeviceType.getName(VmDeviceType.DISK),
+                                VmDeviceType.getName(VmDeviceType.CDROM));
+                VmDevice cd = list.get(0);
+                cd.setSpecParams(newIsoPath);
+                dao.update(cd);
+            }
         }
     }
 
@@ -225,7 +226,7 @@ public class VmDeviceUtils {
      */
 
     private static void updateCdInVmDevice(VmBase newVmBase) {
-        if (!StringUtils.isEmpty(newVmBase.getiso_path())) {
+        if (StringUtils.isNotEmpty(newVmBase.getiso_path())) {
             // new CD was added
             VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
                     newVmBase.getId()), VmDeviceType.getName(VmDeviceType.DISK),
