@@ -48,6 +48,7 @@ public enum VdcBllErrors {
     FailedToPlugDisk(45),
     FailedToUnPlugDisk(46),
     MIGRATION_CANCEL_ERROR(47),
+    SNAPSHOT_FAILED(48),
     recovery(99),
     GeneralException(100),
     StorageException(200),

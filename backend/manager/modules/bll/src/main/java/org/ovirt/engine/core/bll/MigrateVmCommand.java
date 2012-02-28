@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
@@ -184,7 +185,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 retValue = false;
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.toString());
             }
-            retValue = retValue && getVdsSelector().CanFindVdsToRunOn(reasons, true);
+
+            retValue = retValue && validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId()))
+                    && getVdsSelector().CanFindVdsToRunOn(reasons, true);
         }
 
         if (!retValue) {

@@ -645,6 +645,8 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String MIGRATION_CANCEL_ERROR();
 
+    String SNAPSHOT_FAILED();
+
     String DB();
 
     String DB_NO_SUCH_VM();

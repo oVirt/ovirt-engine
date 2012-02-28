@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -16,14 +17,21 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.vdscommands.SnapshotVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @LockIdNameAttribute(fieldName = "VmId")
 public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> {
@@ -115,20 +123,71 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void EndVmCommand() {
-        EndActionOnDisks();
-
         Guid createdSnapshotId =
                 getSnapshotDao().getId(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
         if (getParameters().getTaskGroupSuccess()) {
             getSnapshotDao().updateStatus(createdSnapshotId, SnapshotStatus.OK);
+
+            if (getParameters().getParentCommand() != VdcActionType.RunVm && getVm() != null && getVm().isStatusUp()
+                    && getVm().getrun_on_vds() != null) {
+                performLiveSnapshot(createdSnapshotId);
+            }
         } else {
-            getSnapshotDao().remove(createdSnapshotId);
-            getSnapshotDao().updateId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE), createdSnapshotId);
+            revertToActiveSnapshot(createdSnapshotId);
         }
+
+        EndActionOnDisks();
 
         UpdateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(new VM[] { getVm() }));
 
-        setSucceeded(true);
+        setSucceeded(getParameters().getTaskGroupSuccess());
+        getReturnValue().setEndActionTryAgain(false);
+    }
+
+    /**
+     * Perform live snapshot on the host that the VM is running on. If the snapshot fails, and the error is
+     * unrecoverable then the {@link CreateAllSnapshotsFromVmParameters#getTaskGroupSuccess()} will return false - which
+     * will indicate that rollback of snapshot command should happen.
+     *
+     * @param createdSnapshotId
+     *            Snapshot to revert to being active, in case of rollback.
+     */
+    protected void performLiveSnapshot(Guid createdSnapshotId) {
+        try {
+            TransactionSupport.executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Void>() {
+
+                @Override
+                public Void runInTransaction() {
+                    runVdsCommand(VDSCommandType.Snapshot,
+                            new SnapshotVDSCommandParameters(getVm().getrun_on_vds().getValue(),
+                                    getVm().getId(),
+                                    DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVm().getId())));
+                    return null;
+                }
+            });
+        } catch (VdcBLLException e) {
+            if (e.getErrorCode() == VdcBllErrors.SNAPSHOT_FAILED) {
+                getParameters().setTaskGroupSuccess(false);
+                log.errorFormat("Wasn't able to live snpashot due to error: {0}, rolling back.",
+                        ExceptionUtils.getMessage(e));
+                revertToActiveSnapshot(createdSnapshotId);
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    /**
+     * Return the given snapshot ID's snapshot to be the active snapshot. The snapshot with the given ID is removed
+     * in the process.
+     *
+     * @param createdSnapshotId
+     *            The snapshot ID to return to being active.
+     */
+    protected void revertToActiveSnapshot(Guid createdSnapshotId) {
+        getSnapshotDao().remove(createdSnapshotId);
+        getSnapshotDao().updateId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE), createdSnapshotId);
+        setSucceeded(false);
     }
 
     protected SnapshotDao getSnapshotDao() {
@@ -177,6 +236,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         boolean result = true;
         if (getDisksList().size() > 0) {
             result = validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
+                    && validate(vmNotDuringMigration())
                     && ImagesHandler.PerformImagesChecks(getVmId(),
                             getReturnValue().getCanDoActionMessages(),
                             getVm().getstorage_pool_id(),
@@ -186,7 +246,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                             true,
                             true,
                             true,
-                            getParameters().getParentCommand() != VdcActionType.RunVm,
+                            false,
                             true);
         }
 
@@ -195,6 +255,17 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
         }
         return result;
+    }
+
+    /**
+     * @return Validation result that indicates if the VM is during migration or not.
+     */
+    private ValidationResult vmNotDuringMigration() {
+        if (getVm().getstatus() == VMStatus.MigratingFrom || getVm().getstatus() == VMStatus.MigratingTo) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
+        }
+
+        return new ValidationResult();
     }
 
     @Override
