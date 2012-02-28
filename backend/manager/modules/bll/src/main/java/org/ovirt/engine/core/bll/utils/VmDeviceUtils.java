@@ -454,7 +454,7 @@ public class VmDeviceUtils {
         List<DiskImage> disks = new ArrayList<DiskImage>();
         id = entity.getId();
         if (entity instanceof VmStatic) {
-            disks = DbFacade.getInstance().getVmDAO().get(id).getDiskList();
+            disks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(id);
         }
         else if (entity instanceof VmTemplate) {
             disks = ((VmTemplate)entity).getDiskList();
@@ -475,7 +475,7 @@ public class VmDeviceUtils {
         List<VmNetworkInterface> ifaces = new ArrayList<VmNetworkInterface>();
         id = entity.getId();
         if (entity instanceof VmStatic) {
-            ifaces = DbFacade.getInstance().getVmDAO().get(id).getInterfaces();
+            ifaces = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(id);
         }
         else if (entity instanceof VmTemplate) {
             ifaces = ((VmTemplate)entity).getInterfaces();
