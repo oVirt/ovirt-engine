@@ -525,7 +525,10 @@ public enum AuditLogType {
     CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE(9006),
 
     TASK_STOPPING_ASYNC_TASK(9500, AuditLogTimeInterval.MINUTE.getValue()),
-    TASK_CLEARING_ASYNC_TASK(9501, AuditLogTimeInterval.MINUTE.getValue());
+    TASK_CLEARING_ASYNC_TASK(9501, AuditLogTimeInterval.MINUTE.getValue()),
+
+    IMPORTEXPORT_IMPORT_VM_INTERFACES_ON_NON_VM_NETWORKS(9600, AuditLogTimeInterval.MINUTE.getValue()),
+    VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS(9601, AuditLogTimeInterval.MINUTE.getValue());
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are supressed.
