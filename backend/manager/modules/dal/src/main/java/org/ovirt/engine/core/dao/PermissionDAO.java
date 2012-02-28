@@ -48,7 +48,7 @@ public interface PermissionDAO extends GenericDao<permissions, Guid> {
      *            The quota Id to consume from.
      * @return All Permissions to consume from quota Id
      */
-    public permissions getConsumedPermissionsForQuotaId(Guid quotaId);
+    List<permissions> getConsumedPermissionsForQuotaId(Guid quotaId);
 
     /**
      * Gets all permissions for the specified AD element, including permissions of groups that it is in.

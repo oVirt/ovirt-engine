@@ -236,6 +236,9 @@ public enum VdcQueryType implements Serializable {
     GetQuotaVdsGroupByQuotaId,
     GetQuotaStorageByQuotaId,
     GetDisksForQuotaId,
+    GetVmsRelatedToQuotaId,
+    GetTemplatesRelatedToQuotaId,
+    GetPermissionsToConsumeQuotaByQuotaId,
 
     // Jobs
     GetJobByJobId,

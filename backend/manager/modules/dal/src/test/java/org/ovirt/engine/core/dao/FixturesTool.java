@@ -91,4 +91,16 @@ public class FixturesTool {
      * <li>Based on template: 1 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li></ul>
      */
     protected static final Guid VM_RHEL5_POOL_57 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
+
+    /**
+     * Predefined user for testing with the following properties :
+     * <ul>
+     * <li>Ad group id : 9bf7c640-b620-456f-a550-0348f366544b</li>
+     * <li>Group name : philosophers</li>
+     * <li>Status : 1</li>
+     * <li>Domain : rhel</li>
+     * <li>Role : jUnitTestRole</li>
+     * <li>Action group ids : 4, 901</li></ul>
+     */
+    protected static final Guid USER_EXISTING_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
 }

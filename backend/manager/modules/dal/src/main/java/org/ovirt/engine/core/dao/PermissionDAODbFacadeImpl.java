@@ -48,11 +48,11 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     }
 
     @Override
-    public permissions getConsumedPermissionsForQuotaId(Guid quotaId) {
+    public List<permissions> getConsumedPermissionsForQuotaId(Guid quotaId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("quota_id", quotaId);
 
-        return getCallsHandler().executeRead("GetConsumedPermissionsForQuotaId", new PermissionRowMapper(), parameterSource);
+        return getCallsHandler().executeReadList("GetConsumedPermissionsForQuotaId", new PermissionRowMapper(), parameterSource);
     }
 
     @Override

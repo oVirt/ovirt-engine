@@ -303,7 +303,7 @@ public class PermissionDAOHibernateImpl extends BaseDAOHibernateImpl<permissions
     }
 
     @Override
-    public permissions getConsumedPermissionsForQuotaId(Guid quotaId) {
+    public List<permissions> getConsumedPermissionsForQuotaId(Guid quotaId) {
         throw new NotImplementedException("This method is not implemented for Hibernate yet");
     }
 }

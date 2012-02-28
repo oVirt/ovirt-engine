@@ -6,9 +6,9 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetEntitiesRelatedToQuotaIdParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class GetTemplatesRelatedToQuotaQuery<P extends GetEntitiesRelatedToQuotaIdParameters>
+public class GetTemplatesRelatedToQuotaIdQuery<P extends GetEntitiesRelatedToQuotaIdParameters>
         extends QueriesCommandBase<P> {
-    public GetTemplatesRelatedToQuotaQuery(P parameters) {
+    public GetTemplatesRelatedToQuotaIdQuery(P parameters) {
         super(parameters);
     }
 

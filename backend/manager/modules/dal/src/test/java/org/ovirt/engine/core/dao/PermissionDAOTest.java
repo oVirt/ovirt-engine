@@ -112,9 +112,15 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     }
 
     @Test
+    public void testGetAllForQuotaIdWithNoPermissions() {
+        List<permissions> result = dao.getConsumedPermissionsForQuotaId(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
     public void testGetAllForQuotaId() {
-        permissions result = dao.getConsumedPermissionsForQuotaId(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL);
-        assertNull(result);
+        List<permissions> result = dao.getConsumedPermissionsForQuotaId(FixturesTool.QUOTA_GENERAL);
+        assertEquals(result.get(0).getad_element_id(), FixturesTool.USER_EXISTING_ID);
     }
 
     /**
