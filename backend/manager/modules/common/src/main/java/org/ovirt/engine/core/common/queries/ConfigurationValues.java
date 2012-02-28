@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.common.queries;
 
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(name = "ConfigurationValues")
 public enum ConfigurationValues {
     MaxNumOfVmCpus,
     MaxNumOfVmSockets,
@@ -75,7 +72,7 @@ public enum ConfigurationValues {
     HotPlugEnabled;
 
     public int getValue() {
-        return this.ordinal();
+        return ordinal();
     }
 
     public static ConfigurationValues forValue(int value) {
