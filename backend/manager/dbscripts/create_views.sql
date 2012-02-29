@@ -718,6 +718,23 @@ FROM storage_domain_static
 ----------------------------------------------
 -- Quota
 ----------------------------------------------
+CREATE OR REPLACE VIEW quota_view
+AS
+SELECT q.id as quota_id,
+    q.storage_pool_id as storage_pool_id,
+    storage_pool.name as storage_pool_name,
+    q.quota_name as quota_name,
+    q.description as description,
+    q.threshold_vds_group_percentage as threshold_vds_group_percentage,
+    q.threshold_storage_percentage as threshold_storage_percentage,
+    q.grace_vds_group_percentage as grace_vds_group_percentage,
+    q.grace_storage_percentage as grace_storage_percentage,
+    storage_pool.quota_enforcement_type as quota_enforcement_type,
+    is_default_quota
+FROM  storage_pool, quota q
+WHERE storage_pool.id = q.storage_pool_id;
+
+
 CREATE OR REPLACE VIEW quota_global_view
 AS
 SELECT q_limit.quota_id as quota_id,

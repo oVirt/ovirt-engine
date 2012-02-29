@@ -8,14 +8,13 @@ import static org.junit.Assert.assertNull;
 import java.util.List;
 
 import org.junit.Test;
-
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.action_version_map;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ActionGroupDAOTest extends BaseDAOTestCase {
-    private static final int ACTION_GROUP_COUNT = 1;
+    private static final int ACTION_GROUP_COUNT = 2;
     private static final Guid EXISTING_ROLE_ID = new Guid("f5972bfa-7102-4d33-ad22-9dd421bfba78");
     private ActionGroupDAO dao;
     private action_version_map existingActionMap;

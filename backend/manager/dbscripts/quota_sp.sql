@@ -39,6 +39,22 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+-- Returns all the global quotas in the storage pool if v_storage_pool_id is null, if v_storage_id is not null then a specific quota storage will be returned.
+Create or replace FUNCTION GetQuotaByAdElementId(v_ad_element_id UUID, v_storage_pool_id UUID)
+RETURNS SETOF quota_view
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT * FROM quota_view WHERE quota_view.quota_id IN
+   (SELECT object_id
+    FROM PERMISSIONS
+    WHERE object_type_id = 17
+    AND role_id in (SELECT role_id FROM ROLES_groups where action_group_id = 901)
+    AND ad_element_id = v_ad_element_id)
+    AND (v_storage_pool_id = quota_view.storage_pool_id or v_storage_pool_id IS NULL);
+  END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION GetQuotaStorageByQuotaGuid(v_id UUID)
 RETURNS SETOF quota_storage_view
    AS $procedure$

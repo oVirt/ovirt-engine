@@ -332,6 +332,21 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     }
 
     /**
+     * Test get Quota by Name, with name of specific Quota.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testGetQuotaByAdElementId() throws Exception {
+        setUp();
+        List<Quota> quotaByAdElementIdList =
+                dao.getQuotaByAdElementId(FixturesTool.USER_EXISTING_ID, FixturesTool.STORAGE_POOL_NFS);
+
+        // Check if quota general has been fetched.
+        assertEquals(quotaByAdElementIdList.get(0).getQuotaName(), "Quota General");
+    }
+
+    /**
      * Test fetch default quota by storage pool id and check that it has default indication as true.
      *
      * @throws Exception

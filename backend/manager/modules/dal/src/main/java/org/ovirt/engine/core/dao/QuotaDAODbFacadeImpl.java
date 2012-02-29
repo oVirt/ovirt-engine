@@ -49,6 +49,27 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     }
 
     /**
+     * Get list of <code>Quotas</code> which are consumed by ad element id in storage pool (if not storage pool id not
+     * null).
+     *
+     * @param adElementId
+     *            - The user ID or group ID.
+     * @param storagePoolId
+     *            - The storage pool Id to search the quotas in (If null search all over the setup).
+     * @return All quotas for user.
+     */
+    public List<Quota> getQuotaByAdElementId(Guid adElementId, Guid storagePoolId) {
+        MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
+        quotaParameterSource.addValue("ad_element_id", adElementId);
+        quotaParameterSource.addValue("storage_pool_id", storagePoolId);
+        List<Quota> quotaEntityList =
+                getCallsHandler().executeReadList("GetQuotaByAdElementId",
+                        getQuotaMetaDataFromResultSet(),
+                        quotaParameterSource);
+        return quotaEntityList;
+    }
+
+    /**
      * Get specific limitation for <code>VdsGroup</code>.
      *
      * @param vdsGroupId
@@ -204,25 +225,14 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     }
 
     /**
-     * Returns initialized entity with quota meta data result set.
+     * Returns initialized entity with quota result set.
      */
     private ParameterizedRowMapper<Quota> getQuotaFromResultSet() {
         ParameterizedRowMapper<Quota> mapper = new ParameterizedRowMapper<Quota>() {
             @Override
             public Quota mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
-                Quota entity = new Quota();
-                entity.setId(Guid.createGuidFromString(rs.getString("quota_id")));
-                entity.setStoragePoolId(Guid.createGuidFromString(rs.getString("storage_pool_id")));
-                entity.setStoragePoolName(rs.getString("storage_pool_name"));
-                entity.setQuotaName((String) rs.getObject("quota_name"));
-                entity.setDescription((String) rs.getObject("description"));
-                entity.setThresholdVdsGroupPercentage((Integer) rs.getObject("threshold_vds_group_percentage"));
-                entity.setThresholdStoragePercentage((Integer) rs.getObject("threshold_storage_percentage"));
-                entity.setGraceVdsGroupPercentage((Integer) rs.getObject("grace_vds_group_percentage"));
-                entity.setGraceStoragePercentage((Integer) rs.getObject("grace_storage_percentage"));
-                entity.setQuotaEnforcementType(QuotaEnforcmentTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
-                entity.setIsDefaultQuota(rs.getBoolean("is_default_quota"));
+                Quota entity = getQuotaMetaDataFromResultSet(rs);
                 mapVdsGroupResultSet(rs, entity);
                 mapStorageResultSet(rs, entity);
                 return entity;
@@ -231,6 +241,40 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
         return mapper;
     }
 
+    /**
+     * Returns initialized entity with quota meta data result set.
+     */
+    private ParameterizedRowMapper<Quota> getQuotaMetaDataFromResultSet() {
+        ParameterizedRowMapper<Quota> mapper = new ParameterizedRowMapper<Quota>() {
+            @Override
+            public Quota mapRow(ResultSet rs, int rowNum)
+                    throws SQLException {
+                return getQuotaMetaDataFromResultSet(rs);
+            }
+        };
+        return mapper;
+    }
+
+    private Quota getQuotaMetaDataFromResultSet(ResultSet rs) throws SQLException {
+        Quota entity = new Quota();
+        entity.setId(Guid.createGuidFromString(rs.getString("quota_id")));
+        entity.setStoragePoolId(Guid.createGuidFromString(rs.getString("storage_pool_id")));
+        entity.setStoragePoolName(rs.getString("storage_pool_name"));
+        entity.setQuotaName((String) rs.getObject("quota_name"));
+        entity.setDescription((String) rs.getObject("description"));
+        entity.setThresholdVdsGroupPercentage((Integer) rs.getObject("threshold_vds_group_percentage"));
+        entity.setThresholdStoragePercentage((Integer) rs.getObject("threshold_storage_percentage"));
+        entity.setGraceVdsGroupPercentage((Integer) rs.getObject("grace_vds_group_percentage"));
+        entity.setGraceStoragePercentage((Integer) rs.getObject("grace_storage_percentage"));
+        entity.setQuotaEnforcementType(QuotaEnforcmentTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
+        entity.setIsDefaultQuota(rs.getBoolean("is_default_quota"));
+        return entity;
+    }
+
+
+    /**
+     * Returns initialized entity with quota meta data result set.
+     */
     private void mapStorageResultSet(ResultSet rs, QuotaStorageProperties entity) throws SQLException {
         entity.setStorageSizeGB((Long) rs.getObject("storage_size_gb"));
         entity.setStorageSizeGBUsage((Double) rs.getObject("storage_size_gb_usage"));

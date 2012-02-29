@@ -152,6 +152,7 @@
 		<include name="core/common/queries/GetQuotaStorageByQuotaIdQueryParameters.java"/>
 		<include name="core/common/queries/GetEntitiesRelatedToQuotaIdParameters.java"/>
 		<include name="core/common/queries/GetDisksByQuotaIdParameters.java"/>
+		<include name="core/common/queries/GetQuotasByAdElementIdQueryParameters.java"/>
 		
 		
 		<!-- Misc -->
