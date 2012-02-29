@@ -55,6 +55,7 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         initTable();
 
         contentPanel = new VerticalPanel();
+        contentPanel.setWidth("100%");
         contentPanel.add(table);
         contentPanel.add(new Label("Empty"));
         initWidget(contentPanel);

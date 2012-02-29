@@ -139,6 +139,17 @@ public class VmInterfaceListModel extends SearchableListModel
         model.getName().setEntity(newNicName);
         model.getMAC().setIsChangable(false);
 
+        final UICommand okCommand = new UICommand("OnSave", this);
+        okCommand.setTitle("OK");
+        okCommand.setIsDefault(true);
+        // wait for data to fetch
+        okCommand.setIsExecutionAllowed(false);
+        model.getCommands().add(okCommand);
+        UICommand cancelCommand = new UICommand("Cancel", this);
+        cancelCommand.setTitle("Cancel");
+        cancelCommand.setIsCancel(true);
+        model.getCommands().add(cancelCommand);
+
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -177,19 +188,11 @@ public class VmInterfaceListModel extends SearchableListModel
                         }
                     }
                 }
-
+                // fetch completed
+                okCommand.setIsExecutionAllowed(true);
             }
         };
         AsyncDataProvider.GetClusterNetworkList(_asyncQuery, vm.getvds_group_id());
-
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
-        tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
     }
 
     private void Edit()
