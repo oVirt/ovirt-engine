@@ -60,21 +60,21 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 public class VdsEventListener implements IVdsEventListener {
 
     @Override
-    public void VdsMovedToMaintanance(Guid vdsId) {
+    public void vdsMovedToMaintanance(Guid vdsId) {
         VDS vds = DbFacade.getInstance().getVdsDAO().get(vdsId);
         MaintananceVdsCommand.ProcessStorageOnVdsInactive(vds);
         ExecutionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintananceVds, true);
     }
 
     @Override
-    public void StorageDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
+    public void storageDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
         Backend.getInstance().runInternalAction(VdcActionType.HandleFailedStorageDomain,
                 new StorageDomainPoolParametersBase(storageDomainId, storagePoolId),
                 ExecutionHandler.createInternalJobContext());
     }
 
     @Override
-    public void MasterDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
+    public void masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
         VdcActionParametersBase parameters = new ReconstructMasterParameters(storagePoolId, storageDomainId, false);
         parameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
         Backend.getInstance().runInternalAction(VdcActionType.ReconstructMasterDomain,
@@ -83,7 +83,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void ProcessOnVmStop(Guid vmId) {
+    public void processOnVmStop(Guid vmId) {
         VmPoolHandler.ProcessVmPoolOnStopVm(vmId, null);
         /**
          * Vitaly wating for Vm.ExitStatus in DB.
@@ -92,7 +92,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void VdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, boolean saveToDb,
+    public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, boolean saveToDb,
                                   Guid domainId) {
         ExecutionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintananceVds, false);
         SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(vdsId, reason);
@@ -103,7 +103,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void VdsNotResponding(final VDS vds) {
+    public void vdsNotResponding(final VDS vds) {
         ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintananceVds, false);
         ThreadPoolUtil.execute(new Runnable() {
             @Override
@@ -119,7 +119,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void VdsUpEvent(final Guid vdsId) {
+    public void vdsUpEvent(final Guid vdsId) {
         StoragePoolParametersBase tempVar = new StoragePoolParametersBase(Guid.Empty);
         tempVar.setVdsId(vdsId);
         if (Backend.getInstance().runInternalAction(VdcActionType.InitVdsOnUp, tempVar).getSucceeded()) {
@@ -187,7 +187,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void ProcessOnClientIpChange(final VDS vds, final Guid vmId) {
+    public void processOnClientIpChange(final VDS vds, final Guid vmId) {
         final VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(vmId);
         // when a spice client connects to the VM, we need to check if the
         // client is local or remote to adjust compression and migration aspects
@@ -222,14 +222,14 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void ProcessOnCpuFlagsChange(Guid vdsId) {
+    public void processOnCpuFlagsChange(Guid vdsId) {
         Backend.getInstance().runInternalAction(VdcActionType.HandleVdsCpuFlagsOrClusterChanged,
                 new VdsActionParameters(vdsId));
         Backend.getInstance().runInternalAction(VdcActionType.HandleVdsVersion, new VdsActionParameters(vdsId));
     }
 
     @Override
-    public void ProcessOnVmPoweringUp(Guid vds_id, Guid vmid, String display_ip, int display_port) {
+    public void processOnVmPoweringUp(Guid vds_id, Guid vmid, String display_ip, int display_port) {
         IVdsAsyncCommand command = Backend.getInstance().getResourceManager().GetAsyncCommandForVm(vmid);
         if (command != null && command.getAutoStart() && command.getAutoStartVdsId() != null) {
             try {
@@ -255,7 +255,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void StoragePoolUpEvent(storage_pool storagePool, boolean isNewSpm) {
+    public void storagePoolUpEvent(storage_pool storagePool, boolean isNewSpm) {
         if (isNewSpm) {
             AsyncTaskManager.getInstance().StopStoragePoolTasks(storagePool);
         }
@@ -265,13 +265,13 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void StoragePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
+    public void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
                                         VdcBllErrors error) {
-        StoragePoolStatusChange(storagePoolId, status, auditLogType, error, null);
+        storagePoolStatusChange(storagePoolId, status, auditLogType, error, null);
     }
 
     @Override
-    public void StoragePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
+    public void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
                                         VdcBllErrors error, TransactionScopeOption transactionScopeOption) {
         SetStoragePoolStatusParameters tempVar =
                 new SetStoragePoolStatusParameters(storagePoolId, status, auditLogType);
@@ -283,19 +283,19 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void StoragePoolStatusChanged(Guid storagePoolId, StoragePoolStatus status) {
+    public void storagePoolStatusChanged(Guid storagePoolId, StoragePoolStatus status) {
         StoragePoolStatusHandler.PoolStatusChanged(storagePoolId, status);
     }
 
     @Override
-    public void RunFailedAutoStartVM(Guid vmId) {
+    public void runFailedAutoStartVM(Guid vmId) {
         Backend.getInstance().runInternalAction(VdcActionType.RunVm,
                 new RunVmParams(vmId),
                 ExecutionHandler.createInternalJobContext());
     }
 
     @Override
-    public boolean RestartVds(Guid vdsId) {
+    public boolean restartVds(Guid vdsId) {
         return Backend
                 .getInstance()
                 .runInternalAction(VdcActionType.RestartVds,
@@ -305,7 +305,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void Rerun(Guid vmId) {
+    public void rerun(Guid vmId) {
         IVdsAsyncCommand command = Backend.getInstance().getResourceManager().GetAsyncCommandForVm(vmId);
         if (command != null) {
             command.Rerun();
@@ -313,7 +313,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void RunningSucceded(Guid vmId) {
+    public void runningSucceded(Guid vmId) {
         IVdsAsyncCommand command = Backend.getInstance().getResourceManager().GetAsyncCommandForVm(vmId);
         if (command != null) {
             command.RunningSucceded();
@@ -321,7 +321,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void RemoveAsyncRunningCommand(Guid vmId) {
+    public void removeAsyncRunningCommand(Guid vmId) {
         IVdsAsyncCommand command = Backend.getInstance().getResourceManager().RemoveAsyncRunningCommand(vmId);
         if (command != null) {
             command.reportCompleted();

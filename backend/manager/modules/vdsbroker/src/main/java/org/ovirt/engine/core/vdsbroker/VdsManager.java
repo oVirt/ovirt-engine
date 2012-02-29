@@ -353,7 +353,7 @@ public class VdsManager {
                 ResourceManager
                             .getInstance()
                             .getEventListener()
-                            .VdsNonOperational(vds.getId(),
+                            .vdsNonOperational(vds.getId(),
                                     NonOperationalReason.TIMEOUT_RECOVERING_FROM_CRASH,
                                     true,
                                     true,
@@ -421,7 +421,7 @@ public class VdsManager {
             if (vds != null) {
                 UpdateDynamicData(vds.getDynamicData());
                 // always check flags in case host cluster changed
-                ResourceManager.getInstance().getEventListener().ProcessOnCpuFlagsChange(vds.getId());
+                ResourceManager.getInstance().getEventListener().processOnCpuFlagsChange(vds.getId());
             }
         }
     }
@@ -569,7 +569,7 @@ public class VdsManager {
                 ResourceManager
                         .getInstance()
                         .getEventListener()
-                        .VdsNonOperational(vds.getId(), NonOperationalReason.KVM_NOT_RUNNING, true, true,
+                        .vdsNonOperational(vds.getId(), NonOperationalReason.KVM_NOT_RUNNING, true, true,
                                 Guid.Empty);
                 vds.setstatus(VDSStatus.NonOperational);
                 returnStatus = vds.getstatus();
@@ -628,7 +628,7 @@ public class VdsManager {
             AuditLogableBase logable = new AuditLogableBase(vds.getId());
             AuditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
             if (ResourceManager.getInstance().getEventListener() != null) {
-                ResourceManager.getInstance().getEventListener().VdsNotResponding(vds);
+                ResourceManager.getInstance().getEventListener().vdsNotResponding(vds);
             }
         }
         return true;

@@ -128,13 +128,13 @@ public class ResourceManager implements IVdsEventListener {
 
     public void RemoveAsyncRunningVm(Guid vmId) {
         _asyncRunningVms.remove(vmId);
-        getEventListener().RemoveAsyncRunningCommand(vmId);
+        getEventListener().removeAsyncRunningCommand(vmId);
     }
 
     public void SuccededToRunVm(Guid vmId, Guid vdsId) {
         IVdsEventListener listener = _asyncRunningVms.get(vmId);
         if (listener != null) {
-            listener.RunningSucceded(vmId);
+            listener.runningSucceded(vmId);
         }
         RemoveAsyncRunningVm(vmId);
     }
@@ -148,7 +148,7 @@ public class ResourceManager implements IVdsEventListener {
         IVdsEventListener listener = _asyncRunningVms.remove(vmId);
         // remove async record from broker only
         if (listener != null) {
-            listener.Rerun(vmId);
+            listener.rerun(vmId);
         }
     }
 
@@ -167,7 +167,7 @@ public class ResourceManager implements IVdsEventListener {
         java.util.HashSet<Guid> vms = null;
         if ((vms = _vdsAndVmsList.get(vdsId)) != null) {
             for (Guid vmId : vms) {
-                getEventListener().ProcessOnVmStop(vmId);
+                getEventListener().processOnVmStop(vmId);
                 log.info("Procceed on vm stop entered: " + vmId.toString());
             }
             _vdsAndVmsList.remove(vdsId);
@@ -437,101 +437,101 @@ public class ResourceManager implements IVdsEventListener {
      */
 
     @Override
-    public void VdsNotResponding(VDS vds) {
+    public void vdsNotResponding(VDS vds) {
         log.info("ResourceManager:vdsNotResponding - no event listener defined, nothing done.");
     }
 
     @Override
-    public void VdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, boolean saveToDb,
+    public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, boolean saveToDb,
             Guid domainId) {
         log.info("ResourceManager:vdsMaintanance - no event listener defined, nothing done.");
 
     }
 
     @Override
-    public void VdsMovedToMaintanance(Guid vdsId) {
+    public void vdsMovedToMaintanance(Guid vdsId) {
         log.info("ResourceManager:VdsMovedToMaintanance - no event listener defined, nothing done.");
     }
 
     @Override
-    public void StorageDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
+    public void storageDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
         log.info("ResourceManager:StorageDomainOperational - no event listener defined, nothing done.");
     }
 
     @Override
-    public void MasterDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
+    public void masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
         log.info("ResourceManager:MasterDomainNotOperational - no event listener defined, nothing done.");
     }
 
     @Override
-    public void ProcessOnVmStop(Guid vmId) {
+    public void processOnVmStop(Guid vmId) {
         log.info("ResourceManager:ProcessOnVmStop - no event listener defined, nothing done.");
     }
 
     @Override
-    public void VdsUpEvent(Guid vdsId) {
+    public void vdsUpEvent(Guid vdsId) {
         log.info("ResourceManager:RunDedicatedVm - no event listener defined, nothing done.");
     }
 
     @Override
-    public void ProcessOnClientIpChange(VDS vds, Guid vmId) {
+    public void processOnClientIpChange(VDS vds, Guid vmId) {
         log.info("ResourceManager:ProcessOnClientIpChange - no event listener defined, nothing done.");
     }
 
     @Override
-    public void ProcessOnCpuFlagsChange(Guid vdsId) {
+    public void processOnCpuFlagsChange(Guid vdsId) {
         log.info("ResourceManager:ProcessOnCpuFlagsChange - no event listener defined, nothing done.");
     }
 
     @Override
-    public void Rerun(Guid VmId) {
+    public void rerun(Guid VmId) {
         log.info("ResourceManager:Rerun - no event listener defined, nothing done.");
     }
 
     @Override
-    public void RunningSucceded(Guid vmId) {
+    public void runningSucceded(Guid vmId) {
         log.info("ResourceManager:RunningSucceded - no event listener defined, nothing done.");
     }
 
     @Override
-    public void ProcessOnVmPoweringUp(Guid vds_id, Guid vmid, String display_ip, int display_port) {
+    public void processOnVmPoweringUp(Guid vds_id, Guid vmid, String display_ip, int display_port) {
         log.info("ResourceManager:ProcessOnVmPoweringUp - no event listener defined, nothing done.");
     }
 
     @Override
-    public void RemoveAsyncRunningCommand(Guid vmId) {
+    public void removeAsyncRunningCommand(Guid vmId) {
         log.info("ResourceManager:RemoveAsyncRunningCommand - no event listener defined, nothing done.");
     }
 
     @Override
-    public void StoragePoolUpEvent(storage_pool storagePool, boolean isSpmStarted) {
+    public void storagePoolUpEvent(storage_pool storagePool, boolean isSpmStarted) {
         log.info("ResourceManager:StoragePoolUpEvent - no event listener defined, nothing done.");
     }
 
     @Override
-    public void StoragePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
+    public void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
             VdcBllErrors error, TransactionScopeOption transactionScopeOption) {
         log.info("ResourceManager:StoragePoolStatusChange - no event listener defined, nothing done.");
     }
 
     @Override
-    public void StoragePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
+    public void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
             VdcBllErrors error) {
         log.info("ResourceManager:StoragePoolStatusChange - no event listener defined, nothing done.");
     }
 
     @Override
-    public void StoragePoolStatusChanged(Guid storagePoolId, StoragePoolStatus status) {
+    public void storagePoolStatusChanged(Guid storagePoolId, StoragePoolStatus status) {
         log.info("ResourceManager:StoragePoolStatusChange - no event listener defined, nothing done.");
     }
 
     @Override
-    public void RunFailedAutoStartVM(Guid vmId) {
+    public void runFailedAutoStartVM(Guid vmId) {
         log.info("ResourceManager:RunFailedAutoStartVM - no event listener defined, nothing done.");
     }
 
     @Override
-    public boolean RestartVds(Guid vdsId) {
+    public boolean restartVds(Guid vdsId) {
         log.info("ResourceManager:RestartVds - no event listener defined, nothing done.");
         return false;
     }

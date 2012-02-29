@@ -6,52 +6,52 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
 public interface IVdsEventListener {
-    void VdsNotResponding(VDS vds); // BLL
+    void vdsNotResponding(VDS vds); // BLL
 
-    void VdsNonOperational(Guid vdsId, NonOperationalReason type, boolean logCommand, boolean saveToDb,
+    void vdsNonOperational(Guid vdsId, NonOperationalReason type, boolean logCommand, boolean saveToDb,
             Guid domainId); // BLL
 
-    void VdsMovedToMaintanance(Guid vdsId); // BLL
+    void vdsMovedToMaintanance(Guid vdsId); // BLL
 
-    void StorageDomainNotOperational(Guid storageDomainId, Guid storagePoolId); // BLL
+    void storageDomainNotOperational(Guid storageDomainId, Guid storagePoolId); // BLL
 
-    void MasterDomainNotOperational(Guid storageDomainId, Guid storagePoolId); // BLL
+    void masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId); // BLL
 
     /**
      * Temoporary patch. Vitaly todo: fix it
      *
      * @param vmId
      */
-    void ProcessOnVmStop(Guid vmId);
+    void processOnVmStop(Guid vmId);
 
-    void VdsUpEvent(Guid vdsId);
+    void vdsUpEvent(Guid vdsId);
 
-    void ProcessOnClientIpChange(VDS vds, Guid vmId);
+    void processOnClientIpChange(VDS vds, Guid vmId);
 
-    void ProcessOnCpuFlagsChange(Guid vdsId);
+    void processOnCpuFlagsChange(Guid vdsId);
 
-    void ProcessOnVmPoweringUp(Guid vds_id, Guid vmid, String display_ip, int display_port);
+    void processOnVmPoweringUp(Guid vds_id, Guid vmid, String display_ip, int display_port);
 
-    void Rerun(Guid vmId);
+    void rerun(Guid vmId);
 
-    void RunningSucceded(Guid vmId);
+    void runningSucceded(Guid vmId);
 
-    void RemoveAsyncRunningCommand(Guid vmId);
+    void removeAsyncRunningCommand(Guid vmId);
 
     // void VdsNetworkConfigurationChanged(VDS vds);
 
-    void StoragePoolUpEvent(storage_pool storagePool, boolean isNewSpm);
+    void storagePoolUpEvent(storage_pool storagePool, boolean isNewSpm);
 
 
-    void StoragePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
+    void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
             VdcBllErrors error);
 
-    void StoragePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
+    void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
             VdcBllErrors error, TransactionScopeOption transactionScopeOption);
 
-    void StoragePoolStatusChanged(Guid storagePoolId, StoragePoolStatus status);
+    void storagePoolStatusChanged(Guid storagePoolId, StoragePoolStatus status);
 
-    void RunFailedAutoStartVM(Guid vmId);
+    void runFailedAutoStartVM(Guid vmId);
 
-    boolean RestartVds(Guid vdsId);
+    boolean restartVds(Guid vdsId);
 }

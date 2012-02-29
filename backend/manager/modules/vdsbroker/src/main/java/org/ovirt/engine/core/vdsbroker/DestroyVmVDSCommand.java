@@ -62,7 +62,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                             if (!parameters.getGracefully()) {
                                 ResourceManager.getInstance()
                                 .getEventListener()
-                                .ProcessOnVmStop(curVm.getId());
+                                .processOnVmStop(curVm.getId());
                             }
                         } catch (RepositoryException ex) {
                             log.errorFormat(

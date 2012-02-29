@@ -222,7 +222,7 @@ public class VdsUpdateRunTimeInfo {
                     if (log.isDebugEnabled()) {
                         log.debugFormat("vds {0}-{1} firing up event.", _vds.getId(), _vds.getvds_name());
                     }
-                    ResourceManager.getInstance().getEventListener().VdsUpEvent(_vds.getId());
+                    ResourceManager.getInstance().getEventListener().vdsUpEvent(_vds.getId());
                     markIsSetNonOperationalExecuted();
 
                     // Check cpu flags if vm moved to up
@@ -255,19 +255,19 @@ public class VdsUpdateRunTimeInfo {
     public void AfterRefreshTreatment() {
         try {
             if (_cpuFlagsChanged) {
-                ResourceManager.getInstance().getEventListener().ProcessOnCpuFlagsChange(_vds.getId());
+                ResourceManager.getInstance().getEventListener().processOnCpuFlagsChange(_vds.getId());
                 markIsSetNonOperationalExecuted();
             }
 
             if (_vds.getstatus() == VDSStatus.Maintenance) {
                 try {
-                    ResourceManager.getInstance().getEventListener().VdsMovedToMaintanance(_vds.getId());
+                    ResourceManager.getInstance().getEventListener().vdsMovedToMaintanance(_vds.getId());
                 } catch (RuntimeException ex) {
                     log.error("Host encounter a problem moving to maintenance mode. The Host status will change to Non operational status.");
                     ResourceManager
                             .getInstance()
                             .getEventListener()
-                            .VdsNonOperational(_vds.getId(), _vds.getNonOperationalReason(), true, true,
+                            .vdsNonOperational(_vds.getId(), _vds.getNonOperationalReason(), true, true,
                                     Guid.Empty);
                     throw ex;
                 }
@@ -277,7 +277,7 @@ public class VdsUpdateRunTimeInfo {
                     ResourceManager
                             .getInstance()
                             .getEventListener()
-                            .VdsNonOperational(_vds.getId(), _vds.getNonOperationalReason(), false, false,
+                            .vdsNonOperational(_vds.getId(), _vds.getNonOperationalReason(), false, false,
                                     Guid.Empty);
                 } else {
                     log.infoFormat("Host {0} : {1} is already in NonOperational status. SetNonOperationalVds command is skipped.",
@@ -298,14 +298,14 @@ public class VdsUpdateRunTimeInfo {
             for (Guid vm_guid : _autoVmsToRun) {
                 // Refrain from auto-start HA VM during its re-run attempts.
                 if (!_vmsToRerun.contains(vm_guid)) {
-                    ResourceManager.getInstance().getEventListener().RunFailedAutoStartVM(vm_guid);
+                    ResourceManager.getInstance().getEventListener().runFailedAutoStartVM(vm_guid);
                 }
             }
 
             // process all vms that their ip changed.
             for (java.util.Map.Entry<VM, VmDynamic> pair : _vmsClientIpChanged.entrySet()) {
                 ResourceManager.getInstance().getEventListener()
-                               .ProcessOnClientIpChange(_vds, pair.getValue().getId());
+                               .processOnClientIpChange(_vds, pair.getValue().getId());
             }
 
             // process all vms that powering up.
@@ -313,13 +313,13 @@ public class VdsUpdateRunTimeInfo {
                 ResourceManager
                         .getInstance()
                         .getEventListener()
-                        .ProcessOnVmPoweringUp(_vds.getId(), runningVm.getId(), runningVm.getdisplay_ip(),
+                        .processOnVmPoweringUp(_vds.getId(), runningVm.getId(), runningVm.getdisplay_ip(),
                                 runningVm.getdisplay());
             }
 
             // process all vms that went down
             for (Guid vm_guid : _vmsMovedToDown) {
-                ResourceManager.getInstance().getEventListener().ProcessOnVmStop(vm_guid);
+                ResourceManager.getInstance().getEventListener().processOnVmStop(vm_guid);
             }
             for (Guid vm_guid : _vmsToRemoveFromAsync) {
                 ResourceManager.getInstance().RemoveAsyncRunningVm(vm_guid);

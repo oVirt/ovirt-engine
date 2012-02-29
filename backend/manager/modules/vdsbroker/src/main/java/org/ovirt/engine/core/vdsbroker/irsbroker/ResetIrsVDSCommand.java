@@ -31,7 +31,7 @@ public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends 
                     ResourceManager
                             .getInstance()
                             .getEventListener()
-                            .StoragePoolStatusChange(parameters.getStoragePoolId(), StoragePoolStatus.Problematic,
+                            .storagePoolStatusChange(parameters.getStoragePoolId(), StoragePoolStatus.Problematic,
                                     AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_RESET_IRS, VdcBllErrors.ENGINE);
                 }
             } else {

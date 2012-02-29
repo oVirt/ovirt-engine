@@ -98,7 +98,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
         if (hasChanges && vds.getstatus() != VDSStatus.Maintenance) {
             ResourceManager.getInstance()
                     .getEventListener()
-                    .VdsNonOperational(vds.getId(),
+                    .vdsNonOperational(vds.getId(),
                             NonOperationalReason.NETWORK_UNREACHABLE,
                             true,
                             true,
