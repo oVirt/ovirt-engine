@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -26,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 
 @SuppressWarnings("unused")
 public class NewVmModelBehavior extends IVmModelBehavior
@@ -196,6 +198,11 @@ public class NewVmModelBehavior extends IVmModelBehavior
     @Override
     public void Provisioning_SelectedItemChanged()
     {
+        boolean provisioning = (Boolean) getModel().getProvisioning().getEntity();
+        getModel().getProvisioningThin_IsSelected().setEntity(!provisioning);
+        getModel().getProvisioningClone_IsSelected().setEntity(provisioning);
+        getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(provisioning);
+
         UpdateIsDisksAvailable();
         InitStorageDomains();
     }
@@ -320,11 +327,13 @@ public class NewVmModelBehavior extends IVmModelBehavior
                                     : DataProvider.GetVolumeTypeList()));
                             tempVar2.setSelectedItem(a.getvolume_type());
                             diskModel.setVolumeType(tempVar2);
+                            diskModel.setDiskImage(a);
+                            diskModel.getVolumeType().setIsAvailable(false);
                             list.add(diskModel);
                         }
                         model.setDisks(list);
                         UpdateIsDisksAvailable();
-
+                        InitStorageDomains();
                     }
                 },
                 getModel().getHash()),
@@ -333,63 +342,63 @@ public class NewVmModelBehavior extends IVmModelBehavior
 
     public void UpdateIsDisksAvailable()
     {
-        boolean provisioning = (Boolean) ((EntityModel) getModel().getProvisioning().getSelectedItem()).getEntity();
-
-        getModel().setIsDisksAvailable(provisioning && getModel().getDisks() != null);
+        getModel().setIsDisksAvailable(getModel().getDisks() != null);
     }
 
     private void InitStorageDomains()
     {
+        if (getModel().getDisks() == null) {
+            return;
+        }
+
         VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
 
         if (template != null && !template.getId().equals(NGuid.Empty))
         {
-            boolean provisioning = (Boolean) ((EntityModel) getModel().getProvisioning().getSelectedItem()).getEntity();
+            storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
 
-            if (!provisioning)
-            {
-                AsyncDataProvider.GetStorageDomainListByTemplate(new AsyncQuery(this,
-                        new INewAsyncCallback() {
-                            @Override
-                            public void OnSuccess(Object target, Object returnValue) {
+            AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
+                            NewVmModelBehavior behavior = (NewVmModelBehavior) target;
+                            ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
+                            ArrayList<storage_domains> activeStorageDomains = FilterStorageDomains(storageDomains);
+                            DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
 
-                                NewVmModelBehavior behavior = (NewVmModelBehavior) target;
-                                java.util.ArrayList<storage_domains> storageDomains =
-                                        (java.util.ArrayList<storage_domains>) returnValue;
-                                behavior.PostInitStorageDomains(storageDomains);
-
+                            if (activeStorageDomains.size() <= 1) {
+                                disksAllocationModel.setIsChangable(false);
+                                return;
                             }
-                        }, getModel().getHash()), template.getId());
-            }
-            else
-            {
-                AsyncDataProvider.GetStorageDomainListByTemplate(new AsyncQuery(this,
-                        new INewAsyncCallback() {
-                            @Override
-                            public void OnSuccess(Object target, Object returnValue) {
 
-                                java.util.ArrayList<storage_domains> storageDomains =
-                                        (java.util.ArrayList<storage_domains>) returnValue;
-                                boolean isStorageDomainActive = false;
-                                for (storage_domains storageDomain : storageDomains)
-                                {
-                                    isStorageDomainActive = storageDomain.getstatus() == StorageDomainStatus.Active;
-                                    if (!isStorageDomainActive)
-                                    {
-                                        break;
-                                    }
-                                }
-                                if (isStorageDomainActive)
-                                {
-                                    NewVmModelBehavior behavior = (NewVmModelBehavior) target;
-                                    storage_pool dataCenter =
-                                            (storage_pool) behavior.getModel().getDataCenter().getSelectedItem();
-                                    behavior.InitStorageDomains(dataCenter);
-                                }
+                            boolean provisioning = (Boolean) behavior.getModel().getProvisioning().getEntity();
+                            ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
+                            Linq.Sort(activeStorageDomains, new Linq.StorageDomainByNameComparer());
 
+                            for (DiskModel diskModel : disks) {
+                                ArrayList<storage_domains> availableDiskStorageDomains;
+                                if (provisioning) {
+                                    availableDiskStorageDomains = activeStorageDomains;
+                                }
+                                else
+                                {
+                                    ArrayList<Guid> storageIds = diskModel.getDiskImage().getstorage_ids();
+                                    availableDiskStorageDomains =
+                                            Linq.getStorageDomainsByIds(storageIds, activeStorageDomains);
+                                }
+                                Linq.Sort(availableDiskStorageDomains, new Linq.StorageDomainByNameComparer());
+                                diskModel.getStorageDomain().setItems(availableDiskStorageDomains);
                             }
-                        }, getModel().getHash()), template.getId());
-            }
+
+                            ArrayList<storage_domains> storageDomainsDisjoint =
+                                    Linq.getStorageDomainsDisjoint(disks, activeStorageDomains);
+
+                            Linq.Sort(storageDomainsDisjoint, new Linq.StorageDomainByNameComparer());
+
+                            disksAllocationModel.getStorageDomain().setItems(
+                                    provisioning ? activeStorageDomains : storageDomainsDisjoint);
+                        }
+                    }, getModel().getHash()), dataCenter.getId());
         }
         else
         {
@@ -399,13 +408,13 @@ public class NewVmModelBehavior extends IVmModelBehavior
         }
     }
 
-    public void PostInitStorageDomains(java.util.ArrayList<storage_domains> storageDomains)
+    public ArrayList<storage_domains> FilterStorageDomains(ArrayList<storage_domains> storageDomains)
     {
         // filter only the Active storage domains (Active regarding the relevant storage pool).
-        java.util.ArrayList<storage_domains> list = new java.util.ArrayList<storage_domains>();
+        ArrayList<storage_domains> list = new ArrayList<storage_domains>();
         for (storage_domains a : storageDomains)
         {
-            if (a.getstatus() != null && a.getstatus() == StorageDomainStatus.Active)
+            if (Linq.IsDataActiveStorageDomain(a))
             {
                 list.add(a);
             }
@@ -416,9 +425,9 @@ public class NewVmModelBehavior extends IVmModelBehavior
         {
             storage_domains selectStorage = (storage_domains) getSystemTreeSelectedItem().getEntity();
             storage_domains sd = Linq.FirstOrDefault(list, new Linq.StoragePredicate(selectStorage.getId()));
+            list = new ArrayList<storage_domains>(Arrays.asList(new storage_domains[] { sd }));
 
-            getModel().getStorageDomain()
-                    .setItems(new java.util.ArrayList<storage_domains>(java.util.Arrays.asList(new storage_domains[] { sd })));
+            getModel().getStorageDomain().setItems(list);
             getModel().getStorageDomain().setSelectedItem(sd);
             getModel().getStorageDomain().setIsChangable(false);
         }
@@ -428,29 +437,8 @@ public class NewVmModelBehavior extends IVmModelBehavior
             getModel().getStorageDomain().setSelectedItem(Linq.FirstOrDefault(list));
             getModel().getStorageDomain().setIsChangable(true);
         }
+
+        return list;
     }
 
-    public void InitStorageDomains(storage_pool dataCenter)
-    {
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-
-                        NewVmModelBehavior behavior = (NewVmModelBehavior) target;
-                        java.util.ArrayList<storage_domains> storageDomains =
-                                new java.util.ArrayList<storage_domains>();
-                        for (storage_domains a : (java.util.ArrayList<storage_domains>) returnValue)
-                        {
-                            if (a.getstorage_domain_type() == StorageDomainType.Data
-                                    || a.getstorage_domain_type() == StorageDomainType.Master)
-                            {
-                                storageDomains.add(a);
-                            }
-                        }
-                        behavior.PostInitStorageDomains(storageDomains);
-
-                    }
-                }, getModel().getHash()), dataCenter.getId());
-    }
 }

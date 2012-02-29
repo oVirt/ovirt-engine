@@ -3,9 +3,21 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
 
+	<ui:style>
+		.messageLabel,
+		.descriptionPanel {
+			margin: 5px;	
+		}
+	</ui:style>
+
 	<d:SimpleDialogPanel width="500px" height="400px">
 		<d:content>
-			<g:Label ui:field="messageLabel" />
+			<g:FlowPanel>
+				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}"/>
+				<g:ScrollPanel>
+					<g:VerticalPanel ui:field="descriptionPanel" addStyleNames="{style.descriptionPanel}"/>
+				</g:ScrollPanel>
+			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>
 

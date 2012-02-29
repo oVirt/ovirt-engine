@@ -698,4 +698,14 @@ public interface Enums extends ConstantsWithLookup {
     String VmEntityType___VM();
 
     String VmEntityType___TEMPLATE();
+    
+    String ImageStatus___Unassigned();
+    
+    String ImageStatus___OK();
+    
+    String ImageStatus___LOCKED();
+    
+    String ImageStatus___INVALID();
+    
+    String ImageStatus___ILLEGAL();
 }

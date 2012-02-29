@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -7,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
@@ -14,9 +18,11 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -37,6 +43,7 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
     {
         super.Initialize(systemTreeSelectedItem);
         getModel().getTemplate().setIsChangable(false);
+        getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(false);
 
         AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -109,8 +116,32 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
                             behavior.InitStorageDomains(disks.get(0).getstorage_ids().get(0));
                         }
 
+                        InitDisks(disks);
                     }
                 }, getModel().getHash()), vm.getId(), true);
+    }
+
+    private void InitDisks(java.util.ArrayList<DiskImage> disks)
+    {
+        Collections.sort(disks, new Linq.DiskByInternalDriveMappingComparer());
+        java.util.ArrayList<DiskModel> list = new java.util.ArrayList<DiskModel>();
+        for (DiskImage a : disks)
+        {
+            DiskModel diskModel = new DiskModel();
+            diskModel.setIsNew(true);
+            diskModel.setName(a.getinternal_drive_mapping());
+            EntityModel tempVar = new EntityModel();
+            tempVar.setEntity(a.getSizeInGigabytes());
+            diskModel.setSize(tempVar);
+            ListModel tempVar2 = new ListModel();
+            tempVar2.setItems((a.getvolume_type() == VolumeType.Preallocated ? new java.util.ArrayList<VolumeType>(java.util.Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
+                    : DataProvider.GetVolumeTypeList()));
+            tempVar2.setSelectedItem(a.getvolume_type());
+            diskModel.setVolumeType(tempVar2);
+            diskModel.setDiskImage(a);
+            list.add(diskModel);
+        }
+        getModel().setDisks(list);
     }
 
     @Override
@@ -242,9 +273,10 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
                                 storage_domains s =
                                         Linq.FirstOrDefault(activeStorageDomainList,
                                                 new Linq.StoragePredicate(selectStorage.getId()));
-                                behavior.getModel()
-                                        .getStorageDomain()
-                                        .setItems(new java.util.ArrayList<storage_domains>(java.util.Arrays.asList(new storage_domains[] { s })));
+                                activeStorageDomainList =
+                                        new java.util.ArrayList<storage_domains>(java.util.Arrays.asList(new storage_domains[] { s }));
+
+                                behavior.getModel().getStorageDomain().setItems(activeStorageDomainList);
                                 behavior.getModel().getStorageDomain().setIsChangable(false);
                                 behavior.getModel().getStorageDomain().setSelectedItem(s);
                             }
@@ -259,6 +291,11 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
                         {
                             behavior.DisableNewTemplateModel("VM's Storage Domain ("
                                     + currentStorageDomain.getstorage_name() + ") is not accessible.");
+                        }
+
+                        ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
+                        for (DiskModel diskModel : disks) {
+                            diskModel.getStorageDomain().setItems(activeStorageDomainList);
                         }
 
                     }

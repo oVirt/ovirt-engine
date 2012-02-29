@@ -1,13 +1,16 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -46,8 +49,8 @@ public class VmMakeTemplatePopupView extends WebAdminModelBoundPopupView<UnitVmM
     ListModelListBoxEditor<Object> clusterEditor;
 
     @UiField(provided = true)
-    @Path(value = "storageDomain.selectedItem")
-    ListModelListBoxEditor<Object> storageDomainEditor;
+    @Ignore
+    DisksAllocationView disksAllocationView;
 
     @UiField(provided = true)
     @Path(value = "isTemplatePrivate.entity")
@@ -56,11 +59,16 @@ public class VmMakeTemplatePopupView extends WebAdminModelBoundPopupView<UnitVmM
     @UiField
     Label message;
 
+    @UiField
+    @Ignore
+    Label disksAllocationLabel;
+
     @Inject
     public VmMakeTemplatePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
         initListBoxEditors();
         initCheckBoxEditors();
+        disksAllocationView = new DisksAllocationView(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         Driver.driver.initialize(this);
@@ -73,13 +81,6 @@ public class VmMakeTemplatePopupView extends WebAdminModelBoundPopupView<UnitVmM
                 return ((VDSGroup) object).getname();
             }
         });
-
-        storageDomainEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((storage_domains) object).getstorage_name();
-            }
-        });
     }
 
     void initCheckBoxEditors() {
@@ -90,13 +91,35 @@ public class VmMakeTemplatePopupView extends WebAdminModelBoundPopupView<UnitVmM
         nameEditor.setLabel(constants.makeTemplatePopupNameLabel());
         descriptionEditor.setLabel(constants.makeTemplatePopupDescriptionLabel());
         clusterEditor.setLabel(constants.makeTemplateClusterLabel());
-        storageDomainEditor.setLabel(constants.makeTemplateStorageDomainLabel());
         isTemplatePrivateEditor.setLabel(constants.makeTemplateIsTemplatePrivateEditorLabel());
+        disksAllocationLabel.setText(constants.disksAllocation());
     }
 
     @Override
-    public void edit(UnitVmModel object) {
-        Driver.driver.edit(object);
+    public void edit(final UnitVmModel model) {
+        Driver.driver.edit(model);
+
+        model.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                addDiskAllocation(model);
+            }
+        });
+
+        model.getStorageDomain().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                boolean isDisksAllocationEnabled = model.getDisks() != null && !model.getDisks().isEmpty();
+                disksAllocationView.setEnabled(isDisksAllocationEnabled);
+                disksAllocationLabel.getElement().getStyle().setColor(isDisksAllocationEnabled ? "black" : "grey");
+            }
+        });
+    }
+
+    private void addDiskAllocation(UnitVmModel model) {
+        disksAllocationView.edit(model.getDisksAllocationModel());
+        model.getDisksAllocationModel().getStorageDomain().setItems(model.getStorageDomain().getItems());
+        model.getDisksAllocationModel().setDisks(model.getDisks());
     }
 
     @Override

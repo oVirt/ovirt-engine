@@ -354,7 +354,7 @@ public class NewPoolModelBehavior extends IVmModelBehavior
 
     public void UpdateIsDisksAvailable()
     {
-        boolean provisioning = (Boolean) ((EntityModel) getModel().getProvisioning().getSelectedItem()).getEntity();
+        boolean provisioning = (Boolean) getModel().getProvisioning().getEntity();
 
         getModel().setIsDisksAvailable(provisioning && getModel().getDisks() != null);
     }
@@ -365,7 +365,7 @@ public class NewPoolModelBehavior extends IVmModelBehavior
 
         if (template != null && !template.getId().equals(Guid.Empty))
         {
-            boolean provisioning = (Boolean) ((EntityModel) getModel().getProvisioning().getSelectedItem()).getEntity();
+            boolean provisioning = (Boolean) getModel().getProvisioning().getEntity();
 
             if (!provisioning)
             {

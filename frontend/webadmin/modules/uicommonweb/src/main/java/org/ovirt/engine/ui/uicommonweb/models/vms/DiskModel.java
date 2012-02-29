@@ -147,6 +147,18 @@ public class DiskModel extends Model
         privateInterface = value;
     }
 
+    private ListModel privateSourceStorageDomain;
+
+    public ListModel getSourceStorageDomain()
+    {
+        return privateSourceStorageDomain;
+    }
+
+    public void setSourceStorageDomain(ListModel value)
+    {
+        privateSourceStorageDomain = value;
+    }
+
     private ListModel privateStorageDomain;
 
     public ListModel getStorageDomain()
@@ -214,6 +226,9 @@ public class DiskModel extends Model
 
         setInterface(new ListModel());
         setStorageDomain(new ListModel());
+
+        setSourceStorageDomain(new ListModel());
+        getSourceStorageDomain().setIsAvailable(false);
 
         setPreset(new ListModel());
         getPreset().getSelectedItemChangedEvent().addListener(this);

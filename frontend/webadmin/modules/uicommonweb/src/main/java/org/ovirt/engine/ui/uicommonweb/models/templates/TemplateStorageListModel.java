@@ -120,7 +120,15 @@ public class TemplateStorageListModel extends SearchableListModel
                             for (storage_domains storageDomain : storageDomains) {
                                 StorageDomainModel storageDomainModel = new StorageDomainModel();
                                 storageDomainModel.setStorageDomain(storageDomain);
-                                storageDomainModel.setDisks(diskImages);
+
+                                ArrayList<DiskImage> disks = new ArrayList<DiskImage>();
+                                for (DiskImage diskImage : diskImages) {
+                                    if (diskImage.getstorage_ids().contains(storageDomain.getId())) {
+                                        disks.add(diskImage);
+                                    }
+                                }
+
+                                storageDomainModel.setDisks(disks);
                                 storageDomainModels.add(storageDomainModel);
                             }
 

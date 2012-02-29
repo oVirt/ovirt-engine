@@ -25,6 +25,7 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
         table.addColumn(new EmptyColumn(), "Type", "120px");
         table.addColumn(new EmptyColumn(), "Allocation", "120px");
         table.addColumn(new EmptyColumn(), "Interface", "120px");
+        table.addColumn(new EmptyColumn(), "Creation Date", "120px");
     }
 
     @Override

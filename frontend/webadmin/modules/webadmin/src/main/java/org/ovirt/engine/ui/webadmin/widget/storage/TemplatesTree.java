@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageTemplateListModel;
-import org.ovirt.engine.ui.webadmin.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;

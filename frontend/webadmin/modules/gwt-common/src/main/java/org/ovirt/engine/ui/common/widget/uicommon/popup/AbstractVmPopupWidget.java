@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -30,6 +29,7 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -47,6 +47,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 
 public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidget<UnitVmModel> {
@@ -61,6 +62,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     interface Style extends CssResource {
         String longCheckboxContent();
+
+        String provisioningEditorContent();
+
+        String provisioningRadioContent();
     }
 
     @UiField
@@ -197,17 +202,29 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @UiField
     protected DialogTab resourceAllocationTab;
 
-    @UiField(provided = true)
-    @Path(value = "storageDomain.selectedItem")
-    ListModelListBoxEditor<Object> storageDomainEditor;
-
-    @UiField(provided = true)
-    @Path(value = "provisioning.selectedItem")
+    @UiField
+    @Ignore
     ListModelListBoxEditor<Object> provisioningEditor;
 
     @UiField(provided = true)
     @Path(value = "minAllocatedMemory.entity")
     EntityModelTextBoxEditor minAllocatedMemoryEditor;
+
+    @UiField(provided = true)
+    @Path(value = "provisioningThin_IsSelected.entity")
+    EntityModelRadioButtonEditor provisioningThinEditor;
+
+    @UiField(provided = true)
+    @Path(value = "provisioningClone_IsSelected.entity")
+    EntityModelRadioButtonEditor provisioningCloneEditor;
+
+    @UiField
+    @Ignore
+    Label disksAllocationLabel;
+
+    @UiField(provided = true)
+    @Ignore
+    DisksAllocationView disksAllocationView;
 
     // ==Boot Options Tab==
     @UiField
@@ -285,6 +302,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                 return model.getTitle();
             }
         }, "");
+
+        disksAllocationView = new DisksAllocationView(constants);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         applyStyles();
@@ -374,19 +393,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         });
 
         // Resource Allocation
-        storageDomainEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((storage_domains) object).getstorage_name();
-            }
-        });
-
-        provisioningEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((EntityModel) object).getTitle();
-            }
-        });
+        provisioningThinEditor = new EntityModelRadioButtonEditor("provisioningGroup");
+        provisioningCloneEditor = new EntityModelRadioButtonEditor("provisioningGroup");
 
         // Boot Options Tab
         firstBootDeviceEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
@@ -459,8 +467,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         isHighlyAvailableEditor.setLabel("Highly Available");
 
         // Resource Allocation Tab
-        storageDomainEditor.setLabel("Storage Domain");
-        provisioningEditor.setLabel("Provisioning");
+        provisioningEditor.setLabel("Template Provisioning");
+        provisioningThinEditor.setLabel("Thin");
+        provisioningCloneEditor.setLabel("Clone");
         minAllocatedMemoryEditor.setLabel("Physical Memory Guaranteed");
 
         // Boot Options
@@ -475,6 +484,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     private void applyStyles() {
         runVMOnSpecificHostEditor.addContentWidgetStyleName(style.longCheckboxContent());
         dontMigrateVMEditor.addContentWidgetStyleName(style.longCheckboxContent());
+        provisioningEditor.addContentWidgetStyleName(style.provisioningEditorContent());
+        provisioningThinEditor.addContentWidgetStyleName(style.provisioningRadioContent());
+        provisioningCloneEditor.addContentWidgetStyleName(style.provisioningRadioContent());
     }
 
     @Override
@@ -484,6 +496,36 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         Driver.driver.edit(object);
         initSliders(object);
         initTabAvailabilityListeners(object);
+        initListerners(object);
+    }
+
+    private void initListerners(final UnitVmModel object) {
+        object.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                addDiskAllocation(object);
+            }
+        });
+
+        object.getProvisioning().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                boolean isAllocationConfigureAvailable = object.getProvisioning().getIsChangable();
+                provisioningThinEditor.setEnabled(isAllocationConfigureAvailable);
+                provisioningCloneEditor.setEnabled(isAllocationConfigureAvailable);
+                disksAllocationLabel.setVisible(isAllocationConfigureAvailable);
+                disksAllocationView.setVisible(isAllocationConfigureAvailable);
+            }
+        });
+    }
+
+    private void addDiskAllocation(UnitVmModel model) {
+        if (!model.getIsDisksAvailable() || !model.getStorageDomain().getItems().iterator().hasNext()) {
+            return;
+        }
+        disksAllocationView.edit(model.getDisksAllocationModel());
+        model.getDisksAllocationModel().getStorageDomain().setItems(model.getStorageDomain().getItems());
+        model.getDisksAllocationModel().setDisks(model.getDisks());
     }
 
     private void initSliders(final UnitVmModel object) {

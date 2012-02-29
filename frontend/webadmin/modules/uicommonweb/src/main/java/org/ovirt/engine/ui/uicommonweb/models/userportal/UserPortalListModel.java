@@ -1021,19 +1021,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         getVmModel().Initialize(null);
 
         // Ensures that the default provisioning is "Clone" for a new server and "Thin" for a new desktop.
-        EntityModel selectedItem = null;
         boolean selectValue = getVmModel().getVmType() == VmType.Server;
-
-        for (Object item : getVmModel().getProvisioning().getItems())
-        {
-            EntityModel a = (EntityModel) item;
-            if ((Boolean) a.getEntity() == selectValue)
-            {
-                selectedItem = a;
-                break;
-            }
-        }
-        getVmModel().getProvisioning().setSelectedItem(selectedItem);
+        getVmModel().getProvisioning().setEntity(selectValue);
     }
 
     private void Edit()
@@ -1325,7 +1314,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             {
                 setstorageDomain((storage_domains) getVmModel().getStorageDomain().getSelectedItem());
 
-                if ((Boolean) ((EntityModel) getVmModel().getProvisioning().getSelectedItem()).getEntity())
+                if ((Boolean) getVmModel().getProvisioning().getEntity())
                 {
                     AsyncQuery _asyncQuery = new AsyncQuery();
                     _asyncQuery.setModel(this);

@@ -30,8 +30,15 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.Find
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.RecoveryStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.MoveHostPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.*;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDestroyPopupPresenterWidget;
@@ -144,8 +151,15 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindSingl
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.RecoveryStorageConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.guide.GuidePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.guide.MoveHostPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.*;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostBondPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostConfigureLocalStoragePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInstallPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInterfacePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.ManualFenceConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.DisksAllocationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindMultiDcPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindSingleDcPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageDestroyPopupView;
@@ -669,6 +683,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ImportTemplatePopupPresenterWidget.class,
                 ImportTemplatePopupPresenterWidget.ViewDef.class,
                 ImportTemplatePopupView.class);
+        bindPresenterWidget(DisksAllocationPopupPresenterWidget.class,
+                DisksAllocationPopupPresenterWidget.ViewDef.class,
+                DisksAllocationPopupView.class);
 
         // Storage Remove
         bindPresenterWidget(StorageRemovePopupPresenterWidget.class,

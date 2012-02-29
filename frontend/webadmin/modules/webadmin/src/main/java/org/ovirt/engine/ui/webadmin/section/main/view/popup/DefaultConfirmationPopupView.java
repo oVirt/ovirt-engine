@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
+import java.util.ArrayList;
+
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.presenter.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -10,6 +15,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView implements DefaultConfirmationPopupPresenterWidget.ViewDef {
@@ -26,6 +34,9 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    @UiField
+    VerticalPanel descriptionPanel;
+
     @Inject
     public DefaultConfirmationPopupView(EventBus eventBus, ApplicationResources resources) {
         super(eventBus, resources);
@@ -35,8 +46,19 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
     }
 
     @Override
-    public void edit(ConfirmationModel object) {
+    public void edit(final ConfirmationModel object) {
         Driver.driver.edit(object);
+
+        object.getItemsChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                ArrayList<String> items = (ArrayList<String>) object.getItems();
+
+                for (String item : items) {
+                    descriptionPanel.add(new Label(item));
+                }
+            }
+        });
     }
 
     @Override

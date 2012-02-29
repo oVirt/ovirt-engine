@@ -10,15 +10,16 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
-import org.ovirt.engine.ui.webadmin.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.EnumLabel;
 import org.ovirt.engine.ui.webadmin.widget.storage.AbstractSubTabTree;
 
+import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -38,7 +39,8 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskMod
         addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px");
         addValueLabelToPanel(panel, new EnumLabel<DiskType>(), disk.getdisk_type(), "120px");
         addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getvolume_type(), "120px");
-        addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getdisk_interface(), "90px");
+        addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getdisk_interface(), "120px");
+        addValueLabelToPanel(panel, new DateLabel(), disk.getcreation_date(), "90px");
 
         return new TreeItem(panel);
     }

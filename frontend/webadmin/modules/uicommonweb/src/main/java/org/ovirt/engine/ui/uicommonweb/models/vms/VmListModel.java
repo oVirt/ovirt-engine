@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.Collections;
+import java.util.HashMap;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -795,19 +796,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         model.Initialize(getSystemTreeSelectedItem());
 
         // Ensures that the default provisioning is "Clone" for a new server and "Thin" for a new desktop.
-        EntityModel selectedItem = null;
         boolean selectValue = model.getVmType() == VmType.Server;
-
-        for (Object item : model.getProvisioning().getItems())
-        {
-            EntityModel a = (EntityModel) item;
-            if ((Boolean) a.getEntity() == selectValue)
-            {
-                selectedItem = a;
-                break;
-            }
-        }
-        model.getProvisioning().setSelectedItem(selectedItem);
+        model.getProvisioning().setEntity(selectValue);
 
         UICommand tempVar = new UICommand("OnSave", this);
         tempVar.setTitle("OK");
@@ -1403,6 +1393,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
         java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
 
+        model.StopProgress();
+
         for (Object a : getSelectedItems())
         {
             VM vm = (VM) a;
@@ -1491,6 +1483,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         {
             return;
         }
+
+        model.StartProgress(null);
 
         GetTemplatesNotPresentOnExportDomain();
     }
@@ -1963,6 +1957,15 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         addVmTemplateParameters.setDestinationStorageDomainId(((storage_domains) model.getStorageDomain()
                 .getSelectedItem()).getId());
         addVmTemplateParameters.setPublicUse((Boolean) model.getIsTemplatePublic().getEntity());
+
+        if ((Boolean) model.getDisksAllocationModel().getIsSingleStorageDomain().getEntity()) {
+            addVmTemplateParameters.setDestinationStorageDomainId(
+                    ((storage_domains) model.getStorageDomain().getSelectedItem()).getId());
+        }
+        else {
+            addVmTemplateParameters.setImageToDestinationDomainMap(
+                    model.getDisksAllocationModel().getImageToDestinationDomainMap());
+        }
 
         model.StartProgress(null);
 
@@ -2577,7 +2580,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                     return;
                 }
 
-                if ((Boolean) ((EntityModel) model.getProvisioning().getSelectedItem()).getEntity())
+                if ((Boolean) model.getProvisioning().getEntity())
                 {
                     model.StartProgress(null);
 
@@ -2597,7 +2600,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             for (DiskImage templateDisk : templateDisks)
                             {
                                 DiskModel disk = null;
-                                for (DiskModel a : unitVmModel.getDisks())
+                                for (DiskModel a : unitVmModel.getDisksAllocationModel().getDisks())
                                 {
                                     if (StringHelper.stringsEqual(a.getName(), templateDisk.getinternal_drive_mapping()))
                                     {
@@ -2612,8 +2615,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                                         storageDomain.getstorage_type()));
                             }
 
-                            java.util.HashMap<String, DiskImageBase> dict =
-                                    new java.util.HashMap<String, DiskImageBase>();
+                            HashMap<String, DiskImageBase> dict = new HashMap<String, DiskImageBase>();
                             for (DiskImage a : templateDisks)
                             {
                                 dict.put(a.getinternal_drive_mapping(), a);
@@ -2621,12 +2623,16 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
                             AddVmFromTemplateParameters parameters =
                                     new AddVmFromTemplateParameters(vmListModel.getcurrentVm(),
-                                            dict,
-                                            storageDomain.getId());
-                            parameters.setMakeCreatorExplicitOwner(true);
+                                            dict, storageDomain.getId());
 
-                            Frontend.RunAction(VdcActionType.AddVmFromTemplate,
-                                    new AddVmFromTemplateParameters(getcurrentVm(), dict, storageDomain.getId()),
+                            Guid destinationStorageDomainId = Guid.Empty;
+                            if (!(Boolean) unitVmModel.getDisksAllocationModel().getIsSingleStorageDomain().getEntity())
+                            {
+                                parameters.setImageToDestinationDomainMap(
+                                        unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap());
+                            }
+
+                            Frontend.RunAction(VdcActionType.AddVmFromTemplate, parameters,
                                     new IFrontendActionAsyncCallback() {
                                         @Override
                                         public void Executed(FrontendActionAsyncResult result) {
@@ -2659,7 +2665,16 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                     storage_domains storageDomain = (storage_domains) model.getStorageDomain().getSelectedItem();
 
                     VmManagementParametersBase tempVar = new VmManagementParametersBase(getcurrentVm());
-                    tempVar.setStorageDomainId(storageDomain.getId());
+
+                    if ((Boolean) model.getDisksAllocationModel().getIsSingleStorageDomain().getEntity()) {
+                        tempVar.setStorageDomainId(
+                                ((storage_domains) model.getStorageDomain().getSelectedItem()).getId());
+                    }
+                    else {
+                        tempVar.setImageToDestinationDomainMap(
+                                model.getDisksAllocationModel().getImageToDestinationDomainMap());
+                    }
+
                     Frontend.RunAction(VdcActionType.AddVm, tempVar,
                             new IFrontendActionAsyncCallback() {
                                 @Override

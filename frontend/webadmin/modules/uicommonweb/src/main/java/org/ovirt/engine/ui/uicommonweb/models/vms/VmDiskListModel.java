@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
 import org.ovirt.engine.core.common.action.RemoveDisksFromVmParameters;
@@ -191,8 +190,6 @@ public class VmDiskListModel extends SearchableListModel
     {
         ArrayList<DiskImage> disks =
                 value != null ? Linq.<DiskImage> Cast(value) : new ArrayList<DiskImage>();
-
-        Collections.sort(disks, new Linq.DiskByNameComparer());
 
         super.setItems(disks);
     }

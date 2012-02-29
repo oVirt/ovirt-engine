@@ -718,9 +718,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Storage domain can be modified only when 'Single Destination Domain' is unchecked")
     String importVmTemplateSingleStorageCheckedLabel();
 
-    @DefaultStringValue("Single Destination Storage")
-    String singleDestinationStorage();
-
     @DefaultStringValue("Some Templates' disks which the selected VMs are based on are missing from the Data-Center.<br/>"
             + "Suggested solutions: "
             + "1. Preserving Template-Based structure: "

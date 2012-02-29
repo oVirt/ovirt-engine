@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicompat.DateTimeUtils;
 import org.ovirt.engine.ui.uicompat.IEqualityComparer;
@@ -284,6 +286,25 @@ public final class Linq
             }
         }
         return false;
+    }
+
+    public static boolean IsDataActiveStorageDomain(storage_domains storageDomain)
+    {
+        boolean isData = storageDomain.getstorage_domain_type() == StorageDomainType.Data ||
+                storageDomain.getstorage_domain_type() == StorageDomainType.Master;
+
+        boolean isActive = storageDomain.getstatus() != null &&
+                storageDomain.getstatus() == StorageDomainStatus.Active;
+
+        return isData && isActive;
+    }
+
+    public static boolean IsActiveStorageDomain(storage_domains storageDomain)
+    {
+        boolean isActive = storageDomain.getstatus() != null &&
+                storageDomain.getstatus() == StorageDomainStatus.Active;
+
+        return isActive;
     }
 
     /**
@@ -889,6 +910,35 @@ public final class Linq
         }
 
         return result;
+    }
+
+    public static storage_domains getStorageById(Guid storageId, ArrayList<storage_domains> storageDomains) {
+        for (storage_domains storage : storageDomains) {
+            if (storage.getId().equals(storageId)) {
+                return storage;
+            }
+        }
+        return null;
+    }
+
+    public static ArrayList<storage_domains> getStorageDomainsByIds(ArrayList<Guid> storageIds,
+            ArrayList<storage_domains> storageDomains) {
+        ArrayList<storage_domains> list = new ArrayList<storage_domains>();
+        for (Guid storageId : storageIds) {
+            list.add(getStorageById(storageId, storageDomains));
+        }
+        return list;
+    }
+
+    public static ArrayList<storage_domains> getStorageDomainsDisjoint(ArrayList<DiskModel> disks,
+            ArrayList<storage_domains> storageDomains) {
+        ArrayList<storage_domains> storageDomainsDisjoint = new ArrayList<storage_domains>();
+        for (DiskModel diskModel : disks) {
+            ArrayList<storage_domains> list =
+                    getStorageDomainsByIds(diskModel.getDiskImage().getstorage_ids(), storageDomains);
+            storageDomainsDisjoint = Linq.Disjoint(storageDomainsDisjoint, list);
+        }
+        return storageDomainsDisjoint;
     }
 
     public final static class TimeZonePredicate implements IPredicate<java.util.Map.Entry<String, String>>

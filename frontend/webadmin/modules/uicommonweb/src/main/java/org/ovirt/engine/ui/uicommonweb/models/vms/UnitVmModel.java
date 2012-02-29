@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.RangeEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ByteSizeValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.CustomPropertyValidation;
@@ -487,16 +488,40 @@ public class UnitVmModel extends Model
         privateDisplayProtocol = value;
     }
 
-    private ListModel privateProvisioning;
+    private EntityModel privateProvisioning;
 
-    public ListModel getProvisioning()
+    public EntityModel getProvisioning()
     {
         return privateProvisioning;
     }
 
-    private void setProvisioning(ListModel value)
+    private void setProvisioning(EntityModel value)
     {
         privateProvisioning = value;
+    }
+
+    private EntityModel privateProvisioningThin_IsSelected;
+
+    public EntityModel getProvisioningThin_IsSelected()
+    {
+        return privateProvisioningThin_IsSelected;
+    }
+
+    public void setProvisioningThin_IsSelected(EntityModel value)
+    {
+        privateProvisioningThin_IsSelected = value;
+    }
+
+    private EntityModel privateProvisioningClone_IsSelected;
+
+    public EntityModel getProvisioningClone_IsSelected()
+    {
+        return privateProvisioningClone_IsSelected;
+    }
+
+    public void setProvisioningClone_IsSelected(EntityModel value)
+    {
+        privateProvisioningClone_IsSelected = value;
     }
 
     private ListModel privatePriority;
@@ -707,6 +732,18 @@ public class UnitVmModel extends Model
         }
     }
 
+    private DisksAllocationModel disksAllocationModel;
+
+    public DisksAllocationModel getDisksAllocationModel()
+    {
+        return disksAllocationModel;
+    }
+
+    private void setDisksAllocationModel(DisksAllocationModel value)
+    {
+        disksAllocationModel = value;
+    }
+
     private boolean isDisksAvailable;
 
     public boolean getIsDisksAvailable()
@@ -892,7 +929,7 @@ public class UnitVmModel extends Model
         getFirstBootDevice().getSelectedItemChangedEvent().addListener(this);
 
         setProvisioning(new ListModel());
-        getProvisioning().getSelectedItemChangedEvent().addListener(this);
+        getProvisioning().getEntityChangedEvent().addListener(this);
 
         setMemSize(new EntityModel());
         getMemSize().getEntityChangedEvent().addListener(this);
@@ -925,6 +962,14 @@ public class UnitVmModel extends Model
 
         getNumOfDesktops().setIsAvailable(false);
         getAssignedVms().setIsAvailable(false);
+
+        setDisksAllocationModel(new DisksAllocationModel());
+
+        setProvisioningClone_IsSelected(new EntityModel());
+        getProvisioningClone_IsSelected().getEntityChangedEvent().addListener(this);
+
+        setProvisioningThin_IsSelected(new EntityModel());
+        getProvisioningThin_IsSelected().getEntityChangedEvent().addListener(this);
     }
 
     public void Initialize(SystemTreeItemModel SystemTreeSelectedItem)
@@ -951,7 +996,6 @@ public class UnitVmModel extends Model
         InitOSType();
         InitDisplayProtocol();
         InitFirstBootDevice();
-        InitProvisioning();
         InitNumOfMonitors();
         InitMinimalVmMemSize();
         InitMaximalVmMemSize32OS();
@@ -1004,10 +1048,6 @@ public class UnitVmModel extends Model
             {
                 FirstBootDevice_SelectedItemChanged(sender, args);
             }
-            else if (sender == getProvisioning())
-            {
-                Provisioning_SelectedItemChanged(sender, args);
-            }
             else if (sender == getDisplayProtocol())
             {
                 DisplayProtocol_SelectedItemChanged(sender, args);
@@ -1034,6 +1074,23 @@ public class UnitVmModel extends Model
             else if (sender == getIsTemplatePrivate())
             {
                 IsTemplatePrivate_EntityChanged(sender, args);
+            }
+
+            else if (sender == getProvisioning())
+            {
+                Provisioning_SelectedItemChanged(sender, args);
+            }
+            else if (sender == getProvisioningThin_IsSelected())
+            {
+                if ((Boolean) getProvisioningThin_IsSelected().getEntity()) {
+                    getProvisioning().setEntity(false);
+                }
+            }
+            else if (sender == getProvisioningClone_IsSelected())
+            {
+                if ((Boolean) getProvisioningClone_IsSelected().getEntity()) {
+                    getProvisioning().setEntity(true);
+                }
             }
         }
     }
@@ -1186,20 +1243,6 @@ public class UnitVmModel extends Model
         firstBootDeviceItems.add(tempVar3);
         getFirstBootDevice().setItems(firstBootDeviceItems);
         getFirstBootDevice().setSelectedItem(hardDiskOption);
-    }
-
-    private void InitProvisioning()
-    {
-        java.util.ArrayList<EntityModel> provisioningItems = new java.util.ArrayList<EntityModel>();
-        EntityModel tempVar = new EntityModel();
-        tempVar.setTitle("Thin");
-        tempVar.setEntity(false);
-        provisioningItems.add(tempVar);
-        EntityModel tempVar2 = new EntityModel();
-        tempVar2.setTitle("Clone");
-        tempVar2.setEntity(true);
-        provisioningItems.add(tempVar2);
-        getProvisioning().setItems(provisioningItems);
     }
 
     private void DataCenter_SelectedItemChanged(Object sender, EventArgs args)

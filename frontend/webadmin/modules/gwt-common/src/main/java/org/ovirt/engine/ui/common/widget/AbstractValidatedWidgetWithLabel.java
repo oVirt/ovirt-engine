@@ -40,6 +40,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
         String labelDisabled();
 
+        String labelHidden();
     }
 
     private final W contentWidget;
@@ -192,6 +193,14 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     public void addLabelStyleName(String styleName) {
         labelElement.addClassName(styleName);
+    }
+
+    public void addWrapperStyleName(String styleName) {
+        wrapperPanel.addStyleName(styleName);
+    }
+
+    public void hideLabel() {
+        labelElement.addClassName(style.labelHidden());
     }
 
 }

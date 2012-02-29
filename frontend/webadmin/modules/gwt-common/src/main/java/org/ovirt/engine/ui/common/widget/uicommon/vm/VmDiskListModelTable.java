@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -94,21 +95,21 @@ public class VmDiskListModelTable extends AbstractModelBoundTableWidget<DiskImag
         };
         getTable().addColumn(actualSizeColumn, "Actual Size");
 
+        TextColumnWithTooltip<DiskImage> storageDomainColumn = new TextColumnWithTooltip<DiskImage>() {
+            @Override
+            public String getValue(DiskImage object) {
+                return object.getStoragesNames().get(0);
+            }
+        };
+        getTable().addColumn(storageDomainColumn, "Storage Domain");
+
         TextColumnWithTooltip<DiskImage> typeColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getdisk_type().toString();
             }
         };
-        getTable().addColumn(typeColumn, "Type");
-
-        TextColumnWithTooltip<DiskImage> formatColumn = new TextColumnWithTooltip<DiskImage>() {
-            @Override
-            public String getValue(DiskImage object) {
-                return object.getvolume_format().toString();
-            }
-        };
-        getTable().addColumn(formatColumn, "Format");
+        getTable().addColumn(typeColumn, "Type", "120px");
 
         TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override
@@ -116,7 +117,7 @@ public class VmDiskListModelTable extends AbstractModelBoundTableWidget<DiskImag
                 return VolumeType.forValue(object.getvolume_type().getValue());
             }
         };
-        getTable().addColumn(allocationColumn, "Allocation");
+        getTable().addColumn(allocationColumn, "Allocation", "120px");
 
         TextColumnWithTooltip<DiskImage> interfaceColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
@@ -124,7 +125,15 @@ public class VmDiskListModelTable extends AbstractModelBoundTableWidget<DiskImag
                 return object.getdisk_interface().toString();
             }
         };
-        getTable().addColumn(interfaceColumn, "Interface");
+        getTable().addColumn(interfaceColumn, "Interface", "120px");
+
+        TextColumnWithTooltip<DiskImage> statusColumn = new EnumColumn<DiskImage, ImageStatus>() {
+            @Override
+            protected ImageStatus getRawValue(DiskImage object) {
+                return object.getimageStatus();
+            }
+        };
+        getTable().addColumn(statusColumn, "Status", "120px");
 
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
@@ -132,7 +141,7 @@ public class VmDiskListModelTable extends AbstractModelBoundTableWidget<DiskImag
                 return object.getcreation_date();
             }
         };
-        getTable().addColumn(dateCreatedColumn, "Date Created");
+        getTable().addColumn(dateCreatedColumn, "Creation Date", "140px");
 
         getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), "New") {
             @Override

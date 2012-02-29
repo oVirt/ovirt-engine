@@ -10,14 +10,15 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
-import org.ovirt.engine.ui.webadmin.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.EnumLabel;
 import org.ovirt.engine.ui.webadmin.widget.storage.AbstractSubTabTree;
 
+import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -55,6 +56,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateDiskListModel, Stor
         addValueLabelToPanel(panel, new EnumLabel<DiskType>(), disk.getdisk_type(), "120px");
         addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getvolume_type(), "120px");
         addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getdisk_interface(), "110px");
+        addValueLabelToPanel(panel, new DateLabel(), disk.getcreation_date(), "90px");
 
         return new TreeItem(panel);
     }
@@ -67,7 +69,8 @@ public class StoragesTree extends AbstractSubTabTree<TemplateDiskListModel, Stor
         table.addColumn(new EmptyColumn(), "Size", "120px");
         table.addColumn(new EmptyColumn(), "Type", "120px");
         table.addColumn(new EmptyColumn(), "Allocation", "120px");
-        table.addColumn(new EmptyColumn(), "Interface", "120px");
+        table.addColumn(new EmptyColumn(), "Interface", "110px");
+        table.addColumn(new EmptyColumn(), "Creation Date", "100px");
         table.setRowData(new ArrayList());
         table.setWidth("100%", true);
         return new TreeItem(table);

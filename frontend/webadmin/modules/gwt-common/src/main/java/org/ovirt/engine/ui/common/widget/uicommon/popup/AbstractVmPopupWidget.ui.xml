@@ -2,7 +2,9 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
+	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab" xmlns:s="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage">
+
+	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget.Style">
 		.generalTabTopDecorator {
@@ -43,6 +45,31 @@
 		
 		.longCheckboxContent {
 			width: 90%;
+		}
+		
+		.provisioningEditor {
+			padding-right: 25px;
+		}
+		
+		.provisioningEditorContent  {
+			display: none;
+		}
+		
+		.provisioningRadioContent  {
+			padding-top: 3px;			
+			width: 60px;
+		}
+		
+		.disksAllocation {
+			padding-left: 5px;
+			padding-top: 10px;
+		}
+		
+		.disksAllocationPanel {
+			width: 95%;
+			float: right;
+			padding-top: 5px;
+			padding-bottom: 10px;
 		}
 		
 		.radioButton {
@@ -175,8 +202,13 @@
 								<g:Label addStyleNames="{style.sectionLabel}">Storage Allocation:</g:Label>
 								<g:Label addStyleNames="{style.sectionComment}">(Available only when a template is selected)</g:Label>
 							</g:HorizontalPanel>
-							<e:ListModelListBoxEditor ui:field="storageDomainEditor" />
-							<e:ListModelListBoxEditor ui:field="provisioningEditor" />
+									<g:HorizontalPanel>
+										<e:ListModelListBoxEditor ui:field="provisioningEditor" addStyleNames="{style.provisioningEditor}" />
+										<e:EntityModelRadioButtonEditor ui:field="provisioningThinEditor"/>
+										<e:EntityModelRadioButtonEditor ui:field="provisioningCloneEditor"/>
+									</g:HorizontalPanel>
+									<g:Label ui:field="disksAllocationLabel" text="{constants.disksAllocation}"  addStyleNames="{style.disksAllocation}" visible="false" />									
+									<s:DisksAllocationView ui:field="disksAllocationView" listHeight="135px" volumeType="true" addStyleNames="{style.disksAllocationPanel}" />
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
 							<g:Label addStyleNames="{style.sectionLabel}">Memory Allocation:</g:Label>

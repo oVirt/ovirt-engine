@@ -8,8 +8,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -322,9 +320,9 @@ public class ImportVmModel extends ListWithDetailsModel {
                 }
                 else {
                     ArrayList<Guid> storageIds =
-                            templateGuidAllStorageDomainDic.get(vm.getvmt_guid());
+                            templateGuidUniqueStorageDomainDic.get(vm.getvmt_guid());
                     Guid storageId = storageIds != null ?
-                            templateGuidAllStorageDomainDic.get(vm.getvmt_guid()).get(0) : new Guid();
+                            templateGuidUniqueStorageDomainDic.get(vm.getvmt_guid()).get(0) : new Guid();
                     addToDiskStorageMap(vm.getId(), disk, storageId);
                 }
             }
@@ -347,11 +345,8 @@ public class ImportVmModel extends ListWithDetailsModel {
 
         for (storage_domains domain : allStorageDomains) {
             boolean addStorage = false;
-            if ((domain.getstorage_domain_type() == StorageDomainType.Data || domain
-                    .getstorage_domain_type() == StorageDomainType.Master)
-                    && domain.getstatus() != null
-                    && domain.getstatus() == StorageDomainStatus.Active) {
 
+            if (Linq.IsDataActiveStorageDomain(domain)) {
                 allDestStorages.add(domain);
 
                 if (((Boolean) getCollapseSnapshots().getEntity()).equals(true)) {
@@ -610,7 +605,9 @@ public class ImportVmModel extends ListWithDetailsModel {
         if (storageDomainsIds != null) {
             storageDomains = new ArrayList<String>();
             for (Guid storageId : storageDomainsIds) {
-                storageDomains.add(getStorageNameById(storageId));
+                if (Linq.IsActiveStorageDomain(getStorageById(storageId))) {
+                    storageDomains.add(getStorageNameById(storageId));
+                }
             }
         }
 

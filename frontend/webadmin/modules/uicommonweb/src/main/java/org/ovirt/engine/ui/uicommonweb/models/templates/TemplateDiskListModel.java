@@ -120,7 +120,8 @@ public class TemplateDiskListModel extends SearchableListModel
                             for (DiskImage diskImage : disks) {
                                 DiskModel diskModel = new DiskModel();
                                 diskModel.setDiskImage(diskImage);
-                                diskModel.getStorageDomain().setItems(storageDomains);
+                                diskModel.getStorageDomain().setItems(
+                                        Linq.getStorageDomainsByIds(diskImage.getstorage_ids(), storageDomains));
                                 diskModels.add(diskModel);
                             }
 

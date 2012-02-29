@@ -24,6 +24,10 @@
 			color: gray;
 		}
 		
+		.labelHidden {
+			display: none;
+		}
+		
 		.contentWidget {
 			float: right;
 			width: 230px;
