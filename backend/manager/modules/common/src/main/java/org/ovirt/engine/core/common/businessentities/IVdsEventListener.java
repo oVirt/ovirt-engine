@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Map;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
@@ -10,6 +11,10 @@ public interface IVdsEventListener {
 
     void vdsNonOperational(Guid vdsId, NonOperationalReason type, boolean logCommand, boolean saveToDb,
             Guid domainId); // BLL
+
+    void vdsNonOperational(Guid vdsId, NonOperationalReason type, boolean logCommand, boolean saveToDb,
+            Guid domainId,
+            Map<String, String> customLogValues); // BLL
 
     void vdsMovedToMaintanance(Guid vdsId); // BLL
 

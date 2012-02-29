@@ -1,13 +1,16 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.common.businessentities.NonOperationalReason.VERSION_INCOMPATIBLE_WITH_CLUSTER;
+
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -66,8 +69,12 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         // move to non operational if vds-vdc version not supported OR cluster
         // version is not supported
         if (!vdsmVersionSupported || !VersionSupport.checkClusterVersionSupported(cluster.getcompatibility_version(), vds)) {
+            Map<String, String> customLogValues = new HashMap<String, String>();
+            customLogValues.put("CompatibilityVersion", getVdsGroup().getcompatibility_version().toString());
+            customLogValues.put("VdsSupportedVersions", getVds().getsupported_cluster_levels());
             SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVdsId(),
-                    NonOperationalReason.VERSION_INCOMPATIBLE_WITH_CLUSTER);
+                            VERSION_INCOMPATIBLE_WITH_CLUSTER,
+                            customLogValues);
             tempVar.setSaveToDb(true);
             Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar);
         }

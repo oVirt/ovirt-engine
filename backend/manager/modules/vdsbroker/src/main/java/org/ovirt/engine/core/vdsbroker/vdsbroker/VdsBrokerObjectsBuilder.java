@@ -1080,9 +1080,6 @@ public class VdsBrokerObjectsBuilder {
                             .getItem("ports") : null);
                     if (ports != null) {
                         for (Object port : ports) {
-                            // LINQ 29456
-                            // Interface iface = vds.Interfaces.FirstOrDefault(i
-                            // => i.name == port);
                             VdsNetworkInterface iface = null;
                             for (VdsNetworkInterface tempInterface : vds.getInterfaces()) {
                                 if (tempInterface.getName().equals(port.toString())) {
@@ -1090,7 +1087,6 @@ public class VdsBrokerObjectsBuilder {
                                     break;
                                 }
                             }
-                            // LINQ 29456
                             if (iface != null) {
                                 iface.setNetworkName(net.getname());
 
@@ -1098,6 +1094,9 @@ public class VdsBrokerObjectsBuilder {
                                     networkVlans.put(net.getname(), currVlans.get(iface.getName()));
                                 }
                                 iface.setAddress(net.getaddr());
+
+                                // ifaces is bridged if it is reported as one of the bridge ports
+                                iface.setBridged(true);
 
                                 // set the management ip
                                 if (StringHelper.EqOp(iface.getNetworkName(), NetworkUtils.EngineNetwork)) {

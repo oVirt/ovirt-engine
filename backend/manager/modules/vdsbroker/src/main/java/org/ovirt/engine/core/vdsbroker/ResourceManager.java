@@ -438,7 +438,13 @@ public class ResourceManager implements IVdsEventListener {
     public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, boolean saveToDb,
             Guid domainId) {
         log.info("ResourceManager:vdsMaintanance - no event listener defined, nothing done.");
+    }
 
+    @Override
+    public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, boolean saveToDb,
+            Guid domainId,
+            Map<String, String> customLogValues) {
+        log.info("ResourceManager:vdsMaintanance - no event listener defined, nothing done.");
     }
 
     @Override

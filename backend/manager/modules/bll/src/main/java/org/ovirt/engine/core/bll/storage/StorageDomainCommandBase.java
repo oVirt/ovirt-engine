@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import static org.ovirt.engine.core.common.businessentities.NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +16,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map_id;
 import org.ovirt.engine.core.common.businessentities.LUNs;
-import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
@@ -253,7 +254,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         runSynchronizeOperation(new RefreshPoolSingleAsyncOperationFactory(), vdsIdsToSetNonOperational);
         for (Guid vdsId : vdsIdsToSetNonOperational) {
             SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(vdsId,
-                    NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE);
+                    STORAGE_DOMAIN_UNREACHABLE);
             tempVar.setSaveToDb(true);
             tempVar.setStorageDomainId(getStorageDomain().getId());
             tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);

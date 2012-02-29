@@ -360,7 +360,7 @@ public class VdsManager {
                                     NonOperationalReason.TIMEOUT_RECOVERING_FROM_CRASH,
                                     true,
                                     true,
-                                    Guid.Empty);
+                                Guid.Empty);
                 setIsSetNonOperationalExecuted(true);
             } catch (RuntimeException exp) {
                 log.errorFormat(
@@ -551,7 +551,7 @@ public class VdsManager {
         if (vdsBrokerCommand.getVDSReturnValue().getSucceeded()) {
 
             VDSStatus returnStatus = vds.getstatus();
-            boolean isSetNonOperational = CollectVdsNetworkDataVDSCommand.UpdateNetworkToDb(vds);
+            boolean isSetNonOperational = CollectVdsNetworkDataVDSCommand.persistAndEnforceNetworkCompliance(vds);
             if (isSetNonOperational) {
                 setIsSetNonOperationalExecuted(true);
             }

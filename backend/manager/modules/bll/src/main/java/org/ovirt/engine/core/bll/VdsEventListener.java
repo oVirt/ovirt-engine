@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.DependsOn;
 import javax.ejb.Local;
@@ -93,9 +94,17 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, boolean saveToDb,
-                                  Guid domainId) {
+            Guid domainId) {
+        vdsNonOperational(vdsId, reason, logCommand, saveToDb, domainId, null);
+    }
+
+    @Override
+    public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, boolean saveToDb,
+            Guid domainId,
+            Map<String, String> customLogValues) {
         ExecutionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintananceVds, false);
-        SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(vdsId, reason);
+        SetNonOperationalVdsParameters tempVar =
+                new SetNonOperationalVdsParameters(vdsId, reason, customLogValues);
         tempVar.setSaveToDb(saveToDb);
         tempVar.setStorageDomainId(domainId);
         tempVar.setShouldBeLogged(logCommand);
