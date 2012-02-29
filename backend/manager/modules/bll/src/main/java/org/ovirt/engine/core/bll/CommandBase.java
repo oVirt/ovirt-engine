@@ -340,29 +340,50 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     public void endActionInTransactionScope() {
+        boolean exceptionOccurred = false;
         try {
             if (getParameters().getTaskGroupSuccess()) {
                 InternalEndSuccessfully();
             } else {
                 InternalEndWithFailure();
             }
+        } catch (RuntimeException e) {
+            exceptionOccurred = true;
+            throw e;
         } finally {
             if (TransactionSupport.current() == null) {
-                cleanUpCompensationData();
+
+                // In the unusual case that we have no current transaction, try to cleanup after yourself and if the
+                // cleanup fails (probably since the transaction is aborted) then try to compensate.
+                try {
+                    cleanUpCompensationData();
+                } catch (RuntimeException e) {
+                    logExceptionAndCompensate(e);
+                }
             } else {
                 try {
-                    if (TransactionSupport.current().getStatus() == Status.STATUS_ACTIVE) {
+                    if (!exceptionOccurred && TransactionSupport.current().getStatus() == Status.STATUS_ACTIVE) {
                         cleanUpCompensationData();
                     } else {
                         compensate();
                     }
                 } catch (SystemException e) {
-                    log.errorFormat("Exception while wrapping-up compensation in endAction: {0}.",
-                            ExceptionUtils.getMessage(e), e);
-                    compensate();
+                    logExceptionAndCompensate(e);
                 }
             }
         }
+    }
+
+    /**
+     * Log the exception & call compensate.
+     *
+     * @param e
+     *            The exception to log.
+     */
+    protected void logExceptionAndCompensate(Exception e) {
+        log.errorFormat("Exception while wrapping-up compensation in endAction: {0}.",
+                ExceptionUtils.getMessage(e), e);
+        compensate();
     }
 
     private void InternalEndSuccessfully() {
