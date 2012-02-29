@@ -58,6 +58,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 opts.put("mtu", String.valueOf(net.getMtu()));
             }
 
+            opts.put("bridged", Boolean.toString(net.isVmNetwork()));
             networks.add(net.getname(), opts);
         }
 
