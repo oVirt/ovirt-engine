@@ -19,7 +19,7 @@ BEGIN
       end if;
       if (v_new_num_of_monitors > v_old_num_of_monitors) then
 
-           -- set device memmory according to number of monitors
+           -- set device memory according to number of monitors
            if (v_new_num_of_monitors <= 2) then
                v_display_mem := 'vram=65536';
             else
@@ -104,13 +104,13 @@ BEGIN
             perform set_vm_device_boot_order_03_01_0560(v_vm_id, 'interface', 'bridge');
             perform set_vm_device_boot_order_03_01_0560(v_vm_id, 'disk', 'disk');
         when 6 then  -- DNC
+            perform set_vm_device_boot_order_03_01_0560(v_vm_id, 'disk', 'cdrom');
             perform set_vm_device_boot_order_03_01_0560(v_vm_id, 'interface', 'bridge');
             perform set_vm_device_boot_order_03_01_0560(v_vm_id, 'disk', 'disk');
-            perform set_vm_device_boot_order_03_01_0560(v_vm_id, 'disk', 'cdrom');
         when 7 then  -- NCD
             perform set_vm_device_boot_order_03_01_0560(v_vm_id, 'interface', 'bridge');
-            perform set_vm_device_boot_order_03_01_0560(v_vm_id, 'disk', 'cdrom');
             perform set_vm_device_boot_order_03_01_0560(v_vm_id, 'disk', 'disk');
+            perform set_vm_device_boot_order_03_01_0560(v_vm_id, 'disk', 'cdrom');
         when 8 then  -- NDC
             perform set_vm_device_boot_order_03_01_0560(v_vm_id, 'interface', 'bridge');
             perform set_vm_device_boot_order_03_01_0560(v_vm_id, 'disk', 'cdrom');
