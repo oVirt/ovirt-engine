@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.compat.Guid;
@@ -61,7 +62,7 @@ public class SetupNetworksHelper {
 
         Map<String, VdsNetworkInterface> ifaces = interfacesToMap(params.getInterfaces());
         Map<String, VdsNetworkInterface> existingIfaces = extractExistingInterfaceNames();
-        Map<String, network> clusterNetworksMap = clusterNetworksToMap(clusterNetworks);
+        Map<String, network> clusterNetworksMap = Entities.entitiesByName(clusterNetworks);
         // key = bond name, value = interface
         Map<String, VdsNetworkInterface> bonds = new HashMap<String, VdsNetworkInterface>();
         // key = master bond name, value = list of interfaces
@@ -254,14 +255,6 @@ public class SetupNetworksHelper {
             }
         }
         return new ArrayList<network>(removedNetworks.values());
-    }
-
-    private Map<String, network> clusterNetworksToMap(List<network> clusterNetworks) {
-        Map<String, network> map = new HashMap<String, network>();
-        for (network net: clusterNetworks) {
-            map.put(net.getname(), net);
-        }
-        return map;
     }
 
     public List<VdcBllMessages> getViolations() {
