@@ -1,25 +1,12 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "CreateSnapshotFromTemplateParameters")
-public class CreateSnapshotFromTemplateParameters extends ImagesActionsParametersBase implements java.io.Serializable {
+public class CreateSnapshotFromTemplateParameters extends ImagesActionsParametersBase {
     private static final long serialVersionUID = -3841623510039174546L;
-    @XmlElement(name = "VmId")
-    private Guid privateVmId = new Guid();
 
-    public Guid getVmId() {
-        return privateVmId;
-    }
-
-    private void setVmId(Guid value) {
-        privateVmId = value;
-    }
+    private Guid privateVmId = Guid.Empty;
+    private Guid destSorageDomainId;
 
     public CreateSnapshotFromTemplateParameters(Guid imageId, Guid vmId) {
         super(imageId);
@@ -27,5 +14,21 @@ public class CreateSnapshotFromTemplateParameters extends ImagesActionsParameter
     }
 
     public CreateSnapshotFromTemplateParameters() {
+    }
+
+    public void setDestSorageDomainId(Guid destSorageDomainId) {
+        this.destSorageDomainId = destSorageDomainId;
+    }
+
+    public Guid getDestSorageDomainId() {
+        return destSorageDomainId;
+    }
+
+    public Guid getVmId() {
+        return privateVmId;
+    }
+
+    private void setVmId(Guid value) {
+        privateVmId = value;
     }
 }

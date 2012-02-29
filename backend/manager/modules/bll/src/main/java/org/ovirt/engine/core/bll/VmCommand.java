@@ -401,8 +401,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return permissionList;
     }
 
-    protected int getNeededDiskSize() {
-        return getBlockSparseInitSizeInGB() * getVmTemplate().getDiskMap().size();
+    protected int getNeededDiskSize(int count) {
+        return getBlockSparseInitSizeInGB() * count;
     }
 
     protected int getBlockSparseInitSizeInGB() {

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +72,7 @@ public class VmHandler {
      *            The vm template id.
      * @return
      */
-    public static boolean VerifyAddVm(java.util.ArrayList<String> reasons,
+    public static boolean VerifyAddVm(ArrayList<String> reasons,
                                       int vmsCount,
                                       VmTemplate vmTemplate,
                                       Guid storagePoolId,
@@ -94,7 +95,7 @@ public class VmHandler {
                     returnValue = false;
                 } else if (checkVmTemplateImages) {
                     returnValue = VmTemplateCommand.isVmTemplateImagesReady(vmTemplate, storageDomainId,
-                            reasons, true, checkTemplateLock, true, true);
+                            reasons, true, checkTemplateLock, true, true, null);
                 }
             } else {
                 if (reasons != null) {

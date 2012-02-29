@@ -73,7 +73,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
                                                   boolean checkImagesExists,
                                                   boolean checkLocked,
                                                   boolean checkIllegal,
-                                                  boolean checkStorageDomain) {
+                                                  boolean checkStorageDomain, List<DiskImage> providedVmtImages) {
         boolean returnValue = true;
         if (checkStorageDomain) {
             StorageDomainValidator storageDomainValidator =
@@ -82,7 +82,12 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             returnValue = storageDomainValidator.isDomainExistAndActive(reasons);
         }
         if (returnValue && checkImagesExists) {
-            List<DiskImage> vmtImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmTemplate.getId());
+            List<DiskImage> vmtImages;
+            if (providedVmtImages == null) {
+                vmtImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmTemplate.getId());
+            } else {
+                vmtImages = providedVmtImages;
+            }
             if (vmtImages.size() > 0
                     && !ImagesHandler.isImagesExists(vmtImages, vmtImages.get(0).getstorage_pool_id().getValue(),
                             storageDomainId)) {

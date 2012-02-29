@@ -96,7 +96,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         ArrayList<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
         for (Guid domainId : getParameters().getStorageDomainsList()) {
             if (!isVmTemplateImagesReady(getVmTemplate(), domainId,
-                        canDoActionMessages, getParameters().getCheckDisksExists(), true, false, true)) {
+                        canDoActionMessages, getParameters().getCheckDisksExists(), true, false, true, null)) {
                 return false;
             }
         }

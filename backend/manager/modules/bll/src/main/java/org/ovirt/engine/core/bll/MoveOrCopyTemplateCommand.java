@@ -119,7 +119,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             }
             retValue = retValue
                     && VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), getSourceDomain().getId(),
-                            getReturnValue().getCanDoActionMessages(), true, true, true, false);
+                            getReturnValue().getCanDoActionMessages(), true, true, true, false, null);
             if (retValue) {
                 setStoragePoolId(getVmTemplate().getstorage_pool_id());
                 retValue =

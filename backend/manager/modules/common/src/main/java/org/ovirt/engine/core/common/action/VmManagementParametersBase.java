@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.HashMap;
+
 import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -15,6 +17,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private boolean makeCreatorExplicitOwner;
     private Guid privateStorageDomainId = Guid.Empty;
     private boolean privateDontCheckTemplateImages;
+    private HashMap<Guid, Guid> imageToDestinationDomainMap;
 
     public VmManagementParametersBase() {
     }
@@ -78,6 +81,14 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
 
     public boolean isMakeCreatorExplicitOwner() {
         return makeCreatorExplicitOwner;
+    }
+
+    public void setImageToDestinationDomainMap(HashMap<Guid, Guid> imageToDestinationDomainMap) {
+        this.imageToDestinationDomainMap = imageToDestinationDomainMap;
+    }
+
+    public HashMap<Guid, Guid> getImageToDestinationDomainMap() {
+        return imageToDestinationDomainMap;
     }
 
 }

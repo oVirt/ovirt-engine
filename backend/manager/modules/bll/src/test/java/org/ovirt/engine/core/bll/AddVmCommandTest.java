@@ -161,7 +161,7 @@ public class AddVmCommandTest {
         final int sizeRequired = 5;
         final int pctRequired = 10;
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired, pctRequired);
-        assertTrue("vm could not be added", cmd.CanAddVm(new Object(), reasons));
+        assertTrue("vm could not be added", cmd.CanAddVm(reasons));
     }
 
     @Test
@@ -171,7 +171,7 @@ public class AddVmCommandTest {
         final int pctRequired = 0;
         final int domainSizeGB = 4;
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired, pctRequired);
-        assertFalse("vm could not be added", cmd.CanAddVm(new Object(), reasons));
+        assertFalse("vm could not be added", cmd.CanAddVm(reasons));
         assertTrue("canDoAction failed for the wrong reason",
                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
@@ -183,7 +183,7 @@ public class AddVmCommandTest {
         final int pctRequired = 95;
         final int domainSizeGB = 10;
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired, pctRequired);
-        assertFalse("vm could not be added", cmd.CanAddVm(new Object(), reasons));
+        assertFalse("vm could not be added", cmd.CanAddVm(reasons));
         assertTrue("canDoAction failed for the wrong reason",
                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
@@ -199,7 +199,7 @@ public class AddVmCommandTest {
         // Adding 10 disks, which each one should consume the default sparse size (which is 1GB).
         setNewDisksForTemplate(10, cmd.getVmTemplate().getDiskMap());
         doReturn(createVmTemplate()).when(cmd).getVmTemplate();
-        assertFalse("Thin vm could not be added due to storage sufficient", cmd.CanAddVm(new Object(), reasons));
+        assertFalse("Thin vm could not be added due to storage sufficient", cmd.CanAddVm(reasons));
         assertTrue("canDoAction failed for insufficient disk size",
                  reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
@@ -215,7 +215,7 @@ public class AddVmCommandTest {
 
         // Set new Disk Image map with 3GB.
         setNewImageDiskMapForTemplate(new Long("3000000000"), cmd.getVmTemplate().getDiskImageMap());
-        assertFalse("Clone vm could not be added due to storage sufficient", cmd.CanAddVm(new Object(), reasons));
+        assertFalse("Clone vm could not be added due to storage sufficient", cmd.CanAddVm(reasons));
         assertTrue("canDoAction failed for insufficient disk size",
                  reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
@@ -228,7 +228,7 @@ public class AddVmCommandTest {
         final int pctRequired = 53;
         AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = setupCanAddVmFromTemplateTests(domainSizeGB, sizeRequired, pctRequired);
         setNewImageDiskMapForTemplate(new Long("3000000000"), cmd.getVmTemplate().getDiskImageMap());
-        assertFalse("Thin vm could not be added due to storage sufficient", cmd.CanAddVm(new Object(), reasons));
+        assertFalse("Thin vm could not be added due to storage sufficient", cmd.CanAddVm(reasons));
         assertTrue("canDoAction failed for insufficient disk size",
                  reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
