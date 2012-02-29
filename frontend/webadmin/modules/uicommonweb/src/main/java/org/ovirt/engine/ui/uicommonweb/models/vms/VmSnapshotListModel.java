@@ -900,7 +900,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         getCanSelectSnapshot().setEntity(!isPreviewing && !isVmImageLocked);
 
-        getNewCommand().setIsExecutionAllowed(!isPreviewing && isVmDown);
+        getNewCommand().setIsExecutionAllowed(!isPreviewing && !isVmImageLocked);
 
         getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDown);
 
