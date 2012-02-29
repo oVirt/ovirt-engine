@@ -262,9 +262,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
         if (retVal) {
             Map<storage_domains, Integer> domainMap = getSpaceRequirementsForStorageDomains(imageList);
-            if (domainMap.isEmpty()) {
-                domainMap.put(getStorageDomain(), (int) getVm().getDiskSize());
-            }
 
             for (Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
                 retVal = StorageDomainSpaceChecker.hasSpaceForRequest(entry.getKey(), entry.getValue());

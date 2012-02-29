@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.action;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.Guid;
@@ -16,8 +15,7 @@ public class VmOperationParameterBase extends VdcActionParametersBase implements
     public VmOperationParameterBase() {
     }
 
-    @XmlElement(name = "VmId")
-    private Guid _vmId = new Guid();
+    private Guid _vmId = Guid.Empty;
 
     public VmOperationParameterBase(Guid vmId) {
         _vmId = vmId;

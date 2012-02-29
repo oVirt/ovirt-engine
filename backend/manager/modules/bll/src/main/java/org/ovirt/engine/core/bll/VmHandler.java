@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -65,13 +66,13 @@ public class VmHandler {
      *            The reasons.
      * @param vmsCount
      *            The VMS count.
-     * @param vmTemplateId
+     * @param vmTemplate
      *            The vm template id.
      * @return
      */
     public static boolean VerifyAddVm(java.util.ArrayList<String> reasons,
                                       int vmsCount,
-                                      Object vmTemplateId,
+                                      VmTemplate vmTemplate,
                                       Guid storagePoolId,
                                       Guid storageDomainId,
                                       boolean checkVmTemplateImages,
@@ -91,7 +92,7 @@ public class VmHandler {
                 if (!VmTemplateCommand.IsVmPriorityValueLegal(vmPriority, reasons)) {
                     returnValue = false;
                 } else if (checkVmTemplateImages) {
-                    returnValue = VmTemplateCommand.isVmTemplateImagesReady((Guid) vmTemplateId, storageDomainId,
+                    returnValue = VmTemplateCommand.isVmTemplateImagesReady(vmTemplate, storageDomainId,
                             reasons, true, checkTemplateLock, true, true);
                 }
             } else {

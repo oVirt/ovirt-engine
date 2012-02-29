@@ -124,7 +124,7 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         when(VmHandler.VerifyAddVm(
                         Matchers.<ArrayList> any(ArrayList.class),
                         anyInt(),
-                        Matchers.<Object> anyObject(),
+                        Matchers.<VmTemplate> anyObject(),
                         Matchers.<Guid> any(Guid.class),
                         Matchers.<Guid> any(Guid.class),
                         anyBoolean(),

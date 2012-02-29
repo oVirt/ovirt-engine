@@ -118,7 +118,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                 retValue = false;
             }
             retValue = retValue
-                    && VmTemplateCommand.isVmTemplateImagesReady(getVmTemplateId(), getSourceDomain().getId(),
+                    && VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), getSourceDomain().getId(),
                             getReturnValue().getCanDoActionMessages(), true, true, true, false);
             if (retValue) {
                 setStoragePoolId(getVmTemplate().getstorage_pool_id());
@@ -308,9 +308,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         if (imageToDestinationDomainMap.isEmpty() && images != null && defaultDomainId != null
                 && !Guid.Empty.equals(defaultDomainId)) {
             for (DiskImage image : images) {
-                if (imageToDestinationDomainMap.get(image.getId()) == null) {
-                    imageToDestinationDomainMap.put(image.getId(), defaultDomainId);
-                }
+                imageToDestinationDomainMap.put(image.getId(), defaultDomainId);
             }
         }
     }

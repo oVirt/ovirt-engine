@@ -1,28 +1,23 @@
 package org.ovirt.engine.core.common.action;
 
 import javax.validation.Valid;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VmManagementParametersBase")
-public class VmManagementParametersBase extends VmOperationParameterBase implements java.io.Serializable {
-    private static final long serialVersionUID = -7695630335738521510L;
+public class VmManagementParametersBase extends VmOperationParameterBase {
 
-    public VmManagementParametersBase() {
-    }
+    private static final long serialVersionUID = -7695630335738521510L;
 
     @Valid
     private VmStatic _vmStatic;
-
-    @XmlElement(name = "MakeCreatorExplicitOwner")
     private boolean makeCreatorExplicitOwner;
+    private Guid privateStorageDomainId = Guid.Empty;
+    private boolean privateDontCheckTemplateImages;
+
+    public VmManagementParametersBase() {
+    }
 
     public VmManagementParametersBase(VmStatic vmStatic) {
         super(vmStatic.getId());
@@ -41,9 +36,6 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
         _vmStatic = value;
     }
 
-    @XmlElement(name = "StorageDomainId")
-    private Guid privateStorageDomainId = new Guid();
-
     public Guid getStorageDomainId() {
         return privateStorageDomainId;
     }
@@ -51,9 +43,6 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     public void setStorageDomainId(Guid value) {
         privateStorageDomainId = value;
     }
-
-    @XmlElement(name = "DontCheckTemplateImages")
-    private boolean privateDontCheckTemplateImages;
 
     public boolean getDontCheckTemplateImages() {
         return privateDontCheckTemplateImages;
@@ -73,7 +62,6 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
         privateDontAttachToDefaultTag = value;
     }
 
-    @XmlElement(name = "_vm")
     public VM getVm() {
         VM vm = new VM();
         vm.setStaticData(_vmStatic);

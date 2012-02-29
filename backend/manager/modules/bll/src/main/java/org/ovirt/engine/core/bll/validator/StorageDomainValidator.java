@@ -8,24 +8,14 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class StorageDomainValidator {
 
     private storage_domains storageDomain;
 
-    public StorageDomainValidator(Guid storageDomainId) {
-        storageDomain = getStorageDomain(storageDomainId);
-    }
-
     public StorageDomainValidator(storage_domains domain) {
         storageDomain = domain;
-    }
-
-    private storage_domains getStorageDomain(Guid storageDomainId) {
-        return DbFacade.getInstance().getStorageDomainDAO().get(storageDomainId);
     }
 
     public boolean isDomainExistAndActive(List<String> messages) {

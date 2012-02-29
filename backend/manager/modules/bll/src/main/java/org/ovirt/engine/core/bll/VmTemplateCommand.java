@@ -3,16 +3,15 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -68,7 +67,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         return list.size() > 0;
     }
 
-    public static boolean isVmTemplateImagesReady(Guid vmTemplateId,
+    public static boolean isVmTemplateImagesReady(VmTemplate vmTemplate,
                                                   Guid storageDomainId,
                                                   java.util.ArrayList<String> reasons,
                                                   boolean checkImagesExists,
@@ -76,20 +75,14 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
                                                   boolean checkIllegal,
                                                   boolean checkStorageDomain) {
         boolean returnValue = true;
-        VmTemplate vmTemplate = DbFacade.getInstance().getVmTemplateDAO().get(vmTemplateId);
         if (checkStorageDomain) {
-            storage_domains storageDomain = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
-                    storageDomainId, vmTemplate.getstorage_pool_id());
-            if (storageDomain == null) {
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST.toString());
-                returnValue = false;
-            } else if (storageDomain.getstatus() == null || storageDomain.getstatus() != StorageDomainStatus.Active) {
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString());
-                returnValue = false;
-            }
+            StorageDomainValidator storageDomainValidator =
+                    new StorageDomainValidator(DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
+                            storageDomainId, vmTemplate.getstorage_pool_id()));
+            returnValue = storageDomainValidator.isDomainExistAndActive(reasons);
         }
         if (returnValue && checkImagesExists) {
-            List<DiskImage> vmtImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmTemplateId);
+            List<DiskImage> vmtImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmTemplate.getId());
             if (vmtImages.size() > 0
                     && !ImagesHandler.isImagesExists(vmtImages, vmtImages.get(0).getstorage_pool_id().getValue(),
                             storageDomainId)) {

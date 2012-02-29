@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -159,9 +160,9 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         return commandCtx;
     }
 
-    public static boolean CanAddVmPoolWithVms(Object vmTemplateId, java.util.ArrayList<String> reasons, int vmsCount,
+    public static boolean CanAddVmPoolWithVms(VmTemplate vmTemplate, ArrayList<String> reasons, int vmsCount,
                                               Guid storagePoolId, Guid storageDomainId, int vmPriority) {
-        return VmHandler.VerifyAddVm(reasons, vmsCount, vmTemplateId, storagePoolId, storageDomainId,
+        return VmHandler.VerifyAddVm(reasons, vmsCount, vmTemplate, storagePoolId, storageDomainId,
                 true, true, vmPriority);
     }
 
@@ -215,7 +216,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return false;
         }
 
-        if (!CanAddVmPoolWithVms(getParameters().getVmStaticData().getvmt_guid(), getReturnValue()
+        if (!CanAddVmPoolWithVms(getVmTemplate(), getReturnValue()
                         .getCanDoActionMessages(), getParameters().getVmsCount(), grp.getstorage_pool_id()
                         .getValue(), getStorageDomainId().getValue(), getParameters().getVmStaticData()
                         .getpriority())) {

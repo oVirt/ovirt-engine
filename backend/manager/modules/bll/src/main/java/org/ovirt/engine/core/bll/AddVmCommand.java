@@ -48,8 +48,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.All;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
@@ -61,8 +59,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     public AddVmCommand(T parameters) {
         super(parameters);
         // if we came from EndAction the VmId is not null
-        super.setVmId((parameters.getVmId().equals(Guid.Empty)) ? Guid.NewGuid() : parameters.getVmId());
-        parameters.setVmId(super.getVmId());
+        setVmId((parameters.getVmId().equals(Guid.Empty)) ? Guid.NewGuid() : parameters.getVmId());
+        parameters.setVmId(getVmId());
         setVmTemplateId(parameters.getVmStaticData().getvmt_guid());
 
         if (getVmTemplate() != null) {
@@ -111,8 +109,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         Guid selectedDomainId = Guid.Empty;
         if (vmTemplate != null && vmTemplate.getDiskMap().size() > 0) {
             int size = -1;
-            // DiskImage disk = null; // LINQ
-            // DbFacade.Instance.GetSnapshotById(vmTemplate.DiskMap.Values.First().image_guid);
             DiskImage disk = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(
                     LinqUtils.firstOrNull(vmTemplate.getDiskMap().values(), new All<DiskImage>())
                             .getId());
@@ -143,7 +139,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     private Guid _vmSnapshotId = Guid.Empty;
 
     protected Guid getVmSnapshotId() {
-        if (_vmSnapshotId.equals(Guid.Empty)) {
+        if (Guid.Empty.equals(_vmSnapshotId)) {
             _vmSnapshotId = Guid.NewGuid();
         }
         return _vmSnapshotId;
@@ -156,7 +152,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             _vmInterfaces =
                     ((DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(getVmTemplate().getId())) != null) ? DbFacade
                             .getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(getVmTemplate().getId())
-                            : new java.util.ArrayList<VmNetworkInterface>();
+                            : new ArrayList<VmNetworkInterface>();
         }
         return _vmInterfaces;
     }
@@ -165,10 +161,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected List<DiskImageBase> getVmDisks() {
         if (_vmDisks == null) {
-            // LINQ 29456
-            // _vmDisks =
-            // DbFacade.Instance.getImageTemplateByVmt(VmTemplateId).Select(a =>
-            // (DiskImageBase)DbFacade.Instance.GetSnapshotById(a.image_guid)).ToList();
             _vmDisks =
                     LinqUtils.foreach(DbFacade.getInstance()
                             .getDiskImageDAO()
@@ -186,13 +178,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return _vmDisks;
     }
 
-    public boolean CanAddVm(Object vmTemplateId, java.util.ArrayList<String> reasons) {
+    public boolean CanAddVm(Object vmTemplateId, ArrayList<String> reasons) {
         VmStatic vmStaticFromParams = getParameters().getVmStaticData();
-        boolean returnValue = CanAddVm(vmTemplateId, reasons, 1, vmStaticFromParams.getvm_name(), getStoragePoolId()
+        boolean returnValue = CanAddVm(reasons, 1, vmStaticFromParams.getvm_name(), getStoragePoolId()
                 .getValue(), vmStaticFromParams.getpriority());
         // check that template image and vm are on the same storage pool
-        // LINQ && VmTemplate.DiskMap.Values.First().image_guid !=
-        // VmTemplateHandler.BlankVmTemplateId)
 
         if (returnValue) {
             List<ValidationError> validationErrors = VmPropertiesUtils.validateVMProperties(vmStaticFromParams);
@@ -215,8 +205,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH.toString());
                 returnValue = false;
             } else if (domain.getStorageDynamicData() != null) {
-                // populate template disks for domain size check
-                VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
                 returnValue =
                         StorageDomainSpaceChecker.hasSpaceForRequest(domain, getNeededDiskSize());
                 if (!returnValue)
@@ -319,8 +307,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
 
         if (returnValue && Config.<Boolean> GetValue(ConfigValues.LimitNumberOfNetworkInterfaces,
-                                        getVdsGroup().getcompatibility_version().toString()))
-        {
+                                        getVdsGroup().getcompatibility_version().toString())) {
             // check that we have no more then 8 interfaces (kvm limitation in version 2.x)
             if (!validateNumberOfNics(getVmInterfaces(), null)) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_EXITED_MAX_INTERFACES);
@@ -328,13 +315,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
         }
 
-        if (returnValue) {
-            returnValue = AddVmCommand.CheckCpuSockets(getParameters().getVmStaticData().getnum_of_sockets(),
+        return returnValue && AddVmCommand.CheckCpuSockets(getParameters().getVmStaticData().getnum_of_sockets(),
                     getParameters().getVmStaticData().getcpu_per_socket(), getVdsGroup().getcompatibility_version()
                             .toString(), getReturnValue().getCanDoActionMessages());
-        }
-
-        return returnValue;
     }
 
     @Override
@@ -358,7 +341,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return true;
     }
 
-    public boolean CanAddVm(Object vmTemplateId, java.util.ArrayList<String> reasons, int vmsCount, String name,
+    public boolean CanAddVm(ArrayList<String> reasons, int vmsCount, String name,
                             Guid storagePoolId, int vmPriority) {
         boolean returnValue;
         // Checking if a desktop with same name already exists
@@ -376,7 +359,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
         boolean checkTemplateLock = getParameters().getParentCommand() == VdcActionType.AddVmPoolWithVms ? false : true;
 
-        returnValue = VmHandler.VerifyAddVm(reasons, vmsCount, vmTemplateId, storagePoolId, getStorageDomainId()
+        returnValue = VmHandler.VerifyAddVm(reasons, vmsCount, getVmTemplate(), storagePoolId, getStorageDomainId()
                 .getValue(), !getParameters().getDontCheckTemplateImages(), checkTemplateLock, vmPriority);
 
         return returnValue;
@@ -531,7 +514,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                  * if couldnt create snapshot then stop the transaction and the command
                  */
                 if (!result.getSucceeded()) {
-                    throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
+                    throw new VdcBLLException(result.getFault().getError());
                 } else {
                     getTaskIdList().addAll(result.getInternalTaskIdList());
                 }
@@ -580,8 +563,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
         RemoveVmUsers();
         RemoveVmNetwork();
-        // \\RemoveVmStatistics();
-        // \\RemoveVmDynamic();
         RemoveVmStatic();
 
         setSucceeded(true);
@@ -603,6 +584,4 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             MultiLevelAdministrationHandler.addPermission(perms);
         }
     }
-
-    private static Log log = LogFactory.getLog(AddVmCommand.class);
 }

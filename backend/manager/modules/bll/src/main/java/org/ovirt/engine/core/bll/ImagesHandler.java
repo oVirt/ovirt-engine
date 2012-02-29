@@ -5,10 +5,10 @@ import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -218,16 +218,10 @@ public final class ImagesHandler {
                 messages.add(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND.toString());
             }
         } else if (checkStorageDomain) {
-            storage_domains storageDomain = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
-                    storageDomainId, storagePoolId);
-            if (storageDomain == null) {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST.toString());
-                returnValue = false;
-            } else if (storageDomain.getstatus() == null
-                    || storageDomain.getstatus() != StorageDomainStatus.Active) {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString());
-                returnValue = false;
-            }
+            StorageDomainValidator storageDomainValidator =
+                    new StorageDomainValidator(DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
+                            storageDomainId, storagePoolId));
+            returnValue = storageDomainValidator.isDomainExistAndActive(messages);
         }
 
         VmDynamic vm = DbFacade.getInstance().getVmDynamicDAO().get(vmGuid);

@@ -95,7 +95,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         // check template images for selected domains
         ArrayList<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
         for (Guid domainId : getParameters().getStorageDomainsList()) {
-            if (!isVmTemplateImagesReady(vmTemplateId, domainId,
+            if (!isVmTemplateImagesReady(getVmTemplate(), domainId,
                         canDoActionMessages, getParameters().getCheckDisksExists(), true, false, true)) {
                 return false;
             }

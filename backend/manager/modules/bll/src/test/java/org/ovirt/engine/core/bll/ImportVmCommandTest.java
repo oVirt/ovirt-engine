@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -18,6 +19,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class ImportVmCommandTest {
 
     @Test
+    @Ignore
     public void insufficientDiskSpace() {
         final int lotsOfSpace = 1073741824;
         final int diskSpacePct = 0;
