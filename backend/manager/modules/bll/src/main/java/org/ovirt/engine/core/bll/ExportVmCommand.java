@@ -241,13 +241,11 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         for (VM vm : vmsList) {
             java.util.ArrayList<DiskImage> AllVmImages = new java.util.ArrayList<DiskImage>();
             VmHandler.updateDisksFromDb(vm);
-            if (vm.getInterfaces() == null) {
+            List<VmNetworkInterface> interfaces = vm.getInterfaces();
+            if (interfaces != null) {
                 // TODO remove this when the API changes
-               vm.getInterfaces().clear();
-                for(VmNetworkInterface iface: DbFacade.getInstance().getVmNetworkInterfaceDAO()
-                        .getAllForVm(vm.getId())) {
-                    vm.getInterfaces().add(iface);
-                }
+                interfaces.clear();
+                interfaces.addAll(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
             }
             for (DiskImage disk : vm.getDiskMap().values()) {
                 disk.setParentId(VmTemplateHandler.BlankVmTemplateId);
