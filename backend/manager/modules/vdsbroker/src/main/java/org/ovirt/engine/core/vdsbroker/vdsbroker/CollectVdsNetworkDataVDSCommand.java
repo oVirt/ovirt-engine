@@ -6,7 +6,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
@@ -36,7 +35,6 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
     // in this case we need to set the vds to non-operational
     public static boolean UpdateNetworkToDb(VDS vds) {
         boolean returnValue = false;
-        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDAO().get(vds.getvds_group_id());
         List<VdsNetworkInterface> dbIfaces = DbFacade.getInstance().getInterfaceDAO().getAllInterfacesForVds(vds.getId());
         List<String> updatedIfaces = new ArrayList<String>();
 
@@ -70,6 +68,26 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
         }
 
         // here we check if the vds networks match it's cluster networks
+        if (vds.getstatus() != VDSStatus.Maintenance && hostIsMissingClusterNetworks(vds)) {
+            setNonOperationl(vds, NonOperationalReason.NETWORK_UNREACHABLE);
+            returnValue = true;
+        }
+
+        return returnValue;
+    }
+
+    private static void setNonOperationl(VDS vds, NonOperationalReason reason) {
+        ResourceManager.getInstance()
+                .getEventListener()
+                .vdsNonOperational(vds.getId(),
+                        reason,
+                        true,
+                        true,
+                        Guid.Empty);
+    }
+
+    private static boolean hostIsMissingClusterNetworks(VDS vds) {
+        boolean returnValue = false;
         boolean hasChanges = false;
         List<network> clusterNetworks = DbFacade.getInstance().getNetworkDAO()
                 .getAllForCluster(vds.getvds_group_id());
