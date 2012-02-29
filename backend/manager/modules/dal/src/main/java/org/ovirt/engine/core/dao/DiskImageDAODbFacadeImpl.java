@@ -306,6 +306,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setappList(rs.getString("app_list"));
             entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
                     .getString("storage_id")))));
+            entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
             entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
                     .getString("vm_snapshot_id")));
             entity.setvolume_type(VolumeType.forValue(rs
