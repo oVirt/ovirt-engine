@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "NetworkInterface")
 public abstract class NetworkInterface<T extends NetworkStatistics> extends IVdcQueryable
-        implements BusinessEntity<Guid> {
+        implements BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = -4926026587466645571L;
 
     @XmlElement(name = "Id")
@@ -85,6 +85,7 @@ public abstract class NetworkInterface<T extends NetworkStatistics> extends IVdc
      *
      * @return the name
      */
+    @Override
     public String getName() {
         return name;
     }
