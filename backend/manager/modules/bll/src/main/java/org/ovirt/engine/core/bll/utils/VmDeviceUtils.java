@@ -62,47 +62,50 @@ public class VmDeviceUtils {
      * @param srcId
      * @param dstId
      */
-    public static  void copyVmDevices(Guid srcId, Guid dstId) {
+    public static void copyVmDevices(Guid srcId, Guid dstId) {
         Guid id;
-        VmBase VmBase = DbFacade.getInstance().getVmStaticDAO().get(dstId);
+        VmBase vmBase = DbFacade.getInstance().getVmStaticDAO().get(dstId);
         List<DiskImage> disks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(dstId);
         List<VmNetworkInterface> ifaces;
-        int diskCount=0;
-        int ifaceCount=0;
-        boolean isVm = (VmBase != null);
+        int diskCount = 0;
+        int ifaceCount = 0;
+        boolean isVm = (vmBase != null);
         if (isVm) {
             ifaces = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(dstId);
-        }
-        else {
+        } else {
+            vmBase = DbFacade.getInstance().getVmTemplateDAO().get(dstId);
             ifaces = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(dstId);
         }
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
         for (VmDevice device : devices) {
             id = Guid.NewGuid();
+            String specParams = "";
             if (srcId.equals(Guid.Empty)) {
                 // only update number of monitors if this is a desktop
-                if (VmBase.getvm_type() == VmType.Desktop) {
-                    updateNumOfMonitorsInVmDevice(null, VmBase);
+                if (vmBase.getvm_type() == VmType.Desktop) {
+                    updateNumOfMonitorsInVmDevice(null, vmBase);
                 }
                 continue; // skip Blank template devices
             }
-            if (device.getType().equalsIgnoreCase(VmDeviceType.DISK.name()) && device.getDevice().equalsIgnoreCase(VmDeviceType.DISK.name())) {
+            if (VmDeviceType.DISK.getName().equals(device.getType())
+                    && VmDeviceType.DISK.getName().equals(device.getDevice())) {
                 if (diskCount < disks.size()) {
                     id = (disks.get(diskCount++)).getimage_group_id();
                 }
-            }
-            else if (device.getType().equalsIgnoreCase(VmDeviceType.INTERFACE.name())) {
+            } else if (VmDeviceType.INTERFACE.getName().equals(device.getType())) {
                 if (ifaceCount < ifaces.size()) {
                     id = ifaces.get(ifaceCount++).getId();
                 }
+            } else if (VmDeviceType.VIDEO.getName().equals(device.getType())) {
+                specParams = getMemExpr(vmBase.getnum_of_monitors());
             }
             device.setId(new VmDeviceId(id, dstId));
-            device.setSpecParams(appendDeviceIdToSpecParams(id, ""));
+            device.setSpecParams(appendDeviceIdToSpecParams(id, specParams));
             dao.save(device);
         }
         // if destination is a VM , update devices boot order
         if (isVm) {
-            updateBootOrderInVmDevice(VmBase);
+            updateBootOrderInVmDevice(vmBase);
         }
     }
 
@@ -379,18 +382,13 @@ public class VmDeviceUtils {
             prevNumOfMonitors = oldVmBase.getnum_of_monitors();
         }
         if (newStatic.getnum_of_monitors() > prevNumOfMonitors) {
-            Guid newId = Guid.NewGuid();
-            String mem = (newStatic.getnum_of_monitors() > 2 ? LOW_VIDEO_MEM
-                    : HIGH_VIDEO_MEM);
-            StringBuilder sb = new StringBuilder();
-            sb.append(VRAM);
-            sb.append("=");
-            sb.append(mem);
-            sb = new StringBuilder(appendDeviceIdToSpecParams(newId, sb.toString()));
             // monitors were added
             for (int i = prevNumOfMonitors; i < newStatic
                     .getnum_of_monitors(); i++) {
-                VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), newStatic.getId()),
+                Guid newId = Guid.NewGuid();
+                StringBuilder sb =
+                        new StringBuilder(appendDeviceIdToSpecParams(newId, getMemExpr(newStatic.getnum_of_monitors())));
+                VmDeviceUtils.addManagedDevice(new VmDeviceId(newId, newStatic.getId()),
                         VmDeviceType.VIDEO,
                         VmDeviceType.QXL,
                         sb.toString(),
@@ -458,5 +456,21 @@ public class VmDeviceUtils {
             String specParams = appendDeviceIdToSpecParams(deviceId, "");
             addManagedDevice(new VmDeviceId(deviceId,id) , VmDeviceType.INTERFACE, VmDeviceType.BRIDGE, specParams, true, false);
         }
+    }
+
+    /**
+     * gets Monitor memory expression
+     *
+     * @param numOfMonitors
+     *            Number of monitors
+     * @return
+     */
+    private static String getMemExpr(int numOfMonitors) {
+        String mem = (numOfMonitors > 2 ? LOW_VIDEO_MEM : HIGH_VIDEO_MEM);
+        StringBuilder sb = new StringBuilder();
+        sb.append(VRAM);
+        sb.append("=");
+        sb.append(mem);
+        return sb.toString();
     }
 }
