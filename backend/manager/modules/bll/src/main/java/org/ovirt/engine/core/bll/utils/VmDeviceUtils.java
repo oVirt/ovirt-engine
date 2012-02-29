@@ -346,6 +346,7 @@ public class VmDeviceUtils {
      * @return
      */
     private static int setDiskBootOrder(List<VmDevice> devices, int bootOrder) {
+        VM vm = DbFacade.getInstance().getVmDAO().get(vmBaseInstance.getId());
         boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version());
         for (VmDevice device : devices) {
             if (device.getType()
