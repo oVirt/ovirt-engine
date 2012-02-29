@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import static junit.framework.Assert.assertNotSame;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -9,8 +10,10 @@ import java.lang.reflect.ParameterizedType;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> {
@@ -78,5 +81,10 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
     /** @return The mock query parameters to use in the test */
     protected P getQueryParameters() {
         return params;
+    }
+
+    @Test
+    public void testQueryType() throws IllegalArgumentException, IllegalAccessException {
+        assertNotSame("The query can't be found in the enum VdcQueryType", VdcQueryType.Unknown, TestHelperQueriesCommandType.getQueryTypeFieldValue(query));
     }
 }
