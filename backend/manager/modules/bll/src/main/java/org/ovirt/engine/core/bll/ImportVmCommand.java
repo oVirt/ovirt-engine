@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -709,6 +711,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     protected void AddVmNetwork() {
         addInterfacesFromTemplate();
+        auditInvalidInterfaces();
     }
 
     private void addInterfacesFromTemplate() {
@@ -819,6 +822,34 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             return AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED;
         }
         return super.getAuditLogTypeValue();
+    }
+
+    /**
+     * log to audit-log if VmInterfaces are attached on non VmNetworks
+     */
+    private void auditInvalidInterfaces() {
+        List<VmNetworkInterface> interfaces = getVm().getInterfaces();
+        Map<String, network> networksByName =
+                Entities.entitiesByName(DbFacade.getInstance()
+                        .getNetworkDAO()
+                        .getAllForCluster(getVm().getvds_group_id()));
+        StringBuilder networks = new StringBuilder();
+        StringBuilder ifaces = new StringBuilder();
+        for (VmNetworkInterface iface : interfaces) {
+            if (networksByName.containsKey(iface.getNetworkName()) &&
+                    !networksByName.get(iface.getNetworkName()).isVmNetwork()) {
+                networks.append(iface.getNetworkName()).append(",");
+                ifaces.append(iface.getName()).append(",");
+            }
+        }
+
+        if (networks.length() > 0) {
+            networks.deleteCharAt(networks.length()); // remove the last comma
+            AuditLogableBase logable = new AuditLogableBase();
+            logable.AddCustomValue("Newtorks", networks.toString());
+            logable.AddCustomValue("Interfaces", ifaces.toString());
+            AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_VM_INTERFACES_ON_NON_VM_NETWORKS);
+        }
     }
 
     private static Log log = LogFactory.getLog(ImportVmCommand.class);

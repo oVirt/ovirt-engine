@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -51,6 +53,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
@@ -836,7 +839,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 getReturnValue().getCanDoActionMessages(),
                 getParameters(),
                 getVdsSelector(),
-                getSnapshotsValidator());
+                getSnapshotsValidator()) &&
+                isVmInterfacesAttachedToVmNetworks();
         return canDoAction;
     }
 
@@ -937,6 +941,24 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             return param.getRunAsStateless();
         }
         return vm.getis_stateless();
+    }
+
+    /**
+     * @return true if all VM network interfaces are attached to VM networks
+     */
+    private boolean isVmInterfacesAttachedToVmNetworks() {
+        List<String> nonVmNetworkNames =
+                NetworkUtils.filterNonVmNetworkNames(DbFacade.getInstance()
+                        .getNetworkDAO()
+                        .getAllForCluster(getVm().getvds_group_id()),
+                        Entities.interfacesByNetworkName(getVm().getInterfaces()).keySet());
+
+        if (nonVmNetworkNames.size() > 0) {
+            AddCustomValue("Networks", StringUtils.join(nonVmNetworkNames, ","));
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK);
+            return false;
+        }
+        return true;
     }
 
     private static Log log = LogFactory.getLog(RunVmCommand.class);

@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.utils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
@@ -103,5 +105,23 @@ public final class NetworkUtils {
         } else {
             return Collections.emptyMap();
         }
+    }
+
+    /**
+     * filter networks which are not VM networks from the newtorkNames list
+     * @param networks
+     *            logical networks
+     * @param networkNames
+     *            target names to match non-VM networks upon
+     * @return
+     */
+    public static List<String> filterNonVmNetworkNames(List<network> networks, Set<String> networkNames) {
+        List<String> list = new ArrayList<String>();
+        for (network net : networks) {
+            if (!net.isVmNetwork() && networkNames.contains(net.getName())) {
+                list.add(net.getName());
+            }
+        }
+        return list;
     }
 }

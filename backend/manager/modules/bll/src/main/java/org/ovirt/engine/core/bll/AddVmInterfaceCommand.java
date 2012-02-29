@@ -169,18 +169,24 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
 
         // check that the exists in current cluster
         List<network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(vm.getvds_group_id());
-        // LINQ 29456
-        // if (null == null) //LINQ 29456 networks.FirstOrDefault(n => n.name ==
-        // AddVmInterfaceParameters.Interface.network_name))
-        if (null == LinqUtils.firstOrNull(networks, new Predicate<network>() {
+
+        network interfaceNetwork = LinqUtils.firstOrNull(networks, new Predicate<network>() {
             @Override
             public boolean eval(network network) {
                 return network.getname().equals(getParameters().getInterface().getNetworkName());
             }
-        })) {
+        });
+
+        if (interfaceNetwork == null) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
             return false;
+        } else if (!interfaceNetwork.isVmNetwork()){
+            AddCustomValue("Networks", interfaceNetwork.getname());
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK);
+            return false;
         }
+
+
 
         return super.canDoAction();
     }
