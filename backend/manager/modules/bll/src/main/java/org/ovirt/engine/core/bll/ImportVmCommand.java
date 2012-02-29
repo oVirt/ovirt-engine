@@ -13,6 +13,7 @@ import java.util.Set;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -24,6 +25,9 @@ import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -435,7 +439,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
             @Override
             public Void runInTransaction() {
-                AddVmImages();
+                addVmImagesAndSnapshots();
                 MoveOrCopyAllImageGroups();
                 VmDeviceUtils.addImportedDevices(getVm().getStaticData(), getVm().getId());
                 VmHandler.LockVm(getVm().getId());
@@ -485,16 +489,18 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
     }
 
-    private void AddVmImages() {
+    private void addVmImagesAndSnapshots() {
         Map<String, List<DiskImage>> images = GetImagesLeaf(getVm().getImages());
 
         if (getParameters().getCopyCollapse()) {
+            Guid snapshotId = Guid.NewGuid();
             for (String drive : images.keySet()) {
                 List<DiskImage> list = images.get(drive);
                 DiskImage disk = list.get(list.size() - 1);
 
                 disk.setParentId(VmTemplateHandler.BlankVmTemplateId);
                 disk.setit_guid(VmTemplateHandler.BlankVmTemplateId);
+                disk.setvm_snapshot_id(snapshotId);
 
                 if (getParameters().getDiskInfoList() != null
                         && getParameters().getDiskInfoList().containsKey(disk.getinternal_drive_mapping())) {
@@ -515,9 +521,24 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                         .getImageVmMapDAO()
                         .save(new image_vm_map(true, disk.getId(), getVm().getId()));
             }
+
+            new SnapshotsManager().addActiveSnapshot(snapshotId, getVm(), getCompensationContext());
         } else {
+            Guid snapshotId = null;
             for (DiskImage disk : getVm().getImages()) {
                 BaseImagesCommand.saveDiskImage(disk);
+                snapshotId = disk.getvm_snapshot_id().getValue();
+                if (!DbFacade.getInstance().getSnapshotDao().exists(getVm().getId(), snapshotId)) {
+                    DbFacade.getInstance().getSnapshotDao().save(
+                            new Snapshot(snapshotId,
+                                    SnapshotStatus.OK,
+                                    getVm().getId(),
+                                    null,
+                                    SnapshotType.REGULAR,
+                                    disk.getdescription(),
+                                    disk.getlast_modified_date(),
+                                    disk.getappList()));
+                }
 
                 DiskImageDynamic diskDynamic = new DiskImageDynamic();
                 diskDynamic.setId(disk.getId());
@@ -528,10 +549,22 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             for (String drive : images.keySet()) {
                 List<DiskImage> list = images.get(drive);
                 DiskImage disk = list.get(list.size() - 1);
+                snapshotId = disk.getvm_snapshot_id().getValue();
                 DbFacade.getInstance().getImageVmMapDAO().save(
                         new image_vm_map(true, disk.getId(), getVm().getId()));
                 DbFacade.getInstance().getDiskDao().save(disk.getDisk());
             }
+
+            // Update active snapshot's data, since it was inserted as a regular snapshot.
+            DbFacade.getInstance().getSnapshotDao().update(
+                    new Snapshot(snapshotId,
+                            SnapshotStatus.OK,
+                            getVm().getId(),
+                            null,
+                            SnapshotType.ACTIVE,
+                            "Active VM snapshot",
+                            new Date(),
+                            null));
         }
     }
 
