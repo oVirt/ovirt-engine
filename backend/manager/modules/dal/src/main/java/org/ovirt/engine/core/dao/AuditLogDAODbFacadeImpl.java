@@ -26,7 +26,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
  */
 public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLogDAO {
 
-    private static AuditLogRowMapper auditLogRowMapper = new AuditLogRowMapper();
+    @SuppressWarnings("synthetic-access")
+    private static final AuditLogRowMapper auditLogRowMapper = new AuditLogRowMapper();
 
     @Override
     public AuditLog get(long id) {
@@ -53,6 +54,21 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
     public List<AuditLog> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
         return getCallsHandler().executeReadList("GetAllFromAuditLog", auditLogRowMapper, parameterSource);
+    }
+
+    @Override
+    public List<AuditLog> getAllByVMName(String vmName) {
+        return getAllByVMName(vmName, null, false);
+    }
+
+    @Override
+    public List<AuditLog> getAllByVMName(String vmName, Guid userID, boolean isFiltered) {
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_name", vmName)
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered);
+        return getCallsHandler().executeReadList("GetAuditLogByVMName", auditLogRowMapper, parameterSource);
     }
 
     @Override

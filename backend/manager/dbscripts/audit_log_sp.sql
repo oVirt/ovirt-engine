@@ -146,6 +146,24 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetAuditLogByVMName(v_vm_name VARCHAR, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT *
+      FROM   audit_log
+      WHERE  vm_name = v_vm_name
+      AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                        FROM   user_vm_permissions_view
+                                        WHERE  user_id = v_user_id AND entity_id = vm_id));
+
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
 
 Create or replace FUNCTION GetAuditLogLaterThenDate(v_date TIMESTAMP WITH TIME ZONE) 
 RETURNS SETOF audit_log

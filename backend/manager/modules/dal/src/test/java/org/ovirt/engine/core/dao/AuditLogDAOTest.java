@@ -28,6 +28,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  */
 public class AuditLogDAOTest extends BaseDAOTestCase {
+    private static final String VM_NAME = "rhel5-pool-50";
     private static final Guid VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final long EXISTING_ENTRY_ID = 44291;
     private static final SimpleDateFormat EXPECTED_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -49,7 +50,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
         newAuditLog.setuser_id(new Guid("9bf7c640-b620-456f-a550-0348f366544b"));
         newAuditLog.setuser_name("userportal3");
         newAuditLog.setvm_id(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
-        newAuditLog.setvm_name("rhel5-pool-50");
+        newAuditLog.setvm_name(VM_NAME);
         newAuditLog.setvm_template_id(new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
         newAuditLog.setvm_template_name("1");
         newAuditLog.setvds_id(VDS_ID);
@@ -122,6 +123,53 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
         assertEquals(0, result.size());
     }
 
+    /** Tests {@link AuditLogDAO#getAllByVMName(String) with a name of a VM that exists */
+    @Test
+    public void testGetAllByVMName() {
+        assertGetVMByNameValidResults(dao.getAllByVMName(VM_NAME));
+    }
+
+    /** Tests {@link AuditLogDAO#getAllByVMName(String) with a name of a VM that doesn't exist */
+    @Test
+    public void testGetAllByVMNameInvalidName() {
+        assertGetVMByNameInvalidResults(dao.getAllByVMName("There is no such VM!!!"));
+    }
+
+    /** Tests {@link AuditLogDAO#getAllByVMName(String, Guid, boolean) with a user that has permissions on that VM */
+    @Test
+    public void testGetAllByVMNamePrivilegedUser() {
+        assertGetVMByNameValidResults(dao.getAllByVMName(VM_NAME, PRIVILEGED_USER_ID, true));
+    }
+
+    /** Tests {@link AuditLogDAO#getAllByVMName(String, Guid, boolean) with a user that doesn't have permissions on that VM, but with the filtering mechanism disabled */
+    @Test
+    public void testGetAllByVMNameUnprivilegedUserNoFiltering() {
+        assertGetVMByNameValidResults(dao.getAllByVMName(VM_NAME, UNPRIVILEGED_USER_ID, false));
+    }
+
+    /** Tests {@link AuditLogDAO#getAllByVMName(String, Guid, boolean) with a user that doesn't have permissions on that VM */
+    @Test
+    public void testGetAllByVMNameUnprivilegedUserFiltering() {
+        assertGetVMByNameInvalidResults(dao.getAllByVMName(VM_NAME, UNPRIVILEGED_USER_ID, true));
+    }
+
+    private static void assertGetVMByNameValidResults(List<AuditLog> results) {
+        assertGetVMByNameResults(results, EXISTING_COUNT);
+    }
+
+    private static void assertGetVMByNameInvalidResults(List<AuditLog> results) {
+        assertGetVMByNameResults(results, 0);
+    }
+
+    private static void assertGetVMByNameResults(List<AuditLog> results, int expectedResults) {
+        assertNotNull("Results object should not be null", results);
+        assertEquals("Wrong number of results", expectedResults, results.size());
+
+        for (AuditLog auditLog : results) {
+            assertEquals("Wrong name of VM in result", VM_NAME, auditLog.getvm_name());
+        }
+    }
+
     /**
      * Test query
      */
@@ -188,7 +236,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     @Ignore
     public void testLongMessageSave() {
         // generate a value that is longer than the max configured.
-        char[] fill = new char[Config.<Integer>GetValue(ConfigValues.MaxAuditLogMessageLength) + 1];
+        char[] fill = new char[Config.<Integer> GetValue(ConfigValues.MaxAuditLogMessageLength) + 1];
         Arrays.fill(fill, '0');
         newAuditLog.setaudit_log_id(45000);
         newAuditLog.setmessage(new String(fill));

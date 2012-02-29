@@ -6,7 +6,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
-
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
@@ -29,6 +28,16 @@ public class AuditLogDAOHibernateImpl extends BaseDAOHibernateImpl<AuditLog, Lon
     @Override
     public List<AuditLog> getAllAfterDate(Date cutoff) {
         return findByCriteria(Restrictions.gt("logTime", cutoff));
+    }
+
+    @Override
+    public List<AuditLog> getAllByVMName(String vmName) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public List<AuditLog> getAllByVMName(String vmName, Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
     }
 
     @SuppressWarnings("unchecked")

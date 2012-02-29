@@ -38,6 +38,28 @@ public interface AuditLogDAO extends DAO, SearchDAO<AuditLog> {
     List<AuditLog> getAll();
 
     /**
+     * Retrieves all audit log entries for the given VM name.
+     *
+     * @param vmName
+     *          The name of the vm to retrieve audit logs for
+     * @return the list of entries
+     */
+    List<AuditLog> getAllByVMName(String vmName);
+
+    /**
+     * Retrieves all audit log entries for the given VM name with optional permission filtering.
+     *
+     * @param vmName
+     *            The name of the vm to retrieve audit logs for
+     * @param userID
+     *            The ID of the user requesting the information
+     * @param isFiltered
+     *            whether the results should be filtered according to the user's permissions
+     * @return the list of entries
+     */
+    List<AuditLog> getAllByVMName(String vmName, Guid userID, boolean isFiltered);
+
+    /**
      * Saves the provided audit log
      *
      * @param entry
@@ -88,6 +110,7 @@ public interface AuditLogDAO extends DAO, SearchDAO<AuditLog> {
      *            the entry type
      */
     void removeAllOfTypeForVds(Guid id, int type);
+
     /**
      * Get time to wait in seconds before another PM operation is allowed on the given Host
      * @param vdsName Host name
