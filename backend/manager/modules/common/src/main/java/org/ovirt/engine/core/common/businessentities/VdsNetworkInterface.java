@@ -37,6 +37,8 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     @MTU
     private int mtu;
 
+    private boolean bridged;
+
     public VdsNetworkInterface() {
         super(new VdsNetworkStatistics(), VdsInterfaceType.None.getValue());
     }
@@ -276,5 +278,14 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
 
     public void setMtu(int mtu) {
         this.mtu = mtu;
+
+    }
+
+    public boolean isBridged() {
+        return bridged;
+    }
+
+    public void setBridged(boolean bridged) {
+        this.bridged = bridged;
     }
 }

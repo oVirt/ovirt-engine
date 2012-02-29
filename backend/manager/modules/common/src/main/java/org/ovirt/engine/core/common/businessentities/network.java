@@ -27,7 +27,7 @@ import org.ovirt.engine.core.compat.NGuid;
 @Entity
 @Table(name = "network")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class network extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid> {
+public class network extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = 7357288865938773402L;
 
     @Id
@@ -73,9 +73,11 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
     private NGuid storage_pool_id;
 
     @ManyToOne
-    @JoinTable(name = "network_cluster", joinColumns = @JoinColumn(name = "network_id"),
-            inverseJoinColumns = @JoinColumn(name = "cluster_id"))
-    private network_cluster cluster = new network_cluster();
+@JoinTable(name = "network_cluster", joinColumns = @JoinColumn(name = "network_id"),
+    inverseJoinColumns = @JoinColumn(name = "cluster_id"))
+private network_cluster cluster = new network_cluster();
+
+    private boolean vmNetwork;
 
     @MTU
     private int mtu;
@@ -87,7 +89,7 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
     public network(String dummyVariable){}
 
     public network(String addr, String description, Guid id, String name, String subnet, String gateway, Integer type,
-            Integer vlan_id, boolean stp, int mtu) {
+            Integer vlan_id, boolean stp, int mtu, boolean vmNetwork) {
         this.addr = addr;
         this.description = description;
         this.id = id;
@@ -98,6 +100,7 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
         this.vlan_id = vlan_id;
         this.stp = stp;
         this.mtu = mtu;
+        this.vmNetwork = vmNetwork;
     }
 
     public network_cluster getCluster() {
@@ -128,6 +131,12 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
         this.id = value;
     }
 
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    // remove this in a cleanup patch
     public String getname() {
         return this.name;
     }
@@ -240,6 +249,7 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((vlan_id == null) ? 0 : vlan_id.hashCode());
         result = prime * result + (mtu);
+        result = prime * result + ((vmNetwork) ? 11 : 13);
         return result;
     }
 
@@ -309,12 +319,25 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
             return false;
         if (mtu != other.mtu)
             return false;
+        if (vmNetwork != other.vmNetwork) {
+            return false;
+        }
         return true;
     }
+
     public int getMtu() {
         return mtu;
     }
+
     public void setMtu(int mtu) {
         this.mtu = mtu;
+    }
+
+    public boolean isVmNetwork() {
+        return vmNetwork;
+    }
+
+    public void setVmNetwork(boolean vmNetwork) {
+        this.vmNetwork = vmNetwork;
     }
 }

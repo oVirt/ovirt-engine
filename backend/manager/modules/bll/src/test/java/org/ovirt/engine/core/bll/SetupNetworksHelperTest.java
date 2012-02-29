@@ -243,8 +243,8 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(new SetupNetworksParameters());
         String[] networkNames = { "red" };
         Map<String, network> clusterNetworksMap = new HashMap<String, network>();
-        clusterNetworksMap.put("red", new network(null, null, null, "red", null, null, 1, 100, false, 1500));
-        clusterNetworksMap.put("blue", new network(null, null, null, "blue", null, null, 1, 100, false, 1500));
+        clusterNetworksMap.put("red", new network(null, null, null, "red", null, null, 1, 100, false, 1500, true));
+        clusterNetworksMap.put("blue", new network(null, null, null, "blue", null, null, 1, 100, false, 1500, true));
 
         List<network> removeNetworks =
                 helper.extractRemoveNetworks(new HashSet<String>(asList(networkNames)),

@@ -53,7 +53,8 @@ public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements Interfa
                 .addValue("type", stats.getType())
                 .addValue("vds_id", stats.getVdsId())
                 .addValue("vlan_id", stats.getVlanId())
-                .addValue("mtu", stats.getMtu());
+                .addValue("mtu", stats.getMtu())
+                .addValue("bridged", stats.isBridged());
 
         getCallsHandler().executeModification("Insertvds_interface", parameterSource);
     }
@@ -110,7 +111,8 @@ public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements Interfa
                 .addValue("type", stats.getType())
                 .addValue("vds_id", stats.getVdsId())
                 .addValue("vlan_id", stats.getVlanId())
-                .addValue("mtu", stats.getMtu());
+                .addValue("mtu", stats.getMtu())
+                .addValue("bridged", stats.isBridged());
 
         getCallsHandler().executeModification("Updatevds_interface", parameterSource);
     }
@@ -151,6 +153,7 @@ public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements Interfa
                 entity.setId(Guid.createGuidFromString(rs.getString("id")));
                 entity.setBootProtocol(NetworkBootProtocol.forValue(rs.getInt("boot_protocol")));
                 entity.setMtu(rs.getInt("mtu"));
+                entity.setBridged(rs.getBoolean("bridged"));
                 return entity;
             }
         };

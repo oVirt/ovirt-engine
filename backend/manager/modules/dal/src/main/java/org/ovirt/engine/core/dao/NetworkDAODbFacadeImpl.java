@@ -19,30 +19,29 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, Guid> implements NetworkDAO {
 
-    private static ParameterizedRowMapper<network> parameterizedRowMapper;
-    static {
-        parameterizedRowMapper = new ParameterizedRowMapper<network>() {
-            @Override
-            public network mapRow(ResultSet rs, int rowNum) throws SQLException {
-                network entity = new network();
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setname(rs.getString("name"));
-                entity.setdescription(rs.getString("description"));
-                entity.settype((Integer) rs.getObject("type"));
-                entity.setaddr(rs.getString("addr"));
-                entity.setsubnet(rs.getString("subnet"));
-                entity.setgateway(rs.getString("gateway"));
-                entity.setvlan_id((Integer) rs.getObject("vlan_id"));
-                entity.setstp(rs.getBoolean("stp"));
-                entity.setstorage_pool_id(NGuid.createGuidFromString(rs
-                        .getString("storage_pool_id")));
-                entity.setis_display((Boolean) rs.getObject("is_display"));
-                entity.setStatus(NetworkStatus.forValue(rs.getInt("status")));
-                entity.setMtu(rs.getInt("mtu"));
-                return entity;
+    private static final ParameterizedRowMapper<network> parameterizedRowMapper =
+            new ParameterizedRowMapper<network>() {
+                @Override
+                public network mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    network entity = new network();
+                    entity.setId(Guid.createGuidFromString(rs.getString("id")));
+                    entity.setname(rs.getString("name"));
+                    entity.setdescription(rs.getString("description"));
+                    entity.settype((Integer) rs.getObject("type"));
+                    entity.setaddr(rs.getString("addr"));
+                    entity.setsubnet(rs.getString("subnet"));
+                    entity.setgateway(rs.getString("gateway"));
+                    entity.setvlan_id((Integer) rs.getObject("vlan_id"));
+                    entity.setstp(rs.getBoolean("stp"));
+                    entity.setstorage_pool_id(NGuid.createGuidFromString(rs
+                            .getString("storage_pool_id")));
+                    entity.setis_display((Boolean) rs.getObject("is_display"));
+                    entity.setStatus(NetworkStatus.forValue(rs.getInt("status")));
+                    entity.setMtu(rs.getInt("mtu"));
+                    entity.setVmNetwork(rs.getBoolean("vm_network"));
+                    return entity;
+                };
             };
-        };
-    }
 
     @Override
     public network getByName(String name) {
@@ -137,8 +136,8 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, G
                 .addValue("vlan_id", network.getvlan_id())
                 .addValue("stp", network.getstp())
                 .addValue("storage_pool_id", network.getstorage_pool_id())
-                .addValue("mtu", network.getMtu());
-
+                .addValue("mtu", network.getMtu())
+                .addValue("vm_network", network.isVmNetwork());
     }
 
     @Override

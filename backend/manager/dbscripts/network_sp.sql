@@ -16,13 +16,14 @@ Create or replace FUNCTION Insertnetwork(v_addr VARCHAR(50) ,
 	v_type INTEGER ,
 	v_vlan_id INTEGER ,
 	v_stp BOOLEAN ,
-	v_storage_pool_id UUID,
-	v_mtu INTEGER)
+    	v_storage_pool_id UUID,
+	v_mtu INTEGER,
+	v_vm_network BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO network(addr, description, id, name, subnet, gateway, type, vlan_id, stp, storage_pool_id, mtu)
-	VALUES(v_addr, v_description, v_id, v_name, v_subnet, v_gateway, v_type, v_vlan_id, v_stp, v_storage_pool_id, v_mtu);
+INSERT INTO network(addr, description, id, name, subnet, gateway, type, vlan_id, stp, storage_pool_id, mtu, vm_network)
+	VALUES(v_addr, v_description, v_id, v_name, v_subnet, v_gateway, v_type, v_vlan_id, v_stp, v_storage_pool_id, v_mtu, v_vm_network );
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -37,9 +38,10 @@ Create or replace FUNCTION Updatenetwork(v_addr VARCHAR(50) ,
 	v_gateway VARCHAR(20) ,
 	v_type INTEGER ,
 	v_vlan_id INTEGER ,
-	v_stp BOOLEAN,
+	v_stp BOOLEAN ,
 	v_storage_pool_id UUID,
-	v_mtu INTEGER)
+	v_mtu INTEGER,
+	v_vm_network BOOLEAN)
 RETURNS VOID
 
 	--The [network] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -48,7 +50,8 @@ BEGIN
       UPDATE network
       SET addr = v_addr,description = v_description,name = v_name,subnet = v_subnet,
       gateway = v_gateway,type = v_type,vlan_id = v_vlan_id,
-      stp = v_stp,storage_pool_id = v_storage_pool_id, mtu = v_mtu
+      stp = v_stp,storage_pool_id = v_storage_pool_id, mtu = v_mtu,
+      vm_network = v_vm_network
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -123,13 +126,13 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllNetworkByStoragePoolId(v_id UUID)
-RETURNS SETOF network_view 
+RETURNS SETOF network_view
    AS $procedure$
 BEGIN
-RETURN QUERY SELECT 
+RETURN QUERY SELECT
 distinct   network.id, network.name, network.description, network.type, network.addr, network.subnet, network.gateway,
-                      network.vlan_id, network.stp, network.storage_pool_id, CAST(0 AS BOOLEAN) as is_display, 0 as status,
-                      network.mtu as mtu
+                      network.vlan_id, network.stp, network.storage_pool_id,network.vm_network, CAST(0 AS BOOLEAN) as is_display, 0 as status,
+		      network.mtu as mtu
    FROM network_view network
    where storage_pool_id = v_id;
 
@@ -140,12 +143,12 @@ LANGUAGE plpgsql;
 DROP TYPE IF EXISTS networkViewClusterType CASCADE;
 CREATE TYPE networkViewClusterType AS(id uuid,name VARCHAR(50),description VARCHAR(4000),type INTEGER,
             addr VARCHAR(50),subnet VARCHAR(20),gateway VARCHAR(20),vlan_id INTEGER,stp BOOLEAN,storage_pool_id UUID,
-            mtu INTEGER, network_id UUID,cluster_id UUID, status INTEGER, is_display BOOLEAN);
+	    mtu INTEGER, vm_network BOOLEAN, network_id UUID,cluster_id UUID, status INTEGER, is_display BOOLEAN);
 Create or replace FUNCTION GetAllNetworkByClusterId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
 RETURNS SETOF networkViewClusterType
    AS $procedure$
 BEGIN
-RETURN QUERY SELECT 
+RETURN QUERY SELECT
     DISTINCT
     network_view.id,
     network_view.name,
@@ -158,6 +161,7 @@ RETURN QUERY SELECT
     network_view.stp,
     network_view.storage_pool_id,
     network_view.mtu,
+    network_view.vm_network,
     network_cluster.network_id,
     network_cluster.cluster_id,
     network_cluster.status,
@@ -201,14 +205,13 @@ Create or replace FUNCTION Insertvds_interface(v_addr VARCHAR(20) ,
  v_type INTEGER ,  
  v_vds_id UUID,  
  v_vlan_id INTEGER,
- v_mtu INTEGER)
+ v_mtu INTEGER,
+ v_bridged BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vds_interface(addr, bond_name, bond_type, gateway, id, is_bond, bond_opts, mac_addr, name,
-                          network_name, speed, subnet, boot_protocol, type, VDS_ID, vlan_id, mtu)
-	VALUES(v_addr, v_bond_name, v_bond_type, v_gateway, v_id, v_is_bond, v_bond_opts, v_mac_addr, v_name,
-	       v_network_name, v_speed, v_subnet, v_boot_protocol, v_type, v_vds_id, v_vlan_id,v_mtu);
+INSERT INTO vds_interface(addr, bond_name, bond_type, gateway, id, is_bond, bond_opts, mac_addr, name, network_name, speed, subnet, boot_protocol, type, VDS_ID, vlan_id, mtu, bridged)
+	VALUES(v_addr, v_bond_name, v_bond_type, v_gateway, v_id, v_is_bond, v_bond_opts, v_mac_addr, v_name, v_network_name, v_speed, v_subnet, v_boot_protocol, v_type, v_vds_id, v_vlan_id, v_mtu, v_bridged);
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -232,7 +235,8 @@ Create or replace FUNCTION Updatevds_interface(v_addr VARCHAR(20) ,
  v_type INTEGER ,  
  v_vds_id UUID,  
  v_vlan_id INTEGER,
- v_mtu INTEGER)
+ v_mtu INTEGER,
+ v_bridged BOOLEAN)
 RETURNS VOID
 
 	--The [vds_interface] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -243,7 +247,8 @@ BEGIN
       is_bond = v_is_bond,bond_opts = v_bond_opts,mac_addr = v_mac_addr, 
       name = v_name,network_name = v_network_name,speed = v_speed, 
       subnet = v_subnet,boot_protocol = v_boot_protocol, 
-      type = v_type,VDS_ID = v_vds_id,vlan_id = v_vlan_id,_update_date = LOCALTIMESTAMP, mtu = v_mtu
+      type = v_type,VDS_ID = v_vds_id,vlan_id = v_vlan_id,_update_date = LOCALTIMESTAMP, mtu = v_mtu,
+      bridged = v_bridged
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;

@@ -616,7 +616,7 @@ roles ON permissions.role_id = roles.id;
 CREATE OR REPLACE VIEW network_view
 AS
 SELECT  distinct   network.id as id, network.name as name, network.description as description, network.type as type, network.addr as addr, network.subnet as subnet, network.gateway as gateway,
-                      network.vlan_id as vlan_id, network.stp as stp, network.storage_pool_id as storage_pool_id, network_cluster.is_display as is_display, network_cluster.status as status, network.mtu as mtu
+                      network.vlan_id as vlan_id, network.stp as stp, network.storage_pool_id as storage_pool_id, network.vm_network as vm_network, network_cluster.is_display as is_display, network_cluster.status as status, network.mtu as mtu
 FROM         network LEFT OUTER JOIN
 network_cluster ON network.id = network_cluster.network_id;
 
@@ -631,7 +631,7 @@ CREATE OR REPLACE VIEW vds_interface_view AS
       vds_interface.subnet, vds_interface.addr, vds_interface.speed, vds_interface.vlan_id, vds_interface.bond_type,
       vds_interface.bond_name, vds_interface.is_bond, vds_interface.bond_opts, vds_interface.mac_addr,
       vds_interface.network_name, vds_interface.name, vds_static.vds_id, vds_static.vds_name,  vds_interface.id,
-      vds_interface.boot_protocol, vds_interface.mtu as mtu, 1 AS is_vds
+      vds_interface.boot_protocol, vds_interface.mtu as mtu, vds_interface.bridged, 1 AS is_vds
   FROM vds_interface_statistics
   JOIN vds_interface ON vds_interface_statistics.id = vds_interface.id
   JOIN vds_static ON vds_interface.vds_id = vds_static.vds_id;
@@ -643,6 +643,9 @@ CREATE OR REPLACE VIEW vm_interface_view AS
       vm_static.vm_name, vm_interface.id, 0 AS boot_protocol, 0 AS is_vds
   FROM vm_interface_statistics
   JOIN vm_interface ON vm_interface_statistics.id = vm_interface.id
+
+
+
   JOIN vm_static ON vm_interface.vm_guid = vm_static.vm_guid
   UNION
   SELECT vm_interface_statistics.rx_rate, vm_interface_statistics.tx_rate, vm_interface_statistics.rx_drop,
