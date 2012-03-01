@@ -76,7 +76,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         setStoragePoolId(getVm().getstorage_pool_id());
 
         VmHandler.updateDisksFromDb(getVm());
-        ensureDomainMap();
+        ensureDomainMap(getVm().getDiskMap().values(), getParameters().getStorageDomainId());
 
         retValue = retValue && CheckTemplateInStorageDomain();
 
@@ -236,13 +236,5 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
     @Override
     protected VdcActionType getImagesActionType() {
         return VdcActionType.MoveMultipleImageGroups;
-    }
-
-    protected void ensureDomainMap() {
-        for (DiskImage image : getVm().getDiskMap().values()) {
-            if (imageToDestinationDomainMap.get(image.getId()) == null) {
-                imageToDestinationDomainMap.put(image.getId(), getParameters().getStorageDomainId());
-            }
-        }
     }
 }

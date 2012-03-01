@@ -301,7 +301,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         return retVal;
     }
 
-    protected void ensureDomainMap(List<DiskImage> images, Guid defaultDomainId) {
+    protected void ensureDomainMap(Collection<DiskImage> images, Guid defaultDomainId) {
         if (imageToDestinationDomainMap == null) {
             imageToDestinationDomainMap = new HashMap<Guid, Guid>();
         }
