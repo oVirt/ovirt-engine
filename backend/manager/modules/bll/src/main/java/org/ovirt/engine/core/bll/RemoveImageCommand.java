@@ -105,16 +105,10 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 }
             }
 
-            List<DiskImage> imagesForDisk =
-                    DbFacade.getInstance()
-                            .getDiskImageDAO()
-                            .getAllSnapshotsForImageGroup(diskImage.getimage_group_id());
-            if (imagesForDisk == null || imagesForDisk.isEmpty()) {
-                DbFacade.getInstance().getDiskDao().remove(diskImage.getimage_group_id());
-                DbFacade.getInstance()
-                        .getVmDeviceDAO()
-                        .remove(new VmDeviceId(diskImage.getimage_group_id(), getParameters().getContainerId()));
-            }
+            getDiskDao().remove(diskImage.getimage_group_id());
+            DbFacade.getInstance()
+                    .getVmDeviceDAO()
+                    .remove(new VmDeviceId(diskImage.getimage_group_id(), getParameters().getContainerId()));
         } else {
             log.warn("RemoveImageCommand::RemoveImageFromDB: DiskImage is null, nothing to remove.");
         }
