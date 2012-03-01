@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -180,6 +181,16 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     private void setShutdownCommand(UICommand value)
     {
         privateShutdownCommand = value;
+    }
+
+    private UICommand privateCancelMigrateCommand;
+
+    public UICommand getCancelMigrateCommand() {
+        return privateCancelMigrateCommand;
+    }
+
+    private void setCancelMigrateCommand(UICommand value) {
+        privateCancelMigrateCommand = value;
     }
 
     private UICommand privateMigrateCommand;
@@ -444,6 +455,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         setStopCommand(new UICommand("Stop", this));
         setShutdownCommand(new UICommand("Shutdown", this));
         setMigrateCommand(new UICommand("Migrate", this));
+        setCancelMigrateCommand(new UICommand("CancelMigration", this));
         setNewTemplateCommand(new UICommand("NewTemplate", this));
         setRunOnceCommand(new UICommand("RunOnce", this));
         setExportCommand(new UICommand("Export", this));
@@ -2002,6 +2014,23 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 }), vm.getvds_group_name());
     }
 
+    private void CancelMigration()
+    {
+        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        for (Object item : getSelectedItems()) {
+            VM a = (VM) item;
+            list.add(new VmOperationParameterBase(a.getId()));
+        }
+
+        Frontend.RunMultipleAction(VdcActionType.CancelMigrateVm, list,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(
+                            FrontendMultipleActionAsyncResult result) {
+                    }
+                }, null);
+    }
+
     private void PostMigrateGetUpHosts(java.util.ArrayList<VDS> hosts)
     {
         MigrateModel model = (MigrateModel) getWindow();
@@ -2882,6 +2911,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.StopVm));
         getMigrateCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.MigrateVm));
+        getCancelMigrateCommand().setIsExecutionAllowed(items.size() > 0
+                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.CancelMigrateVm));
         getNewTemplateCommand().setIsExecutionAllowed(items.size() == 1
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.AddVmTemplate));
         getRunOnceCommand().setIsExecutionAllowed(items.size() == 1
@@ -3059,6 +3090,10 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         else if (StringHelper.stringsEqual(command.getName(), "OnMigrate"))
         {
             OnMigrate();
+        }
+        else if (command == getCancelMigrateCommand())
+        {
+            CancelMigration();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnShutdown"))
         {
