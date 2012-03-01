@@ -237,6 +237,19 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="usages" type="Usages" />
+
+  <xs:complexType name="Usages">
+    <xs:sequence>
+      <xs:annotation>
+        <xs:appinfo>
+            <jaxb:property name="usages"/>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:element name="usage" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <!-- Represents an asynchronous resource creation -->
 
   <xs:element name="creation" type="Creation"/>
@@ -1444,7 +1457,7 @@
 
   <xs:element name="network" type="Network"/>
 
-  <xs:element name="networks" type="Networks"/>
+  <xs:element name="networks" type="Networks" />
 
   <xs:complexType name="Network">
     <xs:complexContent>
@@ -1458,6 +1471,7 @@
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
           <xs:element name="display" type="xs:boolean" minOccurs="0"/>
           <xs:element name="mtu" type="xs:int" minOccurs="0"/>
+          <xs:element ref="usages" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2117,6 +2131,7 @@
           <xs:element name="speed" type="xs:long" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
           <xs:element name="mtu" type="xs:int" minOccurs="0"/>
+          <xs:element name="bridged" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <!-- Also a rel="master" link for bonded nics -->
         </xs:sequence>
       </xs:extension>

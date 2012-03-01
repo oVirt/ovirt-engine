@@ -653,7 +653,7 @@ actions:
       parameterType: Network
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {network.display: 'xs:boolean'}
+        optionalArguments: {network.display: 'xs:boolean', network.usages--COLLECTION: {usage: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/clusters/{cluster:id}/networks|rel=add

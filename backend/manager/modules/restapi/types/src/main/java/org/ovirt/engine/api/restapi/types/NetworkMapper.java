@@ -1,10 +1,15 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkStatus;
+import org.ovirt.engine.api.model.NetworkUsage;
+import org.ovirt.engine.api.model.Usages;
 import org.ovirt.engine.api.model.VLAN;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.compat.Guid;
@@ -50,8 +55,17 @@ public class NetworkMapper {
         if (model.isSetStp()) {
             entity.setstp(model.isStp());
         }
-        if (model.isSetDisplay()) {
-            entity.setis_display(model.isDisplay());
+        if (model.isSetUsages()) {
+            List<NetworkUsage> networkUsages = new ArrayList<NetworkUsage>();
+            for (String usage : model.getUsages().getUsages()) {
+                networkUsages.add(map(usage,null));
+            }
+            entity.setis_display(networkUsages.contains(NetworkUsage.DISPLAY));
+            if (model.isSetDisplay()) { // for backward compatibility use display tag or usage tag
+                entity.setis_display(model.isDisplay());
+            } else {
+                entity.setVmNetwork(networkUsages.contains(NetworkUsage.VM));
+            }
         }
         if (model.isSetMtu()) {
             entity.setMtu(model.getMtu());
@@ -88,6 +102,14 @@ public class NetworkMapper {
         model.setStp(entity.getstp());
         model.setDisplay(entity.getis_display());
         model.setMtu(entity.getMtu());
+
+        model.setUsages(new Usages());
+        if (entity.getis_display()) {
+            model.getUsages().getUsages().add(NetworkUsage.DISPLAY.name());
+        }
+        if (entity.isVmNetwork()) {
+            model.getUsages().getUsages().add(NetworkUsage.VM.name());
+        }
         return model;
     }
 
@@ -120,4 +142,13 @@ public class NetworkMapper {
             }
         }
     }
+
+    @Mapping(from = String.class, to = NetworkUsage.class)
+    public static NetworkUsage map(String candidate, NetworkUsage template) {
+        if (candidate == null) {
+            return null;
+        }
+        return NetworkUsage.valueOf(candidate);
+    }
+
 }
