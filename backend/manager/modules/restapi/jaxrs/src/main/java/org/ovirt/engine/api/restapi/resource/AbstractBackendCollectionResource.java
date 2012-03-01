@@ -30,7 +30,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     private static final String BLOCKING_EXPECTATION = "201-created";
     private static final String CREATION_STATUS_REL = "creation_status";
     public static final String FROM_CONSTRAINT_PARAMETER = "from";
-    public static final String CASE_SENSITIVE_CONSTRAINT_PARAMETER = "case-sensitive";
+    public static final String CASE_SENSITIVE_CONSTRAINT_PARAMETER = "case_sensitive";
     protected static final Log LOG = LogFactory.getLog(AbstractBackendCollectionResource.class);
 
     protected AbstractBackendCollectionResource(Class<R> modelType, Class<Q> entityType, String... subCollections) {

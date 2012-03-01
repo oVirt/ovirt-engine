@@ -7,7 +7,7 @@ actions:
       signatures: []
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/vms/{vm:id}|rel=get
   request:
@@ -454,7 +454,7 @@ actions:
       signatures: []
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/files/{file:id}|rel=get
   request:
@@ -549,7 +549,7 @@ actions:
       signatures: []
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/clusters/{cluster:id}|rel=get
   request:
@@ -588,8 +588,6 @@ actions:
       parameterType: null
       signatures: []
     urlparams: 
-      search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/clusters/{cluster:id}/networks/{network:id}|rel=get
   request:
@@ -669,7 +667,7 @@ actions:
       signatures: []
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/datacenters/{datacenter:id}|rel=get
   request:
@@ -811,7 +809,7 @@ actions:
       signatures: []
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/domains/{domain:id}/groups/{group:id}|rel=get
   request:
@@ -827,7 +825,7 @@ actions:
       signatures: []
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/domains/{domain:id}/users/{user:id}|rel=get
   request:
@@ -843,7 +841,7 @@ actions:
       signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       from: {context: matrix, type: 'xs:string', value: event_id, required: false}
     headers: {}
 - name: /api/events/{event:id}|rel=get
@@ -860,7 +858,7 @@ actions:
       signatures: []
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/groups/{group:id}|rel=get
   request:
@@ -1027,7 +1025,7 @@ actions:
       signatures: []
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/hosts/{host:id}|rel=get
   request:
@@ -1299,7 +1297,7 @@ actions:
       signatures: []
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/networks/{network:id}|rel=get
   request:
@@ -1441,7 +1439,7 @@ actions:
       signatures: []
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/templates/{template:id}|rel=get
   request:
@@ -1587,7 +1585,7 @@ actions:
       signatures: []
     urlparams:
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false} 
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false} 
     headers: {}
 - name: /api/users/{user:id}|rel=get
   request:
@@ -1596,7 +1594,7 @@ actions:
       signatures: []
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/users|rel=add
   request:
@@ -1755,7 +1753,7 @@ actions:
       signatures: []
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
-      case-sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/vmpools/{vmpool:id}|rel=get
   request:
