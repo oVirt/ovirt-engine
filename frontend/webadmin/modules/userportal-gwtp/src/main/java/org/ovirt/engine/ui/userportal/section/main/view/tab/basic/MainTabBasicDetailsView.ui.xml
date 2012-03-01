@@ -13,73 +13,74 @@
 	<ui:style
 		type="org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicDetailsView.Style">
 		.detailsHeaderPanel {
-		margin-top: 10px;
-		margin-left: 10px;
-		border-style: solid;
-		border-width: 1px;
-		border-color: #b5c7d5;
-		width: 95%;
-		background-color: #ffffff;
+			margin-top: 10px;
+			margin-left: 10px;
+			border-style: solid;
+			border-width: 1px;
+			border-color: #b5c7d5;
+			width: 95%;
+			background-color: #ffffff;
 		}
 
 		.mainPanel {
-		background-color: #e1e8f2;
+			background-color: #e1e8f2;
+			overflow: auto;
 		}
 
 		.osImage {
-		float: left;
-		padding: 10px;
+			float: left;
+			padding: 10px;
 		}
 		
 		.vmImage {
-		position: relative;
-		top: 38px;
-		left: -17px;
+			position: relative;
+			top: 38px;
+			left: -17px;
 		}
 
 		.basicInfoVmNameLabel {
-		font-family: Arial,sans-serif;
-		color: #3A5F7C;
-		font-size: 18px;
-		font-weight: bold;
-		position: relative;
-		top: -10px;
-		left: 7px;
+			font-family: Arial,sans-serif;
+			color: #3A5F7C;
+			font-size: 18px;
+			font-weight: bold;
+			position: relative;
+			top: -10px;
+			left: 7px;
 		}
 
 		.basicInfoVmDescriptionLabel {
-		font-family: Arial,sans-serif;
-		color: #728FAD;
-		font-size: 15px;
-		position: relative;
-		top: -12px;
-		left: 7px;
+			font-family: Arial,sans-serif;
+			color: #728FAD;
+			font-size: 15px;
+			position: relative;
+			top: -12px;
+			left: 7px;
 		}
 
 		.rowIcon {
-		float: left;
-		padding-left: 20px;
+			float: left;
+			padding-left: 20px;
 		}
 
 		.rowLabel {
-		float: left;
-		font-family: Arial,sans-serif;
-		color: #3A5F7C;
-		font-size: 19px;
-		font-weight: bold;
-		text-align: left;
-		padding-left: 5px;
-		padding-top: 4px;
+			float: left;
+			font-family: Arial,sans-serif;
+			color: #3A5F7C;
+			font-size: 19px;
+			font-weight: bold;
+			text-align: left;
+			padding-left: 5px;
+			padding-top: 4px;
 		}
 
 
 		.rowValue {
-		float: right;
-		font-family: Arial,sans-serif;
-		color: #3A5F7C;
-		font-size: 15px;
-		text-align: right;
-		padding-right: 20px;
+			float: right;
+			font-family: Arial,sans-serif;
+			color: #3A5F7C;
+			font-size: 15px;
+			text-align: right;
+			padding-right: 20px;
 		}
 
 		.detailsRow {

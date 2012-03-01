@@ -88,7 +88,7 @@
 		.basicVmViewBoxStyle, .itemSelectedStyle, .itemOverStyle, .itemNotRunningStyle, .itemRunningStyle {
 			border-style: solid;
 			border-width: 1px;
-			width: 155px;
+			width: 158px;
 			height: 175px;
 			margin-left: 10px;
 			margin-right: 10px;
