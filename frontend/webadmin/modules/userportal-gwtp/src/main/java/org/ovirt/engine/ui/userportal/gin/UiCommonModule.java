@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateGeneralMod
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateInterfaceListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplatePermissionListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.UserPortalTemplateListProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmAppListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmDiskListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmEventListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmGeneralModelProvider;
@@ -45,6 +46,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(VmSnapshotListModelProvider.class).asEagerSingleton();
         bind(VmPermissionListModelProvider.class).asEagerSingleton();
         bind(VmEventListModelProvider.class).asEagerSingleton();
+        bind(VmAppListModelProvider.class).asEagerSingleton();
 
         // Extended tab: Template
         bind(UserPortalTemplateListProvider.class).asEagerSingleton();

@@ -65,6 +65,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Events")
     String extendedVirtualMachineEventSubTabLabel();
 
+    @DefaultStringValue("Applications")
+    String extendedVirtualMachineApplicationSubTabLabel();
+
     @DefaultStringValue("General")
     String extendedTemplateGeneralSubTabLabel();
 

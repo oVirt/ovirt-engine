@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.templa
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplatePermissionsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateVirtualDisksPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.ExtendedVmSubTabPanelPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmApplicationPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmEventPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGeneralPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmNetworkInterfacePresenter;
@@ -94,6 +95,8 @@ public interface ManagedComponents {
     AsyncProvider<SubTabExtendedVmPermissionPresenter> getSubTabExtendedVmPermissionPresenter();
 
     AsyncProvider<SubTabExtendedVmEventPresenter> getSubTabExtendedVmEventPresenter();
+
+    AsyncProvider<SubTabExtendedVmApplicationPresenter> getSubTabExtendedVmApplicationPresenter();
 
     // Template
 
