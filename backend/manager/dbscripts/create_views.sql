@@ -66,7 +66,7 @@ SELECT DISTINCT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
 FROM
 images
 left outer join disk_image_dynamic on images.image_guid = disk_image_dynamic.image_id
-JOIN disks ON images.image_group_id = disks.disk_id left outer JOIN vm_device on vm_device.device_id = images.image_guid left outer join vm_static on vm_static.vm_guid = vm_device.vm_id
+JOIN disks ON images.image_group_id = disks.disk_id left outer JOIN vm_device on vm_device.device_id = images.image_group_id left outer join vm_static on vm_static.vm_guid = vm_device.vm_id
 LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
 LEFT OUTER JOIN storage_domain_static_view ON image_storage_domain_map.storage_domain_id = storage_domain_static_view.id;
 
