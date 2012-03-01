@@ -401,10 +401,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return permissionList;
     }
 
-    protected int getNeededDiskSize(int count) {
-        return getBlockSparseInitSizeInGB() * count;
-    }
-
     protected int getBlockSparseInitSizeInGB() {
         return Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB).intValue();
     }

@@ -1,6 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -8,6 +15,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,6 +23,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 
 public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> extends AddVmCommand<T> {
+
     public AddVmFromTemplateCommand(T parameters) {
         super(parameters);
         parameters.setDontCheckTemplateImages(true);
@@ -46,14 +55,13 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
             for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
                 DiskImageBase diskInfo = null;
                 diskInfo = getParameters().getDiskInfoList().get(dit.getinternal_drive_mapping());
-                CreateCloneOfTemplateParameters tempVar = new CreateCloneOfTemplateParameters(dit.getId(),
+                CreateCloneOfTemplateParameters p = new CreateCloneOfTemplateParameters(dit.getId(),
                         getParameters().getVmStaticData().getId(), diskInfo);
-                DiskImage img = DbFacade.getInstance().getDiskImageDAO().get(dit.getId());
-                tempVar.setStorageDomainId(img.getstorage_ids().get(0));
-                tempVar.setVmSnapshotId(getVmSnapshotId());
-                tempVar.setParentCommand(VdcActionType.AddVmFromTemplate);
-                tempVar.setEntityId(getParameters().getEntityId());
-                CreateCloneOfTemplateParameters p = tempVar;
+                p.setStorageDomainId(dit.getstorage_ids().get(0));
+                p.setDestSorageDomainId(imageToDestinationDomainMap.get(dit.getId()));
+                p.setVmSnapshotId(getVmSnapshotId());
+                p.setParentCommand(VdcActionType.AddVmFromTemplate);
+                p.setEntityId(getParameters().getEntityId());
                 VdcReturnValueBase result = Backend.getInstance().runInternalAction(
                                 VdcActionType.CreateCloneOfTemplate,
                                 p,
@@ -74,18 +82,68 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     }
 
     @Override
-    protected boolean canDoAction() {
-        boolean returnValue = super.canDoAction();
-        returnValue = returnValue
-                && ImagesHandler.CheckImagesConfiguration(getStorageDomainId().getValue(),
-                        new java.util.ArrayList<DiskImageBase>(getParameters().getDiskInfoList().values()),
-                        getReturnValue().getCanDoActionMessages());
-        return returnValue;
+    protected boolean buildAndCheckDestStorageDomains() {
+        if (imageToDestinationDomainMap.isEmpty()) {
+            List<storage_domains> domains =
+                    DbFacade.getInstance()
+                            .getStorageDomainDAO()
+                            .getAllForStoragePool(getVmTemplate().getstorage_pool_id().getValue());
+            Map<Guid, storage_domains> storageDomainsMap = new HashMap<Guid, storage_domains>();
+            for (storage_domains storageDomain : domains) {
+                StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
+                ArrayList<String> messages = new ArrayList<String>();
+                if (validator.isDomainExistAndActive(messages) && validator.domainIsValidDestination(messages)) {
+                    storageDomainsMap.put(storageDomain.getId(), storageDomain);
+                }
+            }
+            for (DiskImage image : getVmTemplate().getDiskMap().values()) {
+                for (Guid storageId : image.getstorage_ids()) {
+                    if (storageDomainsMap.containsKey(storageId)) {
+                        imageToDestinationDomainMap.put(image.getId(), storageId);
+                        break;
+                    }
+                }
+            }
+            if (getVmTemplate().getDiskMap().values().size() != imageToDestinationDomainMap.size()) {
+                log.errorFormat("Can not found any default active domain for one of the disks of template with id : {0}",
+                        getVmTemplateId());
+                return false;
+            }
+            for (Guid storageDomainId : new HashSet<Guid>(imageToDestinationDomainMap.values())) {
+                destStorages.put(storageDomainId, storageDomainsMap.get(storageDomainId));
+            }
+            return true;
+        }
+        return super.buildAndCheckDestStorageDomains();
     }
 
     @Override
-    protected int getNeededDiskSize(int count) {
-        return (int)getVmTemplate().getActualDiskSize();
+    protected boolean canDoAction() {
+        boolean retValue = false;
+        if (super.canDoAction()) {
+            for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
+                retValue =
+                        ImagesHandler.CheckImageConfiguration(destStorages.get(imageToDestinationDomainMap.get(dit.getId()))
+                                .getStorageStaticData(),
+                                getParameters().getDiskInfoList().get(dit.getinternal_drive_mapping()),
+                                getReturnValue().getCanDoActionMessages());
+                if (!retValue) {
+                    break;
+                }
+            }
+            retValue = true;
+        }
+        return retValue;
+    }
+
+    @Override
+    protected int getNeededDiskSize(Guid storageId) {
+        double actualSize = 0;
+        List<DiskImage> disks = storageToDisksMap.get(storageId);
+        for (DiskImage disk : disks) {
+            actualSize += disk.getActualSize();
+        }
+        return (int) actualSize;
     }
 
     @Override

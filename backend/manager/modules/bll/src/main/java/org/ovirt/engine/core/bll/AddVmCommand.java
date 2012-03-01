@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,9 +62,9 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationErro
 
 public class AddVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T> {
 
-    private Map<Guid, Guid> imageToDestinationDomainMap;
-    private List<storage_domains> destStorages;
-    private Map<Guid, List<DiskImage>> storageToDisksMap;
+    protected Map<Guid, Guid> imageToDestinationDomainMap;
+    protected Map<Guid, storage_domains> destStorages = new HashMap<Guid, storage_domains>();
+    protected Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
     protected String newMac = "";
 
     public AddVmCommand(T parameters) {
@@ -82,6 +83,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                         .getValue() : Guid.Empty);
         }
         imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
+        if (imageToDestinationDomainMap == null) {
+            imageToDestinationDomainMap = new HashMap<Guid, Guid>();
+        }
     }
 
     protected AddVmCommand(Guid commandId) {
@@ -185,9 +189,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return _vmDisks;
     }
 
-    public boolean CanAddVm(ArrayList<String> reasons) {
+    protected boolean CanAddVm(ArrayList<String> reasons, Collection<storage_domains> destStorages) {
         VmStatic vmStaticFromParams = getParameters().getVmStaticData();
-        boolean returnValue = CanAddVm(reasons, 1, vmStaticFromParams.getvm_name(), getStoragePoolId()
+        boolean returnValue = canAddVm(reasons, 1, vmStaticFromParams.getvm_name(), getStoragePoolId()
                 .getValue(), vmStaticFromParams.getpriority());
         // check that template image and vm are on the same storage pool
 
@@ -212,7 +216,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                         reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
                         break;
                     } else if (!StorageDomainSpaceChecker.hasSpaceForRequest(domain,
-                            getNeededDiskSize(storageToDisksMap.get(domain.getId()).size()))) {
+                            getNeededDiskSize(domain.getId()))) {
                         returnValue = false;
                         reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
                         break;
@@ -226,6 +230,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return returnValue;
     }
 
+    protected int getNeededDiskSize(Guid domainId) {
+        return getBlockSparseInitSizeInGB() * storageToDisksMap.get(domainId).size();
+    }
+
     protected boolean CanDoAddVmCommand() {
         boolean returnValue = false;
         returnValue = areParametersLegal(getReturnValue().getCanDoActionMessages());
@@ -233,7 +241,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 returnValue
                         && CheckPCIAndIDELimit(getParameters().getVmStaticData().getnum_of_monitors(),
                                 getVmInterfaces(),
-                                getVmDisks(), getReturnValue().getCanDoActionMessages()) && CanAddVm(getReturnValue().getCanDoActionMessages())
+                                getVmDisks(), getReturnValue().getCanDoActionMessages())
+                        && CanAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
                         && hostToRunExist();
         return returnValue;
     }
@@ -297,21 +306,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
             return false;
         }
-        ensureDomainMap();
-        Set<Guid> destStorageDomains = new HashSet<Guid>(imageToDestinationDomainMap.values());
-        destStorages = new ArrayList<storage_domains>();
-        for (Guid destStorageDomain : destStorageDomains) {
-            storage_domains storage = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
-                    destStorageDomain, getStoragePoolId());
-            StorageDomainValidator validator =
-                    new StorageDomainValidator(storage);
-            if (!validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages())
-                    || !validator.domainIsValidDestination(getReturnValue().getCanDoActionMessages())) {
-                returnValue = false;
-                break;
-            }
-            destStorages.add(storage);
-        }
+        returnValue = buildAndCheckDestStorageDomains();
         if (returnValue) {
             buildStorageToDiskMap();
             returnValue = CanDoAddVmCommand();
@@ -344,8 +339,26 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                             .toString(), getReturnValue().getCanDoActionMessages());
     }
 
-    private void buildStorageToDiskMap() {
-        storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
+    protected boolean buildAndCheckDestStorageDomains() {
+        boolean returnValue = true;
+        ensureDomainMap();
+        Set<Guid> destStorageDomains = new HashSet<Guid>(imageToDestinationDomainMap.values());
+        for (Guid destStorageDomain : destStorageDomains) {
+            storage_domains storage = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
+                    destStorageDomain, getStoragePoolId());
+            StorageDomainValidator validator =
+                    new StorageDomainValidator(storage);
+            if (!validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages())
+                    || !validator.domainIsValidDestination(getReturnValue().getCanDoActionMessages())) {
+                returnValue = false;
+                break;
+            }
+            destStorages.put(storage.getId(), storage);
+        }
+        return returnValue;
+    }
+
+    protected void buildStorageToDiskMap() {
         for (DiskImage disk : getVmTemplate().getDiskMap().values()) {
             Guid storageDomainId = imageToDestinationDomainMap.get(disk.getId());
             List<DiskImage> diskList = storageToDisksMap.get(storageDomainId);
@@ -357,12 +370,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
     }
 
-    protected void ensureDomainMap() {
-        if (imageToDestinationDomainMap == null) {
-            imageToDestinationDomainMap = new HashMap<Guid, Guid>();
-        }
+    private void ensureDomainMap() {
         if (imageToDestinationDomainMap.isEmpty()) {
-            for (DiskImage image : getVmTemplate().getDiskImageMap().values()) {
+            for (DiskImage image : getVmTemplate().getDiskMap().values()) {
                 imageToDestinationDomainMap.put(image.getId(), getStorageDomainId().getValue());
             }
         }
@@ -390,7 +400,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return true;
     }
 
-    public boolean CanAddVm(ArrayList<String> reasons, int vmsCount, String name,
+    protected boolean canAddVm(ArrayList<String> reasons, int vmsCount, String name,
                             Guid storagePoolId, int vmPriority) {
         boolean returnValue;
         // Checking if a desktop with same name already exists
@@ -411,9 +421,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         returnValue = VmHandler.VerifyAddVm(reasons, vmsCount, getVmTemplate(), storagePoolId, null, false, checkTemplateLock, vmPriority);
 
         if (!getParameters().getDontCheckTemplateImages()) {
-            for (storage_domains storage : destStorages) {
+            for (storage_domains storage : destStorages.values()) {
                 if (!VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), storage.getId(),
-                        reasons, true, checkTemplateLock, true, true, storageToDisksMap.get(storage.getId()))) {
+                        reasons, false, checkTemplateLock, true, true, storageToDisksMap.get(storage.getId()))) {
                     return false;
                 }
             }
@@ -425,7 +435,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     @Override
     protected void ExecuteVmCommand() {
         ArrayList<String> errorMessages = new ArrayList<String>();
-        if (CanAddVm(errorMessages)) {
+        if (CanAddVm(errorMessages, destStorages.values())) {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
                 @Override
