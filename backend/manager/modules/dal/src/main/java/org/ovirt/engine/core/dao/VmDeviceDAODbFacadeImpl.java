@@ -11,7 +11,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class VmDeviceDAODbFacadeImpl extends
-        DefaultGenericDaoDbFacade<VmDevice, VmDeviceId> implements VmDeviceDAO {
+        MassOperationsGenericDaoDbFacade<VmDevice, VmDeviceId> implements VmDeviceDAO {
+
+    private static VmDeviceRowMapper vmDeviceRowMapper = new VmDeviceRowMapper();
 
     @Override
     protected String getProcedureNameForUpdate() {
@@ -60,27 +62,7 @@ public class VmDeviceDAODbFacadeImpl extends
 
     @Override
     protected ParameterizedRowMapper<VmDevice> createEntityRowMapper() {
-        return new ParameterizedRowMapper<VmDevice>() {
-
-            @Override
-            public VmDevice mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                VmDevice vmDevice = new VmDevice();
-
-                vmDevice.setId(new VmDeviceId(Guid.createGuidFromString(rs.getString("device_id")),
-                        Guid.createGuidFromString(rs
-                                .getString("vm_id"))));
-                vmDevice.setDevice(rs.getString("device"));
-                vmDevice.setType(rs.getString("type"));
-                vmDevice.setAddress(rs.getString("address"));
-                vmDevice.setBootOrder(rs.getInt("boot_order"));
-                vmDevice.setSpecParams(rs.getString("spec_params"));
-                vmDevice.setIsManaged(rs.getBoolean("is_managed"));
-                vmDevice.setIsPlugged(rs.getBoolean("is_plugged"));
-                vmDevice.setIsReadOnly(rs.getBoolean("is_readonly"));
-                return vmDevice;
-            }
-        };
+        return vmDeviceRowMapper;
     }
 
     @Override
@@ -131,5 +113,41 @@ public class VmDeviceDAODbFacadeImpl extends
                 .addValue("vm_id", vmId);
         return getCallsHandler().executeReadList("GetVmUnmanagedDevicesByVmId",
                 createEntityRowMapper(), parameterSource);
+    }
+
+    private static class VmDeviceRowMapper implements ParameterizedRowMapper<VmDevice> {
+
+        @Override
+        public VmDevice mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            VmDevice vmDevice = new VmDevice();
+
+            vmDevice.setId(new VmDeviceId(Guid.createGuidFromString(rs.getString("device_id")),
+                    Guid.createGuidFromString(rs
+                            .getString("vm_id"))));
+            vmDevice.setDevice(rs.getString("device"));
+            vmDevice.setType(rs.getString("type"));
+            vmDevice.setAddress(rs.getString("address"));
+            vmDevice.setBootOrder(rs.getInt("boot_order"));
+            vmDevice.setSpecParams(rs.getString("spec_params"));
+            vmDevice.setIsManaged(rs.getBoolean("is_managed"));
+            vmDevice.setIsPlugged(rs.getBoolean("is_plugged"));
+            vmDevice.setIsReadOnly(rs.getBoolean("is_readonly"));
+            return vmDevice;
+        }
+    }
+
+    @Override
+    public void removeAll(List<VmDeviceId> removedDeviceIds) {
+        for (VmDeviceId vmDeviceId : removedDeviceIds) {
+            remove(vmDeviceId);
+        }
+    }
+
+    @Override
+    public void saveAll(List<VmDevice> newVmDevices) {
+        for (VmDevice vmDevice : newVmDevices) {
+            save(vmDevice);
+        }
     }
 }
