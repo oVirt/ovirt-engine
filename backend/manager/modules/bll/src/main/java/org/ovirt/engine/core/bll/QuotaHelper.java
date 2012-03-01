@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,9 @@ public class QuotaHelper {
         }
     }
 
-    public List<PermissionSubject> addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList, storage_pool storagePool, Guid quotaId) {
+    public List<PermissionSubject> addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList,
+            storage_pool storagePool,
+            Guid quotaId) {
         if (storagePool != null && storagePool.getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED) {
             log.debug("Adding validation for consume quota to permission subjects list");
             quotaPermissionList.add(new PermissionSubject(quotaId, VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
@@ -196,13 +199,13 @@ public class QuotaHelper {
      * Helper method which get as an input disk image list for VM or template and returns a list of quotas and their
      * desired limitation to be used.<BR/>
      *
-     * @param diskImageList
+     * @param diskImages
      *            - The disk image list to be grouped by
      * @return List of summarized requested size for quota.
      */
-    public Map<Pair<Guid, Guid>, Double> getQuotaConsumeMap(List<DiskImage> diskImageList) {
+    public Map<Pair<Guid, Guid>, Double> getQuotaConsumeMap(Collection<DiskImage> diskImages) {
         Map<Pair<Guid, Guid>, Double> quotaForStorageConsumption = new HashMap<Pair<Guid, Guid>, Double>();
-        for (DiskImage disk : diskImageList) {
+        for (DiskImage disk : diskImages) {
             Pair<Guid, Guid> quotaForStorageKey =
                     new Pair<Guid, Guid>(disk.getQuotaId(), disk.getstorage_ids().get(0).getValue());
             Double storageRequest = quotaForStorageConsumption.get(quotaForStorageKey);
