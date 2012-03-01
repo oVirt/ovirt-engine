@@ -10,6 +10,7 @@ import static org.ovirt.engine.core.dal.VdcBllMessages.NETWROK_NOT_EXISTS;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -245,10 +246,11 @@ public class SetupNetworksHelper {
         for (String name : networkNames) {
             removedNetworks.remove(name);
         }
-        // exclude networks which already the host doesn't have
-        for (String networkToRemove : removedNetworks.keySet()) {
-            if (!exisitingHostNetworksNames.contains(networkToRemove)) {
-                removedNetworks.remove(networkToRemove);
+        // exclude networks which already the host anyway doesn't have
+        for (Iterator<Entry<String, network>> iterator = removedNetworks.entrySet().iterator(); iterator.hasNext();) {
+            Entry<String, network> entry = iterator.next();
+            if (!exisitingHostNetworksNames.contains(entry.getKey())) {
+                iterator.remove();
             }
         }
         return new ArrayList<network>(removedNetworks.values());
