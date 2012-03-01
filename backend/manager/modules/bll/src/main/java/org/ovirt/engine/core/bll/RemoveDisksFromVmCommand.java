@@ -76,7 +76,7 @@ public class RemoveDisksFromVmCommand<T extends RemoveDisksFromVmParameters> ext
             @Override
             public Void runInTransaction() {
                 for (Guid imageId : getParameters().getImageIds()) {
-                    RemoveImageParameters tempVar = new RemoveImageParameters(imageId, null, getVmId());
+                    RemoveImageParameters tempVar = new RemoveImageParameters(imageId, getVmId());
                     tempVar.setParentCommand(VdcActionType.RemoveDisksFromVm);
                     tempVar.setEntityId(getParameters().getEntityId());
                     RemoveImageParameters p = tempVar;
