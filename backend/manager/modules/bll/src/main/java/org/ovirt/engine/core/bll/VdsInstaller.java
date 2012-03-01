@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.VdcException;
 import org.ovirt.engine.core.utils.hostinstall.ICAWrapper;
@@ -58,7 +60,7 @@ public class VdsInstaller implements IVdsInstallCallBack {
     private final VDS _vds;
     private String serverInstallationTime;
     private String _bootStrapInitialCommand =
-            "chmod +x {vdsInstaller}; {vdsInstaller} -c 'ssl={server_SSL_enabled};management_port={management_port}' -O '{OrganizationName}' -t {utc_time} {OverrideFirewall} {EnginePort} -b {URL1} {URL1} {vds-server} {GUID} {RunFlag}";
+            "chmod +x {vdsInstaller}; {vdsInstaller} -c 'ssl={server_SSL_enabled};management_port={management_port}' -O '{OrganizationName}' -t {utc_time} {OverrideFirewall} {EnginePort} -b {virt-placeholder} {gluster-placeholder} {URL1} {URL1} {vds-server} {GUID} {RunFlag}";
 
     protected String _finishCommand = "";
 
@@ -120,13 +122,37 @@ public class VdsInstaller implements IVdsInstallCallBack {
         remoteFwRulesFilePath = String.format("%s/%s.%s", _remoteDirectory,FIREWALL_CONFIG_FILENAME_PREFIX,_fileGuid);
         _bootStrapInitialCommand = InitInitialCommand(vds, _bootStrapInitialCommand);
 
+        VdsGroupDAO vdsGroupDao = DbFacade.getInstance().getVdsGroupDAO();
+        Guid vdsGroupId = vds.getvds_group_id();
+        VDSGroup vdsGroup = vdsGroupDao.get(vdsGroupId);
+
+        boolean supportVirt = vdsGroup.supportsVirtService();
+        boolean supportGluster = vdsGroup.supportsGlusterService();
+
+        // We don't allow having none services on the cluster. In such a case we
+        // specify that the cluster supports virt for installation purposes
+        if (!supportVirt && !supportGluster) {
+            supportVirt = true;
+        }
+
+        if (supportVirt) {
+            _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{virt-placeholder}", "-v");
+        } else {
+            _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{virt-placeholder}", "");
+        }
+
+        if (supportGluster) {
+            _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{gluster-placeholder}", "-g");
+        } else {
+            _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{gluster-placeholder}", "");
+        }
+
         _finishCommand = _bootStrapInitialCommand;
         _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{RunFlag}", "False");
         _finishCommand = _finishCommand.replace("{RunFlag}", "True");
         if (!rebootAfterInstallation) {
             _finishCommand = _finishCommand.replace(" -b ", " ");
         }
-
         _serverName = vds.gethost_name();
         _rootPassword = rootPassword;
         _wrapper.InitCallback(this);
