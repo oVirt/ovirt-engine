@@ -141,9 +141,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("PASSW0RD")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
     Password(45),
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("900")
-    VdsFailTimeout(46),
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     IncludeDesktop(47),
