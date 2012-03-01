@@ -357,7 +357,7 @@ class MYum():
         tid = None
 
         # Get the list
-        cmd = [YUM_EXEC, "history", "list", self.upackages[0]]
+        cmd = [YUM_EXEC, "history", "list", basedefs.ENGINE_RPM_NAME]
         output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_YUM_HISTORY_LIST)
 
         # Parse last tid
