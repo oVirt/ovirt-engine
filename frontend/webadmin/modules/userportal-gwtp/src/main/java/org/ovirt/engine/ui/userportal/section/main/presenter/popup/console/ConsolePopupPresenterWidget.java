@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.popup.console;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.IUserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
@@ -16,7 +16,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.dispatch.annotation.GenEvent;
 
-public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<UserPortalBasicListModel, ConsolePopupPresenterWidget.ViewDef> {
+public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<IUserPortalListModel, ConsolePopupPresenterWidget.ViewDef> {
 
     private final ConsoleUtils consoleUtils;
     private final ApplicationConstants constants;
@@ -26,7 +26,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         UserPortalItemModel itemModel;
     }
 
-    public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<UserPortalBasicListModel> {
+    public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<IUserPortalListModel> {
 
         void setSpiceAvailable(boolean visible);
 
@@ -59,7 +59,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     }
 
     @Override
-    public void init(final UserPortalBasicListModel model) {
+    public void init(final IUserPortalListModel model) {
 
         // it is needed to define this buttons by hand as the model does not contain the specific commands
         // TODO implement the enter/escape binding
@@ -77,7 +77,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
             @Override
             public void onClick(ClickEvent event) {
-                ConsoleModelChangedEvent.fire(getEventBus(), model.getSelectedItem());
+                ConsoleModelChangedEvent.fire(getEventBus(), (UserPortalItemModel) model.getSelectedItem());
+                getView().flush();
                 hideAndUnbind();
             }
         });
@@ -89,11 +90,11 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         super.init(model);
     }
 
-    private void initView(UserPortalBasicListModel model) {
+    private void initView(IUserPortalListModel model) {
 
         listenOnRadioButtons();
 
-        UserPortalItemModel currentItem = model.getSelectedItem();
+        UserPortalItemModel currentItem = (UserPortalItemModel) model.getSelectedItem();
 
         boolean spiceAvailable =
                 currentItem.getDefaultConsole() instanceof SpiceConsoleModel && consoleUtils.isSpiceAvailable();

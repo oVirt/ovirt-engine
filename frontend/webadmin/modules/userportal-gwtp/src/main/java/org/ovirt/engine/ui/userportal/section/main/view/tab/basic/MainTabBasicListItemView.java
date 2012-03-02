@@ -201,7 +201,6 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
      * Ensures that the specified action button is visible or hidden and enabled or disabled as it should.
      */
     private void updateActionButton(ActionButton button, ActionButtonDefinition<UserPortalItemModel> buttonDef) {
-        button.asWidget().setVisible(buttonDef.isAccessible());
         button.setEnabled(buttonDef.isEnabled(null));
     }
 

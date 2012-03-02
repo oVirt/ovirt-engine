@@ -71,8 +71,4 @@ public interface MainTabBasicListItemMessages extends Messages {
 
     @DefaultMessage("Double Click for Console")
     String doubleClickForConsole();
-
-    @DefaultMessage("Error Connecting to {0}. This browser does not support {1} protocol")
-    String errorConnectingToConsole(String name, String protocol);
-
 }

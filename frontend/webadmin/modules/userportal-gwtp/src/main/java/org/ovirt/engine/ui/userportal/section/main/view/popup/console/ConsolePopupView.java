@@ -5,7 +5,8 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.IUserPortalListModel;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
@@ -17,7 +18,6 @@ import org.ovirt.engine.ui.userportal.section.main.view.popup.console.widget.Ent
 import org.ovirt.engine.ui.userportal.section.main.view.popup.console.widget.EntityModelValueCheckbox.ValueCheckboxRenderer;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -26,50 +26,39 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
-public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalBasicListModel> implements ConsolePopupPresenterWidget.ViewDef {
+public class ConsolePopupView extends UserPortalModelBoundPopupView<IUserPortalListModel> implements ConsolePopupPresenterWidget.ViewDef {
 
     @UiField
-    @Ignore
     Label consoleTitle;
 
     @UiField(provided = true)
-    @Ignore
     EntityModelRadioButtonEditor spiceRadioButton;
 
     @UiField(provided = true)
-    @Ignore
     EntityModelRadioButtonEditor remoteDesktopRadioButton;
 
     @UiField(provided = true)
-    @Path("SelectedItem.DefaultConsole")
     EntityModelValueCheckBoxEditor<ConsoleModel> ctrlAltDel;
 
     @UiField(provided = true)
-    @Path("SelectedItem.DefaultConsole")
     EntityModelValueCheckBoxEditor<ConsoleModel> enableUsbAutoshare;
 
     @UiField(provided = true)
-    @Path("SelectedItem.DefaultConsole")
     EntityModelValueCheckBoxEditor<ConsoleModel> openInFullScreen;
 
     @UiField(provided = true)
-    @Path("SelectedItem.AdditionalConsole")
     EntityModelValueCheckBoxEditor<ConsoleModel> useLocalDrives;
 
     @UiField
-    @Ignore
     FlowPanel spicePanel;
 
     @UiField
-    @Ignore
     FlowPanel rdpPanel;
+
+    private IUserPortalListModel model;
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ConsolePopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
-    }
-
-    interface Driver extends SimpleBeanEditorDriver<UserPortalBasicListModel, ConsolePopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     @Inject
@@ -159,17 +148,24 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalBasi
         spicePanel.setVisible(false);
         rdpPanel.setVisible(false);
 
-        Driver.driver.initialize(this);
     }
 
     @Override
-    public void edit(UserPortalBasicListModel model) {
-        Driver.driver.edit(model);
+    public void edit(IUserPortalListModel model) {
+        this.model = model;
+        ctrlAltDel.asEditor().getSubEditor().setValue(((UserPortalItemModel)model.getSelectedItem()).getDefaultConsole());
+        enableUsbAutoshare.asEditor().getSubEditor().setValue(((UserPortalItemModel)model.getSelectedItem()).getDefaultConsole());
+        openInFullScreen.asEditor().getSubEditor().setValue(((UserPortalItemModel)model.getSelectedItem()).getDefaultConsole());
+        useLocalDrives.asEditor().getSubEditor().setValue(((UserPortalItemModel)model.getSelectedItem()).getDefaultConsole());
     }
 
     @Override
-    public UserPortalBasicListModel flush() {
-        return Driver.driver.flush();
+    public IUserPortalListModel flush() {
+        ctrlAltDel.asEditor().getSubEditor().getValue();
+        enableUsbAutoshare.asEditor().getSubEditor().getValue();
+        openInFullScreen.asEditor().getSubEditor().getValue();
+        useLocalDrives.asEditor().getSubEditor().getValue();
+        return model;
     }
 
     @Override

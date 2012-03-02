@@ -1,0 +1,31 @@
+div.enabledConsoleButton:hover {
+	background-image: url("images/actions/console_Over.png")
+}
+
+div.enabledConsoleButton {
+	width: 80px;
+	height: 27px;
+	background-image: url("images/actions/console.png")
+}
+
+div.disabledConsoleButton {
+	width: 80px;
+	height: 27px;
+	background-image: url("images/actions/console_Disabled.png")
+}
+
+div.enabledEditConsoleButton:hover {
+	background-image: url("images/actions/console_edit_Over.png")
+}
+
+div.enabledEditConsoleButton {
+	width: 15px;
+	height: 27px;
+	background-image: url("images/actions/console_edit.png")
+}
+
+div.disabledEditConsoleButton {
+	width: 15px;
+	height: 27px;
+	background-image: url("images/actions/console_edit_Disabled.png")
+}

@@ -10,6 +10,9 @@ public class UserPortalEntityModelLabel extends ValueLabel<Object> {
 
             @Override
             public String render(Object object) {
+                if (object == null) {
+                    return "";
+                }
                 return object.toString();
             }
         });

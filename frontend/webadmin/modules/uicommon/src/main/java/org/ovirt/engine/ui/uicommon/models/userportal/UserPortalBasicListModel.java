@@ -347,4 +347,5 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
 			}
 		}
 	}
+	
 }

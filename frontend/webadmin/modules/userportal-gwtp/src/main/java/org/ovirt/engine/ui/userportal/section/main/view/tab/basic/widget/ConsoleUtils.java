@@ -113,4 +113,17 @@ public class ConsoleUtils {
         return null;
     }
 
+    public boolean canShowConsole(ConsoleProtocol selectedProtocol, UserPortalItemModel item) {
+        if (selectedProtocol == null) {
+            return false;
+        }
+
+        boolean isSpiceAvailable =
+                selectedProtocol.equals(ConsoleProtocol.SPICE) && canOpenSpiceConsole(item);
+        boolean isRdpAvailable =
+                (selectedProtocol.equals(ConsoleProtocol.RDP) && canOpenRDPConsole(item));
+
+        return isSpiceAvailable || isRdpAvailable;
+    }
+
 }

@@ -2,7 +2,10 @@ package org.ovirt.engine.ui.userportal;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.resources.client.ClientBundle.Source;
+import com.google.gwt.resources.client.CssResource.NotStrict;
 
 public interface ApplicationResources extends CommonApplicationResources {
 
@@ -57,6 +60,12 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/actions/stop_Disabled.png")
     ImageResource stopDisabledIcon();
 
+    @Source("images/actions/power.png")
+    ImageResource powerIcon();
+
+    @Source("images/actions/power_Disabled.png")
+    ImageResource powerDisabledIcon();
+
     // status images
     @Source("images/status/pause_icon.png")
     ImageResource pausedIcon();
@@ -83,6 +92,10 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/status/WAITING.png")
     ImageResource vmStatusWaiting();
+
+    @NotStrict
+    @Source("css/ConsoleButton.css")
+    CssResource consoleButtonResource();
 
     // resources tab
     @Source("images/general/vm_icon.png")

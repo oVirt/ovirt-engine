@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListMode
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsoleModelChangedEvent;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListItemMessages;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.ConsoleManager;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.ConsoleProtocol;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.ConsoleUtils;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
@@ -46,7 +46,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
     private final UserPortalBasicListProvider modelProvider;
 
-    private final MainTabBasicListItemMessages messages;
+    private final ConsoleManager consoleManager;
 
     public interface ViewDef extends View, HasEditorDriver<UserPortalItemModel>, HasMouseOutHandlers, HasMouseOverHandlers, HasClickHandlers, HasDoubleClickHandlers {
 
@@ -72,11 +72,11 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
             ViewDef view,
             ConsoleUtils consoleUtils,
             final UserPortalBasicListProvider modelProvider,
-            MainTabBasicListItemMessages messages) {
+            ConsoleManager consoleManager) {
         super(eventBus, view);
         this.consoleUtils = consoleUtils;
         this.modelProvider = modelProvider;
-        this.messages = messages;
+        this.consoleManager = consoleManager;
 
         eventBus.addHandler(ConsoleModelChangedEvent.getType(), new ConsoleModelChangedHandler() {
 
@@ -84,7 +84,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
             public void onConsoleModelChanged(ConsoleModelChangedEvent event) {
                 // update only when my model has changed
                 if (sameEntity(model, event.getItemModel())) {
-                    setuSelectedProtocol(model);
+                    setupSelectedProtocol(model);
                 }
             }
 
@@ -119,7 +119,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     public void setModel(final UserPortalItemModel model) {
         this.model = model;
         this.listModel = modelProvider.getModel();
-        setuSelectedProtocol(model);
+        setupSelectedProtocol(model);
         setupDefaultVmStyles();
         getView().edit(model);
 
@@ -129,7 +129,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
     }
 
-    protected void setuSelectedProtocol(final UserPortalItemModel model) {
+    protected void setupSelectedProtocol(final UserPortalItemModel model) {
         selectedProtocol = consoleUtils.determineDefaultProtocol(model);
     }
 
@@ -180,36 +180,10 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
     @Override
     public void onDoubleClick(DoubleClickEvent event) {
-        if (!canShowConsole()) {
-            return;
+        String res = consoleManager.connectToConsole(selectedProtocol, model);
+        if (res != null) {
+            getView().showErrorDialog(res);
         }
-
-        if (selectedProtocol == ConsoleProtocol.SPICE) {
-            showSpiceConsole();
-        } else if (selectedProtocol == ConsoleProtocol.RDP) {
-            showRpdConsole();
-        }
-
-    }
-
-    private void showRpdConsole() {
-        if (consoleUtils.canOpenRDPConsole(model)) {
-            model.getAdditionalConsole().getConnectCommand().Execute();
-        } else if (!consoleUtils.isRDPAvailable()) {
-            showError("RDP");
-        }
-    }
-
-    private void showSpiceConsole() {
-        if (consoleUtils.canOpenSpiceConsole(model)) {
-            model.getDefaultConsole().getConnectCommand().Execute();
-        } else if (!consoleUtils.isSpiceAvailable()) {
-            showError("SPICE");
-        }
-    }
-
-    private void showError(String protocol) {
-        getView().showErrorDialog(messages.errorConnectingToConsole(model.getName(), protocol));
     }
 
     @Override
@@ -222,16 +196,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     }
 
     private boolean canShowConsole() {
-        if (selectedProtocol == null) {
-            return false;
-        }
-
-        boolean isSpiceAvailable =
-                selectedProtocol.equals(ConsoleProtocol.SPICE) && consoleUtils.canOpenSpiceConsole(model);
-        boolean isRdpAvailable =
-                (selectedProtocol.equals(ConsoleProtocol.RDP) && consoleUtils.canOpenRDPConsole(model));
-
-        return isSpiceAvailable || isRdpAvailable;
+        return consoleUtils.canShowConsole(selectedProtocol, model);
     }
 
     boolean isSelected() {
