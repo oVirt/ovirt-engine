@@ -94,6 +94,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/general/cpu_icon.png")
     ImageResource cpuIcon();
 
+    @Source("images/general/network_icon.png")
+    ImageResource networkIcon();
+
     @Source("images/general/storage_icon.png")
     ImageResource storageIcon();
 

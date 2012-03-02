@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
 
 @SuppressWarnings("unused")
 public class VmMonitorModel extends EntityModel
@@ -72,11 +73,42 @@ public class VmMonitorModel extends EntityModel
         }
     }
 
+    private GridTimer refreshTimer;
+
+    private GridTimer getRefreshTimer()
+    {
+        if (refreshTimer == null)
+        {
+            refreshTimer = new GridTimer("VmMonitorModel") {
+                @Override
+                public void execute() {
+                    Refresh();
+                }
+            };
+            refreshTimer.setRefreshRate(1000);
+        }
+
+        return refreshTimer;
+    }
+
     public VmMonitorModel()
     {
         setTitle("Monitor");
 
         setRefreshCommand(new UICommand("Refresh", this));
+    }
+
+    @Override
+    public void setEntity(Object value)
+    {
+        super.setEntity(value);
+
+        if (value != null)
+        {
+            getRefreshTimer().start();
+        } else {
+            getRefreshTimer().stop();
+        }
     }
 
     @Override

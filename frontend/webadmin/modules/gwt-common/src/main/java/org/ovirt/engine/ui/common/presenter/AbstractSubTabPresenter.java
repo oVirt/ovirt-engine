@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.presenter;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -59,6 +60,8 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         void setLoadingState(LoadingState state);
 
     }
+
+    private static final Logger logger = Logger.getLogger(AbstractSubTabPresenter.class.getName());
 
     private final PlaceManager placeManager;
     private final DetailModelProvider<M, D> modelProvider;
@@ -227,6 +230,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             // This usually happens with synthetic item types that wrap multiple
             // logical entities into single type. Since views can typically edit
             // a single item type, we can do nothing here.
+            logger.warning("Detail model entity type is different from main model item type");
         }
     }
 

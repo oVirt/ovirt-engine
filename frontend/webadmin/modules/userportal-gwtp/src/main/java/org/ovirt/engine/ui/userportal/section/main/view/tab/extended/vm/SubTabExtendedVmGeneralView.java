@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm;
 
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmGeneralModelForm;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
@@ -34,11 +33,11 @@ public class SubTabExtendedVmGeneralView extends AbstractSubTabFormView<UserPort
 
     @Override
     public void setMainTabSelectedItem(UserPortalItemModel selectedItem) {
-        form.update();
+        update();
     }
 
     @Override
-    public void editVm(VM entity) {
+    public void update() {
         form.update();
     }
 

@@ -68,6 +68,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Applications")
     String extendedVirtualMachineApplicationSubTabLabel();
 
+    @DefaultStringValue("Monitor")
+    String extendedVirtualMachineMonitorSubTabLabel();
+
     @DefaultStringValue("General")
     String extendedTemplateGeneralSubTabLabel();
 
@@ -108,5 +111,16 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Console Options")
     String consoleOptions();
+
+    // VM Monitor sub tab
+
+    @DefaultStringValue("CPU Usage")
+    String vmMonitorCpuUsageLabel();
+
+    @DefaultStringValue("Memory Usage")
+    String vmMonitorMemoryUsageLabel();
+
+    @DefaultStringValue("Network Usage")
+    String vmMonitorNetworkUsageLabel();
 
 }

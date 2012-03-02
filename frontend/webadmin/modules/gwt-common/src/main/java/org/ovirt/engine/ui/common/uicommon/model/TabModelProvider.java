@@ -67,6 +67,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
+
                 // Handle popups that bind to "Window" and "ConfirmWindow" model properties
                 if ("Window".equals(propName)) {
                     handleWindowModelChange(windowPopup, false);

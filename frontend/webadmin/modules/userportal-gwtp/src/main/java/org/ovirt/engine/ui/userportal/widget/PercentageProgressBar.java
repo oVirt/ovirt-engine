@@ -36,6 +36,10 @@ public class PercentageProgressBar extends Composite implements IsEditor<TakesVa
                     + value.getClass());
         }
 
+        setValue((Integer) value);
+    }
+
+    public void setValue(Integer value) {
         this.value = value;
         String percentage = value + "%";
         percentageLabel.setText(percentage);
