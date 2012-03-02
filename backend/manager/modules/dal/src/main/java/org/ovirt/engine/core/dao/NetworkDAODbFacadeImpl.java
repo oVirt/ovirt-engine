@@ -19,40 +19,13 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, Guid> implements NetworkDAO {
 
-    private static final ParameterizedRowMapper<network> parameterizedRowMapper =
-            new ParameterizedRowMapper<network>() {
-                @Override
-                public network mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    network entity = new network();
-                    entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                    entity.setname(rs.getString("name"));
-                    entity.setdescription(rs.getString("description"));
-                    entity.settype((Integer) rs.getObject("type"));
-                    entity.setaddr(rs.getString("addr"));
-                    entity.setsubnet(rs.getString("subnet"));
-                    entity.setgateway(rs.getString("gateway"));
-                    entity.setvlan_id((Integer) rs.getObject("vlan_id"));
-                    entity.setstp(rs.getBoolean("stp"));
-                    entity.setstorage_pool_id(NGuid.createGuidFromString(rs
-                            .getString("storage_pool_id")));
-                    entity.setis_display((Boolean) rs.getObject("is_display"));
-                    entity.setRequired(rs.getBoolean("required"));
-                    entity.setStatus(NetworkStatus.forValue(rs.getInt("status")));
-                    entity.setMtu(rs.getInt("mtu"));
-                    entity.setVmNetwork(rs.getBoolean("vm_network"));
-                    return entity;
-                };
-            };
-
     @Override
     public network getByName(String name) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("networkName", name);
-
         Map<String, Object> dbResults = dialect.createJdbcCallForQuery(jdbcTemplate)
                 .withProcedureName("GetnetworkByName")
-                .returningResultSet("RETURN_VALUE", parameterizedRowMapper)
-                .execute(parameterSource);
+                .returningResultSet("RETURN_VALUE", NetworkRowMapper.instance)
+                .execute(getCustomMapSqlParameterSource()
+                        .addValue("networkName", name));
 
         return (network) DbFacadeUtils.asSingleResult((List<?>) (dbResults
                 .get("RETURN_VALUE")));
@@ -61,24 +34,20 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, G
     @SuppressWarnings("unchecked")
     @Override
     public List<network> getAll() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
         Map<String, Object> dbResults = dialect.createJdbcCallForQuery(jdbcTemplate)
                 .withProcedureName("GetAllFromnetwork")
-                .returningResultSet("RETURN_VALUE", parameterizedRowMapper)
-                .execute(parameterSource);
+                .returningResultSet("RETURN_VALUE", NetworkRowMapper.instance)
+                .execute(getCustomMapSqlParameterSource());
 
         return (List<network>) dbResults.get("RETURN_VALUE");
     }
 
     @Override
     public List<network> getAllForDataCenter(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", id);
-
         return getCallsHandler().executeReadList("GetAllNetworkByStoragePoolId",
-                parameterizedRowMapper,
-                parameterSource);
+                NetworkRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("id", id));
     }
 
     @Override
@@ -88,10 +57,10 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, G
 
     @Override
     public List<network> getAllForCluster(Guid id, Guid userID, boolean isFiltered) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
-
-        return getCallsHandler().executeReadList("GetAllNetworkByClusterId", parameterizedRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllNetworkByClusterId",
+                NetworkRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
 
     @Override
@@ -143,6 +112,34 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, G
 
     @Override
     protected ParameterizedRowMapper<network> createEntityRowMapper() {
-        return parameterizedRowMapper;
+        return NetworkRowMapper.instance;
     }
+
+    private static final class NetworkRowMapper implements ParameterizedRowMapper<network> {
+        public final static NetworkRowMapper instance = new NetworkRowMapper();
+
+        @Override
+        public network mapRow(ResultSet rs, int rowNum) throws SQLException {
+            network entity = new network();
+            entity.setId(Guid.createGuidFromString(rs.getString("id")));
+            entity.setname(rs.getString("name"));
+            entity.setdescription(rs.getString("description"));
+            entity.settype((Integer) rs.getObject("type"));
+            entity.setaddr(rs.getString("addr"));
+            entity.setsubnet(rs.getString("subnet"));
+            entity.setgateway(rs.getString("gateway"));
+            entity.setvlan_id((Integer) rs.getObject("vlan_id"));
+            entity.setstp(rs.getBoolean("stp"));
+            entity.setstorage_pool_id(NGuid.createGuidFromString(rs
+                 .getString("storage_pool_id")));
+            entity.setis_display((Boolean) rs.getObject("is_display"));
+            entity.setRequired(rs.getBoolean("required"));
+            entity.setStatus(NetworkStatus.forValue(rs.getInt("status")));
+            entity.setMtu(rs.getInt("mtu"));
+            entity.setVmNetwork(rs.getBoolean("vm_network"));
+
+            return entity;
+        }
+    }
+
 }
