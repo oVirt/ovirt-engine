@@ -116,6 +116,12 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "migrate_on_error")
     private MigrateOnErrorOptions migrateOnError;
 
+    @Column(name = "virt_service")
+    private boolean virtService = true;
+
+    @Column(name = "gluster_service")
+    private boolean glusterService = false;
+
     public VDSGroup() {
         selection_algorithm = VdsSelectionAlgorithm.None;
         high_utilization = -1;
@@ -275,6 +281,22 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
         return migrateOnError;
     }
 
+    public void setVirtService(boolean virtService) {
+        this.virtService = virtService;
+    }
+
+    public boolean supportsVirtService() {
+        return virtService;
+    }
+
+    public void setGlusterService(boolean glusterService) {
+        this.glusterService = glusterService;
+    }
+
+    public boolean supportsGlusterService() {
+        return glusterService;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -297,6 +319,8 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
         result = prime * result + ((selection_algorithm == null) ? 0 : selection_algorithm.hashCode());
         result = prime * result + ((storagePool == null) ? 0 : storagePool.hashCode());
         result = prime * result + (transparentHugepages ? 1231 : 1237);
+        result = prime * result + (virtService ? 1231 : 1237);
+        result = prime * result + (glusterService ? 1231 : 1237);
         return result;
     }
 
@@ -365,6 +389,12 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
             return false;
         if (transparentHugepages != other.transparentHugepages)
             return false;
+        if (virtService != other.virtService) {
+            return false;
+        }
+        if (glusterService != other.glusterService) {
+            return false;
+        }
         return true;
     }
 }

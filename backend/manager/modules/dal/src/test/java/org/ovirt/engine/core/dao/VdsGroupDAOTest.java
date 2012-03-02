@@ -45,6 +45,8 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         newGroup = new VDSGroup();
         newGroup.setname("New VDS Group");
         newGroup.setcompatibility_version(new Version("3.0"));
+        newGroup.setVirtService(true);
+        newGroup.setGlusterService(false);
     }
 
     /**
@@ -204,6 +206,9 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         String oldName = existingVdsGroup.getname();
 
         existingVdsGroup.setname("This is the new name");
+        existingVdsGroup.setVirtService(false);
+        existingVdsGroup.setGlusterService(true);
+
         dao.update(existingVdsGroup);
 
         VDSGroup result = dao.get(existingVdsGroup.getId());
