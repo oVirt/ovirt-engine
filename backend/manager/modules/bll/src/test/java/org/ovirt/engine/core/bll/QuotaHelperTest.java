@@ -128,6 +128,108 @@ public class QuotaHelperTest {
     }
 
     @Test
+    public void testGetDefaultQuotaName() throws Exception {
+        QuotaHelper quotaHelper = getQuotaHelper();
+        List<Quota> listQuota = new ArrayList<Quota>();
+        listQuota.add(mockGeneralStorageQuota());
+        when(quotaDAO.getQuotaByStoragePoolGuid(storagePoolUUID)).thenReturn(listQuota);
+        String quotaDefaultName = quotaHelper.getDefaultQuotaName(mockStoragePool());
+        String desiredQuotaDefaultName = "Quota_Def_Storage pool name";
+        Assert.assertEquals(desiredQuotaDefaultName, quotaDefaultName);
+    }
+
+    @Test
+    public void testGetDefaultQuotaNameWhenDefaultNameAlreadyExist() throws Exception {
+        QuotaHelper quotaHelper = getQuotaHelper();
+        List<Quota> listQuota = new ArrayList<Quota>();
+
+        // Add storage quota.
+        Quota quota = mockGeneralStorageQuota();
+        quota.setQuotaName("Quota_Def_Storage pool name");
+        listQuota.add(quota);
+
+        // Add the list to the mock up when fetching list of quota.
+        when(quotaDAO.getQuotaByStoragePoolGuid(storagePoolUUID)).thenReturn(listQuota);
+
+        // Get and check the retrieved default quota name.
+        String quotaDefaultName = quotaHelper.getDefaultQuotaName(mockStoragePool());
+        String desiredQuotaDefaultName = "Quota_Def_Storage pool name_1";
+        Assert.assertEquals(desiredQuotaDefaultName, quotaDefaultName);
+    }
+
+    @Test
+    public void testGetDefaultQuotaNameWhenManyDefaultQuotasExist() throws Exception {
+        QuotaHelper quotaHelper = getQuotaHelper();
+        List<Quota> listQuota = new ArrayList<Quota>();
+
+        // Add storage quota.
+        Quota generalStorageQuota = mockGeneralStorageQuota();
+        generalStorageQuota.setQuotaName("Quota_Def_Storage pool name");
+        listQuota.add(generalStorageQuota);
+
+        // Add vds group quota.
+        Quota generalVdsGroupQuota = mockGeneralVdsGroupQuota();
+        generalVdsGroupQuota.setQuotaName("Quota_Def_Storage pool name_1");
+        listQuota.add(generalVdsGroupQuota);
+
+        // Add the list to the mock up when fetching list of quota.
+        when(quotaDAO.getQuotaByStoragePoolGuid(storagePoolUUID)).thenReturn(listQuota);
+
+        // Get and check the retrieved default quota name.
+        String quotaDefaultName = quotaHelper.getDefaultQuotaName(mockStoragePool());
+        String desiredQuotaDefaultName = "Quota_Def_Storage pool name_2";
+        Assert.assertEquals(desiredQuotaDefaultName, quotaDefaultName);
+    }
+
+    @Test
+    public void testGetDefaultQuotaNameWhenManyDefaultQuotasExistNotOrdered() throws Exception {
+        QuotaHelper quotaHelper = getQuotaHelper();
+        List<Quota> listQuota = new ArrayList<Quota>();
+
+        // Add storage quota.
+        Quota generalStorageQuota = mockGeneralStorageQuota();
+        generalStorageQuota.setQuotaName("Quota_Def_Storage pool name_1");
+        listQuota.add(generalStorageQuota);
+
+        // Add vds group quota.
+        Quota generalVdsGroupQuota = mockGeneralVdsGroupQuota();
+        generalVdsGroupQuota.setQuotaName("Quota_Def_Storage pool name");
+        listQuota.add(generalVdsGroupQuota);
+
+        // Add the list to the mock up when fetching list of quota.
+        when(quotaDAO.getQuotaByStoragePoolGuid(storagePoolUUID)).thenReturn(listQuota);
+
+        // Get and check the retrieved default quota name.
+        String quotaDefaultName = quotaHelper.getDefaultQuotaName(mockStoragePool());
+        String desiredQuotaDefaultName = "Quota_Def_Storage pool name_2";
+        Assert.assertEquals(desiredQuotaDefaultName, quotaDefaultName);
+    }
+
+    @Test
+    public void testGetDefaultQuotaNameWhenManyDefaultQuotasExistMixedNumbered() throws Exception {
+        QuotaHelper quotaHelper = getQuotaHelper();
+        List<Quota> listQuota = new ArrayList<Quota>();
+
+        // Add storage quota.
+        Quota generalStorageQuota = mockGeneralStorageQuota();
+        generalStorageQuota.setQuotaName("Quota_Def_Storage pool name_53");
+        listQuota.add(generalStorageQuota);
+
+        // Add vds group quota.
+        Quota generalVdsGroupQuota = mockGeneralVdsGroupQuota();
+        generalVdsGroupQuota.setQuotaName("Quota_Def_Storage pool name_2");
+        listQuota.add(generalVdsGroupQuota);
+
+        // Add the list to the mock up when fetching list of quota.
+        when(quotaDAO.getQuotaByStoragePoolGuid(storagePoolUUID)).thenReturn(listQuota);
+
+        // Get and check the retrieved default quota name.
+        String quotaDefaultName = quotaHelper.getDefaultQuotaName(mockStoragePool());
+        String desiredQuotaDefaultName = "Quota_Def_Storage pool name_54";
+        Assert.assertEquals(desiredQuotaDefaultName, quotaDefaultName);
+    }
+
+    @Test
     public void testAddDefaultQuotaToDCWithDefaultQuota() throws Exception {
         QuotaHelper quotaHelper = getQuotaHelper();
         when(quotaDAO.getDefaultQuotaByStoragePoolId(storagePoolUUID)).thenReturn(mockGeneralStorageQuota());

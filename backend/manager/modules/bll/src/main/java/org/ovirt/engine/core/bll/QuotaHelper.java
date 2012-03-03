@@ -126,23 +126,22 @@ public class QuotaHelper {
         List<Quota> quotaList = getQuotaDAO().getQuotaByStoragePoolGuid(storagePool.getId());
         String quotaDefaultName = "Quota_Def_" + storagePool.getname();
         String regexToolPattern = quotaDefaultName + "_[0-9]{1,}$";
-        Integer suffixQuotaName = 0;
+        int suffixQuotaName = 0;
         for (Quota quota : quotaList) {
             String quotaName = quota.getQuotaName();
-            if (quotaName.contains(quotaDefaultName)) {
-                // If the quota name is the default one
-                if (quotaName.length() == quotaDefaultName.length() && suffixQuotaName == 0) {
-                    suffixQuotaName = 1;
-                }
+            if (quotaName.contains(quotaDefaultName)
+                    && (quotaName.length() == quotaDefaultName.length() && suffixQuotaName == 0)) {
+                suffixQuotaName = 1;
             } else if (quotaName.matches(regexToolPattern)) {
-                String defaultQuotaString = quotaName.substring(quotaName.lastIndexOf("_"));
+                String defaultQuotaString = quotaName.substring(quotaName.lastIndexOf("_") + 1);
                 Integer defaultQuotaNumber = new Integer(defaultQuotaString);
-                if (suffixQuotaName < defaultQuotaNumber.intValue()) {
+                if (suffixQuotaName <= defaultQuotaNumber.intValue()) {
                     suffixQuotaName = defaultQuotaNumber.intValue() + 1;
                 }
             }
         }
-        return (suffixQuotaName > 0) ? quotaDefaultName + suffixQuotaName.toString() : quotaDefaultName;
+        return (suffixQuotaName > 0) ? String.format("%1$s_%2$s", quotaDefaultName, suffixQuotaName)
+                : quotaDefaultName;
     }
 
     public boolean checkQuotaValidationForAddEdit(Quota quota, List<String> messages) {
