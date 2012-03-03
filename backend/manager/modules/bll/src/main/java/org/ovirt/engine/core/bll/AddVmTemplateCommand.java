@@ -67,9 +67,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (getVm() != null) {
             VmHandler.updateDisksFromDb(getVm());
             setStoragePoolId(getVm().getstorage_pool_id());
+            setQuotaId(parameters.getMasterVm().getQuotaId());
         }
         imageToDestinationDomainMap = parameters.getImageToDestinationDomainMap();
-        setQuotaId(parameters.getQuotaId());
     }
 
     @Override
@@ -128,10 +128,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     @Override
     protected boolean validateQuota() {
         // Set default quota id if storage pool enforcement is disabled.
-        getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getQuotaId(),
+        getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaId(),
                 getStoragePool()));
         for (DiskImage diskImage : mImages) {
-            diskImage.setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getQuotaId(),
+            diskImage.setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaId(),
                     getStoragePool()));
         }
 
@@ -423,7 +423,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     getActionType().getActionGroup()));
             permissionCheckSubject = QuotaHelper.getInstance().addQuotaPermissionSubject(permissionCheckSubject,
                     getStoragePool(),
-                    getVm().getStaticData().getQuotaId());
+                    getQuotaId());
             permissionCheckSubject = setPermissionListForDiskImage(permissionCheckSubject);
         }
         return permissionCheckSubject;
