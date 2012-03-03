@@ -7,12 +7,15 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -168,6 +171,26 @@ public class QuotaHelper {
         }
 
         return true;
+    }
+
+    /**
+     * Save new <code>Quota</code> with permissions for ad_element_id to consume from.
+     *
+     * @param quota
+     *            - The quota to be saved
+     * @param ad_element_id
+     *            - The user which will have consume permissions on the quota.
+     */
+    public void saveQuotaForUser(Quota quota, Guid ad_element_id) {
+        DbFacade.getInstance().getQuotaDAO().save(quota);
+        permissions perm =
+                new permissions(ad_element_id,
+                        PredefinedRoles.QUOTA_CONSUMER.getId(),
+                        quota.getId(),
+                        VdcObjectType.Quota);
+        PermissionsOperationsParametes permParams = new PermissionsOperationsParametes(perm);
+        Backend.getInstance().runInternalAction(VdcActionType.AddPermission,
+                permParams);
     }
 
     /**

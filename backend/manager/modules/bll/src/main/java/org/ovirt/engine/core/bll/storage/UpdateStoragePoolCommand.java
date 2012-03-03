@@ -3,10 +3,12 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.QuotaHelper;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -40,12 +42,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     @Override
     protected void executeCommand() {
-        // If quota storage pool enforcement type was disable, and now we want to enforce the quota in the DC, loose the
-        // the default quota configuration.
-        if ((_oldStoragePool.getQuotaEnforcementType() == QuotaEnforcmentTypeEnum.DISABLED)
-                && (getStoragePool().getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED)) {
-            QuotaHelper.getInstance().setDefaultQuotaAsRegularQuota(_oldStoragePool);
-        }
+        updateDefaultQuota();
         DbFacade.getInstance().getStoragePoolDAO().updatePartial(getStoragePool());
         if (getStoragePool().getstatus() == StoragePoolStatus.Up
                 && !StringHelper.EqOp(_oldStoragePool.getname(), getStoragePool().getname())) {
@@ -57,6 +54,24 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                                     getStoragePool().getname()));
         }
         setSucceeded(true);
+    }
+
+    /**
+     * If quota storage pool enforcement type was disable, and now we want to enforce the quota in the DC, the default
+     * quota configuration should be relinquished. If the storage pool enforcement type has been changed to disable,
+     * create a new default quota.
+     */
+    private void updateDefaultQuota() {
+        if ((_oldStoragePool.getQuotaEnforcementType() == QuotaEnforcmentTypeEnum.DISABLED)
+                && (getStoragePool().getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED)) {
+            QuotaHelper.getInstance().setDefaultQuotaAsRegularQuota(_oldStoragePool);
+        } else if (_oldStoragePool.getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED
+                && (getStoragePool().getQuotaEnforcementType() == QuotaEnforcmentTypeEnum.DISABLED)) {
+            Quota newDefaultQuota = QuotaHelper.getInstance().getUnlimitedQuota(getStoragePool(), true);
+            newDefaultQuota.setQuotaName(QuotaHelper.getInstance().getDefaultQuotaName(getStoragePool()));
+            QuotaHelper.getInstance().saveQuotaForUser(newDefaultQuota,
+                    MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID);
+        }
     }
 
     @Override

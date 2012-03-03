@@ -4,23 +4,18 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.AddVdsGroupCommand;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
-import org.ovirt.engine.core.bll.PredefinedRoles;
 import org.ovirt.engine.core.bll.QuotaHelper;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.network;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -38,19 +33,8 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         getStoragePool().setstatus(StoragePoolStatus.Uninitialized);
         Quota defaultStoragePoolQuota = generateQuotaForNewStoragePool();
         DbFacade.getInstance().getStoragePoolDAO().save(getStoragePool());
-        createUnlimitedQuotaForEveryUser(defaultStoragePoolQuota);
-    }
-
-    private void createUnlimitedQuotaForEveryUser(Quota defaultStoragePoolQuota) {
-        DbFacade.getInstance().getQuotaDAO().save(defaultStoragePoolQuota);
-        permissions perm =
-                new permissions(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
-                        PredefinedRoles.QUOTA_CONSUMER.getId(),
-                        defaultStoragePoolQuota.getId(),
-                        VdcObjectType.Quota);
-        PermissionsOperationsParametes permParams = new PermissionsOperationsParametes(perm);
-        Backend.getInstance().runInternalAction(VdcActionType.AddPermission,
-                permParams);
+        QuotaHelper.getInstance().saveQuotaForUser(defaultStoragePoolQuota,
+                MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID);
     }
 
     private Quota generateQuotaForNewStoragePool() {
