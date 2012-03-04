@@ -1229,6 +1229,22 @@ actions:
           hostnic.ip.netmask: xs:string
     urlparams: {}
     headers: {Content-Type: application/xml}
+- name: /api/hosts/{host:id}/nics/setupnetworks|rel=setupnetworks
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:
+          action.host_nics.host_nic--COLLECTION: {host_nic.network.id|name: 'xs:string', host_nic.name: 'xs:string', host_nic.ip.gateway: 'xs:string',
+            host_nic.boot_protocol: 'xs:string', host_nic.mac: 'xs:string', host_nic.ip.address: 'xs:string', host_nic.ip.netmask: 'xs:string',
+            host_nic.bonding.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string', option.type: 'xs:string'},
+            bonding.slaves.host_nic--COLLECTION: {host_nic.name|id: 'xs:string'}}
+          action.checkConnectivity: xs:boolean
+          action.connectivityTimeout: xs:int
+          action.force: xs:boolean
+    urlparams: {}
+    headers: {Content-Type: application/xml}
 - name: /api/hosts/{host:id}/nics/{nic:id}/attach|rel=attach
   request:
     body:
