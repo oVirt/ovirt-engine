@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapSearchByQueryParameters;
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -112,6 +113,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         }
         case Quota: {
             returnValue = searchQuota();
+            break;
+        }
+        case DiskImage: {
+            returnValue = searchDiskImage();
             break;
         }
         default: {
@@ -240,6 +245,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     private List<Quota> searchQuota() {
         return genericSearch(DbFacade.getInstance().getQuotaDAO(), true, null);
+    }
+
+    private List<DiskImage> searchDiskImage() {
+        return genericSearch(DbFacade.getInstance().getDiskImageDAO(), true, null);
     }
 
     private QueryData2 InitQueryData(boolean useCache) {

@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.DayOfWeek;
+import org.ovirt.engine.core.compat.EnumCompat;
+import org.ovirt.engine.core.compat.StringHelper;
 
 public class BaseAutoCompleter implements IAutoCompleter {
     protected final Map<String, String> mVerbs = new HashMap<String, String>();

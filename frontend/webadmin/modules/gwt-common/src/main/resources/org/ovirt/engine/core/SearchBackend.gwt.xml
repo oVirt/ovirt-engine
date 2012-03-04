@@ -15,6 +15,7 @@
 		<include name="searchbackend/SyntaxChecker.java" />
 		<include name="searchbackend/ADSyntaxChecker.java" />
 		<include name="searchbackend/AdSearchObjecAutoCompleter.java" />
+		<include name="searchbackend/DiskImageConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/BaseAutoCompleter.java" />
 		<include name="searchbackend/IConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/AdUserConditionFieldAutoCompleter.java" />

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  *
  */
-public interface DiskImageDAO extends GenericDao<DiskImage, Guid> {
+public interface DiskImageDAO extends GenericDao<DiskImage, Guid>, SearchDAO<DiskImage> {
 
     /**
      * Retrieves the snapshot with the specified id.

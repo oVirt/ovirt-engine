@@ -21,7 +21,8 @@ public enum SearchType implements Serializable {
     Cluster,
     StoragePool,
     StorageDomain,
-    Quota;
+    Quota,
+    DiskImage;
 
     public int getValue() {
         return this.ordinal();

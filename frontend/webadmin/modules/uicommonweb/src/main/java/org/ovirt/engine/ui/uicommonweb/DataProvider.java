@@ -2804,6 +2804,10 @@ public final class DataProvider
         {
             return ((Quota) entity).getId();
         }
+        else if (entity instanceof DiskImage)
+        {
+            return ((DiskImage) entity).getId();
+        }
         return new Guid();
     }
 

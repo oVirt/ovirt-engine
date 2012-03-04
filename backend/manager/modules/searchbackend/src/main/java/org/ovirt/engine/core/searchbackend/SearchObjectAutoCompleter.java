@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.core.compat.StringHelper;
 
 public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
     private final java.util.HashMap<String, String[]> mJoinDictionary = new java.util.HashMap<String, String[]>();
@@ -16,6 +17,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.put(SearchObjects.AUDIT_PLU_OBJ_NAME, SearchObjects.AUDIT_PLU_OBJ_NAME);
         mVerbs.put(SearchObjects.VDC_USER_PLU_OBJ_NAME, SearchObjects.VDC_USER_PLU_OBJ_NAME);
         mVerbs.put(SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME);
+        mVerbs.put(SearchObjects.DISK_IMAGE_PLU_OBJ_NAME, SearchObjects.DISK_IMAGE_PLU_OBJ_NAME);
         mVerbs.put(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME);
         mVerbs.put(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
 
@@ -24,6 +26,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         if (isDesktopsAllowed) {
             mVerbs.put(SearchObjects.VDC_POOL_OBJ_NAME, SearchObjects.VDC_POOL_OBJ_NAME);
         }
+        mVerbs.put(SearchObjects.DISK_IMAGE_OBJ_NAME, SearchObjects.DISK_IMAGE_OBJ_NAME);
         mVerbs.put(SearchObjects.VDS_OBJ_NAME, SearchObjects.VDS_OBJ_NAME);
         mVerbs.put(SearchObjects.TEMPLATE_OBJ_NAME, SearchObjects.TEMPLATE_OBJ_NAME);
         mVerbs.put(SearchObjects.AUDIT_OBJ_NAME, SearchObjects.AUDIT_OBJ_NAME);
@@ -215,6 +218,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                 || StringHelper.EqOp(obj, SearchObjects.VDC_POOL_PLU_OBJ_NAME)) {
             retval = new PoolConditionFieldAutoCompleter();
         }
+        else if (StringHelper.EqOp(obj, SearchObjects.DISK_IMAGE_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.DISK_IMAGE_PLU_OBJ_NAME)) {
+            retval = new DiskImageConditionFieldAutoCompleter();
+        }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
             retval = new ClusterConditionFieldAutoCompleter();
@@ -244,6 +251,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                 || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
             retval = "vms";
 
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.DISK_IMAGE_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.DISK_IMAGE_PLU_OBJ_NAME)) {
+            retval = "vm_images_view";
         }
         else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
@@ -291,6 +302,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                 || StringHelper.EqOp(obj, SearchObjects.AUDIT_PLU_OBJ_NAME)) {
             retval = "audit_log";
         }
+        else if (StringHelper.EqOp(obj, SearchObjects.DISK_IMAGE_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.DISK_IMAGE_PLU_OBJ_NAME)) {
+            retval = "vm_images_view";
+        }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
             retval = "vdc_users_with_tags";
@@ -323,6 +338,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
             retval = "vm_guid";
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.DISK_IMAGE_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.DISK_IMAGE_PLU_OBJ_NAME)) {
+            retval = "image_guid";
         }
         else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
@@ -391,6 +410,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
             retval = "vm_name ASC ";
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.DISK_IMAGE_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.DISK_IMAGE_PLU_OBJ_NAME)) {
+            retval = "disk_name ASC ";
         }
         else if (StringHelper.EqOp(obj, SearchObjects.AUDIT_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.AUDIT_PLU_OBJ_NAME)) {

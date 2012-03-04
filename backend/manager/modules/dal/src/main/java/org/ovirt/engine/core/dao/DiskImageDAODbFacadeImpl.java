@@ -23,6 +23,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * <code>DiskImageDAODbFacadeImpl</code> provides an implementation of {@link DiskImageDAO} that uses previously
@@ -321,5 +322,10 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         }
         return images;
 
+    }
+
+    @Override
+    public List<DiskImage> getAllWithQuery(String query) {
+        return new SimpleJdbcTemplate(jdbcTemplate).query(query, diskImageRowMapper);
     }
 }

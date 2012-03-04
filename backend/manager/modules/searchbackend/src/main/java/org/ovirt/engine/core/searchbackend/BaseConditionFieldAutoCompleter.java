@@ -6,11 +6,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.DateEnumForSearch;
+import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.interfaces.*;
+import org.ovirt.engine.core.common.interfaces.ITagsHandler;
+import org.ovirt.engine.core.compat.DateFormatCompat;
+import org.ovirt.engine.core.compat.DateTime;
+import org.ovirt.engine.core.compat.DayOfWeek;
+import org.ovirt.engine.core.compat.DoubleCompat;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.IntegerCompat;
+import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.compat.Regex;
+import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.TimeSpan;
 
 /**
  * A base class for all condition field auto completers
