@@ -311,7 +311,7 @@ public class SnapshotsManager {
 
         // Remove all disks that didn't exist in the snapshot.
         for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmId(vmId)) {
-            if (VmDeviceType.getName(VmDeviceType.DISK).equals(vmDevice.getType())
+            if (VmDeviceType.DISK.getName().equals(vmDevice.getType())
                     && !diskIdsFromSnapshot.contains(vmDevice.getDeviceId())) {
                 for (DiskImage diskImage : getDiskImageDao().getAllSnapshotsForImageGroup(vmDevice.getDeviceId())) {
                     getImageVmMapDao().remove(new image_vm_map_id(diskImage.getId(), vmId));
