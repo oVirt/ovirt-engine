@@ -2,8 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
+import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -45,7 +48,7 @@ public final class ImagesHandler {
     public static final String DefaultDriveName = "1";
 
     /**
-     * Adds a disk image (Adds image, disk and relevant VmDevice entities)
+     * Adds a disk image (Adds image, disk and relevant entities)
      *
      * @param image
      *            DiskImage to add
@@ -65,6 +68,77 @@ public final class ImagesHandler {
     }
 
     /**
+     * Gets a map of DiskImage IDs to DiskImage objects
+     *
+     * @param diskImages
+     *            collection of DiskImage objects to create the map for
+     * @return map object is the collection is not null
+     */
+    public static Map<Guid, DiskImage> getDiskImagesByIdMap(Collection<DiskImage> diskImages) {
+        Map<Guid, DiskImage> result = null;
+        if (diskImages != null) {
+            result = new HashMap<Guid, DiskImage>();
+            for (DiskImage diskImage : diskImages) {
+                result.put(diskImage.getId(), diskImage);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Adds a disk image (Adds image, disk, and relevant entities , but not VmDevice) This may be useful for Clone VMs,
+     * where besides adding images it is required to copy all vm devices (VmDeviceUtils.copyVmDevices) from the source
+     * VM
+     *
+     * @param image
+     *            image to add
+     * @param active
+     *            true if to add as active image
+     * @param imageStorageDomainMap
+     *            entry of image storagte domain map
+     */
+    public static void addDiskImageWithNoVmDevice(DiskImage image,
+            boolean active,
+            image_storage_domain_map imageStorageDomainMap) {
+        try {
+            addImage(image, active, imageStorageDomainMap);
+            addDisk(image.getDisk());
+        } catch (RuntimeException ex) {
+            log.error("Failed adding new disk image and related entities to db", ex);
+            throw new VdcBLLException(VdcBllErrors.DB, ex);
+        }
+    }
+
+    /**
+     * Adds a disk image (Adds image, disk, and relevant entities , but not VmDevice) This may be useful for Clone VMs,
+     * where besides adding images it is required to copy all vm devices (VmDeviceUtils.copyVmDevices) from the source
+     * VM
+     *
+     * @param image
+     * @param active
+     * @param imageStorageDomainMap
+     */
+    public static void addDiskImageWithNoVmDevice(DiskImage image) {
+        addDiskImageWithNoVmDevice(image,
+                image.getactive(),
+                new image_storage_domain_map(image.getId(), image.getstorage_ids().get(0)));
+    }
+
+    /**
+     * Adds disk to a VM without creating a VmDevice entry
+     *
+     * @param disk
+     *            disk to add
+     * @param vmId
+     *            ID of the VM the disk will be associated with
+     */
+    public static void addDisk(Disk disk) {
+        if (!DbFacade.getInstance().getDiskDao().exists(disk.getId())) {
+            DbFacade.getInstance().getDiskDao().save(disk);
+        }
+    }
+
+    /**
      * Adds a disk image (Adds image with active flag according to the value in image, using the first storage domain in
      * the storage id as entry to the storage domain map)
      *
@@ -72,8 +146,8 @@ public final class ImagesHandler {
      *            DiskImage to add
      */
     public static void addDiskImage(DiskImage image) {
-        addDiskImage(image, image.getactive(), new image_storage_domain_map(image.getId(),
-                    getStorageDomainId(image)));
+        addDiskImage(image, image.getactive(), new image_storage_domain_map(image.getId(), image.getstorage_ids()
+                .get(0)));
     }
 
     /**
@@ -94,9 +168,11 @@ public final class ImagesHandler {
         diskDynamic.setId(image.getId());
         diskDynamic.setactual_size(image.getactual_size());
         DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
-        DbFacade.getInstance()
-                .getStorageDomainDAO()
-                .addImageStorageDomainMap(imageStorageDomainMap);
+        if (imageStorageDomainMap != null) {
+            DbFacade.getInstance()
+                    .getStorageDomainDAO()
+                    .addImageStorageDomainMap(imageStorageDomainMap);
+        }
     }
 
     /**
@@ -146,18 +222,6 @@ public final class ImagesHandler {
             curImage = curDiskImage.getParentId();
         }
         return snapshots;
-    }
-
-    public static void setStorageDomainId(DiskImage diskImage, Guid storageDomainId) {
-        ArrayList<Guid> storageDomainIds = new ArrayList<Guid>();
-        storageDomainIds.add(storageDomainId);
-        diskImage.setstorage_ids(storageDomainIds);
-    }
-
-    public static Guid getStorageDomainId(DiskImage diskImage) {
-        return (diskImage.getstorage_ids() != null && !diskImage.getstorage_ids().isEmpty()) ? diskImage.getstorage_ids()
-                .get(0)
-                : null;
     }
 
     public static String cdPathWindowsToLinux(String windowsPath, Guid storagePoolId) {
@@ -409,6 +473,44 @@ public final class ImagesHandler {
             }
         }
         return returnValue;
+    }
+
+    public static String calculateImageDescription(VM vm) {
+        String vmName = (vm == null) ? null : vm.getvm_name();
+        return calculateImageDescription(vmName);
+    }
+
+    public static String calculateImageDescription(String vmName) {
+        StringBuilder vmLabel = new StringBuilder("ActiveImage");
+        vmLabel = (vmName == null) ? vmLabel : vmLabel.append("_").append(vmName);
+        return String.format("_%1$s_%2$s", vmLabel, new java.util.Date());
+    }
+
+    public static void removeDiskImage(DiskImage diskImage) {
+        try {
+            removeDiskFromVm(diskImage.getvm_guid(), diskImage.getDisk().getId());
+            removeImage(diskImage);
+        } catch (RuntimeException ex) {
+            log.error("Failed adding new disk image and related entities to db", ex);
+            throw new VdcBLLException(VdcBllErrors.DB, ex);
+        }
+    }
+
+    public static void removeImage(DiskImage diskImage) {
+        DbFacade.getInstance()
+                .getStorageDomainDAO()
+                .removeImageStorageDomainMap(new image_storage_domain_map(diskImage.getId(),
+                        diskImage.getstorage_ids().get(0)));
+        DbFacade.getInstance().getDiskImageDynamicDAO().remove(diskImage.getId());
+        DbFacade.getInstance()
+                .getImageVmMapDAO()
+                .remove(new image_vm_map_id(diskImage.getId(), diskImage.getvm_guid()));
+        DbFacade.getInstance().getDiskImageDAO().remove(diskImage.getId());
+    }
+
+    public static void removeDiskFromVm(Guid vmGuid, Guid diskId) {
+        DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(diskId, vmGuid));
+        DbFacade.getInstance().getDiskDao().remove(diskId);
     }
 
     protected static Log log = LogFactory.getLog(ImagesHandler.class);
