@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
@@ -108,9 +109,18 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected boolean canDoAction() {
-        return super.canDoAction() && noConflictingNetwork() && VdsGroupExists();
+        return super.canDoAction() && noConflictingNetwork() && VdsGroupExists() && changesAreClusterCompatible();
     }
 
+
+    private boolean changesAreClusterCompatible() {
+        if (getParameters().getNetwork().isVmNetwork() == false
+                && getVdsGroup().getcompatibility_version().compareTo(Version.v3_1) < 0) {
+            addCanDoActionMessage(VdcBllMessages.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL);
+            return false;
+        }
+        return true;
+    }
 
     private boolean noConflictingNetwork() {
         if (networkExists()) {

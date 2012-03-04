@@ -1158,4 +1158,6 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME();
 
     String ACTION_TYPE_FAILED_CANNOT_MOVE_TEMPLATE_DISK();
+
+    String NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL();
 }

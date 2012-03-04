@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.NetworkClusterDAO;
@@ -47,6 +48,7 @@ public class AttachNetworkToVdsGroupCommandTest {
 
     @Before
     public void setup() {
+        existingGroup.setcompatibility_version(Version.v3_1);
         createCommand();
         when(DbFacade.getInstance()).thenReturn(getDbFacadeMock());
     }
