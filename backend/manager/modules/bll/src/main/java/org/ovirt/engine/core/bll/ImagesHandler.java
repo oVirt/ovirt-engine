@@ -5,17 +5,26 @@ import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -25,6 +34,8 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public final class ImagesHandler {
     public static final Guid BlankImageTemplateId = new Guid("00000000-0000-0000-0000-000000000000");
@@ -42,11 +53,93 @@ public final class ImagesHandler {
     }
 
     /**
-     * This function was developed especially for GUI needs.
-     * It returns a list of all the snapshots of current image of a specific VM.
-     * If there are two images mapped to same VM, it's assumed that this is a TryBackToImage case and
-     * the function returns a list of snapshots of inactive images.
-     * In this case the parent of the active image appears to be trybackfrom image
+     * Adds a disk image (Adds image, disk and relevant VmDevice entities)
+     *
+     * @param image
+     *            DiskImage to add
+     * @param active
+     *            true if the image should be added as active
+     * @param imageStorageDomainMap
+     *            storage domain map entry to map between the image and its storage domain
+     */
+    public static void addDiskImage(DiskImage image, boolean active, image_storage_domain_map imageStorageDomainMap) {
+        try {
+            addImage(image, active, imageStorageDomainMap);
+            addDiskToVmIfNotExists(image.getDisk(), image.getvm_guid());
+        } catch (RuntimeException ex) {
+            log.error("Failed adding new disk image and related entities to db", ex);
+            throw new VdcBLLException(VdcBllErrors.DB, ex);
+        }
+    }
+
+    /**
+     * Adds a disk image (Adds image with active flag according to the value in image, using the first storage domain in
+     * the storage id as entry to the storage domain map)
+     *
+     * @param image
+     *            DiskImage to add
+     */
+    public static void addDiskImage(DiskImage image) {
+        addDiskImage(image, image.getactive(), new image_storage_domain_map(image.getId(),
+                    getStorageDomainId(image)));
+    }
+
+    /**
+     * Add image and related entities to DB (Adds image, disk image dynamic and image storage domain map)
+     *
+     * @param image
+     *            the image to add
+     * @param active
+     *            if true the image will be active
+     * @param imageStorageDomainMap
+     *            entry of mapping between the storage domain and the image
+     */
+    public static void addImage(DiskImage image, boolean active, image_storage_domain_map imageStorageDomainMap) {
+        DbFacade.getInstance().getDiskImageDAO().save(image);
+        DbFacade.getInstance().getImageVmMapDAO().save(
+                new image_vm_map(active, image.getId(), image.getvm_guid()));
+        DiskImageDynamic diskDynamic = new DiskImageDynamic();
+        diskDynamic.setId(image.getId());
+        diskDynamic.setactual_size(image.getactual_size());
+        DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
+        DbFacade.getInstance()
+                .getStorageDomainDAO()
+                .addImageStorageDomainMap(imageStorageDomainMap);
+    }
+
+    /**
+     * Add disk if it does not exist to a given vm
+     *
+     * @param disk
+     *            the disk to add
+     * @param vmId
+     *            the ID of the vm to add to if the disk does not exist for this VM
+     */
+    public static void addDiskToVmIfNotExists(Disk disk, Guid vmId) {
+        if (!DbFacade.getInstance().getDiskDao().exists(disk.getId())) {
+            addDiskToVm(disk, vmId);
+        }
+    }
+
+    /**
+     * Adds disk to vm
+     *
+     * @param disk
+     *            the disk to add
+     * @param vmId
+     *            the ID of the VM to add to
+     */
+    public static void addDiskToVm(Disk disk, Guid vmId) {
+        DbFacade.getInstance().getDiskDao().save(disk);
+        VmDeviceUtils.addManagedDevice(new VmDeviceId(disk.getId(), vmId),
+                VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
+    }
+
+    /**
+     * This function was developed especially for GUI needs. It returns a list of all the snapshots of current image of
+     * a specific VM. If there are two images mapped to same VM, it's assumed that this is a TryBackToImage case and the
+     * function returns a list of snapshots of inactive images. In this case the parent of the active image appears to
+     * be trybackfrom image
      *
      * @param imageId
      * @param imageTemplateId
@@ -91,6 +184,18 @@ public final class ImagesHandler {
             }
         }
         return count;
+    }
+
+    public static void setStorageDomainId(DiskImage diskImage, Guid storageDomainId) {
+        ArrayList<Guid> storageDomainIds = new ArrayList<Guid>();
+        storageDomainIds.add(storageDomainId);
+        diskImage.setstorage_ids(storageDomainIds);
+    }
+
+    public static Guid getStorageDomainId(DiskImage diskImage) {
+        return (diskImage.getstorage_ids() != null && !diskImage.getstorage_ids().isEmpty()) ? diskImage.getstorage_ids()
+                .get(0)
+                : null;
     }
 
     public static String cdPathWindowsToLinux(String windowsPath, Guid storagePoolId) {
@@ -334,4 +439,7 @@ public final class ImagesHandler {
         }
         return returnValue;
     }
+
+    protected static Log log = LogFactory.getLog(ImagesHandler.class);
+
 }
