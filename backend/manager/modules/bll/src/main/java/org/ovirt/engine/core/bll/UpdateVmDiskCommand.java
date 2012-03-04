@@ -138,7 +138,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
         } else if (!DiskInterface.VirtIO.equals(_oldDisk.getdisk_interface())) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_VIRTIO);
-        } else if (oldVmDevice.getIsPlugged() == getParameters().getDiskInfo().getPlugged()) {
+        } else if (oldVmDevice.getIsPlugged().equals(getParameters().getDiskInfo().getPlugged())) {
             if (oldVmDevice.getIsPlugged()) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
@@ -168,7 +168,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
                 DbFacade.getInstance().getDiskDao().update(_oldDisk.getDisk());
                 getDiskImageDao().update(_oldDisk);
                 if (getParameters().getDiskInfo().getPlugged() != null
-                        && getParameters().getDiskInfo().getPlugged() != oldVmDevice.getIsPlugged()) {
+                        && !getParameters().getDiskInfo().getPlugged().equals(oldVmDevice.getIsPlugged())) {
                     oldVmDevice.setIsPlugged(getParameters().getDiskInfo().getPlugged());
                     getVmDeviceDao().update(oldVmDevice);
                 }

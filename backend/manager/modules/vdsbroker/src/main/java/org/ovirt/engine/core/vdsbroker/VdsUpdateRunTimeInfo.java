@@ -832,7 +832,8 @@ public class VdsUpdateRunTimeInfo {
                 VM vm = _vmDict.get(vmDynamic.getId());
                 if (vm != null) {
                     String dbHash = vm.getHash();
-                    if ((dbHash == null && vmDynamic.getHash() != null) || !dbHash.equals(vmDynamic.getHash())) {
+                    if ((dbHash == null && vmDynamic.getHash() != null) || (dbHash != null)
+                            && !dbHash.equals(vmDynamic.getHash())) {
                         vmsToUpdate.add(vmDynamic.getId().toString());
                         // update new hash value
                         if (_vmDynamicToSave.containsKey(vm.getId())) {
