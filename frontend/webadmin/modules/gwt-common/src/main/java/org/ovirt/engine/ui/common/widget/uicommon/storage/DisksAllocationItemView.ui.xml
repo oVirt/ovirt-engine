@@ -6,43 +6,38 @@
 	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationItemView.WidgetStyle">
 	
 		.container {
-			float: right;
-		}		
+			width: 100%;
+		}
 		
-		.diskNameLabelPanel {
-			margin: 5px;
-			float: left;
-			width: 120px;
+		.editorLabel {
+			display: none;
 		}
 		
 		.editorContent {
-			width: auto;
-			width: 120px;
+			width: 100px;
 		}
 		
 		.editorWrapper {
 			display: inline-block;
 		}
 		
-		.diskNameLabel {
-			color: black;
-			line-height: 22px;
-		}
-		
-		.diskSizeLabel {
-			white-space: nowrap;
-			line-height: 22px;
+		.editorsPanel {
+			float: right;
 		}
 			
 	</ui:style>	
 	
-	<g:FlowPanel width="100%">
-		<g:HorizontalPanel ui:field="diskNameLabelPanel" addStyleNames="{style.diskNameLabelPanel}"/>
-		<g:FlowPanel addStyleNames="{style.container}">
+	<g:HorizontalPanel addStyleNames="{style.container}">
+		<g:HorizontalPanel>
+			<e:EntityModelLabelEditor ui:field="diskNameLabel" />
+			<e:EntityModelLabelEditor ui:field="diskSizeLabel" />
+		</g:HorizontalPanel>
+		<g:HorizontalPanel addStyleNames="{style.editorsPanel}">
+			<e:EntityModelLabelEditor ui:field="sourceStorageLabel" />
 			<e:ListModelListBoxEditor ui:field="volumeTypeListEditor" />
 			<e:ListModelListBoxEditor ui:field="sourceStorageListEditor" />
 			<e:ListModelListBoxEditor ui:field="storageListEditor" />
-		</g:FlowPanel>
-	</g:FlowPanel>
+		</g:HorizontalPanel>
+	</g:HorizontalPanel>
 
 </ui:UiBinder>

@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.IVdcQueryableCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -25,7 +26,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.qouta.QuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.QuotaModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.editor.IVdcQueryableCellTable;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NullableButtonCell;
 
 import com.google.gwt.cell.client.CheckboxCell;

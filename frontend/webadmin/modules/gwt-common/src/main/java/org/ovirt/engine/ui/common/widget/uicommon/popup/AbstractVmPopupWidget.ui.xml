@@ -66,8 +66,7 @@
 		}
 		
 		.disksAllocationPanel {
-			width: 95%;
-			float: right;
+			width: 460px;
 			padding-top: 5px;
 			padding-bottom: 10px;
 		}
@@ -199,22 +198,24 @@
 				<t:content>
 					<g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
+							<g:Label addStyleNames="{style.sectionLabel}">Memory Allocation:</g:Label>
+							<e:EntityModelTextBoxEditor ui:field="minAllocatedMemoryEditor" />
+						</g:FlowPanel>
+						<g:FlowPanel ui:field="storageAllocationPanel" addStyleNames="{style.sectionPanel}">
 							<g:HorizontalPanel>
 								<g:Label addStyleNames="{style.sectionLabel}">Storage Allocation:</g:Label>
 								<g:Label addStyleNames="{style.sectionComment}">(Available only when a template is selected)</g:Label>
 							</g:HorizontalPanel>
-									<g:HorizontalPanel>
-										<e:ListModelListBoxEditor ui:field="provisioningEditor" addStyleNames="{style.provisioningEditor}" />
-										<e:EntityModelRadioButtonEditor ui:field="provisioningThinEditor"/>
-										<e:EntityModelRadioButtonEditor ui:field="provisioningCloneEditor"/>
-									</g:HorizontalPanel>
-									<g:Label ui:field="disksAllocationLabel" text="{constants.disksAllocation}"  addStyleNames="{style.disksAllocation}" visible="false" />									
-									<s:DisksAllocationView ui:field="disksAllocationView" listHeight="135px" volumeType="true" addStyleNames="{style.disksAllocationPanel}" />
-						</g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.sectionPanel}">
-							<g:Label addStyleNames="{style.sectionLabel}">Memory Allocation:</g:Label>
-							<e:EntityModelTextBoxEditor ui:field="minAllocatedMemoryEditor" />
-						</g:FlowPanel>
+							<g:HorizontalPanel>
+								<e:ListModelListBoxEditor ui:field="provisioningEditor" addStyleNames="{style.provisioningEditor}" />
+								<e:EntityModelRadioButtonEditor ui:field="provisioningThinEditor"/>
+								<e:EntityModelRadioButtonEditor ui:field="provisioningCloneEditor"/>
+							</g:HorizontalPanel>
+							<g:Label ui:field="disksAllocationLabel" text="{constants.disksAllocation}"  addStyleNames="{style.disksAllocation}" visible="false" />									
+							<g:VerticalPanel>
+								<s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" showVolumeType="true" addStyleNames="{style.disksAllocationPanel}" />
+							</g:VerticalPanel>
+						</g:FlowPanel>	
 					</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>

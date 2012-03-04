@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 
@@ -23,14 +24,15 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     @UiField
     Label messageLabel;
 
-    @UiField
+    @UiField(provided = true)
     @Ignore
     DisksAllocationView disksAllocationView;
 
     @Inject
-    public DisksAllocationPopupView(EventBus eventBus, ApplicationResources resources) {
+    public DisksAllocationPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
 
+        disksAllocationView = new DisksAllocationView(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
     }
 
@@ -48,7 +50,7 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     public void setMessage(String message) {
         super.setMessage(message);
         // Hide table in case of message
-        if (message != null && message.isEmpty()) {
+        if (message != null && !message.isEmpty()) {
             disksAllocationView.setVisible(false);
         }
         messageLabel.setText(message);

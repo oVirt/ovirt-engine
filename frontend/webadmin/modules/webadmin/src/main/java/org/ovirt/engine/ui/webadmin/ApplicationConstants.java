@@ -778,4 +778,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("VMs")
     String quotaVmSubTabLabel();
+
+    @DefaultStringValue("Source")
+    String sourceStorage();
+
+    @DefaultStringValue("Destination")
+    String destinationStorage();
 }

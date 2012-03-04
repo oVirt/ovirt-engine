@@ -219,6 +219,18 @@ public class DiskModel extends Model
         privateDiskImage = value;
     }
 
+    private EntityModel sourceStorageDomainName;
+
+    public EntityModel getSourceStorageDomainName()
+    {
+        return sourceStorageDomainName;
+    }
+
+    public void setSourceStorageDomainName(EntityModel value)
+    {
+        sourceStorageDomainName = value;
+    }
+
     public DiskModel()
     {
         setSize(new EntityModel());
@@ -229,6 +241,9 @@ public class DiskModel extends Model
 
         setSourceStorageDomain(new ListModel());
         getSourceStorageDomain().setIsAvailable(false);
+
+        setSourceStorageDomainName(new EntityModel());
+        getSourceStorageDomainName().setIsAvailable(false);
 
         setPreset(new ListModel());
         getPreset().getSelectedItemChangedEvent().addListener(this);

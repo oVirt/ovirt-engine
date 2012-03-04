@@ -26,7 +26,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Disk Activate/Deactivate while VM is running, is supported only for Clusters of version 3.1 and above")
     String diskHotPlugNotSupported();
 
-    @DefaultStringValue("Disks Allocation")
+    @DefaultStringValue("Disks Allocation:")
     String disksAllocation();
 
     @DefaultStringValue("Disk ")

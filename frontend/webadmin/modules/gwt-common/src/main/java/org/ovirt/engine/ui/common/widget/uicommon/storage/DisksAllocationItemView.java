@@ -2,10 +2,14 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelRenderer;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.parser.EntityModelParser;
+import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
@@ -16,7 +20,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DisksAllocationItemView extends Composite implements HasEditorDriver<DiskModel> {
@@ -32,15 +35,6 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     @UiField
     WidgetStyle style;
 
-    @UiField
-    HorizontalPanel diskNameLabelPanel;
-
-    @Ignore
-    TextBoxLabel diskNameLabel;
-
-    @Ignore
-    DiskSizeLabel<Long> diskSizeLabel;
-
     @UiField(provided = true)
     @Path(value = "volumeType.selectedItem")
     ListModelListBoxEditor<Object> volumeTypeListEditor;
@@ -53,19 +47,30 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     @Path(value = "sourceStorageDomain.selectedItem")
     ListModelListBoxEditor<Object> sourceStorageListEditor;
 
+    @UiField
+    @Path(value = "sourceStorageDomainName.entity")
+    EntityModelLabelEditor sourceStorageLabel;
+
+    @UiField
+    @Ignore
+    EntityModelLabelEditor diskNameLabel;
+
+    @UiField
+    @Ignore
+    EntityModelLabelEditor diskSizeLabel;
+
     CommonApplicationConstants constants;
 
     public DisksAllocationItemView(CommonApplicationConstants constants) {
         this.constants = constants;
 
-        initListBoxEditors();
+        initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        initLabels();
         addStyles();
         Driver.driver.initialize(this);
     }
 
-    void initListBoxEditors() {
+    void initEditors() {
         volumeTypeListEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
 
         storageListEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
@@ -81,39 +86,33 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
                 return ((storage_domains) object).getstorage_name();
             }
         });
-    }
 
-    void initLabels() {
-        diskNameLabel = new TextBoxLabel();
-        diskSizeLabel = new DiskSizeLabel<Long>();
-        diskNameLabelPanel.add(diskNameLabel);
-        diskNameLabelPanel.add(diskSizeLabel);
+        diskSizeLabel = new EntityModelLabelEditor(
+                new EntityModelRenderer(), new EntityModelParser());
     }
 
     void addStyles() {
-        diskNameLabel.addStyleName(style.diskNameLabel());
-        diskSizeLabel.addStyleName(style.diskSizeLabel());
-        diskNameLabelPanel.addStyleName(style.diskNameLabelPanel());
+        updateEditorStyle(diskNameLabel);
+        updateEditorStyle(diskSizeLabel);
+        updateEditorStyle(sourceStorageLabel);
+        updateEditorStyle(volumeTypeListEditor);
+        updateEditorStyle(sourceStorageListEditor);
+        updateEditorStyle(storageListEditor);
+    }
 
-        volumeTypeListEditor.addContentWidgetStyleName(style.editorContent());
-        sourceStorageListEditor.addContentWidgetStyleName(style.editorContent());
-        storageListEditor.addContentWidgetStyleName(style.editorContent());
-
-        volumeTypeListEditor.addWrapperStyleName(style.editorWrapper());
-        sourceStorageListEditor.addWrapperStyleName(style.editorWrapper());
-        storageListEditor.addWrapperStyleName(style.editorWrapper());
-
-        volumeTypeListEditor.hideLabel();
-        sourceStorageListEditor.hideLabel();
-        storageListEditor.hideLabel();
+    private void updateEditorStyle(AbstractValidatedWidgetWithLabel editor) {
+        editor.addContentWidgetStyleName(style.editorContent());
+        editor.addWrapperStyleName(style.editorWrapper());
+        editor.setLabelStyleName(style.editorLabel());
     }
 
     @Override
     public void edit(DiskModel object) {
         Driver.driver.edit(object);
 
-        diskNameLabel.setText(constants.diskNamePrefix() + object.getName());
-        diskSizeLabel.setValue((Long) object.getSize().getEntity());
+        diskNameLabel.asValueBox().setValue(constants.diskNamePrefix() + object.getName());
+        diskSizeLabel.asValueBox().setValue(
+                (new DiskSizeRenderer<Long>(DiskSizeUnit.GIGABYTE).render((Long) object.getSize().getEntity())));
     }
 
     @Override
@@ -122,15 +121,11 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     }
 
     interface WidgetStyle extends CssResource {
-        String diskNameLabel();
-
-        String diskNameLabelPanel();
-
-        String diskSizeLabel();
-
         String editorContent();
 
         String editorWrapper();
+
+        String editorLabel();
     }
 
 }

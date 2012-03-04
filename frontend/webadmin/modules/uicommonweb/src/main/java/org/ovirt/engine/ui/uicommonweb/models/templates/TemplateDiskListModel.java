@@ -7,11 +7,14 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.Linq.DiskModelByNameComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -44,8 +47,6 @@ public class TemplateDiskListModel extends SearchableListModel
         setCopyCommand(new UICommand("Copy", this));
 
         UpdateActionAvailability();
-
-        setIsTimerDisabled(true);
     }
 
     @Override
@@ -98,8 +99,14 @@ public class TemplateDiskListModel extends SearchableListModel
     @Override
     public void setItems(Iterable value)
     {
-        if (diskModels != null) {
-            super.setItems(diskModels);
+        if (diskModels != null)
+        {
+            ItemsChanging(value, items);
+            Linq.Sort(diskModels, new DiskModelByNameComparer());
+            items = diskModels;
+            getItemsChangedEvent().raise(this, EventArgs.Empty);
+            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
+
             diskModels = null;
         }
         else
@@ -120,6 +127,7 @@ public class TemplateDiskListModel extends SearchableListModel
                             for (DiskImage diskImage : disks) {
                                 DiskModel diskModel = new DiskModel();
                                 diskModel.setDiskImage(diskImage);
+                                diskModel.setName(diskImage.getinternal_drive_mapping());
                                 diskModel.getStorageDomain().setItems(
                                         Linq.getStorageDomainsByIds(diskImage.getstorage_ids(), storageDomains));
                                 diskModels.add(diskModel);
@@ -130,6 +138,8 @@ public class TemplateDiskListModel extends SearchableListModel
                         }
                     }), template.getId());
         }
+
+        UpdateActionAvailability();
     }
 
     @Override
@@ -166,6 +176,44 @@ public class TemplateDiskListModel extends SearchableListModel
     public void ExecuteCommand(UICommand command)
     {
         super.ExecuteCommand(command);
+
+        if (command == getCopyCommand())
+        {
+            Copy();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        {
+            Cancel();
+        }
+    }
+
+    private void Copy()
+    {
+        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
+
+        if (disks == null)
+        {
+            return;
+        }
+
+        if (getWindow() != null)
+        {
+            return;
+        }
+
+        VmTemplate template = (VmTemplate) getEntity();
+
+        CopyDiskModel model = new CopyDiskModel(template);
+        model.setIsSingleDiskCopy(disks.size() == 1);
+        setWindow(model);
+        model.setTitle("Copy Disk(s)");
+        model.setHashName("copy_disk");
+        model.setIsVolumeFormatAvailable(false);
+        model.setIsSourceStorageDomainAvailable(true);
+        model.setIsSourceStorageDomainChangable(true);
+        model.setEntity(this);
+        model.init(disks);
+        model.StartProgress(null);
     }
 
     private void Cancel()

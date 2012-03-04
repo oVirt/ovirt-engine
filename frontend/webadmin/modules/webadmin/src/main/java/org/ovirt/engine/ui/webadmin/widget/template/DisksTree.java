@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.webadmin.widget.label.EnumLabel;
-import org.ovirt.engine.ui.webadmin.widget.storage.AbstractSubTabTree;
+import org.ovirt.engine.ui.webadmin.widget.tree.AbstractSubTabTree;
 
 import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -25,6 +25,10 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TreeItem;
 
 public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskModel, storage_domains> {
+
+    public DisksTree() {
+        enableRootSelection();
+    }
 
     @Override
     protected TreeItem getRootItem(DiskModel diskModel) {
@@ -42,7 +46,9 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskMod
         addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getdisk_interface(), "120px");
         addValueLabelToPanel(panel, new DateLabel(), disk.getcreation_date(), "90px");
 
-        return new TreeItem(panel);
+        TreeItem treeItem = new TreeItem(panel);
+        treeItem.setUserObject(disk);
+        return treeItem;
     }
 
     @Override
@@ -59,7 +65,9 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskMod
         addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getused_disk_size(), "120px");
         addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getTotalDiskSize(), "120px");
 
-        return new TreeItem(panel);
+        TreeItem treeItem = new TreeItem(panel);
+        treeItem.setUserObject(storage);
+        return treeItem;
     }
 
     @Override

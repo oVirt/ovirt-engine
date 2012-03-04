@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.storage;
+package org.ovirt.engine.ui.webadmin.widget.tree;
 
 import java.util.ArrayList;
 

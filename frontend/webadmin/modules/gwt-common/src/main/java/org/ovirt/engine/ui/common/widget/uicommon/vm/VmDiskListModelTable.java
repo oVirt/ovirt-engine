@@ -161,6 +161,13 @@ public class VmDiskListModelTable extends AbstractModelBoundTableWidget<DiskImag
             }
         });
 
+        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), "Move") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getMoveCommand();
+            }
+        });
+
         plugButtonDefinition = new ImageUiCommandButtonDefinition<DiskImage>(getEventBus(), "Activate",
                 resources.upImage(), resources.upDisabledImage(), true, false) {
             @Override

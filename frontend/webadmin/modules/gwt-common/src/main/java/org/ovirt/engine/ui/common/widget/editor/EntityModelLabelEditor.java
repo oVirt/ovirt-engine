@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
+import com.google.gwt.text.shared.Parser;
+import com.google.gwt.text.shared.Renderer;
+
 public class EntityModelLabelEditor extends AbstractValueBoxWithLabelEditor<Object, EntityModelLabel> {
 
     /**
@@ -9,4 +12,7 @@ public class EntityModelLabelEditor extends AbstractValueBoxWithLabelEditor<Obje
         super(new EntityModelLabel());
     }
 
+    public EntityModelLabelEditor(Renderer<Object> renderer, Parser<Object> parser) {
+        super(new EntityModelLabel(renderer, parser));
+    }
 }

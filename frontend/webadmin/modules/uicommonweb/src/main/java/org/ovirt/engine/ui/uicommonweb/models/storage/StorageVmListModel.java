@@ -28,8 +28,6 @@ public class StorageVmListModel extends SearchableListModel
     public StorageVmListModel()
     {
         setTitle("Virtual Machines");
-
-        setIsTimerDisabled(true);
     }
 
     @Override

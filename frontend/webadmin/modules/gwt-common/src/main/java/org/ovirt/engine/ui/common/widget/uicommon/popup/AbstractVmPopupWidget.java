@@ -208,6 +208,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     protected DialogTab resourceAllocationTab;
 
     @UiField
+    protected FlowPanel storageAllocationPanel;
+
+    @UiField
     @Ignore
     ListModelListBoxEditor<Object> provisioningEditor;
 

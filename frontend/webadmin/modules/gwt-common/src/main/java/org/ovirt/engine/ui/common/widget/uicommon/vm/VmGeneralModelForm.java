@@ -25,7 +25,6 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     TextBoxLabel oS = new TextBoxLabel();
     TextBoxLabel cpuInfo = new TextBoxLabel();
     TextBoxLabel defaultDisplayType = new TextBoxLabel();
-    TextBoxLabel storageDomain = new TextBoxLabel();
     TextBoxLabel origin = new TextBoxLabel();
     TextBoxLabel priority = new TextBoxLabel();
     TextBoxLabel usbPolicy = new TextBoxLabel();
@@ -84,12 +83,6 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
             }
         });
 
-        formBuilder.addFormItem(new FormItem("Resides on Storage Domain", storageDomain, 5, 1, "HasStorageDomain") {
-            @Override
-            public boolean isVisible() {
-                return getModel().getHasStorageDomain();
-            }
-        });
         formBuilder.addFormItem(new FormItem("Origin", origin, 0, 2));
         formBuilder.addFormItem(new FormItem("Run On", defaultHost, 1, 2));
         formBuilder.addFormItem(new FormItem("Custom Properties", customProperties, 2, 2));

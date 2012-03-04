@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
 import org.ovirt.engine.ui.webadmin.widget.label.EnumLabel;
-import org.ovirt.engine.ui.webadmin.widget.storage.AbstractSubTabTree;
+import org.ovirt.engine.ui.webadmin.widget.tree.AbstractSubTabTree;
 
 import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -41,7 +41,9 @@ public class StoragesTree extends AbstractSubTabTree<TemplateDiskListModel, Stor
         addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getused_disk_size(), "120px");
         addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getTotalDiskSize(), "90px");
 
-        return new TreeItem(panel);
+        TreeItem treeItem = new TreeItem(panel);
+        treeItem.setUserObject(storage);
+        return treeItem;
     }
 
     @Override
@@ -58,7 +60,9 @@ public class StoragesTree extends AbstractSubTabTree<TemplateDiskListModel, Stor
         addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getdisk_interface(), "110px");
         addValueLabelToPanel(panel, new DateLabel(), disk.getcreation_date(), "90px");
 
-        return new TreeItem(panel);
+        TreeItem treeItem = new TreeItem(panel);
+        treeItem.setUserObject(disk);
+        return treeItem;
     }
 
     @Override

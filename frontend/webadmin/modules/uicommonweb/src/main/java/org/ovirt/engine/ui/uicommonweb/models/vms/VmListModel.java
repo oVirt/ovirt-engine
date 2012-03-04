@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -21,10 +22,10 @@ import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -69,7 +70,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -901,197 +901,27 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             return;
         }
 
-        ListModel model = new ListModel();
+        MoveDiskModel model = new MoveDiskModel(vm);
         setWindow(model);
         model.setTitle("Move Virtual Machine");
         model.setHashName("move_virtual_machine");
-
-        java.util.ArrayList<storage_domains> storageDomains;
-
-        if (!vm.getvmt_guid().equals(NGuid.Empty))
-        {
-            AsyncDataProvider.GetStorageDomainListByTemplate(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object target, Object returnValue) {
-                            VmListModel vmListModel = (VmListModel) target;
-                            java.util.ArrayList<storage_domains> storageDomains =
-                                    (java.util.ArrayList<storage_domains>) returnValue;
-                            vmListModel.PostMoveGetStorageDomains(storageDomains);
-                        }
-                    }), vm.getvmt_guid());
-        }
-        else
-        {
-            AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object target, Object returnValue) {
-                            VmListModel vmListModel = (VmListModel) target;
-                            java.util.ArrayList<storage_domains> storageDomains =
-                                    (java.util.ArrayList<storage_domains>) returnValue;
-
-                            java.util.ArrayList<storage_domains> filteredStorageDomains =
-                                    new java.util.ArrayList<storage_domains>();
-                            for (storage_domains a : storageDomains)
-                            {
-                                if (a.getstorage_domain_type() == StorageDomainType.Data
-                                        || a.getstorage_domain_type() == StorageDomainType.Master)
-                                {
-                                    filteredStorageDomains.add(a);
-                                }
-                            }
-
-                            vmListModel.PostMoveGetStorageDomains(filteredStorageDomains);
-                        }
-                    }), vm.getstorage_pool_id());
-        }
-    }
-
-    private void PostMoveGetStorageDomains(java.util.ArrayList<storage_domains> storageDomains)
-    {
-        // filter only the Active storage domains (Active regarding the relevant storage pool).
-        java.util.ArrayList<storage_domains> list = new java.util.ArrayList<storage_domains>();
-        for (storage_domains a : storageDomains)
-        {
-            if (a.getstatus() != null && a.getstatus() == StorageDomainStatus.Active)
-            {
-                list.add(a);
-            }
-        }
-        storageDomains = list;
-
-        VM vm = (VM) getSelectedItem();
-        AsyncDataProvider.GetVmDiskList(new AsyncQuery(new Object[] { this, storageDomains },
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        Object[] array = (Object[]) target;
-                        VmListModel vmListModel = (VmListModel) array[0];
-                        java.util.ArrayList<storage_domains> storageDomains =
-                                (java.util.ArrayList<storage_domains>) array[1];
-
-                        java.util.ArrayList<DiskImage> disks = new java.util.ArrayList<DiskImage>();
-                        Iterable disksEnumerable = (Iterable) returnValue;
-                        java.util.Iterator disksIterator = disksEnumerable.iterator();
-
-                        while (disksIterator.hasNext()) {
-                            disks.add((DiskImage) disksIterator.next());
-                        }
-
-                        vmListModel.PostMoveGetVmDiskList(disks, storageDomains);
-                    }
-                }), vm.getId(), true);
-    }
-
-    private void PostMoveGetVmDiskList(java.util.ArrayList<DiskImage> disks,
-            java.util.ArrayList<storage_domains> storageDomains)
-    {
-        if (disks.size() > 0)
-        {
-            java.util.ArrayList<storage_domains> list = new java.util.ArrayList<storage_domains>();
-            for (storage_domains a : storageDomains)
-            {
-                if (!a.getId().equals(disks.get(0).getstorage_ids().get(0)))
-                {
-                    list.add(a);
-                }
-            }
-            storageDomains = list;
-        }
-
-        Collections.sort(storageDomains, new Linq.StorageDomainByNameComparer());
-
-        java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
-        for (storage_domains a : storageDomains)
-        {
-            EntityModel m = new EntityModel();
-            m.setEntity(a);
-            items.add(m);
-        }
-
-        ListModel model = (ListModel) getWindow();
-        model.setItems(items);
-        if (items.size() == 1)
-        {
-            items.get(0).setIsSelected(true);
-        }
-
-        if (items.isEmpty())
-        {
-            model.setMessage("The system could not find available target Storage Domain.\nPossible reasons:\n  - No active Storage Domain available\n  - The Template that the VM is based on does not exist on active Storage Domain");
-
-            UICommand tempVar = new UICommand("Cancel", this);
-            tempVar.setTitle("Close");
-            tempVar.setIsDefault(true);
-            tempVar.setIsCancel(true);
-            model.getCommands().add(tempVar);
-        }
-        else
-        {
-            UICommand tempVar2 = new UICommand("OnMove", this);
-            tempVar2.setTitle("OK");
-            tempVar2.setIsDefault(true);
-            model.getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", this);
-            tempVar3.setTitle("Cancel");
-            tempVar3.setIsCancel(true);
-            model.getCommands().add(tempVar3);
-        }
-    }
-
-    private void OnMove()
-    {
-        VM vm = (VM) getSelectedItem();
-
-        if (vm == null)
-        {
-            Cancel();
-            return;
-        }
-
-        ListModel model = (ListModel) getWindow();
-
-        if (model.getProgress() != null)
-        {
-            return;
-        }
-
-        java.util.ArrayList<storage_domains> items = new java.util.ArrayList<storage_domains>();
-        for (Object item : model.getItems())
-        {
-            EntityModel a = (EntityModel) item;
-            if (a.getIsSelected())
-            {
-                items.add((storage_domains) a.getEntity());
-            }
-        }
-
-        // should be only one:
-        if (items.isEmpty())
-        {
-            return;
-        }
-
-        java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
-        for (storage_domains a : items)
-        {
-            parameters.add(new MoveVmParameters(vm.getId(), a.getId()));
-        }
-
+        model.setIsVolumeFormatAvailable(false);
+        model.setIsSourceStorageDomainNameAvailable(true);
+        model.setEntity(this);
         model.StartProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.MoveVm, parameters,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+        AsyncDataProvider.GetVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                VmListModel vmListModel = (VmListModel) target;
+                MoveDiskModel moveDiskModel = (MoveDiskModel) vmListModel.getWindow();
+                LinkedList<DiskImage> disks = (LinkedList<DiskImage>) returnValue;
+                ArrayList<DiskImage> diskImages = new ArrayList<DiskImage>();
+                diskImages.addAll(disks);
 
-                        ListModel localModel = (ListModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
-
-                    }
-                }, model);
+                moveDiskModel.init(diskImages);
+            }
+        }), vm.getId(), true);
     }
 
     private void Export()
@@ -3080,10 +2910,6 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
         {
             OnRemove();
-        }
-        else if (StringHelper.stringsEqual(command.getName(), "OnMove"))
-        {
-            OnMove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnExport"))
         {

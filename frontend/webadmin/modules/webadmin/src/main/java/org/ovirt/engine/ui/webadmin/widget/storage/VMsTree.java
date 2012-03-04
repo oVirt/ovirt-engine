@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
+import org.ovirt.engine.ui.webadmin.widget.tree.AbstractSubTabTree;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -33,7 +34,9 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
         addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), vm.getActualDiskWithSnapshotsSize(), "110px");
         addValueLabelToPanel(panel, new FullDateTimeLabel(), vm.getvm_creation_date(), "140px");
 
-        return new TreeItem(panel);
+        TreeItem treeItem = new TreeItem(panel);
+        treeItem.setUserObject(vm);
+        return treeItem;
     }
 
     @Override
@@ -89,7 +92,9 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
             vPanel.add(panel);
         }
 
-        return new TreeItem(vPanel);
+        TreeItem treeItem = new TreeItem(vPanel);
+        treeItem.setUserObject(disks.get(0));
+        return treeItem;
     }
 
     private TreeItem getDiskNode(DiskImage disk) {

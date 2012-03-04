@@ -28,8 +28,6 @@ public class StorageTemplateListModel extends SearchableListModel
     public StorageTemplateListModel()
     {
         setTitle("Templates");
-
-        setIsTimerDisabled(true);
     }
 
     @Override

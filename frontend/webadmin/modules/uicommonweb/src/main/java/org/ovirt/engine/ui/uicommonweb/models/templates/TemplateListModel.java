@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
-import java.util.Collections;
+import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
@@ -42,7 +42,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -170,150 +169,27 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
             return;
         }
 
-        ListModel model = new ListModel();
+        CopyDiskModel model = new CopyDiskModel(template);
         setWindow(model);
         model.setTitle("Copy Template");
         model.setHashName("copy_template");
-
-        // Select all active data storage domains where the template is not
-        // copied to.
-        AsyncDataProvider.GetStorageDomainListByTemplate(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        TemplateListModel templateListModel = (TemplateListModel) target;
-                        java.util.ArrayList<storage_domains> domainsWithTemplate =
-                                (java.util.ArrayList<storage_domains>) returnValue;
-                        templateListModel
-                                .PostCopyGetStorageDomains(domainsWithTemplate);
-                    }
-                }), template.getId());
-    }
-
-    private void PostCopyGetStorageDomains(java.util.ArrayList<storage_domains> domainsWithTemplate)
-    {
-        VmTemplate template = (VmTemplate) getSelectedItem();
-        Guid storagePoolId = template.getstorage_pool_id() != null ? template
-                .getstorage_pool_id().getValue() : NGuid.Empty;
-
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(new Object[] {
-                this, domainsWithTemplate }, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object target, Object returnValue) {
-                Object[] array = (Object[]) target;
-                TemplateListModel templateListModel = (TemplateListModel) array[0];
-                java.util.ArrayList<storage_domains> domainsWithTemplate =
-                        (java.util.ArrayList<storage_domains>) array[1];
-                java.util.ArrayList<storage_domains> storageDomains =
-                        (java.util.ArrayList<storage_domains>) returnValue;
-
-                Collections.sort(storageDomains,
-                        new Linq.StorageDomainByNameComparer());
-                templateListModel.PostCopyGetStorageDomainList(storageDomains,
-                        domainsWithTemplate);
-            }
-        }), storagePoolId);
-    }
-
-    private void PostCopyGetStorageDomainList(
-            java.util.ArrayList<storage_domains> storageDomains,
-            java.util.ArrayList<storage_domains> domainsWithTemplate)
-    {
-        java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
-        boolean isTemplateExistInOneActiveDomain = false;
-        for (storage_domains a : storageDomains) {
-            boolean templateNotExistInAnyDomain_iter = true;
-            for (storage_domains b : domainsWithTemplate) {
-                if (b.getId().equals(a.getId())
-                        && (b.getstatus() == null ? StorageDomainStatus.InActive
-                                : b.getstatus()) == StorageDomainStatus.Active) {
-                    templateNotExistInAnyDomain_iter = false;
-                    isTemplateExistInOneActiveDomain = true;
-                    break;
-                }
-            }
-
-            if ((a.getstorage_domain_type() == StorageDomainType.Data || a
-                    .getstorage_domain_type() == StorageDomainType.Master)
-                    && templateNotExistInAnyDomain_iter
-                    && (a.getstatus() == null ? null : a.getstatus()) == StorageDomainStatus.Active) {
-                EntityModel entityModel = new EntityModel();
-                entityModel.setEntity(a);
-
-                items.add(entityModel);
-            }
-        }
-
-        ListModel model = (ListModel) getWindow();
-        model.setItems(items);
-
-        if (items.size() == 1) {
-            items.get(0).setIsSelected(true);
-        }
-
-        if (items.isEmpty()) {
-            if (isTemplateExistInOneActiveDomain) {
-                model.setMessage("Template already exists on all available Storage Domains.");
-            } else {
-                model.setMessage("No Storage Domain is available - check Storage Domains and Hosts status.");
-            }
-
-            UICommand tempVar = new UICommand("Cancel", this);
-            tempVar.setTitle("Close");
-            tempVar.setIsDefault(true);
-            tempVar.setIsCancel(true);
-            model.getCommands().add(tempVar);
-        } else {
-            UICommand tempVar2 = new UICommand("OnCopy", this);
-            tempVar2.setTitle("OK");
-            tempVar2.setIsDefault(true);
-            model.getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", this);
-            tempVar3.setTitle("Cancel");
-            tempVar3.setIsCancel(true);
-            model.getCommands().add(tempVar3);
-        }
-    }
-
-    private void OnCopy()
-    {
-        VmTemplate template = (VmTemplate) getSelectedItem();
-        ListModel model = (ListModel) getWindow();
-
-        if (model.getProgress() != null)
-        {
-            return;
-        }
-
-        java.util.ArrayList<VdcActionParametersBase> items = new java.util.ArrayList<VdcActionParametersBase>();
-        for (Object item : model.getItems())
-        {
-            EntityModel a = (EntityModel) item;
-            if (a.getIsSelected())
-            {
-                items.add(new MoveOrCopyParameters(template.getId(), ((storage_domains) a.getEntity()).getId()));
-            }
-        }
-
-        // should be only 1
-        if (items.isEmpty())
-        {
-            return;
-        }
+        model.setIsVolumeFormatAvailable(false);
+        model.setIsSourceStorageDomainAvailable(true);
+        model.setIsSourceStorageDomainChangable(true);
+        model.setEntity(this);
 
         model.StartProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.MoveOrCopyTemplate, items,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+        AsyncDataProvider.GetTemplateDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                TemplateListModel templateListModel = (TemplateListModel) target;
+                CopyDiskModel copyDiskModel = (CopyDiskModel) templateListModel.getWindow();
+                ArrayList<DiskImage> diskImages = (ArrayList<DiskImage>) returnValue;
 
-                        ListModel localModel = (ListModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
-
-                    }
-                }, model);
+                copyDiskModel.init(diskImages);
+            }
+        }), template.getId());
     }
 
     private void Export()
@@ -882,10 +758,6 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
         {
             Cancel();
-        }
-        else if (StringHelper.stringsEqual(command.getName(), "OnCopy"))
-        {
-            OnCopy();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnExport"))
         {

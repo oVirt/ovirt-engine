@@ -9,6 +9,8 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.Linq.DiskModelByNameComparer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
@@ -39,6 +41,30 @@ public class DisksAllocationModel extends EntityModel
         privateStorageDomain = value;
     }
 
+    private ListModel privateSourceStorageDomain;
+
+    public ListModel getSourceStorageDomain()
+    {
+        return privateSourceStorageDomain;
+    }
+
+    public void setSourceStorageDomain(ListModel value)
+    {
+        privateSourceStorageDomain = value;
+    }
+
+    private EntityModel sourceStorageDomainName;
+
+    public EntityModel getSourceStorageDomainName()
+    {
+        return sourceStorageDomainName;
+    }
+
+    public void setSourceStorageDomainName(EntityModel value)
+    {
+        sourceStorageDomainName = value;
+    }
+
     private List<DiskModel> disks;
 
     public List<DiskModel> getDisks()
@@ -51,6 +77,7 @@ public class DisksAllocationModel extends EntityModel
         if (disks != value)
         {
             disks = value;
+            Linq.Sort(disks, new DiskModelByNameComparer());
             OnPropertyChanged(new PropertyChangedEventArgs("Disks"));
         }
     }
@@ -66,8 +93,12 @@ public class DisksAllocationModel extends EntityModel
         this.imageToDestinationDomainMap = imageToDestinationDomainMap;
     }
 
+    private boolean isSingleDiskMove;
+    private boolean isSingleDiskCopy;
     private boolean isVolumeFormatAvailable;
     private boolean isSourceStorageDomainAvailable;
+    private boolean isSourceStorageDomainChangable;
+    private boolean isSourceStorageDomainNameAvailable;
 
     public DisksAllocationModel()
     {
@@ -76,8 +107,14 @@ public class DisksAllocationModel extends EntityModel
         getIsSingleStorageDomain().getEntityChangedEvent().addListener(this);
 
         setStorageDomain(new ListModel());
-        getStorageDomain().setIsChangable(true);
         getStorageDomain().getItemsChangedEvent().addListener(this);
+
+        setSourceStorageDomain(new ListModel());
+        getSourceStorageDomain().getItemsChangedEvent().addListener(this);
+        getSourceStorageDomain().setIsAvailable(false);
+
+        setSourceStorageDomainName(new EntityModel());
+        getSourceStorageDomainName().setIsAvailable(false);
 
         setImageToDestinationDomainMap(new HashMap<Guid, Guid>());
     }
@@ -91,7 +128,8 @@ public class DisksAllocationModel extends EntityModel
         {
             UpdateStorageDomainsAvailability();
         }
-        else if (ev.equals(ListModel.ItemsChangedEventDefinition) && sender == getStorageDomain())
+        else if (ev.equals(ListModel.ItemsChangedEventDefinition) && sender == getStorageDomain() ||
+                ev.equals(ListModel.ItemsChangedEventDefinition) && sender == getSourceStorageDomain())
         {
             UpdateSingleStorageDomainsAvailability();
             UpdateStorageDomainsAvailability();
@@ -120,15 +158,33 @@ public class DisksAllocationModel extends EntityModel
 
     private void UpdateStorageDomainsAvailability()
     {
-        boolean isStorageDomainsEmpty = ((ArrayList) getStorageDomain().getItems()).isEmpty();
         boolean isSingleStorageDomain = (Boolean) getIsSingleStorageDomain().getEntity();
-        getStorageDomain().setIsChangable(isSingleStorageDomain && !isStorageDomainsEmpty);
 
-        if (disks != null) {
-            for (DiskModel diskModel : disks) {
-                diskModel.getStorageDomain().setIsChangable(!isSingleStorageDomain);
-                diskModel.getVolumeType().setIsAvailable(isVolumeFormatAvailable);
-                diskModel.getSourceStorageDomain().setIsAvailable(isSourceStorageDomainAvailable);
+        if (getStorageDomain().getItems() != null) {
+            boolean isStorageDomainsEmpty = ((ArrayList) getStorageDomain().getItems()).isEmpty();
+            getStorageDomain().setIsChangable(isSingleStorageDomain && !isStorageDomainsEmpty);
+        }
+
+        if (disks == null) {
+            return;
+        }
+
+        for (DiskModel diskModel : disks) {
+            boolean isDestStoragesEmpty = diskModel.getStorageDomain().getItems() != null ?
+                    ((ArrayList) diskModel.getStorageDomain().getItems()).isEmpty() : true;
+
+            diskModel.getVolumeType().setIsAvailable(isVolumeFormatAvailable);
+            diskModel.getSourceStorageDomain().setIsAvailable(isSourceStorageDomainAvailable);
+            diskModel.getStorageDomain().setIsChangable(!isSingleStorageDomain && !isDestStoragesEmpty);
+            diskModel.getSourceStorageDomain().setIsChangable(!isSingleStorageDomain && isSourceStorageDomainChangable);
+
+            if (diskModel.getSourceStorageDomain().getItems() != null
+                    && diskModel.getSourceStorageDomain().getItems().iterator().hasNext()) {
+                storage_domains sourceStorage =
+                        ((storage_domains) diskModel.getSourceStorageDomain().getItems().iterator().next());
+                String sourceStorageName = sourceStorage != null ? sourceStorage.getstorage_name() : "";
+                diskModel.getSourceStorageDomainName().setEntity(sourceStorageName);
+                diskModel.getSourceStorageDomainName().setIsAvailable(isSourceStorageDomainNameAvailable);
             }
         }
     }
@@ -147,5 +203,29 @@ public class DisksAllocationModel extends EntityModel
 
     public void setIsSourceStorageDomainAvailable(boolean isSourceStorageDomainAvailable) {
         this.isSourceStorageDomainAvailable = isSourceStorageDomainAvailable;
+    }
+
+    public void setIsSourceStorageDomainChangable(boolean isSourceStorageDomainChangable) {
+        this.isSourceStorageDomainChangable = isSourceStorageDomainChangable;
+    }
+
+    public void setIsSourceStorageDomainNameAvailable(boolean isSourceStorageDomainNameAvailable) {
+        this.isSourceStorageDomainNameAvailable = isSourceStorageDomainNameAvailable;
+    }
+
+    public void setIsSingleDiskMove(boolean isSingleDiskMove) {
+        this.isSingleDiskMove = isSingleDiskMove;
+    }
+
+    public void setIsSingleDiskCopy(boolean isSingleDiskCopy) {
+        this.isSingleDiskCopy = isSingleDiskCopy;
+    }
+
+    public boolean getIsSingleDiskMove() {
+        return isSingleDiskMove;
+    }
+
+    public boolean getIsSingleDiskCopy() {
+        return isSingleDiskCopy;
     }
 }

@@ -4,18 +4,23 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:com.google.gwt.editor.ui.client"
 	xmlns:f="urn:import:org.ovirt.engine.ui.webadmin.widget.form">
 
-	<ui:style>
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView.WidgetStyle">
 		.mainContainer {
+		}
+		
+		.actionPanelContainer {
+			padding-top: 2px;
 		}
 
 		.headerTableContainer {
-			padding-top: 10px;
+			padding-top: 8px;
 			padding-right: 2px;
 			width: 100%;
 			position: absolute;
 		}
 
-		.treeContainer {
+		.treeContainer,
+		.actionTreeContainer {
 			width: 100%;
 			position: absolute;
 			overflow-y: scroll;
@@ -24,9 +29,14 @@
 			left: 0px;
 			right: 0px;
 		}
+		
+		.actionTreeContainer {
+			top: 58px;
+		}
 	</ui:style>
 
 	<g:VerticalPanel ui:field="mainContainer" addStyleNames="{style.mainContainer}">
+		<g:SimplePanel ui:field="actionPanelContainer" addStyleNames="{style.actionPanelContainer}"></g:SimplePanel>
 		<g:SimplePanel ui:field="headerTableContainer" addStyleNames="{style.headerTableContainer}"></g:SimplePanel>
 		<g:SimplePanel ui:field="treeContainer" addStyleNames="{style.treeContainer}"></g:SimplePanel>
 	</g:VerticalPanel>

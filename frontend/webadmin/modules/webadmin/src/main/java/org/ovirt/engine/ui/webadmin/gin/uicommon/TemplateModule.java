@@ -28,8 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindMultiStoragePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindSingleStoragePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateNewPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
@@ -48,7 +47,7 @@ public class TemplateModule extends AbstractGinModule {
     public MainModelProvider<VmTemplate, TemplateListModel> getTemplateListProvider(ClientGinjector ginjector,
             final Provider<TemplateNewPresenterWidget> popupProvider,
             final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
-            final Provider<FindSingleStoragePopupPresenterWidget> copyPopupProvider,
+            final Provider<DisksAllocationPopupPresenterWidget> copyPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new MainTabModelProvider<VmTemplate, TemplateListModel>(ginjector, TemplateListModel.class) {
             @Override
@@ -122,7 +121,7 @@ public class TemplateModule extends AbstractGinModule {
     @Provides
     @Singleton
     public SearchableDetailModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel> getTemplateDiskListProvider(ClientGinjector ginjector,
-            final Provider<FindMultiStoragePopupPresenterWidget> copyPopupProvider) {
+            final Provider<DisksAllocationPopupPresenterWidget> copyPopupProvider) {
         return new SearchableDetailTabModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel>(ginjector,
                 TemplateListModel.class,
                 TemplateDiskListModel.class) {
