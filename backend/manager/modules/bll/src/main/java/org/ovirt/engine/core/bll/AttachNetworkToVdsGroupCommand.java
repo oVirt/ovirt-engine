@@ -72,28 +72,29 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         List<VDS> vdsList = (List) Backend.getInstance()
                 .runInternalQuery(VdcQueryType.Search, searchParams).getReturnValue();
 
-        for (VDS vds : vdsList) {
-            if (vds.getstatus() != VDSStatus.Up) {
-                continue;
-            }
-            List<VdsNetworkInterface> interfaces = (List<VdsNetworkInterface>) Backend
-                    .getInstance()
-                    .runInternalQuery(VdcQueryType.GetVdsInterfacesByVdsId,
-                            new GetVdsByVdsIdParameters(vds.getId())).getReturnValue();
-            // Interface iface = null; //LINQ 31899 interfaces.FirstOrDefault(i
-            // => i.network_name == net.name);
-            VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
-                @Override
-                public boolean eval(VdsNetworkInterface i) {
-                    return StringHelper.EqOp(i.getNetworkName(), net.getname());
+        if (net.isRequired()) {
+            for (VDS vds : vdsList) {
+                if (vds.getstatus() != VDSStatus.Up) {
+                    continue;
                 }
-            });
-            if (iface == null) {
-                status = NetworkStatus.NonOperational;
-                break;
+                List<VdsNetworkInterface> interfaces = (List<VdsNetworkInterface>) Backend
+                        .getInstance()
+                        .runInternalQuery(VdcQueryType.GetVdsInterfacesByVdsId,
+                                new GetVdsByVdsIdParameters(vds.getId())).getReturnValue();
+                // Interface iface = null; //LINQ 31899 interfaces.FirstOrDefault(i
+                // => i.network_name == net.name);
+                VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
+                    @Override
+                    public boolean eval(VdsNetworkInterface i) {
+                        return StringHelper.EqOp(i.getNetworkName(), net.getname());
+                    }
+                });
+                if (iface == null) {
+                    status = NetworkStatus.NonOperational;
+                    break;
+                }
             }
         }
-
         List<network_cluster> all = DbFacade.getInstance()
                 .getNetworkClusterDAO().getAllForCluster(vdsGroupId);
         for (network_cluster nc : all) {

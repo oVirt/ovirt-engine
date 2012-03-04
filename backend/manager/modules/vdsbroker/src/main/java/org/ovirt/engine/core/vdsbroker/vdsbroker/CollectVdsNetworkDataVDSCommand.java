@@ -133,7 +133,9 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
         Map<String, network> vdsNetworksByName = Entities.entitiesByName(vds.getNetworks());
 
         for (network net : clusterNetworks) {
-            if (net.getStatus() == Operational && !vdsNetworksByName.containsKey(net.getName())) {
+            if (net.getStatus() == Operational &&
+                    net.isRequired() &&
+                    !vdsNetworksByName.containsKey(net.getName())) {
                 sb.append(net.getName()).append(",");
             }
         }
