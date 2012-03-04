@@ -26,6 +26,7 @@ public class VersionHelper {
     }
 
     public static boolean equals(Version v1, Version v2) {
-        return v1.getMajor() == v2.getMajor() && v1.getMinor() == v2.getMinor();
+        return v1.getMajor() != null && v1.getMajor().equals(v2.getMajor()) &&
+                v1.getMinor() != null && v1.getMinor().equals(v2.getMinor());
     }
 }
