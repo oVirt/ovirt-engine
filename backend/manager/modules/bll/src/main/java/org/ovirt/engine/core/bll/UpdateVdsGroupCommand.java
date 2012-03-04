@@ -98,7 +98,7 @@ VdsGroupOperationCommandBase<T> {
                     if (StringHelper.EqOp(net.getname(), managementNetwork)) {
                         DbFacade.getInstance().getNetworkClusterDAO().save(
                                 new network_cluster(getVdsGroup().getId(), net.getId(),
-                                            NetworkStatus.Operational.getValue(), true));
+                                        NetworkStatus.Operational.getValue(), true, true));
                     }
                 }
             }

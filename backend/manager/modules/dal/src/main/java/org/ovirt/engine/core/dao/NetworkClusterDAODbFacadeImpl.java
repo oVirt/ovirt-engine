@@ -16,25 +16,25 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class NetworkClusterDAODbFacadeImpl extends BaseDAODbFacade implements NetworkClusterDAO {
 
+    private static final ParameterizedRowMapper<network_cluster> mapper =
+            new ParameterizedRowMapper<network_cluster>() {
+                @Override
+                public network_cluster mapRow(ResultSet rs, int rowNum)
+                        throws SQLException {
+                    network_cluster entity = new network_cluster();
+                    entity.setcluster_id(Guid.createGuidFromString(rs.getString("cluster_id")));
+                    entity.setnetwork_id(Guid.createGuidFromString(rs.getString("network_id")));
+                    entity.setstatus(rs.getInt("status"));
+                    entity.setis_display(rs.getBoolean("is_display"));
+                    entity.setRequired(rs.getBoolean("required"));
+                    return entity;
+                }
+            };
+
     @SuppressWarnings("unchecked")
     @Override
     public List<network_cluster> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
-        ParameterizedRowMapper<network_cluster> mapper = new ParameterizedRowMapper<network_cluster>() {
-            @Override
-            public network_cluster mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                network_cluster entity = new network_cluster();
-                entity.setcluster_id(Guid.createGuidFromString(rs
-                        .getString("cluster_id")));
-                entity.setnetwork_id(Guid.createGuidFromString(rs
-                        .getString("network_id")));
-                entity.setstatus(rs.getInt("status"));
-                entity.setis_display(rs.getBoolean("is_display"));
-                return entity;
-            }
-        };
 
         return getCallsHandler().executeReadList("GetAllFromnetwork_cluster", mapper, parameterSource);
     }
@@ -44,21 +44,6 @@ public class NetworkClusterDAODbFacadeImpl extends BaseDAODbFacade implements Ne
     public List<network_cluster> getAllForCluster(Guid clusterid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("cluster_id", clusterid);
-
-        ParameterizedRowMapper<network_cluster> mapper = new ParameterizedRowMapper<network_cluster>() {
-            @Override
-            public network_cluster mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                network_cluster entity = new network_cluster();
-                entity.setcluster_id(Guid.createGuidFromString(rs
-                        .getString("cluster_id")));
-                entity.setnetwork_id(Guid.createGuidFromString(rs
-                        .getString("network_id")));
-                entity.setstatus(rs.getInt("status"));
-                entity.setis_display(rs.getBoolean("is_display"));
-                return entity;
-            }
-        };
 
         return getCallsHandler().executeReadList("GetAllFromnetwork_clusterByClusterId", mapper,
                 parameterSource);
@@ -70,21 +55,6 @@ public class NetworkClusterDAODbFacadeImpl extends BaseDAODbFacade implements Ne
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("network_id", network);
 
-        ParameterizedRowMapper<network_cluster> mapper = new ParameterizedRowMapper<network_cluster>() {
-            @Override
-            public network_cluster mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                network_cluster entity = new network_cluster();
-                entity.setnetwork_id(Guid.createGuidFromString(rs
-                        .getString("network_id")));
-                entity.setcluster_id(Guid.createGuidFromString(rs
-                        .getString("cluster_id")));
-                entity.setstatus(rs.getInt("status"));
-                entity.setis_display(rs.getBoolean("is_display"));
-                return entity;
-            }
-        };
-
         return getCallsHandler().executeReadList("GetAllFromnetwork_clusterByNetworkId",mapper,
                 parameterSource);
     }
@@ -95,7 +65,8 @@ public class NetworkClusterDAODbFacadeImpl extends BaseDAODbFacade implements Ne
                 .addValue("cluster_id", cluster.getcluster_id())
                 .addValue("network_id", cluster.getnetwork_id())
                 .addValue("status", cluster.getstatus())
-                .addValue("is_display", cluster.getis_display());
+                .addValue("is_display", cluster.getis_display())
+                .addValue("required", cluster.isRequired());
 
         getCallsHandler().executeModification("Insertnetwork_cluster", parameterSource);
     }
@@ -106,7 +77,8 @@ public class NetworkClusterDAODbFacadeImpl extends BaseDAODbFacade implements Ne
                 .addValue("cluster_id", cluster.getcluster_id())
                 .addValue("network_id", cluster.getnetwork_id())
                 .addValue("status", cluster.getstatus())
-                .addValue("is_display", cluster.getis_display());
+                .addValue("is_display", cluster.getis_display())
+                .addValue("required", cluster.isRequired());
 
         getCallsHandler().executeModification("Updatenetwork_cluster", parameterSource);
     }

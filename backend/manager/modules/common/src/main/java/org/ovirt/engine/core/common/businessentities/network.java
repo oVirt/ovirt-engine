@@ -212,6 +212,14 @@ private network_cluster cluster = new network_cluster();
         cluster.setis_display(value);
     }
 
+    public Boolean isRequired() {
+        return cluster.isRequired();
+    }
+
+    public void setRequired(boolean value) {
+        cluster.setRequired(value);
+    }
+
     public void setCluster(network_cluster cluster) {
         this.cluster = cluster;
     }

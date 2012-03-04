@@ -616,7 +616,8 @@ roles ON permissions.role_id = roles.id;
 CREATE OR REPLACE VIEW network_view
 AS
 SELECT  distinct   network.id as id, network.name as name, network.description as description, network.type as type, network.addr as addr, network.subnet as subnet, network.gateway as gateway,
-                      network.vlan_id as vlan_id, network.stp as stp, network.storage_pool_id as storage_pool_id, network.vm_network as vm_network, network_cluster.is_display as is_display, network_cluster.status as status, network.mtu as mtu
+                      network.vlan_id as vlan_id, network.stp as stp, network.storage_pool_id as storage_pool_id, network.vm_network as vm_network, network_cluster.is_display as is_display,
+		      network_cluster.status as status, network.mtu as mtu, network_cluster.required as required
 FROM         network LEFT OUTER JOIN
 network_cluster ON network.id = network_cluster.network_id;
 

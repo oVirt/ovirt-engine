@@ -56,7 +56,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     private boolean createNetworkCluster() {
         DbFacade.getInstance().getNetworkClusterDAO().save(
                 new network_cluster(getVdsGroupId(), getNetwork().getId(),
-                            NetworkStatus.Operational.getValue(), false));
+                        NetworkStatus.Operational.getValue(), false, getNetwork().isRequired()));
 
         return true;
     }

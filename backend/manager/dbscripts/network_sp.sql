@@ -132,7 +132,8 @@ BEGIN
 RETURN QUERY SELECT
 distinct   network.id, network.name, network.description, network.type, network.addr, network.subnet, network.gateway,
                       network.vlan_id, network.stp, network.storage_pool_id,network.vm_network, CAST(0 AS BOOLEAN) as is_display, 0 as status,
-		      network.mtu as mtu
+		      network.mtu as mtu,
+                      network.required as required
    FROM network_view network
    where storage_pool_id = v_id;
 
@@ -143,7 +144,8 @@ LANGUAGE plpgsql;
 DROP TYPE IF EXISTS networkViewClusterType CASCADE;
 CREATE TYPE networkViewClusterType AS(id uuid,name VARCHAR(50),description VARCHAR(4000),type INTEGER,
             addr VARCHAR(50),subnet VARCHAR(20),gateway VARCHAR(20),vlan_id INTEGER,stp BOOLEAN,storage_pool_id UUID,
-	    mtu INTEGER, vm_network BOOLEAN, network_id UUID,cluster_id UUID, status INTEGER, is_display BOOLEAN);
+	    mtu INTEGER, vm_network BOOLEAN, network_id UUID,cluster_id UUID, status INTEGER, is_display BOOLEAN,
+	    required BOOLEAN);
 Create or replace FUNCTION GetAllNetworkByClusterId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
 RETURNS SETOF networkViewClusterType
    AS $procedure$
@@ -165,7 +167,8 @@ RETURN QUERY SELECT
     network_cluster.network_id,
     network_cluster.cluster_id,
     network_cluster.status,
-    network_cluster.is_display
+    network_cluster.is_display,
+    network_cluster.required
    FROM network_view
    INNER JOIN network_cluster
    ON network_view.id = network_cluster.network_id
@@ -575,31 +578,32 @@ LANGUAGE plpgsql;
 --
 
 
-Create or replace FUNCTION Insertnetwork_cluster(v_cluster_id UUID,  
- v_network_id UUID,  
- v_status INTEGER,   
-    v_is_display BOOLEAN)
+Create or replace FUNCTION Insertnetwork_cluster(v_cluster_id UUID,
+   v_network_id UUID,
+   v_status INTEGER,
+   v_is_display BOOLEAN,
+   v_required BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO network_cluster(cluster_id, network_id, status, is_display)
-	VALUES(v_cluster_id, v_network_id, v_status, v_is_display);
+INSERT INTO network_cluster(cluster_id, network_id, status, is_display, required)
+	VALUES(v_cluster_id, v_network_id, v_status, v_is_display, v_required);
 END; $procedure$
-LANGUAGE plpgsql;    
-
+LANGUAGE plpgsql;
 
 
 
 
 Create or replace FUNCTION Updatenetwork_cluster(v_cluster_id UUID,
-	v_network_id UUID,
-	v_status INTEGER,
-    v_is_display BOOLEAN)
+    v_network_id UUID,
+    v_status INTEGER,
+    v_is_display BOOLEAN,
+    v_required BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
    UPDATE network_cluster
-   SET status = v_status,is_display = v_is_display
+   SET status = v_status,is_display = v_is_display, required = v_required
    WHERE cluster_id = v_cluster_id AND network_id = v_network_id;
 END; $procedure$
 LANGUAGE plpgsql;

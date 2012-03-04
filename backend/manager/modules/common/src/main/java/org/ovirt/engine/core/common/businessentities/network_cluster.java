@@ -20,7 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
 @TypeDef(name = "guid", typeClass = GuidType.class)
 @NamedQueries(value = { @NamedQuery(name = "delete_network_cluster",
                                     query = "delete from network_cluster n where n.clusterId = :cluster_id and n.networkId = :network_id") })
-                                    public class network_cluster implements Serializable {
+public class network_cluster implements Serializable {
     private static final long serialVersionUID = -4900811332744926545L;
 
     @Id
@@ -38,6 +38,12 @@ import org.ovirt.engine.core.compat.Guid;
     @Column(name = "is_display")
     private Boolean isDisplay = false;
 
+    /**
+     * A cluster network can be tagged as monitored. Monitored network have implications on automated actions taken on a
+     * host during monitoring.
+     */
+    private boolean required;
+
     public network_cluster() {
     }
 
@@ -53,6 +59,7 @@ import org.ovirt.engine.core.compat.Guid;
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + ((networkId == null) ? 0 : networkId.hashCode());
         result = prime * result + ((clusterId == null) ? 0 : clusterId.hashCode());
+        result = prime * result + (required ? 11 : 13);
         return result;
     }
 
@@ -85,15 +92,19 @@ import org.ovirt.engine.core.compat.Guid;
                 return false;
         } else if (!clusterId.equals(other.clusterId))
             return false;
+        if (required != other.required) {
+            return false;
+        }
         return true;
     }
 
 
-    public network_cluster(Guid cluster_id, Guid network_id, int status, boolean isDisplay) {
+    public network_cluster(Guid cluster_id, Guid network_id, int status, boolean isDisplay, boolean required) {
         clusterId = cluster_id;
         networkId = network_id;
         this.status = status;
         this.isDisplay = isDisplay;
+        this.required = required;
     }
 
     public Guid getcluster_id() {
@@ -126,5 +137,13 @@ import org.ovirt.engine.core.compat.Guid;
 
     public void setis_display(boolean value) {
         this.isDisplay = value;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
     }
 }

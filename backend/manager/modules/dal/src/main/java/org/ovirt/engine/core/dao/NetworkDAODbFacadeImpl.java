@@ -36,6 +36,7 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, G
                     entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                             .getString("storage_pool_id")));
                     entity.setis_display((Boolean) rs.getObject("is_display"));
+                    entity.setRequired(rs.getBoolean("required"));
                     entity.setStatus(NetworkStatus.forValue(rs.getInt("status")));
                     entity.setMtu(rs.getInt("mtu"));
                     entity.setVmNetwork(rs.getBoolean("vm_network"));
