@@ -18,6 +18,7 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
     private boolean postZero;
     private boolean forceOverride;
     private NGuid sourceDomainId;
+    private Guid destImageGroupId;
 
     public MoveOrCopyImageGroupParameters() {
     }
@@ -43,6 +44,25 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
         setVolumeType(VolumeType.Unassigned);
         setPostZero(false);
         setForceOverride(false);
+    }
+
+    public MoveOrCopyImageGroupParameters(Guid containerId,
+            Guid imageGroupId,
+            Guid imageId,
+            Guid destImageGroupId,
+            Guid destImageId,
+            Guid storageDomainId, ImageOperation operation) {
+        this(containerId, imageGroupId, imageId, storageDomainId, operation);
+        setDestImageGroupId(destImageGroupId);
+        setDestinationImageId(destImageId);
+    }
+
+    public Guid getDestImageGroupId() {
+        return destImageGroupId;
+    }
+
+    public void setDestImageGroupId(Guid destImageGroupId) {
+        this.destImageGroupId = destImageGroupId;
     }
 
     public ImageOperation getOperation() {

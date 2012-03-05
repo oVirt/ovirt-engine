@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
+import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -57,10 +59,19 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         return getParameters().getOperation();
     }
 
+    protected Guid getDestImageGroupId() {
+        return (getParameters().getDestImageGroupId() != null) ? getParameters().getDestImageGroupId()
+                : getImageGroupId();
+    }
+
+    protected Guid getDestImageId() {
+        return (getParameters().getDestinationImageId() != null) ? getParameters().getDestinationImageId()
+                : getImage().getId();
+    }
+
     @Override
     protected void executeCommand() {
         LockImage();
-
         VDSReturnValue vdsReturnValue = null;
 
         if (getParameters().getUseCopyCollapse()) {
@@ -79,8 +90,8 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                                             getParameters().getImageGroupID(),
                                             getImage()
                                                     .getId(),
-                                            getImageGroupId(),
-                                            getImage().getId(),
+                                            getDestImageGroupId(),
+                                            getDestImageId(),
                                             StringUtils.defaultString(getImage()
                                                     .getdescription()),
                                             getParameters().getStorageDomainId(),
@@ -155,11 +166,13 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
     protected void EndWithFailure() {
         if (getMoveOrCopyImageOperation() == ImageOperation.Copy) {
             UnLockImage();
-
-            // remove iamge-storage mapping
-            DbFacade.getInstance().getStorageDomainDAO().removeImageStorageDomainMap(
-                    new image_storage_domain_map(getParameters().getImageId(), getParameters()
-                            .getStorageDomainId()));
+            if (getParameters().getAddImageDomainMapping()) {
+                // remove iamge-storage mapping
+                DbFacade.getInstance().getStorageDomainDAO().removeImageStorageDomainMap(
+                        new image_storage_domain_map(getParameters().getImageId(), getParameters()
+                                .getStorageDomainId()));
+            }
+            RevertTasks();
         }
 
         else {
@@ -168,4 +181,28 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
 
         setSucceeded(true);
     }
+
+    @Override
+    protected void RevertTasks() {
+        Guid destImageId = getParameters().getDestinationImageId();
+        RemoveImageParameters removeImageParams =
+                new RemoveImageParameters(destImageId, getParameters().getContainerId());
+        removeImageParams.setParentParemeters(getParameters());
+        removeImageParams.setParentCommand(VdcActionType.MoveOrCopyImageGroup);
+        removeImageParams.setEntityId(getDestinationImageId());
+        // Setting the image as the monitored entity, so there will not be dependency
+        VdcReturnValueBase returnValue =
+                checkAndPerformRollbackUsingCommand(VdcActionType.RemoveImage, removeImageParams);
+        if (returnValue.getSucceeded()) {
+            // Starting to monitor the the tasks - RemoveImage is an internal command
+            // which adds the taskId on the internal task ID list
+            startPollingAsyncTasks(returnValue.getInternalTaskIdList());
+        }
+    }
+
+    @Override
+    protected boolean canPerformRollbackUsingCommand(VdcActionType commandType, VdcActionParametersBase params) {
+        return DbFacade.getInstance().getDiskImageDAO().get(getParameters().getDestinationImageId()) != null;
+    }
+
 }
