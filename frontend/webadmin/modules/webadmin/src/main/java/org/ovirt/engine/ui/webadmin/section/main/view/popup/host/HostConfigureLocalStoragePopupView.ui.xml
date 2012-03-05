@@ -31,7 +31,7 @@
         }
 
         .toggleButtonStyle {
-            text-decoration: underline:
+            text-decoration: underline;
             cursor: default;
         }
 
