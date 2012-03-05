@@ -27,6 +27,7 @@ public class RemoveQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
     protected boolean canDoAction() {
         if (getParameters() == null || (getParameters().getQuotaId() == null)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+            return false;
         }
 
         Quota quota = getQuota();
@@ -38,17 +39,21 @@ public class RemoveQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
         // Check if there is attempt to delete the default quota while storage pool enforcement type is disabled.
         if (getStoragePoolDAO().get(quota.getStoragePoolId()).getQuotaEnforcementType() == QuotaEnforcmentTypeEnum.DISABLED && quota.getIsDefaultQuota()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_CAN_NOT_HAVE_DEFAULT_INDICATION);
+            return false;
         }
 
         // Check If we try to delete the last quota in the DC.
-        List<Quota> quotaList = getQuotaDAO().getQuotaByStoragePoolGuid(getParameters().getStoragePoolId());
+        List<Quota> quotaList = getQuotaDAO().getQuotaByStoragePoolGuid(quota.getStoragePoolId());
         if (quotaList.size() <= 1) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DATA_CENTER_MUST_HAVE_AT_LEAST_ONE_QUOTA);
+            return false;
         }
 
-        if (getVmDAO().getAllVmsRelatedToQuotaId(quota.getId()) != null && !getVmDAO().getAllVmsRelatedToQuotaId(quota.getId()).isEmpty()) {
+        if (getVmDAO().getAllVmsRelatedToQuotaId(quota.getId()) != null
+                && !getVmDAO().getAllVmsRelatedToQuotaId(quota.getId()).isEmpty()) {
             // TODO : Add an appropriate message.
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
+            return false;
         }
         return true;
     }
