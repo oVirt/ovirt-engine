@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.ExtendedTemplateSelectionChangeEvent;
 
@@ -15,22 +15,22 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public abstract class BasicSubTabExtendedTemplatePresenter<M extends ListWithDetailsModel, D extends EntityModel, V extends AbstractSubTabPresenter.ViewDef<VmTemplate>, P extends TabContentProxyPlace<?>>
-        extends AbstractSubTabPresenter<VmTemplate, M, D, V, P> {
+public abstract class AbstractSubTabExtendedTemplatePresenter<D extends EntityModel, V extends AbstractSubTabPresenter.ViewDef<VmTemplate>, P extends TabContentProxyPlace<?>>
+        extends AbstractSubTabPresenter<VmTemplate, UserPortalTemplateListModel, D, V, P> {
 
-    public BasicSubTabExtendedTemplatePresenter(EventBus eventBus, V view, P proxy,
-            PlaceManager placeManager, DetailModelProvider<M, D> modelProvider) {
+    public AbstractSubTabExtendedTemplatePresenter(EventBus eventBus, V view, P proxy,
+            PlaceManager placeManager, DetailModelProvider<UserPortalTemplateListModel, D> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
-    }
-
-    @Override
-    protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.extendedTemplateSideTabPlace);
     }
 
     @Override
     protected void revealInParent() {
         RevealContentEvent.fire(this, ExtendedTemplateSubTabPanelPresenter.TYPE_SetTabContent, this);
+    }
+
+    @Override
+    protected PlaceRequest getMainTabRequest() {
+        return new PlaceRequest(ApplicationPlaces.extendedTemplateSideTabPlace);
     }
 
     @ProxyEvent

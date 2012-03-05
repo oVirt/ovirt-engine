@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.templ
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateGeneralModelProvider;
@@ -18,7 +17,8 @@ import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabExtendedTemplateGeneralPresenter extends BasicSubTabExtendedTemplatePresenter<UserPortalTemplateListModel, TemplateGeneralModel, SubTabExtendedTemplateGeneralPresenter.ViewDef, SubTabExtendedTemplateGeneralPresenter.ProxyDef> {
+public class SubTabExtendedTemplateGeneralPresenter
+        extends AbstractSubTabExtendedTemplatePresenter<TemplateGeneralModel, SubTabExtendedTemplateGeneralPresenter.ViewDef, SubTabExtendedTemplateGeneralPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.extendedTempplateGeneralSubTabPlace)
