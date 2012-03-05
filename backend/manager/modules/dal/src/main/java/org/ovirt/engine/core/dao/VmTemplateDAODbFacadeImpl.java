@@ -154,10 +154,8 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs.getString("storage_pool_id")));
             entity.setstorage_pool_name(rs.getString("storage_pool_name"));
             entity.setdefault_display_type(DisplayType.forValue(rs.getInt("default_display_type")));
+            entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             return entity;
-
         }
-
     }
-
 }

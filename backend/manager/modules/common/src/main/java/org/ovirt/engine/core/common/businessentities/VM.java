@@ -252,6 +252,14 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmStatic.setcreation_date(value);
     }
 
+    public Guid getQuotaId() {
+        return this.mVmStatic.getQuotaId();
+    }
+
+    public void setQuotaId(Guid value) {
+        this.mVmStatic.setQuotaId(value);
+    }
+
     public String getdescription() {
         return this.getvm_description();
     }
