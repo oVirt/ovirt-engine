@@ -197,6 +197,9 @@ public class RsdlBuilder {
             return this;
         }
         public DetailedLink build() {
+            if (!link.getRequest().isSetBody()) {
+                link.getRequest().setBody(new Body());
+            }
             return addParametersMetadata(link);
         }
     }

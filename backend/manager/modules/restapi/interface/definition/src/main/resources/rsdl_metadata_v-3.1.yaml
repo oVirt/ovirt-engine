@@ -19,16 +19,10 @@ actions:
 - name: /api/vms/{vm:id}|rel=delete
   request:
     body:
-      parameterType: null
-      signatures: []
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {}
-- name: /api/vms/{vm:id}|rel=delete
-  request:
-    body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.force: 'xs:boolean'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {Content-Type: application/xml}
@@ -36,7 +30,32 @@ actions:
   request:
     body:
       parameterType: VM
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:
+          vm.name: xs:string
+          vm.cluster.id|name: xs:string
+          vm.timezone: xs:string
+          vm.os.boot.dev: xs:string
+          vm.custom_properties.custom_property--COLLECTION: {name: 'xs:string', value: 'xs:string'}
+          vm.os.type: xs:string
+          vm.usb.enabled: xs:boolean
+          vm.type: xs:string
+          vm.os.initRd: xs:string
+          vm.display.monitors: xs:int
+          vm.display.type: xs:string
+          vm.os.cmdline: xs:string
+          vm.cpu.topology.cores: xs:int
+          vm.memory: xs:long
+          vm.high_availability.priority: xs:int
+          vm.high_availability.enabled: xs:boolean
+          vm.domain.name: xs:string
+          vm.description: xs:string
+          vm.stateless: xs:boolean
+          vm.cpu.topology.sockets: xs:int
+          vm.placement_policy.affinity: xs:string
+          vm.origin: xs:string
+          vm.os.kernel: xs:string
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {Content-Type: application/xml}
@@ -49,7 +68,7 @@ actions:
         optionalArguments:
           vm.timezone: xs:string
           vm.os.boot.dev: xs:string
-          vm.custom_properties--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}
+          vm.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}
           vm.os.type: xs:string
           vm.usb.enabled: xs:boolean
           vm.type: xs:string
@@ -59,15 +78,16 @@ actions:
           vm.os.cmdline: xs:string
           vm.cpu.topology.cores: xs:int
           vm.memory: xs:long
-          vm.high_availability.priority: 'xs: int'
-          vm.high_availability.enabled: 'xs: boolean'
+          vm.high_availability.priority: 'xs:int'
+          vm.high_availability.enabled: 'xs:boolean'
           vm.domain.name: xs:string
           vm.description: xs:string
-          vm.stateless: 'xs: boolean'
+          vm.stateless: 'xs:boolean'
           vm.cpu.topology.sockets: xs:int
           vm.placement_policy.affinity: xs:string
           vm.origin: xs:string
           vm.os.kernel: xs:string
+          vm.disks.clone: 'xs:boolean'
     urlparams: {}
     headers: {Content-Type: application/xml, Expect: 201-created}
 - name: /api/vms/{vm:id}/shutdown|rel=shutdown
@@ -175,7 +195,9 @@ actions:
   request:
     body:
       parameterType: CdRom
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {cdrom.file.id: 'xs:string'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {Content-Type: application/xml}
@@ -213,7 +235,17 @@ actions:
   request:
     body:
       parameterType: Disk
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:
+          size: xs:int
+          disk.type: xs:string
+          disk.interface: xs:string
+          disk.format: xs:string
+          disk.sparse: xs:boolean
+          disk.bootable: xs:boolean
+          disk.propagate_errors: xs:boolean
+          disk.wipe_after_delete: xs:boolean
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/vms/{vm:id}/disks|rel=add
@@ -255,7 +287,9 @@ actions:
   request:
     body:
       parameterType: NIC
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {nic.network.id|name: 'xs:string', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/vms/{vm:id}/nics|rel=add
@@ -416,7 +450,9 @@ actions:
   request:
     body:
       parameterType: StorageDomain
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {storagdomain.name: 'xs:string'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {Content-Type: application/xml}
@@ -429,7 +465,7 @@ actions:
           storagdomain.type: 'xs:string', storagdomain.storage.type: 'xs:string',
           storagdomain.format: 'xs:boolean'}
         optionalArguments:
-          storagdomain.storage.logical_units--COLLECTION: &id001 {logical_unit.address: 'xs:string',
+          storagdomain.storage.logical_unit--COLLECTION: &id001 {logical_unit.address: 'xs:string',
             logical_unit.port: 'xs:int', logical_unit.target: 'xs:string', logical_unit.username: 'xs:string', logical_unit.password: 'xs:string',
             logical_unit.serial: 'xs:string', logical_unit.vendor_id: 'xs:string', logical_unit.product_id: 'xs:string',
             logical_unit.lun_mapping: 'xs:int', logical_unit.portal: 'xs:string', logical_unit.paths: 'xs:int', logical_unit.id: 'xs:string'}
@@ -438,12 +474,12 @@ actions:
           storagdomain.type: 'xs:string', storagdomain.storage.type: 'xs:string',
           storagdomain.format: 'xs:boolean'}
         optionalArguments:
-          storagdomain.storage.logical_units--COLLECTION: *id001
+          storagdomain.storage.logical_unit--COLLECTION: *id001
       - mandatoryArguments: {storagdomain.storage.path: 'xs:string', storagdomain.name: 'xs:string',
           storagdomain.host.id|name: 'xs:string', storagdomain.type: 'xs:string',
           storagdomain.storage.type: 'xs:string', storagdomain.format: 'xs:boolean'}
         optionalArguments:
-          storagdomain.storage.logical_units--COLLECTION: *id001
+          storagdomain.storage.logical_unit--COLLECTION: *id001
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {Content-Type: application/xml, Expect: 201-created}
@@ -570,7 +606,12 @@ actions:
   request:
     body:
       parameterType: Cluster
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {cluster.name: 'xs:string', cluster.description: 'xs:string', cluster.cpu.id: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int',
+        cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy: 'xs:string',
+        cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int', cluster.scheduling_policy.thresholds.duration: 'xs:int',
+        cluster.error_handling.on_error: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/clusters|rel=add
@@ -578,8 +619,10 @@ actions:
     body:
       parameterType: Cluster
       signatures:
-      - mandatoryArguments: {cluster.datacenter.id|name: 'xs:string', cluster.name: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments: {cluster.data_center.id|name: 'xs:string', cluster.name: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int', cluster.cpu.id: 'xs:string'}
+        optionalArguments: {cluster.description: 'xs:string', cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean',
+        cluster.scheduling_policy.policy: 'xs:string', cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int',
+        cluster.scheduling_policy.thresholds.duration: 'xs:int', cluster.error_handling.on_error: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml, Expect: 201-created}
 - name: /api/clusters/{cluster:id}/networks|rel=get
@@ -608,15 +651,9 @@ actions:
   request:
     body:
       parameterType: Network
-      signatures: []
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {Content-Type: application/xml}
-- name: /api/clusters/{cluster:id}/networks|rel=update
-  request:
-    body:
-      parameterType: Network
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {network.display: 'xs:boolean'}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/clusters/{cluster:id}/networks|rel=add
@@ -660,6 +697,21 @@ actions:
         optionalArguments: {}
     urlparams: {}
     headers: {Content-Type: application/xml, Expect: 201-created}
+- name: /api/datacenters/{datacenter:id}|rel=update
+  request:
+    body:
+      parameterType: DataCenter
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:
+          datacenter.name: xs:string
+          datacenter.storage_type: xs:string
+          datacenter.version.major: xs:int
+          datacenter.version.minor: xs:int
+          datacenter.description: xs:string
+          datacenter.storage_format: xs:string
+    urlparams: {}
+    headers: {}
 - name: /api/datacenters|rel=get
   request:
     body:
@@ -691,13 +743,6 @@ actions:
       signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {Content-Type: application/xml}
-- name: /api/datacenters/{datacenter:id|rel=update}
-  request:
-    body:
-      parameterType: DataCenter
-      signatures: []
-    urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/datacenters|rel=add
   request:
@@ -1046,7 +1091,12 @@ actions:
   request:
     body:
       parameterType: Host
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {host.name: 'xs:string', host.address: 'xs:string', host.root_password: 'xs:string', host.cluster.id: 'xs:string',
+          host.port: 'xs:int', host.storage_manager.priority: 'xs:int', host.power_management.type: 'xs:string',
+          host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string', host.power_management.user_name: 'xs:string',
+          host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {name: 'xs:string', value: 'xs:string'}}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {Content-Type: application/xml}
@@ -1058,7 +1108,7 @@ actions:
       - mandatoryArguments: {host.name: 'xs:string', host.address: 'xs:string', host.root_password: 'xs:string', host.cluster.id: 'xs:string'}
         optionalArguments: {host.port: 'xs:int', host.storage_manager.priority: 'xs:int', host.power_management.type: 'xs:string',
           host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string', host.power_management.user_name: 'xs:string',
-          host.power_management.password: 'xs:string', host.power_management.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}
+          host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/hosts/{host:id}/activate|rel=activate
@@ -1146,7 +1196,19 @@ actions:
   request:
     body:
       parameterType: HostNIC
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:
+          hostnic.bonding.slaves.host_nic--COLLECTION: {host_nic.id|name: 'xs:string'}
+          hostnic.network.id|name: xs:string
+          hostnic.name: xs:string
+          hostnic.bonding.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string',
+            type: 'xs:string'}
+          hostnic.ip.gateway: xs:string
+          hostnic.boot_protocol: xs:string
+          hostnic.mac: xs:string
+          hostnic.ip.address: xs:string
+          hostnic.ip.netmask: xs:string
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {Content-Type: application/xml}
@@ -1155,10 +1217,10 @@ actions:
     body:
       parameterType: HostNIC
       signatures:
-      - mandatoryArguments: {bonding.slaves.slaves.id|name: 'xs:string', hostnic.network.id|name: 'xs:string',
+      - mandatoryArguments: {hostnic.bonding.slaves.host_nic--COLLECTION: {host_nic.id|name: 'xs:string'}, hostnic.network.id|name: 'xs:string',
           hostnic.name: 'xs:string'}
         optionalArguments:
-          hostnic.bonding.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string',
+          hostnic.bonding.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string',
             type: 'xs:string'}
           hostnic.ip.gateway: xs:string
           hostnic.boot_protocol: xs:string
@@ -1318,7 +1380,11 @@ actions:
   request:
     body:
       parameterType: Network
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {network.description: 'xs:string', network.vlan.id: 'xs:string',
+          network.ip.address: 'xs:string', network.ip.gateway: 'xs:string', network.ip.netmask: 'xs:string',
+          network.display: 'xs:boolean', network.stp: 'xs:boolean'}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/networks|rel=add
@@ -1359,8 +1425,17 @@ actions:
     body:
       parameterType: Role
       signatures:
-      - mandatoryArguments: {role.name: 'xs:string', role.permits--COLLECTION: {permit.id: 'xs:string'}}
+      - mandatoryArguments: {role.name: 'xs:string', role.permits.permit--COLLECTION: {permit.id: 'xs:string'}}
         optionalArguments: {role.description: 'xs:string', role.administrative: 'xs:boolean'}
+    urlparams: {}
+    headers: {Content-Type: application/xml}
+- name: /api/roles/{role:id}|rel=update
+  request:
+    body:
+      parameterType: Role
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {role.permits.permit--COLLECTION: {id: 'xs:string'}, role.description: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/roles/{role:id}/permits|rel=get
@@ -1420,7 +1495,9 @@ actions:
   request:
     body:
       parameterType: Tag
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {tag.name: 'xs:string', tag.description: 'xs:string', tag.parent.name: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/tags|rel=add
@@ -1460,7 +1537,31 @@ actions:
   request:
     body:
       parameterType: Template
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:
+          template.name: 'xs:string'
+          template.memory: xs:long
+          template.cpu.topology.cores: xs:int
+          template.high_availability.enabled: 'xs:boolean'
+          template.os.cmdline: xs:string
+          template.origin: xs:string
+          template.high_availability.priority: 'xs:int'
+          template.timezone: xs:string
+          template.domain.name: xs:string
+          template.type: xs:string
+          template.stateless: 'xs:boolean'
+          template.placement_policy.affinity: xs:string
+          template.description: xs:string
+          template.custom_properties.custom_property--COLLECTION: {name: 'xs:string', value: 'xs:string'}
+          template.os.type: xs:string
+          template.os.boot.dev: xs:string
+          template.cpu.topology.sockets: xs:int
+          template.os.kernel: xs:string
+          template.display.type: xs:string
+          template.display.monitors: xs:int
+          template.os.initRd: xs:string
+          template.usb.enabled: xs:boolean
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/templates|rel=add
@@ -1472,17 +1573,17 @@ actions:
         optionalArguments:
           template.memory: xs:long
           template.cpu.topology.cores: xs:int
-          template.high_availability.enabled: 'xs: boolean'
+          template.high_availability.enabled: 'xs:boolean'
           template.os.cmdline: xs:string
           template.origin: xs:string
-          template.high_availability.priority: 'xs: int'
+          template.high_availability.priority: 'xs:int'
           template.timezone: xs:string
           template.domain.name: xs:string
           template.type: xs:string
-          template.stateless: 'xs: boolean'
+          template.stateless: 'xs:boolean'
           template.placement_policy.affinity: xs:string
           template.description: xs:string
-          template.custom_properties--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}
+          template.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}
           template.os.type: xs:string
           template.os.boot.dev: xs:string
           template.cpu.topology.sockets: xs:int
@@ -1774,7 +1875,10 @@ actions:
   request:
     body:
       parameterType: VmPool
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {vmpool.cluster.id|name: 'xs:string', vmpool.template.id|name: 'xs:string',
+          vmpool.name: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/vmpools|rel=add
