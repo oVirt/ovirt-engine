@@ -80,12 +80,6 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     SafeHtml alertEventButton(SafeHtml image, String text, String start, String stretch,
             String end, String contentStyleName);
 
-    @Template("<ul style='margin-top:0'>{0}</ul>")
-    SafeHtml unsignedList(SafeHtml list);
-
-    @Template("<li>{0}</li>")
-    SafeHtml listItem(SafeHtml item);
-
     @Template("<div style=\"text-align: center; padding-top: 6px;\">{0}{1}</div>")
     SafeHtml statusWithAlertTemplate(SafeHtml statusImage, SafeHtml alertImage);
 

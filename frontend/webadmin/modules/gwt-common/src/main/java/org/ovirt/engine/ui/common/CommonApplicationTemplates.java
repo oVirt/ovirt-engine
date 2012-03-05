@@ -24,4 +24,10 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     SafeHtml dialogButton(SafeHtml image, String text, String start, String stretch,
             String end, String contentStyleName, String customContentStyleName);
 
+    @Template("<ul style='margin-top:0'>{0}</ul>")
+    SafeHtml unsignedList(SafeHtml list);
+
+    @Template("<li>{0}</li>")
+    SafeHtml listItem(SafeHtml item);
+
 }

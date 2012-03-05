@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.common.presenter;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -17,8 +14,6 @@ import com.gwtplatform.mvp.client.PresenterWidget;
 public class ErrorPopupPresenterWidget extends PresenterWidget<ErrorPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends PopupView {
-
-        void setErrorMessage(Map<String, Set<String>> des2msgs);
 
         void setErrorMessage(String errorMessage);
 
@@ -45,10 +40,6 @@ public class ErrorPopupPresenterWidget extends PresenterWidget<ErrorPopupPresent
 
     public void prepare(String errorMessage) {
         getView().setErrorMessage(errorMessage);
-    }
-
-    public void prepare(Map<String, Set<String>> des2Msgs) {
-        getView().setErrorMessage(des2Msgs);
     }
 
 }
