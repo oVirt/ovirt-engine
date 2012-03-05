@@ -25,10 +25,6 @@ target
 
 # UI folders
 ###########################
-/frontend/webadmin/modules/sharedgwt/src/main/java/META-INF
-/frontend/webadmin/modules/sharedgwt/src/main/java/org/ovirt/engine/core/common
-/frontend/webadmin/modules/sharedgwt/src/main/java/org/ovirt/engine/core/compat
-/frontend/webadmin/modules/sharedgwt/src/main/java/org/ovirt/engine/core/searchbackend
 /frontend/webadmin/modules/userportal-gwtp/gen
 /frontend/webadmin/modules/webadmin/gen
 /frontend/webadmin/modules/webadmin/war
