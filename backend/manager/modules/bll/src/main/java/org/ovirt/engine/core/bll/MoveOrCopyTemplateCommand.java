@@ -225,12 +225,15 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected boolean checkIfDisksExist(Iterable<DiskImage> disksList) {
         for (DiskImage disk : disksList) {
-            ArrayList<Guid> domains = (ArrayList<Guid>) getBackend()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.GetImageDomainsList,
-                            new GetImageDomainsListVDSCommandParameters(disk.getstorage_pool_id().getValue(), disk
-                                    .getimage_group_id().getValue())).getReturnValue();
+            ArrayList<Guid> domains =
+                    (ArrayList<Guid>) getBackend()
+                            .getResourceManager()
+                            .RunVdsCommand(
+                                    VDSCommandType.GetImageDomainsList,
+                                    new GetImageDomainsListVDSCommandParameters(getStoragePool().getId()
+                                            .getValue(), disk
+                                            .getimage_group_id().getValue()))
+                            .getReturnValue();
             if (domains.contains(imageToDestinationDomainMap.get(disk.getId()))) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
                 return false;
