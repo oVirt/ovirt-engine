@@ -33,4 +33,5 @@ public class SubTabHostPermissionView extends AbstractSubTabPermissionsView<VDS,
     protected void generateIds() {
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
+
 }

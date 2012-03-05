@@ -4,8 +4,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class StorageDomainSharedStatusColumn extends
-        ImageResourceColumn<storage_domains> {
+public class StorageDomainSharedStatusColumn extends WebAdminImageResourceColumn<storage_domains> {
 
     @Override
     public ImageResource getValue(storage_domains sp) {
@@ -24,4 +23,5 @@ public class StorageDomainSharedStatusColumn extends
             return getApplicationResources().downImage();
         }
     }
+
 }

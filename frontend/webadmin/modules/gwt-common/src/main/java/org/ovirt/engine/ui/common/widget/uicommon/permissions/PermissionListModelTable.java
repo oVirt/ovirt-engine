@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.common.widget.table.column.BasePermissionTypeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -12,21 +12,17 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class PermissionListModelTable extends AbstractModelBoundTableWidget<permissions, PermissionListModel> {
-
-    private final BasePermissionTypeColumn permissionTypeColumn;
+public class PermissionListModelTable<P extends PermissionListModel> extends AbstractModelBoundTableWidget<permissions, P> {
 
     public PermissionListModelTable(
-            SearchableTableModelProvider<permissions, PermissionListModel> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage,
-            BasePermissionTypeColumn permissionTypeColumn) {
+            SearchableTableModelProvider<permissions, P> modelProvider,
+            EventBus eventBus, ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
-        this.permissionTypeColumn = permissionTypeColumn;
     }
 
     @Override
     public void initTable() {
-        getTable().addColumn(permissionTypeColumn, "", "30px");
+        getTable().addColumn(new PermissionTypeColumn(), "", "30px");
 
         TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
             @Override

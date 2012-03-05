@@ -5,7 +5,7 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.BaseAuditLogSeverityColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
@@ -21,19 +21,15 @@ import com.google.gwt.event.shared.EventBus;
  */
 public class EventListModelTable<T extends EventListModel> extends AbstractModelBoundTableWidget<AuditLog, T> {
 
-    private final BaseAuditLogSeverityColumn auditLogCoulmn;
-
     public EventListModelTable(
             SearchableTableModelProvider<AuditLog, T> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage,
-            BaseAuditLogSeverityColumn auditLogCoulmn) {
+            EventBus eventBus, ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
-        this.auditLogCoulmn = auditLogCoulmn;
     }
 
     @Override
     public void initTable() {
-        getTable().addColumn(auditLogCoulmn, "", "20px");
+        getTable().addColumn(new AuditLogSeverityColumn(), "", "20px");
 
         TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
             @Override

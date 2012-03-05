@@ -10,7 +10,7 @@ import com.google.gwt.resources.client.ImageResource;
 /**
  * Image column that corresponds to XAML {@code HistorySeverityTemplate}.
  */
-public class TaskStatusColumn extends ImageResourceColumn<EntityModel> {
+public class TaskStatusColumn extends WebAdminImageResourceColumn<EntityModel> {
 
     @Override
     public ImageResource getValue(EntityModel jobOrStep) {
@@ -37,4 +37,5 @@ public class TaskStatusColumn extends ImageResourceColumn<EntityModel> {
             return null;
         }
     }
+
 }

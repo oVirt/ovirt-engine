@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.network;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class NetworkStatusColumn extends ImageResourceColumn<network> {
+public class NetworkStatusColumn extends WebAdminImageResourceColumn<network> {
 
     @Override
     public ImageResource getValue(network nwk) {
@@ -17,4 +17,5 @@ public class NetworkStatusColumn extends ImageResourceColumn<network> {
             return getApplicationResources().downImage();
         }
     }
+
 }

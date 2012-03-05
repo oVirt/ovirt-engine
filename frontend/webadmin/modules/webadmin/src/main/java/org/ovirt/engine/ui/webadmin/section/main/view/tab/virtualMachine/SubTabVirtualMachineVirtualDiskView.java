@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineVirtualDiskPresenter;
-import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminDiskImageStatusColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -29,8 +28,7 @@ public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableWidg
             SearchableDetailModelProvider<DiskImage, VmListModel, VmDiskListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationResources resources,
             ApplicationConstants constants) {
-        super(new VmDiskListModelTable(modelProvider, eventBus, clientStorage,
-                new WebAdminDiskImageStatusColumn(), resources, constants));
+        super(new VmDiskListModelTable(modelProvider, eventBus, clientStorage, resources, constants));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());

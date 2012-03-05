@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
 import org.ovirt.engine.ui.common.widget.uicommon.events.EventListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
-import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminAuditLogSeverityColumn;
 
 import com.google.gwt.event.shared.EventBus;
 
@@ -25,7 +24,7 @@ public abstract class AbstractSubTabEventView<I, M extends ListWithDetailsModel,
 
     public AbstractSubTabEventView(SearchableDetailModelProvider<AuditLog, M, D> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(new EventListModelTable<D>(modelProvider, eventBus, clientStorage, new WebAdminAuditLogSeverityColumn()));
+        super(new EventListModelTable<D>(modelProvider, eventBus, clientStorage));
         generateIds();
         initTable();
         initWidget(getModelBoundTableWidget());

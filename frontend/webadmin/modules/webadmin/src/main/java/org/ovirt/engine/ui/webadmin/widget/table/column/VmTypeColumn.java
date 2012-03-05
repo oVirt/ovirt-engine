@@ -7,7 +7,7 @@ import com.google.gwt.resources.client.ImageResource;
 /**
  * Image column that corresponds to XAML {@code VmTypeTemplate}.
  */
-public class VmTypeColumn extends ImageResourceColumn<VM> {
+public class VmTypeColumn extends WebAdminImageResourceColumn<VM> {
 
     @Override
     public ImageResource getValue(VM vm) {

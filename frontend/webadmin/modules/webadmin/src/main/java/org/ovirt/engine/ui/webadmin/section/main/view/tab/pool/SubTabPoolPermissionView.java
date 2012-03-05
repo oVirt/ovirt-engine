@@ -33,4 +33,5 @@ public class SubTabPoolPermissionView extends AbstractSubTabPermissionsView<vm_p
     protected void generateIds() {
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
+
 }

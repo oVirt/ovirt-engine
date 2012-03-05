@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ImageUiCommandButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.common.widget.table.column.BaseDiskImageStatusColumn;
+import org.ovirt.engine.ui.common.widget.table.column.DiskImageStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
@@ -29,7 +29,6 @@ import com.google.gwt.event.shared.EventBus;
 
 public class VmDiskListModelTable extends AbstractModelBoundTableWidget<DiskImage, VmDiskListModel> {
 
-    private final BaseDiskImageStatusColumn statusColumn;
     private final CommonApplicationResources resources;
     private final CommonApplicationConstants constants;
 
@@ -39,11 +38,9 @@ public class VmDiskListModelTable extends AbstractModelBoundTableWidget<DiskImag
     public VmDiskListModelTable(
             SearchableTableModelProvider<DiskImage, VmDiskListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
-            BaseDiskImageStatusColumn statusColumn,
             CommonApplicationResources resources,
             CommonApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, false);
-        this.statusColumn = statusColumn;
         this.resources = resources;
         this.constants = constants;
 
@@ -69,7 +66,7 @@ public class VmDiskListModelTable extends AbstractModelBoundTableWidget<DiskImag
 
     @Override
     public void initTable() {
-        getTable().addColumn(statusColumn, "", "30px");
+        getTable().addColumn(new DiskImageStatusColumn(), "", "30px");
 
         TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override

@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmVirtualDiskPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmDiskListModelProvider;
-import org.ovirt.engine.ui.userportal.widget.table.column.UserPortalDiskImageStatusColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -29,8 +28,7 @@ public class SubTabExtendedVmVirtualDiskView extends AbstractSubTabTableWidgetVi
     public SubTabExtendedVmVirtualDiskView(VmDiskListModelProvider modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationResources resources,
             ApplicationConstants constants) {
-        super(new VmDiskListModelTable(modelProvider, eventBus, clientStorage,
-                new UserPortalDiskImageStatusColumn(), resources, constants));
+        super(new VmDiskListModelTable(modelProvider, eventBus, clientStorage, resources, constants));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());

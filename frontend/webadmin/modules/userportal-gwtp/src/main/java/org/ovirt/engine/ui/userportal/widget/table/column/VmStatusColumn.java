@@ -1,12 +1,10 @@
 package org.ovirt.engine.ui.userportal.widget.table.column;
 
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-import org.ovirt.engine.ui.userportal.ApplicationResources;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class VmStatusColumn extends ImageResourceColumn<UserPortalItemModel> {
+public class VmStatusColumn extends UserPortalImageResourceColumn<UserPortalItemModel> {
 
     @Override
     public ImageResource getValue(UserPortalItemModel item) {
@@ -39,10 +37,6 @@ public class VmStatusColumn extends ImageResourceColumn<UserPortalItemModel> {
         default:
             return getApplicationResources().vmStatusUnknown();
         }
-    }
-
-    protected ApplicationResources getApplicationResources() {
-        return ClientGinjectorProvider.instance().getApplicationResources();
     }
 
 }

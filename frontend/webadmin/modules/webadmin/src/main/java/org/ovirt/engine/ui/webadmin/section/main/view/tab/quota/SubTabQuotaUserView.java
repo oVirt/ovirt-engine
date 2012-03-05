@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.ObjectNameColumn;
+import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaListModel;
@@ -14,7 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaUserListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaUserPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminPermissionTypeColumn;
 
 import com.google.gwt.core.client.GWT;
 
@@ -34,7 +34,7 @@ public class SubTabQuotaUserView extends AbstractSubTabTableView<Quota, permissi
     }
 
     private void initTable() {
-        getTable().addColumn(new WebAdminPermissionTypeColumn(), "", "30px");
+        getTable().addColumn(new PermissionTypeColumn(), "", "30px");
 
         TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
             @Override
@@ -67,4 +67,5 @@ public class SubTabQuotaUserView extends AbstractSubTabTableView<Quota, permissi
             }
         });
     }
+
 }

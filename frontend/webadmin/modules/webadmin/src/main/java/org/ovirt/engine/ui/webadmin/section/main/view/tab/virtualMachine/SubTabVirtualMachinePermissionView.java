@@ -32,4 +32,5 @@ public class SubTabVirtualMachinePermissionView extends AbstractSubTabPermission
     protected void generateIds() {
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
+
 }

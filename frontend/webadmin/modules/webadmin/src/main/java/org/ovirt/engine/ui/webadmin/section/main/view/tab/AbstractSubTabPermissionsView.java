@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
 import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionWithInheritedPermissionListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminPermissionTypeColumn;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -15,13 +14,11 @@ import com.google.inject.Inject;
 public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetailsModel> extends AbstractSubTabTableWidgetView<I, permissions, M, PermissionListModel> {
 
     @Inject
-    public AbstractSubTabPermissionsView(SearchableDetailModelProvider<permissions, M, PermissionListModel> modelProvider,
-            EventBus eventBus,
-            ClientStorage clientStorage) {
-        super(new PermissionWithInheritedPermissionListModelTable(modelProvider,
-                eventBus,
-                clientStorage,
-                new WebAdminPermissionTypeColumn()));
+    public AbstractSubTabPermissionsView(
+            SearchableDetailModelProvider<permissions, M, PermissionListModel> modelProvider,
+            EventBus eventBus, ClientStorage clientStorage) {
+        super(new PermissionWithInheritedPermissionListModelTable<PermissionListModel>(
+                modelProvider, eventBus, clientStorage));
         generateIds();
         initTable();
         initWidget(getModelBoundTableWidget());
@@ -29,4 +26,5 @@ public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetails
     }
 
     protected abstract void generateIds();
+
 }
