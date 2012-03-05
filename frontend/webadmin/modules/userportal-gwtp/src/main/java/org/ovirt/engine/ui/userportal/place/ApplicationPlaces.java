@@ -23,6 +23,9 @@ public class ApplicationPlaces {
 
     // Main section: sub tabs
 
+    // Important: the value after SUB_TAB_PREFIX must correspond to given UiCommon model
+    // title, transformed to lower case, with spaces replaced with underscores ('_')
+
     public static final String SUB_TAB_PREFIX = "-";
 
     // Virtual Machines
