@@ -80,7 +80,6 @@ public class RestoreAllSnapshotCommandTest {
     private Guid storageDomainId = Guid.NewGuid();
     private Guid dstSnapshotId = Guid.NewGuid();
     private VmDynamic mockDynamicVm;
-    private VM mockVm;
     private Snapshot mockSnapshot;
     private RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters> spyCommand;
 
@@ -103,65 +102,6 @@ public class RestoreAllSnapshotCommandTest {
         mockIsValidVdsCommand();
     }
 
-    /**
-     * Checking if checkImagesExist validation is passing
-     *
-     * @throws Exception
-     */
-    @Test
-    public void validateInternalCommandWithValidImage() throws Exception {
-        mockSnapshotExists();
-        mockSnapshotFromDb();
-        spyCommand.setInternalExecution(true);
-        mockGetImageInfoVdsCommand(new DiskImage());
-        assertTrue(spyCommand.canDoAction());
-    }
-
-    /**
-     * Checking if checkImagesExist validation is passing
-     *
-     * @throws Exception
-     */
-    @Test
-    public void validateNotInternalCommandWithValidImage() throws Exception {
-        mockSnapshotExists();
-        mockSnapshotFromDb();
-        spyCommand.setInternalExecution(false);
-        mockGetImageInfoVdsCommand(new DiskImage());
-        assertTrue(spyCommand.canDoAction());
-    }
-
-    /**
-     * Checking if for checkImagesExist there is no validation when the command is internal
-     *
-     * @throws Exception
-     */
-    @Test
-    public void validateInternalCommandWithInInValidImage() throws Exception {
-        mockSnapshotExists();
-        mockSnapshotFromDb();
-        spyCommand.setInternalExecution(true);
-        mockGetImageInfoVdsCommand(null);
-        assertTrue(spyCommand.canDoAction());
-    }
-
-    /**
-     * Checking if there is validation for checkImagesExist.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void validateNotInternalCommandWithInValidImage() throws Exception {
-        mockSnapshotExists();
-        mockSnapshotFromDb();
-        spyCommand.setInternalExecution(false);
-        mockGetImageInfoVdsCommand(null);
-        assertFalse(spyCommand.canDoAction());
-        assertTrue(spyCommand.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST.toString()));
-    }
-
     @Test
     public void canDoActionFailsOnSnapshotNotExists() {
         when(snapshotDao.exists(any(Guid.class), any(Guid.class))).thenReturn(false);
@@ -177,7 +117,6 @@ public class RestoreAllSnapshotCommandTest {
         mockSnapshotFromDb();
         mockSnapshot.setType(SnapshotType.REGULAR);
         mockSnapshot.setStatus(SnapshotStatus.OK);
-        mockGetImageInfoVdsCommand(new DiskImage());
         assertFalse(spyCommand.canDoAction());
         assertTrue(spyCommand.getReturnValue()
                 .getCanDoActionMessages()
@@ -210,16 +149,6 @@ public class RestoreAllSnapshotCommandTest {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setReturnValue(Boolean.TRUE);
         when(backend.getResourceManager().RunVdsCommand(eq(VDSCommandType.IsValid),
-                any(IrsBaseVDSCommandParameters.class))).thenReturn(returnValue);
-    }
-
-    /**
-     * Returns if image exists.
-     */
-    private void mockGetImageInfoVdsCommand(DiskImage result) {
-        VDSReturnValue returnValue = new VDSReturnValue();
-        returnValue.setReturnValue(result);
-        when(backend.getResourceManager().RunVdsCommand(eq(VDSCommandType.GetImageInfo),
                 any(IrsBaseVDSCommandParameters.class))).thenReturn(returnValue);
     }
 

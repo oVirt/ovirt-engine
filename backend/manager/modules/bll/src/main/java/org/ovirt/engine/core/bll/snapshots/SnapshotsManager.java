@@ -7,7 +7,6 @@ import java.util.List;
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
@@ -16,11 +15,10 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.image_vm_map;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -292,21 +290,27 @@ public class SnapshotsManager {
         }
 
         // Sync disks that exist or existed in the snapshot.
+        Guid activeSnapshotId = null;
         for (DiskImage diskImage : disksFromSnapshot) {
             Disk disk = diskImage.getDisk();
             if (getDiskDao().exists(disk.getId())) {
                 getDiskDao().update(disk);
             } else {
+
+                // If can't find the image, insert it as illegal so that it can't be used and make the device unplugged.
                 if (getDiskImageDao().getSnapshotById(diskImage.getId()) == null) {
-                    // TODO: Set disk status to broken, for now mark image as illegal for further references.
+                    activeSnapshotId = (activeSnapshotId == null)
+                            ? getSnapshotDao().getId(vmId, SnapshotType.ACTIVE) : activeSnapshotId;
                     diskImage.setimageStatus(ImageStatus.ILLEGAL);
-                } else {
-                    VmDeviceUtils.addManagedDevice(new VmDeviceId(disk.getId(), vmId),
-                            VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
-                    getImageVmMapDao().save(new image_vm_map(true, diskImage.getId(), vmId));
+                    diskImage.setvm_snapshot_id(activeSnapshotId);
+
+                    // Make sure any trash image_vm_map is removed before save.
+                    getImageVmMapDao().remove(new image_vm_map_id(diskImage.getId(), diskImage.getvm_guid()));
+                    ImagesHandler.addImage(diskImage, true, new image_storage_domain_map(diskImage.getId(),
+                            diskImage.getstorage_ids().get(0)));
                 }
 
-                getDiskDao().save(disk);
+                ImagesHandler.addDiskToVm(disk, vmId);
             }
         }
 

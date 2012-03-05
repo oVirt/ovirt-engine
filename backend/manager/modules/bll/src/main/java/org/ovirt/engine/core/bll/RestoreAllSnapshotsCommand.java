@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -67,9 +68,11 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
             VdcReturnValueBase returnValue = null;
             for (DiskImage image : getImagesList()) {
-                ImagesContainterParametersBase params = new ImagesContainterParametersBase(image.getId(),
-                        image.getinternal_drive_mapping(), getVmId());
-                returnValue = runAsyncTask(VdcActionType.RestoreFromSnapshot, params);
+                if (image.getimageStatus() != ImageStatus.ILLEGAL) {
+                    ImagesContainterParametersBase params = new ImagesContainterParametersBase(image.getId(),
+                            image.getinternal_drive_mapping(), getVmId());
+                    returnValue = runAsyncTask(VdcActionType.RestoreFromSnapshot, params);
+                }
             }
 
             // We should have at least one task in the VDSM, to be sure that EndCommand will be called and the VM would
@@ -84,29 +87,33 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 setSucceeded(true);
             }
 
-            boolean noImagesRemovedYet = getTaskIdList().isEmpty();
-            List<Guid> deletedDisksIds = new ArrayList<Guid>();
-            for (DiskImage image : getDiskImageDAO().getImagesWithNoDisk(getVm().getId())) {
-                if (!deletedDisksIds.contains(image.getimage_group_id())) {
-                    deletedDisksIds.add(image.getimage_group_id());
-
-                    returnValue = runAsyncTask(VdcActionType.RemoveImage,
-                            new RemoveImageParameters(image.getId(), getVmId()));
-                    if (!returnValue.getSucceeded() && noImagesRemovedYet) {
-                        setSucceeded(false);
-                        getReturnValue().setFault(returnValue.getFault());
-                        return;
-                    }
-
-                    noImagesRemovedYet = false;
-                }
-            }
+            deleteOrphanedImages();
 
             for (Guid snapshotId : snapshotsToRemove) {
                 getSnapshotDao().remove(snapshotId);
             }
         } else {
             setSucceeded(true);
+        }
+    }
+
+    protected void deleteOrphanedImages() {
+        VdcReturnValueBase returnValue;
+        boolean noImagesRemovedYet = getTaskIdList().isEmpty();
+        List<Guid> deletedDisksIds = new ArrayList<Guid>();
+        for (DiskImage image : getDiskImageDAO().getImagesWithNoDisk(getVm().getId())) {
+            if (!deletedDisksIds.contains(image.getimage_group_id())) {
+                deletedDisksIds.add(image.getimage_group_id());
+                returnValue = runAsyncTask(VdcActionType.RemoveImage,
+                        new RemoveImageParameters(image.getId(), getVmId()));
+                if (!returnValue.getSucceeded() && noImagesRemovedYet) {
+                    setSucceeded(false);
+                    getReturnValue().setFault(returnValue.getFault());
+                    return;
+                }
+
+                noImagesRemovedYet = false;
+            }
         }
     }
 
@@ -259,7 +266,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
         } else {
             result = ImagesHandler.PerformImagesChecks(getVmId(), getReturnValue().getCanDoActionMessages(), getVm()
-                    .getstorage_pool_id(), getImagesList().get(0).getstorage_ids().get(0), true, true, false, !isInternalExecution(),
+                    .getstorage_pool_id(), getImagesList().get(0).getstorage_ids().get(0), true, true, false, false,
                     false, false, true);
             if (result && (getVm().getstatus() != VMStatus.Down)) {
                 result = false;
