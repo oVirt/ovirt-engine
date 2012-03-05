@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -12,6 +15,8 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
@@ -45,48 +50,75 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmDrives() {
-        Map<String, String>[] drives = new Map[vm.getDiskMap().size()];
+        List<Map<String, String>> drives = new ArrayList<Map<String, String>>(vm.getDiskMap().size());
         int ideCount = 0, pciCount = 0;
-        int i = 0;
         List<DiskImage> diskImages = getSortedDiskImages();
+        List<VmDevice> vmDiskDevices = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(
+                vm.getId(), VmDeviceType.DISK.getName(), VmDeviceType.DISK.getName());
         for (DiskImage disk : diskImages) {
-            Map<String, String> drive = new HashMap<String, String>();
-            drive.put("domainID", disk.getstorage_ids().get(0).toString());
-            drive.put("poolID", disk.getstorage_pool_id().toString());
-            drive.put("volumeID", disk.getId().toString());
-            drive.put("imageID", disk.getimage_group_id().toString());
-            drive.put("format", disk.getvolume_format().toString()
-                        .toLowerCase());
-            drive.put("propagateErrors", disk.getpropagate_errors().toString()
-                        .toLowerCase());
-            switch (disk.getdisk_interface()) {
-            case IDE:
-                try {
-                    drive.put("if", "ide");
-                    drive.put("index", String.valueOf(ideIndexSlots[ideCount]));
-                    ideCount++;
-                } catch (IndexOutOfBoundsException e) {
-                    log.errorFormat("buildVmDrives throws IndexOutOfBoundsException for index {0}, IDE slots are limited to 4.",
-                                ideCount);
-                    throw e;
-                }
-                break;
-            case VirtIO:
-                drive.put("if", "virtio");
-                drive.put("index", String.valueOf(pciCount));
-                drive.put("boot", String.valueOf(disk.getboot()).toLowerCase());
-                pciCount++;
-                break;
-            default:
-                // ISCI not supported
-                logUnsupportedInterfaceType();
-                break;
-            }
 
-            drives[i] = drive;
-            i++;
+            // Get the VM device for this disk
+            VmDevice vmDevice = findVmDeviceForDisk(disk.getDisk().getId(), vmDiskDevices);
+            if (vmDevice == null || vmDevice.getIsPlugged()) {
+                Map<String, String> drive = new HashMap<String, String>();
+                drive.put("domainID", disk.getstorage_ids().get(0).toString());
+                drive.put("poolID", disk.getstorage_pool_id().toString());
+                drive.put("volumeID", disk.getId().toString());
+                drive.put("imageID", disk.getimage_group_id().toString());
+                drive.put("format", disk.getvolume_format().toString()
+                            .toLowerCase());
+                drive.put("propagateErrors", disk.getpropagate_errors().toString()
+                            .toLowerCase());
+                switch (disk.getdisk_interface()) {
+                case IDE:
+                    try {
+                        drive.put("if", "ide");
+                        drive.put("index", String.valueOf(ideIndexSlots[ideCount]));
+                        ideCount++;
+                    } catch (IndexOutOfBoundsException e) {
+                        log.errorFormat("buildVmDrives throws IndexOutOfBoundsException for index {0}, IDE slots are limited to 4.",
+                                    ideCount);
+                        throw e;
+                    }
+                    break;
+                case VirtIO:
+                    drive.put("if", "virtio");
+                    drive.put("index", String.valueOf(pciCount));
+                    drive.put("boot", String.valueOf(disk.getboot()).toLowerCase());
+                    pciCount++;
+                    break;
+                default:
+                    // ISCI not supported
+                    logUnsupportedInterfaceType();
+                    break;
+                }
+
+                drives.add(drive);
+            }
         }
-        createInfo.add("drives", drives);
+
+        @SuppressWarnings("unchecked")
+        Map<String, String>[] drivesArray = new Map[drives.size()];
+        createInfo.add("drives", drives.toArray(drivesArray));
+    }
+
+    /**
+     * Find VM device for this disk from the list of VM devices.
+     *
+     * @param diskId
+     *            The disk ID to find the device for.
+     * @param vmDiskDevices
+     *            The list of all VM's disk devices.
+     * @return The device, or null if none found.
+     */
+    private VmDevice findVmDeviceForDisk(final Guid diskId, List<VmDevice> vmDiskDevices) {
+        return (VmDevice) CollectionUtils.find(vmDiskDevices, new Predicate() {
+
+            @Override
+            public boolean evaluate(Object device) {
+                return diskId.equals(((VmDevice) device).getDeviceId());
+            }
+        });
     }
 
     @Override
