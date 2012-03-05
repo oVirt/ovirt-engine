@@ -1096,6 +1096,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("0 0/5 * * * ?")
     AutoRecoverySchedule(346),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("3")
+    VmPoolMonitorMaxAttempts(347),
+
     Invalid(65535);
 
     private int intValue;
