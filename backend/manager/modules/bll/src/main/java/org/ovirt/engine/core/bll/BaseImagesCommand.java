@@ -25,6 +25,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDAO;
 
 /**
  * Base class for all image handling commands
@@ -54,11 +55,11 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected DiskImage getImage() {
         if (mImage == null) {
-            DiskImage image = DbFacade.getInstance().getDiskImageDAO().get(getImageId());
+            DiskImage image = getDiskImageDao().get(getImageId());
             if (image != null) {
                 mImage = image;
             } else {
-                image = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(getImageId());
+                image = getDiskImageDao().getSnapshotById(getImageId());
                 if (image != null) {
                     image.setvm_guid(getImageContainerId());
                     mImage = image;
@@ -66,6 +67,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             }
         }
         return mImage;
+    }
+
+    protected DiskImageDAO getDiskImageDao() {
+        return DbFacade.getInstance().getDiskImageDAO();
     }
 
     protected Guid getImageId() {
@@ -121,9 +126,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected DiskImage getDestinationDiskImage() {
         if (_destinationImage == null) {
-            _destinationImage = DbFacade.getInstance().getDiskImageDAO().get(getDestinationImageId());
+            _destinationImage = getDiskImageDao().get(getDestinationImageId());
             if (_destinationImage == null) {
-                _destinationImage = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(getDestinationImageId());
+                _destinationImage = getDiskImageDao().getSnapshotById(getDestinationImageId());
             }
         }
         return _destinationImage;
@@ -170,7 +175,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
              * Prevent operating image with illegal status TODO: insert it in new CanDoAction mechanism
              */
             if (diskImage == null) {
-                diskImage = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(getImage().getId());
+                diskImage = getDiskImageDao().getSnapshotById(getImage().getId());
             }
 
             Guid storagePoolId = diskImage.getstorage_pool_id() != null ? diskImage.getstorage_pool_id().getValue()
@@ -195,7 +200,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             if (image.getimageStatus() != ImageStatus.OK) {
                 if (diskImage != null) {
                     diskImage.setimageStatus(image.getimageStatus());
-                    DbFacade.getInstance().getDiskImageDAO().update(diskImage);
+                    getDiskImageDao().update(diskImage);
                     throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
                 }
             }
@@ -222,7 +227,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             log.error("Cannot create snapshot. Vm is in preview status");
             return false;
         }
-
         return true;
     }
 
@@ -380,7 +384,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         // TODO - transaction
         // Adding new disk to the image table in the DB
         try {
-            DbFacade.getInstance().getDiskImageDAO().save(image);
+            getDiskImageDao().save(image);
             DbFacade.getInstance().getImageVmMapDAO().save(
                     new image_vm_map(image.getactive(), image.getId(), image.getvm_guid()));
             DiskImageDynamic diskDynamic = new DiskImageDynamic();
@@ -459,7 +463,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
             // Unlock destination image:
             getDestinationDiskImage().setimageStatus(ImageStatus.OK);
-            DbFacade.getInstance().getDiskImageDAO().update(getDestinationDiskImage());
+            getDiskImageDao().update(getDestinationDiskImage());
         }
 
         if (getDiskImage() != null) {
@@ -502,7 +506,12 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected void RemoveSnapshotFromDB(DiskImage snapshot) {
         DbFacade.getInstance().getStorageDomainDAO().removeImageStorageDomainMap(snapshot.getId());
-        DbFacade.getInstance().getDiskImageDAO().remove(snapshot.getId());
+        getDiskImageDao().remove(snapshot.getId());
+        List<DiskImage> imagesForDisk =
+                getDiskImageDao().getAllSnapshotsForImageGroup(snapshot.getimage_group_id());
+        if (imagesForDisk == null || imagesForDisk.isEmpty()) {
+            getDiskDao().remove(snapshot.getimage_group_id());
+        }
     }
 
     public static void GetImageChildren(Guid snapshot, RefObject<java.util.ArrayList<Guid>> children) {
@@ -524,7 +533,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         // children.Reverse();
         Collections.reverse(children);
         for (Guid child : children) {
-            RemoveSnapshot(DbFacade.getInstance().getDiskImageDAO().getSnapshotById(child));
+            RemoveSnapshot(getDiskImageDao().getSnapshotById(child));
         }
     }
 

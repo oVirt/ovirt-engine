@@ -291,6 +291,14 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_FAILED_HOTPLUG_DISK, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_HOTUNPLUG_DISK, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_FAILED_HOTUNPLUG_DISK, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_COPIED_TEMPLATE_DISK, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_FAILED_COPY_TEMPLATE_DISK, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_COPIED_TEMPLATE_DISK_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_COPIED_TEMPLATE_DISK_FINISHED_FAILURE, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_MOVED_VM_DISK, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_FAILED_MOVED_VM_DISK, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_MOVED_VM_DISK_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_MOVED_VM_DISK_FINISHED_FAILURE, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.IRS_FAILURE, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.IRS_DISK_SPACE_LOW_ERROR, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.IRS_DISK_SPACE_LOW, AuditLogSeverity.WARNING);

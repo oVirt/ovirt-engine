@@ -113,6 +113,7 @@ public enum VdcActionType {
     TryBackToAllSnapshotsOfVm(223, ActionGroup.MANIPULATE_VM_SNAPSHOTS),
     RestoreAllSnapshots(224, ActionGroup.MANIPULATE_VM_SNAPSHOTS),
     MoveOrCopyImageGroup(225),
+    MoveOrCopyDisk(226),
     RemoveSnapshotSingleDisk(227),
     MoveMultipleImageGroups(228),
     CreateCloneOfTemplate(229),

@@ -22,6 +22,16 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
     public MoveOrCopyImageGroupParameters() {
     }
 
+    public MoveOrCopyImageGroupParameters(Guid imageId,
+            NGuid sourceDomainId,
+            Guid destDomainId,
+            ImageOperation operation) {
+        super(imageId);
+        setSourceDomainId(sourceDomainId);
+        setStorageDomainId(destDomainId);
+        setOperation(operation);
+    }
+
     public MoveOrCopyImageGroupParameters(Guid containerId, Guid imageGroupId, Guid leafSnapshotID,
                                           Guid storageDomainId, ImageOperation operation) {
         super(leafSnapshotID, "", containerId);

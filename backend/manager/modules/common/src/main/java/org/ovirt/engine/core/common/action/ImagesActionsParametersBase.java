@@ -8,12 +8,12 @@ import org.ovirt.engine.core.compat.Guid;
 public class ImagesActionsParametersBase extends StorageDomainParametersBase {
     private static final long serialVersionUID = -5791892465249711608L;
 
-    private Guid imageId = new Guid();
-    private Guid destinationImageId = new Guid();
+    private Guid imageId = Guid.Empty;
+    private Guid destinationImageId = Guid.Empty;
     private String description;
     private Date oldLastModifiedValue;
-    private Guid vmSnapshotId = new Guid();
-    private Guid imageGroupID = new Guid();
+    private Guid vmSnapshotId = Guid.Empty;
+    private Guid imageGroupID = Guid.Empty;
 
     public ImagesActionsParametersBase() {
     }

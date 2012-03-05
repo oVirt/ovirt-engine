@@ -61,9 +61,6 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
     protected void executeCommand() {
         LockImage();
 
-        List<DiskImage> snapshots = DbFacade.getInstance().getDiskImageDAO()
-                .getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
-
         VDSReturnValue vdsReturnValue = null;
 
         if (getParameters().getUseCopyCollapse()) {
@@ -76,7 +73,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                                     new CopyImageVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
                                             getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
                                                     .getValue()
-                                                    : snapshots.get(0).getstorage_ids().get(0),
+                                                    : getDiskImage().getstorage_ids().get(0),
                                             getParameters()
                                                     .getContainerId(),
                                             getParameters().getImageGroupID(),
@@ -102,9 +99,9 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.MoveImageGroup,
-                            new MoveImageGroupVDSCommandParameters(snapshots.get(0).getstorage_pool_id().getValue(),
+                            new MoveImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
                                     getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
-                                            .getValue() : snapshots.get(0).getstorage_ids().get(0), snapshots.get(0)
+                                            .getValue() : getDiskImage().getstorage_ids().get(0), getDiskImage()
                                             .getimage_group_id().getValue(), getParameters().getStorageDomainId(),
                                     getParameters().getContainerId(), getParameters().getOperation(), getParameters()
                                             .getPostZero(), getParameters().getForceOverride(), getStoragePool()
@@ -120,6 +117,8 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
             if (getParameters().getOperation() == ImageOperation.Move
                     || getParameters().getParentCommand() == VdcActionType.ImportVm
                     || getParameters().getParentCommand() == VdcActionType.ImportVmTemplate) {
+                List<DiskImage> snapshots = getDiskImageDao()
+                        .getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
                 for (DiskImage snapshot : snapshots) {
                     DbFacade.getInstance()
                             .getStorageDomainDAO()
