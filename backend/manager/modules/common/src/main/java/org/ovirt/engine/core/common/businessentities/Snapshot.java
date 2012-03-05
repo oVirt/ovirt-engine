@@ -226,8 +226,7 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
     public enum SnapshotStatus {
         OK,
         LOCKED,
-        IN_PREVIEW,
-        BROKEN
+        IN_PREVIEW
     }
 
     public enum SnapshotType {

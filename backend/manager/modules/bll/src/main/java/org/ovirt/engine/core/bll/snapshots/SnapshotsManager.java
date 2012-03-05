@@ -164,24 +164,6 @@ public class SnapshotsManager {
     }
 
     /**
-     * Mark the given snapshot as {@link SnapshotStatus#BROKEN} if it exists and it's a {@link SnapshotType#REGULAR}
-     * snapshot.
-     *
-     * @param snapshotId
-     *            The ID of the snapshot.
-     */
-    public void markBroken(Guid snapshotId) {
-        if (snapshotId == null) {
-            return;
-        }
-
-        Snapshot snapshot = getSnapshotDao().get(snapshotId);
-        if (snapshot != null && SnapshotType.REGULAR == snapshot.getType()) {
-            getSnapshotDao().updateStatus(snapshotId, SnapshotStatus.BROKEN);
-        }
-    }
-
-    /**
      * Attempt to read the configuration that is stored in the snapshot, and restore the VM from it.<br>
      * The NICs and Disks will be restored from the configuration (if available).<br>
      * <br>

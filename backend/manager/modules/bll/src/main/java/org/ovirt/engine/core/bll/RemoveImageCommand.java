@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
-
-import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -17,9 +14,9 @@ import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParame
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * This command responcible to removing image, contains all created snapshots.
@@ -97,10 +94,6 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 DiskImage image = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(currentGuid);
                 if (image != null) {
                     RemoveSnapshot(image);
-                    if (image.getvm_snapshot_id() != null) {
-                        new SnapshotsManager().markBroken(image.getvm_snapshot_id().getValue());
-                    }
-
                     currentGuid = image.getParentId();
                 }
 
