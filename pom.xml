@@ -3,7 +3,7 @@
 
   <groupId>org.ovirt.engine</groupId>
   <artifactId>root</artifactId>
-  <version>3.0.0-0001</version>
+  <version>3.1.0-0001</version>
   <packaging>pom</packaging>
 
   <name>oVirt Engine Root Project</name>
@@ -17,7 +17,7 @@
 
   <properties>
    <!--  Version Info -->
-    <engine.version>3.0.0-0001</engine.version>
+    <engine.version>3.1.0-0001</engine.version>
     <engine.groupId>org.ovirt.engine</engine.groupId>
 
     <!-- project file encoding -->
@@ -414,7 +414,7 @@
             <dependency>
               <groupId>org.ovirt.engine</groupId>
               <artifactId>build-tools</artifactId>
-              <version>3.0.0-0001</version>
+              <version>3.1.0-0001</version>
             </dependency>
           </dependencies>
           <configuration>

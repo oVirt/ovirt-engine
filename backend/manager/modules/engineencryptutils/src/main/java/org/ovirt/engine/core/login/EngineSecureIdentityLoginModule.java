@@ -24,7 +24,7 @@ import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
  * an entry of element &lt;classloader name="security-classloader"...&gt;<br>
  * e.g.:
  * <pre>
- * &lt;root&gt;${jboss.server.home.url}deploy/engine.ear/lib/engine-login-3.0.0-0001.jar&lt;/root&gt;
+ * &lt;root&gt;${jboss.server.home.url}deploy/engine.ear/lib/engine-login-3.1.0-0001.jar&lt;/root&gt;
  * </pre>
  * <li>Modify <i>$JBOSS_HOME/$PROFILE/conf/login-config.xml</i> to use the custom login class in element
  * &lt;application-policy name="EncryptDBPassword"&gt; (a complete element is shown below) e.g.:

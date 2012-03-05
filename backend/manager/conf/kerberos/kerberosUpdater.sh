@@ -40,9 +40,9 @@ fi
 # This is used during installation where Jboss is not extracted yet.
  DEVELOPER_MODE=y
 if [ -z $DEVELOPER_MODE ]; then
-    CLASSPATH=$JB_HOME/utils-3.0.0-0001.jar:$JB_HOME/engine-compat.jar:$JB_HOME/commons-logging.jar:$JB_HOME/sqljdbc4.jar:$JB_HOME/engineencryptutils-3.0.0-0001.jar:$JB_HOME/commons-codec-1.4.jar
+    CLASSPATH=$JB_HOME/utils-3.1.0-0001.jar:$JB_HOME/engine-compat.jar:$JB_HOME/commons-logging.jar:$JB_HOME/sqljdbc4.jar:$JB_HOME/engineencryptutils-3.1.0-0001.jar:$JB_HOME/commons-codec-1.4.jar
 else
-    CLASSPATH=$JB_HOME/$EAR_LIB/utils-3.0.0-0001.jar:$JB_HOME/$EAR_LIB/engine-compat.jar:$JB_HOME/common/lib/commons-logging.jar:$JB_HOME/common/lib/sqljdbc4.jar:$JB_HOME/$EAR_LIB/engineencryptutils-3.0.0-0001.jar:$JB_HOME/$EAR_LIB/commons-codec-1.4.jar
+    CLASSPATH=$JB_HOME/$EAR_LIB/utils-3.1.0-0001.jar:$JB_HOME/$EAR_LIB/engine-compat.jar:$JB_HOME/common/lib/commons-logging.jar:$JB_HOME/common/lib/sqljdbc4.jar:$JB_HOME/$EAR_LIB/engineencryptutils-3.1.0-0001.jar:$JB_HOME/$EAR_LIB/commons-codec-1.4.jar
     echo ### running in developer mode ###
 fi
 

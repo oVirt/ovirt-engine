@@ -41,14 +41,14 @@ fi
 # Jboss is not extracted yet.
 DEVELOPER_MODE=y
 if [ -z "$DEVELOPER_MODE" ]; then
-    CLASSPATH=$JB_HOME/utils-3.0.0-0001.jar:$JB_HOME/engine-compat.jar:$JB_HOME/commons-logging.jar
+    CLASSPATH=$JB_HOME/utils-3.1.0-0001.jar:$JB_HOME/engine-compat.jar:$JB_HOME/commons-logging.jar
 else
     echo -e "\n### running in developer mode ###"
 	if [ ! -d $JB_HOME/$EAR_LIB ]; then
 		#if the engine-slimmed profile is missing, use /usr/share/engine/engine.ear
-		CLASSPATH=$ENGINE_LIB_PATH/utils-3.0.0-0001.jar:$ENGINE_LIB_PATH/engine-compat.jar:$JB_HOME/common/lib/commons-logging.jar		
+		CLASSPATH=$ENGINE_LIB_PATH/utils-3.1.0-0001.jar:$ENGINE_LIB_PATH/engine-compat.jar:$JB_HOME/common/lib/commons-logging.jar
 	else
-	    CLASSPATH=$JB_HOME/$EAR_LIB/utils-3.0.0-0001.jar:$JB_HOME/$EAR_LIB/engine-compat.jar:$JB_HOME/common/lib/commons-logging.jar
+	    CLASSPATH=$JB_HOME/$EAR_LIB/utils-3.1.0-0001.jar:$JB_HOME/$EAR_LIB/engine-compat.jar:$JB_HOME/common/lib/commons-logging.jar
 	fi
 fi
 

@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.ovirt.engine.api</groupId>
     <artifactId>common-parent</artifactId>
-    <version>3.0.0-0001</version>
+    <version>3.1.0-0001</version>
   </parent>
 
   <artifactId>interface-common-jaxrs</artifactId>

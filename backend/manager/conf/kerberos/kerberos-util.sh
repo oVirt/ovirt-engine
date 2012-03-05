@@ -37,7 +37,7 @@ else
         EAR_LIB=$5
 fi
 
-CP=$EAR_LIB/utils-3.0.0-0001.jar:$EAR_LIB/engine-compat.jar:$JB_HOME/common/lib/commons-logging.jar
+CP=$EAR_LIB/utils-3.1.0-0001.jar:$EAR_LIB/engine-compat.jar:$JB_HOME/common/lib/commons-logging.jar
 
 java -cp $CP org.ovirt.engine.core.utils.kerberos.KerberosUtil -realm="$1" -user="$2" -pass="$3" -conf="$4"  -Dsun.security.krb5.debug=true
 

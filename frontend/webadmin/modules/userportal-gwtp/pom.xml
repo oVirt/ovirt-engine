@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>webadmin-modules</artifactId>
 		<groupId>org.ovirt.engine.ui</groupId>
-		<version>3.0.0-0001</version>
+		<version>3.1.0-0001</version>
 	</parent>
 
 	<artifactId>userportal-gwtp</artifactId>

@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.ovirt.engine.core</groupId>
     <artifactId>manager-modules</artifactId>
-    <version>3.0.0-0001</version>
+    <version>3.1.0-0001</version>
   </parent>
 
   <artifactId>restapi-parent</artifactId>
@@ -20,7 +20,7 @@
   </modules>
 
   <properties>
-    <engine.api.version>3.0.0-0001</engine.api.version>
+    <engine.api.version>3.1.0-0001</engine.api.version>
     <resteasy.version>2.2.2.GA</resteasy.version>
   </properties>
 

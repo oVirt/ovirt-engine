@@ -362,7 +362,7 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %doc  %{_mandir}/man8/engine-log-collector.8.gz
 
 %files tools-common
-%{_datadir}/java/engine-tools-common-3.0.0-0001.jar
+%{_datadir}/java/engine-tools-common-3.1.0-0001.jar
 %{_datadir}/java/engine-tools-common.jar
 
 %files config
@@ -383,10 +383,10 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %config(noreplace) %{_sysconfdir}/%{name}/notifier/notifier.conf
 
 %changelog
-* Wed Jan 04 2012 Ronen Angluste <ranglust@redhat.com> - 3.0.0-1
+* Wed Jan 04 2012 Ronen Angluste <ranglust@redhat.com> - 3.1.0-1
 - Adjust code for Jboss AS 7.1
-* Sun Dec 11 2011 Ronen Angluster <ranglust@redhat.com> - 3.0.0-1
+* Sun Dec 11 2011 Ronen Angluster <ranglust@redhat.com> - 3.1.0-1
 - Moved all hard coded paths to macros
-* Wed Oct 26 2011 Ronen Angluster <ranglust@redhat.com> - 3.0.0-1
+* Wed Oct 26 2011 Ronen Angluster <ranglust@redhat.com> - 3.1.0-1
 - Initial build
 - Cloned from RHEVM spec file

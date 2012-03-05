@@ -5,7 +5,7 @@ ven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <groupId>org.ovirt.engine.api</groupId>
     <artifactId>restapi-parent</artifactId>
-    <version>3.0.0-0001</version>
+    <version>3.1.0-0001</version>
   </parent>
 
   <artifactId>interface</artifactId>
