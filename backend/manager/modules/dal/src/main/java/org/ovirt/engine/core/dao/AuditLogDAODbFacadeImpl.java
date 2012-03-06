@@ -72,6 +72,21 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
     }
 
     @Override
+    public List<AuditLog> getAllByVMTemplateName(String vmName) {
+        return getAllByVMTemplateName(vmName, null, false);
+    }
+
+    @Override
+    public List<AuditLog> getAllByVMTemplateName(String vmName, Guid userID, boolean isFiltered) {
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_template_name", vmName)
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered);
+        return getCallsHandler().executeReadList("GetAuditLogByVMTemplateName", auditLogRowMapper, parameterSource);
+    }
+
+    @Override
     public void save(AuditLog event) {
         getCallsHandler().executeModification("InsertAuditLog",
                 getSqlMapper(event).addValue("log_type_name", event.getlog_type_name()));

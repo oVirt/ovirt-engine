@@ -60,6 +60,28 @@ public interface AuditLogDAO extends DAO, SearchDAO<AuditLog> {
     List<AuditLog> getAllByVMName(String vmName, Guid userID, boolean isFiltered);
 
     /**
+     * Retrieves all audit log entries for the given VM Template name.
+     *
+     * @param vmTemplateName
+     *          The name of the vm template to retrieve audit logs for
+     * @return the list of entries
+     */
+    List<AuditLog> getAllByVMTemplateName(String vmTemplateName);
+
+    /**
+     * Retrieves all audit log entries for the given VM Template name with optional permission filtering.
+     *
+     * @param vmTemplateName
+     *            The name of the vm template to retrieve audit logs for
+     * @param userID
+     *            The ID of the user requesting the information
+     * @param isFiltered
+     *            whether the results should be filtered according to the user's permissions
+     * @return the list of entries
+     */
+    List<AuditLog> getAllByVMTemplateName(String vmTemplateName, Guid userID, boolean isFiltered);
+
+    /**
      * Saves the provided audit log
      *
      * @param entry

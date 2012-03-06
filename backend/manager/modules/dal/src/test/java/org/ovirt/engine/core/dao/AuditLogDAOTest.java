@@ -29,6 +29,7 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class AuditLogDAOTest extends BaseDAOTestCase {
     private static final String VM_NAME = "rhel5-pool-50";
+    private static final String VM_TEMPLATE_NAME = "1";
     private static final Guid VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final long EXISTING_ENTRY_ID = 44291;
     private static final SimpleDateFormat EXPECTED_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -52,7 +53,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
         newAuditLog.setvm_id(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
         newAuditLog.setvm_name(VM_NAME);
         newAuditLog.setvm_template_id(new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
-        newAuditLog.setvm_template_name("1");
+        newAuditLog.setvm_template_name(VM_TEMPLATE_NAME);
         newAuditLog.setvds_id(VDS_ID);
         newAuditLog.setvds_name("magenta-vdsc");
         newAuditLog.setlog_time(EXPECTED_DATE_FORMAT.parse("2010-12-22 14:00:00"));
@@ -126,47 +127,78 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     /** Tests {@link AuditLogDAO#getAllByVMName(String) with a name of a VM that exists */
     @Test
     public void testGetAllByVMName() {
-        assertGetVMByNameValidResults(dao.getAllByVMName(VM_NAME));
+        assertGetByNameValidResults(dao.getAllByVMName(VM_NAME));
     }
 
     /** Tests {@link AuditLogDAO#getAllByVMName(String) with a name of a VM that doesn't exist */
     @Test
     public void testGetAllByVMNameInvalidName() {
-        assertGetVMByNameInvalidResults(dao.getAllByVMName("There is no such VM!!!"));
+        assertGetByNameInvalidResults(dao.getAllByVMName("There is no such VM!!!"));
     }
 
     /** Tests {@link AuditLogDAO#getAllByVMName(String, Guid, boolean) with a user that has permissions on that VM */
     @Test
     public void testGetAllByVMNamePrivilegedUser() {
-        assertGetVMByNameValidResults(dao.getAllByVMName(VM_NAME, PRIVILEGED_USER_ID, true));
+        assertGetByNameValidResults(dao.getAllByVMName(VM_NAME, PRIVILEGED_USER_ID, true));
     }
 
     /** Tests {@link AuditLogDAO#getAllByVMName(String, Guid, boolean) with a user that doesn't have permissions on that VM, but with the filtering mechanism disabled */
     @Test
     public void testGetAllByVMNameUnprivilegedUserNoFiltering() {
-        assertGetVMByNameValidResults(dao.getAllByVMName(VM_NAME, UNPRIVILEGED_USER_ID, false));
+        assertGetByNameValidResults(dao.getAllByVMName(VM_NAME, UNPRIVILEGED_USER_ID, false));
     }
 
     /** Tests {@link AuditLogDAO#getAllByVMName(String, Guid, boolean) with a user that doesn't have permissions on that VM */
     @Test
     public void testGetAllByVMNameUnprivilegedUserFiltering() {
-        assertGetVMByNameInvalidResults(dao.getAllByVMName(VM_NAME, UNPRIVILEGED_USER_ID, true));
+        assertGetByNameInvalidResults(dao.getAllByVMName(VM_NAME, UNPRIVILEGED_USER_ID, true));
     }
 
-    private static void assertGetVMByNameValidResults(List<AuditLog> results) {
-        assertGetVMByNameResults(results, EXISTING_COUNT);
+    /** Tests {@link AuditLogDAO#getAllByVMTemplateName(String) with a name of a VM Template that exists */
+    @Test
+    public void testGetAllByVMTemplateName() {
+        assertGetByNameValidResults(dao.getAllByVMTemplateName(VM_TEMPLATE_NAME));
     }
 
-    private static void assertGetVMByNameInvalidResults(List<AuditLog> results) {
-        assertGetVMByNameResults(results, 0);
+    /** Tests {@link AuditLogDAO#getAllByVMTemplateName(String) with a name of a VM Template that doesn't exist */
+    @Test
+    public void testGetAllByVMTemplateNameInvalidName() {
+        assertGetByNameInvalidResults(dao.getAllByVMTemplateName("There is no such VM!!!"));
     }
 
-    private static void assertGetVMByNameResults(List<AuditLog> results, int expectedResults) {
+    /** Tests {@link AuditLogDAO#getAllByVMTemplateName(String, Guid, boolean) with a user that has permissions on that VM Template */
+    @Test
+    public void testGetAllByVMTemplateNamePrivilegedUser() {
+        assertGetByNameValidResults(dao.getAllByVMTemplateName(VM_TEMPLATE_NAME, PRIVILEGED_USER_ID, true));
+    }
+
+    /** Tests {@link AuditLogDAO#getAllByVMTemplateName(String, Guid, boolean) with a user that doesn't have permissions on that VM Template, but with the filtering mechanism disabled */
+    @Test
+    public void testGetAllByVMTemplateNameUnprivilegedUserNoFiltering() {
+        assertGetByNameValidResults(dao.getAllByVMTemplateName(VM_TEMPLATE_NAME, UNPRIVILEGED_USER_ID, false));
+    }
+
+    /** Tests {@link AuditLogDAO#getAllByVMTemplateName(String, Guid, boolean) with a user that doesn't have permissions on that VM Template */
+    @Test
+    public void testGetAllByVMTemplateNameUnprivilegedUserFiltering() {
+        assertGetByNameInvalidResults(dao.getAllByVMTemplateName(VM_TEMPLATE_NAME, UNPRIVILEGED_USER_ID, true));
+    }
+
+    private static void assertGetByNameValidResults(List<AuditLog> results) {
+        assertGetByNameResults(results, EXISTING_COUNT);
+    }
+
+    private static void assertGetByNameInvalidResults(List<AuditLog> results) {
+        assertGetByNameResults(results, 0);
+    }
+
+    private static void assertGetByNameResults(List<AuditLog> results, int expectedResults) {
         assertNotNull("Results object should not be null", results);
         assertEquals("Wrong number of results", expectedResults, results.size());
 
         for (AuditLog auditLog : results) {
             assertEquals("Wrong name of VM in result", VM_NAME, auditLog.getvm_name());
+            assertEquals("Wrong template name of VM in result", VM_TEMPLATE_NAME, auditLog.getvm_template_name());
         }
     }
 
