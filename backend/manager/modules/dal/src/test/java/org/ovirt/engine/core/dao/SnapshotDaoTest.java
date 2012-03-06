@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -139,6 +140,44 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
     @Test
     public void getIdByTypeAndStatusReturnsNullForNonExistingStatus() throws Exception {
         assertEquals(null, dao.getId(EXISTING_VM_ID, SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW));
+    }
+
+
+    @Test
+    public void getForVm() {
+        List<Snapshot> disks = dao.getForVm(FixturesTool.VM_RHEL5_POOL_57);
+        assertFullGetForVmResult(disks);
+    }
+
+    @Test
+    public void getForVmFilteredWithPermissions() {
+        // test user 3 - has permissions
+        List<Snapshot> snapshots = dao.getForVm(FixturesTool.VM_RHEL5_POOL_57, PRIVILEGED_USER_ID, true);
+        assertFullGetForVmResult(snapshots);
+    }
+
+    @Test
+    public void getForVmFilteredWithPermissionsNoPermissions() {
+        // test user 2 - hasn't got permissions
+        List<Snapshot> snapshots = dao.getForVm(FixturesTool.VM_RHEL5_POOL_57, UNPRIVILEGED_USER_ID, true);
+        assertTrue("VM should have no snapshots viewable to the user", snapshots.isEmpty());
+    }
+
+    @Test
+    public void getForVmFilteredWithPermissionsNoPermissionsAndNoFilter() {
+        // test user 2 - hasn't got permissions, but no filtering was requested
+        List<Snapshot> snapshots = dao.getForVm(FixturesTool.VM_RHEL5_POOL_57, UNPRIVILEGED_USER_ID, false);
+        assertFullGetForVmResult(snapshots);
+    }
+
+    /**
+     * Asserts the result of {@link SnapshotDao#getForVm(Guid)} contains the correct snapshots.
+     *
+     * @param snapshots
+     *            The result to check
+     */
+    private static void assertFullGetForVmResult(List<Snapshot> snapshots) {
+        assertEquals("VM should have " + TOTAL_SNAPSHOTS + " snapshots", TOTAL_SNAPSHOTS, snapshots.size());
     }
 
     @Test

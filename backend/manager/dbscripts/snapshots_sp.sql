@@ -134,13 +134,16 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromSnapshotsByVmId(v_vm_id UUID) RETURNS SETOF snapshots
+Create or replace FUNCTION GetAllFromSnapshotsByVmId(v_vm_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF snapshots
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
     FROM   snapshots
     WHERE  vm_id = v_vm_id
+    AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                      FROM   user_vm_permissions_view
+                                      WHERE  user_id = v_user_id AND entity_id = v_vm_id))
     ORDER BY creation_date ASC;
 END; $procedure$
 LANGUAGE plpgsql;
