@@ -178,6 +178,9 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
      */
     private static void assertFullGetAllByVmResult(List<Snapshot> snapshots) {
         assertEquals("VM should have " + TOTAL_SNAPSHOTS + " snapshots", TOTAL_SNAPSHOTS, snapshots.size());
+        for (Snapshot snapshot : snapshots) {
+            assertFalse("Snapshot shouldn't have configuration available", snapshot.isVmConfigurationAvailable());
+        }
     }
 
     @Test

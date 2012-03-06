@@ -134,11 +134,14 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromSnapshotsByVmId(v_vm_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF snapshots
+
+DROP TYPE IF EXISTS GetAllFromSnapshotsByVmId_rs CASCADE;
+CREATE TYPE GetAllFromSnapshotsByVmId_rs AS (snapshot_id UUID, vm_id UUID, snapshot_type VARCHAR(32), status VARCHAR(32), description VARCHAR(4000), creation_date TIMESTAMP WITH TIME ZONE, app_list TEXT, vm_configuration_available BOOLEAN);
+Create or replace FUNCTION GetAllFromSnapshotsByVmId(v_vm_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF GetAllFromSnapshotsByVmId_rs
 AS $procedure$
 BEGIN
     RETURN QUERY
-    SELECT *
+    SELECT snapshot_id, vm_id, snapshot_type, status, description, creation_date, app_list, (vm_configuration IS NOT NULL AND vm_configuration != '')
     FROM   snapshots
     WHERE  vm_id = v_vm_id
     AND (NOT v_is_filtered OR EXISTS (SELECT 1

@@ -15,24 +15,10 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot, Guid> implements SnapshotDao {
 
-    private static final ParameterizedRowMapper<Snapshot> ROW_MAPPER = new ParameterizedRowMapper<Snapshot>() {
+    private static final ParameterizedRowMapper<Snapshot> ROW_MAPPER = new SnapshotRowMapper();
 
-        @Override
-        public Snapshot mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Snapshot snapshot = new Snapshot();
-
-            snapshot.setId(Guid.createGuidFromString(rs.getString("snapshot_id")));
-            snapshot.setVmId(new Guid(rs.getString("vm_id")));
-            snapshot.setType(SnapshotType.valueOf(rs.getString("snapshot_type")));
-            snapshot.setStatus(SnapshotStatus.valueOf(rs.getString("status")));
-            snapshot.setDescription(rs.getString("description"));
-            snapshot.setCreationDate(new Date(rs.getTimestamp("creation_date").getTime()));
-            snapshot.setAppList(rs.getString("app_list"));
-            snapshot.setVmConfiguration(rs.getString("vm_configuration"));
-
-            return snapshot;
-        }
-    };
+    private static final ParameterizedRowMapper<Snapshot> NO_CONFIG_ROW_MAPPER =
+            new SnapshotRowMapperWithoutConfiguration();
 
     @Override
     protected String getProcedureNameForUpdate() {
@@ -130,7 +116,7 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
                 .addValue("user_id", userId)
                 .addValue("is_filtered", isFiltered);
 
-        return getCallsHandler().executeReadList("GetAllFromSnapshotsByVmId", createEntityRowMapper(), parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromSnapshotsByVmId", NO_CONFIG_ROW_MAPPER, parameterSource);
     }
 
     @Override
@@ -164,5 +150,55 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
         return getCallsHandler().executeRead("CheckIfSnapshotExistsByVmIdAndSnapshotId",
                 createBooleanMapper(),
                 parameterSource);
+    }
+
+    private static class SnapshotRowMapper implements ParameterizedRowMapper<Snapshot> {
+
+        @Override
+        public Snapshot mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Snapshot snapshot = createInitialSnapshotEntity(rs);
+
+            mapPropertiesWithoutConfiguration(rs, snapshot);
+            mapConfiguration(rs, snapshot);
+
+            return snapshot;
+        }
+
+        protected Snapshot createInitialSnapshotEntity(ResultSet rs) throws SQLException {
+            return new Snapshot();
+        }
+
+        private void mapPropertiesWithoutConfiguration(ResultSet rs, Snapshot snapshot) throws SQLException {
+            snapshot.setId(Guid.createGuidFromString(rs.getString("snapshot_id")));
+            snapshot.setVmId(new Guid(rs.getString("vm_id")));
+            snapshot.setType(SnapshotType.valueOf(rs.getString("snapshot_type")));
+            snapshot.setStatus(SnapshotStatus.valueOf(rs.getString("status")));
+            snapshot.setDescription(rs.getString("description"));
+            snapshot.setCreationDate(new Date(rs.getTimestamp("creation_date").getTime()));
+            snapshot.setAppList(rs.getString("app_list"));
+        }
+
+        protected void mapConfiguration(ResultSet rs, Snapshot snapshot) throws SQLException {
+            snapshot.setVmConfiguration(rs.getString("vm_configuration"));
+        }
+    }
+
+    /**
+     * Mapper that will not map the {@link Snapshot#getVmConfiguration()} field, but instead will map the
+     * {@link Snapshot#isVmConfigurationAvailable()} field.
+     */
+    private static class SnapshotRowMapperWithoutConfiguration extends SnapshotRowMapper {
+
+        @Override
+        protected Snapshot createInitialSnapshotEntity(ResultSet rs) throws SQLException {
+            return new Snapshot(rs.getBoolean("vm_configuration_available"));
+        }
+
+        /**
+         * Nothing to map, since the read only field was mapped when entity was created.
+         */
+        @Override
+        protected void mapConfiguration(ResultSet rs, Snapshot snapshot) throws SQLException {
+        }
     }
 }

@@ -44,6 +44,11 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
     private String vmConfiguration;
 
     /**
+     * Read-only (calculated field) to see if the VM configuration is available or not.
+     */
+    private final boolean vmConfigurationAvailable;
+
+    /**
      * The type of snapshot taken (regular, live, etC).
      */
     private SnapshotType type;
@@ -65,6 +70,11 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
     private String appList;
 
     public Snapshot() {
+        vmConfigurationAvailable = true;
+    }
+
+    public Snapshot(boolean vmConfigurationAvailable) {
+        this.vmConfigurationAvailable = vmConfigurationAvailable;
     }
 
     public Snapshot(Guid id,
@@ -75,7 +85,7 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
             String description,
             Date creationDate,
             String appList) {
-        super();
+        this();
         this.id = id;
         this.status = status;
         this.vmId = vmId;
@@ -128,6 +138,10 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
 
     public void setVmConfiguration(String vmConfiguration) {
         this.vmConfiguration = vmConfiguration;
+    }
+
+    public boolean isVmConfigurationAvailable() {
+        return vmConfigurationAvailable;
     }
 
     public SnapshotType getType() {

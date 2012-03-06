@@ -51,7 +51,9 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
     Guid getId(Guid vmId, SnapshotType type, SnapshotStatus status);
 
     /**
-     * Get all the snapshots of the given VM.
+     * Get all the snapshots of the given VM. The {@link Snapshot#getVmConfiguration()} field will always be null, and
+     * instead the {@link Snapshot#isVmConfigurationAvailable()} field will specify if configuration is available or
+     * not.
      *
      * @param vmId
      *            The VM id.
@@ -61,7 +63,9 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
     List<Snapshot> getAll(Guid vmId);
 
     /**
-     * Get all the snapshots of the given VM.
+     * Get all the snapshots of the given VM. The {@link Snapshot#getVmConfiguration()} field will always be null, and
+     * instead the {@link Snapshot#isVmConfigurationAvailable()} field will specify if configuration is available or
+     * not.
      *
      * @param vmId
      *            The VM id.
