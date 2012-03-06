@@ -10,6 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
+@Deprecated
 public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDriveParameters>
         extends QueriesCommandBase<P> {
     public GetAllVmSnapshotsByDriveQuery(P parameters) {

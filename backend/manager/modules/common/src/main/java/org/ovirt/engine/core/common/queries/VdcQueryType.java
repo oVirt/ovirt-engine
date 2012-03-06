@@ -70,8 +70,12 @@ public enum VdcQueryType implements Serializable {
     GetVmTemplatesByStoragePoolId,
     GetSystemPermissions,
 
-    // Images queries
+    // VM Snapshot queries
+    @Deprecated
     GetAllVmSnapshotsByDrive(VdcQueryAuthType.User),
+    GetAllVmSnapshotsByVmId(VdcQueryAuthType.User),
+
+    // Images queries
     GetAllIsoImagesList,
     GetAllFloppyImagesList,
     GetAllDisksByVmId(VdcQueryAuthType.User),
