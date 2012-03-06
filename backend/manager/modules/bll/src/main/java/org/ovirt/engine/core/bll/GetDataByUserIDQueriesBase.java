@@ -37,9 +37,8 @@ public abstract class GetDataByUserIDQueriesBase<P extends VdcUserQueryParameter
     /**
      * @return The result of executing the query without the proper privileges, as defined by {@link #shouldReturnValue()}.
      */
-    @SuppressWarnings("rawtypes")
-    protected List<?> getUnprivilegedQueryReturnValue() {
-        return new ArrayList();
+    protected List<P> getUnprivilegedQueryReturnValue() {
+        return new ArrayList<P>();
     }
 
     /**
