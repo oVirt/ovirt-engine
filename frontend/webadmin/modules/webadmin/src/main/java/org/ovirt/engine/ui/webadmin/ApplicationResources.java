@@ -282,4 +282,7 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/icon_enforce.png")
     ImageResource iconEnforce();
+
+    @Source("images/icon_collapse_all.png")
+    ImageResource collapseAllIcon();
 }

@@ -59,8 +59,8 @@
 			cursor: hand;
 			cursor: pointer;
 			float: left;
-			margin-left: 8px;
-    		margin-top: 6px;
+			line-height: 25px;
+			vertical-align: middle;
 		}
 
 		.alertButtonUpStyle {
@@ -83,12 +83,12 @@
 
 		.taskButtonUpStyle {
 			color: #333333;
-			min-width: 90px;
+			min-width: 70px;
 		}
 
 		.taskButtonDownStyle {
 			color: white;
-			min-width: 90px;
+			min-width: 70px;
 		}
 
 		.alertButtonUpStyle,
@@ -106,7 +106,7 @@
 		<g:VerticalPanel addStyleNames="{style.widgetOuterPanel}">
 			<g:HorizontalPanel addStyleNames="{style.widgetInnerPanel}">
 				<g:PushButton ui:field="collapseButton" styleName="{style.collapseButton}">
-					<g:upFace image='{resources.minusImage}' />
+					<g:upFace image='{resources.collapseAllIcon}' />
 				</g:PushButton>
 				<g:Label ui:field="message" text="Last Message:" addStyleNames="{style.lastMessage}" />
 				<g:SimplePanel ui:field="firstRowTablePanel" addStyleNames="{style.firstRowTablePanel}" />

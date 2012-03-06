@@ -45,7 +45,9 @@ public class TaskModelProvider extends SearchableTabModelProvider<Job, TaskListM
         }
         if (count != lastRunningTasksCount) {
             lastRunningTasksCount = count;
-            taskCountChangeHandler.onRunningTasksCountChange(count);
+            if (taskCountChangeHandler != null) {
+                taskCountChangeHandler.onRunningTasksCountChange(count);
+            }
         }
 
         super.updateDataProvider(items);

@@ -14,6 +14,9 @@ public class FullDateTimeRenderer extends AbstractRenderer<Date> {
 
     @Override
     public String render(Date object) {
+        if(object == null){
+            return "";
+        }
         return format.format(object);
     }
 

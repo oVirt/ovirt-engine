@@ -31,8 +31,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TreeItem;
 
 public class TasksTree extends AbstractTaskSubTabTree<TaskListModel> {
-    ArrayList<Guid> openTasks = new ArrayList<Guid>();
-    ArrayList<Guid> openSteps = new ArrayList<Guid>();
+    ArrayList<String> openTasks = new ArrayList<String>();
+    ArrayList<String> openSteps = new ArrayList<String>();
 
     @Override
     public void updateTree(final TaskListModel listModel) {
@@ -41,20 +41,20 @@ public class TasksTree extends AbstractTaskSubTabTree<TaskListModel> {
             @Override
             public void onOpen(OpenEvent<TreeItem> event) {
                 TreeItem item = event.getTarget();
-                Guid guid = null;
+                String guidOrCorrelationId = "";
                 if (item.getParentItem() != null) {
-                    guid = new Guid(item.getElement().getId());
-                    if (!openSteps.contains(guid)) {
-                        openSteps.add(guid);
+                    guidOrCorrelationId = item.getElement().getId();
+                    if (!openSteps.contains(guidOrCorrelationId)) {
+                        openSteps.add(guidOrCorrelationId);
                     }
                     return;
                 }
-                guid = new Guid(item.getElement().getId());
+                guidOrCorrelationId = item.getElement().getId();
                 if (item.getChildCount() == 1) {
                     item.addItem(new Label("Loading..."));
                 }
-                openTasks.add(guid);
-                listModel.updateSingleTask(guid);
+                openTasks.add(guidOrCorrelationId);
+                listModel.updateSingleTask(guidOrCorrelationId);
             }
         });
 
@@ -62,16 +62,16 @@ public class TasksTree extends AbstractTaskSubTabTree<TaskListModel> {
 
             @Override
             public void onClose(CloseEvent<TreeItem> event) {
-                Guid guid = null;
+                String guidOrCorrelationId = null;
                 TreeItem item = event.getTarget();
                 if (item.getParentItem() != null) {
-                    guid = new Guid(item.getElement().getId());
-                    openSteps.remove(guid);
+                    guidOrCorrelationId = item.getElement().getId();
+                    openSteps.remove(guidOrCorrelationId);
                     return;
                 }
-                guid = new Guid(item.getElement().getId());
-                openTasks.remove(guid);
-                listModel.removeSingleTask(new Guid(item.getElement().getId()));
+                guidOrCorrelationId = item.getElement().getId();
+                openTasks.remove(guidOrCorrelationId);
+                listModel.removeSingleTask(item.getElement().getId());
             }
         });
 
@@ -88,16 +88,21 @@ public class TasksTree extends AbstractTaskSubTabTree<TaskListModel> {
                     openSteps.clear();
                     return;
                 }
-                ArrayList<Guid> currentTasks = new ArrayList<Guid>();
+                ArrayList<String> currentTasks = new ArrayList<String>();
 
                 for (Job task : tasks) {
-                    currentTasks.add(task.getId());
+                    String id = "";
+                    if (task.getCorrelationId().startsWith(TaskListModel._WEBADMIN_)) {
+                        id = task.getCorrelationId();
+                    } else {
+                        id = task.getId().toString();
+                    }
+                    currentTasks.add(id);
 
                     TreeItem taskItem = getJobNode(task);
-                    Guid guid = task.getId();
-                    taskItem.getElement().setId(guid.toString());
 
-                    boolean isTaskOpen = openTasks.contains(task.getId());
+                    taskItem.getElement().setId(id);
+                    boolean isTaskOpen = openTasks.contains(id);
                     if (task.getSteps() == null || task.getSteps().size() == 0) {
                         taskItem.addItem(new TreeItem());
                     } else {
@@ -108,10 +113,10 @@ public class TasksTree extends AbstractTaskSubTabTree<TaskListModel> {
 
                     tree.addItem(taskItem);
                 }
-                ArrayList<Guid> removedTasks = new ArrayList<Guid>();
-                for (Guid guid : openTasks) {
-                    if (!currentTasks.contains(guid)) {
-                        removedTasks.add(guid);
+                ArrayList<String> removedTasks = new ArrayList<String>();
+                for (String guidOrCorrelationId : openTasks) {
+                    if (!currentTasks.contains(guidOrCorrelationId)) {
+                        removedTasks.add(guidOrCorrelationId);
                     }
                 }
                 openTasks.removeAll(removedTasks);
@@ -122,8 +127,8 @@ public class TasksTree extends AbstractTaskSubTabTree<TaskListModel> {
                     return;
                 }
                 for (int i = 0; i < taskItem.getChildCount(); i++) {
-                    Guid stepGuid = new Guid(taskItem.getChild(i).getElement().getId());
-                    boolean isOpen = openSteps.contains(stepGuid);
+                    String stepId = taskItem.getChild(i).getElement().getId();
+                    boolean isOpen = openSteps.contains(stepId);
                     taskItem.getChild(i).setState(isOpen);
                     openSteps(taskItem.getChild(i));
                 }
