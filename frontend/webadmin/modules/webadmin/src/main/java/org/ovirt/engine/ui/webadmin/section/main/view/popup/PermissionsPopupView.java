@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
@@ -38,7 +39,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 
-public class PermissionsPopupView extends WebAdminModelBoundPopupView<AdElementListModel> implements PermissionsPopupPresenterWidget.ViewDef {
+public class PermissionsPopupView extends AbstractModelBoundPopupView<AdElementListModel> implements PermissionsPopupPresenterWidget.ViewDef {
     interface Driver extends SimpleBeanEditorDriver<AdElementListModel, PermissionsPopupView> {
         Driver driver = GWT.create(Driver.class);
     }

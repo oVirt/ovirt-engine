@@ -12,6 +12,7 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -23,7 +24,6 @@ import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.qouta.QuotaPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.QuotaModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.editor.IVdcQueryableCellTable;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NullableButtonCell;
@@ -40,7 +40,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.inject.Inject;
 
-public class QuotaPopupView extends WebAdminModelBoundPopupView<QuotaModel> implements QuotaPopupPresenterWidget.ViewDef {
+public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> implements QuotaPopupPresenterWidget.ViewDef {
 
     @UiField
     @Path(value = "name.entity")
@@ -201,6 +201,7 @@ public class QuotaPopupView extends WebAdminModelBoundPopupView<QuotaModel> impl
 
         NullableButtonCell editCellButton = new NullableButtonCell();
         Column<QuotaStorage, String> editColumn = new Column<QuotaStorage, String>(editCellButton) {
+            @Override
             public String getValue(QuotaStorage object) {
                 if ((Boolean) model.getGlobalStorageQuota().getEntity()
                         || ((Boolean) model.getSpecificStorageQuota().getEntity() && selectedStorageGuid.contains(object.getStorageId()))) {
@@ -293,6 +294,7 @@ public class QuotaPopupView extends WebAdminModelBoundPopupView<QuotaModel> impl
 
         NullableButtonCell editCellButton = new NullableButtonCell();
         Column<QuotaVdsGroup, String> editColumn = new Column<QuotaVdsGroup, String>(editCellButton) {
+            @Override
             public String getValue(QuotaVdsGroup object) {
                 if ((Boolean) model.getGlobalClusterQuota().getEntity()
                         || ((Boolean) model.getSpecificClusterQuota().getEntity() && selectedClusterGuid.contains(object.getVdsGroupId()))) {

@@ -9,6 +9,7 @@ import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
@@ -19,7 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -30,7 +30,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
-public class ClusterPopupView extends WebAdminModelBoundPopupView<ClusterModel> implements ClusterPopupPresenterWidget.ViewDef {
+public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> implements ClusterPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ClusterModel, ClusterPopupView> {
         Driver driver = GWT.create(Driver.class);

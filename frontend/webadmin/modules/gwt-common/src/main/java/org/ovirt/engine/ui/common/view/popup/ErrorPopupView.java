@@ -1,11 +1,9 @@
-package org.ovirt.engine.ui.userportal.view;
+package org.ovirt.engine.ui.common.view.popup;
 
-import org.ovirt.engine.ui.common.presenter.ErrorPopupPresenterWidget;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.presenter.popup.ErrorPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
-import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.ApplicationMessages;
-import org.ovirt.engine.ui.userportal.ApplicationResources;
-import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -33,25 +31,18 @@ public class ErrorPopupView extends AbstractPopupView<DialogBox> implements Erro
     @UiField
     PushButton closeButton;
 
-    ApplicationMessages messages;
-    ApplicationTemplates templates;
-
     @Inject
-    public ErrorPopupView(EventBus eventBus, ApplicationResources resources,
-            ApplicationConstants constants, ApplicationMessages messages,
-            ApplicationTemplates templates) {
+    public ErrorPopupView(EventBus eventBus, CommonApplicationResources resources,
+            CommonApplicationConstants constants) {
         super(eventBus, resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
-        this.messages = messages;
-        this.templates = templates;
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize(CommonApplicationConstants constants) {
         titleLabel.setText(constants.errorPopupCaption());
         closeButton.setText(constants.closeButtonLabel());
     }
-
 
     @Override
     public void setErrorMessage(String errorMessage) {

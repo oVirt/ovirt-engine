@@ -4,11 +4,6 @@ import org.ovirt.engine.ui.common.CommonApplicationMessages;
 
 public interface ApplicationMessages extends CommonApplicationMessages {
 
-    // Main section
-
-    @DefaultMessage("Are you sure you want to remove the following {0}?")
-    String removeConfirmationPopupMessage(String what);
-
     @DefaultMessage("Browser {0} version {1,number,#.#} is currently not supported.")
     String browserNotSupportedVersion(String browser, float version);
 

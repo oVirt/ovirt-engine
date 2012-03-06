@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterW
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterNewNetworkPopupPresenterWidget;
@@ -146,10 +145,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.MainTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.ReportView;
 import org.ovirt.engine.ui.webadmin.section.main.view.SearchPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AssignTagsPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.DefaultConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.DetachConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.PermissionsPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.RemoveConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.bookmark.BookmarkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterManageNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterNewNetworkPopupView;
@@ -272,7 +269,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabV
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineSnapshotView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineVirtualDiskView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.VirtualMachineSubTabPanelView;
-import org.ovirt.engine.ui.webadmin.view.ErrorPopupView;
 
 /**
  * GIN module containing WebAdmin GWTP presenter bindings.
@@ -282,7 +278,7 @@ public class PresenterModule extends BasePresenterModule {
     @Override
     protected void configure() {
         // Common stuff
-        bindCommonPresenters(ErrorPopupView.class, DefaultConfirmationPopupView.class);
+        bindCommonPresenters();
 
         // Login section
         bindPresenter(LoginSectionPresenter.class,
@@ -650,10 +646,7 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabQuotaEventView.class,
                 SubTabQuotaEventPresenter.ProxyDef.class);
 
-        // MAIN SECTION: -POPUPS-
-        bindPresenterWidget(RemoveConfirmationPopupPresenterWidget.class,
-                RemoveConfirmationPopupPresenterWidget.ViewDef.class,
-                RemoveConfirmationPopupView.class);
+        // Main section: popups
 
         // Permissions
         bindPresenterWidget(PermissionsPopupPresenterWidget.class,

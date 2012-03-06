@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.section.main.presenter.popup;
+package org.ovirt.engine.ui.common.presenter.popup;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;

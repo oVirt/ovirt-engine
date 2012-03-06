@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
+import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
@@ -19,7 +20,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
-public class DetachConfirmationPopupView extends WebAdminModelBoundPopupView<HostInterfaceModel> implements DetachConfirmationPopupPresenterWidget.ViewDef {
+public class DetachConfirmationPopupView extends AbstractModelBoundPopupView<HostInterfaceModel> implements DetachConfirmationPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<HostInterfaceModel, DetachConfirmationPopupView> {
         Driver driver = GWT.create(Driver.class);

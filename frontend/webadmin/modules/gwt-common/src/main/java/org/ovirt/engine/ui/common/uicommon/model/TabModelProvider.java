@@ -1,13 +1,17 @@
 package org.ovirt.engine.ui.common.uicommon.model;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
-import org.ovirt.engine.ui.common.presenter.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
@@ -32,6 +36,9 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
     private final EventBus eventBus;
     private final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider;
 
+    private final Set<String> windowPropertyNames = new HashSet<String>();
+    private final Set<String> confirmWindowPropertyNames = new HashSet<String>();
+
     private AbstractModelBoundPopupPresenterWidget<?, ?> windowPopup;
     private AbstractModelBoundPopupPresenterWidget<?, ?> confirmWindowPopup;
 
@@ -46,6 +53,9 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
                 TabModelProvider.this.onCommonModelChange();
             }
         });
+
+        windowPropertyNames.addAll(Arrays.asList(getWindowPropertyNames()));
+        confirmWindowPropertyNames.addAll(Arrays.asList(getConfirmWindowPropertyNames()));
     }
 
     protected EventBus getEventBus() {
@@ -54,6 +64,34 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
 
     protected CommonModel getCommonModel() {
         return CommonModelManager.instance();
+    }
+
+    /**
+     * Returns model property names whose values correspond to Window (main popup) models.
+     */
+    protected String[] getWindowPropertyNames() {
+        return new String[] { "Window" };
+    }
+
+    /**
+     * Returns the current Window (main popup) model.
+     */
+    protected Model getWindowModel(String propertyName) {
+        return getModel().getWindow();
+    }
+
+    /**
+     * Returns model property names whose values correspond to ConfirmWindow (confirmation popup) models.
+     */
+    protected String[] getConfirmWindowPropertyNames() {
+        return new String[] { "ConfirmWindow" };
+    }
+
+    /**
+     * Returns the current ConfirmWindow (confirmation popup) model.
+     */
+    protected Model getConfirmWindowModel(String propertyName) {
+        return getModel().getConfirmWindow();
     }
 
     /**
@@ -69,10 +107,10 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
 
                 // Handle popups that bind to "Window" and "ConfirmWindow" model properties
-                if ("Window".equals(propName)) {
-                    handleWindowModelChange(windowPopup, false);
-                } else if ("ConfirmWindow".equals(propName)) {
-                    handleWindowModelChange(confirmWindowPopup, true);
+                if (windowPropertyNames.contains(propName)) {
+                    handleWindowModelChange(windowPopup, false, propName);
+                } else if (confirmWindowPropertyNames.contains(propName)) {
+                    handleWindowModelChange(confirmWindowPopup, true, propName);
                 } else if ("WidgetModel".equals(propName)) {
                     modelBoundWidgetChange();
                 }
@@ -88,8 +126,9 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
     }
 
     @SuppressWarnings("unchecked")
-    void handleWindowModelChange(AbstractModelBoundPopupPresenterWidget<?, ?> popup, boolean isConfirm) {
-        Model windowModel = isConfirm ? getModel().getConfirmWindow() : getModel().getWindow();
+    void handleWindowModelChange(AbstractModelBoundPopupPresenterWidget<?, ?> popup,
+            boolean isConfirm, String propertyName) {
+        Model windowModel = isConfirm ? getConfirmWindowModel(propertyName) : getWindowModel(propertyName);
 
         // Reveal new popup
         if (windowModel != null && popup == null) {

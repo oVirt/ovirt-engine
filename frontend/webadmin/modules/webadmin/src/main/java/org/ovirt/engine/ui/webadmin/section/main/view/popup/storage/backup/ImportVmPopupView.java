@@ -18,6 +18,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
+import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
@@ -38,7 +39,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.editor.IVdcQueryableCellTable;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CustomSelectionCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.IsProblematicImportVmColumn;
@@ -67,7 +67,7 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 
-public class ImportVmPopupView extends WebAdminModelBoundPopupView<ImportVmModel> implements ImportVmPopupPresenterWidget.ViewDef {
+public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel> implements ImportVmPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ImportVmModel, ImportVmPopupView> {
         Driver driver = GWT.create(Driver.class);

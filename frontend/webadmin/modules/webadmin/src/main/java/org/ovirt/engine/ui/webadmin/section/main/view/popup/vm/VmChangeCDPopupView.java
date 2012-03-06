@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 
+import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -16,7 +16,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
 
-public class VmChangeCDPopupView extends WebAdminModelBoundPopupView<AttachCdModel>
+public class VmChangeCDPopupView extends AbstractModelBoundPopupView<AttachCdModel>
         implements VmChangeCDPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<AttachCdModel, VmChangeCDPopupView> {

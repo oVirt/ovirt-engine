@@ -8,6 +8,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
@@ -28,7 +29,7 @@ import com.google.gwt.user.cellview.client.TreeNode;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.inject.Inject;
 
-public class AssignTagsPopupView extends WebAdminModelBoundPopupView<TagListModel>
+public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListModel>
         implements AssignTagsPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<TagListModel, AssignTagsPopupView> {

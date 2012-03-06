@@ -2,12 +2,12 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.EntityModelEnumColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -16,7 +16,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 
-public class AbstractFindDcPopupView extends WebAdminModelBoundPopupView<ListModel> {
+public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListModel> {
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AbstractFindDcPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);

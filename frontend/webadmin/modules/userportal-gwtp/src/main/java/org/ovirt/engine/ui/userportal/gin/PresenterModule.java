@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.userportal.gin;
 
 import org.ovirt.engine.ui.common.gin.BasePresenterModule;
-import org.ovirt.engine.ui.userportal.main.view.popup.DefaultConfirmationPopupView;
 import org.ovirt.engine.ui.userportal.section.login.presenter.LoginPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.login.presenter.LoginSectionPresenter;
 import org.ovirt.engine.ui.userportal.section.login.view.LoginPopupView;
@@ -10,6 +9,8 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.HeaderPresenterWidg
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsolePopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
@@ -37,6 +38,8 @@ import org.ovirt.engine.ui.userportal.section.main.view.HeaderView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainTabPanelView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.console.ConsolePopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDesktopNewPopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmServerNewPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabBasicView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabExtendedView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicDetailsView;
@@ -60,7 +63,6 @@ import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabEx
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmPermissionView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmSnapshotView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmVirtualDiskView;
-import org.ovirt.engine.ui.userportal.view.ErrorPopupView;
 
 /**
  * GIN module containing UserPortal GWTP presenter bindings.
@@ -70,7 +72,7 @@ public class PresenterModule extends BasePresenterModule {
     @Override
     protected void configure() {
         // Common stuff
-        bindCommonPresenters(ErrorPopupView.class, DefaultConfirmationPopupView.class);
+        bindCommonPresenters();
 
         // Login section
         bindPresenter(LoginSectionPresenter.class,
@@ -195,10 +197,20 @@ public class PresenterModule extends BasePresenterModule {
                 MainTabBasicListItemPresenterWidget.ViewDef.class,
                 MainTabBasicListItemView.class);
 
+        // Main section: popups
+
         // Console popup
         bindPresenterWidget(ConsolePopupPresenterWidget.class,
                 ConsolePopupPresenterWidget.ViewDef.class,
                 ConsolePopupView.class);
+
+        // VM popups
+        bindPresenterWidget(VmDesktopNewPopupPresenterWidget.class,
+                VmDesktopNewPopupPresenterWidget.ViewDef.class,
+                VmDesktopNewPopupView.class);
+        bindPresenterWidget(VmServerNewPopupPresenterWidget.class,
+                VmServerNewPopupPresenterWidget.ViewDef.class,
+                VmServerNewPopupView.class);
     }
 
 }

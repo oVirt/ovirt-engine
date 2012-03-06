@@ -3,7 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
 
-	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
 	<ui:style>
 		.content {

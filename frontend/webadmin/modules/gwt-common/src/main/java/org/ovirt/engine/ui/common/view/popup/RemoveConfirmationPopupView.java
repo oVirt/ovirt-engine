@@ -1,19 +1,19 @@
-package org.ovirt.engine.ui.webadmin.section.main.view.popup;
+package org.ovirt.engine.ui.common.view.popup;
 
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -38,7 +38,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final ApplicationMessages messages;
+    private final CommonApplicationMessages messages;
 
     @UiField
     FlowPanel itemPanel;
@@ -53,7 +53,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     Label noteLabel;
 
     @Inject
-    public RemoveConfirmationPopupView(EventBus eventBus, ApplicationResources resources, ApplicationMessages messages) {
+    public RemoveConfirmationPopupView(EventBus eventBus, CommonApplicationResources resources, CommonApplicationMessages messages) {
         super(eventBus, resources);
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
         this.messages = messages;

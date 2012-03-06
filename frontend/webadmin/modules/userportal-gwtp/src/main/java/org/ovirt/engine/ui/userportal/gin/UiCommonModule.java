@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.userportal.gin;
 import org.ovirt.engine.ui.common.gin.BaseUiCommonModule;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 import org.ovirt.engine.ui.userportal.uicommon.UserPortalConfigurator;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.resources.ResourcesModelProvider;
@@ -13,6 +12,7 @@ import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateGeneralMod
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateInterfaceListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplatePermissionListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.UserPortalTemplateListProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmAppListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmDiskListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmEventListModelProvider;

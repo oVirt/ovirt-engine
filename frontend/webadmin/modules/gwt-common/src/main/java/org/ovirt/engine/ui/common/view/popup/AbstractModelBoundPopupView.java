@@ -8,8 +8,10 @@ import org.ovirt.engine.ui.common.view.AbstractPopupView;
 import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.IsProgressContentWidget;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.AbstractDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.common.widget.dialog.ProgressPopupContent;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
@@ -55,9 +57,13 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
         this.popupContent = widget.getContent();
     }
 
-    protected abstract AbstractUiCommandButton createCommandButton(String label);
+    protected AbstractUiCommandButton createCommandButton(String label) {
+        return new UiCommandButton(label);
+    }
 
-    protected abstract IsProgressContentWidget createProgressContentWidget();
+    protected IsProgressContentWidget createProgressContentWidget() {
+        return new ProgressPopupContent();
+    }
 
     @Override
     public void setTitle(String title) {

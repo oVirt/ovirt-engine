@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.gin;
 
-import org.ovirt.engine.ui.common.presenter.DefaultConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.Ginjector;
@@ -19,5 +20,7 @@ public interface BaseClientGinjector extends Ginjector {
     // PresenterWidgets
 
     Provider<DefaultConfirmationPopupPresenterWidget> getDefaultConfirmationPopupProvider();
+
+    Provider<RemoveConfirmationPopupPresenterWidget> getRemoveConfirmPopupProvider();
 
 }

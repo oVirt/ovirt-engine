@@ -98,7 +98,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
@@ -208,8 +207,6 @@ public interface ManagedComponents {
     Provider<PermissionsPopupPresenterWidget> getPermissionsPopupPresenterWidgetProvider();
 
     Provider<TagPopupPresenterWidget> getTagPopupPresenterWidgetProvider();
-
-    Provider<RemoveConfirmationPopupPresenterWidget> getRemoveConfirmPopupProvider();
 
     Provider<GuidePopupPresenterWidget> getGuidePopupPresenterWidget();
 

@@ -567,6 +567,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         {
             OnNewTemplate();
         }
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        {
+            OnSave();
+        }
     }
 
     private void NewTemplate()
@@ -1011,7 +1015,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
     private void NewInternal(VmType vmType)
     {
-        setVmModel(new UnitVmModel(new UserPortalNewVmModelBehavior()));
+        UnitVmModel model = new UnitVmModel(new UserPortalNewVmModelBehavior());
+        setVmModel(model);
         getVmModel().setTitle("New " + (vmType == VmType.Server ? "Server" : "Desktop") + " Virtual Machine");
         vmModel.setHashName(getVmModel().getTitle().toLowerCase().replace(' ', '_'));
         getVmModel().setIsNew(true);
@@ -1023,6 +1028,15 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         // Ensures that the default provisioning is "Clone" for a new server and "Thin" for a new desktop.
         boolean selectValue = getVmModel().getVmType() == VmType.Server;
         getVmModel().getProvisioning().setEntity(selectValue);
+
+        UICommand tempVar = new UICommand("OnSave", this);
+        tempVar.setTitle("OK");
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this);
+        tempVar2.setTitle("Cancel");
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
     }
 
     private void Edit()
@@ -1035,13 +1049,23 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         VM vm = (VM) selectedItem.getEntity();
 
-        setVmModel(new UnitVmModel(new UserPortalExistingVmModelBehavior(vm)));
+        UnitVmModel model = new UnitVmModel(new UserPortalExistingVmModelBehavior(vm));
+        setVmModel(model);
         getVmModel().setTitle("Edit " + (vm.getvm_type() == VmType.Server ? "Server" : "Desktop") + " Virtual Machine");
         vmModel.setHashName(getVmModel().getTitle().toLowerCase().replace(' ', '_'));
         getVmModel().setVmType(vm.getvm_type());
         getVmModel().setCustomPropertiesKeysList(CustomPropertiesKeysList);
 
         getVmModel().Initialize(null);
+
+        UICommand tempVar = new UICommand("OnSave", this);
+        tempVar.setTitle("OK");
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this);
+        tempVar2.setTitle("Cancel");
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
     }
 
     private void remove()
