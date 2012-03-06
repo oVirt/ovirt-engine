@@ -20,7 +20,7 @@ public class GetAllVmSnapshotsByVmIdQuery<P extends GetAllVmSnapshotsByVmIdParam
     @Override
     protected void executeQueryCommand() {
         List<Snapshot> snapshotsList = DbFacade.getInstance().getSnapshotDao()
-                .getForVm(getParameters().getVmId(), getUserID(), getParameters().isFiltered());
+                .getAll(getParameters().getVmId(), getUserID(), getParameters().isFiltered());
         getQueryReturnValue().setReturnValue(snapshotsList);
     }
 }

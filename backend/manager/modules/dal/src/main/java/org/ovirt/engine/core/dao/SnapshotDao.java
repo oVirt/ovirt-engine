@@ -58,7 +58,7 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      * @return A list of snapshots that exist for the VM, ordered by date (earliest to latest), or empty list if no
      *         snapshots exist.
      */
-    List<Snapshot> getForVm(Guid vmId);
+    List<Snapshot> getAll(Guid vmId);
 
     /**
      * Get all the snapshots of the given VM.
@@ -72,7 +72,7 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      * @return A list of snapshots that exist for the VM, ordered by date (earliest to latest), or empty list if no
      *         snapshots exist.
      */
-    List<Snapshot> getForVm(Guid vmId, Guid userId, boolean isFiltered);
+    List<Snapshot> getAll(Guid vmId, Guid userId, boolean isFiltered);
 
     /**
      * Check if there exists a snapshot of the given type for the VM.

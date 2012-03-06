@@ -144,39 +144,39 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
 
     @Test
-    public void getForVm() {
-        List<Snapshot> disks = dao.getForVm(FixturesTool.VM_RHEL5_POOL_57);
-        assertFullGetForVmResult(disks);
+    public void getAllByVm() {
+        List<Snapshot> snapshots = dao.getAll(FixturesTool.VM_RHEL5_POOL_57);
+        assertFullGetAllByVmResult(snapshots);
     }
 
     @Test
-    public void getForVmFilteredWithPermissions() {
+    public void getAllByVmFilteredWithPermissions() {
         // test user 3 - has permissions
-        List<Snapshot> snapshots = dao.getForVm(FixturesTool.VM_RHEL5_POOL_57, PRIVILEGED_USER_ID, true);
-        assertFullGetForVmResult(snapshots);
+        List<Snapshot> snapshots = dao.getAll(FixturesTool.VM_RHEL5_POOL_57, PRIVILEGED_USER_ID, true);
+        assertFullGetAllByVmResult(snapshots);
     }
 
     @Test
-    public void getForVmFilteredWithPermissionsNoPermissions() {
+    public void getAllByVmFilteredWithPermissionsNoPermissions() {
         // test user 2 - hasn't got permissions
-        List<Snapshot> snapshots = dao.getForVm(FixturesTool.VM_RHEL5_POOL_57, UNPRIVILEGED_USER_ID, true);
+        List<Snapshot> snapshots = dao.getAll(FixturesTool.VM_RHEL5_POOL_57, UNPRIVILEGED_USER_ID, true);
         assertTrue("VM should have no snapshots viewable to the user", snapshots.isEmpty());
     }
 
     @Test
-    public void getForVmFilteredWithPermissionsNoPermissionsAndNoFilter() {
+    public void getAllByVmFilteredWithPermissionsNoPermissionsAndNoFilter() {
         // test user 2 - hasn't got permissions, but no filtering was requested
-        List<Snapshot> snapshots = dao.getForVm(FixturesTool.VM_RHEL5_POOL_57, UNPRIVILEGED_USER_ID, false);
-        assertFullGetForVmResult(snapshots);
+        List<Snapshot> snapshots = dao.getAll(FixturesTool.VM_RHEL5_POOL_57, UNPRIVILEGED_USER_ID, false);
+        assertFullGetAllByVmResult(snapshots);
     }
 
     /**
-     * Asserts the result of {@link SnapshotDao#getForVm(Guid)} contains the correct snapshots.
+     * Asserts the result of {@link SnapshotDao#getAll(Guid)} contains the correct snapshots.
      *
      * @param snapshots
      *            The result to check
      */
-    private static void assertFullGetForVmResult(List<Snapshot> snapshots) {
+    private static void assertFullGetAllByVmResult(List<Snapshot> snapshots) {
         assertEquals("VM should have " + TOTAL_SNAPSHOTS + " snapshots", TOTAL_SNAPSHOTS, snapshots.size());
     }
 

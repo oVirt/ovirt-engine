@@ -131,7 +131,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                 return false;
             }
 
-            List<Snapshot> snapshots = DbFacade.getInstance().getSnapshotDao().getForVm(guid);
+            List<Snapshot> snapshots = DbFacade.getInstance().getSnapshotDao().getAll(guid);
 
             if (!snapshots.isEmpty() && SnapshotStatus.LOCKED == snapshots.get(snapshots.size() - 1).getStatus()) {
                 log.infoFormat("VM Running failed - VM {0}:{1} - cannot run VM when VM during Snapshot", guid, vmName);

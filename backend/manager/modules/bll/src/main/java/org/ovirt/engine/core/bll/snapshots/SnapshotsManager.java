@@ -158,7 +158,7 @@ public class SnapshotsManager {
      *            The ID of the VM.
      */
     public void removeSnapshots(Guid vmId) {
-        for (Snapshot snapshot : getSnapshotDao().getForVm(vmId)) {
+        for (Snapshot snapshot : getSnapshotDao().getAll(vmId)) {
             getSnapshotDao().remove(snapshot.getId());
         }
     }
