@@ -44,6 +44,16 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
     private DiskType diskType;
 
     /**
+     * The alias name of the disk.
+     */
+    private String diskAlias;
+
+    /**
+     * The description of the disk.
+     */
+    private String diskDescription;
+
+    /**
      * The disk interface (IDE/SCSI/etc).
      */
     private DiskInterface diskInterface;
@@ -139,11 +149,29 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
         this.propagateErrors = propagateErrors;
     }
 
+    public String getDiskDescription() {
+        return diskDescription;
+    }
+
+    public void setDiskDescription(String diskDescription) {
+        this.diskDescription = diskDescription;
+    }
+
+    public String getDiskAlias() {
+        return diskAlias;
+    }
+
+    public void setDiskAlias(String diskAlias) {
+        this.diskAlias = diskAlias;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((diskDescription == null) ? 0 : diskDescription.hashCode());
         result = prime * result + ((diskInterface == null) ? 0 : diskInterface.hashCode());
+        result = prime * result + ((diskAlias == null) ? 0 : diskAlias.hashCode());
         result = prime * result + ((diskType == null) ? 0 : diskType.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + internalDriveMapping;
@@ -154,38 +182,38 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (!(obj instanceof Disk)) {
+        if (getClass() != obj.getClass())
             return false;
-        }
         Disk other = (Disk) obj;
-        if (diskInterface != other.diskInterface) {
-            return false;
-        }
-        if (diskType != other.diskType) {
-            return false;
-        }
-        if (id == null) {
-            if (other.id != null) {
+        if (diskDescription == null) {
+            if (other.diskDescription != null)
                 return false;
-            }
-        } else if (!id.equals(other.id)) {
+        } else if (!diskDescription.equals(other.diskDescription))
             return false;
-        }
-        if (internalDriveMapping != other.internalDriveMapping) {
+        if (diskInterface != other.diskInterface)
             return false;
-        }
-        if (propagateErrors != other.propagateErrors) {
+        if (diskAlias == null) {
+            if (other.diskAlias != null)
+                return false;
+        } else if (!diskAlias.equals(other.diskAlias))
             return false;
-        }
-        if (wipeAfterDelete != other.wipeAfterDelete) {
+        if (diskType != other.diskType)
             return false;
-        }
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (internalDriveMapping != other.internalDriveMapping)
+            return false;
+        if (propagateErrors != other.propagateErrors)
+            return false;
+        if (wipeAfterDelete != other.wipeAfterDelete)
+            return false;
         return true;
     }
 }

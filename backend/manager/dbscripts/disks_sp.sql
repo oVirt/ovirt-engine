@@ -13,7 +13,9 @@ Create or replace FUNCTION InsertDisk(
     v_disk_type VARCHAR(32),
     v_disk_interface VARCHAR(32),
     v_wipe_after_delete BOOLEAN,
-    v_propagate_errors VARCHAR(32))
+    v_propagate_errors VARCHAR(32),
+    v_disk_alias VARCHAR(50),
+    v_disk_description VARCHAR(500))
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -23,14 +25,18 @@ BEGIN
         disk_type,
         disk_interface,
         wipe_after_delete,
-        propagate_errors)
+        propagate_errors,
+        disk_alias,
+        disk_description)
     VALUES(
         v_disk_id,
         v_internal_drive_mapping,
         v_disk_type,
         v_disk_interface,
         v_wipe_after_delete,
-        v_propagate_errors);
+        v_propagate_errors,
+        v_disk_alias,
+        v_disk_description);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -44,7 +50,9 @@ Create or replace FUNCTION UpdateDisk(
     v_disk_type VARCHAR(32),
     v_disk_interface VARCHAR(32),
     v_wipe_after_delete BOOLEAN,
-    v_propagate_errors VARCHAR(32))
+    v_propagate_errors VARCHAR(32),
+    v_disk_alias VARCHAR(50),
+    v_disk_description VARCHAR(500))
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -53,7 +61,9 @@ BEGIN
            disk_type = v_disk_type,
            disk_interface = v_disk_interface,
            wipe_after_delete = v_wipe_after_delete,
-           propagate_errors = v_propagate_errors
+           propagate_errors = v_propagate_errors,
+           disk_alias = v_disk_alias,
+           disk_description = v_disk_description
     WHERE  disk_id = v_disk_id;
 END; $procedure$
 LANGUAGE plpgsql;
