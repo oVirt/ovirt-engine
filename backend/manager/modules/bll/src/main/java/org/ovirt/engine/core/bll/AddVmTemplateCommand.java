@@ -347,6 +347,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             createParams,
                             ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
+            if (!retValue.getSucceeded()) {
+                throw new VdcBLLException(retValue.getFault().getError(), retValue.getFault().getMessage());
+            }
+
             getReturnValue().getTaskIdList().addAll(retValue.getInternalTaskIdList());
         }
     }

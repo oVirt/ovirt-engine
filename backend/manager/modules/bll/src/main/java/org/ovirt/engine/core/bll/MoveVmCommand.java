@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
@@ -173,7 +174,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     protected boolean UpdateVmImSpm() {
         return VmCommand.UpdateVmInSpm(getVm().getstorage_pool_id(),
-                new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { getVm() })));
+                Arrays.asList(new VM[] { getVm() }));
     }
 
     @Override
@@ -187,6 +188,10 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                 Backend.getInstance().runInternalAction(VdcActionType.MoveMultipleImageGroups,
                         p,
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+
+        if (!vdcRetValue.getSucceeded()) {
+            throw new VdcBLLException(vdcRetValue.getFault().getError(), vdcRetValue.getFault().getMessage());
+        }
 
         getParameters().getImagesParameters().add(p);
         getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
