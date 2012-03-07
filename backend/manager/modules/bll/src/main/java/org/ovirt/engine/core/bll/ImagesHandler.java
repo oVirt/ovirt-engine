@@ -148,36 +148,6 @@ public final class ImagesHandler {
         return snapshots;
     }
 
-    public static int getImagesMappedToDrive(Guid vmId, String drive, RefObject<DiskImage> activeImage,
-            RefObject<DiskImage> inactiveImage) {
-        return getImagesMappedToDrive(DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId),
-                drive,
-                activeImage,
-                inactiveImage);
-    }
-
-    public static int getImagesMappedToDrive(
-            List<DiskImage> disks,
-            String drive,
-            RefObject<DiskImage> activeImage,
-            RefObject<DiskImage> inactiveImage) {
-        String currentDrive = StringHelper.isNullOrEmpty(drive) ? DefaultDriveName : drive;
-        activeImage.argvalue = null;
-        inactiveImage.argvalue = null;
-        int count = 0;
-        for (DiskImage disk : disks) {
-            if (StringHelper.EqOp(disk.getinternal_drive_mapping(), currentDrive)) {
-                if (disk.getactive() != null && disk.getactive().equals(true)) {
-                    activeImage.argvalue = disk;
-                } else {
-                    inactiveImage.argvalue = disk;
-                }
-                count++;
-            }
-        }
-        return count;
-    }
-
     public static void setStorageDomainId(DiskImage diskImage, Guid storageDomainId) {
         ArrayList<Guid> storageDomainIds = new ArrayList<Guid>();
         storageDomainIds.add(storageDomainId);
