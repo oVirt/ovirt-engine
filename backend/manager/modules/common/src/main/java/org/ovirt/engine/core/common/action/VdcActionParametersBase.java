@@ -31,6 +31,11 @@ public class VdcActionParametersBase implements java.io.Serializable {
 
     private VdcActionType parentCommand = VdcActionType.Unknown;
 
+    /**
+     * Used to determine the correct command to construct for these parameters.
+     */
+    private VdcActionType commandType = VdcActionType.Unknown;
+
     private transient VdcActionParametersBase parentParameters;
 
     // this flag marks if the command ran with MultipleAction for ProcessExceptionToClient
@@ -120,6 +125,14 @@ public class VdcActionParametersBase implements java.io.Serializable {
 
     public void setParentCommand(VdcActionType value) {
         parentCommand = value;
+    }
+
+    public VdcActionType getCommandType() {
+        return commandType;
+    }
+
+    public void setCommandType(VdcActionType commandType) {
+        this.commandType = commandType;
     }
 
     public VdcActionParametersBase getParentParameters() {

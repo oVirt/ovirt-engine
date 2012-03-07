@@ -288,7 +288,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected void EndActionOnDisks() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
-            Backend.getInstance().EndAction(getChildActionType(), p);
+            Backend.getInstance().EndAction(
+                    p.getCommandType() == VdcActionType.Unknown ? getChildActionType() : p.getCommandType(), p);
         }
     }
 
