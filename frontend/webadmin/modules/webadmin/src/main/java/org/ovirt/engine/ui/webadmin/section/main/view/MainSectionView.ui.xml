@@ -6,47 +6,88 @@
 		@external .gwt-MenuBar;
 		@external .gwt-MenuBar .gwt-MenuItem;
 		@external .gwt-MenuBar .gwt-MenuItem-selected;
-		.gwt-MenuBar { 
-			border: 1px solid #666;
+		.gwt-MenuBar {
+			border: 1px solid #D3D3D3;
 		    margin: 0 auto;
-		    background-color: #eee;
+		    background-color: white;
 		    font-size: 70%;
 		    padding: 3px;
 		}
-		
+
 		.gwt-MenuBar .gwt-MenuItem {
 			cursor: hand;
 		    cursor: pointer;
-		
-		    border: 1px solid #999;
-		    background-color: #eee;
+		    background-color: white;
 		    padding: 2px 10px;
 		}
-		
+
 		.gwt-MenuBar .gwt-MenuItem-selected {
-		 	background-color: #fff;
+			background-color: #C3D0E0;
 		}
-		
+
 		@external .gwt-PopupPanel;
 		.gwt-PopupPanel {
-		  border: 1px solid #C3D9FF;
+		  border: 0px none;
 		  padding: 0px;
 		  background: white;
+		  z-index: 1;
 		}
-		
-		
+
+		@external .gwt-MenuBarPopup .menuPopupMiddleLeft;
+		.gwt-MenuBarPopup .menuPopupMiddleLeft {
+			background: white;
+		}
+
+		@external .gwt-MenuBarPopup .menuPopupMiddleRight;
+		.gwt-MenuBarPopup .menuPopupMiddleRight {
+			background: white;
+		}
+
+		@external .gwt-MenuBarPopup .menuPopupTopCenter;
+		.gwt-MenuBarPopup .menuPopupTopCenter {
+			background: white;
+		}
+
+		@external .gwt-MenuBarPopup .menuPopupBottomCenter;
+		.gwt-MenuBarPopup .menuPopupBottomCenter {
+			background: white;
+		}
+
+		@external .gwt-MenuBarPopup .menuPopupTopLeftInner;
+		.gwt-MenuBarPopup .menuPopupTopLeftInner {
+			height: 0px;
+			width: 0px;
+		}
+
+		@external .gwt-MenuBarPopup .menuPopupTopRightInner;
+		.gwt-MenuBarPopup .menuPopupTopRightInner {
+			height: 0px;
+			width: 0px;
+		}
+
+		@external .gwt-MenuBarPopup .menuPopupBottomLeftInner;
+		.gwt-MenuBarPopup .menuPopupBottomLeftInner {
+			height: 0px;
+			width: 0px;
+		}
+
+		@external .gwt-MenuBarPopup .menuPopupBottomRightInner;
+		.gwt-MenuBarPopup .menuPopupBottomRightInner {
+			height: 0px;
+			width: 0px;
+		}
 		@external gwt-SplitLayoutPanel-HDragger;
 		@external gwt-SplitLayoutPanel-VDragger;
 		.gwt-SplitLayoutPanel-HDragger {
 			background-color: #4a607c;
 			width: 2px !important;
 		}
-		
+
 		.gwt-SplitLayoutPanel-VDragger {
 			background-color: #4a607c;
 			height: 2px !important;
 		}
-		
+
 		@external gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader;
 		@external gwt-StackLayoutPanel .gwt-StackLayoutPanelContent;
 		.gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {

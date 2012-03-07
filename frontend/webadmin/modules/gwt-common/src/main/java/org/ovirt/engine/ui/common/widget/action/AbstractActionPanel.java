@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.common.utils.PopupUtils;
 import org.ovirt.engine.ui.common.widget.FeatureNotImplementedYetPopup;
 import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
 
@@ -200,8 +201,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
                     int eventY = event.getNativeEvent().getClientY();
 
                     updateContextMenu(contextMenuBar, actionButtonList, contextPopupPanel);
-                    contextPopupPanel.setPopupPosition(eventX, eventY);
-                    contextPopupPanel.show();
+                    PopupUtils.showPopup(contextPopupPanel, eventX, eventY);
                 }
             }
         }, ContextMenuEvent.getType());
