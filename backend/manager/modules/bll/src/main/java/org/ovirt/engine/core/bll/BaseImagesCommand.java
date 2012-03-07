@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 
@@ -70,6 +70,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected Guid getImageId() {
         return mImageId;
+    }
+
+    protected void setImageId(Guid imageId) {
+        this.mImageId = imageId;
     }
 
     protected Guid getImageContainerId() {
@@ -223,19 +227,36 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     /**
-     * Returns first found image in database that assigned to Image's parent Vm and mapped to same drive
-     * @return m
+     * Find the image for the same drive by the snapshot type:<br>
+     * The image is the image from the snapshot of the given type, which represents the same drive.
+     * @param snapshotType
+     *            The snapshot type for which the other image should exist.
+     *
+     * @return The ID of the image for the same drive, or null if none found.
      */
-    protected DiskImage GetOtherImageMappedToSameDrive() {
-        List<DiskImage> images = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getImageContainerId());
-        if (getImage() != null) {
-            for (DiskImage image : images) {
-                if (StringHelper.EqOp(image.getinternal_drive_mapping(), getImage().getinternal_drive_mapping())
-                        && !getImage().getId().equals(image.getId())) {
-                    return image;
-                }
+    protected Guid findImageForSameDrive(SnapshotType snapshotType) {
+        return findImageForSameDrive(
+                DbFacade.getInstance().getSnapshotDao().getId(getImageContainerId(), snapshotType));
+    }
+
+    /**
+     * Find the image for the same drive by the snapshot ID:<br>
+     * The image is the image from the given snapshot, which represents the same drive.
+     *
+     * @param snapshotId
+     *            The snapshot ID for which the other image should exist.
+     *
+     * @return The ID of the image for the same drive, or null if none found.
+     */
+    protected Guid findImageForSameDrive(Guid snapshotId) {
+        List<DiskImage> imagesFromSanpshot =
+                DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForVmSnapshot(snapshotId);
+        for (DiskImage diskImage : imagesFromSanpshot) {
+            if (getDiskImage().getimage_group_id().equals(diskImage.getimage_group_id())) {
+                return diskImage.getId();
             }
         }
+
         return null;
     }
 

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
@@ -18,9 +19,6 @@ import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
@@ -29,66 +27,53 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  * drive will be removed.
  */
 @InternalCommandAttribute
-public class RestoreFromSnapshotCommand<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
-    /**
-     * patch
-     */
-    private Guid mImageIdToRestore;
-    private Guid mOtherImageId;
+public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters> extends BaseImagesCommand<T> {
 
     private final java.util.ArrayList<Guid> _imagesToDelete = new java.util.ArrayList<Guid>();
 
     public RestoreFromSnapshotCommand(T parameters) {
         super(parameters);
-        mImageIdToRestore = mImageIdToRestore == null ? Guid.Empty : mImageIdToRestore;
-        mOtherImageId = mOtherImageId == null ? Guid.Empty : mOtherImageId;
+        setImageContainerId(getParameters().getContainerId());
     }
 
     @Override
     protected void executeCommand() {
+
         super.executeCommand();
         if (RemoveImages()) {
-            SaveImageVmMapToDb();
+            if (getParameters().getSnapshot().getType() != SnapshotType.REGULAR) {
+                DbFacade.getInstance().getImageVmMapDAO().save(
+                        new image_vm_map(true, getImageId(), getParameters().getContainerId()));
+            }
+
             setSucceeded(true);
         }
     }
 
-    private void RemoveOtherMappedImages() {
-        DiskImage image;
-        while ((image = GetOtherImageMappedToSameDrive()) != null) {
-            DbFacade.getInstance()
-                    .getImageVmMapDAO()
-                    .remove(new image_vm_map_id(image.getId(), getDiskImage().getvm_guid()));
-            /**
-             * Vitaly //_imagesToDelete.Insert(_imagesToDelete.Count,
-             * image.image_guid);
-             */
-            RemoveSnapshot(image);
-        }
-    }
-
     private boolean RemoveImages() {
-        (getParameters()).setImageGroupID(getDiskImage().getimage_group_id().getValue());
-        if (!mOtherImageId.equals(Guid.Empty)) {
+        Guid imageToRemoveId = findImageForSameDrive(getParameters().getRemovedSnapshotId());
 
-            // Restoring done to trieng image. - active.
-            // all other child images of trieng image's parent should be removed
-            // They are: other mapped image and all its parents until trying
-            // image parent
+        switch (getParameters().getSnapshot().getType()) {
+        case REGULAR:
+            RemoveOtherImageAndParents(imageToRemoveId, getDiskImage().getParentId());
+            break;
+        case PREVIEW:
+        case STATELESS:
+            if (imageToRemoveId != null) {
+                RemoveSnapshot(DbFacade.getInstance().getDiskImageDAO().get(imageToRemoveId));
+            }
+
+            break;
+        }
+
+        if (imageToRemoveId != null) {
             DbFacade.getInstance()
                     .getImageVmMapDAO()
-                    .remove(new image_vm_map_id(mOtherImageId, getDiskImage().getvm_guid()));
-            RemoveOtherImageAndParents(mOtherImageId, getDiskImage().getParentId());
-        } else {
-            if (getDiskImage().getactive() != null && getDiskImage().getactive().equals(false)) {
-                RemoveOtherMappedImages();
-            }
-            RemoveChildren(getImage().getId());
+                    .remove(new image_vm_map_id(imageToRemoveId, getDiskImage().getvm_guid()));
         }
         VDSReturnValue vdsReturnValue = performImageVdsmOperation();
         return vdsReturnValue != null && vdsReturnValue.getSucceeded();
     }
-
 
     @Override
     protected Guid ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
@@ -129,53 +114,6 @@ public class RestoreFromSnapshotCommand<T extends ImagesContainterParametersBase
             RemoveSnapshot(image);
         }
     }
-
-    private void SaveImageVmMapToDb() {
-        DiskImage image = DbFacade.getInstance().getDiskImageDAO().get(getImage().getId());
-        if (image != null) {
-            // //Restoring inactive image
-            DbFacade.getInstance().getImageVmMapDAO().update(
-                    new image_vm_map(true, image.getId(), image.getcontainer_guid()));
-        } else {
-            DbFacade.getInstance().getImageVmMapDAO().save(
-                    new image_vm_map(true, getImage().getId(), getImage().getcontainer_guid()));
-        }
-    }
-
-    /**
-     * During trying image new snapshot created to image, user wish to try. If
-     * user wish to work with image, he tried - he will work with snapshot
-     * instead of the original image. In this case ImageId will be not the
-     * original image Id, But the snapshots. We assuming that this case can
-     * occure only during Trying image. So there are two images map to same
-     * drive will appiare in db and active is the one - user will work with.
-     * Inactive will be removed
-     */
-    @Override
-    protected Guid getImageId() {
-        if (mImageIdToRestore == null || mImageIdToRestore.equals(Guid.Empty)) {
-            mImageIdToRestore = super.getImageId();
-            DiskImage activeImage = null;
-            DiskImage inactiveImage = null;
-            RefObject<DiskImage> tempRefObject = new RefObject<DiskImage>(activeImage);
-            RefObject<DiskImage> tempRefObject2 = new RefObject<DiskImage>(inactiveImage);
-            int count = ImagesHandler.getImagesMappedToDrive(getImageContainerId(), getDrive(), tempRefObject,
-                    tempRefObject2);
-            activeImage = tempRefObject.argvalue;
-            inactiveImage = tempRefObject2.argvalue;
-            if (count == 2) {
-                if (activeImage != null && inactiveImage != null) {
-                    if (super.getImageId().equals(activeImage.getParentId())) {
-                        mImageIdToRestore = activeImage.getId();
-                        mOtherImageId = inactiveImage.getId();
-                    }
-                }
-            }
-        }
-        return mImageIdToRestore;
-    }
-
-    private static Log log = LogFactory.getLog(RestoreFromSnapshotCommand.class);
 
     @Override
     protected VDSReturnValue performImageVdsmOperation() {

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.compat.Guid;
@@ -28,14 +28,13 @@ public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> 
     }
 
     /**
-     * Set old image be inactive
+     * Remove old image vm map.
      */
     @Override
     protected void ProcessOldImageFromDb() {
-        DiskImage oldImage = GetOtherImageMappedToSameDrive();
-        oldImage.setactive(false);
-        DbFacade.getInstance().getImageVmMapDAO().update(
-                new image_vm_map(false, oldImage.getId(), oldImage.getvm_guid()));
+        Guid oldImageId = findImageForSameDrive(SnapshotType.PREVIEW);
+        DbFacade.getInstance().getImageVmMapDAO().remove(
+                new image_vm_map_id(oldImageId, getImageContainerId()));
     }
 
     @Override
@@ -49,12 +48,9 @@ public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> 
         // Remove image_vm_map between Vm and the preview snapshot:
         DbFacade.getInstance().getImageVmMapDAO().remove(new image_vm_map_id(getDestinationImageId(), getVmId()));
 
-        // Update image_vm_map between Vm and original leaf image to be active:
-        DiskImage originalLeafImage = GetOtherImageMappedToSameDrive();
-        if (originalLeafImage != null) {
-            DbFacade.getInstance().getImageVmMapDAO().update(
-                    new image_vm_map(true, originalLeafImage.getId(), getVmId()));
-        }
+        // Restore image_vm_map between Vm and original leaf image to be active:
+        Guid originalLeafImage = findImageForSameDrive(SnapshotType.ACTIVE);
+        DbFacade.getInstance().getImageVmMapDAO().save(new image_vm_map(true, originalLeafImage, getVmId()));
 
         // Remove destination, unlock source:
         UndoActionOnSourceAndDestination();

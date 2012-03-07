@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
+import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -47,6 +48,16 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     private List<Guid> snapshotsToRemove = new ArrayList<Guid>();
 
     /**
+     * The snapshot being restored to.
+     */
+    private Snapshot targetSnapshot;
+
+    /**
+     * The snapshot id which will be removed (the stateless/preview/active image).
+     */
+    private Guid removedSnapshotId;
+
+    /**
      * Constructor for command creation when compensation is applied on startup
      *
      * @param commandId
@@ -69,8 +80,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             VdcReturnValueBase returnValue = null;
             for (DiskImage image : getImagesList()) {
                 if (image.getimageStatus() != ImageStatus.ILLEGAL) {
-                    ImagesContainterParametersBase params = new ImagesContainterParametersBase(image.getId(),
-                            image.getinternal_drive_mapping(), getVmId());
+                    ImagesContainterParametersBase params = new RestoreFromSnapshotParameters(image.getId(),
+                            image.getinternal_drive_mapping(), getVmId(), targetSnapshot, removedSnapshotId);
                     returnValue = runAsyncTask(VdcActionType.RestoreFromSnapshot, params);
                 }
             }
@@ -152,7 +163,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      * Additionally, remove all obsolete snapshots (The one after stateless, or the preview chain which was not chosen).
      */
     protected void restoreSnapshotAndRemoveObsoleteSnapshots() {
-        Snapshot targetSnapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+        targetSnapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
 
         if (targetSnapshot == null) {
             throw new VdcBLLException(VdcBllErrors.ENGINE, "Can't find target snapshot by id: "
@@ -173,6 +184,10 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         case REGULAR:
             if (SnapshotStatus.IN_PREVIEW == targetSnapshot.getStatus()) {
                 prepareToDeletePreviewBranch();
+
+                // Set the active snapshot's images as target images for restore, because they are what we keep.
+                getParameters().setImagesList(getDiskImageDAO().getAllSnapshotsForVmSnapshot(
+                        getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE)));
                 break;
             }
         default:
@@ -194,7 +209,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 targetSnapshot,
                 getCompensationContext());
 
-        snapshotsToRemove.add(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
+        removedSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
+        snapshotsToRemove.add(removedSnapshotId);
         getSnapshotDao().remove(targetSnapshot.getId());
         snapshotsManager.addActiveSnapshot(targetSnapshot.getId(), getVm(), getCompensationContext());
     }
@@ -205,7 +221,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      * The traversal between snapshots is done according to the {@link DiskImage} level.
      */
     protected void prepareToDeletePreviewBranch() {
-        Guid removedSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.PREVIEW);
+        removedSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.PREVIEW);
         Guid previewedSnapshotId =
                 getSnapshotDao().getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW);
         getSnapshotDao().updateStatus(previewedSnapshotId, SnapshotStatus.OK);
