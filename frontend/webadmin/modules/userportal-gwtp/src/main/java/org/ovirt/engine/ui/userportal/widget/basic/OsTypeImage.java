@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget;
+package org.ovirt.engine.ui.userportal.widget.basic;
 
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;

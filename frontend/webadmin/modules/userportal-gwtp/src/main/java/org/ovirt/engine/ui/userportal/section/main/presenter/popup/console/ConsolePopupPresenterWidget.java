@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.IUserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.ConsoleUtils;
+import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

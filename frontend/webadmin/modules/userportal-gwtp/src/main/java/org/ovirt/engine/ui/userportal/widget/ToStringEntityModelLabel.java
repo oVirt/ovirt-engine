@@ -1,11 +1,11 @@
-package org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget;
+package org.ovirt.engine.ui.userportal.widget;
 
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.user.client.ui.ValueLabel;
 
-public class UserPortalEntityModelLabel extends ValueLabel<Object> {
+public class ToStringEntityModelLabel extends ValueLabel<Object> {
 
-    protected UserPortalEntityModelLabel() {
+    protected ToStringEntityModelLabel() {
         super(new AbstractRenderer<Object>() {
 
             @Override

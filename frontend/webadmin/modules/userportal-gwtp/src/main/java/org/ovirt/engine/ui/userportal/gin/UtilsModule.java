@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.userportal.gin;
 
 import org.ovirt.engine.ui.userportal.section.login.presenter.ConnectAutomaticallyProvider;
-import org.ovirt.engine.ui.userportal.section.main.presenter.tab.ConnectAutomaticallyManager;
-import org.ovirt.engine.ui.userportal.section.main.presenter.tab.ConsoleManager;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.ConsoleUtils;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.MainTabBasicListItemMessagesTranslator;
+import org.ovirt.engine.ui.userportal.utils.ConnectAutomaticallyManager;
+import org.ovirt.engine.ui.userportal.utils.ConsoleManager;
+import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
+import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemMessagesTranslator;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;

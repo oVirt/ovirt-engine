@@ -14,8 +14,8 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsolePopupPresenterWidget;
-import org.ovirt.engine.ui.userportal.section.main.view.popup.console.widget.EntityModelValueCheckBoxEditor;
-import org.ovirt.engine.ui.userportal.section.main.view.popup.console.widget.EntityModelValueCheckbox.ValueCheckboxRenderer;
+import org.ovirt.engine.ui.userportal.widget.popup.console.EntityModelValueCheckBoxEditor;
+import org.ovirt.engine.ui.userportal.widget.popup.console.EntityModelValueCheckbox.ValueCheckboxRenderer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
-public class ConsolePopupView extends UserPortalModelBoundPopupView<IUserPortalListModel> implements ConsolePopupPresenterWidget.ViewDef {
+public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalListModel> implements ConsolePopupPresenterWidget.ViewDef {
 
     @UiField
     Label consoleTitle;

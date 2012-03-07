@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.userportal.section.main.presenter.tab;
+package org.ovirt.engine.ui.userportal.utils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -6,10 +6,10 @@ import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.DisksImageWidget;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.OsTypeImage;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.UserPortalEntityModelLabel;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.VmTypeImage;
+import org.ovirt.engine.ui.userportal.widget.ToStringEntityModelLabel;
+import org.ovirt.engine.ui.userportal.widget.basic.DisksImageWidget;
+import org.ovirt.engine.ui.userportal.widget.basic.OsTypeImage;
+import org.ovirt.engine.ui.userportal.widget.basic.VmTypeImage;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -48,11 +48,11 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
 
     @UiField
     @Path("SelectedItemDefinedMemory.Entity")
-    UserPortalEntityModelLabel memory;
+    ToStringEntityModelLabel memory;
 
     @UiField
     @Path("SelectedItemNumOfCpuCores.Entity")
-    UserPortalEntityModelLabel numberOfCores;
+    ToStringEntityModelLabel numberOfCores;
 
     @UiField
     @Ignore

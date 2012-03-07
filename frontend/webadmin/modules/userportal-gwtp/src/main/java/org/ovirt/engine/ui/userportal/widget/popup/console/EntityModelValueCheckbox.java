@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.userportal.section.main.view.popup.console.widget;
+package org.ovirt.engine.ui.userportal.widget.popup.console;
 
 import org.ovirt.engine.ui.common.widget.editor.BaseEntityModelCheckbox;
 

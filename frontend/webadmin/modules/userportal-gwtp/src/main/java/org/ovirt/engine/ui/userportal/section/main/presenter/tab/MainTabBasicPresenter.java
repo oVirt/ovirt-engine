@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBa
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
+import org.ovirt.engine.ui.userportal.utils.ConnectAutomaticallyManager;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;

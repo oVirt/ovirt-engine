@@ -4,7 +4,7 @@
 xmlns:g="urn:import:com.google.gwt.user.client.ui" 
 xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-xmlns:w="urn:import:org.ovirt.engine.ui.userportal.section.main.view.popup.console.widget">
+xmlns:w="urn:import:org.ovirt.engine.ui.userportal.widget.popup.console">
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
 

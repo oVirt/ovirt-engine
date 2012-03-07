@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget;
+package org.ovirt.engine.ui.userportal.widget.basic;
 
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.client.adapters.TakesValueEditor;

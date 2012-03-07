@@ -9,12 +9,12 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicListItemPresenterWidget;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.MainTabBasicListItemActionButton;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.MainTabBasicListItemMessagesTranslator;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.OsTypeImage;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.VmPausedImage;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.VmUpMaskImage;
 import org.ovirt.engine.ui.userportal.widget.action.UserPortalImageButtonDefinition;
+import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemActionButton;
+import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemMessagesTranslator;
+import org.ovirt.engine.ui.userportal.widget.basic.OsTypeImage;
+import org.ovirt.engine.ui.userportal.widget.basic.VmPausedImage;
+import org.ovirt.engine.ui.userportal.widget.basic.VmUpMaskImage;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;

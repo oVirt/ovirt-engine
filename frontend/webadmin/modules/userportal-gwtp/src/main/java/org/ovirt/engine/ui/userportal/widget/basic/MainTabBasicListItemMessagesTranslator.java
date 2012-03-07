@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget;
+package org.ovirt.engine.ui.userportal.widget.basic;
 
 import java.util.HashMap;
 import java.util.Map;

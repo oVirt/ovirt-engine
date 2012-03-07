@@ -6,9 +6,9 @@ import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.uicommonweb.models.resources.ResourcesModel;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedResourcePresenter;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.widget.UserPortalEntityModelLabel;
 import org.ovirt.engine.ui.userportal.uicommon.model.resources.ResourcesModelProvider;
 import org.ovirt.engine.ui.userportal.widget.PercentageProgressBar;
+import org.ovirt.engine.ui.userportal.widget.ToStringEntityModelLabel;
 import org.ovirt.engine.ui.userportal.widget.resources.VmTable;
 
 import com.google.gwt.core.client.GWT;
@@ -23,11 +23,11 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
 
     @UiField
     @Path("DefinedVMs.Entity")
-    UserPortalEntityModelLabel definedVms;
+    ToStringEntityModelLabel definedVms;
 
     @UiField
     @Path("RunningVMs.Entity")
-    UserPortalEntityModelLabel runningVms;
+    ToStringEntityModelLabel runningVms;
 
     @UiField
     @Path("RunningVMsPercentage.Entity")
@@ -35,11 +35,11 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
 
     @UiField
     @Path("DefinedCPUs.Entity")
-    UserPortalEntityModelLabel definedCpus;
+    ToStringEntityModelLabel definedCpus;
 
     @UiField
     @Path("UsedCPUs.Entity")
-    UserPortalEntityModelLabel usedCpus;
+    ToStringEntityModelLabel usedCpus;
 
     @UiField
     @Path("UsedCPUsPercentage.Entity")
@@ -47,11 +47,11 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
 
     @UiField
     @Path("DefinedMemory.Entity")
-    UserPortalEntityModelLabel definedMemory;
+    ToStringEntityModelLabel definedMemory;
 
     @UiField
     @Path("UsedMemory.Entity")
-    UserPortalEntityModelLabel memoryUsage;
+    ToStringEntityModelLabel memoryUsage;
 
     @UiField
     @Path("UsedMemoryPercentage.Entity")
@@ -59,15 +59,15 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
 
     @UiField
     @Path("TotalDisksSize.Entity")
-    UserPortalEntityModelLabel totalSize;
+    ToStringEntityModelLabel totalSize;
 
     @UiField
     @Path("NumOfSnapshots.Entity")
-    UserPortalEntityModelLabel numOfSnapshots;
+    ToStringEntityModelLabel numOfSnapshots;
 
     @UiField
     @Path("TotalSnapshotsSize.Entity")
-    UserPortalEntityModelLabel totalSizeOfSnapshots;
+    ToStringEntityModelLabel totalSizeOfSnapshots;
 
     @UiField(provided = true)
     @Ignore
