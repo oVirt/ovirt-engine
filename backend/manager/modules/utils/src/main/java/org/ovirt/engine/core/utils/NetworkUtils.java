@@ -3,12 +3,14 @@ package org.ovirt.engine.core.utils;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public final class NetworkUtils {
-    public static String EngineNetwork = "engine";
+    public static String EngineNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
     public static int MaxVmInterfaces = 8;
     public static final String DASH = "-";
     public static final String OS_REFERENCE_TO_MACHINE_NAME = "HOSTNAME";
