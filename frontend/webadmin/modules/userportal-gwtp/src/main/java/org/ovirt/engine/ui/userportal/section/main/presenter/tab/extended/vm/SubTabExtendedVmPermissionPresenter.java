@@ -31,7 +31,7 @@ public class SubTabExtendedVmPermissionPresenter
     @TabInfo(container = ExtendedVmSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
         return new TabDataBasic(ginjector.getApplicationConstants().extendedVirtualMachinePermissionSubTabLabel(),
-                4);
+                7);
     }
 
     @Inject

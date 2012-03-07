@@ -28,16 +28,26 @@ public class ApplicationPlaces {
 
     public static final String SUB_TAB_PREFIX = "-";
 
+    public static final String POOL_SUFFIX = "-pool";
+
     // Virtual Machines
 
     public static final String extendedVirtualMachineGeneralSubTabPlace = extendedVirtualMachineSideTabPlace
             + SUB_TAB_PREFIX + "general";
 
+    public static final String extendedPoolGeneralSubTabPlace = extendedVirtualMachineGeneralSubTabPlace + POOL_SUFFIX;
+
     public static final String extendedVirtualMachineNetworkInterfaceSubTabPlace = extendedVirtualMachineSideTabPlace
             + SUB_TAB_PREFIX + "network_interfaces";
 
+    public static final String extendedPoolNetworkInterfaceSubTabPlace =
+            extendedVirtualMachineNetworkInterfaceSubTabPlace + POOL_SUFFIX;
+
     public static final String extendedVirtualMachineVirtualDiskSubTabPlace = extendedVirtualMachineSideTabPlace
             + SUB_TAB_PREFIX + "virtual_disks";
+
+    public static final String extendedVirtualPoolDiskSubTabPlace = extendedVirtualMachineVirtualDiskSubTabPlace
+            + POOL_SUFFIX;
 
     public static final String extendedVirtualMachineSnapshotSubTabPlace = extendedVirtualMachineSideTabPlace
             + SUB_TAB_PREFIX + "snapshots";

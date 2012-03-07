@@ -110,11 +110,14 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
      */
     protected abstract PlaceRequest getSideTabRequest();
 
-    PlaceRequest getSubTabRequest() {
+    private PlaceRequest getSubTabRequest() {
+        return new PlaceRequest(createRequestToken());
+    }
+
+    protected String createRequestToken() {
         String subTabName = modelProvider.getModel().getActiveDetailModel().getTitle().toLowerCase().replace(" ", "_");
         String requestToken = getSideTabRequest().getNameToken() + ApplicationPlaces.SUB_TAB_PREFIX + subTabName;
-
-        return new PlaceRequest(requestToken);
+        return requestToken;
     }
 
     /**

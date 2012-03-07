@@ -21,6 +21,9 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.templa
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplatePermissionsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateVirtualDisksPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.ExtendedVmSubTabPanelPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedPoolGeneralPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedPoolNetworkInterfacePresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedPoolVirtualDiskPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmApplicationPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmEventPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGeneralPresenter;
@@ -29,6 +32,15 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.Sub
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmPermissionPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmSnapshotPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmVirtualDiskPresenter;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolDiskListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolGeneralModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolInterfaceListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmDiskListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmEventListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmGeneralModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmInterfaceListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmMonitorModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmSnapshotListModelProvider;
 
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.inject.Provider;
@@ -89,7 +101,11 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabExtendedVmNetworkInterfacePresenter> getSubTabExtendedVmNetworkInterfacePresenter();
 
+    AsyncProvider<SubTabExtendedPoolNetworkInterfacePresenter> getSubTabExtendedPoolNetworkInterfacePresenter();
+
     AsyncProvider<SubTabExtendedVmVirtualDiskPresenter> getSubTabExtendedVmVirtualDiskPresenter();
+
+    AsyncProvider<SubTabExtendedPoolVirtualDiskPresenter> getSubTabExtendedPoolVirtualDiskPresenter();
 
     AsyncProvider<SubTabExtendedVmSnapshotPresenter> getSubTabExtendedVmSnapshotPresenter();
 
@@ -100,6 +116,26 @@ public interface ManagedComponents {
     AsyncProvider<SubTabExtendedVmApplicationPresenter> getSubTabExtendedVmApplicationPresenter();
 
     AsyncProvider<SubTabExtendedVmMonitorPresenter> getSubTabExtendedVmMonitorPresenter();
+
+    VmSnapshotListModelProvider getVmSnapshotListModelProvider();
+
+    VmEventListModelProvider getVmEventListModelProvider();
+
+    VmMonitorModelProvider getVmMonitorModelProvider();
+
+    VmGeneralModelProvider getVmGeneralModelProvider();
+
+    PoolGeneralModelProvider getPoolGeneralModelProvider();
+
+    VmInterfaceListModelProvider getVmInterfaceListModelProvider();
+
+    PoolInterfaceListModelProvider getPoolInterfaceListModelProvider();
+
+    VmDiskListModelProvider getVmDiskListModelProvider();
+
+    PoolDiskListModelProvider getPoolDiskListModelProvider();
+
+    AsyncProvider<SubTabExtendedPoolGeneralPresenter> getSubTabExtendedPoolGeneralPresenter();
 
     // Template
 

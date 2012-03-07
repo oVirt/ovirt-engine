@@ -22,5 +22,4 @@ public class ExtendedVmSubTabPanelView extends AbstractTabPanelView implements E
     protected AbstractTabPanel getTabPanel() {
         return tabPanel;
     }
-
 }

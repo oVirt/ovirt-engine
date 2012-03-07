@@ -26,6 +26,9 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.templa
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplatePermissionsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateVirtualDisksPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.ExtendedVmSubTabPanelPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedPoolGeneralPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedPoolNetworkInterfacePresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedPoolVirtualDiskPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmApplicationPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmEventPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGeneralPresenter;
@@ -55,6 +58,9 @@ import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.Su
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.SubTabExtendedTemplatePermissionsView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template.SubTabExtendedTemplateVirtualDisksView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.ExtendedVmSubTabPanelView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedPoolGeneralView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedPoolNetworkInterfaceView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedPoolVirtualDiskView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmApplicationView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmEventView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmGeneralView;
@@ -131,14 +137,26 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabExtendedVmGeneralPresenter.ViewDef.class,
                 SubTabExtendedVmGeneralView.class,
                 SubTabExtendedVmGeneralPresenter.ProxyDef.class);
+        bindPresenter(SubTabExtendedPoolGeneralPresenter.class,
+                SubTabExtendedPoolGeneralPresenter.ViewDef.class,
+                SubTabExtendedPoolGeneralView.class,
+                SubTabExtendedPoolGeneralPresenter.ProxyDef.class);
         bindPresenter(SubTabExtendedVmNetworkInterfacePresenter.class,
                 SubTabExtendedVmNetworkInterfacePresenter.ViewDef.class,
                 SubTabExtendedVmNetworkInterfaceView.class,
                 SubTabExtendedVmNetworkInterfacePresenter.ProxyDef.class);
+        bindPresenter(SubTabExtendedPoolNetworkInterfacePresenter.class,
+                SubTabExtendedPoolNetworkInterfacePresenter.ViewDef.class,
+                SubTabExtendedPoolNetworkInterfaceView.class,
+                SubTabExtendedPoolNetworkInterfacePresenter.ProxyDef.class);
         bindPresenter(SubTabExtendedVmVirtualDiskPresenter.class,
                 SubTabExtendedVmVirtualDiskPresenter.ViewDef.class,
                 SubTabExtendedVmVirtualDiskView.class,
                 SubTabExtendedVmVirtualDiskPresenter.ProxyDef.class);
+        bindPresenter(SubTabExtendedPoolVirtualDiskPresenter.class,
+                SubTabExtendedPoolVirtualDiskPresenter.ViewDef.class,
+                SubTabExtendedPoolVirtualDiskView.class,
+                SubTabExtendedPoolVirtualDiskPresenter.ProxyDef.class);
         bindPresenter(SubTabExtendedVmSnapshotPresenter.class,
                 SubTabExtendedVmSnapshotPresenter.ViewDef.class,
                 SubTabExtendedVmSnapshotView.class,

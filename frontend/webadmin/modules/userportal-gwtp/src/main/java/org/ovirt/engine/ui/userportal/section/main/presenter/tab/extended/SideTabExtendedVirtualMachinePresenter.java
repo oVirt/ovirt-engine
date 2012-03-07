@@ -2,6 +2,10 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended;
 
 import java.util.List;
 
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
+import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
@@ -66,4 +70,19 @@ public class SideTabExtendedVirtualMachinePresenter extends AbstractSideTabWithD
         return new PlaceRequest(ApplicationPlaces.extendedVirtualMachineSideTabPlace);
     }
 
+    /**
+     * This method is a hack which enables to have pool and VM subtabs to be bound with the same title
+     */
+    @Override
+    protected String createRequestToken() {
+        String requestToken = super.createRequestToken();
+        EntityModel model = modelProvider.getModel().getActiveDetailModel();
+        if (model instanceof PoolGeneralModel ||
+                model instanceof PoolInterfaceListModel ||
+                model instanceof PoolDiskListModel
+        ) {
+            requestToken += ApplicationPlaces.POOL_SUFFIX;
+        }
+        return requestToken;
+    }
 }

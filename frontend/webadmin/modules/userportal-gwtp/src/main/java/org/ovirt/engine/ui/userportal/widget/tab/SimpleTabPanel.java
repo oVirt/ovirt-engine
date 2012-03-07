@@ -1,8 +1,9 @@
 package org.ovirt.engine.ui.userportal.widget.tab;
 
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
-import org.ovirt.engine.ui.common.widget.tab.SimpleTab;
 import org.ovirt.engine.ui.common.widget.tab.TabDefinition;
+import org.ovirt.engine.ui.common.widget.tab.TabFactory;
+import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -36,7 +37,7 @@ public class SimpleTabPanel extends AbstractTabPanel {
 
     @Override
     protected TabDefinition createNewTab(TabData tabData) {
-        return new SimpleTab(tabData, this);
+        return TabFactory.createTab(tabData, this, ClientGinjectorProvider.instance().getEventBus());
     }
 
 }

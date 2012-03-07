@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm;
 
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
+import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
-import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmEventListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolInterfaceListModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -17,12 +17,12 @@ import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabExtendedVmEventPresenter
-        extends AbstractSubTabExtendedVmPresenter<VmEventListModel, SubTabExtendedVmEventPresenter.ViewDef, SubTabExtendedVmEventPresenter.ProxyDef> {
+public class SubTabExtendedPoolNetworkInterfacePresenter
+        extends AbstractSubTabExtendedVmPresenter<PoolInterfaceListModel, SubTabExtendedPoolNetworkInterfacePresenter.ViewDef, SubTabExtendedPoolNetworkInterfacePresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.extendedVirtualMachineEventSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedVmEventPresenter> {
+    @NameToken(ApplicationPlaces.extendedPoolNetworkInterfaceSubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedPoolNetworkInterfacePresenter> {
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<UserPortalItemModel> {
@@ -31,14 +31,14 @@ public class SubTabExtendedVmEventPresenter
     @TabInfo(container = ExtendedVmSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
         return new ModelBoundTabData(
-                ginjector.getApplicationConstants().extendedVirtualMachineEventSubTabLabel(),
-                8,
-                ginjector.getVmEventListModelProvider());
+                ginjector.getApplicationConstants().extendedVirtualMachineNetworkInterfaceSubTabLabel(),
+                3,
+                ginjector.getPoolInterfaceListModelProvider());
     }
 
     @Inject
-    public SubTabExtendedVmEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VmEventListModelProvider modelProvider) {
+    public SubTabExtendedPoolNetworkInterfacePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+            PlaceManager placeManager, PoolInterfaceListModelProvider modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

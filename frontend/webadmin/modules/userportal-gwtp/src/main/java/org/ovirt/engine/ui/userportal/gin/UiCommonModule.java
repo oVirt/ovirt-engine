@@ -13,6 +13,9 @@ import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateInterfaceL
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplatePermissionListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.UserPortalTemplateListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.UserPortalListProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolDiskListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolGeneralModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolInterfaceListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmAppListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmDiskListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmEventListModelProvider;
@@ -42,13 +45,16 @@ public class UiCommonModule extends BaseUiCommonModule {
         // Extended tab: Virtual Machine
         bind(UserPortalListProvider.class).asEagerSingleton();
         bind(VmGeneralModelProvider.class).asEagerSingleton();
+        bind(PoolGeneralModelProvider.class).asEagerSingleton();
         bind(VmInterfaceListModelProvider.class).asEagerSingleton();
         bind(VmDiskListModelProvider.class).asEagerSingleton();
+        bind(PoolDiskListModelProvider.class).asEagerSingleton();
         bind(VmSnapshotListModelProvider.class).asEagerSingleton();
         bind(VmPermissionListModelProvider.class).asEagerSingleton();
         bind(VmEventListModelProvider.class).asEagerSingleton();
         bind(VmAppListModelProvider.class).asEagerSingleton();
         bind(VmMonitorModelProvider.class).asEagerSingleton();
+        bind(PoolInterfaceListModelProvider.class).asEagerSingleton();
 
         // Extended tab: Template
         bind(UserPortalTemplateListProvider.class).asEagerSingleton();
