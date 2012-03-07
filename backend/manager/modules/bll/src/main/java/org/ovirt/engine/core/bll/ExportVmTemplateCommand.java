@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -57,6 +58,11 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                                     p,
                                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
                     getParameters().getImagesParameters().add(p);
+
+                    if (!vdcRetValue.getSucceeded()) {
+                        throw new VdcBLLException(vdcRetValue.getFault().getError(), vdcRetValue.getFault()
+                                .getMessage());
+                    }
 
                     getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
                 }
