@@ -424,6 +424,7 @@ public class RunVmCommandTest {
      * @param disks
      *            the disks for the VM
      */
+    @SuppressWarnings("unchecked")
     private void initMocks(final List<DiskImage> disks, final Map<VDSCommandType, Boolean> calls,
             final List<VmDevice> vmDevices) {
         final Guid guid = new Guid("00000000-0000-0000-0000-000000000000");
@@ -512,31 +513,18 @@ public class RunVmCommandTest {
         Mockito.when(DbFacade.getInstance()).thenReturn(facadeMock);
 
         PowerMockito.mockStatic(ImagesHandler.class);
-        Mockito.when(ImagesHandler.PerformImagesChecks(guid,
-                new ArrayList<String>(),
-                guid,
-                guid,
-                true,
-                true,
-                false,
-                false,
-                false,
-                false,
-                false,
-                true))
-                .thenReturn(true);
-        Mockito.when(ImagesHandler.PerformImagesChecks(guid,
-                new ArrayList<String>(),
-                guid,
-                guid,
-                false,
-                true,
-                false,
-                false,
-                false,
-                false,
-                true,
-                true))
+        Mockito.when(ImagesHandler.PerformImagesChecks(any(VM.class),
+                any(ArrayList.class),
+                any(Guid.class),
+                any(Guid.class),
+                anyBoolean(),
+                anyBoolean(),
+                anyBoolean(),
+                anyBoolean(),
+                anyBoolean(),
+                anyBoolean(),
+                anyBoolean(),
+                anyBoolean(), any(List.class)))
                 .thenReturn(true);
         Mockito.when(ImagesHandler.isVmInPreview(disks)).thenReturn(false);
     }

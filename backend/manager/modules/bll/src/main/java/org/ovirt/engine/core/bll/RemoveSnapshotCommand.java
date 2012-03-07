@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -106,9 +107,9 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
         getReturnValue().setCanDoAction(validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId())));
 
-        if (!ImagesHandler.PerformImagesChecks(getParameters().getVmId(), getReturnValue().getCanDoActionMessages(),
-                        getVm().getstorage_pool_id(), getSourceImages().get(0).getstorage_ids().get(0), true, true,
-                        true, true, true, true, true)) {
+        if (!ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(),
+                        getVm().getstorage_pool_id(), Guid.Empty, true, true,
+                        true, true, true, true, true, true, null)) {
             getReturnValue().setCanDoAction(false);
         }
 

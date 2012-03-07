@@ -203,9 +203,21 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (retVal) {
 
             // check that vm is down and images are ok
-            retVal = retVal
-                    && ImagesHandler.PerformImagesChecks(getVmId(), getReturnValue().getCanDoActionMessages(), getVm()
-                            .getstorage_pool_id(), Guid.Empty, false, true, false, false, true, true, false);
+            retVal =
+                    retVal
+                            && ImagesHandler.PerformImagesChecks(getVm(),
+                                    getReturnValue().getCanDoActionMessages(),
+                                    getVm().getstorage_pool_id(),
+                                    Guid.Empty,
+                                    false,
+                                    true,
+                                    false,
+                                    false,
+                                    true,
+                                    true,
+                                    false,
+                                    true,
+                                    new ArrayList<DiskImage>(getVm().getDiskMap().values()));
         }
 
         if (!retVal) {

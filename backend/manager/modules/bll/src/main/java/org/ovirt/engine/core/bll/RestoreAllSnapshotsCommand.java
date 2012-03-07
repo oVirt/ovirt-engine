@@ -265,9 +265,9 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 || !getSnapshotDao().exists(getVmId(), getParameters().getDstSnapshotId())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
         } else {
-            result = ImagesHandler.PerformImagesChecks(getVmId(), getReturnValue().getCanDoActionMessages(), getVm()
-                    .getstorage_pool_id(), getImagesList().get(0).getstorage_ids().get(0), true, true, false, false,
-                    false, false, true);
+            result = ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(), getVm()
+                    .getstorage_pool_id(), Guid.Empty, true, true, false, false,
+                    false, false, true, true, getImagesList());
             if (result && (getVm().getstatus() != VMStatus.Down)) {
                 result = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);

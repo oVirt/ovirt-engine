@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -142,8 +143,7 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
                         allVmDisks.add(getParameters().getDiskInfo());
                         returnValue = ImagesHandler.CheckImagesConfiguration(
                                 getStorageDomainId().getValue(),
-                                new java.util.ArrayList<DiskImageBase>(java.util.Arrays
-                                        .asList(new DiskImageBase[] { getParameters().getDiskInfo() })),
+                                Arrays.asList(getParameters().getDiskInfo()),
                                 getReturnValue().getCanDoActionMessages())
                                         && CheckPCIAndIDELimit(getVm().getnum_of_monitors(),
                                                 vmInterfaces,
@@ -152,10 +152,12 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
                     }
                 }
             }
+
+            List<DiskImage> emptyList = Collections.emptyList();
             returnValue = returnValue
-                    && ImagesHandler.PerformImagesChecks(getVmId(), getReturnValue().getCanDoActionMessages(), getVm()
-                            .getstorage_pool_id(), getStorageDomainId().getValue(), false, false, false, false, true,
-                            true, true);
+                         && ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(), getVm()
+                                 .getstorage_pool_id(), getStorageDomainId().getValue(), false, false, false, false, true,
+                                 false, false, true, emptyList);
 
             if (returnValue && !hasFreeSpace(storageDomain)) {
                 returnValue = false;

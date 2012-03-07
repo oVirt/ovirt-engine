@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -145,8 +146,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     @Override
     protected boolean canDoAction() {
         VmHandler.updateDisksFromDb(getVm());
-        // DiskImage vmDisk = null; // LINQ 32934 Vm.DiskMap.Select(a =>
-        // a.Value).FirstOrDefault();
         DiskImage vmDisk = LinqUtils.first(getVm().getDiskMap().values());
         boolean result = true;
 
@@ -155,23 +154,18 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         if (vmDisk != null) {
             result =
                     result
-                            && ImagesHandler.PerformImagesChecks(getVmId(),
+                            && ImagesHandler.PerformImagesChecks(getVm(),
                                     getReturnValue().getCanDoActionMessages(),
                                     getVm().getstorage_pool_id(),
-                                    vmDisk.getstorage_ids().get(0),
+                                    Guid.Empty,
                                     true,
                                     true,
                                     false,
                                     false,
                                     true,
                                     true,
-                                    true);
+                                    true, true, new ArrayList<DiskImage>(getVm().getDiskMap().values()));
         }
-        // check that not trying to preview current images (leaf)
-        // LINQ 29456
-        // if (result && Vm.DiskMap.Values.Select(disk =>
-        // disk.vm_snapshot_id.Value).
-        // Contains(TryParameters.DstSnapshotId))
         if (result && LinqUtils.foreach(getVm().getDiskMap().values(), new Function<DiskImage, Guid>() {
             @Override
             public Guid eval(DiskImage disk) {

@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -43,6 +46,7 @@ public class RemoveDisksFromVmCommand<T extends RemoveDisksFromVmParameters> ext
 
         retValue = retValue && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()));
 
+        List<DiskImage> diskImageList = new ArrayList<DiskImage>();
         for (Guid imageId : getParameters().getImageIds()) {
             DiskImage disk = DbFacade.getInstance().getDiskImageDAO().get(imageId);
             if (disk == null) {
@@ -50,16 +54,12 @@ public class RemoveDisksFromVmCommand<T extends RemoveDisksFromVmParameters> ext
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
                 break;
             }
-            disk.setstorage_ids(DbFacade.getInstance().getStorageDomainDAO().getAllImageStorageDomainIdsForImage(imageId));
-            retValue = retValue
-                    && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
-                    && ImagesHandler.PerformImagesChecks(getVmId(), getReturnValue().getCanDoActionMessages(), getVm()
-                            .getstorage_pool_id(), disk.getstorage_ids().get(0), false, true, false, false, true,
-                            true, true);
-            if (!retValue) {
-                break;
-            }
+            diskImageList.add(disk);
         }
+        retValue = retValue
+                    && ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(), getVm()
+                            .getstorage_pool_id(), Guid.Empty, false, true, false, false, true,
+                            true, true, true, diskImageList);
 
         if (!retValue) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);

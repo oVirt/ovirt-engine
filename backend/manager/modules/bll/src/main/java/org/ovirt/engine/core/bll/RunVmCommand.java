@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -608,15 +609,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         }
     }
 
-    public boolean CanRunVm() {
-        return CanRunVm(getVm(),
-                getReturnValue().getCanDoActionMessages(),
-                getParameters(),
-                getVdsSelector(),
-                getSnapshotsValidator());
-    }
-
-    public static boolean CanRunVm(VM vm, java.util.ArrayList<String> message, RunVmParams runParams,
+    public static boolean CanRunVm(VM vm, ArrayList<String> message, RunVmParams runParams,
                                    VdsSelector vdsSelector, SnapshotsValidator snapshotsValidator) {
         boolean retValue = true;
 
@@ -668,12 +661,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                     // if there is network in the boot sequence, check that the
                     // vm has network,
                     // otherwise the vm cannot be run in vdsm
-                    if (boot_sequence.toString().indexOf(NETWORK_BOOT_SEQUENCE_CHAR) > -1
+                    if (boot_sequence == BootSequence.N
                             && DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()).size() == 0) {
                         message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK.toString());
                         retValue = false;
                     } else if (vmImages.size() > 0) {
-                        Guid storageDomainId = vmImages.get(0).getstorage_ids().get(0);
                         ValidationResult vmDuringSnapshotResult =
                                 snapshotsValidator.vmNotDuringSnapshot(vm.getId());
                         if (!vmDuringSnapshotResult.isValid()) {
@@ -682,21 +674,21 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                         }
                         // check isValid, storageDomain and diskSpace only
                         // if VM is not HA VM
-                        if (retValue && !ImagesHandler
-                                    .PerformImagesChecks(vm.getId(), message, vm.getstorage_pool_id(),
-                                            storageDomainId, !vm.getauto_startup(), true, false, false, false, false,
-                                            !vm.getauto_startup() && !storageDomainId.equals(Guid.Empty)
-                                                    || !runParams.getIsInternal() && vm.getauto_startup(),
-                                            !vm.getauto_startup() || !runParams.getIsInternal() && vm.getauto_startup())) {
+                        if (retValue && !ImagesHandler.PerformImagesChecks(vm, message,
+                                vm.getstorage_pool_id(), Guid.Empty, !vm.getauto_startup(),
+                                true, false, false, false, false,
+                                !vm.getauto_startup() || !runParams.getIsInternal() && vm.getauto_startup(),
+                                !vm.getauto_startup() || !runParams.getIsInternal() && vm.getauto_startup(),
+                                vmImages)) {
                             retValue = false;
                         }
                         // Check if iso and floppy path exists
-                        else if (!vm.getauto_startup()
+                        if (retValue && !vm.getauto_startup()
                                     && !validateIsoPath(findActiveISODomain(vm.getstorage_pool_id()),
                                             runParams,
                                             message)) {
                             retValue = false;
-                        } else {
+                        } else if (retValue) {
                             boolean isVmDuringInit = ((Boolean) Backend
                                         .getInstance()
                                         .getResourceManager()
@@ -739,8 +731,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                              * action
                              */
                             if (retValue
-                                        && !VdcActionUtils.CanExecute(new java.util.ArrayList<IVdcQueryable>(
-                                                java.util.Arrays.asList(new IVdcQueryable[] { vm })), VM.class,
+                                        && !VdcActionUtils.CanExecute(Arrays.asList(vm), VM.class,
                                                 VdcActionType.RunVm)) {
                                 message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
                                 retValue = false;
@@ -832,7 +823,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         // we can not use only the command Internal flag and remove this flag from RunVmParams
         // since canRunVm is static and can not call non-static method isInternalExecution
         getParameters().setIsInternal(isInternalExecution());
-        boolean canDoAction = CanRunVm();
+        boolean canDoAction = CanRunVm(getVm(),
+                getReturnValue().getCanDoActionMessages(),
+                getParameters(),
+                getVdsSelector(),
+                getSnapshotsValidator());
         return canDoAction;
     }
 

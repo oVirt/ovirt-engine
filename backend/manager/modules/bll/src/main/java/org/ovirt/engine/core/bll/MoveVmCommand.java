@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -71,12 +72,22 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         // check that vm is down and images are ok
         // not checking storage domain, there is a check in
         // CheckTemplateInStorageDomain later
-        retValue = retValue
-                && ImagesHandler.PerformImagesChecks(getVmId(), getReturnValue().getCanDoActionMessages(), getVm()
-                        .getstorage_pool_id(), Guid.Empty, false, true, true, true, true, true, false);
+        VmHandler.updateDisksFromDb(getVm());
+        retValue = retValue && ImagesHandler.PerformImagesChecks(getVm(),
+                                getReturnValue().getCanDoActionMessages(),
+                                getVm().getstorage_pool_id(),
+                                Guid.Empty,
+                                false,
+                                true,
+                                true,
+                                true,
+                                true,
+                                true,
+                                false,
+                                true,
+                                new ArrayList<DiskImage>(getVm().getDiskMap().values()));
         setStoragePoolId(getVm().getstorage_pool_id());
 
-        VmHandler.updateDisksFromDb(getVm());
         ensureDomainMap(getVm().getDiskMap().values(), getParameters().getStorageDomainId());
 
         retValue = retValue && CheckTemplateInStorageDomain();

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -150,9 +151,9 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             } else {
                 List<DiskImage> vmImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId);
                 if (vmImages.size() > 0
-                        && !ImagesHandler.PerformImagesChecks(vmId, imagesMessages, vm.getstorage_pool_id(), vmImages
-                                .get(0).getstorage_ids().get(0), false, !getParameters().getForce(), false, false,
-                                getParameters().getForce(), false, true)) {
+                        && !ImagesHandler.PerformImagesChecks(vm, imagesMessages, vm.getstorage_pool_id(), Guid.Empty,
+                                false, !getParameters().getForce(), false, false,
+                                getParameters().getForce(), false, true, true, vmImages)) {
                     message.addAll(imagesMessages);
                     returnValue = false;
                 }

@@ -215,19 +215,21 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         for (Guid srcStorageDomainId : sourceImageDomainsImageMap.keySet()) {
-            if (!ImagesHandler.PerformImagesChecks(getParameters().getMasterVm().getId(),
+            boolean checkIsValid = true;
+            if (!ImagesHandler.PerformImagesChecks(getVm(),
                     getReturnValue().getCanDoActionMessages(),
                     getVm().getstorage_pool_id(),
                     srcStorageDomainId,
-                    true,
+                    false,
                     true,
                     true,
                     true,
                     true,
                     false,
-                    true, true, sourceImageDomainsImageMap.get(srcStorageDomainId))) {
+                    true, checkIsValid, sourceImageDomainsImageMap.get(srcStorageDomainId))) {
                 return false;
             }
+            checkIsValid = false;
         }
 
         Map<Guid, storage_domains> storageDomains = new HashMap<Guid, storage_domains>();

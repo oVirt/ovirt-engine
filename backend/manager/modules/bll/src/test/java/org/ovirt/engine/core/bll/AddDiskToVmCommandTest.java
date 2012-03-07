@@ -94,7 +94,7 @@ public class AddDiskToVmCommandTest {
         when(ImagesHandler.CheckImagesConfiguration(
                 any(Guid.class), any(ArrayList.class), any(ArrayList.class))).thenReturn(true);
         when(ImagesHandler.PerformImagesChecks(
-                any(Guid.class),
+                any(VM.class),
                 any(ArrayList.class),
                 any(Guid.class),
                 any(Guid.class),
@@ -104,7 +104,7 @@ public class AddDiskToVmCommandTest {
                 anyBoolean(),
                 anyBoolean(),
                 anyBoolean(),
-                anyBoolean())).thenReturn(true);
+                anyBoolean(), anyBoolean(), any(ArrayList.class))).thenReturn(true);
         mockStatic(StorageDomainSpaceChecker.class);
         when(StorageDomainSpaceChecker.isBelowThresholds(any(storage_domains.class))).thenReturn(true);
         when(Config.GetValue(ConfigValues.MaxDiskSize)).thenReturn(Integer.MAX_VALUE);
