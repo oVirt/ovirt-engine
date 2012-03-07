@@ -51,6 +51,7 @@ public enum VdcActionType {
     // powerclient 4.2
     PowerClientMigrateOnConnectCheck(50),
     SetDedicatedVm(51),
+    AddVmFromSnapshot(52, ActionGroup.CREATE_VM),
     // VdsCommands
     AddVds(101, ActionGroup.CREATE_HOST),
     UpdateVds(102, ActionGroup.EDIT_HOST_CONFIGURATION, false),
