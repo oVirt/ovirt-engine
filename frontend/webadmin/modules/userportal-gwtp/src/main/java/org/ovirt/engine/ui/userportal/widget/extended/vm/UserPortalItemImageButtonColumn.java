@@ -16,5 +16,4 @@ public class UserPortalItemImageButtonColumn extends Column<UserPortalItemModel,
         return object;
     }
 
-
 }

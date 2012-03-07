@@ -2,15 +2,18 @@ package org.ovirt.engine.ui.userportal.section.main.view.tab.extended;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.ui.common.system.ErrorPopupManager;
+import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
+import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsolePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.ConsoleManager;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedVirtualMachinePresenter;
@@ -21,19 +24,22 @@ import org.ovirt.engine.ui.userportal.widget.action.UserPortalButtonDefinition;
 import org.ovirt.engine.ui.userportal.widget.action.UserPortalImageButtonDefinition;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.BorderedCompositeCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleButtonCell;
+import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleButtonCell.ConsoleButtonCommand;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ImageButtonCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.UserPortalItemImageButtonColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn.OsTypeExtractor;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmStatusColumn;
-import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleButtonCell.ConsoleButtonCommand;
 
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.RowStyles;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
@@ -46,6 +52,8 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
     private final ConsolePopupPresenterWidget consolePopup;
     private final EventBus eventBus;
 
+    private static final VmTableResources vmTableResources = GWT.create(VmTableResources.class);
+
     @Inject
     public SideTabExtendedVirtualMachineView(UserPortalListProvider modelProvider,
             ApplicationTemplates templates,
@@ -54,16 +62,23 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             ConsoleManager consoleManager,
             ErrorPopupManager errorPopupManager,
             ConsolePopupPresenterWidget consolePopup,
-            EventBus eventBus
-            ) {
+            EventBus eventBus) {
         super(modelProvider);
         this.applicationResources = applicationResources;
         this.consoleManager = consoleManager;
         this.errorPopupManager = errorPopupManager;
         this.consolePopup = consolePopup;
         this.eventBus = eventBus;
-        applicationResources.consoleButtonResource().ensureInjected();
+        applicationResources.sideTabExtendedVmStyle().ensureInjected();
         initTable(templates, consoleUtils);
+    }
+
+    @Override
+    protected SimpleActionTable<UserPortalItemModel> createActionTable() {
+        return new SimpleActionTable<UserPortalItemModel>(modelProvider,
+                vmTableResources,
+                ClientGinjectorProvider.instance().getEventBus(),
+                ClientGinjectorProvider.instance().getClientStorage());
     }
 
     @Override
@@ -108,8 +123,8 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
 
         ConsoleButtonCell openConsoleCell = new ConsoleButtonCell(
                 consoleUtils,
-                "enabledConsoleButton",
-                "disabledConsoleButton",
+                applicationResources.sideTabExtendedVmStyle().enabledConsoleButton(),
+                applicationResources.sideTabExtendedVmStyle().disabledConsoleButton(),
                 "Open Console",
                 new ConsoleButtonCommand() {
 
@@ -127,8 +142,8 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
 
         ConsoleButtonCell consoleEditCell = new ConsoleButtonCell(
                 consoleUtils,
-                "enabledEditConsoleButton",
-                "disabledEditConsoleButton",
+                applicationResources.sideTabExtendedVmStyle().enabledEditConsoleButton(),
+                applicationResources.sideTabExtendedVmStyle().disabledEditConsoleButton(),
                 "Edit Console Options",
                 new ConsoleButtonCommand() {
 
@@ -181,6 +196,47 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewTemplateCommand();
+            }
+        });
+
+        getTable().setExtraRowStyles(new RowStyles<UserPortalItemModel>() {
+
+            @Override
+            public String getStyleNames(UserPortalItemModel row, int rowIndex) {
+                if (row == null) {
+                    return null;
+                }
+
+                if (isSelectedRow(row)) {
+                    return null;
+                }
+
+                return row.IsVmUp() ?
+                        applicationResources.sideTabExtendedVmStyle().vmUpRow() :
+                        applicationResources.sideTabExtendedVmStyle().vmDownRow();
+            }
+
+            protected boolean isSelectedRow(UserPortalItemModel row) {
+                UserPortalItemModel selectedModel = (UserPortalItemModel) getModel().getSelectedItem();
+                if (selectedModel != null) {
+                    if (modelProvider.getKey(selectedModel).equals(modelProvider.getKey(row))) {
+                        return true;
+                    }
+                }
+
+                List<UserPortalItemModel> selectedModels = (List<UserPortalItemModel>) getModel().getSelectedItems();
+
+                if (selectedModels == null) {
+                    return false;
+                }
+
+                for (UserPortalItemModel model : selectedModels) {
+                    if (modelProvider.getKey(model).equals(modelProvider.getKey(row))) {
+                        return true;
+                    }
+                }
+
+                return false;
             }
         });
     }
@@ -276,4 +332,12 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         return compositeCell;
     }
 
+    public interface VmTableResources extends CellTable.Resources {
+        interface TableStyle extends CellTable.Style {
+        }
+
+        @Override
+        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/userportal/css/ExtendedVmListTable.css" })
+        TableStyle cellTableStyle();
+    }
 }

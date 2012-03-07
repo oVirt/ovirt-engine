@@ -29,3 +29,19 @@ div.disabledEditConsoleButton {
 	height: 27px;
 	background-image: url("images/actions/console_edit_Disabled.png")
 }
+
+.vmUpRow {
+	background-color: #ffffff;
+}
+
+.vmDownRow {
+	background-color: #e1e1e1;
+}
+
+.vmUpRow:hover {
+	background-color: #b5c5d7;
+}
+
+.vmDownRow:hover {
+	background-color: #b5c5d7;	
+}

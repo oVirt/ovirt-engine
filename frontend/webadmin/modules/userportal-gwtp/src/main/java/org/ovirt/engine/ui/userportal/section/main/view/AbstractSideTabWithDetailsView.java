@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableListModel> extends AbstractView implements AbstractSideTabWithDetailsPresenter.ViewDef<T> {
 
-    private final SearchableTableModelProvider<T, M> modelProvider;
+    protected final SearchableTableModelProvider<T, M> modelProvider;
     private final SimpleActionTable<T> table;
 
     private static final int subTabPanelHeight = 300;
@@ -32,7 +32,7 @@ public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableList
         initSplitPanel();
     }
 
-    SimpleActionTable<T> createActionTable() {
+    protected SimpleActionTable<T> createActionTable() {
         return new SimpleActionTable<T>(modelProvider,
                 ClientGinjectorProvider.instance().getEventBus(),
                 ClientGinjectorProvider.instance().getClientStorage());

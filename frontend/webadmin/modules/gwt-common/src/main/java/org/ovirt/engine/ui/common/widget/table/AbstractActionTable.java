@@ -25,6 +25,7 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
+import com.google.gwt.user.cellview.client.RowStyles;
 import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 import com.google.gwt.user.cellview.client.TextHeader;
 import com.google.gwt.user.client.Event;
@@ -380,4 +381,11 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         table.setLoadingState(state);
     }
 
+    /**
+     * Gets the instance of RowStyles class and sets it to the cell table. Can be used when the rows have special styles
+     * according to the data they are displaying.
+     */
+    public void setExtraRowStyles(RowStyles<T> rowStyles) {
+        table.setRowStyles(rowStyles);
+    }
 }
