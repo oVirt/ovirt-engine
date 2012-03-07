@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTempla
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.WebAdminModelBoundPopupView;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.Editor.Path;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -54,6 +53,7 @@ public class VmMakeTemplatePopupView extends WebAdminModelBoundPopupView<UnitVmM
     @Ignore
     DisksAllocationView disksAllocationView;
 
+    @UiField(provided = true)
     @Ignore
     @Path(value = "quota.selectedItem")
     ListModelListBoxEditor<Object> quotaEditor;
