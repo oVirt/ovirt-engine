@@ -325,6 +325,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Root Password")
     String hostInstallPasswordLabel();
 
+    @DefaultStringValue("Current version")
+    String hostInstallHostVersionLabel();
+
     @DefaultStringValue("RHEV-H ISO Name")
     String hostInstallIsoLabel();
 

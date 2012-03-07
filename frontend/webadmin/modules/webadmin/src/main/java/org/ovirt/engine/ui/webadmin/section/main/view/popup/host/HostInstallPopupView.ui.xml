@@ -12,6 +12,7 @@
         <d:content>
             <g:FlowPanel>
                 <e:EntityModelPasswordBoxEditor ui:field="passwordEditor"/>
+                <e:EntityModelLabelEditor ui:field="hostVersionEditor"/>
                 <e:ListModelListBoxEditor ui:field="isoEditor"/>
                 <e:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor" />
             </g:FlowPanel>

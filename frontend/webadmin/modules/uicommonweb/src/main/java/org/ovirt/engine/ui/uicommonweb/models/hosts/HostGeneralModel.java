@@ -669,10 +669,9 @@ public class HostGeneralModel extends EntityModel
                 null);
     }
 
-    public void Install()
-    {
-        if (getWindow() != null)
-        {
+    public void Install() {
+
+        if (getWindow() != null) {
             return;
         }
 
@@ -683,22 +682,24 @@ public class HostGeneralModel extends EntityModel
         model.getOVirtISO().setIsAvailable(false);
         model.getRootPassword().setIsAvailable(false);
         model.getOverrideIpTables().setIsAvailable(false);
+        model.getHostVersion().setEntity(getEntity().gethost_os());
+        model.getHostVersion().setIsAvailable(false);
 
         if (getEntity().getvds_type() == VDSType.oVirtNode) {
             AsyncDataProvider.GetoVirtISOsList(new AsyncQuery(model,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
 
-                            InstallModel installModel = (InstallModel) target;
-                            ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
-                            installModel.getOVirtISO().setItems(isos);
-                            installModel.getOVirtISO().setSelectedItem(Linq.FirstOrDefault(isos));
-                            installModel.getOVirtISO().setIsAvailable(true);
-                            installModel.getOVirtISO().setIsChangable(true);
-
-                        }
-                    }), getEntity().getId());
+                        InstallModel model = (InstallModel) target;
+                        ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
+                        model.getOVirtISO().setItems(isos);
+                        model.getOVirtISO().setSelectedItem(Linq.FirstOrDefault(isos));
+                        model.getOVirtISO().setIsAvailable(true);
+                        model.getOVirtISO().setIsChangable(true);
+                        model.getHostVersion().setIsAvailable(true);
+                    }
+                }), getEntity().getId());
         } else {
             model.getRootPassword().setIsAvailable(true);
             model.getRootPassword().setIsChangable(true);
