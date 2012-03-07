@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveParameters;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.SnapshotDao;
 
 @Deprecated
 public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDriveParameters>
@@ -20,32 +24,65 @@ public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDrivePar
     @Override
     protected void executeQueryCommand() {
         Guid tryingImage = Guid.Empty;
-        Guid vmId = getParameters().getId();
-        String drive = getParameters().getDrive();
-        DiskImage inactiveDisk = null;
-        DiskImage activeDisk = null;
-        RefObject<DiskImage> refActive = new RefObject<DiskImage>(activeDisk);
-        RefObject<DiskImage> refInactive = new RefObject<DiskImage>(inactiveDisk);
-        List<DiskImage> images =
-                DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId, getUserID(), getParameters().isFiltered());
-        int count = ImagesHandler.getImagesMappedToDrive(images, drive, refActive, refInactive);
-        activeDisk = refActive.argvalue;
-        inactiveDisk = refInactive.argvalue;
-        if ((count == 0 || count > 2 || activeDisk == null || (count == 2 && inactiveDisk == null))) {
-            log.warnFormat("Vm {0} images data incorrect", vmId);
-            getQueryReturnValue().setReturnValue(new ArrayList<DiskImage>());
-        } else {
-            if (inactiveDisk != null) {
-                tryingImage = activeDisk.getParentId();
-            }
-            Guid topmostImageGuid = inactiveDisk == null ? activeDisk.getId() : inactiveDisk.getId();
+        DiskImage activeDisk = findImageForDrive(SnapshotType.ACTIVE);
+        DiskImage inactiveDisk = findImageForDrive(SnapshotType.PREVIEW);
 
-            // Note that no additional permission filtering is needed -
-            // if a user could read the disk of a VM, all its snapshots are OK too
-            getQueryReturnValue().setReturnValue(
-                    ImagesHandler.getAllImageSnapshots(topmostImageGuid, activeDisk.getit_guid()));
-            getQueryReturnValue().setTryingImage(tryingImage);
+        if (getDiskImageDao().getAllForVm(getParameters().getId(), getUserID(), getParameters().isFiltered()).isEmpty()
+                || activeDisk == null
+                || imageBeforePreviewIsMissing(activeDisk, inactiveDisk)) {
+            log.warnFormat("Vm {0} images data incorrect", getParameters().getId());
+            getQueryReturnValue().setReturnValue(new ArrayList<DiskImage>());
+            return;
         }
+
+        if (inactiveDisk != null) {
+            tryingImage = activeDisk.getParentId();
+        }
+        Guid topmostImageGuid = inactiveDisk == null ? activeDisk.getId() : inactiveDisk.getId();
+
+        // Note that no additional permission filtering is needed -
+        // if a user could read the disk of a VM, all its snapshots are OK too
+        getQueryReturnValue().setReturnValue(
+                ImagesHandler.getAllImageSnapshots(topmostImageGuid, activeDisk.getit_guid()));
+        getQueryReturnValue().setTryingImage(tryingImage);
+    }
+
+    protected boolean imageBeforePreviewIsMissing(DiskImage activeDisk, DiskImage inactiveDisk) {
+        return getSnapshotDao().exists(getParameters().getId(), SnapshotStatus.IN_PREVIEW)
+                && inactiveDisk == null
+                && activeDisk.getimageStatus() != ImageStatus.ILLEGAL;
+    }
+
+    protected SnapshotDao getSnapshotDao() {
+        return DbFacade.getInstance().getSnapshotDao();
+    }
+
+    protected DiskImageDAO getDiskImageDao() {
+        return DbFacade.getInstance().getDiskImageDAO();
+    }
+
+    /**
+     * Find the image for the same drive by the snapshot type:<br>
+     * The image is the image from the snapshot of the given type, which represents the same drive.
+     * @param snapshotType
+     *            The snapshot type for which the other image should exist.
+     *
+     * @return The image for the same drive, or <code>null</code> if not found.
+     */
+    private DiskImage findImageForDrive(SnapshotType snapshotType) {
+        Guid snapshotId = getSnapshotDao().getId(getParameters().getId(), snapshotType);
+        if (snapshotId == null) {
+            return null;
+        }
+
+        List<DiskImage> imagesFromSanpshot = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
+        for (DiskImage diskImage : imagesFromSanpshot) {
+            if (getParameters().getDrive().equals(diskImage.getinternal_drive_mapping())) {
+                return diskImage;
+            }
+        }
+
+        return null;
     }
 
     @Override

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveParameters;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.utils.RandomUtils;
 
+@Ignore
 public class GetAllVmSnapshotsByDriveQueryTest extends
         AbstractUserQueryTest<GetAllVmSnapshotsByDriveParameters, GetAllVmSnapshotsByDriveQuery<GetAllVmSnapshotsByDriveParameters>> {
 
