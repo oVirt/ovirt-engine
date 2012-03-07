@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -83,8 +84,8 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                                                     .getId(),
                                             getImageGroupId(),
                                             getImage().getId(),
-                                            getImage()
-                                                    .getdescription(),
+                                            StringUtils.defaultString(getImage()
+                                                    .getdescription()),
                                             getParameters().getStorageDomainId(),
                                             getParameters()
                                                     .getCopyVolumeType(),

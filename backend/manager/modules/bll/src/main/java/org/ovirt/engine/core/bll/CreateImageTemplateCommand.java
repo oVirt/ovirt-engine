@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -69,7 +70,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                         VDSCommandType.CopyImage,
                         new CopyImageVDSCommandParameters(storagePoolId, getParameters().getStorageDomainId(),
                                 getParameters().getVmId(), imageGroupId, snapshotId, destinationImageGroupID,
-                                getDestinationImageId(), newImage.getdescription(), getParameters()
+                                getDestinationImageId(), StringUtils.defaultString(newImage.getdescription()), getParameters()
                                         .getDestinationStorageDomainId(), CopyVolumeType.SharedVol, newImage
                                         .getvolume_format(), newImage.getvolume_type(), getDiskImage()
                                         .getwipe_after_delete(), false, getStoragePool().getcompatibility_version()
