@@ -713,7 +713,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
                             boolean isStatelessVm = shouldVmRunAsStateless(runParams, vm);
 
-                            if (retValue && isStatelessVm && ImagesHandler.isVmInPreview(vmImages)) {
+                            if (retValue && isStatelessVm && ImagesHandler.isVmInPreview(vm.getId())) {
                                 retValue = false;
                                 message.add(VdcBllMessages.VM_CANNOT_RUN_STATELESS_WHILE_IN_PREVIEW.toString());
                             }

@@ -526,7 +526,7 @@ public class RunVmCommandTest {
                 anyBoolean(),
                 anyBoolean(), any(List.class)))
                 .thenReturn(true);
-        Mockito.when(ImagesHandler.isVmInPreview(disks)).thenReturn(false);
+        Mockito.when(ImagesHandler.isVmInPreview(any(Guid.class))).thenReturn(false);
     }
 
     private SnapshotsValidator mockSuccessfulSnapshotValidator() {

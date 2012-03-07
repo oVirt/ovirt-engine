@@ -214,17 +214,11 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      */
     // TODO: Should be moved to another class in the hierarchy
     protected boolean CanCreateSnapshot() {
-        List<DiskImage> images = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getImageContainerId());
-        int count = 0;
-        for (DiskImage image : images) {
-            if (StringHelper.EqOp(image.getinternal_drive_mapping(), getImage().getinternal_drive_mapping())) {
-                count++;
-                if (count > 1) {
-                    log.error("Cannot create snapshot. Vm is in preview status");
-                    return false;
-                }
-            }
+        if (ImagesHandler.isVmInPreview(getImageContainerId())) {
+            log.error("Cannot create snapshot. Vm is in preview status");
+            return false;
         }
+
         return true;
     }
 

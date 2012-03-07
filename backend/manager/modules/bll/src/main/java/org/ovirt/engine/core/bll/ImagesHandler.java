@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -244,16 +245,8 @@ public final class ImagesHandler {
         return fromIrs;
     }
 
-    public static boolean isVmInPreview(List<DiskImage> images) {
-        List<String> drives = new ArrayList<String>();
-        for (DiskImage image : images) {
-            if (drives.contains(image.getinternal_drive_mapping())) {
-                return true;
-            }
-            drives.add(image.getinternal_drive_mapping());
-        }
-
-        return false;
+    public static boolean isVmInPreview(Guid vmId) {
+        return DbFacade.getInstance().getSnapshotDao().exists(vmId, SnapshotStatus.IN_PREVIEW);
     }
 
     public static boolean CheckImageConfiguration(storage_domain_static storageDomain,
@@ -375,7 +368,7 @@ public final class ImagesHandler {
         if (returnValue && checkImagesIllegal) {
             returnValue = CheckImagesLegality(messages, images, vm, irsImages);
         }
-        if (returnValue && checkVmInPreview && isVmInPreview(images)) {
+        if (returnValue && checkVmInPreview && isVmInPreview(vm.getId())) {
             returnValue = false;
             if (messages != null) {
                 messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString());
