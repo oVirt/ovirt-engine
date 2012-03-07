@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -38,6 +39,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     public UpdateVmCommand(T parameters) {
         super(parameters);
+        if (getVdsGroup() != null) {
+            setStoragePoolId(getVdsGroup().getstorage_pool_id() != null ? getVdsGroup().getstorage_pool_id()
+                        .getValue() : Guid.Empty);
+        }
     }
 
     @Override
@@ -239,6 +244,27 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
         return retValue;
+    }
+
+    @Override
+    protected boolean validateQuota() {
+        Guid quotaId = getParameters().getVmStaticData().getQuotaId();
+        if (quotaId == null) {
+            // Set default quota id if storage pool enforcement is disabled.
+            getParameters().getVmStaticData().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(quotaId,
+                    getStoragePool()));
+        }
+        return true;
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
+        permissionList =
+                QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList,
+                        getStoragePool(),
+                        getParameters().getVmStaticData().getQuotaId());
+        return permissionList;
     }
 
     private void setCustomDefinedProperties(VmStatic vmStaticDataFromParams) {

@@ -3,9 +3,11 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -18,6 +20,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         setVmTemplate(parameters.getVmTemplateData());
         setVmTemplateId(getVmTemplate().getId());
         setVdsGroupId(getVmTemplate().getvds_group_id());
+        if (getVdsGroup() != null) {
+            setStoragePoolId(getVdsGroup().getstorage_pool_id() != null ? getVdsGroup().getstorage_pool_id()
+                        .getValue() : Guid.Empty);
+        }
     }
 
     @Override
@@ -58,6 +64,27 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         return returnValue;
+    }
+
+    @Override
+    protected boolean validateQuota() {
+        Guid quotaId = getVmTemplate().getQuotaId();
+        if (quotaId == null) {
+            // Set default quota id if storage pool enforcement is disabled.
+            getVmTemplate().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(quotaId,
+                    getStoragePool()));
+        }
+        return true;
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
+        permissionList =
+                QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList,
+                        getStoragePool(),
+                        getVmTemplate().getQuotaId());
+        return permissionList;
     }
 
     @Override
