@@ -501,7 +501,7 @@ public class RunOnceModel extends Model
         boolean isFloppyAttached = (Boolean) getAttachFloppy().getEntity();
         boolean isVmFirstRun = (Boolean) getIsVmFirstRun().getEntity();
 
-        getIsSysprepEnabled().setEntity(getIsWindowsOS() && (getReinitialize() || (isVmFirstRun && !isFloppyAttached)));
+        getIsSysprepEnabled().setEntity(getIsWindowsOS() && getReinitialize());
     }
 
     public boolean Validate()
