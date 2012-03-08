@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
@@ -45,8 +47,8 @@ import org.ovirt.engine.core.utils.list.ListUtils;
 import org.ovirt.engine.core.utils.list.ListUtils.Filter;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
-    private static java.util.HashMap<String, QueryData2> mQueriesCache = new java.util.HashMap<String, QueryData2>();
-    private static ISyntaxChecker _defaultSyntaxChecker =
+    private static final HashMap<String, QueryData2> mQueriesCache = new HashMap<String, QueryData2>();
+    private static final ISyntaxChecker _defaultSyntaxChecker =
             SyntaxCheckerFactory.CreateBackendSyntaxChecker(Config.<String> GetValue(ConfigValues.AuthenticationMethod));
 
     public SearchQuery(P parameters) {
@@ -269,7 +271,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 isExistsValue = (data != null);
 
                 if (isExistsValue) {
-                    @SuppressWarnings("null")
                     TimeSpan span = DateTime.getNow().Subtract(data.getDate());
                     if (span.Days >= 1) {
                         IsFromYesterday = true;
@@ -338,7 +339,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 // An expression is considered safe if matches a trivial search.
                 data.setQType(searchObj.getSearchObjectStr());
                 data.setQuery(curSyntaxChecker.generateQueryFromSyntaxContainer(searchObj, isSafe));
-                data.setDate(new java.util.Date());
+                data.setDate(new Date());
                 // when looking for tags , the query contains all parent children tag id's
                 // statically, therefore , in order to reflect changes in the parent tree
                 // we should not rely on the cached query in such case and have to build the
