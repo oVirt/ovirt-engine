@@ -6,6 +6,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.vdscommands.ActivateVdsVDSCommandParameters;
@@ -43,16 +44,16 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     @Override
     protected void executeCommand() {
 
-        // VDS vds = ResourceManager.Instance.getVds(VdsId);
-        if (getVds() == null) {
+        final VDS vds = getVds();
+        if (vds == null) {
             setSucceeded(false);
         } else {
-            ExecutionHandler.updateSpecificActionJobCompleted(getVds().getId(), VdcActionType.MaintananceVds, false);
+            ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintananceVds, false);
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
                 @Override
                 public Void runInTransaction() {
-                    getCompensationContext().snapshotEntityStatus(getVds().getDynamicData(), getVds().getstatus());
+                    getCompensationContext().snapshotEntityStatus(vds.getDynamicData(), vds.getstatus());
                     Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.SetVdsStatus,
                             new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Unassigned));
                     getCompensationContext().stateChanged();
@@ -66,9 +67,9 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
             if (getSucceeded()) {
                 // set network to operational / non-operational
                 List<network> networks = DbFacade.getInstance().getNetworkDAO()
-                        .getAllForCluster(getVds().getvds_group_id());
+                        .getAllForCluster(vds.getvds_group_id());
                 for (network net : networks) {
-                    AttachNetworkToVdsGroupCommand.SetNetworkStatus(getVds().getvds_group_id(), net);
+                    AttachNetworkToVdsGroupCommand.SetNetworkStatus(vds.getvds_group_id(), net);
                 }
             }
         }
