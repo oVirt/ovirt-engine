@@ -1,13 +1,15 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.HashMap;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.compat.EnumCompat;
 
 public class EnumValueAutoCompleter extends BaseAutoCompleter implements IConditionValueAutoCompleter {
-    private final java.util.HashMap<String, Integer> mEnumValues = new java.util.HashMap<String, Integer>();
+    private final HashMap<String, Integer> mEnumValues = new HashMap<String, Integer>();
 
-    public EnumValueAutoCompleter(java.lang.Class enumerationType) {
+    public EnumValueAutoCompleter(Class enumerationType) {
 
         for (int val : EnumCompat.GetIntValues(enumerationType)) {
             String ValName = EnumCompat.GetName(enumerationType, val).toUpperCase();
