@@ -7,6 +7,7 @@ import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.spy;
@@ -24,11 +25,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -53,6 +58,7 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -76,13 +82,13 @@ public class AddVmCommandTest {
     DbFacade db;
 
     @Mock
-    VmDAO vmDao;
-
-    @Mock
     StorageDomainDAO sdDAO;
 
     @Mock
     VmTemplateDAO vmTemplateDAO;
+
+    @Mock
+    VmDAO vmDAO;
 
     @Mock
     DiskImageDAO diskImageDAO;
@@ -98,6 +104,9 @@ public class AddVmCommandTest {
 
     @Mock
     VdsGroupDAO vdsGroupDAO;
+
+    @Mock
+    SnapshotDao snapshotDao;
 
     public AddVmCommandTest() {
         MockitoAnnotations.initMocks(this);
@@ -226,11 +235,53 @@ public class AddVmCommandTest {
         final int domainSizeGB = 30;
         final int sizeRequired = 6;
         final int pctRequired = 53;
-        AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = setupCanAddVmFromTemplateTests(domainSizeGB, sizeRequired, pctRequired);
+        AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd =
+                setupCanAddVmFromTemplateTests(domainSizeGB, sizeRequired, pctRequired);
         setNewImageDiskMapForTemplate(cmd, new Long("3000000000"), cmd.getVmTemplate().getDiskImageMap());
-        assertFalse("Thin vm could not be added due to storage sufficient", cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
+        assertFalse("Thin vm could not be added due to storage sufficient",
+                cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
         assertTrue("canDoAction failed for insufficient disk size",
                  reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
+    }
+
+    @Test
+    public void canAddCloneVmFromSnapshotSnapshotDoesNotExist() {
+        ArrayList<String> reasons = new ArrayList<String>();
+        final int domainSizeGB = 15;
+        final int sizeRequired = 4;
+        final int pctRequired = 10;
+        final Guid sourceSnapshotId = Guid.NewGuid();
+        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = setupCanAddVmFromSnapshotTests(domainSizeGB, sizeRequired, pctRequired,sourceSnapshotId);
+        cmd.getVm().setvm_name("vm1");
+        mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
+        assertFalse("Clone vm should have failed due to non existing snapshot id", cmd.canDoAction());
+        reasons = cmd.getReturnValue().getCanDoActionMessages();
+        assertTrue("Clone vm should have failed due to non existing snapshot id",
+                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST.toString()));
+    }
+
+    @Test
+    public void canAddCloneVmFromSnapshotNoConfiguration() {
+        ArrayList<String> reasons = new ArrayList<String>();
+        final int domainSizeGB = 15;
+        final int sizeRequired = 4;
+        final int pctRequired = 10;
+        final Guid sourceSnapshotId = Guid.NewGuid();
+        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = setupCanAddVmFromSnapshotTests(domainSizeGB, sizeRequired, pctRequired,sourceSnapshotId);
+        cmd.getVm().setvm_name("vm1");
+        mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
+        when(snapshotDao.get(sourceSnapshotId)).thenReturn(new Snapshot());
+        assertFalse("Clone vm should have failed due to non existing vm configuration", cmd.canDoAction());
+        reasons = cmd.getReturnValue().getCanDoActionMessages();
+        assertTrue("Clone vm should have failed due to no configuration id",
+                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION.toString()));
+
+    }
+
+    protected void mockNonInterestingMethodsForCloneVmFromSnapshot(AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd) {
+        mockUninterestingMethods(cmd);
+        doReturn(true).when(cmd).checkCpuSockets();
+        doReturn(null).when(cmd).getVmFromConfiguration();
     }
 
     private VmTemplate setupSelectStorageDomainTests(final int domainSpaceGB,
@@ -255,6 +306,15 @@ public class AddVmCommandTest {
         return spy(concrete);
     }
 
+    private AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> createVmFromSnapshotCommand(VM vm,Guid sourceSnapshotId) {
+        AddVmFromSnapshotParameters param = new AddVmFromSnapshotParameters();
+        param.setVm(vm);
+        param.setSourceSnapshotId(sourceSnapshotId);
+        param.setStorageDomainId(Guid.NewGuid());
+        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> concrete = new AddVmFromSnapshotCommand<AddVmFromSnapshotParameters>(param);
+        return spy(concrete);
+    }
+
     private AddVmFromTemplateCommand<AddVmFromTemplateParameters> setupCanAddVmFromTemplateTests(final int domainSizeGB,
             final int sizeRequired,
             final int pctRequired) {
@@ -262,6 +322,20 @@ public class AddVmCommandTest {
         AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = createVmFromTemplateCommand(vm);
         initCommandMethods(cmd);
         return cmd;
+    }
+
+    private AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> setupCanAddVmFromSnapshotTests(final int domainSizeGB,
+            final int sizeRequired,
+            final int pctRequired, Guid sourceSnapshotId) {
+        VM vm = initializeMock(domainSizeGB, sizeRequired, pctRequired);
+        initializeVmDAOMock(vm);
+        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = createVmFromSnapshotCommand(vm,sourceSnapshotId);
+        initCommandMethods(cmd);
+        return cmd;
+    }
+
+    private void initializeVmDAOMock(VM vm) {
+        when(vmDAO.getById(Matchers.<Guid> any(Guid.class))).thenReturn(vm);
     }
 
     private AddVmCommand<VmManagementParametersBase> setupCanAddVmTests(final int domainSizeGB,
@@ -334,25 +408,35 @@ public class AddVmCommandTest {
     }
 
     private void mockDbFacade() {
-        when(db.getVmDAO()).thenReturn(vmDao);
+        when(db.getVmDAO()).thenReturn(vmDAO);
         when(db.getStorageDomainDAO()).thenReturn(sdDAO);
         when(db.getVmTemplateDAO()).thenReturn(vmTemplateDAO);
         when(db.getDiskImageDAO()).thenReturn(diskImageDAO);
         when(db.getStorageDomainDynamicDAO()).thenReturn(storageDomainDynamicDAO);
         when(db.getVdsGroupDAO()).thenReturn(vdsGroupDAO);
+        when(db.getSnapshotDao()).thenReturn(snapshotDao);
         when(DbFacade.getInstance()).thenReturn(db);
     }
 
     private void mockVmDAOGetById() {
-        when(vmDao.getById(any(Guid.class))).thenReturn(null);
+        when(vmDAO.getById(any(Guid.class))).thenReturn(null);
     }
 
     private void mockStorageDomainDAOGetForStoragePool(int domainSpaceGB) {
         when(sdDAO.getForStoragePool(Matchers.<Guid> any(Guid.class), Matchers.<NGuid> any(NGuid.class))).thenReturn(createStorageDomain(domainSpaceGB));
     }
 
-    private void mockStorageDomainDAOGet(int domainSpaceGB) {
-        when(sdDAO.get(any(Guid.class))).thenReturn(createStorageDomain(domainSpaceGB));
+    private void mockStorageDomainDAOGet(final int domainSpaceGB) {
+        doAnswer(new Answer<storage_domains>() {
+
+            @Override
+            public storage_domains answer(InvocationOnMock invocation) throws Throwable {
+                storage_domains result = createStorageDomain(domainSpaceGB);
+                result.setId((Guid)invocation.getArguments()[0]);
+                return result;
+            }
+
+        }).when(sdDAO).get(any(Guid.class));
     }
 
     private void mockStorageDomainDaoGetAllStoragesForPool(int domainSpaceGB) {
