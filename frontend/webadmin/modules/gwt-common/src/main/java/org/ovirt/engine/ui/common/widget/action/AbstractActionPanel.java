@@ -10,8 +10,9 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-import org.ovirt.engine.ui.common.utils.PopupUtils;
 import org.ovirt.engine.ui.common.widget.FeatureNotImplementedYetPopup;
+import org.ovirt.engine.ui.common.widget.MenuBar;
+import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -28,10 +29,8 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -113,12 +112,13 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
 
         actionButtonList.add(buttonDef);
 
-        actionPanelPopupPanel.asPopupPanel().addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
-                newActionButton.asToggleButton().setDown(false);
-            }
-        });
+        actionPanelPopupPanel.asPopupPanel()
+                .addCloseHandler(new CloseHandler<com.google.gwt.user.client.ui.PopupPanel>() {
+                    @Override
+                    public void onClose(CloseEvent<com.google.gwt.user.client.ui.PopupPanel> event) {
+                        newActionButton.asToggleButton().setDown(false);
+                    }
+                });
 
         // Add button widget click handler
         newActionButton.addClickHandler(new ClickHandler() {
@@ -132,7 +132,8 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
                             updateContextMenu(actionPanelPopupPanel.getMenuBar(),
                                     ((UiMenuBarButtonDefinition<T>) buttonDef).getSubActions(),
                                     actionPanelPopupPanel.asPopupPanel());
-                            actionPanelPopupPanel.asPopupPanel().showRelativeTo(newActionButton.asWidget());
+                            actionPanelPopupPanel.asPopupPanel()
+                                    .showRelativeToAndFitToScreen(newActionButton.asWidget());
                         } else {
                             actionPanelPopupPanel.asPopupPanel().hide();
                         }
@@ -201,7 +202,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
                     int eventY = event.getNativeEvent().getClientY();
 
                     updateContextMenu(contextMenuBar, actionButtonList, contextPopupPanel);
-                    PopupUtils.showPopup(contextPopupPanel, eventX, eventY);
+                    contextPopupPanel.showAndFitToScreen(eventX, eventY);
                 }
             }
         }, ContextMenuEvent.getType());
@@ -241,7 +242,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
                     updateMenuItem(newMenu, buttonDef);
                     menuBar.addItem(newMenu);
                 }
-            }else {
+            } else {
                 MenuItem item = new MenuItem(buttonDef.getTitle(), new Command() {
                     @Override
                     public void execute() {
