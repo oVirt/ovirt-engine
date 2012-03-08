@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -29,6 +30,8 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.ImageVmMapDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
@@ -216,6 +219,17 @@ public class SnapshotsManager {
             vm.setdedicated_vm_for_vds(oldVmStatic.getdedicated_vm_for_vds());
             vm.setiso_path(oldVmStatic.getiso_path());
             vm.setvds_group_id(oldVmStatic.getvds_group_id());
+            // The VM configuration does not hold the vds group Id.
+            // It is necessary to fetch the vm static from the Db, in order to get this information
+            VmStatic vmStaticFromDb = getVmStaticDao().get(vm.getId());
+            if (vmStaticFromDb != null) {
+                VDSGroup vdsGroup = getVdsGroupDao().get(vmStaticFromDb.getvds_group_id());
+                if (vdsGroup != null) {
+                    vm.setvds_group_compatibility_version(vdsGroup.getcompatibility_version());
+                    vm.setvds_group_name(vdsGroup.getname());
+                    vm.setvds_group_cpu_name(vdsGroup.getcpu_name());
+                }
+            }
             return true;
         } catch (OvfReaderException e) {
             log.errorFormat("Failed to update VM from the configuration: {0}).", configuration, e);
@@ -323,6 +337,10 @@ public class SnapshotsManager {
         return DbFacade.getInstance().getDiskDao();
     }
 
+    protected VmDAO getVmDao() {
+        return DbFacade.getInstance().getVmDAO();
+    }
+
     protected SnapshotDao getSnapshotDao() {
         return DbFacade.getInstance().getSnapshotDao();
     }
@@ -337,6 +355,10 @@ public class SnapshotsManager {
 
     protected DiskImageDAO getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDAO();
+    }
+
+    protected VdsGroupDAO getVdsGroupDao() {
+        return DbFacade.getInstance().getVdsGroupDAO();
     }
 
     protected VmTemplateDAO getVmTemplateDao() {
