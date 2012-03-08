@@ -1,10 +1,5 @@
 package org.ovirt.engine.core.common.action;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
@@ -12,63 +7,26 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.Serializable;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "RunVmParams")
 public class RunVmParams extends VmOperationParameterBase implements INotifyPropertyChanged, Serializable {
     private static final long serialVersionUID = 3311307677963231320L;
 
-    @XmlElement(name = "BootSequence", nillable = true)
     private BootSequence _bootSequence;
-
-    @XmlElement(name = "DiskPath")
     private String _diskPath;
-
-    @XmlElement(name = "KvmEnable")
     private boolean _kvmEnable;
-
-    @XmlElement(name = "RunAndPause")
     private boolean _runAndPause;
-
-    @XmlElement(name = "UseVnc", nillable = true)
     private Boolean _useVnc;
-
-    @XmlElement(name = "AcpiEnable")
     private boolean _acpiEnable;
-
-    @XmlElement(name = "Win2kHackEnable", nillable = true)
     private Boolean _win2kHackEnable;
-
-    @XmlElement(name = "CustomProperties", nillable = true)
     private String customProperties;
-
-    @XmlElement(name = "FloppyPath")
     private String privateFloppyPath;
-
-    @XmlElement(name = "ClientIp")
     private String privateClientIp;
-
-    @XmlElement(name = "RequestingUser")
     private VdcUser privateRequestingUser;
-
-    @XmlElement
     private boolean _internal;
-
-    @XmlElement(name = "DestinationVdsId", nillable = true)
     private Guid _destinationVdsId;
-
-    @XmlElement(name = "Reinitialize")
     private boolean privateReinitialize;
-
-    @XmlElement(name = "RunAsStateless", nillable = true)
     private Boolean privateRunAsStateless;
-
-    @XmlElement(name = "initrd_url", nillable = true)
     private String initrd_url;
-
-    @XmlElement(name = "kernel_url", nillable = true)
     private String kernel_url;
-
-    @XmlElement(name = "kernel_params", nillable = true)
     private String kernel_params;
 
     public RunVmParams() {
@@ -227,10 +185,6 @@ public class RunVmParams extends VmOperationParameterBase implements INotifyProp
     }
 
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {
-        // if (PropertyChanged != null)
-        // {
-        // PropertyChanged(this, e);
-        // }
     }
 
     public String getinitrd_url() {
@@ -264,5 +218,4 @@ public class RunVmParams extends VmOperationParameterBase implements INotifyProp
     public void setCustomProperties(String customProperties) {
         this.customProperties = customProperties;
     }
-
 }
