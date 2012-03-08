@@ -65,6 +65,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         net.setname(Config.<String> GetValue(ConfigValues.ManagementNetwork));
         net.setdescription(AddVdsGroupCommand.DefaultNetworkDescription);
         net.setstorage_pool_id(getStoragePool().getId());
+        net.setVmNetwork(true);
         DbFacade.getInstance().getNetworkDAO().save(net);
     }
 
