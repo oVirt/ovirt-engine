@@ -2,14 +2,18 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -23,6 +27,7 @@ public class MultipleActionsRunner {
     private VdcActionType _actionType = VdcActionType.Unknown;
     private List<VdcActionParametersBase> _parameters;
     private final ArrayList<CommandBase<?>> _commands = new ArrayList<CommandBase<?>>();
+    private final Map<Guid, Boolean> hasCorrelationIdMap = new HashMap<Guid, Boolean>();
     protected boolean isInternal;
 
     /**
@@ -56,11 +61,13 @@ public class MultipleActionsRunner {
             VdcReturnValueBase returnValue;
             for (VdcActionParametersBase parameter : getParameters()) {
                 parameter.setMultipleAction(true);
+                boolean hasCorrelationId = StringUtils.isNotEmpty(parameter.getCorrelationId());
                 returnValue = ExecutionHandler.evaluateCorrelationId(parameter);
                 if (returnValue == null) {
                     CommandBase<?> command = CommandsFactory.CreateCommand(_actionType, parameter);
                     command.setInternalExecution(isInternal);
                     getCommands().add(command);
+                    hasCorrelationIdMap.put(command.getCommandId(), hasCorrelationId);
                 } else {
                     returnValues.add(returnValue);
                 }
@@ -168,7 +175,8 @@ public class MultipleActionsRunner {
             if (executionContext == null || executionContext.isMonitored()) {
                 ExecutionHandler.prepareCommandForMonitoring(command,
                         command.getActionType(),
-                        command.isInternalExecution());
+                        command.isInternalExecution(),
+                        new Boolean(hasCorrelationIdMap.get(command.getCommandId())));
             }
             ThreadLocalParamsContainer.setCorrelationId(command.getCorrelationId());
             command.ExecuteAction();

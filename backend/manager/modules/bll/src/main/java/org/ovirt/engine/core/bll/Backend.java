@@ -19,6 +19,7 @@ import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.KeyValue;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -314,6 +315,8 @@ public class Backend implements BackendInternal, BackendRemote {
 
         default: {
             // Evaluate and set the correlationId on the parameters, fails on invalid correlation id
+            boolean hasCorrelationId =
+                    parameters == null ? false : StringUtils.isNotEmpty(parameters.getCorrelationId());
             returnValue = ExecutionHandler.evaluateCorrelationId(parameters);
             if (returnValue != null) {
                 return returnValue;
@@ -322,7 +325,7 @@ public class Backend implements BackendInternal, BackendRemote {
             CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
             command.setInternalExecution(runAsInternal);
             command.setContext(context);
-            ExecutionHandler.prepareCommandForMonitoring(command, actionType, runAsInternal);
+            ExecutionHandler.prepareCommandForMonitoring(command, actionType, runAsInternal, hasCorrelationId);
 
             returnValue = command.ExecuteAction();
             returnValue.setCorrelationId(parameters.getCorrelationId());
