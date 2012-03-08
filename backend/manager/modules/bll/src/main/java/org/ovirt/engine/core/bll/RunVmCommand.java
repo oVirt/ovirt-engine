@@ -237,7 +237,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             if (getVm().getstatus() == VMStatus.Paused) { // resume
                 ResumeVm();
             } else { // run vm
-                if (!_isRerun && Boolean.TRUE.equals(getParameters().getRunAsStateless()) && !getVm().getDiskList().isEmpty()
+                if (!_isRerun && Boolean.TRUE.equals(getParameters().getRunAsStateless())
+                        && !getVm().getDiskList().isEmpty()
                         && getVm().getstatus() != VMStatus.Suspended) {
                     StatelessVmTreatment();
                 } else if (!getParameters().getIsInternal() && !_isRerun
@@ -318,9 +319,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 if (vdcReturnValue.getCanDoActionMessages().contains(
                         VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED.name())) {
                     throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
-                } else {
-                    getReturnValue().setFault(vdcReturnValue.getFault());
                 }
+                getReturnValue().setFault(vdcReturnValue.getFault());
                 log.errorFormat("RunVmAsStateless - {0} - failed to create snapshots", getVm().getvm_name());
             }
         }
@@ -397,7 +397,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            if(isFailedStatlessSnapshot) {
+            if (isFailedStatlessSnapshot) {
                 return AuditLogType.USER_RUN_VM_FAILURE_STATELESS_SNAPSHOT_LEFT;
             }
             if (mResume) {
@@ -528,7 +528,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                                     }
                                 }))
                         && isoDomain.getstatus() == StorageDomainStatus.Active && StringHelper
-                        .isNullOrEmpty(_cdImagePath))) {
+                            .isNullOrEmpty(_cdImagePath))) {
 
             // get cluster version of the vm tools
             Version vmToolsClusterVersion = null;
@@ -574,7 +574,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                     && (vmToolsClusterVersion == null
                             || vmToolsClusterVersion.compareTo(bestClusterVer) < 0 || (Version
                             .OpEquality(vmToolsClusterVersion, bestClusterVer) && getVm().getHasAgent() &&
-                            getVm().getGuestAgentVersion().getBuild() < bestToolVer))) {
+                    getVm().getGuestAgentVersion().getBuild() < bestToolVer))) {
                 // Vm has no tools or there are new tools
                 selectedToolsVersion = (Integer.toString(bestToolVer));
                 selectedToolsClusterVersion = bestClusterVer.toString();
@@ -608,7 +608,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     }
 
     public static boolean CanRunVm(VM vm, ArrayList<String> message, RunVmParams runParams,
-                                   VdsSelector vdsSelector, SnapshotsValidator snapshotsValidator) {
+            VdsSelector vdsSelector, SnapshotsValidator snapshotsValidator) {
         boolean retValue = true;
 
         List<VmPropertiesUtils.ValidationError> validationErrors = null;
@@ -632,8 +632,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             List<DiskImage> vmImages = getPluggedImages(vm);
             if (boot_sequence == BootSequence.C && vmImages.size() == 0) {
                 String messageStr = !vmImages.isEmpty() ?
-                            VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_PLUGGED_DISK.toString() :
-                            VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK.toString();
+                        VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_PLUGGED_DISK.toString() :
+                        VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK.toString();
 
                 message.add(messageStr);
                 retValue = false;
@@ -682,17 +682,17 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                         }
                         // Check if iso and floppy path exists
                         if (retValue && !vm.getauto_startup()
-                                    && !validateIsoPath(findActiveISODomain(vm.getstorage_pool_id()),
-                                            runParams,
-                                            message)) {
+                                && !validateIsoPath(findActiveISODomain(vm.getstorage_pool_id()),
+                                        runParams,
+                                        message)) {
                             retValue = false;
                         } else if (retValue) {
                             boolean isVmDuringInit = ((Boolean) Backend
-                                        .getInstance()
-                                        .getResourceManager()
-                                        .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
-                                                new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
-                                        .getReturnValue()).booleanValue();
+                                    .getInstance()
+                                    .getResourceManager()
+                                    .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
+                                            new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
+                                    .getReturnValue()).booleanValue();
                             if (vm.isStatusUp() || (vm.getstatus() == VMStatus.NotResponding) || isVmDuringInit) {
                                 retValue = false;
                                 if (message != null) {
@@ -700,7 +700,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                                 }
                             } else if (vm.getstatus() == VMStatus.Paused && vm.getrun_on_vds() != null) {
                                 VDS vds = DbFacade.getInstance().getVdsDAO().get(
-                                            new Guid(vm.getrun_on_vds().toString()));
+                                        new Guid(vm.getrun_on_vds().toString()));
                                 if (vds.getstatus() != VDSStatus.Up) {
                                     retValue = false;
                                     if (message != null) {
@@ -729,8 +729,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                              * action
                              */
                             if (retValue
-                                        && !VdcActionUtils.CanExecute(Arrays.asList(vm), VM.class,
-                                                VdcActionType.RunVm)) {
+                                    && !VdcActionUtils.CanExecute(Arrays.asList(vm), VM.class,
+                                            VdcActionType.RunVm)) {
                                 message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
                                 retValue = false;
                             }
@@ -772,8 +772,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
     @SuppressWarnings("unchecked")
     protected static boolean validateIsoPath(Guid storageDomainId,
-                                             RunVmParams runParams,
-                                             java.util.ArrayList<String> messages) {
+            RunVmParams runParams,
+            ArrayList<String> messages) {
         if (!StringHelper.isNullOrEmpty(runParams.getDiskPath())) {
             if (storageDomainId == null) {
                 messages.add(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO.toString());
@@ -840,6 +840,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         return canDoAction;
     }
 
+    @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RUN);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
@@ -924,6 +925,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         return isoGuid;
     }
 
+    @Override
     protected void removeQuotaCommandLeftOver() {
         QuotaManager.removeVdsGroupDeltaQuotaCommand(getQuotaId(),
                 getVm().getvds_group_id(),
