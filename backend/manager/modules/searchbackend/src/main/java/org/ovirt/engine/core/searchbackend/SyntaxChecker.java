@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.searchbackend;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,12 +32,12 @@ public class SyntaxChecker implements ISyntaxChecker {
     private BaseAutoCompleter mOrAC;
     private BaseAutoCompleter mDotAC;
     private BaseAutoCompleter mSortDirectionAC;
-    private java.util.HashMap<SyntaxObjectType, SyntaxObjectType[]> mStateMap;
+    private Map<SyntaxObjectType, SyntaxObjectType[]> mStateMap;
 
     private Regex mFirstDQRegexp;
     private Regex mNonSpaceRegexp;
-    private java.util.ArrayList<Character> mDisAllowedChars;
-    private static SqlInjectionChecker sqlInjectionChecker;
+    private List<Character> mDisAllowedChars;
+    private final SqlInjectionChecker sqlInjectionChecker;
 
     public SyntaxChecker(int searchReasultsLimit, boolean hasDesktop) {
 
@@ -47,12 +50,12 @@ public class SyntaxChecker implements ISyntaxChecker {
         mAndAC = new BaseAutoCompleter("AND");
         mOrAC = new BaseAutoCompleter("OR");
         mDotAC = new BaseAutoCompleter(".");
-        mDisAllowedChars = new java.util.ArrayList<Character>(java.util.Arrays.asList(new Character[] { '\'', ';' }));
+        mDisAllowedChars = Arrays.asList(new Character[] { '\'', ';' });
 
         mFirstDQRegexp = new Regex("^\\s*\"$");
         mNonSpaceRegexp = new Regex("^\\S+$");
 
-        mStateMap = new java.util.HashMap<SyntaxObjectType, SyntaxObjectType[]>();
+        mStateMap = new HashMap<SyntaxObjectType, SyntaxObjectType[]>();
         mStateMap.put(SyntaxObjectType.BEGIN, new SyntaxObjectType[] { SyntaxObjectType.SEARCH_OBJECT });
         mStateMap.put(SyntaxObjectType.SEARCH_OBJECT, new SyntaxObjectType[] { SyntaxObjectType.COLON });
         SyntaxObjectType[] afterColon =
@@ -84,11 +87,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         mStateMap.put(SyntaxObjectType.PAGE, new SyntaxObjectType[] { SyntaxObjectType.PAGE_VALUE });
         mStateMap.put(SyntaxObjectType.PAGE_VALUE, new SyntaxObjectType[] { SyntaxObjectType.END });
         // get sql injection checker for active database engine.
-        try {
-            sqlInjectionChecker = getSqlInjectionChecker();
-        } catch (Exception e) {
-            log.error("Failed to load Sql Injection Checker. " + e.getMessage());
-        }
+        sqlInjectionChecker = getSqlInjectionChecker();
     }
 
     private enum ValueParseResult {
@@ -166,7 +165,7 @@ public class SyntaxChecker implements ISyntaxChecker {
      * @return SqlInjectionChecker
      * @throws Exception
      */
-    private SqlInjectionChecker getSqlInjectionChecker() throws Exception {
+    private SqlInjectionChecker getSqlInjectionChecker() {
         // This can not be done with reflection like:
         //    return (SqlInjectionChecker) Class.forName(props.getProperty(SQL_INJECTION)).newInstance();
         // GWT lacks support of reflection.
@@ -672,8 +671,8 @@ public class SyntaxChecker implements ISyntaxChecker {
     }
 
     private String generateFromStatement(SyntaxContainer syntax) {
-        java.util.LinkedList<String> innerJoins = new java.util.LinkedList<String>();
-        java.util.ArrayList<String> refObjList = syntax.getCrossRefObjList();
+        LinkedList<String> innerJoins = new LinkedList<String>();
+        List<String> refObjList = syntax.getCrossRefObjList();
         String searchObjStr = syntax.getSearchObjectStr();
         if (refObjList.size() > 0) {
             if (StringHelper.EqOp(searchObjStr, SearchObjects.TEMPLATE_OBJ_NAME)) {
@@ -815,7 +814,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 boolean found = true;
                 while (found) {
                     found = false;
-                    java.util.ListIterator<String> iter = whereBuilder.listIterator(0);
+                    ListIterator<String> iter = whereBuilder.listIterator(0);
                     while (iter.hasNext()) {
                         String queryPart = iter.next();
                         if (StringHelper.EqOp(queryPart, lookFor[idx])) {
@@ -834,7 +833,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             StringBuilder wherePhrase = new StringBuilder();
             if (whereBuilder.size() > 0) {
                 wherePhrase.append(" WHERE ");
-                java.util.ListIterator<String> iter = whereBuilder.listIterator(0);
+                ListIterator<String> iter = whereBuilder.listIterator(0);
                 while (iter.hasNext()) {
                     String queryPart = iter.next();
                     wherePhrase.append(queryPart);
@@ -925,7 +924,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         ConditionwithSpesificObj;
     }
 
-    private String generateConditionStatment(SyntaxObject obj, java.util.ListIterator<SyntaxObject> objIter,
+    private String generateConditionStatment(SyntaxObject obj, ListIterator<SyntaxObject> objIter,
             String searchObjStr, boolean caseSensitive, boolean issafe) {
         IConditionFieldAutoCompleter conditionFieldAC;
         IConditionValueAutoCompleter conditionValueAC = null;
