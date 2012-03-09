@@ -44,8 +44,8 @@ public class ListUtils {
         @Override
         public List<T> filter(final List<T> data) {
             final ArrayList<T> ret = new ArrayList<T>();
-            for(final T obj : data) {
-                if(predicate.evaluate(obj)) {
+            for (final T obj : data) {
+                if (predicate.evaluate(obj)) {
                     ret.add(obj);
                 }
             }
@@ -61,10 +61,16 @@ public class ListUtils {
      * @return the filtered list or null if the original list was null
      */
     public static <T> List<T> filter(final List<T> list, final Filter<T> filter) {
-        if(list == null ) {
+        if (list == null) {
             return null;
         } else {
             return filter == null ? list : filter.filter(list);
+        }
+    }
+
+    public static <T> void nullSafeAdd(List<T> list, T elem) {
+        if (list != null) {
+            list.add(elem);
         }
     }
 

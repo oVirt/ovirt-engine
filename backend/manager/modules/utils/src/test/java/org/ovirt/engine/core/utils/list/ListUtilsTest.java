@@ -39,4 +39,17 @@ public class ListUtilsTest {
         Assert.assertEquals("only one element should match the criteria", 1l, filtered.size());
         Assert.assertEquals("and it should be 'bla'", "bla", filtered.get(0));
     }
+
+    @Test
+    public void nullSafeAdd() {
+        ListUtils.nullSafeAdd(null, "foo");
+        ListUtils.nullSafeAdd(null, new Object());
+        ListUtils.nullSafeAdd(null, 1l);
+
+        final ArrayList<String> list = new ArrayList<String>();
+        ListUtils.nullSafeAdd(list, "foo");
+        Assert.assertEquals(1, list.size());
+        Assert.assertTrue(list.contains("foo"));
+    }
+
 }

@@ -42,6 +42,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.list.ListUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -439,9 +440,7 @@ public final class ImagesHandler {
                         .getReturnValue()).booleanValue();
         if (checkIsValid && !isValid) {
             returnValue = false;
-            if (messages != null) {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND.toString());
-            }
+            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND.toString());
         }
 
         if (returnValue && checkImagesLocked) {
@@ -456,26 +455,17 @@ public final class ImagesHandler {
                     }
                 }
             }
-            if (!returnValue && messages != null) {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED.toString());
+            if (!returnValue) {
+                ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED.toString());
             }
         } else if (returnValue && checkVmIsDown && vm.getstatus() != VMStatus.Down) {
             returnValue = false;
-            if (messages != null) {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.toString());
-            }
+            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.toString());
         } else if (returnValue && checkVmInPreview && isVmInPreview(vm.getId())) {
             returnValue = false;
-            if (messages != null) {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString());
-            }
+            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString());
         } else if (returnValue && isValid) {
-            List<DiskImage> images;
-            if (diskImageList == null) {
-                images = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
-            } else {
-                images = (List<DiskImage>) diskImageList;
-            }
+            final List<DiskImage> images = getImages(vm, diskImageList);
             if (images.size() > 0) {
                 returnValue = returnValue &&
                         checkDiskImages(messages,
@@ -489,12 +479,18 @@ public final class ImagesHandler {
                                 images);
             } else if (checkImagesExist) {
                 returnValue = false;
-                if (messages != null) {
-                    messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS.toString());
-                }
+                ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS.toString());
             }
         }
         return returnValue;
+    }
+
+    private static List<DiskImage> getImages(VM vm, Collection<DiskImage> diskImageList) {
+        if (diskImageList == null) {
+            return DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
+        } else {
+            return (List<DiskImage>) diskImageList;
+        }
     }
 
     private static boolean checkDiskImages(List<String> messages,
@@ -516,9 +512,7 @@ public final class ImagesHandler {
             irsImages = tempRefObject.argvalue;
             if (!isImagesExist) {
                 returnValue = false;
-                if (messages != null) {
-                    messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST.toString());
-                }
+                ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST.toString());
             }
         }
         if (returnValue && checkImagesIllegal) {
@@ -543,9 +537,7 @@ public final class ImagesHandler {
                 }
                 if (diskSpaceCheck && returnValue && !StorageDomainSpaceChecker.isBelowThresholds(domain)) {
                     returnValue = false;
-                    if (messages != null) {
-                        messages.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
-                    }
+                    ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
                     break;
                 }
             }
@@ -558,9 +550,7 @@ public final class ImagesHandler {
         boolean returnValue = true;
         if (vm.getstatus() == VMStatus.ImageIllegal) {
             returnValue = false;
-            if (messages != null) {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL.toString());
-            }
+            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL.toString());
         } else {
             int i = 0;
             for (DiskImage diskImage : images) {
@@ -570,10 +560,7 @@ public final class ImagesHandler {
                         diskImage.setimageStatus(image.getimageStatus());
                         DbFacade.getInstance().getDiskImageDAO().update(diskImage);
                         returnValue = false;
-                        if (messages != null) {
-                            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL.toString());
-                        }
-
+                        ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL.toString());
                         break;
                     }
                 }
