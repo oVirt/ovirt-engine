@@ -1,10 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -21,6 +25,10 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 @SuppressWarnings("unused")
 public class PoolItemBehavior extends ItemBehavior
 {
+
+    // this has to be static because in every request a new instance of this class is created
+    private static Map<Guid, VmOsType> poolToOsType = new HashMap<Guid, VmOsType>();
+
     public PoolItemBehavior(UserPortalItemModel item)
     {
         super(item);
@@ -99,6 +107,9 @@ public class PoolItemBehavior extends ItemBehavior
         getItem().setStatus(VMStatus.Down);
         getItem().setIsFromPool(false);
         getItem().setPoolType(entity.getvm_pool_type());
+        if (poolToOsType.containsKey(entity.getvm_pool_id())) {
+            getItem().setOsType(poolToOsType.get(entity.getvm_pool_id()));
+        }
 
         AsyncDataProvider.GetAnyVm(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -111,6 +122,7 @@ public class PoolItemBehavior extends ItemBehavior
                         {
                             UserPortalItemModel model = behavior.getItem();
                             model.setOsType(vm.getvm_os());
+                            poolToOsType.put(((vm_pools) model.getEntity()).getvm_pool_id(), vm.getvm_os());
                         }
 
                     }
