@@ -36,7 +36,7 @@ public class DirectorySearcher {
     }
 
     public Object FindOne(LdapQueryData ldapQueryData) {
-        List<Object> userObjects = find(ldapQueryData, 1);
+        List<?> userObjects = find(ldapQueryData, 1);
 
         if (userObjects == null || userObjects.size() == 0) {
             return null;
@@ -44,8 +44,8 @@ public class DirectorySearcher {
         return userObjects.get(0);
     }
 
-    public List FindAll(LdapQueryData ldapQueryData) {
-        List returnValue = find(ldapQueryData, 0);
+    public List<?> FindAll(LdapQueryData ldapQueryData) {
+        List<?> returnValue = find(ldapQueryData, 0);
 
         if (returnValue == null) {
             returnValue = Collections.EMPTY_LIST;
@@ -62,7 +62,7 @@ public class DirectorySearcher {
         return domainObject;
     }
 
-    public List find(final LdapQueryData queryData, final long resultCount) {
+    public List<?> find(final LdapQueryData queryData, final long resultCount) {
 
         final String domainName = queryData.getDomain();
 
@@ -76,7 +76,7 @@ public class DirectorySearcher {
         if (log.isDebugEnabled()) {
             log.debug("Ldap server list ordered by highest score: " + StringUtils.join(ldapServerURIs, ", "));
         }
-        List response = null;
+        List<?> response = null;
 
         for (Iterator<URI> iterator = ldapServerURIs.iterator(); iterator.hasNext();) {
             URI ldapURI = iterator.next();
