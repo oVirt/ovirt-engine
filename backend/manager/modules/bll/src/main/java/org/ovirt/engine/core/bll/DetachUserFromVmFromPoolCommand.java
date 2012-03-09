@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
 
 public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameters> extends
         VmPoolSimpleUserCommandBase<T> {
@@ -66,10 +65,6 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
                     new VmOperationParameterBase(vm.getId()),
                     new CommandContext(getCompensationContext()));
         }
-    }
-
-    private DiskImageDAO getDiskImageDAO() {
-        return DbFacade.getInstance().getDiskImageDAO();
     }
 
     @Override
