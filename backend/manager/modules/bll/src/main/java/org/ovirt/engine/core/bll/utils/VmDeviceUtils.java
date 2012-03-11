@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.utils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -111,11 +113,18 @@ public class VmDeviceUtils {
 
     /**
      * adds managed device to vm_device
+     *
      * @param id
      * @param type
      * @param device
+     * @return New created VmDevice instance
      */
-    public static void addManagedDevice(VmDeviceId id, VmDeviceType type, VmDeviceType device, String specParams, boolean is_plugged, boolean isReadOnly) {
+    public static VmDevice addManagedDevice(VmDeviceId id,
+            VmDeviceType type,
+            VmDeviceType device,
+            String specParams,
+            boolean is_plugged,
+            boolean isReadOnly) {
         VmDevice managedDevice =
             new VmDevice(id,
                         type.getName(),
@@ -127,6 +136,7 @@ public class VmDeviceUtils {
                     is_plugged,
                     isReadOnly);
         dao.save(managedDevice);
+        return managedDevice;
     }
 
     /**
@@ -134,10 +144,13 @@ public class VmDeviceUtils {
      * @param entity
      * @param id
      */
-    public static <T extends VmBase> void addImportedDevices(T entity, Guid id) {
-        addImportedDisks(entity);
-        addImportedInterfaces(entity);
-        updateVmDevices(entity, id);
+    public static <T extends VmBase> void addImportedDevices(T entity, Guid id, List<VmDevice> vmDeviceToAdd, List<VmDevice> vmDeviceToUpdate) {
+        VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDAO();
+        addImportedDisks(entity, vmDeviceToUpdate);
+        addImportedInterfaces(entity, vmDeviceToUpdate);
+        addOtherDevices(entity, vmDeviceToAdd);
+        dao.saveAll(vmDeviceToAdd);
+        dao.updateAll(vmDeviceToUpdate);
     }
 
     /**
@@ -157,6 +170,18 @@ public class VmDeviceUtils {
         sb.append("deviceId=");
         sb.append(deviceId);
         return sb.toString();
+    }
+
+    public static void setVmDevices(VmBase vmBase) {
+        Map<Guid, VmDevice> vmManagedDeviceMap = new HashMap<Guid, VmDevice>();
+        List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmId(vmBase.getId());
+        vmBase.setUnmanagedDeviceList(DbFacade.getInstance().getVmDeviceDAO().getUnmanagedDevicesByVmId(vmBase.getId()));
+        for (VmDevice device : devices) {
+            if (device.getIsManaged()) {
+                vmManagedDeviceMap.put(device.getDeviceId(), device);
+            }
+        }
+        vmBase.setManagedDeviceMap(vmManagedDeviceMap);
     }
 
     /**
@@ -431,7 +456,7 @@ public class VmDeviceUtils {
      * Adds imported disks to VM devices
      * @param entity
      */
-    private static <T extends VmBase> void addImportedDisks(T entity) {
+    private static <T extends VmBase> void addImportedDisks(T entity, List<VmDevice> vmDeviceToUpdate) {
         final Guid id = entity.getId();
         List<DiskImage> disks;
         if (entity instanceof VmTemplate) {
@@ -442,7 +467,25 @@ public class VmDeviceUtils {
         for (DiskImage disk : disks) {
             Guid deviceId = disk.getDisk().getId();
             String specParams = appendDeviceIdToSpecParams(deviceId, "");
-            addManagedDevice(new VmDeviceId(deviceId,id) , VmDeviceType.DISK, VmDeviceType.DISK, specParams, true, false);
+            VmDevice vmDevice =
+                    addManagedDevice(new VmDeviceId(deviceId, id),
+                            VmDeviceType.DISK,
+                            VmDeviceType.DISK,
+                            specParams,
+                            true,
+                            false);
+            updateVmDevice(entity, vmDevice, deviceId, vmDeviceToUpdate);
+        }
+    }
+
+    private static <T extends VmBase> void updateVmDevice(T entity, VmDevice vmDevice, Guid deviceId, List<VmDevice> vmDeviceToUpdate) {
+        VmDevice exportedDevice = entity.getManagedVmDeviceMap().get(deviceId);
+        if (exportedDevice != null) {
+            vmDevice.setAddress(exportedDevice.getAddress());
+            vmDevice.setBootOrder(exportedDevice.getBootOrder());
+            vmDevice.setIsPlugged(exportedDevice.getIsPlugged());
+            vmDevice.setIsReadOnly(exportedDevice.getIsReadOnly());
+            vmDeviceToUpdate.add(vmDevice);
         }
     }
 
@@ -450,12 +493,44 @@ public class VmDeviceUtils {
      * Adds imported interfaces to VM devices
      * @param entity
      */
-    private static <T extends VmBase> void addImportedInterfaces(T entity) {
+    private static <T extends VmBase> void addImportedInterfaces(T entity, List<VmDevice> vmDeviceToUpdate) {
         final Guid id = entity.getId();
         for (VmNetworkInterface iface : entity.getInterfaces()) {
             Guid deviceId = iface.getId();
             String specParams = appendDeviceIdToSpecParams(deviceId, "");
-            addManagedDevice(new VmDeviceId(deviceId,id) , VmDeviceType.INTERFACE, VmDeviceType.BRIDGE, specParams, true, false);
+            VmDevice vmDevice =
+                    addManagedDevice(new VmDeviceId(deviceId, id),
+                            VmDeviceType.INTERFACE,
+                            VmDeviceType.BRIDGE,
+                            specParams,
+                            true,
+                            false);
+            updateVmDevice(entity, vmDevice, deviceId, vmDeviceToUpdate);
+        }
+    }
+
+    /**
+     * Adds Special managed devices (monitor/CDROM ) and unmanaged devices
+     *
+     * @param <T>
+     * @param entity
+     */
+    private static <T extends VmBase> void addOtherDevices(T entity, List<VmDevice> vmDeviceToAdd) {
+        String memExpr = getMemExpr(entity.getnum_of_monitors());
+        for (VmDevice vmDevice : entity.getManagedVmDeviceMap().values()) {
+            if ((vmDevice.getDevice().equals(VmDeviceType.DISK.getName()) && vmDevice.getType().equals(VmDeviceType.DISK.getName())) ||
+                    (vmDevice.getDevice().equals(VmDeviceType.BRIDGE.getName())
+                    && vmDevice.getType().equals(VmDeviceType.INTERFACE.getName()))) {
+                continue; // skip disks/interfaces that were added separately.
+            }
+            vmDevice.setIsManaged(true);
+            if (vmDevice.getType().equals(VmDeviceType.VIDEO.getName())) {
+                vmDevice.setSpecParams(memExpr);
+            }
+            vmDeviceToAdd.add(vmDevice);
+        }
+        for (VmDevice vmDevice : entity.getUnmanagedDeviceList()) {
+            vmDeviceToAdd.add(vmDevice);
         }
     }
 
