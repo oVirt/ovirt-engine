@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
@@ -274,7 +275,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         });
 
         MoveOrCopyAllImageGroups(getVmTemplateId(), getParameters().getImages());
-        VmDeviceUtils.addImportedDevices(getVmTemplate(), getVmTemplate().getId());
+        VmDeviceUtils.addImportedDevices(getVmTemplate(), getVmTemplate().getId(),new ArrayList<VmDevice>(), new ArrayList<VmDevice>());
         setSucceeded(true);
     }
 
@@ -347,14 +348,15 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
     protected void AddVmInterfaces() {
         List<VmNetworkInterface> interfaces = getVmTemplate().getInterfaces();
         for (VmNetworkInterface iface : interfaces) {
-            Guid newId = Guid.NewGuid();
-            iface.setId(newId);
+            if (iface.getId() == null) {
+                iface.setId(Guid.NewGuid());
+            }
             iface.setVmId(getVmTemplateId());
             VmNetworkInterface iDynamic = new VmNetworkInterface();
             VmNetworkStatistics iStat = new VmNetworkStatistics();
             iDynamic.setStatistics(iStat);
-            iDynamic.setId(newId);
-            iStat.setId(newId);
+            iDynamic.setId(iface.getId());
+            iStat.setId(iface.getId());
             iDynamic.setVmTemplateId(getVmTemplateId());
             iDynamic.setName(iface.getName());
             iDynamic.setNetworkName(iface.getNetworkName());
