@@ -2,7 +2,9 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Enumerated;
@@ -33,6 +35,8 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     private ArrayList<DiskImage> images;
     private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
     private List<VmNetworkInterface> interfaces;
+    private Map<Guid, VmDevice> vmManagedDeviceMap = new HashMap<Guid, VmDevice>();
+    private List<VmDevice> vmUnManagedDeviceList = new ArrayList<VmDevice>();
 
     @Id
     @GeneratedValue(generator = "system-uuid")
@@ -225,6 +229,22 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
 
     public ArrayList<DiskImage> getDiskList() {
         return diskList;
+    }
+
+    public Map<Guid, VmDevice> getManagedVmDeviceMap() {
+        return vmManagedDeviceMap;
+    }
+
+    public void setManagedDeviceMap(Map<Guid, VmDevice> map) {
+        this.vmManagedDeviceMap = map;
+    }
+
+    public List<VmDevice> getUnmanagedDeviceList() {
+        return vmUnManagedDeviceList;
+    }
+
+    public void setUnmanagedDeviceList(List<VmDevice> list) {
+        this.vmUnManagedDeviceList = list;
     }
 
     @XmlElement(name = "Id")

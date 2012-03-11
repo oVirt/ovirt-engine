@@ -1631,4 +1631,32 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return mVmStatic.getDiskList();
     }
 
+    public Map<Guid, VmDevice> getManagedVmDeviceMap() {
+        if (mVmStatic == null) {
+            mVmStatic = new VmStatic();
+        }
+        return mVmStatic.getManagedVmDeviceMap();
+    }
+
+    public void setManagedDeviceMap(Map<Guid, VmDevice> map) {
+        if (mVmStatic == null) {
+            mVmStatic = new VmStatic();
+        }
+        mVmStatic.setManagedDeviceMap(map);
+    }
+
+    public List<VmDevice> getVmUnamagedDeviceList() {
+        if (mVmStatic == null) {
+            mVmStatic = new VmStatic();
+        }
+        return mVmStatic.getUnmanagedDeviceList();
+    }
+
+    public void setUnmanagedDeviceList(List<VmDevice> list) {
+        if (mVmStatic == null) {
+            mVmStatic = new VmStatic();
+        }
+        mVmStatic.setUnmanagedDeviceList(list);
+    }
+
 }
