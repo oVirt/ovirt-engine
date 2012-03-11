@@ -91,7 +91,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 public final class AsyncDataProvider {
 
     // dictionary to hold cache of all config values (per version) queried by client, if the request for them succeeded.
-    private static java.util.HashMap<java.util.Map.Entry<ConfigurationValues, String>, Object> CachedConfigValues =
+    private static java.util.HashMap<java.util.Map.Entry<ConfigurationValues, String>, Object> cachedConfigValues =
             new java.util.HashMap<java.util.Map.Entry<ConfigurationValues, String>, Object>();
 
     public static void GetDomainListViaPublic(AsyncQuery aQuery, boolean filterInternalDomain) {
@@ -1784,6 +1784,16 @@ public final class AsyncDataProvider {
     }
 
     /**
+     * Get the Management Network Name
+     *
+     * @param aQuery
+     *            result callback
+     */
+    public static void GetManagementNetworkName(AsyncQuery aQuery) {
+        GetConfigFromCache(ConfigurationValues.ManagementNetwork, aQuery);
+    }
+
+    /**
      * method to get an item from config while caching it (config is not supposed to change during a session)
      *
      * @param aQuery
@@ -1799,9 +1809,9 @@ public final class AsyncDataProvider {
                 new KeyValuePairCompat<ConfigurationValues, String>(parameters.getConfigValue(),
                         parameters.getVersion());
 
-        if (CachedConfigValues.containsKey(config_key)) {
+        if (cachedConfigValues.containsKey(config_key)) {
             // Cache hit
-            Object cached = CachedConfigValues.get(config_key);
+            Object cached = cachedConfigValues.get(config_key);
             // return result
             if (cached != null) {
                 aQuery.asyncCallback.OnSuccess(aQuery.getModel(), cached);
@@ -1822,7 +1832,7 @@ public final class AsyncDataProvider {
                     returnValue = origConverter.Convert(returnValue, asyncQuery);
                 }
                 if (returnValue != null) {
-                    CachedConfigValues.put(config_key, returnValue);
+                    cachedConfigValues.put(config_key, returnValue);
                 }
                 return returnValue;
             }
@@ -1850,5 +1860,9 @@ public final class AsyncDataProvider {
                 QuotaEnforcmentTypeEnum.DISABLED,
                 QuotaEnforcmentTypeEnum.SOFT_ENFORCEMENT,
                 QuotaEnforcmentTypeEnum.HARD_ENFORCEMENT }));
+    }
+
+    public static void clearCache() {
+        cachedConfigValues.clear();
     }
 }

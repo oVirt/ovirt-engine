@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 
 import com.google.gwt.event.shared.EventBus;
@@ -36,6 +37,7 @@ public class ApplicationInit extends BaseApplicationInit {
     @Override
     public void onLogout() {
         CommonModelManager.instance().SignOut();
+        AsyncDataProvider.clearCache();
     }
 
     @Override

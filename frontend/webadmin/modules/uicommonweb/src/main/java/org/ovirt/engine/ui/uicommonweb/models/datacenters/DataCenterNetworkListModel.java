@@ -35,7 +35,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 @SuppressWarnings("unused")
 public class DataCenterNetworkListModel extends SearchableListModel implements IFrontendMultipleQueryAsyncCallback
 {
-    private static final String ENGINE_NETWORK = "engine";
+    private static String ENGINE_NETWORK;
 
     private UICommand privateNewCommand;
 
@@ -110,6 +110,15 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
 
     public DataCenterNetworkListModel()
     {
+        // get management network name
+        AsyncDataProvider.GetManagementNetworkName(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+                ENGINE_NETWORK = (String) returnValue;
+                UpdateActionAvailability();
+            }
+        }));
+
         setTitle("Logical Networks");
 
         setNewCommand(new UICommand("New", this));
