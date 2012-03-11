@@ -55,6 +55,7 @@ public interface VmsResource {
 
     @DELETE
     @Path("{id}")
+    @RsdlIgnore //TODO:remove this annotation once we have support for signatures with different Parameter-Type in the Body.
     public Response remove(@PathParam("id") String id);
 
     @DELETE

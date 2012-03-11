@@ -52,6 +52,7 @@ import org.ovirt.engine.api.model.Response;
 import org.ovirt.engine.api.model.Schema;
 import org.ovirt.engine.api.model.Url;
 import org.ovirt.engine.api.resource.CreationResource;
+import org.ovirt.engine.api.resource.RsdlIgnore;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -493,6 +494,9 @@ public class RsdlBuilder {
 
 
     private boolean isRequiresDescription(Method m) {
+        if (m.isAnnotationPresent(RsdlIgnore.class)) {
+            return false;
+        }
         boolean pathRelevant = !(m.isAnnotationPresent(Path.class) && m.getAnnotation(Path.class).value().contains(":"));
         boolean returnValueRelevant = !m.getReturnType().equals(CreationResource.class);
         return pathRelevant && returnValueRelevant;
