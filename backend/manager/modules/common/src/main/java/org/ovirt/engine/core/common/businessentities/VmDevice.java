@@ -47,7 +47,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     /**
      * The device special parameters.
      */
-    private String specParams;
+    private String specParams = "";
 
     /**
      * The device managed/unmanaged flag
