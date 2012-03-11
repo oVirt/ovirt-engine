@@ -494,7 +494,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            the type of the object to check
      * @return <code>true</code> if the current user is authorized to run the action, <code>false</code> otherwise
      */
-    protected boolean checkUserAuthorization(final ActionGroup actionGroup, final Guid object, final VdcObjectType type) {
+    private boolean checkUserAuthorization(final ActionGroup actionGroup, final Guid object, final VdcObjectType type) {
         // Grant if there is matching permission in the database:
         final NGuid permId =
                 DbFacade.getInstance().getEntityPermissions(getCurrentUser().getUserId(), actionGroup, object, type);
