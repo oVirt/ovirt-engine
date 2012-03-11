@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -45,7 +44,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     @Override
     protected boolean canDoAction() {
         boolean retValue = isVmExist();
-        if(retValue) {
+        if (retValue) {
             _oldDisk = getDiskImageDao().get(getParameters().getImageId());
             if (_oldDisk == null || !_oldDisk.getactive() || !getVmId().equals(_oldDisk.getvm_guid())) {
                 retValue = false;
@@ -65,10 +64,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
         }
         return retValue;
-    }
-
-    protected DiskImageDAO getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDAO();
     }
 
     private boolean checkCanPerformRegularUpdate() {
@@ -112,8 +107,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private boolean checkCanPerformPlugUnPlugDisk() {
-        boolean returnValue = isHotPlugEnabled() && isOsSupported(getVm()) && isInterfaceSupportedForPlug(_oldDisk);
-         if (returnValue && oldVmDevice.getIsPlugged().equals(getParameters().getDiskInfo().getPlugged())) {
+        boolean returnValue = isHotPlugEnabled() && isOsSupportingPluggableDisks(getVm()) && isInterfaceSupportedForPlug(_oldDisk);
+        if (returnValue && oldVmDevice.getIsPlugged().equals(getParameters().getDiskInfo().getPlugged())) {
             if (oldVmDevice.getIsPlugged()) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);

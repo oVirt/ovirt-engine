@@ -20,7 +20,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.ImageVmMapDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.utils.linq.Function;
@@ -153,7 +152,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
      * @param vm
      * @return
      */
-    protected boolean isOsSupported(VM vm) {
+    protected boolean isOsSupportingPluggableDisks(VM vm) {
         for (String os : oses) {
             if (os.equalsIgnoreCase(vm.getguest_os())) {
                 return true;
@@ -180,10 +179,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
 
     protected DiskImageDAO getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDAO();
-    }
-
-    protected ImageVmMapDAO getImageVmDao() {
-        return DbFacade.getInstance().getImageVmMapDAO();
     }
 
     protected VmDeviceDAO getVmDeviceDao() {

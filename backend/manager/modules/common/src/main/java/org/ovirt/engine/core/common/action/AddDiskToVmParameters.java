@@ -5,8 +5,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class AddDiskToVmParameters extends VmDiskOperatinParameterBase {
     private static final long serialVersionUID = -7832310521101821905L;
-    private Guid privateVmSnapshotId = Guid.Empty;
-    private Guid privateStorageDomainId = Guid.Empty;
+    private Guid vmSnapshotId = Guid.Empty;
+    private Guid storageDomainId = Guid.Empty;
 
     public AddDiskToVmParameters() {
     }
@@ -16,18 +16,18 @@ public class AddDiskToVmParameters extends VmDiskOperatinParameterBase {
     }
 
     public Guid getStorageDomainId() {
-        return privateStorageDomainId;
+        return storageDomainId;
     }
 
     public void setStorageDomainId(Guid value) {
-        privateStorageDomainId = value;
+        storageDomainId = value;
     }
 
     public Guid getVmSnapshotId() {
-        return privateVmSnapshotId;
+        return vmSnapshotId;
     }
 
     public void setVmSnapshotId(Guid value) {
-        privateVmSnapshotId = value;
+        vmSnapshotId = value;
     }
 }
