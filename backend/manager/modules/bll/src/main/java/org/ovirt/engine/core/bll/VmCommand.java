@@ -445,21 +445,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return nameLengthValid;
     }
     /**
-     * The following method should check if os of guest is supported for hot plug/unplug operation
-     * @param vm
-     * @return
-     */
-    protected boolean isOsSupported(VM vm) {
-        String[] oses = Config.<String> GetValue(ConfigValues.HotPlugSupportedOsList).split(",");
-        for (String os : oses) {
-            if (os.equalsIgnoreCase(vm.getguest_os())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Lock the VM.<br>
      * If the command is run internally then compensation won't be used, since it might cause a deadlock if the calling
      * command has already updated the VM's row in the DB but hasn't committed before calling the child command.<br>

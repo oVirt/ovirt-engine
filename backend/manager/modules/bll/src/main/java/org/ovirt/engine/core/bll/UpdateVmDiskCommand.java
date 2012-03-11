@@ -6,27 +6,22 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
-import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
-public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCommand<T> {
+public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends AbstractDiskVmCommand<T> {
 
     private static final long serialVersionUID = 5915267156998835363L;
 
@@ -43,17 +38,14 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
         if (plugAction == null) {
             performRegularDiskUpdate();
         } else {
-            performPlugCommnad(plugAction);
+            performPlugCommnad(plugAction, _oldDisk, oldVmDevice, true);
         }
     }
 
     @Override
     protected boolean canDoAction() {
-        boolean retValue = true;
-        if (getVm() == null) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
-        } else {
+        boolean retValue = isVmExist();
+        if(retValue) {
             _oldDisk = getDiskImageDao().get(getParameters().getImageId());
             if (_oldDisk == null || !_oldDisk.getactive() || !getVmId().equals(_oldDisk.getvm_guid())) {
                 retValue = false;
@@ -120,18 +112,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
     }
 
     private boolean checkCanPerformPlugUnPlugDisk() {
-        boolean returnValue = true;
-        if (!Config.<Boolean> GetValue(ConfigValues.HotPlugEnabled,
-                getVds().getvds_group_compatibility_version().getValue())) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_SUPPORTED);
-        } else if (!isOsSupported(getVm())) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
-        } else if (!DiskInterface.VirtIO.equals(_oldDisk.getdisk_interface())) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_VIRTIO);
-        } else if (oldVmDevice.getIsPlugged().equals(getParameters().getDiskInfo().getPlugged())) {
+        boolean returnValue = isHotPlugEnabled() && isOsSupported(getVm()) && isInterfaceSupportedForPlug(_oldDisk);
+         if (returnValue && oldVmDevice.getIsPlugged().equals(getParameters().getDiskInfo().getPlugged())) {
             if (oldVmDevice.getIsPlugged()) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
@@ -144,10 +126,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
             plugAction = oldVmDevice.getIsPlugged() ? VDSCommandType.HotUnPlugDisk : VDSCommandType.HotPlugDisk;
         }
         return returnValue;
-    }
-
-    protected VmDeviceDAO getVmDeviceDao() {
-        return DbFacade.getInstance().getVmDeviceDAO();
     }
 
     private void performRegularDiskUpdate() {
@@ -170,21 +148,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
                 return null;
             }
         });
-    }
-
-    private void performPlugCommnad(VDSCommandType commandType) {
-        Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
-                        commandType,
-                        new HotPlugDiskVDSParameters(getVm().getrun_on_vds().getValue(),
-                                getVm().getId(),
-                                _oldDisk,
-                                oldVmDevice));
-        oldVmDevice.setIsPlugged(!oldVmDevice.getIsPlugged());
-        getVmDeviceDao().update(oldVmDevice);
-        setSucceeded(true);
     }
 
     @Override

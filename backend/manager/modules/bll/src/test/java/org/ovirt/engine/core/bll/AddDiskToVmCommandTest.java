@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.config.Config;
@@ -91,8 +92,8 @@ public class AddDiskToVmCommandTest {
         MockitoAnnotations.initMocks(this);
         mockStatic(VmHandler.class);
         mockStatic(ImagesHandler.class);
-        when(ImagesHandler.CheckImagesConfiguration(
-                any(Guid.class), any(ArrayList.class), any(ArrayList.class))).thenReturn(true);
+        when(ImagesHandler.CheckImageConfiguration(
+                any(storage_domain_static.class), any(DiskImageBase.class), any(ArrayList.class))).thenReturn(true);
         when(ImagesHandler.PerformImagesChecks(
                 any(VM.class),
                 any(ArrayList.class),

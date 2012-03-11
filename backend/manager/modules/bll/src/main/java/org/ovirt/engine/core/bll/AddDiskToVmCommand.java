@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,12 +12,9 @@ import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
@@ -26,7 +22,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
@@ -35,13 +30,10 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 @CustomLogFields({ @CustomLogField("DiskName") })
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmCommand<T> {
+public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends AbstractDiskVmCommand<T> {
 
     private static final long serialVersionUID = 4499428315430159917L;
 
@@ -70,58 +62,20 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = true;
-        if (getVm() == null) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
-        } else if (getVm().getstatus() != VMStatus.Down) {
+        boolean returnValue = isVmExist();
+        if (returnValue && getVm().getstatus() != VMStatus.Down) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
         } else if (hasRunningTasks()) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_TASKS_ARE_ALREADY_RUNNING);
         } else {
-            // update disks from db
-            VmHandler.updateDisksFromDb(getVm());
             // if user sent drive check that its not in use
-            if (!StringHelper.isNullOrEmpty(getParameters().getDiskInfo().getinternal_drive_mapping())
-                    && getVm().getDiskMap().containsKey(getParameters().getDiskInfo().getinternal_drive_mapping())) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LETTER_ALREADY_IN_USE);
-            } else {
-                getParameters().getDiskInfo().setinternal_drive_mapping(GetCorrectDriveForDisk());
-                if (getParameters().getDiskInfo().getinternal_drive_mapping() == null) {
-                    returnValue = false;
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LIMITATION_EXCEEDED);
-                }
-            }
-
-            if (returnValue && getParameters().getDiskInfo().getdisk_type().equals(DiskType.System)) {
-                for (DiskImageBase disk : getVm().getDiskMap().values()) {
-                    if (disk.getdisk_type().equals(DiskType.System)) {
-                        returnValue = false;
-                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SYSTEM_ALREADY_EXISTS);
-                        getReturnValue().getCanDoActionMessages().add(
-                                String.format("$DiskName %1$s", disk.getinternal_drive_mapping()));
-                        break;
-                    }
-                }
-            }
-
-            if (returnValue && getParameters().getDiskInfo().getboot()) {
-                for (DiskImageBase disk : getVm().getDiskMap().values()) {
-                    if (disk.getboot()) {
-                        returnValue = false;
-                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
-                        getReturnValue().getCanDoActionMessages().add(
-                                String.format("$DiskName %1$s", disk.getinternal_drive_mapping()));
-                        break;
-                    }
-                }
-            }
-            storage_domains storageDomain = getStorageDomainDao().get(
-                    getStorageDomainId().getValue());
+            returnValue = returnValue && isDiskCanBeAddedToVm(getParameters().getDiskInfo());
+            storage_domains storageDomain = null;
             if (returnValue) {
+                storageDomain = getStorageDomainDao().get(
+                        getStorageDomainId().getValue());
                 if (storageDomain == null) {
                     returnValue = false;
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
@@ -131,24 +85,10 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
                         returnValue = false;
                         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
                     } else {
-
-                        List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(getVmId());
-                        List<DiskImageBase> allVmDisks = LinqUtils.foreach(getVm().getDiskMap().values(),
-                                new Function<DiskImage, DiskImageBase>() {
-                                    @Override
-                                    public DiskImageBase eval(DiskImage diskImage) {
-                                        return diskImage;
-                                    }
-                                });
-                        allVmDisks.add(getParameters().getDiskInfo());
-                        returnValue = ImagesHandler.CheckImagesConfiguration(
-                                getStorageDomainId().getValue(),
-                                Arrays.asList(getParameters().getDiskInfo()),
-                                getReturnValue().getCanDoActionMessages())
-                                        && CheckPCIAndIDELimit(getVm().getnum_of_monitors(),
-                                                vmInterfaces,
-                                                allVmDisks,
-                                                getReturnValue().getCanDoActionMessages());
+                        returnValue = ImagesHandler.CheckImageConfiguration(
+                                storageDomain.getStorageStaticData(),
+                                getParameters().getDiskInfo(),
+                                getReturnValue().getCanDoActionMessages()) && isDiskPassPCIAndIDELimit(getParameters().getDiskInfo());
                     }
                 }
             }
@@ -198,13 +138,6 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
         } else {
             return StorageDomainSpaceChecker.isBelowThresholds(storageDomain);
         }
-    }
-
-    /**
-     * @return The VmNetworkInterfaceDAO
-     */
-    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDao() {
-        return DbFacade.getInstance().getVmNetworkInterfaceDAO();
     }
 
     /**
@@ -319,26 +252,6 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends VmComma
         default:
             return AuditLogType.USER_ADD_DISK_TO_VM_FINISHED_FAILURE;
         }
-    }
-
-    private String GetCorrectDriveForDisk() {
-        int driveNum = 1;
-        List<Integer> vmDisks = LinqUtils.foreach(getVm().getDiskMap().keySet(), new Function<String, Integer>() {
-            @Override
-            public Integer eval(String s) {
-                return new Integer(s);
-            }
-        });
-        Collections.sort(vmDisks);
-
-        for (int disk : vmDisks) {
-            if ((disk - driveNum) == 0) {
-                driveNum++;
-            } else {
-                break;
-            }
-        }
-        return Integer.toString(driveNum);
     }
 
     @Override
