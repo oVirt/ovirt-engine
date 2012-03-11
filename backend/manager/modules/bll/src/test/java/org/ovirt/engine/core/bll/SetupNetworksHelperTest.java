@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -42,7 +43,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, Backend.class })
+@PrepareForTest({ DbFacade.class, Backend.class, Config.class })
 public class SetupNetworksHelperTest {
 
     @Mock
@@ -57,6 +58,7 @@ public class SetupNetworksHelperTest {
         MockitoAnnotations.initMocks(this);
         mockStatic(DbFacade.class);
         mockStatic(Backend.class);
+        mockStatic(Config.class);
     }
 
 
