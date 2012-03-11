@@ -1,5 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
+import com.google.inject.Inject;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
@@ -12,26 +20,21 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.inject.Inject;
-
 /**
  * This is the dialog used to re-install a host.
- *
+ * <p/>
  * Take into account that it can be used both for a normal host an also for an bare metal hypervisor. In the first case
  * it will ask for the root password and in the second it will as for the location of the ISO image of the hypervisor.
  */
 public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallModel> implements HostInstallPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<InstallModel, HostInstallPopupView> {
+
         Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostInstallPopupView> {
+
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -51,6 +54,9 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @Path(value = "OverrideIpTables.entity")
     EntityModelCheckBoxEditor overrideIpTablesEditor;
 
+    @UiField
+    Label message;
+
     @Inject
     public HostInstallPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -64,7 +70,11 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         isoEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return object.toString();
+
+                // Format string to contain major.minor version only.
+                RpmVersion version = (RpmVersion) object;
+
+                return version.getMajor() + "." + version.getMinor();
             }
         });
     }

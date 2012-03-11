@@ -3,10 +3,20 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 
 <ui:UiBinder
-    xmlns:ui="urn:ui:com.google.gwt.uibinder"
-    xmlns:g="urn:import:com.google.gwt.user.client.ui"
-    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+        xmlns:ui="urn:ui:com.google.gwt.uibinder"
+        xmlns:g="urn:import:com.google.gwt.user.client.ui"
+        xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+        xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+    <ui:style>
+
+        .errorMessageLabel {
+            color: #CD2127;
+            margin-top: 10px;
+            margin-left: 5px;
+        }
+
+    </ui:style>
 
     <d:SimpleDialogPanel width="500px" height="180px">
         <d:content>
@@ -14,7 +24,8 @@
                 <e:EntityModelPasswordBoxEditor ui:field="passwordEditor"/>
                 <e:EntityModelLabelEditor ui:field="hostVersionEditor"/>
                 <e:ListModelListBoxEditor ui:field="isoEditor"/>
-                <e:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor" />
+                <e:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor"/>
+                <g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}"/>
             </g:FlowPanel>
         </d:content>
     </d:SimpleDialogPanel>

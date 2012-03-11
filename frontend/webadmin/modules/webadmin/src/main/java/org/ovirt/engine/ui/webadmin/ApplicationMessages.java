@@ -9,7 +9,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     // Host alert messages (not that the <a> and </a> tags are used to indicate the
     // place where the link to actions should be introduced:
-    @DefaultMessage("A new RHEV-Hypervisor version is available, an upgrade option will appear once the host is moved to maintenance mode.")
+    @DefaultMessage("A new version is available; an upgrade option will appear once the Host is moved to maintenance mode.")
     String hostHasUpgradeAlert();
 
     @DefaultMessage("This host is in non responding state. Try to Activate it; If the problem persists, switch Host to Maintenance mode and try to reinstall it.")

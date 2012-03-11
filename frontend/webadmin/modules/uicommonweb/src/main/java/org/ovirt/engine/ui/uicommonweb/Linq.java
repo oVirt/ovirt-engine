@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicommonweb;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -25,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -266,6 +269,16 @@ public final class Linq
         }
 
     }
+
+
+    public static class RpmVersionComparer implements Comparator<RpmVersion> {
+
+        @Override
+        public int compare(RpmVersion x, RpmVersion y) {
+            return x.compareTo(y);
+        }
+    }
+
 
     public static boolean IsHostBelongsToAnyOfClusters(java.util.ArrayList<VDSGroup> clusters, VDS host)
     {
