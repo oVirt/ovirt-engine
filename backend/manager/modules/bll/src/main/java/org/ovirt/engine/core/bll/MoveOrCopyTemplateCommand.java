@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
@@ -247,6 +248,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
         if (getVmTemplate() != null) {
             VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());
+            VmDeviceUtils.setVmDevices(getVmTemplate());
             UpdateTemplateInSpm();
         }
 
@@ -259,8 +261,9 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     }
 
     protected void UpdateTemplateInSpm() {
-        VmTemplateCommand.UpdateTemplateInSpm(getVmTemplate().getstorage_pool_id().getValue(),
-                new java.util.ArrayList<VmTemplate>(java.util.Arrays.asList(new VmTemplate[] { getVmTemplate() })));
+        VmTemplate vmt = getVmTemplate();
+        VmTemplateCommand.UpdateTemplateInSpm(vmt.getstorage_pool_id().getValue(),
+                new java.util.ArrayList<VmTemplate>(java.util.Arrays.asList(new VmTemplate[] { vmt })));
     }
 
     @Override
@@ -335,4 +338,4 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         }
         return permissionCheckSubject;
     }
-}
+ }
