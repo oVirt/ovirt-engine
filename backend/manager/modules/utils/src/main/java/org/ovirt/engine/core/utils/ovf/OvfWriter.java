@@ -1,12 +1,18 @@
 package org.ovirt.engine.core.utils.ovf;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Encoding;
 import org.ovirt.engine.core.compat.Formatting;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,13 +27,16 @@ public abstract class OvfWriter implements IOvfBuilder {
     protected List<DiskImage> _images;
     protected XmlTextWriter _writer;
     protected XmlDocument _document;
+    protected VM _vm;
+    protected VmBase vmBase;
 
-    public OvfWriter(RefObject<XmlDocument> document, List<DiskImage> images) {
+    public OvfWriter(RefObject<XmlDocument> document, VmBase vmBase, List<DiskImage> images) {
         _fileName = Path.GetTempFileName();
         document.argvalue = new XmlDocument();
         _document = document.argvalue;
         _images = images;
         _writer = new XmlTextWriter(_fileName, Encoding.UTF8);
+        this.vmBase = vmBase;
         WriteHeader();
     }
 
@@ -64,6 +73,11 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteAttributeString("ovf", "description", null, StringUtils.defaultString(image.getdescription()));
             _writer.WriteEndElement();
 
+        }
+        for (VmNetworkInterface iface : vmBase.getInterfaces()) {
+            _writer.WriteStartElement("Nic");
+            _writer.WriteAttributeString("ovf", "id", null, iface.getId().toString());
+            _writer.WriteEndElement();
         }
         _writer.WriteEndElement();
     }
@@ -174,6 +188,77 @@ public abstract class OvfWriter implements IOvfBuilder {
         super.finalize();
     }
 
+    protected void writeManagedDeviceInfo(VmBase vmBase, XmlTextWriter writer, Guid deviceId) {
+        VmDevice vmDevice = vmBase.getManagedVmDeviceMap().get(deviceId);
+        if (deviceId != null && vmDevice != null && vmDevice.getAddress() != null) {
+            writeVmDeviceInfo(vmDevice);
+        }
+    }
+
+    protected void writeUnmanagedDevices(VmBase vmBase, XmlTextWriter write) {
+        List<VmDevice> devices = vmBase.getUnmanagedDeviceList();
+        for (VmDevice vmDevice : devices) {
+            _writer.WriteStartElement("Item");
+            _writer.WriteStartElement("rasd:ResourceType");
+            _writer.WriteRaw(OvfHardware.OTHER);
+            _writer.WriteEndElement();
+            _writer.WriteStartElement("rasd:InstanceId");
+            _writer.WriteRaw((String.valueOf(vmDevice.getId().getDeviceId())));
+            _writer.WriteEndElement();
+            writeVmDeviceInfo(vmDevice);
+            _writer.WriteEndElement(); // item
+        }
+    }
+
+    protected void writeMonitors(VmBase vmBase) {
+        Collection<VmDevice> devices = vmBase.getManagedVmDeviceMap().values();
+        int numOfMonitors = vmBase.getnum_of_monitors();
+        int i = 0;
+        for (VmDevice vmDevice : devices) {
+            if (vmDevice.getType().equals(VmDeviceType.VIDEO.getName())) {
+                _writer.WriteStartElement("Item");
+                _writer.WriteStartElement("rasd:Caption");
+                _writer.WriteRaw("Graphical Controller");
+                _writer.WriteEndElement();
+                _writer.WriteStartElement("rasd:InstanceId");
+                _writer.WriteRaw((String.valueOf(vmDevice.getId().getDeviceId())));
+                _writer.WriteEndElement();
+                _writer.WriteStartElement("rasd:ResourceType");
+                _writer.WriteRaw(OvfHardware.Monitor);
+                _writer.WriteEndElement();
+                _writer.WriteStartElement("rasd:VirtualQuantity");
+                // we should write number of monitors for each entry for backward compatibility
+                _writer.WriteRaw(String.valueOf(numOfMonitors));
+                _writer.WriteEndElement();
+                writeVmDeviceInfo(vmDevice);
+                _writer.WriteEndElement(); // item
+                if (i++ == numOfMonitors) {
+                    break;
+                }
+            }
+        }
+    }
+
+    protected void writeCd(VmBase vmBase) {
+        Collection<VmDevice> devices = vmBase.getManagedVmDeviceMap().values();
+        for (VmDevice vmDevice : devices) {
+            if (vmDevice.getType().equals(VmDeviceType.CDROM.getName())) {
+                _writer.WriteStartElement("Item");
+                _writer.WriteStartElement("rasd:Caption");
+                _writer.WriteRaw("CDROM");
+                _writer.WriteEndElement();
+                _writer.WriteStartElement("rasd:InstanceId");
+                _writer.WriteRaw((String.valueOf(vmDevice.getId().getDeviceId())));
+                _writer.WriteEndElement();
+                _writer.WriteStartElement("rasd:ResourceType");
+                _writer.WriteRaw(OvfHardware.CD);
+                _writer.WriteEndElement();
+                writeVmDeviceInfo(vmDevice);
+                _writer.WriteEndElement(); // item
+                break; // only one CD is currently supported
+            }
+        }
+    }
     public void Dispose() {
         if (_writer != null) {
             CloseElements();
@@ -195,5 +280,26 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     public void dispose() {
         this.Dispose();
+    }
+
+    private void writeVmDeviceInfo(VmDevice vmDevice) {
+        _writer.WriteStartElement(OvfProperties.VMD_TYPE);
+        _writer.WriteRaw(String.valueOf(vmDevice.getType()));
+        _writer.WriteEndElement();
+        _writer.WriteStartElement(OvfProperties.VMD_DEVICE);
+        _writer.WriteRaw(String.valueOf(vmDevice.getDevice()));
+        _writer.WriteEndElement();
+        _writer.WriteStartElement(OvfProperties.VMD_ADDRESS);
+        _writer.WriteRaw(vmDevice.getAddress());
+        _writer.WriteEndElement();
+        _writer.WriteStartElement(OvfProperties.VMD_BOOT_ORDER);
+        _writer.WriteRaw(String.valueOf(vmDevice.getBootOrder()));
+        _writer.WriteEndElement();
+        _writer.WriteStartElement(OvfProperties.VMD_IS_PLUGGED);
+        _writer.WriteRaw(String.valueOf(vmDevice.getIsPlugged()));
+        _writer.WriteEndElement();
+        _writer.WriteStartElement(OvfProperties.VMD_IS_READONLY);
+        _writer.WriteRaw(String.valueOf(vmDevice.getIsReadOnly()));
+        _writer.WriteEndElement();
     }
 }

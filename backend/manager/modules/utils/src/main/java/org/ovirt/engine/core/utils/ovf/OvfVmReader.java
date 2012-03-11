@@ -28,8 +28,11 @@ public class OvfVmReader extends OvfReader {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
     protected VM _vm;
 
-    public OvfVmReader(XmlDocument document, VM vm, java.util.ArrayList<DiskImage> images) {
-        super(document, images);
+    public OvfVmReader(XmlDocument document,
+            VM vm,
+            ArrayList<DiskImage> images,
+            ArrayList<VmNetworkInterface> interfaces) {
+        super(document, images, interfaces);
         _vm = vm;
     }
 
@@ -111,8 +114,16 @@ public class OvfVmReader extends OvfReader {
                 if (tempVar3) {
                     image.setlast_modified_date(last_modified_date);
                 }
+                readVmDevice(node, _vm.getStaticData(), image.getimage_group_id(), Boolean.TRUE);
             } else if (StringHelper.EqOp(resourceType, OvfHardware.Network)) {
-                VmNetworkInterface iface = new VmNetworkInterface();
+                final Guid guid = new Guid(node.SelectSingleNode("rasd:InstanceId", _xmlNS).InnerText);
+                VmNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
+                    @Override
+                    public boolean eval(VmNetworkInterface iface) {
+                        return iface.getId().equals(guid);
+                    }
+                });
+
                 if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText)) {
                     iface.setType(Integer.parseInt(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText));
                 }
@@ -124,14 +135,20 @@ public class OvfVmReader extends OvfReader {
                         .parseInt(node.SelectSingleNode("rasd:speed", _xmlNS).InnerText)
                         : VmInterfaceType.forValue(iface.getType()).getSpeed());
                 _vm.getInterfaces().add(iface);
+                readVmDevice(node, _vm.getStaticData(), iface.getId(), Boolean.TRUE);
             } else if (StringHelper.EqOp(resourceType, OvfHardware.USB)) {
                 _vm.getStaticData().setusb_policy(
                         UsbPolicy.valueOf(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).InnerText));
             } else if (StringHelper.EqOp(resourceType, OvfHardware.Monitor)) {
-
                 _vm.getStaticData().setnum_of_monitors(
                         Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
+                readVmDevice(node, _vm.getStaticData(), Guid.NewGuid(), Boolean.TRUE);
+            } else if (StringHelper.EqOp(resourceType, OvfHardware.CD)) {
+                readVmDevice(node, _vm.getStaticData(), Guid.NewGuid(), Boolean.TRUE);
+            } else if (StringHelper.EqOp(resourceType, OvfHardware.OTHER)) {
+                readVmDevice(node, _vm.getStaticData(), Guid.NewGuid(), Boolean.FALSE);
             }
+
         }
     }
 

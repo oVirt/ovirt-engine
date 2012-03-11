@@ -1,11 +1,18 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
@@ -17,6 +24,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public abstract class OvfReader implements IOvfBuilder {
     protected java.util.ArrayList<DiskImage> _images;
+    protected java.util.ArrayList<VmNetworkInterface> interfaces;
     protected XmlDocument _document;
     protected XmlNamespaceManager _xmlNS;
     private static final int BYTES_IN_GB = 1024 * 1024 * 1024;
@@ -24,8 +32,9 @@ public abstract class OvfReader implements IOvfBuilder {
     protected String name = EmptyName;
     private String version;
 
-    public OvfReader(XmlDocument document, java.util.ArrayList<DiskImage> images) {
+    public OvfReader(XmlDocument document, ArrayList<DiskImage> images, ArrayList<VmNetworkInterface> interfaces) {
         _images = images;
+        this.interfaces = interfaces;
         _document = document;
 
         _xmlNS = new XmlNamespaceManager(_document.NameTable);
@@ -68,6 +77,12 @@ public abstract class OvfReader implements IOvfBuilder {
             image.setimageStatus(ImageStatus.OK);
             image.setdescription(node.Attributes.get("ovf:description").getValue());
             _images.add(image);
+        }
+        list = _document.SelectNodes("//*/Nic", _xmlNS);
+        for (XmlNode node : list) {
+            VmNetworkInterface iface = new VmNetworkInterface();
+            iface.setId(new Guid(node.Attributes.get("ovf:id").getValue()));
+            interfaces.add(iface);
         }
     }
 
@@ -158,6 +173,54 @@ public abstract class OvfReader implements IOvfBuilder {
     @Override
     public void BuildVirtualSystem() {
         ReadGeneralData();
+    }
+
+    /**
+     * Reads vm device attributes from OVF and stores in in the collection
+     *
+     * @param node
+     * @param vmBase
+     * @param deviceId
+     */
+    public void readVmDevice(XmlNode node, VmBase vmBase, Guid deviceId, boolean isManaged) {
+        VmDevice vmDevice = new VmDevice();
+        vmDevice.setId(new VmDeviceId(deviceId, vmBase.getId()));
+        if (node.SelectSingleNode(OvfProperties.VMD_ADDRESS, _xmlNS) != null
+                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_ADDRESS, _xmlNS).InnerText)) {
+            vmDevice.setAddress(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_ADDRESS, _xmlNS).InnerText));
+        } else {
+            vmDevice.setAddress("");
+        }
+        if (!StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
+            vmDevice.setType(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText));
+        } else {
+            vmDevice.setType(String.valueOf(VmDeviceType.UNKNOWN));
+        }
+        if (!StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText)) {
+            vmDevice.setDevice(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText));
+        } else {
+            vmDevice.setDevice(String.valueOf(VmDeviceType.UNKNOWN));
+        }
+        if (!StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS).InnerText)) {
+            vmDevice.setBootOrder(Integer.valueOf(node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS).InnerText));
+        } else {
+            vmDevice.setBootOrder(0);
+        }
+        if (!StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_IS_PLUGGED, _xmlNS).InnerText)) {
+            vmDevice.setIsPlugged(Boolean.valueOf(node.SelectSingleNode(OvfProperties.VMD_IS_PLUGGED, _xmlNS).InnerText));
+        } else {
+            vmDevice.setIsPlugged(Boolean.TRUE);
+        }
+        if (!StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_IS_READONLY, _xmlNS).InnerText)) {
+            vmDevice.setIsReadOnly(Boolean.valueOf(node.SelectSingleNode(OvfProperties.VMD_IS_READONLY, _xmlNS).InnerText));
+        } else {
+            vmDevice.setIsPlugged(Boolean.FALSE);
+        }
+        if (isManaged) {
+            vmBase.getManagedVmDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
+        } else {
+            vmBase.getUnmanagedDeviceList().add(vmDevice);
+        }
     }
 
     protected abstract void ReadOsSection(XmlNode section);

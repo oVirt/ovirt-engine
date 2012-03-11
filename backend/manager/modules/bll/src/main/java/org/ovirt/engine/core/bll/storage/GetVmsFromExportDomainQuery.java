@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
@@ -78,21 +80,28 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
             for (String ovf : ovfList) {
                 try {
                     if (!ovfManager.IsOvfTemplate(ovf)) {
-                        java.util.ArrayList<DiskImage> diskImages = null;
+                        ArrayList<DiskImage> diskImages = null;
+                        ArrayList<VmNetworkInterface> interfaces  = null;
                         RefObject<VM> tempRefObject = new RefObject<VM>(vm);
-                        RefObject<java.util.ArrayList<DiskImage>> tempRefObject2 =
-                                new RefObject<java.util.ArrayList<DiskImage>>(
+                        RefObject<ArrayList<DiskImage>> tempRefObject2 =
+                                new RefObject<ArrayList<DiskImage>>(
                                         diskImages);
-                        ovfManager.ImportVm(ovf, tempRefObject, tempRefObject2);
+                        RefObject<ArrayList<VmNetworkInterface>> interfacesRefObject =
+                            new RefObject<ArrayList<VmNetworkInterface>>(
+                                    interfaces);
+                        ovfManager.ImportVm(ovf, tempRefObject, tempRefObject2, interfacesRefObject);
 
                         vm = tempRefObject.argvalue;
                         diskImages = tempRefObject2.argvalue;
+                        interfaces = interfacesRefObject.argvalue;
                         shouldAdd = getParameters().getGetAll() ? shouldAdd : !existsVmDictionary
                                 .containsKey(vm.getId());
 
                         if (shouldAdd) {
                             // add images
                             vm.setImages(diskImages);
+                            // add interfaces
+                            vm.setInterfaces(interfaces);
 
                             // add disk map
                             Map<String, List<DiskImage>> images = ImportVmCommand

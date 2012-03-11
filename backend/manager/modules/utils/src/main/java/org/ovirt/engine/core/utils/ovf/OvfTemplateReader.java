@@ -24,8 +24,11 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 public class OvfTemplateReader extends OvfReader {
     protected VmTemplate _vmTemplate;
 
-    public OvfTemplateReader(XmlDocument document, VmTemplate vmTemplate, java.util.ArrayList<DiskImage> images) {
-        super(document, images);
+    public OvfTemplateReader(XmlDocument document,
+            VmTemplate vmTemplate,
+            ArrayList<DiskImage> images,
+            ArrayList<VmNetworkInterface> interfaces) {
+        super(document, images, interfaces);
         _vmTemplate = vmTemplate;
     }
 
@@ -107,11 +110,19 @@ public class OvfTemplateReader extends OvfReader {
                 if (tempVar2) {
                     image.setlastModified(lastModified);
                 }
+                readVmDevice(node, _vmTemplate, image.getimage_group_id(), Boolean.TRUE);
                 break;
 
             // Network
             case 10:
-                VmNetworkInterface iface = new VmNetworkInterface();
+                final Guid interfaceId = new Guid(node.SelectSingleNode("rasd:InstanceId", _xmlNS).InnerText);
+                VmNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
+                    @Override
+                    public boolean eval(VmNetworkInterface iface) {
+                        return iface.getId().equals(interfaceId);
+                    }
+                });
+
                 if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText)) {
                     iface.setType(Integer.parseInt(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText));
                 }
@@ -121,8 +132,12 @@ public class OvfTemplateReader extends OvfReader {
                         .parseInt(node.SelectSingleNode("rasd:speed", _xmlNS).InnerText)
                         : VmInterfaceType.forValue(iface.getType()).getSpeed());
                 _vmTemplate.getInterfaces().add(iface);
+                readVmDevice(node, _vmTemplate, iface.getId(), Boolean.TRUE);
                 break;
-
+            // CDROM
+            case 15:
+                readVmDevice(node, _vmTemplate, Guid.NewGuid(), Boolean.TRUE);
+                break;
             // USB
             case 23:
                 _vmTemplate.setusb_policy(UsbPolicy.valueOf(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).InnerText));
@@ -132,7 +147,13 @@ public class OvfTemplateReader extends OvfReader {
             case 20:
                 _vmTemplate
                         .setnum_of_monitors(Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
+                readVmDevice(node, _vmTemplate, Guid.NewGuid(), Boolean.TRUE);
                 break;
+            // OTHER
+            case 0:
+                readVmDevice(node, _vmTemplate, Guid.NewGuid(), Boolean.FALSE);
+                break;
+
             }
         }
     }

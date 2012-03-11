@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -14,12 +16,12 @@ import org.ovirt.engine.core.common.queries.TemplateCandidateInfo;
 import org.ovirt.engine.core.common.queries.VmCandidateInfo;
 import org.ovirt.engine.core.common.vdscommands.GetImportCandidatesVDSCommandParameters;
 import org.ovirt.engine.core.compat.Encoding;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
@@ -114,6 +116,7 @@ public class GetImportCandidatesInfoVDSCommand<P extends GetImportCandidatesVDSC
                 String ovfData = Encoding.UTF8.getString(byteArrayOvfData);
 
                 java.util.ArrayList<DiskImage> candidateImagesData = null;
+                ArrayList<VmNetworkInterface> candidateInterfacesData = null;
                 OvfManager ovfm = new OvfManager();
                 if (ovfm.IsOvfTemplate(ovfData)) {
                     VmTemplate candidateData = null;
@@ -121,8 +124,11 @@ public class GetImportCandidatesInfoVDSCommand<P extends GetImportCandidatesVDSC
                     RefObject<java.util.ArrayList<DiskImage>> tempRefObject2 =
                             new RefObject<java.util.ArrayList<DiskImage>>(
                                     candidateImagesData);
+                    RefObject<ArrayList<VmNetworkInterface>> interfacesRefObject =
+                            new RefObject<ArrayList<VmNetworkInterface>>(
+                                    candidateInterfacesData);
                     try {
-                        ovfm.ImportTemplate(ovfData, tempRefObject, tempRefObject2);
+                        ovfm.ImportTemplate(ovfData, tempRefObject, tempRefObject2, interfacesRefObject);
                     } catch (OvfReaderException ex) {
                         AuditLogableBase logable = new AuditLogableBase();
                         logable.AddCustomValue("Template", ex.getName());
@@ -130,6 +136,7 @@ public class GetImportCandidatesInfoVDSCommand<P extends GetImportCandidatesVDSC
                     }
                     candidateData = tempRefObject.argvalue;
                     candidateImagesData = tempRefObject2.argvalue;
+                    candidateInterfacesData = interfacesRefObject.argvalue;
                     retValue = new TemplateCandidateInfo(candidateData, ImportCandidateSourceEnum.KVM,
                             GetListOfImageListsByDrive(candidateImagesData));
                 }
@@ -141,8 +148,11 @@ public class GetImportCandidatesInfoVDSCommand<P extends GetImportCandidatesVDSC
                     RefObject<java.util.ArrayList<DiskImage>> tempRefObject4 =
                             new RefObject<java.util.ArrayList<DiskImage>>(
                                     candidateImagesData);
+                    RefObject<ArrayList<VmNetworkInterface>> interfacesRefObject =
+                            new RefObject<ArrayList<VmNetworkInterface>>(
+                                    candidateInterfacesData);
                     try {
-                        ovfm.ImportVm(ovfData, tempRefObject3, tempRefObject4);
+                        ovfm.ImportVm(ovfData, tempRefObject3, tempRefObject4, interfacesRefObject);
                     } catch (OvfReaderException ex) {
                         AuditLogableBase logable = new AuditLogableBase();
                         logable.AddCustomValue("VmName", ex.getName());
@@ -150,6 +160,7 @@ public class GetImportCandidatesInfoVDSCommand<P extends GetImportCandidatesVDSC
                     }
                     candidateData = tempRefObject3.argvalue;
                     candidateImagesData = tempRefObject4.argvalue;
+                    candidateInterfacesData = interfacesRefObject.argvalue;
                     retValue = new VmCandidateInfo(candidateData.getStaticData(), ImportCandidateSourceEnum.KVM,
                             GetListOfImageListsByDrive(candidateImagesData));
                 }

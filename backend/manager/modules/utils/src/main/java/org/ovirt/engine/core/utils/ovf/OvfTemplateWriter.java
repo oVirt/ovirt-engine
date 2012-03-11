@@ -16,7 +16,7 @@ public class OvfTemplateWriter extends OvfWriter {
     protected VmTemplate _vmTemplate;
 
     public OvfTemplateWriter(RefObject<XmlDocument> document, VmTemplate vmTemplate, List<DiskImage> images) {
-        super(document, images);
+        super(document, vmTemplate, images);
         _vmTemplate = vmTemplate;
     }
 
@@ -188,6 +188,7 @@ public class OvfTemplateWriter extends OvfWriter {
             _writer.WriteStartElement("rasd:LastModified");
             _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getlastModified()));
             _writer.WriteEndElement();
+            writeManagedDeviceInfo(_vmTemplate, _writer, image.getimage_group_id());
             _writer.WriteEndElement(); // item
         }
 
@@ -198,7 +199,7 @@ public class OvfTemplateWriter extends OvfWriter {
             _writer.WriteRaw("Ethernet adapter on " + iface.getNetworkName());
             _writer.WriteEndElement();
             _writer.WriteStartElement("rasd:InstanceId");
-            _writer.WriteRaw(((Integer) (++_instanceId)).toString());
+            _writer.WriteRaw(iface.getId().toString());
             _writer.WriteEndElement();
             _writer.WriteStartElement("rasd:ResourceType");
             _writer.WriteRaw(OvfHardware.Network);
@@ -223,6 +224,7 @@ public class OvfTemplateWriter extends OvfWriter {
                         iface.getType()).getSpeed()));
             }
             _writer.WriteEndElement();
+            writeManagedDeviceInfo(_vmTemplate, _writer, iface.getId());
             _writer.WriteEndElement(); // item
         }
 
@@ -242,20 +244,12 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
 
-        // monitor
-        _writer.WriteStartElement("Item");
-        _writer.WriteStartElement("rasd:Caption");
-        _writer.WriteRaw("Graphical Controller");
-        _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:InstanceId");
-        _writer.WriteRaw(((Integer) (++_instanceId)).toString());
-        _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:ResourceType");
-        _writer.WriteRaw(OvfHardware.Monitor);
-        _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:VirtualQuantity");
-        _writer.WriteRaw((new Integer(_vmTemplate.getnum_of_monitors())).toString());
-        _writer.WriteEndElement();
-        _writer.WriteEndElement(); // item
+        // monitors
+        writeMonitors(_vmTemplate);
+        // CD
+        writeCd(_vmTemplate);
+        // ummanged devices
+        writeUnmanagedDevices(_vmTemplate, _writer);
+
     }
 }

@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 
@@ -45,40 +48,49 @@ public class OvfManager {
         ovfstring.argvalue = document.OuterXml;
     }
 
-    public void ImportVm(String ovfstring, RefObject<VM> vm, RefObject<java.util.ArrayList<DiskImage>> images)
+    public void ImportVm(String ovfstring,
+            RefObject<VM> vm,
+            RefObject<ArrayList<DiskImage>> images,
+            RefObject<ArrayList<VmNetworkInterface>> interfaces)
             throws OvfReaderException {
         XmlDocument document = new XmlDocument();
         document.LoadXml(ovfstring);
 
         vm.argvalue = new VM();
-        images.argvalue = new java.util.ArrayList<DiskImage>();
+        images.argvalue = new ArrayList<DiskImage>();
+        interfaces.argvalue = new ArrayList<VmNetworkInterface>();
 
         OvfReader ovf = null;
         try {
-            ovf = new OvfVmReader(document, vm.argvalue, images.argvalue);
+            ovf = new OvfVmReader(document, vm.argvalue, images.argvalue, interfaces.argvalue);
             BuildOvf(ovf);
         } catch (Exception ex) {
             String name = (ovf == null) ? OvfVmReader.EmptyName : ovf.getName();
             throw new OvfReaderException("Error parsing OVF:\r\n\r\n" + ovfstring, ex, name);
         }
-
+        Guid id = vm.argvalue.getStaticData().getId();
         // this is static data for all images:
         for (DiskImage image : images.argvalue) {
-            image.setvm_guid(vm.argvalue.getStaticData().getId());
+            image.setvm_guid(id);
+        }
+        for (VmNetworkInterface iface : interfaces.argvalue) {
+            iface.setVmId(id);
         }
     }
 
     public void ImportTemplate(String ovfstring, RefObject<VmTemplate> vmTemplate,
-            RefObject<java.util.ArrayList<DiskImage>> images) throws OvfReaderException {
+            RefObject<ArrayList<DiskImage>> images, RefObject<ArrayList<VmNetworkInterface>> interfaces)
+            throws OvfReaderException {
         XmlDocument document = new XmlDocument();
         document.LoadXml(ovfstring);
 
         vmTemplate.argvalue = new VmTemplate();
-        images.argvalue = new java.util.ArrayList<DiskImage>();
+        images.argvalue = new ArrayList<DiskImage>();
+        interfaces.argvalue = new ArrayList<VmNetworkInterface>();
 
         OvfReader ovf = null;
         try {
-            ovf = new OvfTemplateReader(document, vmTemplate.argvalue, images.argvalue);
+            ovf = new OvfTemplateReader(document, vmTemplate.argvalue, images.argvalue, interfaces.argvalue);
             BuildOvf(ovf);
         } catch (Exception ex) {
             String name = (ovf == null) ? OvfVmReader.EmptyName : ovf.getName();

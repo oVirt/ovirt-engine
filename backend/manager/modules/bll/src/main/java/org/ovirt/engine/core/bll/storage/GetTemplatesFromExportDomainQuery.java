@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.queries.DiskImageList;
@@ -55,17 +57,23 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
                 try {
                     if (ovfManager.IsOvfTemplate(ovf)) {
                         java.util.ArrayList<DiskImage> diskImages = null;
+                        java.util.ArrayList<VmNetworkInterface> interfaces = null;
                         RefObject<VmTemplate> tempRefObject = new RefObject<VmTemplate>(template);
                         RefObject<java.util.ArrayList<DiskImage>> tempRefObject2 =
                                 new RefObject<java.util.ArrayList<DiskImage>>(
                                         diskImages);
-                        ovfManager.ImportTemplate(ovf, tempRefObject, tempRefObject2);
+                        RefObject<ArrayList<VmNetworkInterface>> interfacesRefObject =
+                            new RefObject<ArrayList<VmNetworkInterface>>(
+                                    interfaces);
+                        ovfManager.ImportTemplate(ovf, tempRefObject, tempRefObject2, interfacesRefObject);
                         template = tempRefObject.argvalue;
                         diskImages = tempRefObject2.argvalue;
+                        interfaces = interfacesRefObject.argvalue;
                         shouldAdd = getParameters().getGetAll() ? shouldAdd :
                                 (!existsVmDictionary.containsKey(template.getId()) && diskImages != null);
                         if (shouldAdd) {
                             templates.put(template, new DiskImageList(diskImages));
+                            template.setInterfaces(interfaces);
                         }
                     }
                 } catch (OvfReaderException ex) {

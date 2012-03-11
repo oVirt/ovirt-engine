@@ -204,12 +204,13 @@ public class SnapshotsManager {
             VmStatic oldVmStatic = vm.getStaticData();
             RefObject<VM> vmRef = new RefObject<VM>();
             RefObject<ArrayList<DiskImage>> imagesRef = new RefObject<ArrayList<DiskImage>>();
-            new OvfManager().ImportVm(configuration, vmRef, imagesRef);
+            RefObject<ArrayList<VmNetworkInterface>> interfacesRef = new RefObject<ArrayList<VmNetworkInterface>>();
+            new OvfManager().ImportVm(configuration, vmRef, imagesRef, interfacesRef);
             new VMStaticOvfLogHandler(vmRef.argvalue.getStaticData()).resetDefaults(oldVmStatic);
 
             vm.setStaticData(vmRef.argvalue.getStaticData());
             vm.setImages(imagesRef.argvalue);
-            vm.setInterfaces(vmRef.argvalue.getInterfaces());
+            vm.setInterfaces(interfacesRef.argvalue);
 
             // These fields are not saved in the OVF, so get them from the current VM.
             vm.setdedicated_vm_for_vds(oldVmStatic.getdedicated_vm_for_vds());
