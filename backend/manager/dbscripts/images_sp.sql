@@ -8,14 +8,12 @@
 
 
 Create or replace FUNCTION InsertImage(v_creation_date TIMESTAMP WITH TIME ZONE,
-	v_description VARCHAR(4000) ,
 	v_image_guid UUID,
 	v_it_guid UUID,
 	v_size BIGINT,
 	v_ParentId UUID,
     v_imageStatus INTEGER ,
     v_lastModified TIMESTAMP WITH TIME ZONE,
-	v_app_list VARCHAR(4000) ,
 	v_vm_snapshot_id UUID ,
 	v_volume_type INTEGER,
 	v_volume_format INTEGER,
@@ -26,9 +24,9 @@ Create or replace FUNCTION InsertImage(v_creation_date TIMESTAMP WITH TIME ZONE,
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO images(creation_date, description, image_guid, it_guid, size, ParentId,imageStatus,lastModified, app_list,
+INSERT INTO images(creation_date, image_guid, it_guid, size, ParentId,imageStatus,lastModified,
     vm_snapshot_id, volume_type, image_group_id, volume_format, active, boot, quota_id)
-	VALUES(v_creation_date, v_description, v_image_guid, v_it_guid, v_size, v_ParentId, v_imageStatus, v_lastModified,v_app_list,
+	VALUES(v_creation_date, v_image_guid, v_it_guid, v_size, v_ParentId, v_imageStatus, v_lastModified,
 	v_vm_snapshot_id, v_volume_type, v_image_group_id, v_volume_format, v_active, v_boot, v_quota_id);
 END; $procedure$
 LANGUAGE plpgsql;    
@@ -46,14 +44,12 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION UpdateImage(v_creation_date TIMESTAMP WITH TIME ZONE,
-	v_description VARCHAR(4000) ,
 	v_image_guid UUID,
 	v_it_guid UUID,
 	v_size BIGINT,
 	v_ParentId UUID,
     v_imageStatus INTEGER ,
     v_lastModified TIMESTAMP WITH TIME ZONE,
-	v_app_list VARCHAR(4000) ,
 	v_vm_snapshot_id UUID ,
 	v_volume_type INTEGER,
 	v_volume_format INTEGER,
@@ -67,10 +63,9 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE images
-      SET creation_date = v_creation_date,description = v_description,
+      SET creation_date = v_creation_date,
       it_guid = v_it_guid,size = v_size, 
       ParentId = v_ParentId,imageStatus = v_imageStatus,lastModified = v_lastModified, 
-      app_list = v_app_list, 
       vm_snapshot_id = v_vm_snapshot_id,volume_type = v_volume_type,image_group_id = v_image_group_id, 
       volume_format = v_volume_format,
       active = v_active,

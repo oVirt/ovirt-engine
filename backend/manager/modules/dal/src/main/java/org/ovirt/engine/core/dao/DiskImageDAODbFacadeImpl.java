@@ -132,26 +132,18 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     public void save(DiskImage image) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("creation_date", image.getcreation_date())
-                .addValue("description", image.getdescription())
                 .addValue("image_guid", image.getId())
-                .addValue("internal_drive_mapping",
-                        image.getinternal_drive_mapping())
                 .addValue("it_guid", image.getit_guid())
                 .addValue("size", image.getsize())
                 .addValue("ParentId", image.getParentId())
                 .addValue("imageStatus", image.getimageStatus())
                 .addValue("lastModified", image.getlastModified())
-                .addValue("app_list", image.getappList())
                 .addValue("vm_snapshot_id", image.getvm_snapshot_id())
                 .addValue("volume_type", image.getvolume_type())
                 .addValue("volume_format", image.getvolume_format())
-                .addValue("disk_type", image.getdisk_type())
                 .addValue("image_group_id", image.getimage_group_id())
-                .addValue("disk_interface", image.getdisk_interface())
                 .addValue("active", image.getactive())
                 .addValue("boot", image.getboot())
-                .addValue("wipe_after_delete", image.getwipe_after_delete())
-                .addValue("propagate_errors", image.getpropagate_errors())
                 .addValue("quota_id", image.getQuotaId());
         getCallsHandler().executeModification("InsertImage", parameterSource);
     }
@@ -160,26 +152,18 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     public void update(DiskImage image) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("creation_date", image.getcreation_date())
-                .addValue("description", image.getdescription())
                 .addValue("image_guid", image.getId())
-                .addValue("internal_drive_mapping",
-                        image.getinternal_drive_mapping())
                 .addValue("it_guid", image.getit_guid())
                 .addValue("size", image.getsize())
                 .addValue("ParentId", image.getParentId())
                 .addValue("imageStatus", image.getimageStatus())
                 .addValue("lastModified", image.getlastModified())
-                .addValue("app_list", image.getappList())
                 .addValue("vm_snapshot_id", image.getvm_snapshot_id())
                 .addValue("volume_type", image.getvolume_type())
                 .addValue("volume_format", image.getvolume_format())
-                .addValue("disk_type", image.getdisk_type())
                 .addValue("image_group_id", image.getimage_group_id())
-                .addValue("disk_interface", image.getdisk_interface())
                 .addValue("active", image.getactive())
                 .addValue("boot", image.getboot())
-                .addValue("wipe_after_delete", image.getwipe_after_delete())
-                .addValue("propagate_errors", image.getpropagate_errors())
                 .addValue("quota_id", image.getQuotaId());
 
         getCallsHandler().executeModification("UpdateImage", parameterSource);

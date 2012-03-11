@@ -1593,21 +1593,14 @@
         <column>creation_date</column>
         <column>size</column>
         <column>it_guid</column>
-        <column>internal_drive_mapping</column>
-        <column>description</column>
         <column>ParentId</column>
         <column>imageStatus</column>
         <column>lastModified</column>
-        <column>app_list</column>
         <column>vm_snapshot_id</column>
         <column>volume_type</column>
         <column>volume_format</column>
-        <column>disk_type</column>
         <column>image_group_id</column>
-        <column>disk_interface</column>
         <column>boot</column>
-        <column>wipe_after_delete</column>
-        <column>propagate_errors</column>
         <column>_create_date</column>
         <column>_update_date</column>
         <column>quota_id</column>
@@ -1618,20 +1611,13 @@
             <value>2010-11-12 19:49:24</value>
             <value>85899345920</value>
             <value>00000000-0000-0000-0000-000000000000</value>
-            <value>1</value>
-            <value>Blank image</value>
             <null />
             <value>1</value>
             <value>2010-11-18 11:03:50</value>
-            <value></value>
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
-            <value>1</value>
             <null />
-            <value>2</value>
-            <value>0</value>
-            <value>1</value>
             <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -1643,20 +1629,13 @@
             <value>2010-11-17 19:49:24</value>
             <value>1073741824</value>
             <value>00000000-0000-0000-0000-000000000000</value>
-            <value>1</value>
-            <value>_rhel5-guest_Wed Nov 17 19:49:23 IST 2010_template</value>
             <null />
             <value>1</value>
             <value>2010-11-18 11:03:50</value>
-            <value></value>
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
-            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
-            <value>2</value>
-            <value>0</value>
-            <value>1</value>
             <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -1668,20 +1647,13 @@
             <value>2010-11-12 19:49:24</value>
             <value>85899345920</value>
             <value>00000000-0000-0000-0000-000000000000</value>
-            <value>1</value>
-            <value>Some disk</value>
             <null />
             <value>1</value>
             <value>2010-11-18 11:03:50</value>
-            <value></value>
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
-            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
-            <value>2</value>
-            <value>0</value>
-            <value>1</value>
             <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -1694,20 +1666,13 @@
             <value>2010-11-18 11:03:50</value>
             <value>2147483648</value>
             <value>52058975-3d5e-484a-80c1-01c31207f578</value>
-            <value>2</value>
-            <value>_rhel5-pool-40_Thu Nov 18 11:11:33 IST 2010</value>
             <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
             <value>1</value>
             <value>2010-11-18 11:03:50</value>
-            <value></value>
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
-            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
-            <value>2</value>
-            <value>0</value>
-            <value>1</value>
             <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -1719,20 +1684,13 @@
             <value>2010-11-18 11:03:50</value>
             <value>2147483648</value>
             <value>52058975-3d5e-484a-80c1-01c31207f578</value>
-            <value>2</value>
-            <value>_rhel5-pool-40_Thu Nov 18 11:11:33 IST 2010</value>
             <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
             <value>1</value>
             <value>2010-11-18 11:03:50</value>
-            <value></value>
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
-            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
-            <value>2</value>
-            <value>0</value>
-            <value>1</value>
             <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -1744,20 +1702,13 @@
             <value>2010-11-18 11:03:50</value>
             <value>2147483648</value>
             <value>00000000-0000-0000-0000-000000000000</value>
-            <value>2</value>
-            <value>ancestor</value>
             <value>00000000-0000-0000-0000-000000000000</value>
             <value>1</value>
             <value>2010-11-18 11:03:50</value>
-            <value></value>
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
-            <value>1</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
-            <value>2</value>
-            <value>0</value>
-            <value>1</value>
             <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -1769,20 +1720,13 @@
             <value>2010-11-18 11:03:50</value>
             <value>2147483648</value>
             <value>00000000-0000-0000-0000-000000000000</value>
-            <value>2</value>
-            <value>ancestor</value>
             <value>00000000-0000-0000-0000-000000000000</value>
             <value>1</value>
             <value>2010-11-18 11:03:50</value>
-            <value></value>
             <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
             <value>2</value>
             <value>4</value>
-            <value>1</value>
             <value>fb26a52b-b60f-44cb-9f46-3ef333b04a3f</value>
-            <value>2</value>
-            <value>0</value>
-            <value>1</value>
             <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
@@ -1794,7 +1738,6 @@
     <table name="disks">
         <column>disk_id</column>
         <column>internal_drive_mapping</column>
-        <column>active_image_id</column>
         <column>disk_type</column>
         <column>disk_interface</column>
         <column>wipe_after_delete</column>
@@ -1804,7 +1747,6 @@
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>2</value>
-            <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
             <value>System</value>
             <value>VirtIO</value>
             <value>1</value>
@@ -1815,7 +1757,6 @@
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
             <value>2</value>
-            <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
             <value>System</value>
             <value>VirtIO</value>
             <value>1</value>
