@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
-import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -11,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
@@ -20,14 +20,14 @@ import com.google.inject.Provider;
 public class VmDiskListModelProvider extends UserPortalSearchableDetailModelProvider<DiskImage, UserPortalListModel, VmDiskListModel> {
 
     private final Provider<VmDiskPopupPresenterWidget> diskPopupProvider;
-    private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
+    private final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider;
 
     @Inject
     public VmDiskListModelProvider(ClientGinjector ginjector,
             UserPortalListProvider parentModelProvider,
             UserPortalModelResolver resolver,
             Provider<VmDiskPopupPresenterWidget> diskPopupProvider,
-            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
             CurrentUser user) {
         super(ginjector, parentModelProvider, VmDiskListModel.class, resolver, user);
         this.diskPopupProvider = diskPopupProvider;

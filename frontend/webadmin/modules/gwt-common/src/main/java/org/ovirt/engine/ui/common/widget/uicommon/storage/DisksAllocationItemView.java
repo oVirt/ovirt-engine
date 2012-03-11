@@ -69,7 +69,6 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        addStyles();
         Driver.driver.initialize(this);
     }
 
@@ -98,18 +97,20 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         });
     }
 
-    void addStyles() {
-        updateEditorStyle(diskNameLabel, style.editorLabelContent());
-        updateEditorStyle(diskSizeLabel, style.editorLabelContent());
-        updateEditorStyle(sourceStorageLabel, style.editorContent());
-        updateEditorStyle(volumeTypeListEditor, style.editorContent());
-        updateEditorStyle(sourceStorageListEditor, style.editorContent());
-        updateEditorStyle(storageListEditor, style.editorContent());
-        updateEditorStyle(quotaListEditor, style.editorContent());
+    void updateStyles(Boolean isNarrowStyle) {
+        String editorStyle = isNarrowStyle ? style.editorContentNarrow() : style.editorContent();
+
+        updateEditorStyle(diskNameLabel, editorStyle);
+        updateEditorStyle(diskSizeLabel, editorStyle);
+        updateEditorStyle(sourceStorageLabel, editorStyle);
+        updateEditorStyle(volumeTypeListEditor, editorStyle);
+        updateEditorStyle(sourceStorageListEditor, editorStyle);
+        updateEditorStyle(storageListEditor, editorStyle);
+        updateEditorStyle(quotaListEditor, editorStyle);
     }
 
     private void updateEditorStyle(AbstractValidatedWidgetWithLabel editor, String contentStyle) {
-        editor.addContentWidgetStyleName(contentStyle);
+        editor.setContentWidgetStyleName(contentStyle);
         editor.addWrapperStyleName(style.editorWrapper());
         editor.setLabelStyleName(style.editorLabel());
     }
@@ -126,6 +127,8 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
         sourceStorageLabel.getElement().getElementsByTagName("input").getItem(0).
                 getStyle().setBorderColor("transparent");
+
+        updateStyles(object.getQuota().getIsAvailable());
     }
 
     @Override
@@ -136,7 +139,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     interface WidgetStyle extends CssResource {
         String editorContent();
 
-        String editorLabelContent();
+        String editorContentNarrow();
 
         String editorWrapper();
 

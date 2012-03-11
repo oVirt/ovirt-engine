@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.GetAllAttachableDisks;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
@@ -1740,6 +1741,34 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM), aQuery);
     }
 
+    public static void GetDiskList(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (ArrayList<DiskImage>) source : new ArrayList<DiskImage>();
+            }
+        };
+
+        SearchParameters searchParams = new SearchParameters("Disks:", SearchType.DiskImage);
+        searchParams.setMaxCount(9999);
+
+        Frontend.RunQuery(VdcQueryType.Search, searchParams, aQuery);
+    }
+
+    public static void GetNextAvailableDiskAliasNameByVMId(AsyncQuery aQuery, Guid vmId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetNextAvailableDiskAliasNameByVMId,
+                new GetAllDisksByVmIdParameters(vmId),
+                aQuery);
+    }
+
     public static void IsPoolNameUnique(AsyncQuery aQuery, String name) {
 
         aQuery.converterCallback = new IAsyncConverter() {
@@ -1798,6 +1827,18 @@ public final class AsyncDataProvider {
                 new GetConfigurationValueParameters(ConfigurationValues.HotPlugEnabled);
         tempVar.setVersion(version);
         GetConfigFromCache(tempVar, aQuery);
+    }
+
+    public static void GetAllAttachableDisks(AsyncQuery aQuery, Guid storagePoolId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (ArrayList<DiskImage>) source : new ArrayList<DiskImage>();
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.GetAllAttachableDisks, new GetAllAttachableDisks(storagePoolId), aQuery);
     }
 
     public static void GetRedirectServletReportsPage(AsyncQuery aQuery) {

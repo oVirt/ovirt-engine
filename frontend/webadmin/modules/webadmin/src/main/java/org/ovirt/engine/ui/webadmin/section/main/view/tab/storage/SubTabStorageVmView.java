@@ -22,7 +22,7 @@ public class SubTabStorageVmView extends AbstractSubTabTreeView<VMsTree<StorageV
 
     @Override
     protected void initHeader() {
-        table.addColumn(new EmptyColumn(), "Name");
+        table.addColumn(new EmptyColumn(), "Alias");
         table.addColumn(new EmptyColumn(), "Disks", "80px");
         table.addColumn(new EmptyColumn(), "Template", "160px");
         table.addColumn(new EmptyColumn(), "V-Size", "110px");

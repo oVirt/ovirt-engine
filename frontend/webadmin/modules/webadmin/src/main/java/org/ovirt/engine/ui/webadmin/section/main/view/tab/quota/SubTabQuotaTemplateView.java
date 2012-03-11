@@ -22,7 +22,7 @@ public class SubTabQuotaTemplateView extends AbstractSubTabTreeView<TemplatesTre
 
     @Override
     protected void initHeader() {
-        table.addColumn(new EmptyColumn(), "Name");
+        table.addColumn(new EmptyColumn(), "Alias");
         table.addColumn(new EmptyColumn(), "Disks", "110px");
         table.addColumn(new EmptyColumn(), "Actual Size", "110px");
         table.addColumn(new EmptyColumn(), "Creation Date", "170px");

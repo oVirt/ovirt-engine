@@ -4,6 +4,7 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -41,24 +42,28 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     private final CommonApplicationMessages messages;
 
     @UiField
-    FlowPanel itemPanel;
+    protected FlowPanel itemPanel;
 
     @UiField(provided = true)
     @Path(value = "latch.entity")
     @WithElementId
-    EntityModelCheckBoxEditor latch;
+    protected EntityModelCheckBoxEditor latch;
 
     @UiField
     @Ignore
-    Label noteLabel;
+    protected Label noteLabel;
 
     @Inject
-    public RemoveConfirmationPopupView(EventBus eventBus, CommonApplicationResources resources, CommonApplicationMessages messages) {
+    public RemoveConfirmationPopupView(EventBus eventBus,
+            CommonApplicationResources resources,
+            CommonApplicationMessages messages,
+            CommonApplicationConstants constants) {
         super(eventBus, resources);
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
         this.messages = messages;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
+        localize(constants);
         Driver.driver.initialize(this);
     }
 
@@ -120,6 +125,10 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
                 }
             }
         });
+    }
+
+    protected void localize(CommonApplicationConstants constants) {
+        latch.setLabel(constants.latchApproveOperationLabel());
     }
 
     @Override

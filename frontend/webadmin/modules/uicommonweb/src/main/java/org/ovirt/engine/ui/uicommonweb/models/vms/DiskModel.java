@@ -59,6 +59,18 @@ public class DiskModel extends Model
         privateName = value;
     }
 
+    private EntityModel privateAlias;
+
+    public EntityModel getAlias()
+    {
+        return privateAlias;
+    }
+
+    public void setAlias(EntityModel value)
+    {
+        privateAlias = value;
+    }
+
     private VolumeFormat privateVolumeFormat = getVolumeFormat().values()[0];
 
     public VolumeFormat getVolumeFormat()
@@ -239,6 +251,42 @@ public class DiskModel extends Model
         quota = value;
     }
 
+    private EntityModel privateAttachDisk;
+
+    public EntityModel getAttachDisk()
+    {
+        return privateAttachDisk;
+    }
+
+    public void setAttachDisk(EntityModel value)
+    {
+        privateAttachDisk = value;
+    }
+
+    private ListModel attachableDisks;
+
+    public ListModel getAttachableDisks()
+    {
+        return attachableDisks;
+    }
+
+    public void setAttachableDisks(ListModel value)
+    {
+        attachableDisks = value;
+    }
+
+    private Guid datacenterId;
+
+    public Guid getDatacenterId()
+    {
+        return datacenterId;
+    }
+
+    public void setDatacenterId(Guid value)
+    {
+        datacenterId = value;
+    }
+
     public DiskModel()
     {
         setSize(new EntityModel());
@@ -270,10 +318,16 @@ public class DiskModel extends Model
 
         setIsPlugged(new EntityModel());
         getIsPlugged().setEntity(true);
-        getIsPlugged().setIsAvailable(false);
+
+        setAttachDisk(new EntityModel());
+        getAttachDisk().setEntity(false);
+        getAttachDisk().getEntityChangedEvent().addListener(this);
 
         setQuota(new ListModel());
         getQuota().setIsAvailable(false);
+
+        setAlias(new EntityModel());
+        setAttachableDisks(new ListModel());
 
         AsyncDataProvider.GetDiskMaxSize(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -338,6 +392,10 @@ public class DiskModel extends Model
         {
             WipeAfterDelete_EntityChanged(args);
         }
+        else if (ev.equals(EntityModel.EntityChangedEventDefinition) && sender == getAttachDisk())
+        {
+            AttachDisk_EntityChanged(args);
+        }
         else if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getPreset())
         {
             Preset_SelectedItemChanged();
@@ -383,8 +441,35 @@ public class DiskModel extends Model
         }
     }
 
+    private void AttachDisk_EntityChanged(EventArgs e)
+    {
+        if ((Boolean) getAttachDisk().getEntity() && getDatacenterId() != null)
+        {
+            AsyncDataProvider.GetAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object target, Object returnValue) {
+                    DiskModel model = (DiskModel) target;
+                    ArrayList<DiskImage> diskImages = (ArrayList<DiskImage>) returnValue;
+                    ArrayList<DiskModel> diskModels = new ArrayList<DiskModel>();
+
+                    for (DiskImage disk : diskImages) {
+                        DiskModel diskModel = new DiskModel();
+                        diskModel.setDiskImage(disk);
+                        diskModels.add(diskModel);
+                    }
+
+                    model.getAttachableDisks().setItems(Linq.ToEntityModelList(diskModels));
+                }
+            }), getDatacenterId());
+        }
+    }
+
     public boolean Validate()
     {
+        if ((Boolean) getAttachDisk().getEntity()) {
+            return true;
+        }
+
         IntegerValidation tempVar = new IntegerValidation();
         tempVar.setMinimum(1);
         tempVar.setMaximum(maxDiskSize);

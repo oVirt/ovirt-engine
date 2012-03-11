@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -314,18 +315,6 @@ public class VmGuideModel extends GuideModel
     }
 
     private void AddDiskUpdateData() {
-        if (disks != null && !disks.isEmpty()) {
-            AsyncDataProvider.GetStorageDomainById(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object target, Object returnValue) {
-                            VmGuideModel vmGuideModel = (VmGuideModel) target;
-                            vmGuideModel.storage = (storage_domains) returnValue;
-                            vmGuideModel.AddDiskPostData();
-                        }
-                    }), disks.get(0).getstorage_ids().get(0));
-        }
-
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
@@ -360,6 +349,32 @@ public class VmGuideModel extends GuideModel
                         vmGuideModel.AddDiskPostData();
                     }
                 }), getEntity().getstorage_pool_id());
+
+        AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        VmGuideModel vmGuideModel = (VmGuideModel) target;
+                        java.util.ArrayList<DiskImage> disks = (java.util.ArrayList<DiskImage>) returnValue;
+                        vmGuideModel.disks = disks;
+
+                        if (disks != null && !disks.isEmpty()) {
+                            AsyncDataProvider.GetStorageDomainById(new AsyncQuery(vmGuideModel,
+                                    new INewAsyncCallback() {
+                                        @Override
+                                        public void OnSuccess(Object target, Object returnValue) {
+                                            VmGuideModel vmGuideModel1 = (VmGuideModel) target;
+                                            vmGuideModel1.storage = (storage_domains) returnValue;
+                                            vmGuideModel1.AddDiskPostData();
+                                        }
+                                    }), disks.get(0).getstorage_ids().get(0));
+                        }
+                        else
+                        {
+                            vmGuideModel.AddDiskPostData();
+                        }
+                    }
+                }), getEntity().getId());
     }
 
     private void AddDiskPostData() {
@@ -423,6 +438,9 @@ public class VmGuideModel extends GuideModel
 
     private void updateQuota(final DiskModel model) {
         storage_domains storageDomain = (storage_domains) model.getStorageDomain().getSelectedItem();
+        if (storageDomain == null) {
+            return;
+        }
         Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
                 new GetAllRelevantQuotasForStorageParameters(storageDomain.getId()),
                 new AsyncQuery(this,
@@ -449,10 +467,9 @@ public class VmGuideModel extends GuideModel
 
     private void AddDiskPostGetDiskPresets(java.util.ArrayList<DiskImageBase> presets) {
         DiskModel model = (DiskModel) getWindow();
-        model.getPreset().setItems(presets);
-
         boolean hasDisks = !disks.isEmpty();
 
+        model.getPreset().setItems(presets);
         for (DiskImageBase a : presets)
         {
             if ((hasDisks && !a.getboot()) || (!hasDisks && a.getboot()))
@@ -481,6 +498,23 @@ public class VmGuideModel extends GuideModel
             model.getIsBootable().setIsChangable(false);
             model.getIsBootable().getChangeProhibitionReasons().add("There can be only one bootable disk defined.");
         }
+
+        AsyncDataProvider.GetNextAvailableDiskAliasNameByVMId(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object model, Object returnValue) {
+                        String suggestedDiskName = (String) returnValue;
+                        VmGuideModel vmGuideModel = (VmGuideModel) model;
+                        DiskModel diskModel = (DiskModel) vmGuideModel.getWindow();
+                        diskModel.getAlias().setEntity(suggestedDiskName);
+                        vmGuideModel.AddDiskPostGetNextAvailableDiskAlias();
+                    }
+                }), getEntity().getId());
+    }
+
+    private void AddDiskPostGetNextAvailableDiskAlias() {
+        DiskModel model = (DiskModel) getWindow();
+        boolean hasDisks = !disks.isEmpty();
 
         if (storage == null)
         {
@@ -552,6 +586,7 @@ public class VmGuideModel extends GuideModel
 
             DiskImage tempVar = new DiskImage();
             tempVar.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
+            tempVar.setDiskAlias(model.getAlias().getEntity().toString());
             tempVar.setdisk_interface((DiskInterface) model.getInterface().getSelectedItem());
             tempVar.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
             tempVar.setvolume_format(model.getVolumeFormat());

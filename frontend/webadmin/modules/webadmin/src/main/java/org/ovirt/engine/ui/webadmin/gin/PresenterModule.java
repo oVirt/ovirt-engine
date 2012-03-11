@@ -58,6 +58,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
@@ -67,6 +68,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmServerNewP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresenter;
@@ -90,6 +92,10 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTab
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStoragePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.DiskSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskTemplatePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeneralPresenter;
@@ -201,6 +207,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmChangeCDPopupVi
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmClonePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDesktopNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmExportPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMakeTemplatePopupView;
@@ -210,6 +217,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmServerNewPopupV
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotCreatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabClusterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabDataCenterView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabDiskView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabHostView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabPoolView;
@@ -233,6 +241,10 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataC
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterPermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterQuotaView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterStorageView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.DiskSubTabPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskGeneralView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskTemplateView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskVmView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeBrickView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeGeneralView;
@@ -389,6 +401,10 @@ public class PresenterModule extends BasePresenterModule {
                 MainTabVolumePresenter.ViewDef.class,
                 MainTabVolumeView.class,
                 MainTabVolumePresenter.ProxyDef.class);
+        bindPresenter(MainTabDiskPresenter.class,
+                MainTabDiskPresenter.ViewDef.class,
+                MainTabDiskView.class,
+                MainTabDiskPresenter.ProxyDef.class);
 
         // Main section: sub tabs
 
@@ -676,6 +692,24 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabQuotaEventView.class,
                 SubTabQuotaEventPresenter.ProxyDef.class);
 
+        // Disk
+        bindPresenter(DiskSubTabPanelPresenter.class,
+                DiskSubTabPanelPresenter.ViewDef.class,
+                DiskSubTabPanelView.class,
+                DiskSubTabPanelPresenter.ProxyDef.class);
+        bindPresenter(SubTabDiskGeneralPresenter.class,
+                SubTabDiskGeneralPresenter.ViewDef.class,
+                SubTabDiskGeneralView.class,
+                SubTabDiskGeneralPresenter.ProxyDef.class);
+        bindPresenter(SubTabDiskVmPresenter.class,
+                SubTabDiskVmPresenter.ViewDef.class,
+                SubTabDiskVmView.class,
+                SubTabDiskVmPresenter.ProxyDef.class);
+        bindPresenter(SubTabDiskTemplatePresenter.class,
+                SubTabDiskTemplatePresenter.ViewDef.class,
+                SubTabDiskTemplateView.class,
+                SubTabDiskTemplatePresenter.ProxyDef.class);
+
         // Main section: popups
 
         // Permissions
@@ -852,6 +886,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmDiskPopupPresenterWidget.class,
                 VmDiskPopupPresenterWidget.ViewDef.class,
                 VmDiskPopupView.class);
+
+        // VM Detach/Remove Disk
+        bindPresenterWidget(VmDiskRemovePopupPresenterWidget.class,
+                VmDiskRemovePopupPresenterWidget.ViewDef.class,
+                VmDiskRemovePopupView.class);
 
         // Edit Template
         bindPresenterWidget(TemplateNewPresenterWidget.class,

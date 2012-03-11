@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.models.common.AboutModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.SystemPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.AlertListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
@@ -602,6 +603,9 @@ public class CommonModel extends ListModel
             case VMs:
                 setSelectedItem(vmList);
                 break;
+            case Disk:
+                setSelectedItem(diskList);
+                break;
             default:
                 // webadmin: redirect to default tab in case no tab is selected.
                 if (getSelectedItem() == null)
@@ -745,6 +749,7 @@ public class CommonModel extends ListModel
     private SearchableListModel quotaList;
     private SearchableListModel monitor;
     private SearchableListModel volumeList;
+    private SearchableListModel diskList;
 
     private void InitItems()
     {
@@ -789,6 +794,9 @@ public class CommonModel extends ListModel
         volumeList = new VolumeListModel();
         list.add(volumeList);
         volumeList.setIsAvailable(!volumeList.getGlusterModeEnum().equals(GlusterModeEnum.ONLY_OVIRT));
+
+        diskList = new DiskListModel();
+        list.add(diskList);
 
         setItems(list);
 

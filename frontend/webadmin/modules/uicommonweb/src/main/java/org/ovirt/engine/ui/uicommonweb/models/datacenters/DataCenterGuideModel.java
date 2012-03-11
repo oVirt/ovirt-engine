@@ -206,7 +206,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         }
                         dataCenterGuideModel.allHosts = hosts;
 
-                        AsyncDataProvider.GetLocalStorageHost(new AsyncQuery(this,
+                        AsyncDataProvider.GetLocalStorageHost(new AsyncQuery(dataCenterGuideModel,
                                 new INewAsyncCallback() {
                                     @Override
                                     public void OnSuccess(Object target, Object returnValue) {

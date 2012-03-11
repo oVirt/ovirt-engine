@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
@@ -18,37 +16,24 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
 
 public class MoveDiskModel extends MoveOrCopyDiskModel
 {
-    protected VM vm;
-
     public MoveDiskModel() {
         super();
     }
 
-    public MoveDiskModel(VM vm) {
-        super();
-
-        this.vm = vm;
-    }
-
     @Override
-    public void init(ArrayList<DiskImage> disksImages) {
-        setDiskImages(disksImages);
+    public void init(ArrayList<DiskImage> diskImages) {
+        setDiskImages(diskImages);
 
-        if (vm != null && !vm.getvmt_guid().equals(NGuid.Empty)) {
-            AsyncDataProvider.GetTemplateDiskList(new AsyncQuery(this, new INewAsyncCallback() {
-                @Override
-                public void OnSuccess(Object target, Object returnValue) {
-                    MoveDiskModel moveDiskModel = (MoveDiskModel) target;
-                    ArrayList<DiskImage> disksImages = (ArrayList<DiskImage>) returnValue;
+        AsyncDataProvider.GetDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                MoveDiskModel moveDiskModel = (MoveDiskModel) target;
+                ArrayList<DiskImage> diskImages = (ArrayList<DiskImage>) returnValue;
 
-                    moveDiskModel.onInitTemplateDisks(disksImages);
-                    moveDiskModel.onInitDisks();
-                }
-            }), vm.getvmt_guid());
-        }
-        else {
-            onInitDisks();
-        }
+                moveDiskModel.onInitAllDisks(diskImages);
+                moveDiskModel.onInitDisks();
+            }
+        }));
     }
 
     @Override
@@ -58,10 +43,9 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
             public void OnSuccess(Object target, Object returnValue) {
                 MoveDiskModel moveDiskModel = (MoveDiskModel) target;
                 ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
-
                 moveDiskModel.onInitStorageDomains(storageDomains);
             }
-        }), vm.getstorage_pool_id());
+        }), getDisks().get(0).getDiskImage().getstorage_pool_id().getValue());
     }
 
     protected void postCopyOrMoveInit() {

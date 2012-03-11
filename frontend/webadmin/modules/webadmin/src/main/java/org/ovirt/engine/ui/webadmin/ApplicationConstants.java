@@ -743,4 +743,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Destination")
     String destinationStorage();
 
+    @DefaultStringValue("Disks")
+    String diskMainTabLabel();
+
+    @DefaultStringValue("General")
+    String diskGeneralSubTabLabel();
+
+    @DefaultStringValue("Virtual Machines")
+    String diskVmSubTabLabel();
+
+    @DefaultStringValue("Templates")
+    String diskTemplateSubTabLabel();
 }

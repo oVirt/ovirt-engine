@@ -15,18 +15,43 @@
 			width: 100%;
 			text-align: center;
 		}
+		
+		.topPanel {
+			border-bottom: 1px solid black;
+			width: 100%
+		}
+		
+		.mainPanel {
+			width: 100%;
+		}
+		
+		.isPluggedEditor {
+			position: absolute;
+			bottom: 10px;
+		}
 	</ui:style>
 
 	<g:FlowPanel>
-		<e:EntityModelTextBoxEditor ui:field="sizeEditor" />
-		<e:ListModelListBoxEditor ui:field="storageDomainEditor" />
-		<e:ListModelListBoxEditor ui:field="quotaEditor" />
-		<e:ListModelListBoxEditor ui:field="interfaceEditor" />
-		<e:ListModelListBoxEditor ui:field="volumeTypeEditor" />
-		<e:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" />
-		<e:EntityModelCheckBoxEditor ui:field="isBootableEditor" />
-		<e:EntityModelCheckBoxEditor ui:field="isPluggedEditor" />
-		<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
+		<g:HorizontalPanel addStyleNames="{style.topPanel}">
+			<e:EntityModelCheckBoxEditor ui:field="attachEditor" />	
+		</g:HorizontalPanel>
+		<g:VerticalPanel ui:field="createDiskPanel" addStyleNames="{style.mainPanel}">
+			<e:EntityModelTextBoxEditor ui:field="aliasEditor" />
+			<e:EntityModelTextBoxEditor ui:field="sizeEditor" />						
+			<e:ListModelListBoxEditor ui:field="storageDomainEditor" />
+			<e:ListModelListBoxEditor ui:field="quotaEditor" />
+			<e:ListModelListBoxEditor ui:field="interfaceEditor" />
+			<e:ListModelListBoxEditor ui:field="volumeTypeEditor" />
+			<e:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" />
+			<e:EntityModelCheckBoxEditor ui:field="isBootableEditor" />			
+			<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="attachDiskPanel" addStyleNames="{style.mainPanel}" visible="false">
+			<g:ScrollPanel height="250px">			
+				<e:EntityModelCellTable ui:field="diskTable" />			
+			</g:ScrollPanel>
+			<e:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" />
+		</g:VerticalPanel>
 	</g:FlowPanel>
 
 </ui:UiBinder>

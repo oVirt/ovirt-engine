@@ -39,6 +39,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
@@ -175,7 +176,7 @@ public class VirtualMachineModule extends AbstractGinModule {
     @Singleton
     public SearchableDetailModelProvider<DiskImage, VmListModel, VmDiskListModel> getVmDiskListProvider(ClientGinjector ginjector,
             final Provider<VmDiskPopupPresenterWidget> popupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<DisksAllocationPopupPresenterWidget> movePopupProvider) {
         return new SearchableDetailTabModelProvider<DiskImage, VmListModel, VmDiskListModel>(ginjector,
                 VmListModel.class,

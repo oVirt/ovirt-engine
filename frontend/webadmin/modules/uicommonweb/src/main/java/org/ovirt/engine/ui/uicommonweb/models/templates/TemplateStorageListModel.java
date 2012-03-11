@@ -170,8 +170,8 @@ public class TemplateStorageListModel extends SearchableListModel
         ArrayList<String> items = new ArrayList<String>();
         for (DiskModel diskModel : disks)
         {
-            items.add(StringFormat.format("Disk %1$s (from Stroage Domain %2$s)",
-                    diskModel.getDiskImage().getinternal_drive_mapping(),
+            items.add(StringFormat.format("%1$s (from Stroage Domain %2$s)",
+                    diskModel.getDiskImage().getDiskAlias(),
                     ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getstorage_name()));
         }
         model.setItems(items);

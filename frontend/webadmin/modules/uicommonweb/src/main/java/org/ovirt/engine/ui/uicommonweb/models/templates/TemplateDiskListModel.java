@@ -215,7 +215,7 @@ public class TemplateDiskListModel extends SearchableListModel
 
         VmTemplate template = (VmTemplate) getEntity();
 
-        CopyDiskModel model = new CopyDiskModel(template);
+        CopyDiskModel model = new CopyDiskModel();
         model.setIsSingleDiskCopy(disks.size() == 1);
         setWindow(model);
         model.setTitle("Copy Disk(s)");

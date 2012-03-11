@@ -170,7 +170,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
             return;
         }
 
-        CopyDiskModel model = new CopyDiskModel(template);
+        CopyDiskModel model = new CopyDiskModel();
         setWindow(model);
         model.setTitle("Copy Template");
         model.setHashName("copy_template");

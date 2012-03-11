@@ -14,7 +14,7 @@ public class ConfirmationModel extends ListModel
         return privateLatch;
     }
 
-    private void setLatch(EntityModel value)
+    public void setLatch(EntityModel value)
     {
         privateLatch = value;
     }

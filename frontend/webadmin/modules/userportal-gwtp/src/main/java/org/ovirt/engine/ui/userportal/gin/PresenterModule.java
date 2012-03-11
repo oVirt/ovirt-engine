@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCD
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
@@ -59,6 +60,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmChangeCDPopup
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmClonePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDesktopNewPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDiskPopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDiskRemovePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmMakeTemplatePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmRunOncePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmServerNewPopupView;
@@ -269,6 +271,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmDiskPopupPresenterWidget.class,
                 VmDiskPopupPresenterWidget.ViewDef.class,
                 VmDiskPopupView.class);
+        bindPresenterWidget(VmDiskRemovePopupPresenterWidget.class,
+                VmDiskRemovePopupPresenterWidget.ViewDef.class,
+                VmDiskRemovePopupView.class);
         bindPresenterWidget(VmSnapshotCreatePopupPresenterWidget.class,
                 VmSnapshotCreatePopupPresenterWidget.ViewDef.class,
                 VmSnapshotCreatePopupView.class);

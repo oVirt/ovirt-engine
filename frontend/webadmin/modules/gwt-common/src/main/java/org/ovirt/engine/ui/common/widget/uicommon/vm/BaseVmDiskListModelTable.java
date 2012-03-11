@@ -33,7 +33,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
         TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return "Disk " + object.getinternal_drive_mapping();
+                return object.getDiskAlias();
             }
         };
         getTable().addColumn(nameColumn, "Alias");
@@ -44,7 +44,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
                 return object.getsize();
             }
         };
-        getTable().addColumn(sizeColumn, "Size");
+        getTable().addColumn(sizeColumn, "Provisioned Size");
 
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -52,7 +52,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
                 return object.getactual_size();
             }
         };
-        getTable().addColumn(actualSizeColumn, "Actual Size");
+        getTable().addColumn(actualSizeColumn, "Size");
 
         TextColumnWithTooltip<DiskImage> storageDomainColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override

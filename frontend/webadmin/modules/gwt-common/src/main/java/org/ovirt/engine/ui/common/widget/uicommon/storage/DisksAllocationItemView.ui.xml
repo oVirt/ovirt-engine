@@ -9,14 +9,14 @@
 			display: none;
 		}
 		
-		.editorLabelContent {
-			width: 100%;
-			float: none;
+		.editorContentNarrow {
+			width: 85px;
+			margin-left: 5px;
 		}
 		
 		.editorContent {
-			width: 110px;
-			float: right;
+			width: 100px;
+			margin-left: 5px;
 		}
 		
 		.editorWrapper {

@@ -90,7 +90,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
 
             ImageResource image =
                     isDisk ? resources.diskImage() : resources.snapshotImage();
-            String name = isDisk ? "Disk " + disk.getinternal_drive_mapping() : disk.getdescription();
+            String name = isDisk ? disk.getDiskAlias() : disk.getdescription();
 
             addItemToPanel(panel, new Image(image), "25px");
             addTextBoxToPanel(panel, new TextBoxLabel(), name, "");

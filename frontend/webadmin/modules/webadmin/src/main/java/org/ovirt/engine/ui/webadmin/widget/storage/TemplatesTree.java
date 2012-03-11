@@ -54,7 +54,7 @@ public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTab
         panel.setWidth("100%");
 
         addItemToPanel(panel, new Image(resources.diskImage()), "25px");
-        addTextBoxToPanel(panel, new TextBoxLabel(), disk.getinternal_drive_mapping(), "");
+        addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), "");
         addTextBoxToPanel(panel, new TextBoxLabel(), "", "110px");
         addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), disk.getActualSize(), "110px");
         addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getcreation_date(), "140px");

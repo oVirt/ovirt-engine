@@ -200,6 +200,15 @@ public final class Linq
         }
     }
 
+    public static class DiskModelByAliasComparer implements java.util.Comparator<DiskModel>
+    {
+        @Override
+        public int compare(DiskModel x, DiskModel y)
+        {
+            return x.getDiskImage().getDiskAlias().compareTo(y.getDiskImage().getDiskAlias());
+        }
+    }
+
     // C# TO JAVA CONVERTER TODO TASK: The interface type was changed to the closest equivalent Java type, but the
     // methods implemented will need adjustment:
     public static class NetworkByNameComparer implements java.util.Comparator<network>
@@ -319,8 +328,7 @@ public final class Linq
         boolean isData = storageDomain.getstorage_domain_type() == StorageDomainType.Data ||
                 storageDomain.getstorage_domain_type() == StorageDomainType.Master;
 
-        boolean isActive = storageDomain.getstatus() != null &&
-                storageDomain.getstatus() == StorageDomainStatus.Active;
+        boolean isActive = IsActiveStorageDomain(storageDomain);
 
         return isData && isActive;
     }
@@ -961,13 +969,12 @@ public final class Linq
         return (ArrayList<storage_domains>) Intersection(storageDomainslists);
     }
 
-    public static ListModel ToEntityListModel(ListModel list)
+    public static <T> ArrayList<EntityModel> ToEntityModelList(ArrayList<T> list)
     {
-        ListModel listModel = new ListModel();
         ArrayList<EntityModel> entityModelList = new ArrayList<EntityModel>();
 
-        if (list.getItems() != null) {
-            for (Object item : list.getItems())
+        if (list != null) {
+            for (Object item : list)
             {
                 EntityModel model = new EntityModel();
                 model.setEntity(item);
@@ -975,8 +982,7 @@ public final class Linq
             }
         }
 
-        listModel.setItems(entityModelList);
-        return listModel;
+        return entityModelList;
     }
 
     public static DiskModel DiskImageToModel(DiskImage disk) {

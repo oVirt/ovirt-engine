@@ -289,7 +289,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                 return object.getsize();
             }
         };
-        diskTable.addColumn(sizeColumn, "Size", "100px");
+        diskTable.addColumn(sizeColumn, "Provisioned Size", "100px");
 
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -297,7 +297,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                 return object.getactual_size();
             }
         };
-        diskTable.addColumn(actualSizeColumn, "Actual Size", "100px");
+        diskTable.addColumn(actualSizeColumn, "Size", "100px");
 
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override

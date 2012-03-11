@@ -18,6 +18,7 @@
 			color: red;
 			font-size: 12px;
 		}
+		
 	</ui:style>
 
 	<d:SimpleDialogPanel width="500px" height="400px">
@@ -25,7 +26,7 @@
 			<g:FlowPanel>
 				<g:Label ui:field="messageLabel" />
 				<g:FlowPanel ui:field="itemPanel" addStyleNames="{style.items}" />
-				<e:EntityModelCheckBoxEditor ui:field="latch" visible="false" label="Approve operation"/>
+				<e:EntityModelCheckBoxEditor ui:field="latch" visible="false" />
 				<g:Label ui:field="noteLabel" addStyleNames="{style.noteLabel}"/>
 			</g:FlowPanel>
 		</d:content>

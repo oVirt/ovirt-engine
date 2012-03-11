@@ -20,7 +20,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.DiskModelByNameComparer;
+import org.ovirt.engine.ui.uicommonweb.Linq.DiskModelByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
@@ -103,7 +103,7 @@ public class DisksAllocationModel extends EntityModel
     }
 
     public void sortDisks() {
-        Linq.Sort(disks, new DiskModelByNameComparer());
+        Linq.Sort(disks, new DiskModelByAliasComparer());
         OnPropertyChanged(new PropertyChangedEventArgs("Disks"));
     }
 

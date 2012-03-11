@@ -43,7 +43,7 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
     public void initTable() {
         super.initTable();
 
-        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), "New") {
+        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), "Add") {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();

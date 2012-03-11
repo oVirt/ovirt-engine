@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
@@ -19,30 +17,28 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
 public class CopyDiskModel extends MoveOrCopyDiskModel
 {
-    protected VmTemplate template;
-
     public CopyDiskModel() {
         super();
-    }
-
-    public CopyDiskModel(VmTemplate template) {
-        super();
-
-        this.template = template;
     }
 
     @Override
     public void init(ArrayList<DiskImage> disksImages) {
         setDiskImages(disksImages);
 
-        onInitDisks();
+        AsyncDataProvider.GetDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                CopyDiskModel copyDiskModel = (CopyDiskModel) target;
+                ArrayList<DiskImage> diskImages = (ArrayList<DiskImage>) returnValue;
+
+                copyDiskModel.onInitAllDisks(diskImages);
+                copyDiskModel.onInitDisks();
+            }
+        }));
     }
 
     @Override
     protected void initStorageDomains() {
-        Guid storagePoolId = template.getstorage_pool_id() != null ?
-                template.getstorage_pool_id().getValue() : NGuid.Empty;
-
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object target, Object returnValue) {
@@ -51,18 +47,17 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
 
                 copyDiskModel.onInitStorageDomains(storageDomains);
             }
-        }), storagePoolId);
+        }), getDisks().get(0).getDiskImage().getstorage_pool_id().getValue());
     }
 
     protected void postCopyOrMoveInit() {
         ICommandTarget target = (ICommandTarget) getEntity();
 
         boolean noSingleStorageDomain = !getStorageDomain().getItems().iterator().hasNext();
-        boolean noDestStorageDomain =
-                activeStorageDomains.isEmpty() || intersectStorageDomains.containsAll(activeStorageDomains);
+        boolean noDestStorageDomain = intersectStorageDomains.containsAll(activeStorageDomains);
 
-        if (noSingleStorageDomain || noDestStorageDomain) {
-            if (noSingleStorageDomain) {
+        if (activeStorageDomains.isEmpty() || noDestStorageDomain) {
+            if (activeStorageDomains.isEmpty()) {
                 setMessage("No Storage Domain is available - check Storage Domains and Hosts status.");
             }
             else if (noDestStorageDomain) {

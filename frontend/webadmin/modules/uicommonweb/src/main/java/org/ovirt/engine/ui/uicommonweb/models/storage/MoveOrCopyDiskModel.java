@@ -29,19 +29,19 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implements ICommandTarget
 {
-    private ArrayList<DiskModel> templateDisks;
+    private ArrayList<DiskModel> allDisks;
 
-    public ArrayList<DiskModel> getTemplateDisks()
+    public ArrayList<DiskModel> getAllDisks()
     {
-        return templateDisks;
+        return allDisks;
     }
 
-    public void setTemplateDisks(ArrayList<DiskModel> value)
+    public void setAllDisks(ArrayList<DiskModel> value)
     {
-        if (templateDisks != value)
+        if (allDisks != value)
         {
-            templateDisks = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Template Disks"));
+            allDisks = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("All Disks"));
         }
     }
 
@@ -91,7 +91,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             DiskModel diskModel);
 
     public MoveOrCopyDiskModel() {
-        templateDisks = new ArrayList<DiskModel>();
+        allDisks = new ArrayList<DiskModel>();
         storageDomains = new ArrayList<storage_domains>();
     }
 
@@ -106,10 +106,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         initStorageDomains();
     }
 
-    protected void onInitTemplateDisks(ArrayList<DiskImage> diskImages) {
+    protected void onInitAllDisks(ArrayList<DiskImage> diskImages) {
         for (DiskImage disk : diskImages)
         {
-            templateDisks.add(Linq.DiskImageToModel(disk));
+            allDisks.add(Linq.DiskImageToModel(disk));
         }
     }
 
@@ -143,26 +143,31 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         activeStorageDomains = getStorageDomains();
 
         ArrayList<ArrayList<storage_domains>> allSourceStorages = new ArrayList<ArrayList<storage_domains>>();
-
         ArrayList<storage_domains> missingStorageDomains = new ArrayList<storage_domains>();
 
         for (DiskModel disk : getDisks()) {
+            // Source storages
             ArrayList<Guid> diskStorageIds = disk.getDiskImage().getstorage_ids();
-            ArrayList<storage_domains> diskStorageDomains =
-                    Linq.getStorageDomainsByIds(diskStorageIds, activeStorageDomains);
+            ArrayList<storage_domains> diskStorages = Linq.getStorageDomainsByIds(diskStorageIds, activeStorageDomains);
+            disk.getSourceStorageDomain().setItems(diskStorages);
+            allSourceStorages.add(diskStorages);
+
+            // Destination storages
+            ArrayList<storage_domains> destStorageDomains = Linq.Except(activeStorageDomains, diskStorages);
             ArrayList<storage_domains> diskMissingStorageDomains = new ArrayList<storage_domains>();
 
-            disk.getSourceStorageDomain().setItems(diskStorageDomains);
-            allSourceStorages.add(diskStorageDomains);
-
-            ArrayList<storage_domains> destStorageDomains = Linq.Except(activeStorageDomains, diskStorageDomains);
-
+            // Filter storages with missing template disk
             if (!disk.getDiskImage().getParentId().equals(NGuid.Empty)) {
-                diskMissingStorageDomains = getMissingStorageDomains(destStorageDomains, disk);
+                diskMissingStorageDomains = getMissingStorages(destStorageDomains, disk);
             }
-
             missingStorageDomains.addAll(diskMissingStorageDomains);
             destStorageDomains = Linq.Except(destStorageDomains, missingStorageDomains);
+
+            // Filter storages on different datacenters
+            if (!diskStorages.isEmpty()) {
+                NGuid diskDatacenterId = diskStorages.get(0).getstorage_pool_id();
+                destStorageDomains = filterStoragesByDatacenterId(destStorageDomains, diskDatacenterId);
+            }
 
             Collections.sort(destStorageDomains, new Linq.StorageDomainByNameComparer());
             disk.getStorageDomain().setItems(destStorageDomains);
@@ -181,8 +186,20 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         postCopyOrMoveInit();
     }
 
-    protected ArrayList<storage_domains> getMissingStorageDomains(ArrayList<storage_domains> storageDomains,
-            DiskModel vmdisk) {
+    protected ArrayList<storage_domains> filterStoragesByDatacenterId(ArrayList<storage_domains> storageDomains,
+            NGuid diskDatacenterId) {
+
+        ArrayList<storage_domains> storages = new ArrayList<storage_domains>();
+        for (storage_domains storage : storageDomains) {
+            if (storage.getstorage_pool_id().equals(diskDatacenterId)) {
+                storages.add(storage);
+            }
+        }
+
+        return storages;
+    }
+
+    protected ArrayList<storage_domains> getMissingStorages(ArrayList<storage_domains> storageDomains, DiskModel vmdisk) {
         ArrayList<storage_domains> missingStorageDomains = new ArrayList<storage_domains>();
         DiskModel templateDisk = getTemplateDiskByVmDisk(vmdisk);
 
@@ -198,7 +215,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     protected DiskModel getTemplateDiskByVmDisk(DiskModel vmdisk) {
-        for (DiskModel disk : getTemplateDisks()) {
+        for (DiskModel disk : getAllDisks()) {
             if (disk.getDiskImage().getId().equals(vmdisk.getDiskImage().getParentId())) {
                 return disk;
             }

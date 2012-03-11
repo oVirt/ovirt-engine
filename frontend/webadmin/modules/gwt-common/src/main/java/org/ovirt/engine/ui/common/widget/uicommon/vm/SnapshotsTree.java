@@ -284,7 +284,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 return object.getsize();
             }
         };
-        table.addColumn(sizeColumn, "Size");
+        table.addColumn(sizeColumn, "Provisioned Size");
 
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -292,7 +292,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 return object.getactual_size();
             }
         };
-        table.addColumn(actualSizeColumn, "Actual Size");
+        table.addColumn(actualSizeColumn, "Size");
 
         TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override

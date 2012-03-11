@@ -72,7 +72,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
         DiskImage disk = diskModel.getDiskImage();
 
         addItemToPanel(panel, new Image(resources.diskImage()), "25px");
-        addTextBoxToPanel(panel, new TextBoxLabel(), "Disk " + disk.getinternal_drive_mapping(), "");
+        addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), "");
         addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px");
         addValueLabelToPanel(panel, new EnumLabel<ImageStatus>(), disk.getimageStatus(), "120px");
         addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getvolume_type(), "120px");

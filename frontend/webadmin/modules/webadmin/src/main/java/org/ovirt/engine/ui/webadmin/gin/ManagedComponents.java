@@ -40,6 +40,10 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterQuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListModel;
+import org.ovirt.engine.ui.uicommonweb.models.disks.DiskGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
+import org.ovirt.engine.ui.uicommonweb.models.disks.DiskTemplateListModel;
+import org.ovirt.engine.ui.uicommonweb.models.disks.DiskVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
@@ -109,6 +113,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.Bookma
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresenter;
@@ -132,6 +137,10 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTab
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStoragePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.DiskSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskTemplatePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeneralPresenter;
@@ -277,6 +286,10 @@ public interface ManagedComponents {
     AsyncProvider<MainTabQuotaPresenter> getMainTabQuotaPresenter();
 
     MainModelProvider<Quota, QuotaListModel> getMainTabQuotaModelProvider();
+
+    AsyncProvider<MainTabDiskPresenter> getMainTabDiskPresenter();
+
+    MainModelProvider<DiskImage, DiskListModel> getMainTabDiskModelProvider();
 
     // Presenters & model providers: Main section: sub tabs
 
@@ -573,4 +586,19 @@ public interface ManagedComponents {
 
     SearchableDetailModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> getSubTabVolumeEventModelProvider();
 
+    // Disk
+
+    AsyncProvider<DiskSubTabPanelPresenter> getDiskSubTabPanelPresenter();
+
+    AsyncProvider<SubTabDiskGeneralPresenter> getSubTabDiskGeneralPresenter();
+
+    DetailModelProvider<DiskListModel, DiskGeneralModel> getSubTabDiskGeneralModelProvider();
+
+    AsyncProvider<SubTabDiskVmPresenter> getSubTabDiskVmPresenter();
+
+    SearchableDetailModelProvider<VM, DiskListModel, DiskVmListModel> getSubTabDiskVmModelProvider();
+
+    AsyncProvider<SubTabDiskTemplatePresenter> getSubTabDiskTemplatePresenter();
+
+    SearchableDetailModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel> getSubTabDiskTemplateModelProvider();
 }

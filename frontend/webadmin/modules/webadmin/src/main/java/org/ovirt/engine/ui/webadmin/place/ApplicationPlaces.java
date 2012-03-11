@@ -35,6 +35,8 @@ public class ApplicationPlaces {
 
     public static final String volumeMainTabPlace = "volumes";
 
+    public static final String diskMainTabPlace = "disks";
+
     // Main section: sub tabs
 
     // Important: the value after SUB_TAB_PREFIX must correspond to given UiCommon model
@@ -238,6 +240,14 @@ public class ApplicationPlaces {
     public static final String volumePermissionSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "Permission";
 
     public static final String volumeEventSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "Event";
+
+    // Disk
+
+    public static final String diskGeneralSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "general";
+
+    public static final String diskVmSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "virtual_machines";
+
+    public static final String diskTemplateSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "templates";
 
     // Default places
 

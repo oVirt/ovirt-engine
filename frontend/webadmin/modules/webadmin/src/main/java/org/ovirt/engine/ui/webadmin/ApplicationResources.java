@@ -316,4 +316,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/network/bond.png")
     ImageResource bond();
 
+    @Source("images/disk_bootable.png")
+    ImageResource bootableDiskIcon();
 }

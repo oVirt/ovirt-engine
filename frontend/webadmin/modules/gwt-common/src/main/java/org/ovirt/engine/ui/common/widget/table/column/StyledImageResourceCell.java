@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class StyledImageResourceCell extends ImageResourceCell {
 
-    private String style = "";
+    private String style = "line-height: 100%; text-align: center; vertical-align: middle;";
 
     @Override
     public void render(Context context, ImageResource value, SafeHtmlBuilder sb) {

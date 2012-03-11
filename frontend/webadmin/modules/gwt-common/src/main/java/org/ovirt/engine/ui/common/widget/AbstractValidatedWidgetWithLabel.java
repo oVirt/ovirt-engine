@@ -187,6 +187,10 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         contentWidgetContainer.addStyleName(styleName);
     }
 
+    public void setContentWidgetStyleName(String styleName) {
+        contentWidgetContainer.setStyleName(styleName);
+    }
+
     public void setLabelStyleName(String styleName) {
         labelElement.setClassName(styleName);
     }

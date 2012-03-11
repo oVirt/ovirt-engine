@@ -153,4 +153,10 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("The VM contains disks in illegal status")
     String illegalDisksInVm();
+
+    @DefaultStringValue("Approve operation")
+    String latchApproveOperationLabel();
+
+    @DefaultStringValue("Permanently remove from storage")
+    String permanentlyRemoveLabel();
 }

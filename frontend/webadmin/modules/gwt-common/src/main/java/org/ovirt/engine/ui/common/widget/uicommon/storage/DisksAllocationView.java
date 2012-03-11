@@ -118,21 +118,22 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     }
 
     void updateListHeader(DisksAllocationModel model) {
+        String width = showQuota ? "85px" : "100px";
         listHeader = new EntityModelCellTable(false, (Resources) GWT.create(
                 PopupSimpleTableResources.class), true);
-        listHeader.addColumn(new EmptyColumn(), "Alias");
-        listHeader.addColumn(new EmptyColumn(), "Size");
+        listHeader.addColumn(new EmptyColumn(), "Alias", width);
+        listHeader.addColumn(new EmptyColumn(), "Provisioned Size", width);
 
         if (showVolumeType)
-            listHeader.addColumn(new EmptyColumn(), "Allocation", "125px");
+            listHeader.addColumn(new EmptyColumn(), "Allocation", width);
 
         if (showSource)
-            listHeader.addColumn(new EmptyColumn(), "Source", "125px");
+            listHeader.addColumn(new EmptyColumn(), "Source", width);
 
-        listHeader.addColumn(new EmptyColumn(), "Destination", "125px");
+        listHeader.addColumn(new EmptyColumn(), "Target", width);
 
         if (showQuota)
-            listHeader.addColumn(new EmptyColumn(), "Quota", "125px");
+            listHeader.addColumn(new EmptyColumn(), "Quota", width);
 
         listHeader.setRowData(new ArrayList());
         listHeader.setWidth("100%", true);
@@ -197,6 +198,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         for (final DiskModel diskModel : model.getDisks()) {
             DisksAllocationItemView disksAllocationItemView = new DisksAllocationItemView(constants);
             disksAllocationItemView.edit(diskModel);
+            disksAllocationItemView.updateStyles(showQuota);
             diskListPanel.add(disksAllocationItemView);
         }
 

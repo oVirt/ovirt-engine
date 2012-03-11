@@ -98,7 +98,7 @@ public class VmSnapshotListModelTree<L extends ListWithDetailsModel> extends Abs
 
             @Override
             public String getCustomToolTip() {
-                if (!modelProvider.getModel().getIsCloneVmSupported()) {
+                if (!modelProvider.getModel().getIsCloneVmSupported() && modelProvider.getModel().getEntity() != null) {
                     CommandVersionsInfo commandVersionsInfo =
                             AsyncDataProvider.GetCommandVersionsInfo(VdcActionType.AddVmFromSnapshot);
                     String minimalClusterVersion = commandVersionsInfo != null ?

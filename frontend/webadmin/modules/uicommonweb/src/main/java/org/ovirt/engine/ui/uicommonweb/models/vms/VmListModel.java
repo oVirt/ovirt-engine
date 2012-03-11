@@ -909,7 +909,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             return;
         }
 
-        MoveDiskModel model = new MoveDiskModel(vm);
+        MoveDiskModel model = new MoveDiskModel();
         setWindow(model);
         model.setTitle("Move Virtual Machine");
         model.setHashName("move_virtual_machine");

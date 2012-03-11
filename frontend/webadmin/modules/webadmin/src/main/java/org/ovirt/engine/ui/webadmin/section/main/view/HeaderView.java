@@ -35,7 +35,7 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private static final int mainTabBarInitialOffset = 250;
+    private static final int mainTabBarInitialOffset = 240;
 
     @UiField
     @WithElementId
