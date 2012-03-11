@@ -20,15 +20,16 @@ Create or replace FUNCTION InsertImage(v_creation_date TIMESTAMP WITH TIME ZONE,
 	v_volume_type INTEGER,
 	v_volume_format INTEGER,
 	v_image_group_id UUID ,
+    v_active BOOLEAN,
     v_boot BOOLEAN,
     v_quota_id UUID)
 RETURNS VOID
    AS $procedure$
 BEGIN
 INSERT INTO images(creation_date, description, image_guid, it_guid, size, ParentId,imageStatus,lastModified, app_list,
-    vm_snapshot_id, volume_type, image_group_id, volume_format, boot, quota_id)
+    vm_snapshot_id, volume_type, image_group_id, volume_format, active, boot, quota_id)
 	VALUES(v_creation_date, v_description, v_image_guid, v_it_guid, v_size, v_ParentId, v_imageStatus, v_lastModified,v_app_list,
-	v_vm_snapshot_id, v_volume_type, v_image_group_id, v_volume_format, v_boot, v_quota_id);
+	v_vm_snapshot_id, v_volume_type, v_image_group_id, v_volume_format, v_active, v_boot, v_quota_id);
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -49,6 +50,7 @@ Create or replace FUNCTION UpdateImage(v_creation_date TIMESTAMP WITH TIME ZONE,
 	v_volume_type INTEGER,
 	v_volume_format INTEGER,
 	v_image_group_id UUID ,
+    v_active BOOLEAN,
     v_boot BOOLEAN,
     v_quota_id UUID)
 RETURNS VOID
@@ -63,6 +65,7 @@ BEGIN
       app_list = v_app_list, 
       vm_snapshot_id = v_vm_snapshot_id,volume_type = v_volume_type,image_group_id = v_image_group_id, 
       volume_format = v_volume_format,
+      active = v_active,
       boot = v_boot, quota_id = v_quota_id,
       _update_date = LOCALTIMESTAMP
       WHERE image_guid = v_image_guid;
@@ -253,14 +256,14 @@ BEGIN
 	  IF v_template_id IS NULL then
            RETURN QUERY SELECT images_storage_domain_view.*
            FROM images_storage_domain_view 
-           INNER JOIN image_vm_map ON image_vm_map.image_id = images_storage_domain_view.image_guid
-           INNER JOIN vm_static ON vm_static.vm_guid = image_vm_map.vm_id
+           INNER JOIN vm_device ON vm_device.device_id = images_storage_domain_view.image_group_id
+           INNER JOIN vm_static ON vm_static.vm_guid = vm_device.vm_id
            WHERE images_storage_domain_view.storage_id = v_storage_id AND vm_static.entity_type::text = 'TEMPLATE'::text;
       ELSE
            RETURN QUERY SELECT images_storage_domain_view.*
            FROM images_storage_domain_view 
-           INNER JOIN image_vm_map ON image_vm_map.image_id = images_storage_domain_view.image_guid
-           INNER JOIN vm_static ON vm_static.vm_guid = image_vm_map.vm_id
+           INNER JOIN vm_device ON vm_device.device_id = images_storage_domain_view.image_group_id
+           INNER JOIN vm_static ON vm_static.vm_guid = vm_device.vm_id
            WHERE images_storage_domain_view.storage_id = v_storage_id AND vm_static.vm_guid = v_template_id AND vm_static.entity_type::text = 'TEMPLATE'::text;
       END IF;     
 END; $procedure$

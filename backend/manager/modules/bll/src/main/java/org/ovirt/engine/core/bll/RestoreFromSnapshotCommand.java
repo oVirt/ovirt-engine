@@ -11,8 +11,6 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
-import org.ovirt.engine.core.common.businessentities.image_vm_map;
-import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters;
@@ -42,8 +40,8 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         super.executeCommand();
         if (RemoveImages()) {
             if (getParameters().getSnapshot().getType() != SnapshotType.REGULAR) {
-                DbFacade.getInstance().getImageVmMapDAO().save(
-                        new image_vm_map(true, getImageId(), getParameters().getContainerId()));
+                getImage().setactive(true);
+                DbFacade.getInstance().getDiskImageDAO().update(getImage());
             }
 
             setSucceeded(true);
@@ -66,11 +64,6 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
             break;
         }
 
-        if (imageToRemoveId != null) {
-            DbFacade.getInstance()
-                    .getImageVmMapDAO()
-                    .remove(new image_vm_map_id(imageToRemoveId, getDiskImage().getvm_guid()));
-        }
         VDSReturnValue vdsReturnValue = performImageVdsmOperation();
         return vdsReturnValue != null && vdsReturnValue.getSucceeded();
     }

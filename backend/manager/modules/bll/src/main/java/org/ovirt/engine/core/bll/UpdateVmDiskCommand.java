@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
@@ -20,7 +19,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.ImageVmMapDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -56,9 +54,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         } else {
-            image_vm_map map = getImageVmDao().getByImageId(getParameters().getImageId());
+            DiskImage image = getDiskImageDao().get(getParameters().getImageId());
             _oldDisk = getDiskImageDao().get(getParameters().getImageId());
-            if (map == null || !getVmId().equals(map.getvm_id()) || _oldDisk == null) {
+            if (image == null || !image.getactive() || !image.getimage_group_id().equals(_oldDisk.getId())
+                    || _oldDisk == null) {
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
             } else {
@@ -80,10 +79,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
 
     protected DiskImageDAO getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDAO();
-    }
-
-    protected ImageVmMapDAO getImageVmDao() {
-        return DbFacade.getInstance().getImageVmMapDAO();
     }
 
     private boolean checkCanPerformRegularUpdate() {

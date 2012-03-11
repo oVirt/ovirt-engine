@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.images.DiskImageDAOHibernateImpl;
 import org.ovirt.engine.core.dao.images.DiskImageDynamicDAOHibernateImpl;
-import org.ovirt.engine.core.dao.images.ImageVmMapDAOHibernateImpl;
 
 /**
  * <code>DiskImageDAOWrapperImpl</code> provides an implementation of {@link DiskImageDAO} that wraps underlying
@@ -18,7 +17,6 @@ import org.ovirt.engine.core.dao.images.ImageVmMapDAOHibernateImpl;
 public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskImageDAO {
     private DiskImageDAOHibernateImpl imageDAO = new DiskImageDAOHibernateImpl();
     private DiskImageDynamicDAOHibernateImpl dynamicDAO = new DiskImageDynamicDAOHibernateImpl();
-    private ImageVmMapDAOHibernateImpl imageVmMapDAO = new ImageVmMapDAOHibernateImpl();
 
     @Override
     public void setSession(Session session) {
@@ -26,7 +24,6 @@ public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskI
 
         imageDAO.setSession(session);
         dynamicDAO.setSession(session);
-        imageVmMapDAO.setSession(session);
     }
 
     @Override

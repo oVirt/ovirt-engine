@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -502,6 +501,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 disk.setParentId(VmTemplateHandler.BlankVmTemplateId);
                 disk.setit_guid(VmTemplateHandler.BlankVmTemplateId);
                 disk.setvm_snapshot_id(snapshotId);
+                disk.setactive(true);
 
                 if (getParameters().getDiskInfoList() != null
                         && getParameters().getDiskInfoList().containsKey(disk.getinternal_drive_mapping())) {
@@ -518,9 +518,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 diskDynamic.setId(disk.getId());
                 diskDynamic.setactual_size(disk.getactual_size());
                 DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
-                DbFacade.getInstance()
-                        .getImageVmMapDAO()
-                        .save(new image_vm_map(true, disk.getId(), getVm().getId()));
             }
 
             new SnapshotsManager().addActiveSnapshot(snapshotId, getVm(), getCompensationContext());
@@ -551,8 +548,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 List<DiskImage> list = images.get(drive);
                 DiskImage disk = list.get(list.size() - 1);
                 snapshotId = disk.getvm_snapshot_id().getValue();
-                DbFacade.getInstance().getImageVmMapDAO().save(
-                        new image_vm_map(true, disk.getId(), getVm().getId()));
+                disk.setactive(true);
+                DbFacade.getInstance().getDiskImageDAO().update(disk);
                 DbFacade.getInstance().getDiskDao().save(disk.getDisk());
             }
 

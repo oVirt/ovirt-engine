@@ -235,10 +235,10 @@ BEGIN
       WHERE quota_id = v_quota_id
       UNION
       SELECT DISTINCT vm_templates.*
-      FROM vm_templates_view vm_templates, image_vm_map, images
-      WHERE vm_templates.vmt_guid = image_vm_map.vm_id
-        AND images.image_guid = image_vm_map.image_id
-        AND images.quota_id = v_quota_id;
+      FROM vm_templates_view vm_templates
+      INNER JOIN vm_device vd ON vd.vm_id = vm_templates.vmt_guid
+      INNER JOIN images ON images.image_group_id = vd.device_id AND images.active = TRUE
+      WHERE images.quota_id = v_quota_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -274,8 +274,9 @@ Create or replace FUNCTION GetVmTemplateByImageId(v_image_guid UUID) RETURNS SET
 BEGIN
       RETURN QUERY SELECT vm_templates.*
       FROM vm_templates_view vm_templates
-      inner join image_vm_map AS vm_template_image_map on vm_templates.vmt_guid = vm_template_image_map.vm_id
-      WHERE vm_template_image_map.image_id = v_image_guid;
+      INNER JOIN vm_device vd ON vd.vm_id = vm_templates.vmt_guid
+      INNER JOIN images i ON i.image_group_id = vd.device_id AND i.active = TRUE
+      WHERE i.image_guid = v_image_guid;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -285,8 +286,9 @@ Create or replace FUNCTION GetVmTemplatesByStorageDomainId(v_storage_domain_id U
 BEGIN
       RETURN QUERY SELECT DISTINCT vm_templates.*
       FROM vm_templates_view vm_templates
-      inner join image_vm_map AS vm_template_image_map on vm_templates.vmt_guid = vm_template_image_map.vm_id
-      where vm_template_image_map.image_id in(select image_id from image_storage_domain_map where storage_domain_id = v_storage_domain_id);
+      INNER JOIN vm_device vd ON vd.vm_id = vm_templates.vmt_guid
+      INNER JOIN images i ON i.image_group_id = vd.device_id AND i.active = TRUE
+      where i.image_guid in(select image_id from image_storage_domain_map where storage_domain_id = v_storage_domain_id);
 END; $procedure$
 LANGUAGE plpgsql;
 

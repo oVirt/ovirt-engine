@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class DiskDaoTest extends BaseGenericDaoTestCase<Guid, Disk, DiskDao> {
 
     private static final Guid EXISTING_DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
-    private static final int TOTAL_DISKS = 1;
+    private static final int TOTAL_DISKS = 2;
 
     @Override
     protected Guid generateNonExistingId() {

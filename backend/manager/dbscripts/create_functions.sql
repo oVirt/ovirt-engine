@@ -197,7 +197,7 @@ BEGIN
 			SELECT v_entity_id AS id;
 	WHEN v_entity_type = 4 THEN -- Template
 		-- get image id first
-		v_image_id := ( SELECT image_id FROM image_vm_map WHERE vm_id = v_entity_id limit 1);
+		v_image_id := ( SELECT image_guid FROM images i JOIN vm_device vd ON i.image_group_id = vd.device_id WHERE vm_id = v_entity_id limit 1);
 		-- get the storage id from images
 		v_storage_id := ( SELECT storage_domain_id FROM image_storage_domain_map WHERE image_id = v_image_id limit 1);
 		-- finally get data center id
@@ -495,8 +495,8 @@ BEGIN
 	FROM disk_image_dynamic, images_storage_domain_view
 	WHERE image_guid = disk_image_dynamic.image_id
     AND image_guid in (SELECT image_guid
-                       FROM image_vm_map ivm,images
-                       WHERE ivm.image_id = images.image_guid and active = 't')
+                       FROM   images i JOIN vm_device vd ON i.image_group_id = vd.device_id
+                       WHERE  active = TRUE)
 	AND quota_id = v_quota_id
     AND (v_storage_id = images_storage_domain_view.storage_id or v_storage_id IS NULL);
 
@@ -505,8 +505,8 @@ BEGIN
 	FROM disk_image_dynamic, images_storage_domain_view
 	WHERE image_guid = disk_image_dynamic.image_id
     AND image_guid not in (SELECT image_guid
-                           FROM image_vm_map ivm,images
-                           WHERE ivm.image_id = images.image_guid and active = 't')
+                           FROM   images i JOIN vm_device vd ON i.image_group_id = vd.device_id
+                           WHERE  active = TRUE)
 	AND quota_id = v_quota_id
 	AND (v_storage_id = images_storage_domain_view.storage_id or v_storage_id IS NULL);
 	RETURN v_actual_size + v_virtual_size;

@@ -23,7 +23,7 @@ public class VmDAOTest extends BaseDAOTestCase {
     private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
     private static final Guid STORAGE_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
     private static final Guid IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
-    private static final Guid IMAGE_GROUP_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
+    private static final Guid IMAGE_GROUP_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a35");
 
     private static final int VM_COUNT = 3;
     private VmDAO dao;

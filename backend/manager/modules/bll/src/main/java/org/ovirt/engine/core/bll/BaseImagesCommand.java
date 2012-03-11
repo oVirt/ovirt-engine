@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
@@ -386,9 +385,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         // TODO - transaction
         // Adding new disk to the image table in the DB
         try {
+            image.setactive(true);
             getDiskImageDao().save(image);
-            DbFacade.getInstance().getImageVmMapDAO().save(
-                    new image_vm_map(image.getactive(), image.getId(), image.getvm_guid()));
             DiskImageDynamic diskDynamic = new DiskImageDynamic();
             diskDynamic.setId(image.getId());
             diskDynamic.setactual_size(image.getactual_size());

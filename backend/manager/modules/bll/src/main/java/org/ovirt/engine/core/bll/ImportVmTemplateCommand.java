@@ -29,8 +29,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.image_vm_map;
-import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -279,15 +277,13 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         DbFacade.getInstance().getVmTemplateDAO().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         for (DiskImage image : getParameters().getImages()) {
+            image.setactive(true);
             BaseImagesCommand.saveDiskImage(image);
             getCompensationContext().snapshotNewEntity(image);
             if (!DbFacade.getInstance().getDiskDao().exists(image.getimage_group_id())) {
                 Disk disk = image.getDisk();
                 DbFacade.getInstance().getDiskDao().save(disk);
                 getCompensationContext().snapshotNewEntity(disk);
-                image_vm_map imageVmMap = new image_vm_map(true, image.getId(), image.getvm_guid());
-                DbFacade.getInstance().getImageVmMapDAO().save(imageVmMap);
-                getCompensationContext().snapshotNewEntity(imageVmMap);
             }
 
             DiskImageDynamic diskDynamic = new DiskImageDynamic();
@@ -346,7 +342,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
             DbFacade.getInstance().getDiskImageDynamicDAO().remove(image.getId());
             DbFacade.getInstance().getDiskImageDAO().remove(image.getId());
             DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(image.getDisk().getId(),image.getvm_guid()));
-            DbFacade.getInstance().getImageVmMapDAO().remove(new image_vm_map_id(image.getId(),image.getvm_guid()));
             DbFacade.getInstance().getDiskDao().remove(image.getimage_group_id());
         }
     }

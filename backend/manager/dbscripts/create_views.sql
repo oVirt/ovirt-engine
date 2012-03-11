@@ -42,6 +42,7 @@ SELECT DISTINCT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
     images.boot as boot,
     images.imageStatus as imageStatus,
     images.image_group_id as image_group_id,
+    images.active,
     vm_static.entity_type as entity_type,
     CAST (disks.internal_drive_mapping AS VARCHAR(50)) as internal_drive_mapping,
     CASE WHEN disks.disk_type = 'Unassigned' THEN 0
@@ -105,14 +106,14 @@ SELECT     images_storage_domain_view.storage_path as storage_path, images_stora
                       images_storage_domain_view.internal_drive_mapping as internal_drive_mapping, images_storage_domain_view.description as description,
                       images_storage_domain_view.ParentId as ParentId, images_storage_domain_view.imageStatus as imageStatus, images_storage_domain_view.lastModified as lastModified,
                       images_storage_domain_view.app_list as app_list, images_storage_domain_view.storage_id as storage_id, images_storage_domain_view.vm_snapshot_id as vm_snapshot_id,
-                      images_storage_domain_view.volume_type as volume_type, images_storage_domain_view.image_group_id as image_group_id, image_vm_map.vm_id as vm_guid,
-                      image_vm_map.active as active, images_storage_domain_view.volume_format as volume_format, images_storage_domain_view.disk_type as disk_type,
+                      images_storage_domain_view.volume_type as volume_type, images_storage_domain_view.image_group_id as image_group_id, images_storage_domain_view.vm_guid as vm_guid,
+                      images_storage_domain_view.active as active, images_storage_domain_view.volume_format as volume_format, images_storage_domain_view.disk_type as disk_type,
                       images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors,
                       images_storage_domain_view.entity_type as entity_type,images_storage_domain_view.quota_id as quota_id, disks.disk_alias as disk_alias, disks.disk_description as disk_description
-FROM         image_vm_map INNER JOIN
-images_storage_domain_view ON image_vm_map.image_id = images_storage_domain_view.image_guid
+FROM         images_storage_domain_view
 INNER JOIN disk_image_dynamic ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id
-INNER JOIN disks ON images_storage_domain_view.image_group_id = disks.disk_id;
+INNER JOIN disks ON images_storage_domain_view.image_group_id = disks.disk_id
+WHERE images_storage_domain_view.active = TRUE;
 
 
 CREATE OR REPLACE VIEW storage_domains
@@ -223,8 +224,8 @@ AS
 FROM                  vm_static AS vm_templates INNER JOIN		
 	                  vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN		
                       storage_pool ON storage_pool.id = vds_groups.storage_pool_id INNER JOIN		
-                      image_vm_map AS vm_template_image_map ON vm_template_image_map.vm_id = vm_templates.vm_guid LEFT JOIN		
-	                  images ON images.image_guid = vm_template_image_map.image_id	
+                      vm_device ON vm_device.vm_id = vm_templates.vm_guid LEFT JOIN
+	                  images ON images.image_group_id = vm_device.device_id
 	                  LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid	
 WHERE      entity_type = 'TEMPLATE'		
 UNION
@@ -241,8 +242,8 @@ SELECT                vm_templates_1.vm_guid AS vmt_guid, vm_templates_1.vm_name
 FROM                  vm_static AS vm_templates_1 INNER JOIN
                       vds_groups AS vds_groups_1 ON vm_templates_1.vds_group_id = vds_groups_1.vds_group_id LEFT OUTER JOIN
                       storage_pool AS storage_pool_1 ON storage_pool_1.id = vds_groups_1.storage_pool_id INNER JOIN
-                      image_vm_map AS vm_template_image_map_1 ON vm_template_image_map_1.vm_id = vm_templates_1.vm_guid INNER JOIN
-                      images AS images_1 ON images_1.image_guid = vm_template_image_map_1.image_id INNER JOIN
+                      vm_device AS vm_device_1 ON vm_device_1.vm_id = vm_templates_1.vm_guid INNER JOIN
+                      images AS images_1 ON images_1.image_group_id = vm_device_1.device_id INNER JOIN
                       image_storage_domain_map ON image_storage_domain_map.image_id = images_1.image_guid
 WHERE                 entity_type = 'TEMPLATE';
 
@@ -388,9 +389,11 @@ SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.vmt_guid, vms.v
             vms.exit_status, vms.exit_message, vms.min_allocated_mem, storage_domain_static.id AS storage_id
 FROM        vms LEFT OUTER JOIN
             tags_vm_map_view ON vms.vm_guid = tags_vm_map_view.vm_id LEFT OUTER JOIN
-            image_vm_map ON vms.vm_guid = image_vm_map.vm_id LEFT OUTER JOIN
-            image_storage_domain_map ON image_storage_domain_map.image_id = image_vm_map.image_id LEFT OUTER JOIN
-            storage_domain_static ON storage_domain_static.id = image_storage_domain_map.storage_domain_id;
+            vm_device ON vm_device.vm_id = vms.vm_guid LEFT OUTER JOIN
+            images ON images.image_group_id = vm_device.device_id LEFT OUTER JOIN
+            image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid LEFT OUTER JOIN
+            storage_domain_static ON storage_domain_static.id = image_storage_domain_map.storage_domain_id
+WHERE       images.active IS NULL OR images.active = TRUE;
 
 CREATE OR REPLACE VIEW server_vms
 as

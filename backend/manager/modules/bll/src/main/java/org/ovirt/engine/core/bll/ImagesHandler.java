@@ -24,8 +24,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.image_vm_map;
-import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -161,9 +159,8 @@ public final class ImagesHandler {
      *            entry of mapping between the storage domain and the image
      */
     public static void addImage(DiskImage image, boolean active, image_storage_domain_map imageStorageDomainMap) {
+        image.setactive(active);
         DbFacade.getInstance().getDiskImageDAO().save(image);
-        DbFacade.getInstance().getImageVmMapDAO().save(
-                new image_vm_map(active, image.getId(), image.getvm_guid()));
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(image.getId());
         diskDynamic.setactual_size(image.getactual_size());
@@ -499,9 +496,6 @@ public final class ImagesHandler {
                 .removeImageStorageDomainMap(new image_storage_domain_map(diskImage.getId(),
                         diskImage.getstorage_ids().get(0)));
         DbFacade.getInstance().getDiskImageDynamicDAO().remove(diskImage.getId());
-        DbFacade.getInstance()
-                .getImageVmMapDAO()
-                .remove(new image_vm_map_id(diskImage.getId(), diskImage.getvm_guid()));
         DbFacade.getInstance().getDiskImageDAO().remove(diskImage.getId());
     }
 

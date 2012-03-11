@@ -1,9 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.image_vm_map;
-import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -32,9 +31,30 @@ public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> 
      */
     @Override
     protected void ProcessOldImageFromDb() {
-        Guid oldImageId = findImageForSameDrive(SnapshotType.PREVIEW);
-        DbFacade.getInstance().getImageVmMapDAO().remove(
-                new image_vm_map_id(oldImageId, getImageContainerId()));
+        updateOldImageActive(SnapshotType.PREVIEW, false);
+    }
+
+    /**
+     * Update the old image that represents the disk of the command's image to be in the given active state.
+     *
+     * @param snapshotType
+     *            The type of snapshot to look for the same image in.
+     * @param active
+     *            The active state.
+     */
+    protected void updateOldImageActive(SnapshotType snapshotType, boolean active) {
+        Guid oldImageId = findImageForSameDrive(snapshotType);
+        if (oldImageId == null) {
+            log.errorFormat("Can't find image to update to active: {0}, snapshot type: {1}, original image id: {2}",
+                    active,
+                    snapshotType,
+                    getImageId());
+            return;
+        }
+
+        DiskImage oldImage = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(oldImageId);
+        oldImage.setactive(active);
+        DbFacade.getInstance().getDiskImageDAO().update(oldImage);
     }
 
     @Override
@@ -45,12 +65,7 @@ public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> 
 
     @Override
     protected void EndWithFailure() {
-        // Remove image_vm_map between Vm and the preview snapshot:
-        DbFacade.getInstance().getImageVmMapDAO().remove(new image_vm_map_id(getDestinationImageId(), getVmId()));
-
-        // Restore image_vm_map between Vm and original leaf image to be active:
-        Guid originalLeafImage = findImageForSameDrive(SnapshotType.ACTIVE);
-        DbFacade.getInstance().getImageVmMapDAO().save(new image_vm_map(true, originalLeafImage, getVmId()));
+        updateOldImageActive(SnapshotType.ACTIVE, true);
 
         // Remove destination, unlock source:
         UndoActionOnSourceAndDestination();

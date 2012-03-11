@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -30,7 +29,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.ImageVmMapDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -51,8 +49,6 @@ public class UpdateVmDiskCommandTest {
     private VdsDAO vdsDao;
     @Mock
     private DiskImageDAO diskImageDao;
-    @Mock
-    private ImageVmMapDAO imageVmMapDao;
     @Mock
     private VmDeviceDAO vmDeviceDAO;
 
@@ -147,7 +143,6 @@ public class UpdateVmDiskCommandTest {
     protected void initializeCommand(boolean paramsPlugged, boolean diskPlugged) {
         command = spy(new UpdateVmDiskCommand<UpdateVmDiskParameters>(createParameters(paramsPlugged)));
         mockVds();
-        mockImageVmMap();
         mockVmDevice(diskPlugged);
     }
 
@@ -196,12 +191,6 @@ public class UpdateVmDiskCommandTest {
         when(vdsDao.get(Guid.Empty)).thenReturn(vds);
     }
 
-    private void mockImageVmMap() {
-        image_vm_map vm_map = new image_vm_map(true, diskImageGuid, vmId);
-        doReturn(imageVmMapDao).when(command).getImageVmDao();
-        when(imageVmMapDao.getByImageId(diskImageGuid)).thenReturn(vm_map);
-    }
-
     private void mockVmDevice(boolean plugged) {
         VmDevice vmDevice = new VmDevice();
         vmDevice.setId(new VmDeviceId());
@@ -236,6 +225,8 @@ public class UpdateVmDiskCommandTest {
         disk.setId(diskImageGuid);
         disk.setdisk_interface(DiskInterface.IDE);
         disk.setdisk_type(DiskType.Data);
+        disk.setactive(true);
+        disk.setimage_group_id(diskImageGuid);
         doReturn(diskImageDao).when(command).getDiskImageDao();
         when(diskImageDao.get(diskImageGuid)).thenReturn(disk);
         return disk;
@@ -251,6 +242,8 @@ public class UpdateVmDiskCommandTest {
         disk.setdisk_interface(DiskInterface.VirtIO);
         disk.setdisk_type(DiskType.Data);
         disk.setPlugged(false);
+        disk.setactive(true);
+        disk.setimage_group_id(diskImageGuid);
         doReturn(diskImageDao).when(command).getDiskImageDao();
         when(diskImageDao.get(diskImageGuid)).thenReturn(disk);
         return disk;

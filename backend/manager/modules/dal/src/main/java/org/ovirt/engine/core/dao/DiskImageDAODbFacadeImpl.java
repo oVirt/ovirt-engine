@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -32,7 +31,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskImageDAO {
 
     private static DiskImageRowMapper diskImageRowMapper = new DiskImageRowMapper();
-    private static FullDiskImageRowMapper fullDiskImageRowMapper = new FullDiskImageRowMapper();
 
     @Override
     public DiskImage get(Guid id) {
@@ -41,7 +39,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
 
         List<DiskImage> images =
                 groupImagesStorage(getCallsHandler().executeReadList("GetImageByImageGuid",
-                        fullDiskImageRowMapper,
+                        diskImageRowMapper,
                         parameterSource));
         if (images == null || images.isEmpty()) {
             return null;
@@ -76,7 +74,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 .addValue("vm_guid", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
         return groupImagesStorage(getCallsHandler().executeReadList("GetImagesByVmGuid",
-                fullDiskImageRowMapper,
+                diskImageRowMapper,
                 parameterSource));
     }
 
@@ -141,6 +139,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 .addValue("disk_type", image.getdisk_type())
                 .addValue("image_group_id", image.getimage_group_id())
                 .addValue("disk_interface", image.getdisk_interface())
+                .addValue("active", image.getactive())
                 .addValue("boot", image.getboot())
                 .addValue("wipe_after_delete", image.getwipe_after_delete())
                 .addValue("propagate_errors", image.getpropagate_errors())
@@ -168,6 +167,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 .addValue("disk_type", image.getdisk_type())
                 .addValue("image_group_id", image.getimage_group_id())
                 .addValue("disk_interface", image.getdisk_interface())
+                .addValue("active", image.getactive())
                 .addValue("boot", image.getboot())
                 .addValue("wipe_after_delete", image.getwipe_after_delete())
                 .addValue("propagate_errors", image.getpropagate_errors())
@@ -195,10 +195,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             if (imagesForDisk == null || imagesForDisk.isEmpty()) {
                 DbFacade.getInstance().getDiskDao().remove(image.getimage_group_id());
             }
-        }
-        // TODO this will be fixed when we have ORM and object relationships
-        for (Guid guid : imagesList) {
-            DbFacade.getInstance().getImageVmMapDAO().remove(new image_vm_map_id(guid, id));
         }
     }
 
@@ -284,6 +280,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setread_rate(rs.getInt("read_rate"));
             entity.setwrite_rate(rs.getInt("write_rate"));
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
+            entity.setactive((Boolean) rs.getObject("active"));
             String entityType = rs.getString("entity_type");
             handleEntityType(entityType, entity);
         }
@@ -294,18 +291,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 entity.setVmEntityType(vmEntityType);
             }
         }
-    }
-
-    private static class FullDiskImageRowMapper extends DiskImageRowMapper {
-
-        @Override
-        public DiskImage mapRow(ResultSet rs, int rowNum) throws SQLException {
-            DiskImage entity = new DiskImage();
-            mapEntity(rs, entity);
-            entity.setactive((Boolean) rs.getObject("active"));
-            return entity;
-        }
-
     }
 
     private List<DiskImage> groupImagesStorage(List<DiskImage> images) {

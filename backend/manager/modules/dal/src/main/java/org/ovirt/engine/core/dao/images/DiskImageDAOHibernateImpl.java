@@ -6,7 +6,6 @@ import org.hibernate.Query;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAOHibernateImpl;
 
@@ -37,13 +36,6 @@ public class DiskImageDAOHibernateImpl extends BaseDAOHibernateImpl<DiskImage, G
             Query query = getSession().createQuery("from image_vm_map where id.imageId = :image_id");
 
             query.setParameter("image_id", image.getId());
-
-            image_vm_map result = (image_vm_map) query.uniqueResult();
-
-            if (result != null) {
-                image.setactive(result.getactive());
-                image.setvm_guid(result.getvm_id());
-            }
         }
 
         return images;

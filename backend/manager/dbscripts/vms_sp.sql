@@ -724,8 +724,9 @@ Create or replace FUNCTION GetVmByImageId(v_image_guid UUID) RETURNS SETOF vms
 BEGIN
       RETURN QUERY SELECT DISTINCT vms.*
       FROM vms
-      inner join image_vm_map on vms.vm_guid = image_vm_map.vm_id
-      WHERE image_vm_map.image_id = v_image_guid;
+      INNER JOIN vm_device vd ON vd.vm_id = vms.vm_guid
+      INNER JOIN images ON images.image_group_id = vd.device_id AND images.active = TRUE
+      WHERE images.image_guid = v_image_guid;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -738,8 +739,8 @@ Create or replace FUNCTION GetVmByImageGroupId(v_image_group_id UUID) RETURNS SE
 BEGIN
       RETURN QUERY SELECT DISTINCT vms.*
       FROM vms
-      inner join image_vm_map on vms.vm_guid = image_vm_map.vm_id
-      inner join images on image_vm_map.image_id = images.image_guid
+      INNER JOIN vm_device vd ON vd.vm_id = vms.vm_guid
+      INNER JOIN images on vd.device_id = images.image_group_id AND active = TRUE
       and images.image_guid in(select image_guid
          from images where image_group_id = v_image_group_id);
 END; $procedure$
@@ -768,8 +769,9 @@ Create or replace FUNCTION GetRunningVmsByStorageDomainId(v_storage_domain_id UU
 BEGIN
       RETURN QUERY SELECT DISTINCT vms.*
       FROM vms
-      inner join image_vm_map on vms.vm_guid = image_vm_map.vm_id
-      inner join image_storage_domain_map on image_vm_map.image_id = image_storage_domain_map.image_id
+      INNER JOIN vm_device vd ON vd.vm_id = vms.vm_guid
+      INNER JOIN images i ON i.image_group_id = vd.device_id AND i.active = TRUE
+      inner join image_storage_domain_map on i.image_guid = image_storage_domain_map.image_id
       WHERE status <> 0 and image_storage_domain_map.storage_domain_id = v_storage_domain_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -783,8 +785,9 @@ Create or replace FUNCTION GetVmsByStorageDomainId(v_storage_domain_id UUID) RET
 BEGIN
       RETURN QUERY SELECT DISTINCT vms.*
       FROM vms
-      inner join image_vm_map on vms.vm_guid = image_vm_map.vm_id
-      inner join image_storage_domain_map on image_vm_map.image_id = image_storage_domain_map.image_id
+      INNER JOIN vm_device vd ON vd.vm_id = vms.vm_guid
+      INNER JOIN images ON images.image_group_id = vd.device_id AND images.active = TRUE
+      inner join image_storage_domain_map on images.image_guid = image_storage_domain_map.image_id
       where image_storage_domain_map.storage_domain_id = v_storage_domain_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -798,10 +801,10 @@ BEGIN
       WHERE quota_id = v_quota_id
       UNION
       SELECT DISTINCT vms.*
-      FROM vms, image_vm_map, images
-      WHERE vms.vm_guid = image_vm_map.vm_id
-        AND images.image_guid = image_vm_map.image_id
-        AND images.quota_id = v_quota_id;
+      FROM vms
+      INNER JOIN vm_device vd ON vd.vm_id = vms.vm_guid
+      INNER JOIN images ON images.image_group_id = vd.device_id AND images.active = TRUE
+      WHERE images.quota_id = v_quota_id;
 END; $procedure$
 LANGUAGE plpgsql;
 

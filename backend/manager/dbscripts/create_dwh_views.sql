@@ -315,14 +315,14 @@ SELECT i.image_guid AS vm_disk_id,
        i._update_date AS update_date
 FROM   images as i
            INNER JOIN
-	           image_vm_map as map ON i.image_guid = map.image_id
-		              INNER JOIN
-		                  vm_static ON vm_static.vm_guid = map.vm_id
-           INNER JOIN
                disks as d ON i.image_group_id = d.disk_id
            INNER JOIN
+               vm_device as vd ON d.disk_id = vd.device_id
+		              INNER JOIN
+		                  vm_static ON vm_static.vm_guid = vd.vm_id
+           INNER JOIN
                image_storage_domain_map ON image_storage_domain_map.image_id = i.image_guid
-WHERE     map.active = true AND
+WHERE     i.active = true AND
                  vm_static.entity_type = 'VM' AND
           (i._create_date >
                           (SELECT     var_datetime
@@ -332,15 +332,6 @@ WHERE     map.active = true AND
                           (SELECT     var_datetime
                            FROM         dwh_history_timekeeping AS history_timekeeping_1
                            WHERE      (var_name = 'lastSync')));
-
-CREATE OR REPLACE VIEW dwh_disk_vm_map_history_view
-AS
-SELECT image_id as vm_disk_id,
-       vm_id
-  FROM image_vm_map
-  		         INNER JOIN
-		             vm_static ON vm_static.vm_guid = image_vm_map.vm_id
-WHERE active = true AND vm_static.entity_type = 'VM';
 
 CREATE OR REPLACE VIEW dwh_vm_disks_history_view
 AS
@@ -357,10 +348,10 @@ FROM    images
 			INNER JOIN
 				disk_image_dynamic ON images.image_guid = disk_image_dynamic.image_id
            INNER JOIN
-	            image_vm_map as map ON images.image_guid = map.image_id
-				    INNER JOIN
-		                  vm_static ON vm_static.vm_guid = map.vm_id
-WHERE map.active = true
+               vm_device as vd ON images.image_group_id = vd.device_id
+                              INNER JOIN
+                                  vm_static ON vm_static.vm_guid = vd.vm_id
+WHERE images.active = true
              AND  vm_static.entity_type = 'VM';
 
 CREATE OR REPLACE VIEW dwh_remove_tags_relations_history_view AS

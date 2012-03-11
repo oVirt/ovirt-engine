@@ -49,7 +49,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         this.vmEntityType = vmEntityType;
     }
 
-    // TODO comes from image_vm_map
     private Boolean activeField;
     private ArrayList<String> storagesNames;
 
@@ -103,9 +102,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         result = prime * result
                 + ((vm_guidField == null) ? 0 : vm_guidField.hashCode());
         result = prime * result + writeRateFromDiskImageDynamic;
-        result = prime
-        * result
-        + ((vmEntityType == null) ? 0 : vmEntityType.hashCode());
         return result;
     }
 
@@ -194,8 +190,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         } else if (!vm_guidField.equals(other.vm_guidField))
             return false;
         if (writeRateFromDiskImageDynamic != other.writeRateFromDiskImageDynamic)
-            return false;
-        if (vmEntityType != other.vmEntityType)
             return false;
         return true;
     }

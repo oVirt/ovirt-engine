@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
@@ -28,7 +27,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.ImageVmMapDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -301,8 +299,6 @@ public class SnapshotsManager {
                     diskImage.setimageStatus(ImageStatus.ILLEGAL);
                     diskImage.setvm_snapshot_id(activeSnapshotId);
 
-                    // Make sure any trash image_vm_map is removed before save.
-                    getImageVmMapDao().remove(new image_vm_map_id(diskImage.getId(), diskImage.getvm_guid()));
                     ImagesHandler.addImage(diskImage, true, new image_storage_domain_map(diskImage.getId(),
                             diskImage.getstorage_ids().get(0)));
                 }
@@ -315,10 +311,6 @@ public class SnapshotsManager {
         for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmId(vmId)) {
             if (VmDeviceType.DISK.getName().equals(vmDevice.getType())
                     && !diskIdsFromSnapshot.contains(vmDevice.getDeviceId())) {
-                for (DiskImage diskImage : getDiskImageDao().getAllSnapshotsForImageGroup(vmDevice.getDeviceId())) {
-                    getImageVmMapDao().remove(new image_vm_map_id(diskImage.getId(), vmId));
-                }
-
                 getDiskDao().remove(vmDevice.getDeviceId());
                 getVmDeviceDao().remove(vmDevice.getId());
             }
@@ -327,10 +319,6 @@ public class SnapshotsManager {
 
     protected VmDeviceDAO getVmDeviceDao() {
         return DbFacade.getInstance().getVmDeviceDAO();
-    }
-
-    protected ImageVmMapDAO getImageVmMapDao() {
-        return DbFacade.getInstance().getImageVmMapDAO();
     }
 
     protected DiskDao getDiskDao() {

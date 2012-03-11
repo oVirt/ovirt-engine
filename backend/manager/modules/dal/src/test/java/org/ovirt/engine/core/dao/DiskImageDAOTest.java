@@ -14,9 +14,10 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DiskType;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -39,6 +40,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
     private static final int TOTAL_DISK_IMAGES = 6;
     private DiskImageDynamicDAO diskImageDynamicDao;
     private DiskDao diskDao;
+    private VmDeviceDAO vmDeviceDao;
     private DiskImage newImage;
 
     @Override
@@ -78,6 +80,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
 
         diskImageDynamicDao = prepareDAO(dbFacade.getDiskImageDynamicDAO());
         diskDao = prepareDAO(dbFacade.getDiskDao());
+        vmDeviceDao = prepareDAO(dbFacade.getVmDeviceDAO());
 
         newImage = new DiskImage();
         newImage.setactive(true);
@@ -103,28 +106,28 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
     public void testSave() {
         dao.save(newImage);
 
-        // TODO this call is only necessary when we have a DbFacade implementation
-        if (dao instanceof BaseDAODbFacade) {
-            dbFacade.getImageVmMapDAO().save(new image_vm_map(true, newImage.getId(),
-                    FixturesTool.VM_RHEL5_POOL_57));
-        }
         DiskImageDynamic dynamic = new DiskImageDynamic();
         dynamic.setId(newImage.getId());
         diskDao.save(newImage.getDisk());
         diskImageDynamicDao.save(dynamic);
+        VmDevice vmDevice =
+                new VmDevice(new VmDeviceId(newImage.getimage_group_id(), newImage.getvm_guid()),
+                        "",
+                        "",
+                        "",
+                        0,
+                        "",
+                        false,
+                        false,
+                        false);
+        vmDeviceDao.save(vmDevice);
         DiskImageDynamic dynamicFromDB = diskImageDynamicDao.get(dynamic.getId());
         assertNotNull(dynamicFromDB);
         DiskImage result = dao.get(newImage.getId());
 
         assertNotNull(result);
         assertEquals(newImage, result);
-
-        image_vm_map mapping = dbFacade.getImageVmMapDAO().getByImageId(result.getId());
-
-        assertNotNull(mapping);
-        assertTrue(mapping.getactive());
-        assertEquals(newImage.getId(), mapping.getimage_id());
-        assertEquals(newImage.getvm_guid(), mapping.getvm_id());
+        assertTrue(newImage.getactive());
     }
 
     @Test

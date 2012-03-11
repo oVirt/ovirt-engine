@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.image_vm_map;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
@@ -54,7 +53,6 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.EventDAO;
 import org.ovirt.engine.core.dao.GenericDao;
-import org.ovirt.engine.core.dao.ImageVmMapDAO;
 import org.ovirt.engine.core.dao.InterfaceDAO;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
@@ -124,7 +122,6 @@ public class DbFacade {
             put(VmDynamic.class, VmDynamicDAO.class);
             put(VmStatic.class, VmStaticDAO.class);
             put(VmStatistics.class, VmStatisticsDAO.class);
-            put(image_vm_map.class, ImageVmMapDAO.class);
             put(Disk.class, DiskDao.class);
             put(DiskImage.class, DiskImageDAO.class);
             put(DiskImageDynamic.class, DiskImageDynamicDAO.class);
@@ -525,16 +522,6 @@ public class DbFacade {
     public DiskImageDynamicDAO getDiskImageDynamicDAO() {
         return getDAO(DiskImageDynamicDAO.class);
     }
-
-    /**
-     * Returns the singleton instance of {@link DiskImageDAO}.
-     *
-     * @return the dao
-     */
-    public ImageVmMapDAO getImageVmMapDAO() {
-        return getDAO(ImageVmMapDAO.class);
-    }
-
 
     /**
      * Returns the singleton instance of {@link EventSubscriberDAO}.

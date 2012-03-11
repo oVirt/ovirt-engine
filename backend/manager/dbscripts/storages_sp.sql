@@ -488,21 +488,9 @@ BEGIN
          from images_storage_domain_view where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
    END;
 
-   BEGIN
-      CREATE GLOBAL TEMPORARY TABLE tt_TEMPTEMPLATEIMAGESTABLE AS select image_id
-	
-         from image_vm_map AS vm_template_image_map where vm_id in(select vm_guid from tt_TEMPTEMPLATESTABLE);
-      exception when others then
-         truncate table tt_TEMPTEMPLATEIMAGESTABLE;
-         insert into tt_TEMPTEMPLATEIMAGESTABLE select image_id
-	
-         from image_vm_map AS vm_template_image_map where vm_id in(select vm_guid from tt_TEMPTEMPLATESTABLE);
-   END;
-
    delete FROM permissions where object_id in (select vm_guid from vm_images_view where storage_id = v_storage_domain_id);
    delete FROM snapshots WHERE vm_id in (select vm_guid from vm_images_view where storage_id  = v_storage_domain_id);
    delete FROM images where image_guid in (select image_id from tt_TEMPSTORAGEDOMAINMAPTABLE);
-   delete FROM image_vm_map where vm_id in(select vm_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM vm_interface where vmt_guid in(select vm_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM permissions where object_id in (select vm_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM permissions where object_id = v_storage_domain_id;

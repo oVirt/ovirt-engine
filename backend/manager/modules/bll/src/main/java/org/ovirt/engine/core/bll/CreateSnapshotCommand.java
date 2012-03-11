@@ -17,8 +17,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
-import org.ovirt.engine.core.common.businessentities.image_vm_map;
-import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParameters;
@@ -26,8 +24,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * This command responsible to creating snapshot from existing image and replace it to VM, holds the image. This command
@@ -155,10 +151,8 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     protected void ProcessOldImageFromDb() {
         getParameters().setOldLastModifiedValue(getDiskImage().getlastModified());
         getDiskImage().setlastModified(new Date());
+        getDiskImage().setactive(false);
         DbFacade.getInstance().getDiskImageDAO().update(getDiskImage());
-        DbFacade.getInstance()
-                .getImageVmMapDAO()
-                .remove(new image_vm_map_id(getImage().getId(), getImageContainerId()));
     }
 
     @Override
@@ -167,30 +161,24 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
 
         if (getDestinationDiskImage() != null
                 && DbFacade.getInstance().getVmStaticDAO().get(getDestinationDiskImage().getcontainer_guid()) != null) {
-            DbFacade.getInstance()
-                    .getImageVmMapDAO()
-                    .remove(new image_vm_map_id(
-                            getDestinationImageId(), getDestinationDiskImage().getcontainer_guid()));
 
             // Empty Guid, means new disk rather than snapshot, so no need to add a map to the db for new disk.
             if (!getDestinationDiskImage().getParentId().equals(Guid.Empty)) {
-                DbFacade.getInstance().getImageVmMapDAO().save(
-                        new image_vm_map(true, getDestinationDiskImage().getParentId(), getDestinationDiskImage()
-                                .getcontainer_guid()));
                 if (!getDestinationDiskImage().getParentId().equals(getDestinationDiskImage().getit_guid())) {
+                    DiskImage previousSnapshot = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(
+                            getDestinationDiskImage().getParentId());
+                    previousSnapshot.setactive(true);
+
                     // If the old description of the snapshot got overriden, we should restore the previous description
                     if (getParameters().getOldLastModifiedValue() != null) {
-                        DiskImage previousSnapshot =
-                                DbFacade.getInstance().getDiskImageDAO().get(getDestinationDiskImage().getParentId());
                         previousSnapshot.setlastModified(getParameters().getOldLastModifiedValue());
-                        DbFacade.getInstance().getDiskImageDAO().update(previousSnapshot);
                     }
+
+                    DbFacade.getInstance().getDiskImageDAO().update(previousSnapshot);
                 }
             }
         }
 
         super.EndWithFailure();
     }
-
-    private static Log log = LogFactory.getLog(CreateSnapshotCommand.class);
 }
