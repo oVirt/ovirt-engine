@@ -111,6 +111,10 @@ install_common_func() {
     execute_file "common_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 }
 
+delete_async_tasks_and_compensation_data() {
+  execute_file "delete_async_tasks_and_compensation_data.sql" ${DATABASE} > /dev/null
+}
+
 run_pre_upgrade() {
     #Dropping all views & sps
     drop_views
@@ -121,6 +125,7 @@ run_pre_upgrade() {
        echo "Running pre-upgrade script $file ..."
        execute_file $file ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
     done
+    delete_async_tasks_and_compensation_data
 }
 
 run_post_upgrade() {
