@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -461,11 +462,12 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         EndActionOnAllImageGroups();
 
         if (getVm() != null) {
-            VmHandler.UnLockVm(getVm().getId());
+            VM vm = getVm();
+            VmHandler.UnLockVm(vm.getId());
 
-            VmHandler.updateDisksFromDb(getVm());
+            VmHandler.updateDisksFromDb(vm);
+            VmDeviceUtils.setVmDevices(vm.getStaticData());
             if (getParameters().getCopyCollapse()) {
-                VM vm = getVm();
                 vm.setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
                 vm.setvmt_name(null);
                 UpdateCopyVmInSpm(getVm().getstorage_pool_id(),
