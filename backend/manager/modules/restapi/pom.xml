@@ -22,6 +22,7 @@
   <properties>
     <engine.api.version>3.1.0-0001</engine.api.version>
     <resteasy.version>2.2.2.GA</resteasy.version>
+    <maven-jaxb22-plugin.version>0.8.1</maven-jaxb22-plugin.version>
   </properties>
 
   <repositories>
