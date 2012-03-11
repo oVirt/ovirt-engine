@@ -56,8 +56,7 @@ actions:
           vm.placement_policy.affinity: xs:string
           vm.origin: xs:string
           vm.os.kernel: xs:string
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    urlparams: {}
     headers: {Content-Type: application/xml}
 - name: /api/vms|rel=add
   request:
