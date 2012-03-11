@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -441,7 +442,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             public Void runInTransaction() {
                 addVmImagesAndSnapshots();
                 MoveOrCopyAllImageGroups();
-                VmDeviceUtils.addImportedDevices(getVm().getStaticData(), getVm().getId());
+                VmDeviceUtils.addImportedDevices(getVm().getStaticData(), getVm().getId(), new ArrayList<VmDevice>(), new ArrayList<VmDevice>());
                 VmHandler.LockVm(getVm().getId());
                 return null;
 
@@ -704,7 +705,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
 
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
-            iface.setId(Guid.NewGuid());
+            if (iface.getId() == null) {
+                iface.setId(Guid.NewGuid());
+            }
             iface.setVmTemplateId(null);
             iface.setVmId(getVm().getStaticData().getId());
             iface.setVmName(getVm().getvm_name());
