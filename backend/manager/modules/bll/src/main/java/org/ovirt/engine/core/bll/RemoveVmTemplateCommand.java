@@ -1,7 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -18,17 +22,23 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends VmTemplateCommand<T> {
+
+    private List<DiskImage> imageTemplates;
+    private Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
+
     public RemoveVmTemplateCommand(T parameters) {
         super(parameters);
         super.setVmTemplateId(parameters.getVmTemplateId());
         parameters.setEntityId(getVmTemplateId());
+    }
+
+    public RemoveVmTemplateCommand(Guid vmTemplateId) {
+        super.setVmTemplateId(vmTemplateId);
     }
 
     @Override
@@ -52,7 +62,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         // check storage pool valid
-        if (template.getstorage_pool_id() != null
+        if (template.getstorage_pool_id() != null && !Guid.Empty.equals(template.getstorage_pool_id())
                 && !((Boolean) Backend
                         .getInstance()
                         .getResourceManager()
@@ -63,17 +73,18 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             return false;
         }
 
+        imageTemplates = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVmTemplateId());
         List<Guid> storageDomainsList = getParameters().getStorageDomainsList();
-        List<Guid> allDomainsList = getAllTemplateDoamins();
+        Set<Guid> allDomainsList = getStorageDoaminsByDisks(imageTemplates, true);
 
         // if null or empty list sent, get all template domains for deletion
         if (storageDomainsList == null || storageDomainsList.isEmpty()) {
             // populate all the domains of the template
-            getParameters().setStorageDomainsList(allDomainsList);
+            getParameters().setStorageDomainsList(new ArrayList<Guid>(allDomainsList));
             getParameters().setRemoveTemplateFromDb(true);
         } else {
             // if some domains sent, check that the sent domains are part of all domains
-            ArrayList<String> problematicDomains = new ArrayList<String>();
+            List<String> problematicDomains = new ArrayList<String>();
             for (Guid domainId : storageDomainsList) {
                 if (!allDomainsList.contains(domainId)) {
                     storage_domain_static domain = DbFacade.getInstance().getStorageDomainStaticDAO().get(domainId);
@@ -96,22 +107,24 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         ArrayList<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
         for (Guid domainId : getParameters().getStorageDomainsList()) {
             if (!isVmTemplateImagesReady(getVmTemplate(), domainId,
-                        canDoActionMessages, getParameters().getCheckDisksExists(), true, false, true, null)) {
+                        canDoActionMessages, getParameters().getCheckDisksExists(), true, false, true, storageToDisksMap.get(domainId))) {
                 return false;
             }
         }
 
         // check no vms from this template on selected domains
         List<VM> vms = DbFacade.getInstance().getVmDAO().getAllWithTemplate(vmTemplateId);
-        ArrayList<String> problematicVmNames = new ArrayList<String>();
+        List<String> problematicVmNames = new ArrayList<String>();
         for (VM vm : vms) {
             if (getParameters().isRemoveTemplateFromDb()) {
                 problematicVmNames.add(vm.getvm_name());
             } else {
                 List<DiskImage> vmDIsks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
-                if (vmDIsks != null && !vmDIsks.isEmpty()
-                        && storageDomainsList.contains(vmDIsks.get(0).getstorage_ids().get(0))) {
-                    problematicVmNames.add(vm.getvm_name());
+                Set<Guid> domainsIds = getStorageDoaminsByDisks(vmDIsks, false);
+                for (Guid domainId : domainsIds) {
+                    if (!getParameters().getStorageDomainsList().contains(domainId)) {
+                        problematicVmNames.add(vm.getvm_name());
+                    }
                 }
             }
         }
@@ -127,21 +140,24 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     /**
      * Get a list of all domains id that the template is on
      */
-    private List<Guid> getAllTemplateDoamins() {
-        List<Guid> domainsList = new ArrayList<Guid>();
-        List<DiskImage> imageTemplates =
-                DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVmTemplateId());
-        if (imageTemplates != null && !imageTemplates.isEmpty()) {
-            // populate storages list
-            domainsList = DbFacade.getInstance()
-                    .getStorageDomainDAO()
-                    .getAllImageStorageDomainIdsForImage(imageTemplates.get(0).getId());
+    private Set<Guid> getStorageDoaminsByDisks(List<DiskImage> disks, boolean isFillStorageTodDiskMap) {
+        Set<Guid> domainsList = new HashSet<Guid>();
+        if (disks != null) {
+            for (DiskImage disk : disks) {
+                domainsList.addAll(disk.getstorage_ids());
+                if (isFillStorageTodDiskMap) {
+                    for (Guid storageDomainId : disk.getstorage_ids()) {
+                        List<DiskImage> diskList = storageToDisksMap.get(storageDomainId);
+                        if (diskList == null) {
+                            diskList = new ArrayList<DiskImage>();
+                            storageToDisksMap.put(storageDomainId, diskList);
+                        }
+                        diskList.add(disk);
+                    }
+                }
+            }
         }
         return domainsList;
-    }
-
-    public RemoveVmTemplateCommand(Guid vmTemplateId) {
-        super.setVmTemplateId(vmTemplateId);
     }
 
     @Override
@@ -150,8 +166,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             // Set VM to lock status immediately, for reducing race condition.
             VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
             // if for some reason template doesn't have images, remove it now and not in end action
-            final boolean hasImanges =
-                    DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVmTemplateId()).size() > 0;
+            final boolean hasImanges = imageTemplates.size() > 0;
             if (RemoveTemplateInSpm(getVmTemplate().getstorage_pool_id().getValue(), getVmTemplateId())) {
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
@@ -229,6 +244,4 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             log.errorFormat("Encounter a problem removing template from DB, Setting the action, not to try again.");
         }
     }
-
-    private static Log log = LogFactory.getLog(RemoveVmTemplateCommand.class);
 }

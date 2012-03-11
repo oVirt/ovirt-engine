@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -9,13 +11,11 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.image_vm_map_id;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * This command responsible to removing all Image Templates, of a VmTemplate
@@ -29,6 +29,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
         super.setVmTemplateId(parameters.getVmTemplateId());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void executeCommand() {
         List<DiskImage> imageTemplates = DbFacade.getInstance().getDiskImageDAO().getAllForVm(
@@ -38,7 +39,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
         for (DiskImage template : imageTemplates) {
             // get disk
             // remove this disk in all domain that were sent
-            for (Guid domain : getParameters().getStorageDomainsList()) {
+            for (Guid domain : (Collection<Guid>)CollectionUtils.intersection(getParameters().getStorageDomainsList(), template.getstorage_ids())) {
                 ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(template.getId(),
                         template.getinternal_drive_mapping(), getVmTemplateId());
                 tempVar.setStorageDomainId(domain);
@@ -93,6 +94,4 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
         }
         setSucceeded(true);
     }
-
-    private static Log log = LogFactory.getLog(RemoveAllVmTemplateImageTemplatesCommand.class);
 }
