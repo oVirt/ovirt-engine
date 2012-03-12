@@ -191,27 +191,32 @@ public abstract class OvfReader implements IOvfBuilder {
         } else {
             vmDevice.setAddress("");
         }
-        if (!StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
+        if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
+                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
             vmDevice.setType(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText));
         } else {
             vmDevice.setType(String.valueOf(VmDeviceType.UNKNOWN));
         }
-        if (!StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText)) {
+        if (node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS) != null
+                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText)) {
             vmDevice.setDevice(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText));
         } else {
             vmDevice.setDevice(String.valueOf(VmDeviceType.UNKNOWN));
         }
-        if (!StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS).InnerText)) {
+        if (node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS) != null
+                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS).InnerText)) {
             vmDevice.setBootOrder(Integer.valueOf(node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS).InnerText));
         } else {
             vmDevice.setBootOrder(0);
         }
-        if (!StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_IS_PLUGGED, _xmlNS).InnerText)) {
+        if (node.SelectSingleNode(OvfProperties.VMD_IS_PLUGGED, _xmlNS) != null
+                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_IS_PLUGGED, _xmlNS).InnerText)) {
             vmDevice.setIsPlugged(Boolean.valueOf(node.SelectSingleNode(OvfProperties.VMD_IS_PLUGGED, _xmlNS).InnerText));
         } else {
             vmDevice.setIsPlugged(Boolean.TRUE);
         }
-        if (!StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_IS_READONLY, _xmlNS).InnerText)) {
+        if (node.SelectSingleNode(OvfProperties.VMD_IS_READONLY, _xmlNS) != null
+                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_IS_READONLY, _xmlNS).InnerText)) {
             vmDevice.setIsReadOnly(Boolean.valueOf(node.SelectSingleNode(OvfProperties.VMD_IS_READONLY, _xmlNS).InnerText));
         } else {
             vmDevice.setIsPlugged(Boolean.FALSE);
