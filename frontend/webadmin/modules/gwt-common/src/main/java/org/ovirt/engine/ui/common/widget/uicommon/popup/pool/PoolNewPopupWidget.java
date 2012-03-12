@@ -29,7 +29,6 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
         super.edit(object);
         initTabAvailabilityListeners(object);
         isStatelessEditor.setVisible(false);
-        storageAllocationPanel.setVisible(false);
 
         if (object.getIsNew()) {
             addVmsButton.setVisible(false);

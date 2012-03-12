@@ -526,11 +526,16 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         object.getProvisioning().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean isAllocationConfigureAvailable = object.getProvisioning().getIsChangable();
-                provisioningThinEditor.setEnabled(isAllocationConfigureAvailable);
-                provisioningCloneEditor.setEnabled(isAllocationConfigureAvailable);
-                disksAllocationLabel.setVisible(isAllocationConfigureAvailable);
-                disksAllocationView.setVisible(isAllocationConfigureAvailable);
+                boolean isAllocationConfigureChangable = object.getProvisioning().getIsChangable();
+                provisioningThinEditor.setEnabled(isAllocationConfigureChangable);
+                provisioningCloneEditor.setEnabled(isAllocationConfigureChangable);
+                disksAllocationLabel.setVisible(isAllocationConfigureChangable);
+                disksAllocationView.setVisible(isAllocationConfigureChangable);
+
+                boolean isAllocationConfigureAvailable = object.getProvisioning().getIsAvailable();
+                provisioningThinEditor.setVisible(isAllocationConfigureAvailable);
+                provisioningCloneEditor.setVisible(isAllocationConfigureAvailable);
+                storageAllocationPanel.setVisible(isAllocationConfigureAvailable);
             }
         });
     }

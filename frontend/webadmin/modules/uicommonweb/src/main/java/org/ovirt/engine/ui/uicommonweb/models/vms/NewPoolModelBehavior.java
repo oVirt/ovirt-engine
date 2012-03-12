@@ -175,10 +175,11 @@ public class NewPoolModelBehavior extends IVmModelBehavior
             getModel().getKernel_parameters().setEntity(template.getkernel_params());
             getModel().getInitrd_path().setEntity(template.getinitrd_url());
 
+            getModel().getProvisioning().setIsAvailable(false);
+
             if (!template.getId().equals(Guid.Empty))
             {
                 getModel().getStorageDomain().setIsChangable(true);
-                getModel().getProvisioning().setIsChangable(true);
 
                 getModel().setIsBlankTemplate(false);
                 InitDisks();
@@ -186,7 +187,6 @@ public class NewPoolModelBehavior extends IVmModelBehavior
             else
             {
                 getModel().getStorageDomain().setIsChangable(false);
-                getModel().getProvisioning().setIsChangable(false);
 
                 getModel().setIsBlankTemplate(true);
                 getModel().setIsDisksAvailable(false);
