@@ -1216,9 +1216,9 @@ actions:
     body:
       parameterType: HostNIC
       signatures:
-      - mandatoryArguments: {hostnic.bonding.slaves.host_nic--COLLECTION: {host_nic.id|name: 'xs:string'}, hostnic.network.id|name: 'xs:string',
-          hostnic.name: 'xs:string'}
+      - mandatoryArguments: {hostnic.network.id|name: 'xs:string', hostnic.name: 'xs:string'}
         optionalArguments:
+          hostnic.bonding.slaves.host_nic--COLLECTION: {host_nic.id|name: 'xs:string'}
           hostnic.bonding.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string',
             type: 'xs:string'}
           hostnic.ip.gateway: xs:string
