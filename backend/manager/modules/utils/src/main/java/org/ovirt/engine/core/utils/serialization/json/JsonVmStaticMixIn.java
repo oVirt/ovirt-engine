@@ -9,22 +9,13 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.annotate.JsonTypeInfo.As;
 import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 
 @SuppressWarnings("serial")
 @JsonTypeInfo(use = Id.CLASS, include = As.PROPERTY)
-public abstract class JsonVmMixIn extends VM {
-
-    @JsonIgnore
-    @Override
-    public abstract ValueObjectMap getDiskValueObjectMap();
-
-    @JsonIgnore
-    @Override
-    public abstract ArrayList<DiskImage> getImages();
+public abstract class JsonVmStaticMixIn extends VmStatic {
 
     @JsonIgnore
     @Override
@@ -32,6 +23,10 @@ public abstract class JsonVmMixIn extends VM {
 
     @JsonIgnore
     @Override
-    public abstract List<VmDevice> getVmUnamagedDeviceList();
+    public abstract List<VmDevice> getUnmanagedDeviceList();
+
+    @JsonIgnore
+    @Override
+    public abstract ArrayList<DiskImage> getImages();
 
 }
