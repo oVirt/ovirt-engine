@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.uicommon.template;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -11,63 +10,64 @@ import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class TemplateDiskListModelTable extends AbstractModelBoundTableWidget<DiskImage, TemplateDiskListModel> {
+public class TemplateDiskListModelTable extends AbstractModelBoundTableWidget<DiskModel, TemplateDiskListModel> {
 
     public TemplateDiskListModelTable(
-            SearchableTableModelProvider<DiskImage, TemplateDiskListModel> modelProvider,
+            SearchableTableModelProvider<DiskModel, TemplateDiskListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
     }
 
     @Override
     public void initTable() {
-        TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
+        TextColumnWithTooltip<DiskModel> nameColumn = new TextColumnWithTooltip<DiskModel>() {
             @Override
-            public String getValue(DiskImage object) {
-                return "Disk " + object.getinternal_drive_mapping();
+            public String getValue(DiskModel object) {
+                return "Disk " + object.getDiskImage().getinternal_drive_mapping();
             }
         };
         getTable().addColumn(nameColumn, "Name");
 
-        TextColumnWithTooltip<DiskImage> sizeColumn = new TextColumnWithTooltip<DiskImage>() {
+        TextColumnWithTooltip<DiskModel> sizeColumn = new TextColumnWithTooltip<DiskModel>() {
             @Override
-            public String getValue(DiskImage object) {
-                return String.valueOf(object.getSizeInGigabytes()) + " GB";
+            public String getValue(DiskModel object) {
+                return String.valueOf(object.getDiskImage().getSizeInGigabytes()) + " GB";
             }
         };
         getTable().addColumn(sizeColumn, "Size");
 
-        TextColumnWithTooltip<DiskImage> typeColumn = new EnumColumn<DiskImage, DiskType>() {
+        TextColumnWithTooltip<DiskModel> typeColumn = new EnumColumn<DiskModel, DiskType>() {
             @Override
-            protected DiskType getRawValue(DiskImage object) {
-                return object.getdisk_type();
+            protected DiskType getRawValue(DiskModel object) {
+                return object.getDiskImage().getdisk_type();
             }
         };
         getTable().addColumn(typeColumn, "Type");
 
-        TextColumnWithTooltip<DiskImage> formatColumn = new EnumColumn<DiskImage, VolumeFormat>() {
+        TextColumnWithTooltip<DiskModel> formatColumn = new EnumColumn<DiskModel, VolumeFormat>() {
             @Override
-            protected VolumeFormat getRawValue(DiskImage object) {
-                return object.getvolume_format();
+            protected VolumeFormat getRawValue(DiskModel object) {
+                return object.getDiskImage().getvolume_format();
             }
         };
         getTable().addColumn(formatColumn, "Format");
 
-        TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
+        TextColumnWithTooltip<DiskModel> allocationColumn = new EnumColumn<DiskModel, VolumeType>() {
             @Override
-            protected VolumeType getRawValue(DiskImage object) {
-                return VolumeType.forValue(object.getvolume_type().getValue());
+            protected VolumeType getRawValue(DiskModel object) {
+                return VolumeType.forValue(object.getDiskImage().getvolume_type().getValue());
             }
         };
         getTable().addColumn(allocationColumn, "Allocation");
 
-        TextColumnWithTooltip<DiskImage> interfaceColumn = new EnumColumn<DiskImage, DiskInterface>() {
+        TextColumnWithTooltip<DiskModel> interfaceColumn = new EnumColumn<DiskModel, DiskInterface>() {
             @Override
-            protected DiskInterface getRawValue(DiskImage object) {
-                return object.getdisk_interface();
+            protected DiskInterface getRawValue(DiskModel object) {
+                return object.getDiskImage().getdisk_interface();
             }
         };
         getTable().addColumn(interfaceColumn, "Interface");
