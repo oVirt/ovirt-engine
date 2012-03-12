@@ -1,50 +1,54 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public final class CpuFlagsManagerHandler {
-    private static java.util.HashMap<Version, CpuFlagsManager> _managersDictionary =
-            new java.util.HashMap<Version, CpuFlagsManager>();
+    private static Map<Version, CpuFlagsManager> _managersDictionary =
+            new HashMap<Version, CpuFlagsManager>();
 
     public static void InitDictionaries() {
         _managersDictionary.clear();
-        for (Version ver : Config.<java.util.HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels)) {
+        for (Version ver : Config.<HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels)) {
             _managersDictionary.put(ver, new CpuFlagsManager(ver));
         }
     }
 
     public static String GetVDSVerbDataByCpuName(String name, Version ver) {
-        CpuFlagsManager cpuFlagsManager = null;
-        if ((cpuFlagsManager = _managersDictionary.get(ver)) != null) {
+        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        if (cpuFlagsManager != null) {
             return cpuFlagsManager.GetVDSVerbDataByCpuName(name);
         }
         return null;
     }
 
-    public static java.util.ArrayList<ServerCpu> AllServerCpuList(Version ver) {
-        CpuFlagsManager cpuFlagsManager = null;
-        if ((cpuFlagsManager = _managersDictionary.get(ver)) != null) {
+    public static List<ServerCpu> AllServerCpuList(Version ver) {
+        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        if (cpuFlagsManager != null) {
             return cpuFlagsManager.getAllServerCpuList();
         }
-        return new java.util.ArrayList<ServerCpu>();
+        return new ArrayList<ServerCpu>();
     }
 
     public static ServerCpu FindMaxServerCpu(String clusterCpuName, String serverFlags, Version ver) {
-        CpuFlagsManager cpuFlagsManager = null;
-        if ((cpuFlagsManager = _managersDictionary.get(ver)) != null) {
+        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        if (cpuFlagsManager != null) {
             return cpuFlagsManager.FindMaxServerCpu(clusterCpuName, serverFlags);
         }
         return null;
@@ -60,33 +64,32 @@ public final class CpuFlagsManagerHandler {
      * @return list of missing CPU flags
      */
     public static List<String> missingServerCpuFlags(String clusterCpuName, String serverFlags, Version ver) {
-        List<String> list = null;
-        CpuFlagsManager cpuFlagsManager = null;
-        if ((cpuFlagsManager = _managersDictionary.get(ver)) != null) {
-            list = cpuFlagsManager.missingServerCpuFlags(clusterCpuName, serverFlags);
+        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        if (cpuFlagsManager != null) {
+            return cpuFlagsManager.missingServerCpuFlags(clusterCpuName, serverFlags);
         }
-        return list;
+        return null;
     }
 
     public static boolean CheckIfServerAndClusterCanFit(String clusterCpuName, String serverFlags, Version ver) {
-        CpuFlagsManager cpuFlagsManager = null;
-        if ((cpuFlagsManager = _managersDictionary.get(ver)) != null) {
+        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        if (cpuFlagsManager != null) {
             return cpuFlagsManager.CheckIfServerAndClusterCanFit(clusterCpuName, serverFlags);
         }
         return false;
     }
 
     public static boolean CheckIfCpusSameManufacture(String cpuName1, String cpuName2, Version ver) {
-        CpuFlagsManager cpuFlagsManager = null;
-        if ((cpuFlagsManager = _managersDictionary.get(ver)) != null) {
+        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        if (cpuFlagsManager != null) {
             return cpuFlagsManager.CheckIfCpusSameManufacture(cpuName1, cpuName2);
         }
         return false;
     }
 
     public static boolean CheckIfCpusExist(String cpuName, Version ver) {
-        CpuFlagsManager cpuFlagsManager = null;
-        if ((cpuFlagsManager = _managersDictionary.get(ver)) != null) {
+        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        if (cpuFlagsManager != null) {
             return cpuFlagsManager.CheckIfCpusExist(cpuName);
         }
         return false;
@@ -99,11 +102,11 @@ public final class CpuFlagsManagerHandler {
      * @return
      */
     public static List<ServerCpu> GetAllServerCpusBelowCpu(String cpuName, Version ver) {
-        CpuFlagsManager cpuFlagsManager = null;
-        if ((cpuFlagsManager = _managersDictionary.get(ver)) != null) {
+        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        if (cpuFlagsManager != null) {
             return cpuFlagsManager.GetAllServerCpusBelowCpu(cpuName);
         }
-        return new java.util.ArrayList<ServerCpu>();
+        return new ArrayList<ServerCpu>();
     }
 
     /**
@@ -113,21 +116,21 @@ public final class CpuFlagsManagerHandler {
      * @return
      */
     public static ServerCpu FindMaxServerCpuByFlags(String flags, Version ver) {
-        CpuFlagsManager cpuFlagsManager = null;
-        if ((cpuFlagsManager = _managersDictionary.get(ver)) != null) {
+        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        if (cpuFlagsManager != null) {
             return cpuFlagsManager.FindMaxServerCpuByFlags(flags);
         }
         return null;
     }
 
     private static class CpuFlagsManager {
-        private java.util.ArrayList<ServerCpu> _intelCpuList;
-        private java.util.ArrayList<ServerCpu> _amdCpuList;
-        private java.util.ArrayList<ServerCpu> _allCpuList = new java.util.ArrayList<ServerCpu>();
-        private java.util.HashMap<String, ServerCpu> _intelCpuByNameDictionary =
-                new java.util.HashMap<String, ServerCpu>();
-        private java.util.HashMap<String, ServerCpu> _amdCpuByNameDictionary =
-                new java.util.HashMap<String, ServerCpu>();
+        private List<ServerCpu> _intelCpuList;
+        private List<ServerCpu> _amdCpuList;
+        private List<ServerCpu> _allCpuList = new ArrayList<ServerCpu>();
+        private Map<String, ServerCpu> _intelCpuByNameDictionary =
+                new HashMap<String, ServerCpu>();
+        private Map<String, ServerCpu> _amdCpuByNameDictionary =
+                new HashMap<String, ServerCpu>();
         private final String _intelFlag = "vmx";
 
         public CpuFlagsManager(Version ver) {
@@ -145,6 +148,7 @@ public final class CpuFlagsManagerHandler {
             return result;
         }
 
+        @SuppressWarnings("synthetic-access")
         public void InitDictionaries(Version ver) {
             // init dictionaries
             _intelCpuByNameDictionary.clear();
@@ -152,16 +156,15 @@ public final class CpuFlagsManagerHandler {
             _allCpuList.clear();
 
             String[] cpus = Config.<String> GetValue(ConfigValues.ServerCPUList, ver.toString()).split("[;]", -1);
-            String[] info;
             for (String cpu : cpus) {
                 if (!StringHelper.isNullOrEmpty(cpu)) {
                     // [0]-level, [1]-name, [2]-flags, [3]-verb
-                    info = cpu.split("[:]", -1);
+                    final String[] info = cpu.split("[:]", -1);
                     if (info.length == 4) {
                         // if no flags at all create new list instead of split
-                        java.util.HashSet<String> flgs =
-                                (StringHelper.isNullOrEmpty(info[2])) ? new java.util.HashSet<String>()
-                                        : new java.util.HashSet<String>(java.util.Arrays.asList(info[2].split("[,]", -1)));
+                        HashSet<String> flgs =
+                                (StringHelper.isNullOrEmpty(info[2])) ? new HashSet<String>()
+                                        : new HashSet<String>(Arrays.asList(info[2].split("[,]", -1)));
 
                         ServerCpu sc = new ServerCpu(info[1], Integer.parseInt(info[0].trim()), flgs, info[3]);
                         if (sc.getFlags().contains(_intelFlag)) {
@@ -175,12 +178,6 @@ public final class CpuFlagsManagerHandler {
                     }
                 }
             }
-            // LINQ FIXED 29456
-            // _intelCpuList = _intelCpuByNameDictionary.Select(a =>
-            // a.Value).OrderBy(a => a.Level).ToList<ServerCpu>();
-            // _amdCpuList = _amdCpuByNameDictionary.Select(a =>
-            // a.Value).OrderBy(a => a.Level).ToList<ServerCpu>();
-
             _intelCpuList = new ArrayList<ServerCpu>(_intelCpuByNameDictionary.values());
             _amdCpuList = new ArrayList<ServerCpu>(_amdCpuByNameDictionary.values());
 
@@ -197,26 +194,6 @@ public final class CpuFlagsManagerHandler {
             Collections.sort(_amdCpuList, cpuComparator);
         }
 
-        private static boolean CheckIfListIsValid(java.util.ArrayList<ServerCpu> list) {
-            boolean result = true;
-            for (int i = 1; i < list.size(); i++) {
-                // check that list[i].Flags contains all list[i-1].Flags and
-                // larger (have more members).
-                // LINQ FIXED 29456
-                // if (!(list[i].Flags.Intersect(list[i - 1].Flags).Count() ==
-                // list[i - 1].Flags.Count &&
-                // list[i].Flags.Count > list[i - 1].Flags.Count))
-
-                if (!(CollectionUtils.intersection(list.get(i).getFlags(), list.get(i - 1).getFlags()).size() == list
-                        .get(i - 1).getFlags().size() && list.get(i).getFlags().size() > list.get(i - 1).getFlags()
-                        .size())) {
-                    result = false;
-                    break;
-                }
-            }
-            return result;
-        }
-
         public String GetVDSVerbDataByCpuName(String name) {
             String result = null;
             ServerCpu sc = null;
@@ -229,7 +206,7 @@ public final class CpuFlagsManagerHandler {
             return result;
         }
 
-        public java.util.ArrayList<ServerCpu> getAllServerCpuList() {
+        public List<ServerCpu> getAllServerCpuList() {
             return _allCpuList;
         }
 
@@ -249,8 +226,8 @@ public final class CpuFlagsManagerHandler {
                         && !((clusterCpu = _amdCpuByNameDictionary.get(clusterCpuName)) != null)) {
                     result = FindMaxServerCpuByFlags(serverFlags);
                 } else {
-                    java.util.HashSet<String> lstFlags = new java.util.HashSet<String>(
-                            java.util.Arrays.asList(serverFlags.split("[,]", -1)));
+                    HashSet<String> lstFlags = new HashSet<String>(
+                            Arrays.asList(serverFlags.split("[,]", -1)));
 
                     // check if to search in intel or amd
                     result =
@@ -261,8 +238,8 @@ public final class CpuFlagsManagerHandler {
             return result;
         }
 
-        private ServerCpu FindServerCpuByFlags(java.util.HashSet<String> lstFlags, ServerCpu clusterCpu,
-                                               java.util.ArrayList<ServerCpu> fullList) {
+        private ServerCpu FindServerCpuByFlags(Set<String> lstFlags, ServerCpu clusterCpu,
+                List<ServerCpu> fullList) {
             ServerCpu result = null;
 
             int i;
@@ -302,9 +279,9 @@ public final class CpuFlagsManagerHandler {
             ServerCpu clusterCpu = null;
             List<String> missingFlags = null;
 
-            java.util.HashSet<String> lstServerflags =
-                    (StringHelper.isNullOrEmpty(serverFlags)) ? new java.util.HashSet<String>()
-                            : new java.util.HashSet<String>(java.util.Arrays.asList(serverFlags.split("[,]", -1)));
+            HashSet<String> lstServerflags =
+                    (StringHelper.isNullOrEmpty(serverFlags)) ? new HashSet<String>()
+                            : new HashSet<String>(Arrays.asList(serverFlags.split("[,]", -1)));
 
             // first find cluster cpu
             if (clusterCpuName != null
@@ -331,13 +308,9 @@ public final class CpuFlagsManagerHandler {
          * @param lstServerflags
          * @return
          */
-        private boolean CheckIfFlagsContainsCpuFlags(ServerCpu clusterCpu, java.util.HashSet<String> lstServerflags) {
-            // LINQ 29456
-            // return (clusterCpu.Flags.Intersect(lstServerflags).Count() ==
-            // clusterCpu.Flags.Count);
+        private boolean CheckIfFlagsContainsCpuFlags(ServerCpu clusterCpu, Set<String> lstServerflags) {
             return CollectionUtils.intersection(clusterCpu.getFlags(), lstServerflags).size() == clusterCpu.getFlags()
                     .size();
-            // LINQ 29456
         }
 
         /**
@@ -355,8 +328,8 @@ public final class CpuFlagsManagerHandler {
                 if (StringHelper.isNullOrEmpty(serverFlags)) {
                     return true;
                 } else {
-                    java.util.HashSet<String> lstServerflags = new java.util.HashSet<String>(
-                            java.util.Arrays.asList(serverFlags.split("[,]", -1)));
+                    Set<String> lstServerflags = new HashSet<String>(
+                            Arrays.asList(serverFlags.split("[,]", -1)));
 
                     return (lstServerflags.contains(_intelFlag)) ? _intelCpuByNameDictionary
                             .containsKey(clusterCpuName) : _amdCpuByNameDictionary.containsKey(clusterCpuName);
@@ -393,19 +366,13 @@ public final class CpuFlagsManagerHandler {
          * @return
          */
         public List<ServerCpu> GetAllServerCpusBelowCpu(String cpuName) {
-            List<ServerCpu> result = new java.util.ArrayList<ServerCpu>();
+            List<ServerCpu> result = new ArrayList<ServerCpu>();
             if (cpuName != null) {
                 ServerCpu sc = null;
                 // find server cpu object
                 if ((sc = _intelCpuByNameDictionary.get(cpuName)) != null) {
-                    // LINQ 29456
-                    // result = _intelCpuList.Take(_intelCpuList.IndexOf(sc) +
-                    // 1).ToList();
                     result = _intelCpuList.subList(0, _intelCpuList.indexOf(sc) + 1);
                 } else if ((sc = _amdCpuByNameDictionary.get(cpuName)) != null) {
-                    // LINQ 29456
-                    // result = _amdCpuList.Take(_amdCpuList.IndexOf(sc) +
-                    // 1).ToList();
                     result = _amdCpuList.subList(0, _amdCpuList.indexOf(sc) + 1);
                 }
             }
@@ -420,8 +387,8 @@ public final class CpuFlagsManagerHandler {
          */
         public ServerCpu FindMaxServerCpuByFlags(String flags) {
             ServerCpu result = null;
-            java.util.HashSet<String> lstFlags = (StringHelper.isNullOrEmpty(flags)) ? new java.util.HashSet<String>()
-                    : new java.util.HashSet<String>(java.util.Arrays.asList(flags.split("[,]", -1)));
+            HashSet<String> lstFlags = (StringHelper.isNullOrEmpty(flags)) ? new HashSet<String>()
+                    : new HashSet<String>(Arrays.asList(flags.split("[,]", -1)));
 
             if (lstFlags.contains(_intelFlag)) {
                 for (int i = _intelCpuList.size() - 1; i >= 0; i--) {
@@ -443,20 +410,19 @@ public final class CpuFlagsManagerHandler {
 
     }
 
-    public static int compareCpuLevels(String cpuName1 , String cpuName2,Version ver) {
-        CpuFlagsManager cpuFlagsManager = null;
+    public static int compareCpuLevels(String cpuName1, String cpuName2, Version ver) {
+        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         ServerCpu server1 = null;
         ServerCpu server2 = null;
-        if ((cpuFlagsManager = _managersDictionary.get(ver)) != null) {
+        if (cpuFlagsManager != null) {
             server1 = cpuFlagsManager.getServerCpuByName(cpuName1);
             server2 = cpuFlagsManager.getServerCpuByName(cpuName2);
         }
-        int server1Level = (server1 != null)?server1.getLevel():0;
-        int server2Level = (server2 != null)?server2.getLevel():0;
+        int server1Level = (server1 != null) ? server1.getLevel() : 0;
+        int server2Level = (server2 != null) ? server2.getLevel() : 0;
         return server1Level - server2Level;
     }
 
-
-    private static Log log = LogFactory.getLog(CpuFlagsManagerHandler.class);
+    private static final Log log = LogFactory.getLog(CpuFlagsManagerHandler.class);
 
 }
