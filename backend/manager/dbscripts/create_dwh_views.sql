@@ -302,7 +302,7 @@ AS
 SELECT i.image_guid AS vm_disk_id,
        image_storage_domain_map.storage_domain_id as storage_domain_id,
        cast(d.internal_drive_mapping as smallint) as vm_internal_drive_mapping,
-       i.description as vm_disk_description,
+       d.disk_description as vm_disk_description,
        cast(i.size / 1048576 as int) as vm_disk_size_mb,
        cast(i.volume_type as smallint) AS vm_disk_type,
        cast(i.volume_format as smallint) AS vm_disk_format,
