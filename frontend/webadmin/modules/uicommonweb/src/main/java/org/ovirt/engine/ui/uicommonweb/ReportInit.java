@@ -7,7 +7,6 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicompat.BaseUrlUtil;
 import org.ovirt.engine.ui.uicompat.ReportParser;
 import org.ovirt.engine.ui.uicompat.ReportParser.Dashboard;
 import org.ovirt.engine.ui.uicompat.ReportParser.Resource;
@@ -70,7 +69,7 @@ public class ReportInit {
     private void parseReportsXML() {
 
         RequestBuilder requestBuilder =
-                new RequestBuilder(RequestBuilder.GET, BaseUrlUtil.getBaseUrl() + "Reports.xml");
+                new RequestBuilder(RequestBuilder.GET, "Reports.xml");
         try {
             requestBuilder.sendRequest(null, new RequestCallback() {
                 @Override
