@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
@@ -138,9 +137,6 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
             Guid storage_domain_id);
 
     List<image_storage_domain_map> getAllImageStorageDomainMapsForImage(
-            Guid image_id);
-
-    ArrayList<Guid> getAllImageStorageDomainIdsForImage(
             Guid image_id);
 
     /**

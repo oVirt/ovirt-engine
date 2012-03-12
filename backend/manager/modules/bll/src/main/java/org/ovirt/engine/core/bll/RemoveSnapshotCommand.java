@@ -46,11 +46,6 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                     .getDiskImageDAO()
                     .getAllSnapshotsForVmSnapshot(
                             getParameters().getSnapshotId());
-            for (DiskImage image : _sourceImages) {
-                image.setstorage_ids(DbFacade.getInstance()
-                        .getStorageDomainDAO()
-                        .getAllImageStorageDomainIdsForImage(image.getId()));
-            }
         }
         return _sourceImages;
     }

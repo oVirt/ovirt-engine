@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -147,16 +146,6 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
         getCallsHandler().executeModification("Deleteimage_storage_domain_map_by_image_id",
                 getCustomMapSqlParameterSource().addValue("image_id",
                         image_id));
-    }
-
-    @Override
-    public ArrayList<Guid> getAllImageStorageDomainIdsForImage(Guid image_id) {
-        List<image_storage_domain_map> image_storage_domain_maps = getAllImageStorageDomainMapsForImage(image_id);
-        ArrayList<Guid> guids = new ArrayList<Guid>();
-        for (image_storage_domain_map image_storage_domain_map : image_storage_domain_maps) {
-            guids.add(image_storage_domain_map.getstorage_domain_id());
-        }
-        return guids;
     }
 
     @Override

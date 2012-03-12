@@ -187,12 +187,6 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
 
     }
 
-    @Override
-    public ArrayList<Guid> getAllImageStorageDomainIdsForImage(Guid image_id) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public Guid getStorageDomainIdForPoolByType(Guid pool, StorageDomainType type) {
         Guid returnValue = Guid.Empty;
         List<storage_domains> domains = getAllForStoragePool(pool);
