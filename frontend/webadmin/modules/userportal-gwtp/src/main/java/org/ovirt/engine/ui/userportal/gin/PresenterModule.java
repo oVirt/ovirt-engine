@@ -244,6 +244,12 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmMakeTemplatePopupPresenterWidget.class,
                 VmMakeTemplatePopupPresenterWidget.ViewDef.class,
                 VmMakeTemplatePopupView.class);
+
+        // Template popups
+        bindPresenterWidget(TemplateNewPopupPresenterWidget.class,
+                TemplateNewPopupPresenterWidget.ViewDef.class,
+                TemplateNewPopupView.class);
+
     }
 
 }
