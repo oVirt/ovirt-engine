@@ -12,6 +12,11 @@ public interface MonitoringStrategy {
     public void processHardwareCapabilities(VDS vds);
 
     /**
+     * Check if VDS hardware capabilities processing is needed
+     */
+    public boolean processHardwareCapabilitiesNeeded(VDS oldVds, VDS newVds);
+
+    /**
      * Checking for the existence of special software capabilities, and update VDS accordingly
      */
     public void processSoftwareCapabilities(VDS vds);

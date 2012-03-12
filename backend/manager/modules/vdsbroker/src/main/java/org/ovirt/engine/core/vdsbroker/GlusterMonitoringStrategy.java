@@ -25,4 +25,9 @@ public class GlusterMonitoringStrategy implements MonitoringStrategy {
     public void processHardwareCapabilities(VDS vds) {
     }
 
+    @Override
+    public boolean processHardwareCapabilitiesNeeded(VDS oldVds, VDS newVds) {
+        return false;
+    }
+
 }

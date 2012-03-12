@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 
 /**
  * This class defines virt strategy entry points, which are needed in host monitoring phase
@@ -44,6 +45,11 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
 
     protected void vdsNonOperational(VDS vds) {
         ResourceManager.getInstance().getEventListener().vdsNonOperational(vds.getId(), NonOperationalReason.KVM_NOT_RUNNING, true, true, Guid.Empty);
+    }
+
+    @Override
+    public boolean processHardwareCapabilitiesNeeded(VDS oldVds, VDS newVds) {
+        return !StringHelper.EqOp(oldVds.getcpu_flags(), newVds.getcpu_flags());
     }
 }
 

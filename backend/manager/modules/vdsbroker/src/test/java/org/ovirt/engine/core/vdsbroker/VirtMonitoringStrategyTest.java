@@ -9,6 +9,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.compat.Guid;
 
 public class VirtMonitoringStrategyTest {
 
@@ -53,6 +54,27 @@ public class VirtMonitoringStrategyTest {
         vds.setkvm_enabled(Boolean.FALSE);
         virtStrategy.processSoftwareCapabilities(vds);
         assertTrue(vds.getstatus().equals(VDSStatus.NonOperational));
+    }
+
+    @Test
+    public void testNeedToProcessHardwareCapsFalse() {
+        VDS oldVds = new VDS();
+        oldVds.setvds_group_id(Guid.NewGuid());
+        oldVds.setId(Guid.NewGuid());
+        oldVds.setcpu_flags("flag1");
+        VDS newVds = oldVds.clone();
+        assertFalse(virtStrategy.processHardwareCapabilitiesNeeded(oldVds, newVds));
+    }
+
+    @Test
+    public void testNeedToProcessHardwareCapsTrue() {
+        VDS oldVds = new VDS();
+        oldVds.setvds_group_id(Guid.NewGuid());
+        oldVds.setId(Guid.NewGuid());
+        oldVds.setcpu_flags("flag1");
+        VDS newVds = oldVds.clone();
+        newVds.setcpu_flags("flag2");
+        assertTrue(virtStrategy.processHardwareCapabilitiesNeeded(oldVds, newVds));
     }
 
 }

@@ -28,7 +28,6 @@ import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -393,7 +392,7 @@ public class VdsManager {
 
     public void activate() {
         VDS vds = null;
-        boolean cpuFlagsChanged = false;
+        boolean processHardwareCapsNeeded = false;
         try {
             // refresh vds from db in case changed while was down
             // ResourceManager.Instance.RunVdsCommand(VDSCommandType.UpdateVdsCache,
@@ -407,7 +406,7 @@ public class VdsManager {
             /**
              * refresh capabilities
              */
-            RefObject<Boolean> tempRefObject = new RefObject<Boolean>(cpuFlagsChanged);
+            RefObject<Boolean> tempRefObject = new RefObject<Boolean>(processHardwareCapsNeeded);
             VDSStatus newStatus = refreshCapabilities(tempRefObject, vds);
             if (log.isDebugEnabled()) {
                 log.debugFormat(
@@ -415,7 +414,7 @@ public class VdsManager {
                         getVdsId(),
                         newStatus);
             }
-            cpuFlagsChanged = tempRefObject.argvalue;
+            processHardwareCapsNeeded = tempRefObject.argvalue;
         } catch (java.lang.Exception e) {
             log.infoFormat("ResourceManager::activateVds - failed to get VDS = {0} capabilities with error: {1}.",
                     getVdsId(), e.getMessage());
@@ -542,10 +541,10 @@ public class VdsManager {
         ResourceManager.getInstance().SuccededToRunVm(vmId, _vds.getId());
     }
 
-    public VDSStatus refreshCapabilities(RefObject<Boolean> cpuFlagsHasChanged, VDS vds) {
+    public VDSStatus refreshCapabilities(RefObject<Boolean> processHardwareCapsNeeded, VDS vds) {
         log.debug("refreshCapabilities:GetCapabilitiesVDSCommand started method");
         MonitoringStrategy vdsMonitoringStrategy = MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
-        String oldFlags = vds.getcpu_flags();
+        VDS oldVDS = vds.clone();
         GetCapabilitiesVDSCommand vdsBrokerCommand = new GetCapabilitiesVDSCommand(
                 new VdsIdAndVdsVDSCommandParametersBase(vds));
         vdsBrokerCommand.Execute();
@@ -577,7 +576,8 @@ public class VdsManager {
                 setIsSetNonOperationalExecuted(true);
             }
 
-            cpuFlagsHasChanged.argvalue = (!StringHelper.EqOp(oldFlags, vds.getcpu_flags()));
+            processHardwareCapsNeeded.argvalue = monitoringStrategy.processHardwareCapabilitiesNeeded(oldVDS, vds);
+
             return returnStatus;
         } else if (vdsBrokerCommand.getVDSReturnValue().getExceptionObject() != null) {
             // if exception is VDSNetworkException then call to

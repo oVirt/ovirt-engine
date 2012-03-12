@@ -179,7 +179,7 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
             Integer reserved_mem, Integer guest_overhead, VDSStatus previous_status, String software_version,
             String version_name, String build_name, Long mem_available, Long mem_shared, boolean server_SSL_enabled,
             String vds_group_cpu_name, String cpu_name, Boolean net_config_dirty, String pm_type, String pm_user,
-            String pm_password, int pm_port, String pm_options, boolean pm_enabled) // Nullable<System.Int32>
+            String pm_password, Integer pm_port, String pm_options, boolean pm_enabled) // Nullable<System.Int32>
                                                                                     // mem_cached,
     {
         mVdsStatic = new VdsStatic();
@@ -238,6 +238,26 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsStatic = vdsStatic;
         this.mVdsDynamic = vdsDynamic;
         this.mVdsStatistics = vdsStatistics;
+    }
+
+    public VDS clone() {
+        VDS vds = new VDS( Guid.createGuidFromString(getvds_group_id().toString()), getvds_group_name(), getvds_group_description(),
+                           Guid.createGuidFromString(getId().toString()), getvds_name(), getManagmentIp(), gethost_name(), getport(), getstatus().getValue(),
+                           getcpu_cores(), getcpu_model(), getcpu_speed_mh(), getif_total_speed(), getkvm_enabled(), getphysical_mem_mb(), getcpu_idle(),
+                           getcpu_load(), getcpu_sys(), getcpu_user(), getmem_commited(), getvm_active(), getvm_count(), getvm_migrating(),
+                           getusage_mem_percent(), getusage_cpu_percent(), getusage_network_percent(), getreserved_mem(), getguest_overhead(),
+                           getprevious_status(), getsoftware_version(), getversion_name(), getbuild_name(), getmem_available(), getmem_shared(),
+                           getserver_SSL_enabled(), getvds_group_cpu_name(), "", getnet_config_dirty(), getpm_type(), getpm_user(), getpm_password(),
+                           getpm_port(), getpm_options(), getpm_enabled());
+
+        vds.setcpu_flags(getcpu_flags());
+        vds.setVdsSpmPriority(getVdsSpmPriority());
+        vds.setOtpValidity(getOtpValidity());
+        vds.setkernel_version(getkernel_version());
+        vds.setkvm_version(getkvm_version());
+        vds.setHooksStr(getHooksStr());
+
+        return vds;
     }
 
     private Version vds_group_compatibility_versionField;
