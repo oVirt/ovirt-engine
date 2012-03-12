@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.ovirt.engine.core.common.validation.annotation.MTU;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -32,6 +33,8 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private String bondName;
     private Integer bondType;
     private String bondOptions;
+
+    @MTU
     private int mtu;
 
     public VdsNetworkInterface() {

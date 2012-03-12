@@ -1104,6 +1104,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     LiveSnapshotEnabled(348),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("9000")
+    MaxMTU(349),
+
     Invalid(65535);
 
     private int intValue;

@@ -17,6 +17,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
+import org.ovirt.engine.core.common.validation.annotation.MTU;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -76,6 +77,7 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
             inverseJoinColumns = @JoinColumn(name = "cluster_id"))
     private network_cluster cluster = new network_cluster();
 
+    @MTU
     private int mtu;
 
     public network() {
