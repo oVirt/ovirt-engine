@@ -53,6 +53,11 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 }
                 break;
             }
+
+            if (net.getMtu() != 0) {
+                opts.put("mtu", String.valueOf(net.getMtu()));
+            }
+
             networks.add(net.getname(), opts);
         }
 
