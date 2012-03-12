@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
@@ -49,7 +48,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -506,18 +504,6 @@ public class Backend implements BackendInternal, BackendRemote {
      */
     public VDSStatus ShutDownVDS(int vdsId) {
         return VDSStatus.Down;
-    }
-
-    public tags GetTagByTagName(@SuppressWarnings("unused") String tagName) {
-        throw new NotImplementedException();
-    }
-
-    public String GetTagIdsAndChildrenIdsByRegExp(@SuppressWarnings("unused") String tagNameRegExp) {
-        throw new NotImplementedException();
-    }
-
-    public String GetTagIdAndChildrenIds(@SuppressWarnings("unused") int tagId) {
-        throw new NotImplementedException();
     }
 
     @Override
