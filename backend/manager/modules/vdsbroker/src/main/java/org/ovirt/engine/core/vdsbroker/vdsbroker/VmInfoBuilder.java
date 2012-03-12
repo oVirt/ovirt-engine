@@ -25,7 +25,7 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 public class VmInfoBuilder extends VmInfoBuilderBase {
 
     private final String DEVICES = "devices";
-    private List<XmlRpcStruct> devices;
+    private final List<XmlRpcStruct> devices;
 
     public VmInfoBuilder(VM vm, XmlRpcStruct createInfo) {
         this.vm = vm;
@@ -262,28 +262,28 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
         createInfo.add(VdsProperties.Custom, customMap);
         XmlRpcStruct[] devArray = new XmlRpcStruct[devices.size()];
-        createInfo.add(DEVICES, (XmlRpcStruct[]) devices.toArray(devArray));
+        createInfo.add(DEVICES, devices.toArray(devArray));
     }
 
     @Override
     protected void buildVmBootSequence() {
     }
 
-    private void addBootOrder(VmDevice vmDevice, XmlRpcStruct struct) {
+    private static void addBootOrder(VmDevice vmDevice, XmlRpcStruct struct) {
         String s = new Integer(vmDevice.getBootOrder()).toString();
         if (!org.apache.commons.lang.StringUtils.isEmpty(s) && !s.equals("0")) {
             struct.add("bootOrder", s);
         }
     }
 
-    private void addAddress(VmDevice vmDevice, XmlRpcStruct struct) {
+    private static void addAddress(VmDevice vmDevice, XmlRpcStruct struct) {
         Map<String, String> addressMap = StringUtils.string2Map(vmDevice.getAddress());
         if (addressMap.size() > 0) {
             struct.add(VdsProperties.Address, addressMap);
         }
     }
 
-    private void addNetworkInterfaceProperties(XmlRpcStruct struct,
+    private static void addNetworkInterfaceProperties(XmlRpcStruct struct,
             VmNetworkInterface vmInterface,
             VmDevice vmDevice,
             String nicModel) {

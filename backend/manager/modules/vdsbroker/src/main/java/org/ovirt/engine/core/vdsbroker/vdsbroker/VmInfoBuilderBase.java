@@ -30,7 +30,7 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public abstract class VmInfoBuilderBase {
 
-    protected static Log log = LogFactory.getLog(VmInfoBuilderBase.class);
+    protected static final Log log = LogFactory.getLog(VmInfoBuilderBase.class);
     protected XmlRpcStruct createInfo;
     protected VM vm;
     // IDE supports only 4 slots , slot 2 is preserved by VDSM to the CDROM
@@ -119,8 +119,6 @@ public abstract class VmInfoBuilderBase {
         }
     }
 
-
-
     protected void buildVmBootOptions() {
         // Boot Options
         if (!StringHelper.isNullOrEmpty(vm.getinitrd_url())) {
@@ -178,19 +176,19 @@ public abstract class VmInfoBuilderBase {
         if (vm.getvm_type() == VmType.Desktop) {
 
             String soundDeviceTypeConfig = Config.<String> GetValue(
-                        ConfigValues.DesktopAudioDeviceType, vm
-                                .getvds_group_compatibility_version().toString());
+                    ConfigValues.DesktopAudioDeviceType, vm
+                            .getvds_group_compatibility_version().toString());
             String vmOS = vm.getos().name();
 
             Pattern regexPattern = Pattern.compile(String
-                        .format(OS_REGEX, vmOS));
+                    .format(OS_REGEX, vmOS));
             Matcher regexMatcher = regexPattern.matcher(soundDeviceTypeConfig);
 
             if (regexMatcher.find()) {
                 ret = regexMatcher.group(1);
             } else {
                 regexPattern = Pattern.compile(String.format(OS_REGEX,
-                            DEFAULT_TYPE));
+                        DEFAULT_TYPE));
                 regexMatcher = regexPattern.matcher(soundDeviceTypeConfig);
                 if (regexMatcher.find()) {
                     ret = regexMatcher.group(1);

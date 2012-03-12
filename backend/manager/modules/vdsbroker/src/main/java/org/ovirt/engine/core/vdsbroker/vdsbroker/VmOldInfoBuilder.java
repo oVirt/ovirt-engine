@@ -66,9 +66,9 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
                 drive.put("volumeID", disk.getId().toString());
                 drive.put("imageID", disk.getimage_group_id().toString());
                 drive.put("format", disk.getvolume_format().toString()
-                            .toLowerCase());
+                        .toLowerCase());
                 drive.put("propagateErrors", disk.getpropagate_errors().toString()
-                            .toLowerCase());
+                        .toLowerCase());
                 switch (disk.getdisk_interface()) {
                 case IDE:
                     try {
@@ -77,7 +77,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
                         ideCount++;
                     } catch (IndexOutOfBoundsException e) {
                         log.errorFormat("buildVmDrives throws IndexOutOfBoundsException for index {0}, IDE slots are limited to 4.",
-                                    ideCount);
+                                ideCount);
                         throw e;
                     }
                     break;
@@ -111,7 +111,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
      *            The list of all VM's disk devices.
      * @return The device, or null if none found.
      */
-    private VmDevice findVmDeviceForDisk(final Guid diskId, List<VmDevice> vmDiskDevices) {
+    private static VmDevice findVmDeviceForDisk(final Guid diskId, List<VmDevice> vmDiskDevices) {
         return (VmDevice) CollectionUtils.find(vmDiskDevices, new Predicate() {
 
             @Override
@@ -181,6 +181,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
         }
     }
 
+    @Override
     protected void buildVmBootSequence() {
         // get device list for the VM
         List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDAO()
@@ -196,6 +197,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
             createInfo.add(VdsProperties.Boot, bootSeqInBE);
 
     }
+
     @Override
     protected void buildUnmanagedDevices() {
         // Not supported in old code
