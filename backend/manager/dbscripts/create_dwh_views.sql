@@ -333,6 +333,15 @@ WHERE     i.active = true AND
                            FROM         dwh_history_timekeeping AS history_timekeeping_1
                            WHERE      (var_name = 'lastSync')));
 
+CREATE OR REPLACE VIEW dwh_disk_vm_map_history_view
+AS
+SELECT image_guid as vm_disk_id,
+       vm_device.vm_id
+  FROM vm_device
+           INNER JOIN
+               images ON vm_device.device_id = images.image_group_id
+WHERE images.active = true;
+
 CREATE OR REPLACE VIEW dwh_vm_disks_history_view
 AS
 SELECT
