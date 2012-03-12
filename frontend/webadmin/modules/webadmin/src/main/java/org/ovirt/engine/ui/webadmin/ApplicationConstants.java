@@ -505,24 +505,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Policy:")
     String clusterPolicyPolicyLabel();
 
-    @DefaultStringValue("Name")
-    String makeTemplatePopupNameLabel();
-
-    @DefaultStringValue("Description")
-    String makeTemplatePopupDescriptionLabel();
-
-    @DefaultStringValue("Host Cluster")
-    String makeTemplateClusterLabel();
-
-    @DefaultStringValue("Quota")
-    String makeTemplateQuotaLabel();
-
-    @DefaultStringValue("Storage Domain")
-    String makeTemplateStorageDomainLabel();
-
-    @DefaultStringValue("Make Private")
-    String makeTemplateIsTemplatePrivateEditorLabel();
-
     @DefaultStringValue("")
     String copyRightNotice();
 

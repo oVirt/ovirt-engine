@@ -10,7 +10,9 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
@@ -23,6 +25,8 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
     private final Provider<VmDesktopNewPopupPresenterWidget> newDesktopVmPopupProvider;
     private final Provider<VmServerNewPopupPresenterWidget> newServerVmPopupProvider;
     private final Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider;
+    private final Provider<VmChangeCDPopupPresenterWidget> changeCDPopupProvider;
+    private final Provider<VmMakeTemplatePopupPresenterWidget> makeTemplatePopupProvider;
     private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
 
     @Inject
@@ -30,11 +34,15 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
             Provider<VmDesktopNewPopupPresenterWidget> newDesktopVmPopupProvider,
             Provider<VmServerNewPopupPresenterWidget> newServerVmPopupProvider,
             Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider,
+            Provider<VmChangeCDPopupPresenterWidget> changeCDPopupProvider,
+            Provider<VmMakeTemplatePopupPresenterWidget> makeTemplatePopupProvider,
             Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         super(ginjector);
         this.newDesktopVmPopupProvider = newDesktopVmPopupProvider;
         this.newServerVmPopupProvider = newServerVmPopupProvider;
         this.runOncePopupProvider = runOncePopupProvider;
+        this.changeCDPopupProvider = changeCDPopupProvider;
+        this.makeTemplatePopupProvider = makeTemplatePopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
     }
 
@@ -74,13 +82,11 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
     @Override
     protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
         if (lastExecutedCommand == getModel().getNewTemplateCommand()) {
-            // TODO popup bound to UnitVmModel
-            return null;
+            return makeTemplatePopupProvider.get();
         } else if (lastExecutedCommand == getModel().getRunOnceCommand()) {
             return runOncePopupProvider.get();
         } else if (lastExecutedCommand == getModel().getChangeCdCommand()) {
-            // TODO popup bound to AttachCdModel
-            return null;
+            return changeCDPopupProvider.get();
         } else if (lastExecutedCommand == getModel().getNewDesktopCommand()) {
             return newDesktopVmPopupProvider.get();
         } else if (lastExecutedCommand == getModel().getNewServerCommand()) {

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmChangeCDPopupWidget.Style">
+		.content {
+			
+		}
+		
+		.isoImageEditor {
+			width: 100%;
+		}
+		
+		.isoImageEditorLabel {
+			display: none;
+		}
+		
+		.isoImageEditorBox {
+			width: 100%;
+			padding: 0px;
+		}
+	</ui:style>
+
+	<g:VerticalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.content}">
+		<e:ListModelListBoxEditor ui:field="isoImageEditor" addStyleNames="{style.isoImageEditor}" />
+	</g:VerticalPanel>
+
+</ui:UiBinder>

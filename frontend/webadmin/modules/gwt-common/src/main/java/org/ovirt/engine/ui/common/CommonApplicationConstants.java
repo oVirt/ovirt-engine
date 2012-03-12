@@ -94,4 +94,22 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Boot Sequence:")
     String runOncePopupBootSequenceLabel();
 
+    @DefaultStringValue("Name")
+    String makeTemplatePopupNameLabel();
+
+    @DefaultStringValue("Description")
+    String makeTemplatePopupDescriptionLabel();
+
+    @DefaultStringValue("Host Cluster")
+    String makeTemplateClusterLabel();
+
+    @DefaultStringValue("Quota")
+    String makeTemplateQuotaLabel();
+
+    @DefaultStringValue("Storage Domain")
+    String makeTemplateStorageDomainLabel();
+
+    @DefaultStringValue("Make Private")
+    String makeTemplateIsTemplatePrivateEditorLabel();
+
 }

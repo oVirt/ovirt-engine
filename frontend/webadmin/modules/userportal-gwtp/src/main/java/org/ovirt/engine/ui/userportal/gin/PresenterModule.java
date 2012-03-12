@@ -9,7 +9,9 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.HeaderPresenterWidg
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsolePopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
@@ -42,7 +44,9 @@ import org.ovirt.engine.ui.userportal.section.main.view.HeaderView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainTabPanelView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.console.ConsolePopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDesktopNewPopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmMakeTemplatePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmRunOncePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmServerNewPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabBasicView;
@@ -234,6 +238,12 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmRunOncePopupPresenterWidget.class,
                 VmRunOncePopupPresenterWidget.ViewDef.class,
                 VmRunOncePopupView.class);
+        bindPresenterWidget(VmChangeCDPopupPresenterWidget.class,
+                VmChangeCDPopupPresenterWidget.ViewDef.class,
+                VmChangeCDPopupView.class);
+        bindPresenterWidget(VmMakeTemplatePopupPresenterWidget.class,
+                VmMakeTemplatePopupPresenterWidget.ViewDef.class,
+                VmMakeTemplatePopupView.class);
     }
 
 }
