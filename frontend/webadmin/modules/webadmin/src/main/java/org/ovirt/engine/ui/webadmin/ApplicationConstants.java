@@ -523,63 +523,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Make Private")
     String makeTemplateIsTemplatePrivateEditorLabel();
 
-    @DefaultStringValue("Boot Options:")
-    String runOncePopupBootOptionsLabel();
-
-    @DefaultStringValue("Display Protocol:")
-    String runOncePopupDisplayProtocolLabel();
-
-    @DefaultStringValue("Custom Properties")
-    String runOncePopupCustomPropertiesLabel();
-
-    @DefaultStringValue("Vnc")
-    String runOncePopupDisplayConsoleVncLabel();
-
-    @DefaultStringValue("Spice")
-    String runOncePopupDisplayConsoleSpiceLabel();
-
-    @DefaultStringValue("Run Stateless")
-    String runOncePopupRunAsStatelessLabel();
-
-    @DefaultStringValue("Start in Pause Mode")
-    String runOncePopupRunAndPauseLabel();
-
-    @DefaultStringValue("Linux Boot Options:")
-    String runOncePopupLinuxBootOptionsLabel();
-
-    @DefaultStringValue("kernel path")
-    String runOncePopupKernelPathLabel();
-
-    @DefaultStringValue("initrd path")
-    String runOncePopupInitrdPathLabel();
-
-    @DefaultStringValue("kernel params")
-    String runOncePopupKernelParamsLabel();
-
-    @DefaultStringValue("Attach Floppy")
-    String runOncePopupAttachFloppyLabel();
-
-    @DefaultStringValue("Attach CD")
-    String runOncePopupAttachIsoLabel();
-
-    @DefaultStringValue("Windows Sysprep:")
-    String runOncePopupWindowsSysprepLabel();
-
-    @DefaultStringValue("Domain")
-    String runOncePopupSysPrepDomainNameLabel();
-
-    @DefaultStringValue("Alternate Credentials")
-    String runOnceUseAlternateCredentialsLabel();
-
-    @DefaultStringValue("User Name")
-    String runOncePopupSysPrepUserNameLabel();
-
-    @DefaultStringValue("Password")
-    String runOncePopupSysPrepPasswordLabel();
-
-    @DefaultStringValue("Boot Sequence:")
-    String runOncePopupBootSequenceLabel();
-
     @DefaultStringValue("")
     String copyRightNotice();
 
@@ -758,9 +701,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Thin Provision")
     String thisAllocation();
 
-    @DefaultStringValue("Disk Activate/Deactivate while VM is running, is supported only for Clusters of version 3.1 and above")
-    String diskHotPlugNotSupported();
-
     @DefaultStringValue("Clusters")
     String quotaClusterSubTabLabel();
 
@@ -784,4 +724,5 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Destination")
     String destinationStorage();
+
 }

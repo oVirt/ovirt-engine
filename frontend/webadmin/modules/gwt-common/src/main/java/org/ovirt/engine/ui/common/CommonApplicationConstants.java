@@ -34,4 +34,64 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Single Destination Storage")
     String singleDestinationStorage();
+
+    // Model-bound widgets
+
+    @DefaultStringValue("Boot Options:")
+    String runOncePopupBootOptionsLabel();
+
+    @DefaultStringValue("Display Protocol:")
+    String runOncePopupDisplayProtocolLabel();
+
+    @DefaultStringValue("Custom Properties")
+    String runOncePopupCustomPropertiesLabel();
+
+    @DefaultStringValue("Vnc")
+    String runOncePopupDisplayConsoleVncLabel();
+
+    @DefaultStringValue("Spice")
+    String runOncePopupDisplayConsoleSpiceLabel();
+
+    @DefaultStringValue("Run Stateless")
+    String runOncePopupRunAsStatelessLabel();
+
+    @DefaultStringValue("Start in Pause Mode")
+    String runOncePopupRunAndPauseLabel();
+
+    @DefaultStringValue("Linux Boot Options:")
+    String runOncePopupLinuxBootOptionsLabel();
+
+    @DefaultStringValue("kernel path")
+    String runOncePopupKernelPathLabel();
+
+    @DefaultStringValue("initrd path")
+    String runOncePopupInitrdPathLabel();
+
+    @DefaultStringValue("kernel params")
+    String runOncePopupKernelParamsLabel();
+
+    @DefaultStringValue("Attach Floppy")
+    String runOncePopupAttachFloppyLabel();
+
+    @DefaultStringValue("Attach CD")
+    String runOncePopupAttachIsoLabel();
+
+    @DefaultStringValue("Windows Sysprep:")
+    String runOncePopupWindowsSysprepLabel();
+
+    @DefaultStringValue("Domain")
+    String runOncePopupSysPrepDomainNameLabel();
+
+    @DefaultStringValue("Alternate Credentials")
+    String runOnceUseAlternateCredentialsLabel();
+
+    @DefaultStringValue("User Name")
+    String runOncePopupSysPrepUserNameLabel();
+
+    @DefaultStringValue("Password")
+    String runOncePopupSysPrepPasswordLabel();
+
+    @DefaultStringValue("Boot Sequence:")
+    String runOncePopupBootSequenceLabel();
+
 }

@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 
@@ -21,16 +22,19 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
 
     private final Provider<VmDesktopNewPopupPresenterWidget> newDesktopVmPopupProvider;
     private final Provider<VmServerNewPopupPresenterWidget> newServerVmPopupProvider;
+    private final Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider;
     private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
 
     @Inject
     public UserPortalListProvider(ClientGinjector ginjector,
             Provider<VmDesktopNewPopupPresenterWidget> newDesktopVmPopupProvider,
             Provider<VmServerNewPopupPresenterWidget> newServerVmPopupProvider,
+            Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider,
             Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         super(ginjector);
         this.newDesktopVmPopupProvider = newDesktopVmPopupProvider;
         this.newServerVmPopupProvider = newServerVmPopupProvider;
+        this.runOncePopupProvider = runOncePopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
     }
 
@@ -73,8 +77,7 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
             // TODO popup bound to UnitVmModel
             return null;
         } else if (lastExecutedCommand == getModel().getRunOnceCommand()) {
-            // TODO popup bound to RunOnceModel
-            return null;
+            return runOncePopupProvider.get();
         } else if (lastExecutedCommand == getModel().getChangeCdCommand()) {
             // TODO popup bound to AttachCdModel
             return null;

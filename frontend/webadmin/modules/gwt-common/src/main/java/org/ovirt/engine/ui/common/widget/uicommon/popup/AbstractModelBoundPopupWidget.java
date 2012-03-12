@@ -13,4 +13,8 @@ import com.google.gwt.user.client.ui.Composite;
  */
 public abstract class AbstractModelBoundPopupWidget<T extends Model> extends Composite implements HasEditorDriver<T> {
 
+    public void focusInput() {
+        // No-op, override as necessary
+    }
+
 }

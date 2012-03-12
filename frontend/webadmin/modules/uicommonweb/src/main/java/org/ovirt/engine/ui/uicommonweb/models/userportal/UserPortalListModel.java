@@ -1454,6 +1454,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         setConfirmationModel(null);
         setVmModel(null);
+        setRunOnceModel(null);
     }
 
     private void VmModel_DataCenter_ItemsChanged()

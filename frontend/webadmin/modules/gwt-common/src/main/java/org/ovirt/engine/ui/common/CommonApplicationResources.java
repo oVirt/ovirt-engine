@@ -137,4 +137,12 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/user.png")
     ImageResource userImage();
 
+    // Model-bound widgets
+
+    @Source("images/button_up.png")
+    ImageResource bootSequenceListBoxButtonUp();
+
+    @Source("images/button_down.png")
+    ImageResource bootSequenceListBoxButtonDown();
+
 }

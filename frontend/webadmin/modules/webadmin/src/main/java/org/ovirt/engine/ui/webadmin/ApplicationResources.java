@@ -238,12 +238,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/window_header.png")
     ImageResource windowHeaderImage();
 
-    @Source("images/button_up.png")
-    ImageResource bootSequenceListBoxButtonUp();
-
-    @Source("images/button_down.png")
-    ImageResource bootSequenceListBoxButtonDown();
-
     @Source("images/wrench.png")
     ImageResource wrenchImage();
 

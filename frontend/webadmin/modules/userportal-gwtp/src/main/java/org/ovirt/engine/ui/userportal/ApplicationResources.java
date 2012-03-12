@@ -114,4 +114,5 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/general/disk_icon.gif")
     ImageResource vmDiskIcon();
+
 }

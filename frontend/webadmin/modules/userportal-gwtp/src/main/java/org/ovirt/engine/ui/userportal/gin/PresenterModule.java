@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.MainSectionPresente
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsolePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
@@ -42,6 +43,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainTabPanelView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.console.ConsolePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDesktopNewPopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmRunOncePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmServerNewPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabBasicView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabExtendedView;
@@ -229,6 +231,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmServerNewPopupPresenterWidget.class,
                 VmServerNewPopupPresenterWidget.ViewDef.class,
                 VmServerNewPopupView.class);
+        bindPresenterWidget(VmRunOncePopupPresenterWidget.class,
+                VmRunOncePopupPresenterWidget.ViewDef.class,
+                VmRunOncePopupView.class);
     }
 
 }

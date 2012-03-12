@@ -89,7 +89,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField
     @Path(value = "name.entity")
-    public EntityModelTextBoxEditor nameEditor;
+    EntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
@@ -681,6 +681,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     public UnitVmModel flush() {
         priorityEditor.flush();
         return Driver.driver.flush();
+    }
+
+    @Override
+    public void focusInput() {
+        nameEditor.setFocus(true);
     }
 
     public interface ButtonCellTableResources extends CellTable.Resources {
