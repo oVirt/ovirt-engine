@@ -5,9 +5,12 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.user.cellview.client.Column;
 
-public class UserPortalItemImageButtonColumn extends Column<UserPortalItemModel, UserPortalItemModel> {
+/**
+ * Simple column which only returns what it gets with no calculation around
+ */
+public class UserPortalItemSimpleColumn extends Column<UserPortalItemModel, UserPortalItemModel> {
 
-    public UserPortalItemImageButtonColumn(Cell<UserPortalItemModel> cell) {
+    public UserPortalItemSimpleColumn(Cell<UserPortalItemModel> cell) {
         super(cell);
     }
 
