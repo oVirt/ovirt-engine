@@ -25,7 +25,7 @@ actions:
         optionalArguments: {action.force: 'xs:boolean'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}|rel=update
   request:
     body:
@@ -57,7 +57,7 @@ actions:
           vm.origin: xs:string
           vm.os.kernel: xs:string
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms|rel=add
   request:
     body:
@@ -88,21 +88,21 @@ actions:
           vm.os.kernel: xs:string
           vm.disks.clone: 'xs:boolean'
     urlparams: {}
-    headers: {Content-Type: application/xml, Expect: 201-created}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/vms/{vm:id}/shutdown|rel=shutdown
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/stop|rel=stop
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/start|rel=start
   request:
     body:
@@ -116,14 +116,14 @@ actions:
           action.vm.domain.user.username: 'xs:string', action.pause: 'xs:boolean',
           action.vm.os.boot.dev: 'xs:string', action.vm.domain.user.password: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/suspend|rel=suspend
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/export|rel=export
   request:
     body:
@@ -134,14 +134,14 @@ actions:
           action.discard_snapshots: 'xs:boolean', action.storage_domain.id|name: 'xs:string',
           action.grace_period.expiry: 'xs:long'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/detach|rel=detach
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/migrate|rel=migrate
   request:
     body:
@@ -151,7 +151,7 @@ actions:
         optionalArguments: {action.host.id|name: 'xs:string', action.async: 'xs:boolean',
           action.force: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/move|rel=move
   request:
     body:
@@ -160,7 +160,7 @@ actions:
       - mandatoryArguments: {action.storage_domain.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/ticket|rel=ticket
   request:
     body:
@@ -189,7 +189,7 @@ actions:
       signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/cdroms/{cdrom:id}|rel=update
   request:
     body:
@@ -199,7 +199,7 @@ actions:
         optionalArguments: {cdrom.file.id: 'xs:string'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/cdroms|rel=add
   request:
     body:
@@ -207,7 +207,7 @@ actions:
       signatures:
       - mandatoryArguments: {cdrom.file.id: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml, Expect: 201-created}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/vms/{vm:id}/disks|rel=get
   request:
     body:
@@ -246,7 +246,7 @@ actions:
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/disks|rel=add
   request:
     body:
@@ -259,7 +259,7 @@ actions:
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
     urlparams: {}
-    headers: {Content-Type: application/xml, Expect: 201-created}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/vms/{vm:id}/nics|rel=get
   request:
     body:
@@ -281,7 +281,7 @@ actions:
       signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/nics/{nic:id}|rel=update
   request:
     body:
@@ -290,7 +290,7 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/nics|rel=add
   request:
     body:
@@ -299,7 +299,7 @@ actions:
       - mandatoryArguments: {nic.network.id|name: 'xs:string', nic.name: 'xs:string'}
         optionalArguments: {nic.mac.address: 'xs:string', nic.interface: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml, Expect: 201-created}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/vms/{vm:id}/permissions|rel=get
   request:
     body:
@@ -321,7 +321,7 @@ actions:
       signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/permissions|rel=add
   request:
     body:
@@ -332,7 +332,7 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml, Expect: 201-created}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/vms/{vm:id}/statistics|rel=get
   request:
     body:
@@ -376,14 +376,14 @@ actions:
       signatures:
       - mandatoryArguments: {snapshot.description: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml, Expect: 201-created}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}/restore
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/tags|rel=get
   request:
     body:
@@ -413,7 +413,7 @@ actions:
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml, Expect: 201-created}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/capabilities|rel=get
   request:
     body:
@@ -444,7 +444,7 @@ actions:
         optionalArguments: {}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/storagedomains/{storagedomain:id}|rel=update
   request:
     body:
@@ -454,7 +454,7 @@ actions:
         optionalArguments: {storagdomain.name: 'xs:string'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/storagedomains|rel=add
   request:
     body:
@@ -479,7 +479,7 @@ actions:
         optionalArguments: {}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {Content-Type: application/xml, Expect: 201-created}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/storagedomains/{storagedomain:id}/files|rel=get
   request:
     body:
@@ -528,7 +528,7 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml, Expect: 201-created}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/storagedomains/{storagedomain:id}/templates|rel=get
   request:
     body:
@@ -551,7 +551,7 @@ actions:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string', action.storagedomain.id|name: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/storagedomains/{storagedomain:id}/vms|rel=get
   request:
     body:
@@ -574,7 +574,7 @@ actions:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string', action.storagedomain.id|name: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/clusters|rel=get
   request:
     body:
@@ -610,7 +610,7 @@ actions:
         cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int', cluster.scheduling_policy.thresholds.duration: 'xs:int',
         cluster.error_handling.on_error: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/clusters|rel=add
   request:
     body:
@@ -621,7 +621,7 @@ actions:
         cluster.scheduling_policy.policy: 'xs:string', cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int',
         cluster.scheduling_policy.thresholds.duration: 'xs:int', cluster.error_handling.on_error: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml, Expect: 201-created}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/clusters/{cluster:id}/networks|rel=get
   request:
     body:
@@ -652,7 +652,7 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {network.display: 'xs:boolean'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/clusters/{cluster:id}/networks|rel=add
   request:
     body:
@@ -660,7 +660,7 @@ actions:
       signatures:
       - mandatoryArguments: {network.id|name: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml, Expect: 201-created}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/clusters/{cluster:id}/permissions|rel=get
   request:
     body:
@@ -693,7 +693,7 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml, Expect: 201-created}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/datacenters/{datacenter:id}|rel=update
   request:
     body:
@@ -740,7 +740,7 @@ actions:
       signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/datacenters|rel=add
   request:
     body:
@@ -784,7 +784,7 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/datacenters/{datacenter:id}/storagedomains|rel=get
   request:
     body:
@@ -815,21 +815,21 @@ actions:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/activate|rel=activate
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/deactivate|rel=deactivate
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/domains|rel=get
   request:
     body:
@@ -967,7 +967,7 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.template.id: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/groups/{group:id}/roles|rel=get
   request:
     body:
@@ -989,7 +989,7 @@ actions:
       signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/groups/{group:id}/roles|rel=add
   request:
     body:
@@ -997,7 +997,7 @@ actions:
       signatures:
       - mandatoryArguments: {role.id: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/groups/{group:id}/roles/{role:id}/permits|rel=get
   request:
     body:
@@ -1028,7 +1028,7 @@ actions:
       - mandatoryArguments: {permit.id|name: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/groups/{group:id}/tags|rel=get
   request:
     body:
@@ -1059,7 +1059,7 @@ actions:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts|rel=get
   request:
     body:
@@ -1096,7 +1096,7 @@ actions:
           host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {name: 'xs:string', value: 'xs:string'}}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts|rel=add
   request:
     body:
@@ -1107,14 +1107,14 @@ actions:
           host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string', host.power_management.user_name: 'xs:string',
           host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/activate|rel=activate
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/approve|rel=approve
   request:
     body:
@@ -1124,49 +1124,49 @@ actions:
         optionalArguments: {action.cluster.id|name: 'xs:string', action.async: 'xs:boolean',
           action.grace_period.expiry: 'xs:long'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/commitnetconfig|rel=commitnetconfig
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/deactivate|rel=deactivate
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/fence|rel=fence
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/install|rel=install
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/iscsidiscover|rel=iscsidiscover
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/iscsilogin|rel=iscsilogin
   request:
     body:
       parameterType: Action
       signatures: []
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/nics|rel=get
   request:
     body:
@@ -1208,7 +1208,7 @@ actions:
           hostnic.ip.netmask: xs:string
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/nics|rel=add
   request:
     body:
@@ -1225,7 +1225,7 @@ actions:
           hostnic.ip.address: xs:string
           hostnic.ip.netmask: xs:string
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/nics/setupnetworks|rel=setupnetworks
   request:
     body:
@@ -1241,7 +1241,7 @@ actions:
           action.connectivityTimeout: xs:int
           action.force: xs:boolean
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/nics/{nic:id}/attach|rel=attach
   request:
     body:
@@ -1250,7 +1250,7 @@ actions:
       - mandatoryArguments: {action.network.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/nics/{nic:id}/attach|rel=detach
   request:
     body:
@@ -1259,7 +1259,7 @@ actions:
       - mandatoryArguments: {action.network.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/nics/{nic:id}/statistics|rel=get
   request:
     body:
@@ -1306,7 +1306,7 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/statistics|rel=get
   request:
     body:
@@ -1364,7 +1364,7 @@ actions:
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/networks|rel=get
   request:
     body:
@@ -1399,7 +1399,7 @@ actions:
           network.ip.address: 'xs:string', network.ip.gateway: 'xs:string', network.ip.netmask: 'xs:string',
           network.display: 'xs:boolean', network.stp: 'xs:boolean'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/networks|rel=add
   request:
     body:
@@ -1410,7 +1410,7 @@ actions:
           network.ip.address: 'xs:string', network.ip.gateway: 'xs:string', network.ip.netmask: 'xs:string',
           network.display: 'xs:boolean', network.stp: 'xs:boolean'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/roles|rel=get
   request:
     body:
@@ -1441,7 +1441,7 @@ actions:
       - mandatoryArguments: {role.name: 'xs:string', role.permits.permit--COLLECTION: {permit.id: 'xs:string'}}
         optionalArguments: {role.description: 'xs:string', role.administrative: 'xs:boolean'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/roles/{role:id}|rel=update
   request:
     body:
@@ -1450,7 +1450,7 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {role.permits.permit--COLLECTION: {id: 'xs:string'}, role.description: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/roles/{role:id}/permits|rel=get
   request:
     body:
@@ -1481,7 +1481,7 @@ actions:
       - mandatoryArguments: {permit.id|name: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/tags|rel=get
   request:
     body:
@@ -1512,7 +1512,7 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {tag.name: 'xs:string', tag.description: 'xs:string', tag.parent.name: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/tags|rel=add
   request:
     body:
@@ -1576,7 +1576,7 @@ actions:
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/templates|rel=add
   request:
     body:
@@ -1606,7 +1606,7 @@ actions:
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/templates/{template:id}/export|rel=export
   request:
     body:
@@ -1616,7 +1616,7 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.exclusive: 'xs:boolean',
           action.grace_period.expiry: 'xs:long'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/templates/{template:id}/cdroms|rel=get
   request:
     body:
@@ -1691,7 +1691,7 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/users|rel=get
   request:
     body:
@@ -1768,7 +1768,7 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.template.id: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/users/{user:id}/roles|rel=get
   request:
     body:
@@ -1798,7 +1798,7 @@ actions:
       signatures:
       - mandatoryArguments: {role.id: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/users/{user:id}/roles/{role:id}/permits|rel=get
   request:
     body:
@@ -1829,7 +1829,7 @@ actions:
       - mandatoryArguments: {permit.id|name: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/users/{user:id}/tags|rel=get
   request:
     body:
@@ -1859,7 +1859,7 @@ actions:
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vmpools|rel=get
   request:
     body:
@@ -1893,7 +1893,7 @@ actions:
         optionalArguments: {vmpool.cluster.id|name: 'xs:string', vmpool.template.id|name: 'xs:string',
           vmpool.name: 'xs:string'}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vmpools|rel=add
   request:
     body:
@@ -1903,7 +1903,7 @@ actions:
           vmpool.name: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vmpools/{vmpool:id}/permissions|rel=get
   request:
     body:
@@ -1936,5 +1936,5 @@ actions:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
-    headers: {Content-Type: application/xml}
+    headers: {Content-Type: application/xml|json}
     
