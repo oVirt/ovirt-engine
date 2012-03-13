@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.permissions.P
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
@@ -50,6 +51,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.popup.permissions.Permis
 import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateNewPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDesktopNewPopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDiskPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmMakeTemplatePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmRunOncePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmServerNewPopupView;
@@ -253,12 +255,14 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmMakeTemplatePopupPresenterWidget.class,
                 VmMakeTemplatePopupPresenterWidget.ViewDef.class,
                 VmMakeTemplatePopupView.class);
+        bindPresenterWidget(VmDiskPopupPresenterWidget.class,
+                VmDiskPopupPresenterWidget.ViewDef.class,
+                VmDiskPopupView.class);
 
         // Template popups
         bindPresenterWidget(TemplateNewPopupPresenterWidget.class,
                 TemplateNewPopupPresenterWidget.ViewDef.class,
                 TemplateNewPopupView.class);
-
     }
 
 }
