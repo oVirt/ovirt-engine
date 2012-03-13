@@ -73,7 +73,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mRunAndPause = false;
         _diskSize = 0;
 
-        mVmStatic = vmStatic;
+        mVmStatic = (vmStatic == null) ? new VmStatic() : vmStatic;
         mVmDynamic = vmDynamic;
         mVmStatistics = vmStatistics;
         setImages(new ArrayList<DiskImage>());
@@ -1102,30 +1102,18 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     @XmlElement(name = "Interfaces")
     public List<VmNetworkInterface> getInterfaces() {
-        if (mVmStatic == null) {
-            mVmStatic = new VmStatic();
-        }
         return mVmStatic.getInterfaces();
     }
 
     public void setInterfaces(List<VmNetworkInterface> value) {
-        if (mVmStatic == null) {
-            mVmStatic = new VmStatic();
-        }
         mVmStatic.setInterfaces(value);
     }
 
     public ArrayList<DiskImage> getImages() {
-        if (mVmStatic == null) {
-            mVmStatic = new VmStatic();
-        }
         return mVmStatic.getImages();
     }
 
     public void setImages(ArrayList<DiskImage> value) {
-        if (mVmStatic == null) {
-            mVmStatic = new VmStatic();
-        }
         mVmStatic.setImages(value);
     }
 
@@ -1260,6 +1248,9 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public void setStaticData(VmStatic value) {
+        if (mVmStatic == null) {
+            mVmStatic = new VmStatic();
+        }
         mVmStatic = value;
     }
 
@@ -1625,37 +1616,22 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public ArrayList<DiskImage> getDiskList() {
-        if (mVmStatic == null) {
-            mVmStatic = new VmStatic();
-        }
         return mVmStatic.getDiskList();
     }
 
     public Map<Guid, VmDevice> getManagedVmDeviceMap() {
-        if (mVmStatic == null) {
-            mVmStatic = new VmStatic();
-        }
         return mVmStatic.getManagedVmDeviceMap();
     }
 
     public void setManagedDeviceMap(Map<Guid, VmDevice> map) {
-        if (mVmStatic == null) {
-            mVmStatic = new VmStatic();
-        }
         mVmStatic.setManagedDeviceMap(map);
     }
 
     public List<VmDevice> getVmUnamagedDeviceList() {
-        if (mVmStatic == null) {
-            mVmStatic = new VmStatic();
-        }
         return mVmStatic.getUnmanagedDeviceList();
     }
 
     public void setUnmanagedDeviceList(List<VmDevice> list) {
-        if (mVmStatic == null) {
-            mVmStatic = new VmStatic();
-        }
         mVmStatic.setUnmanagedDeviceList(list);
     }
 
