@@ -60,9 +60,6 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
     private static final long serialVersionUID = 3317745769686161108L;
-    // this const represent the character for network in the boot sequence
-    // options
-    private static final char NETWORK_BOOT_SEQUENCE_CHAR = 'N';
     private String _cdImagePath = "";
     private String _floppyImagePath = "";
     private boolean mResume;

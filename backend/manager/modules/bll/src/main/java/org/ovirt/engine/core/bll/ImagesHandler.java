@@ -271,9 +271,18 @@ public final class ImagesHandler {
             }
         }
 
-        if (returnValue && checkImagesLocked && vm.getstatus() == VMStatus.ImageLocked) {
-            returnValue = false;
-            if (messages != null) {
+        if (returnValue && checkImagesLocked) {
+            if (vm.getstatus() == VMStatus.ImageLocked) {
+                returnValue = false;
+            } else if (diskImageList != null) {
+                for (DiskImage diskImage : diskImageList) {
+                    if (diskImage.getimageStatus() == ImageStatus.LOCKED) {
+                        returnValue = false;
+                        break;
+                    }
+                }
+            }
+            if (!returnValue && messages != null) {
                 messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED.toString());
             }
         } else if (returnValue && checkVmIsDown && vm.getstatus() != VMStatus.Down) {
