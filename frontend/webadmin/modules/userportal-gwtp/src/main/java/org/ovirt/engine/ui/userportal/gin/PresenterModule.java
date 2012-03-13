@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.HeaderPresenterWidg
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsolePopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.permissions.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
@@ -45,6 +46,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.HeaderView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainTabPanelView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.console.ConsolePopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.permissions.PermissionsPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateNewPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDesktopNewPopupView;
@@ -224,6 +226,11 @@ public class PresenterModule extends BasePresenterModule {
                 MainTabBasicListItemView.class);
 
         // Main section: popups
+
+        // Permissions
+        bindPresenterWidget(PermissionsPopupPresenterWidget.class,
+                PermissionsPopupPresenterWidget.ViewDef.class,
+                PermissionsPopupView.class);
 
         // Console popup
         bindPresenterWidget(ConsolePopupPresenterWidget.class,

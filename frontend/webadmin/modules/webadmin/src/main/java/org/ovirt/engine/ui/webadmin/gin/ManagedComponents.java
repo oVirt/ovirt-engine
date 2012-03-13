@@ -96,10 +96,7 @@ import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginSectionPresente
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
@@ -204,13 +201,7 @@ public interface ManagedComponents {
 
     Provider<BookmarkPopupPresenterWidget> getBookmarkPopupPresenterWidgetProvider();
 
-    Provider<PermissionsPopupPresenterWidget> getPermissionsPopupPresenterWidgetProvider();
-
     Provider<TagPopupPresenterWidget> getTagPopupPresenterWidgetProvider();
-
-    Provider<GuidePopupPresenterWidget> getGuidePopupPresenterWidget();
-
-    Provider<ReportPresenterWidget> getReportsPresenterWidget();
 
     // Presenters: Login section
 
