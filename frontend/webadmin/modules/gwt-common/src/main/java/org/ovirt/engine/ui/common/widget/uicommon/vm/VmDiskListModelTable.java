@@ -22,6 +22,8 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
     private final CommonApplicationResources resources;
     private final CommonApplicationConstants constants;
 
+    private final boolean showMoveButton;
+
     private ImageUiCommandButtonDefinition<DiskImage> plugButtonDefinition;
     private ImageUiCommandButtonDefinition<DiskImage> unPlugButtonDefinition;
 
@@ -29,11 +31,12 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             SearchableTableModelProvider<DiskImage, VmDiskListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
             CommonApplicationResources resources,
-            CommonApplicationConstants constants) {
+            CommonApplicationConstants constants,
+            boolean showMoveButton) {
         super(modelProvider, eventBus, clientStorage);
         this.resources = resources;
         this.constants = constants;
-
+        this.showMoveButton = showMoveButton;
     }
 
     @Override
@@ -58,13 +61,6 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
-            }
-        });
-
-        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), "Move") {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getMoveCommand();
             }
         });
 
@@ -108,10 +104,19 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
         };
         getTable().addActionButton(unPlugButtonDefinition);
 
-        attachListenersForModel();
+        attachActivationListenersForModel();
+
+        if (showMoveButton) {
+            getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), "Move") {
+                @Override
+                protected UICommand resolveCommand() {
+                    return getModel().getMoveCommand();
+                }
+            });
+        }
     }
 
-    protected void attachListenersForModel() {
+    protected void attachActivationListenersForModel() {
         getModel().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -131,4 +136,5 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             }
         });
     }
+
 }
