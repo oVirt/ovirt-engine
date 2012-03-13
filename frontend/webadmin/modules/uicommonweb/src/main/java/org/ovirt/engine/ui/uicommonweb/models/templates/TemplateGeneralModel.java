@@ -418,7 +418,7 @@ public class TemplateGeneralModel extends EntityModel
 
         setName(template.getname());
         setDescription(template.getdescription());
-        setQuotaName(template.getQuotaId().toString());
+        setQuotaName(template.getQuotaId() == null ? null : template.getQuotaId().toString());
         setHostCluster(template.getvds_group_name());
         setDefinedMemory(template.getmem_size_mb() + " MB");
         setIsHighlyAvailable(template.getauto_startup());

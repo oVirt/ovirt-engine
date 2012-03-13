@@ -79,7 +79,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         formBuilder.addFormItem(new FormItem("Quota", quotaName, 5, 2) {
             @Override
             public boolean isVisible() {
-                return true;
+                return getModel().getQuotaName() != null;
             }
         });
 

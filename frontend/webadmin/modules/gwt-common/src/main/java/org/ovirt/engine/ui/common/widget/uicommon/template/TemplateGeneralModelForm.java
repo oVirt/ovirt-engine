@@ -75,7 +75,12 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
             }
         });
 
-        formBuilder.addFormItem(new FormItem("Quota", quotaName, 4, 2));
+        formBuilder.addFormItem(new FormItem("Quota", quotaName, 4, 2) {
+            @Override
+            public boolean isVisible() {
+                return getModel().getQuotaName() != null;
+            }
+        });
     }
 
     @Override
