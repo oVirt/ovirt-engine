@@ -1,6 +1,10 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -10,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 
+import com.google.gwt.event.logical.shared.InitializeEvent;
 import com.google.gwt.event.shared.EventBus;
 
 public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListModel> {
@@ -28,6 +33,7 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
         super(modelProvider, eventBus, clientStorage);
         this.resources = resources;
         this.constants = constants;
+
     }
 
     @Override
@@ -101,6 +107,28 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             }
         };
         getTable().addActionButton(unPlugButtonDefinition);
+
+        attachListenersForModel();
     }
 
+    protected void attachListenersForModel() {
+        getModel().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
+                if ("IsDiskHotPlugAvailable".equals(changedArgs.PropertyName)) {
+                    InitializeEvent.fire(plugButtonDefinition);
+                    InitializeEvent.fire(unPlugButtonDefinition);
+                }
+            }
+        });
+
+        getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                InitializeEvent.fire(plugButtonDefinition);
+                InitializeEvent.fire(unPlugButtonDefinition);
+            }
+        });
+    }
 }

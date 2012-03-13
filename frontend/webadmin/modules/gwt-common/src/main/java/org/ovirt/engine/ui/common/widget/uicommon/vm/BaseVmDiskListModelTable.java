@@ -5,13 +5,8 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.action.ImageUiCommandButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.column.DiskImageStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -20,38 +15,15 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
-import com.google.gwt.event.logical.shared.InitializeEvent;
 import com.google.gwt.event.shared.EventBus;
 
 public class BaseVmDiskListModelTable<T extends SearchableListModel> extends AbstractModelBoundTableWidget<DiskImage, T> {
-
-    private ImageUiCommandButtonDefinition<DiskImage> plugButtonDefinition;
-    private ImageUiCommandButtonDefinition<DiskImage> unPlugButtonDefinition;
 
     public BaseVmDiskListModelTable(
             SearchableTableModelProvider<DiskImage, T> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
-
-        getModel().getPropertyChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                if ("IsDiskHotPlugAvailable".equals(changedArgs.PropertyName)) {
-                    InitializeEvent.fire(plugButtonDefinition);
-                    InitializeEvent.fire(unPlugButtonDefinition);
-                }
-            }
-        });
-
-        getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                InitializeEvent.fire(plugButtonDefinition);
-                InitializeEvent.fire(unPlugButtonDefinition);
-            }
-        });
     }
 
     @Override
