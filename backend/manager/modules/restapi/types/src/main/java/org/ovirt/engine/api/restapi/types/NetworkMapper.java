@@ -70,6 +70,9 @@ public class NetworkMapper {
         if (model.isSetMtu()) {
             entity.setMtu(model.getMtu());
         }
+        if (model.isSetRequired()) {
+            entity.setRequired(model.isRequired());
+        }
         return entity;
     }
 
@@ -110,6 +113,7 @@ public class NetworkMapper {
         if (entity.isVmNetwork()) {
             model.getUsages().getUsages().add(NetworkUsage.VM.name());
         }
+        model.setRequired(entity.isRequired());
         return model;
     }
 

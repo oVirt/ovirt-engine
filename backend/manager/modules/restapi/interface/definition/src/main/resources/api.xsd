@@ -1472,6 +1472,7 @@
           <xs:element name="display" type="xs:boolean" minOccurs="0"/>
           <xs:element name="mtu" type="xs:int" minOccurs="0"/>
           <xs:element ref="usages" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="required" type="xs:boolean" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
