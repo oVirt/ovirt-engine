@@ -156,7 +156,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
         if (model.getIsSingleDiskMove() || model.getIsSingleDiskCopy()) {
             singleStoragePanel.setVisible(false);
-            storageTable.edit(model.getStorageDomain());
+            storageTable.edit(model.getDisks().get(0).getStorageDomain());
             container.add(storageTable);
             diskListPanel.addStyleName(style.listPanelSingleDisk());
         } else {

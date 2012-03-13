@@ -84,7 +84,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
     protected abstract void initStorageDomains();
 
-    protected abstract void PostCopyOrMoveInit();
+    protected abstract void postCopyOrMoveInit();
+
+    protected abstract void updateMoveOrCopySingleDiskParameters(ArrayList<VdcActionParametersBase> parameters,
+            DiskModel diskModel);
 
     public MoveOrCopyDiskModel() {
         templateDisks = new ArrayList<DiskModel>();
@@ -147,10 +150,14 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         disjointStorageDomains = new ArrayList<storage_domains>();
         unionStorageDomains = new ArrayList<storage_domains>();
 
+        ArrayList<storage_domains> missingStorageDomains = new ArrayList<storage_domains>();
+
         for (DiskModel disk : getDisks()) {
             ArrayList<Guid> diskStorageIds = disk.getDiskImage().getstorage_ids();
             ArrayList<storage_domains> diskStorageDomains =
                     Linq.getStorageDomainsByIds(diskStorageIds, activeStorageDomains);
+            ArrayList<storage_domains> diskMissingStorageDomains = new ArrayList<storage_domains>();
+
             disk.getSourceStorageDomain().setItems(diskStorageDomains);
 
             disjointStorageDomains = Linq.Disjoint(disjointStorageDomains, diskStorageDomains);
@@ -159,37 +166,41 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             ArrayList<storage_domains> destStorageDomains = Linq.Except(activeStorageDomains, diskStorageDomains);
 
             if (!disk.getDiskImage().getParentId().equals(NGuid.Empty)) {
-                destStorageDomains = filterStorageDomains(destStorageDomains, disk);
+                diskMissingStorageDomains = getMissingStorageDomains(destStorageDomains, disk);
             }
+
+            missingStorageDomains.addAll(diskMissingStorageDomains);
+            destStorageDomains = Linq.Except(destStorageDomains, missingStorageDomains);
 
             Collections.sort(destStorageDomains, new Linq.StorageDomainByNameComparer());
             disk.getStorageDomain().setItems(destStorageDomains);
         }
 
         ArrayList<storage_domains> destStorageDomains = Linq.Except(activeStorageDomains, disjointStorageDomains);
+        destStorageDomains = Linq.Except(destStorageDomains, missingStorageDomains);
         Collections.sort(destStorageDomains, new Linq.StorageDomainByNameComparer());
 
         getStorageDomain().setItems(destStorageDomains);
         getSourceStorageDomain().setItems(disjointStorageDomains);
         setDisks(getDisks());
 
-        PostCopyOrMoveInit();
+        postCopyOrMoveInit();
     }
 
-    protected ArrayList<storage_domains> filterStorageDomains(ArrayList<storage_domains> storageDomains,
+    protected ArrayList<storage_domains> getMissingStorageDomains(ArrayList<storage_domains> storageDomains,
             DiskModel vmdisk) {
-        ArrayList<storage_domains> destStorageDomains = new ArrayList<storage_domains>();
+        ArrayList<storage_domains> missingStorageDomains = new ArrayList<storage_domains>();
         DiskModel templateDisk = getTemplateDiskByVmDisk(vmdisk);
 
         if (templateDisk != null) {
             for (storage_domains storageDomain : storageDomains) {
-                if (templateDisk.getDiskImage().getstorage_ids().contains(storageDomain.getId())) {
-                    destStorageDomains.add(storageDomain);
+                if (!templateDisk.getDiskImage().getstorage_ids().contains(storageDomain.getId())) {
+                    missingStorageDomains.add(storageDomain);
                 }
             }
         }
 
-        return destStorageDomains;
+        return missingStorageDomains;
     }
 
     protected DiskModel getTemplateDiskByVmDisk(DiskModel vmdisk) {
@@ -216,32 +227,38 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             return;
         }
 
+        boolean iSingleStorageDomain = (Boolean) getIsSingleStorageDomain().getEntity();
+
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         for (DiskModel diskModel : getDisks())
         {
-            storage_domains destStorageDomain = (Boolean) getIsSingleStorageDomain().getEntity() ?
+            storage_domains destStorageDomain = iSingleStorageDomain ?
                     (storage_domains) getStorageDomain().getSelectedItem() :
                     (storage_domains) diskModel.getStorageDomain().getSelectedItem();
 
-            storage_domains sourceStorageDomain = (Boolean) getIsSingleStorageDomain().getEntity() ?
+            storage_domains sourceStorageDomain = iSingleStorageDomain ?
                     (storage_domains) getSourceStorageDomain().getSelectedItem() :
                     (storage_domains) diskModel.getSourceStorageDomain().getSelectedItem();
 
-            if (destStorageDomain == null
-                    || diskModel.getDiskImage().getstorage_ids().contains(destStorageDomain.getId())) {
-                continue;
-            }
-
             Guid sourceStorageDomainGuid = sourceStorageDomain != null ? sourceStorageDomain.getId() : Guid.Empty;
-            Guid destStorageDomainGuid = destStorageDomain.getId();
             DiskImage disk = diskModel.getDiskImage();
-            MoveOrCopyImageGroupParameters diskParameters =
-                    new MoveOrCopyImageGroupParameters(disk.getId(),
-                            sourceStorageDomainGuid,
-                            destStorageDomainGuid,
-                            imageOperation);
 
-            parameters.add(diskParameters);
+            if (iSingleStorageDomain && getDisks().size() == 1) {
+                updateMoveOrCopySingleDiskParameters(parameters, diskModel);
+            }
+            else {
+                if (destStorageDomain == null
+                        || diskModel.getDiskImage().getstorage_ids().contains(destStorageDomain.getId())) {
+                    continue;
+                }
+
+                Guid destStorageDomainGuid = destStorageDomain.getId();
+                addMoveOrCopyParameters(parameters,
+                        sourceStorageDomainGuid,
+                        destStorageDomainGuid,
+                        disk,
+                        imageOperation);
+            }
         }
 
         StartProgress(null);
@@ -256,6 +273,20 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                         listModel.setWindow(null);
                     }
                 }, this);
+    }
+
+    protected void addMoveOrCopyParameters(ArrayList<VdcActionParametersBase> parameters,
+            Guid sourceStorageDomainGuid,
+            Guid destStorageDomainGuid,
+            DiskImage disk,
+            ImageOperation imageOperation) {
+        MoveOrCopyImageGroupParameters diskParameters =
+                new MoveOrCopyImageGroupParameters(disk.getId(),
+                        sourceStorageDomainGuid,
+                        destStorageDomainGuid,
+                        imageOperation);
+
+        parameters.add(diskParameters);
     }
 
     @Override

@@ -2,9 +2,12 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -61,8 +64,12 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
         }), vm.getstorage_pool_id());
     }
 
-    protected void PostCopyOrMoveInit() {
+    protected void postCopyOrMoveInit() {
         ICommandTarget target = (ICommandTarget) getEntity();
+
+        if (getDisks().size() == 1) {
+            getIsSingleStorageDomain().setEntity(true);
+        }
 
         if (!getStorageDomain().getItems().iterator().hasNext())
         {
@@ -87,6 +94,19 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
         }
 
         StopProgress();
+    }
+
+    @Override
+    protected void updateMoveOrCopySingleDiskParameters(ArrayList<VdcActionParametersBase> parameters,
+            DiskModel diskModel) {
+
+        storage_domains selectedStorageDomain = (storage_domains) diskModel.getStorageDomain().getSelectedItem();
+
+        addMoveOrCopyParameters(parameters,
+                Guid.Empty,
+                selectedStorageDomain.getId(),
+                diskModel.getDiskImage(),
+                ImageOperation.Move);
     }
 
 }

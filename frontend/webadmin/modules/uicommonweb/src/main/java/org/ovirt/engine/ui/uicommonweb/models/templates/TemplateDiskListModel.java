@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
@@ -169,7 +170,23 @@ public class TemplateDiskListModel extends SearchableListModel
 
     private void UpdateActionAvailability()
     {
-        getCopyCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
+        getCopyCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
+                && isCopyCommandAvailable());
+    }
+
+    private boolean isCopyCommandAvailable() {
+        ArrayList<DiskImage> disks =
+                getSelectedItems() != null ? Linq.<DiskImage> Cast(getSelectedItems()) : new ArrayList<DiskImage>();
+
+        for (DiskImage disk : disks)
+        {
+            if (disk.getimageStatus() != ImageStatus.OK)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override

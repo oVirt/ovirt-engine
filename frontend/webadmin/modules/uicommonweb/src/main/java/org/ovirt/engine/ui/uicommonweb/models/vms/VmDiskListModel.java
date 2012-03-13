@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DiskType;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -594,7 +595,7 @@ public class VmDiskListModel extends SearchableListModel
                 && isVmDown());
 
         getMoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
-                && isVmDown());
+                && isVmDown() && isMoveCommandAvailable());
 
         getPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(true));
 
@@ -625,6 +626,21 @@ public class VmDiskListModel extends SearchableListModel
         for (DiskImage disk : disks)
         {
             if (disk.getPlugged() == plug)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean isMoveCommandAvailable() {
+        ArrayList<DiskImage> disks =
+                getSelectedItems() != null ? Linq.<DiskImage> Cast(getSelectedItems()) : new ArrayList<DiskImage>();
+
+        for (DiskImage disk : disks)
+        {
+            if (disk.getimageStatus() != ImageStatus.OK)
             {
                 return false;
             }

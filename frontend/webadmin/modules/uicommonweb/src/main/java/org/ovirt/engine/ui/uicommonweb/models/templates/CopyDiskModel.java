@@ -2,7 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
@@ -13,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
 public class CopyDiskModel extends MoveOrCopyDiskModel
 {
@@ -51,8 +54,12 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
         }), storagePoolId);
     }
 
-    protected void PostCopyOrMoveInit() {
+    protected void postCopyOrMoveInit() {
         ICommandTarget target = (ICommandTarget) getEntity();
+
+        if (getDisks().size() == 1) {
+            getIsSingleStorageDomain().setEntity(true);
+        }
 
         boolean noSingleStorageDomain = !getStorageDomain().getItems().iterator().hasNext();
         boolean noDestStorageDomain =
@@ -85,6 +92,27 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
         }
 
         StopProgress();
+    }
+
+    @Override
+    protected void updateMoveOrCopySingleDiskParameters(ArrayList<VdcActionParametersBase> parameters,
+            DiskModel diskModel) {
+
+        ArrayList<storage_domains> selectedStorageDomains = new ArrayList<storage_domains>();
+        if (diskModel.getStorageDomain().getSelectedItems() != null) {
+            selectedStorageDomains.addAll((ArrayList<storage_domains>) diskModel.getStorageDomain().getSelectedItems());
+        }
+        else {
+            selectedStorageDomains.add((storage_domains) diskModel.getStorageDomain().getSelectedItem());
+        }
+
+        for (storage_domains storageDomain : selectedStorageDomains) {
+            addMoveOrCopyParameters(parameters,
+                    Guid.Empty,
+                    storageDomain.getId(),
+                    diskModel.getDiskImage(),
+                    ImageOperation.Copy);
+        }
     }
 
 }
