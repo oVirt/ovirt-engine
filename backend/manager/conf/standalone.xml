@@ -71,6 +71,16 @@
                 <max-backup-index value="30"/>
                 <append value="true"/>
             </size-rotating-file-handler>
+            <size-rotating-file-handler name="FRONTEND_LOG" autoflush="true">
+                <level name="DEBUG"/>
+                <formatter>
+                    <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
+                </formatter>
+                <file relative-to="jboss.server.log.dir" path="/engine/engine-ui.log"/>
+                <rotate-size value="10M"/>
+                <max-backup-index value="9"/>
+                <append value="true"/>
+            </size-rotating-file-handler>
             <logger category="com.arjuna">
                 <level name="WARN"/>
             </logger>
@@ -84,6 +94,12 @@
                 <level name="INFO"/>
                 <handlers>
                     <handler name="ENGINE_LOG"/>
+                </handlers>
+            </logger>
+            <logger category="org.ovirt.engine.ui">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="FRONTEND_LOG"/>
                 </handlers>
             </logger>
             <logger category="org.ovirt.engine.core.bll">
