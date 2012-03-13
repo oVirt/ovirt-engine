@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -114,9 +115,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             }
         }
 
-
         // check if Vm has disks
-        if (retVal && getVm().getDiskMap().size() <= 0) {
+        if (retVal && getVm().getDiskMap().size() == 0) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
             retVal = false;
         }
@@ -128,7 +128,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             }
             // check that the images requested format are valid (COW+Sparse)
             retVal = ImagesHandler.CheckImagesConfiguration(getParameters().getStorageDomainId(),
-                    new java.util.ArrayList<DiskImageBase>(images.values()),
+                    new ArrayList<DiskImageBase>(images.values()),
                     getReturnValue().getCanDoActionMessages());
 
             if (retVal && getParameters().getCopyCollapse()) {
@@ -165,48 +165,17 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
         }
 
-        // Set source domain
         if (retVal) {
-            // DiskImage image = null; //LINQ Vm.DiskMap.First().Value;
             DiskImage image = LinqUtils.first(getVm().getDiskMap().values());
             if (image == null) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
                 retVal = false;
             }
-            if (retVal) {
-                SetSourceDomainId(image.getstorage_ids().get(0));
-                if (getSourceDomain() == null) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
-                    retVal = false;
-                }
-            }
-        }
-        // check soource domain is active
-        if (retVal) {
-            retVal = IsDomainActive(getSourceDomain().getId(), getVm().getstorage_pool_id());
-        }
-        // check that source domain is not ISO or Export domain
-        if (retVal) {
-            if (getSourceDomain().getstorage_domain_type() == StorageDomainType.ISO
-                    || getSourceDomain().getstorage_domain_type() == StorageDomainType.ImportExport) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-                retVal = false;
-            }
         }
 
-        // check if Vm exists in export domain
-        if (retVal) {
-            retVal = CheckVmInStorageDomain();
-        }
-
-        retVal = retVal && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()));
-
-        if (retVal) {
-
-            // check that vm is down and images are ok
-            retVal =
-                    retVal
-                            && ImagesHandler.PerformImagesChecks(getVm(),
+        retVal =
+                CheckVmInStorageDomain() && retVal && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
+                        && ImagesHandler.PerformImagesChecks(getVm(),
                                     getReturnValue().getCanDoActionMessages(),
                                     getVm().getstorage_pool_id(),
                                     Guid.Empty,
@@ -216,10 +185,9 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                                     false,
                                     true,
                                     true,
-                                    false,
+                                    true,
                                     true,
                                     new ArrayList<DiskImage>(getVm().getDiskMap().values()));
-        }
 
         if (!retVal) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXPORT);
@@ -246,13 +214,13 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         }
     }
 
-    public boolean UpdateCopyVmInSpm(Guid storagePoolId, java.util.ArrayList<VM> vmsList, Guid storageDomainId) {
-        java.util.HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary =
-                new java.util.HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>(
+    public boolean UpdateCopyVmInSpm(Guid storagePoolId, List<VM> vmsList, Guid storageDomainId) {
+        HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary =
+                new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>(
                         vmsList.size());
         OvfManager ovfManager = new OvfManager();
         for (VM vm : vmsList) {
-            java.util.ArrayList<DiskImage> AllVmImages = new java.util.ArrayList<DiskImage>();
+            ArrayList<DiskImage> AllVmImages = new ArrayList<DiskImage>();
             VmHandler.updateDisksFromDb(vm);
             List<VmNetworkInterface> interfaces = vm.getInterfaces();
             if (interfaces != null) {
@@ -290,12 +258,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             RefObject<String> tempRefObject = new RefObject<String>(vmMeta);
             ovfManager.ExportVm(tempRefObject, vm, AllVmImages);
             vmMeta = tempRefObject.argvalue;
-
-            // LINQ vmsAndMetaDictionary.Add(vm.vm_guid, new
-            // KeyValuePair<string,List<Guid>>
-            // LINQ (vmMeta, vm.DiskMap.Values.Select(a =>
-            // a.image_group_id.Value).ToList()));
-
             List<Guid> imageGroupIds = LinqUtils.foreach(vm.getDiskMap().values(), new Function<DiskImage, Guid>() {
                 @Override
                 public Guid eval(DiskImage diskImage) {
@@ -366,6 +328,10 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         }
     }
 
+    /**
+     * Check that vm is in export domain
+     * @return
+     */
     protected boolean CheckVmInStorageDomain() {
         boolean retVal = true;
         GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(getVm()
@@ -453,7 +419,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     protected boolean UpdateVmImSpm() {
         return VmCommand.UpdateVmInSpm(getVm().getstorage_pool_id(),
-                new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { getVm() })), getParameters()
+                Arrays.asList(getVm()), getParameters()
                         .getStorageDomainId());
     }
 
@@ -471,7 +437,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 vm.setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
                 vm.setvmt_name(null);
                 UpdateCopyVmInSpm(getVm().getstorage_pool_id(),
-                        new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { vm })), getParameters()
+                        Arrays.asList(vm), getParameters()
                                 .getStorageDomainId());
             } else {
                 UpdateVmImSpm();
