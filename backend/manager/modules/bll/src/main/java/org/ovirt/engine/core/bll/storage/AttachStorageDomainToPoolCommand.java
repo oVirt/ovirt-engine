@@ -117,7 +117,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
         // We can share only ISO or Export domain , or a data domain
         // which is not attached.
         boolean returnValue =
-                CheckStoragePool()
+                checkStoragePool()
                         && InitializeVds() && CheckStorageDomain() && checkDomainCanBeAttached(getStorageDomain());
 
         if (returnValue && getStoragePool().getstatus() == StoragePoolStatus.Uninitialized

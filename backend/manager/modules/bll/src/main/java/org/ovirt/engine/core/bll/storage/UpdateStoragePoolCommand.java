@@ -81,7 +81,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = super.canDoAction() && CheckStoragePool();
+        boolean returnValue = super.canDoAction() && checkStoragePool();
         _oldStoragePool = DbFacade.getInstance().getStoragePoolDAO().get(getStoragePool().getId());
         if (returnValue && !StringHelper.EqOp(_oldStoragePool.getname(), getStoragePool().getname())
                 && DbFacade.getInstance().getStoragePoolDAO().getByName(getStoragePool().getname()) != null) {

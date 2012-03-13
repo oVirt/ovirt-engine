@@ -122,15 +122,12 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return returnValue;
     }
 
-    protected boolean CheckStoragePool() {
-        boolean returnValue = false;
-        if (getStoragePool() != null) {
-            returnValue = DbFacade.getInstance().getStoragePoolDAO().get(getStoragePool().getId()) != null;
-        }
-        if (!returnValue) {
+    protected boolean checkStoragePool() {
+        if (getStoragePool() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+            return false;
         }
-        return returnValue;
+        return true;
     }
 
     protected boolean CheckStoragePoolStatus(StoragePoolStatus status) {

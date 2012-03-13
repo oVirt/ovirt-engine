@@ -48,7 +48,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = super.canDoAction() && CheckStoragePool();
+        boolean returnValue = super.canDoAction() && checkStoragePool();
         getReturnValue().getCanDoActionMessages().remove(VdcBllMessages.VAR__ACTION__RECONSTRUCT_MASTER.toString());
 
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RECOVER_POOL);

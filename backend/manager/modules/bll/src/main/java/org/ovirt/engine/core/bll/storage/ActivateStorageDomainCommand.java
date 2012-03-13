@@ -45,7 +45,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     protected boolean canDoAction() {
         super.canDoAction();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ACTIVATE);
-        boolean returnValue = CheckStoragePool()
+        boolean returnValue = checkStoragePool()
                 && CheckStoragePoolStatusNotEqual(StoragePoolStatus.Uninitialized,
                                                   VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
                 && CheckStorageDomain()

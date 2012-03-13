@@ -300,7 +300,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = super.canDoAction() && CheckStoragePool()
+        boolean returnValue = super.canDoAction() && checkStoragePool()
                 && CheckStoragePoolStatusNotEqual(StoragePoolStatus.Up,
                                                   VdcBllMessages.ERROR_CANNOT_REMOVE_ACTIVE_STORAGE_POOL);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__POOL);

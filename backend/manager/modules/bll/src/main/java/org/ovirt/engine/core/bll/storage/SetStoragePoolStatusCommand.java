@@ -62,6 +62,6 @@ public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameter
 
     @Override
     protected boolean canDoAction() {
-        return CheckStoragePool();
+        return checkStoragePool();
     }
 }

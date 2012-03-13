@@ -50,7 +50,7 @@ public class ConnectHostToStoragePoolServersCommand<T extends StoragePoolParamet
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = CheckStoragePool()
+        boolean returnValue = checkStoragePool()
                 && CheckStoragePoolStatusNotEqual(StoragePoolStatus.Uninitialized,
                                                   VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
                 && InitializeVds();

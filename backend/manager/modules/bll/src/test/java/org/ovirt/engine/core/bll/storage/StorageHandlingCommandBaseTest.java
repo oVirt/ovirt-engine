@@ -72,7 +72,7 @@ public class StorageHandlingCommandBaseTest {
     }
 
     private void checkStoragePoolSucceeds() {
-        assertTrue(cmd.CheckStoragePool());
+        assertTrue(cmd.checkStoragePool());
     }
 
     private storage_pool createStoragePool() {
@@ -83,7 +83,7 @@ public class StorageHandlingCommandBaseTest {
     }
 
     private void checkStoragePoolFails() {
-        assertFalse(cmd.CheckStoragePool());
+        assertFalse(cmd.checkStoragePool());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages
                 .ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST.toString()));
     }

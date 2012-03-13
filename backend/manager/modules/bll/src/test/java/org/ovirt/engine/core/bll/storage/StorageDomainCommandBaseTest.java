@@ -84,7 +84,7 @@ public class StorageDomainCommandBaseTest {
 
 
     private void storagePoolExists() {
-        when(cmd.CheckStoragePool()).thenReturn(true);
+        when(cmd.checkStoragePool()).thenReturn(true);
     }
 
     private void masterDomainIsUp() {
