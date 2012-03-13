@@ -52,4 +52,15 @@ public class MultipleServicesMonitoringStrategy implements MonitoringStrategy {
         return false;
     }
 
+    @Override
+    public boolean processHardwareCapabilitiesNeeded(VDS oldVds, VDS newVds) {
+        // In this case, if one of the services needs hardware capabilities processing then we return true
+        for ( MonitoringStrategy monitoringStrategy : strategies ) {
+            if (monitoringStrategy.processHardwareCapabilitiesNeeded(oldVds, newVds)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
