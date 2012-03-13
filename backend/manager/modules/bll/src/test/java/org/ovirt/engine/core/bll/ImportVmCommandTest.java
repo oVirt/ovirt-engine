@@ -43,7 +43,6 @@ public class ImportVmCommandTest {
         cfgMocker.mockConfigLowDiskSpace(diskSpaceRequired);
         cfgMocker.mockConfigLowDiskPct(diskSpacePct);
         cfgMocker.mockLimitNumberOfNetworkInterfaces(Boolean.TRUE);
-        mockImportExportCommonAlwaysTrue();
         return new TestHelperImportVmCommand(createParameters());
     }
 
@@ -60,10 +59,5 @@ public class ImportVmCommandTest {
         v.setId(Guid.NewGuid());
         v.setDiskSize(2);
         return v;
-    }
-
-    protected static void mockImportExportCommonAlwaysTrue() {
-        ImportExportCommonMocker mocker = new ImportExportCommonMocker();
-        mocker.mockCheckStoragePool(true);
     }
 }

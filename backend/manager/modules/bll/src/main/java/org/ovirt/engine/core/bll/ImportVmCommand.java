@@ -98,7 +98,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             setDescription(getVmName());
         }
         ArrayList<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
-        boolean retVal = CheckStoragePool();
+        boolean retVal = checkStoragePool();
 
         Map<Guid, storage_domains> domainsMap = null;
         if (retVal) {

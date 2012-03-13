@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
-
-import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -15,13 +12,5 @@ public class ImportExportCommon {
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST.toString());
         }
         return returnValue;
-    }
-
-    public static boolean checkStoragePool(storage_pool pool, List<String> messages) {
-        if (pool == null) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST.toString());
-            return false;
-        }
-        return true;
     }
 }

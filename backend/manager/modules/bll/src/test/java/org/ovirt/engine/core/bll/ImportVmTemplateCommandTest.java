@@ -74,9 +74,11 @@ public class ImportVmTemplateCommandTest {
 
         assertValidVolumeInfoCombination(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.ISCSI);
         assertValidVolumeInfoCombination(VolumeFormat.COW, VolumeType.Sparse, StorageType.ISCSI);
+        assertValidVolumeInfoCombination(VolumeFormat.RAW, VolumeType.Sparse, StorageType.ISCSI);
 
         assertValidVolumeInfoCombination(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.FCP);
         assertValidVolumeInfoCombination(VolumeFormat.COW, VolumeType.Sparse, StorageType.FCP);
+        assertValidVolumeInfoCombination(VolumeFormat.RAW, VolumeType.Sparse, StorageType.FCP);
 
         assertValidVolumeInfoCombination(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.LOCALFS);
         assertValidVolumeInfoCombination(VolumeFormat.RAW, VolumeType.Sparse, StorageType.LOCALFS);
@@ -92,9 +94,7 @@ public class ImportVmTemplateCommandTest {
 
         assertInvalidVolumeInfoCombination(VolumeFormat.RAW, VolumeType.Unassigned, StorageType.NFS);
         assertInvalidVolumeInfoCombination(VolumeFormat.RAW, VolumeType.Unassigned, StorageType.ISCSI);
-        assertInvalidVolumeInfoCombination(VolumeFormat.RAW, VolumeType.Sparse, StorageType.ISCSI);
         assertInvalidVolumeInfoCombination(VolumeFormat.RAW, VolumeType.Unassigned, StorageType.FCP);
-        assertInvalidVolumeInfoCombination(VolumeFormat.RAW, VolumeType.Sparse, StorageType.FCP);
         assertInvalidVolumeInfoCombination(VolumeFormat.RAW, VolumeType.Unassigned, StorageType.LOCALFS);
 
         assertInvalidVolumeInfoCombination(VolumeFormat.Unassigned, VolumeType.Preallocated, StorageType.NFS);
@@ -136,7 +136,6 @@ public class ImportVmTemplateCommandTest {
         ConfigMocker cfg = new ConfigMocker();
         cfg.mockConfigLowDiskSpace(0);
         cfg.mockConfigLowDiskPct(0);
-        mockImportExportCommonAlwaysTrue();
         mockVmTemplateCommand();
 
         ImportVmTemplateCommand command =
@@ -221,7 +220,6 @@ public class ImportVmTemplateCommandTest {
         ConfigMocker cfg = new ConfigMocker();
         cfg.mockConfigLowDiskSpace(extraDiskSpaceRequired);
         cfg.mockConfigLowDiskPct(pctOfSpaceRequired);
-        mockImportExportCommonAlwaysTrue();
         mockVmTemplateCommand();
         return new TestHelperImportVmTemplateCommand(createParameters());
     }
@@ -232,11 +230,6 @@ public class ImportVmTemplateCommandTest {
         final ImprotVmTemplateParameters p =
                 new ImprotVmTemplateParameters(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), t);
         return p;
-    }
-
-    protected static void mockImportExportCommonAlwaysTrue() {
-        ImportExportCommonMocker mocker = new ImportExportCommonMocker();
-        mocker.mockCheckStoragePool(true);
     }
 
     protected void mockVmTemplateCommand() {

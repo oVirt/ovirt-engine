@@ -72,8 +72,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
             setDescription(getVmTemplateName());
         }
         // check that the storage pool is valid
-        retVal = retVal && ImportExportCommon.checkStoragePool(getStoragePool(), getReturnValue()
-                    .getCanDoActionMessages());
+        retVal = retVal && checkStoragePool();
 
         if (retVal) {
             // set the source domain and check that it is ImportExport type and active

@@ -6,7 +6,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -24,9 +23,4 @@ public class ImportExportCommonMocker {
     public void mockCheckStorageDomain(final boolean toReturn) {
         when(ImportExportCommon.CheckStorageDomain(any(Guid.class), any(ArrayList.class))).thenReturn(toReturn);
     }
-
-    public void mockCheckStoragePool(final boolean toReturn) {
-        when(ImportExportCommon.checkStoragePool(any(storage_pool.class), any(ArrayList.class))).thenReturn(toReturn);
-    }
-
 }
