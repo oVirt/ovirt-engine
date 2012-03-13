@@ -41,7 +41,7 @@ public class AsyncIteratorCallback {
         NotifyEventDefinition = new EventDefinition("Notify", AsyncIteratorCallback.class);
     }
 
-    public AsyncIteratorCallback() {
+    public AsyncIteratorCallback(String frontendContext) {
 
         setNotifyEvent(new Event(NotifyEventDefinition));
 
@@ -56,9 +56,9 @@ public class AsyncIteratorCallback {
 
                     notifyEvent.raise(this, new ValueEventArgs(returnValue));
                 }
-            })
+            },
+            frontendContext)
         );
     }
 }
-
 

@@ -5,7 +5,11 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicompat.*;
+import org.ovirt.engine.ui.uicompat.Enlistment;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEnlistmentNotification;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.PreparingEnlistment;
 
 @SuppressWarnings("unused")
 public class ChangeHostClusterRM implements IEnlistmentNotification {
@@ -26,9 +30,11 @@ public class ChangeHostClusterRM implements IEnlistmentNotification {
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
         VDS host = (VDS) model.getSelectedItem();
-        enlistmentContext.setOldClusterId(host.getvds_group_id());
 
-        if (!configureModel.getDontChangeHostCluster()) {
+        if (!enlistmentContext.getClusterId().equals(host.getvds_group_id())) {
+
+            enlistmentContext.setOldClusterId(host.getvds_group_id());
+
             Frontend.RunAction(VdcActionType.ChangeVDSCluster, new ChangeVDSClusterParameters(enlistmentContext.getClusterId(), host.getId()),
                 new IFrontendActionAsyncCallback() {
                     @Override

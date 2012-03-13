@@ -1,10 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -12,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IntegerCompat;
@@ -21,6 +17,7 @@ import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -32,6 +29,12 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class ConfigureLocalStorageModel extends Model {
@@ -76,74 +79,24 @@ public class ConfigureLocalStorageModel extends Model {
         privateFormattedStorageName = value;
     }
 
-    private boolean isEditedFlag;
+    private storage_pool candidateDataCenter;
 
-    private boolean editMode;
-
-    public boolean getEditMode() {
-        return editMode;
+    public storage_pool getCandidateDataCenter() {
+        return candidateDataCenter;
     }
 
-    public void setEditMode(boolean value) {
-        // once editing the view the flags stays true
-        if (isEditedFlag != true) {
-            isEditedFlag = value;
-        }
-        editMode = value;
+    public void setCandidateDataCenter(storage_pool value) {
+        candidateDataCenter = value;
     }
 
-    private boolean privatedontCreateDataCenter;
+    private VDSGroup candidateCluster;
 
-    private boolean getdontCreateDataCenter() {
-        return privatedontCreateDataCenter;
+    public VDSGroup getCandidateCluster() {
+        return candidateCluster;
     }
 
-    private void setdontCreateDataCenter(boolean value) {
-        privatedontCreateDataCenter = value;
-    }
-
-    private boolean privatedontCreateCluster;
-
-    private boolean getdontCreateCluster() {
-        return privatedontCreateCluster;
-    }
-
-    private void setdontCreateCluster(boolean value) {
-        privatedontCreateCluster = value;
-    }
-
-    private boolean privatedontChangeHostCluster;
-
-    private boolean getdontChangeHostCluster() {
-        return privatedontChangeHostCluster;
-    }
-
-    private void setdontChangeHostCluster(boolean value) {
-        privatedontChangeHostCluster = value;
-    }
-
-    public boolean getDontCreateDataCenter() {
-        return getdontCreateDataCenter() & !isEditedFlag;
-    }
-
-    public void setDontCreateDataCenter(boolean value) {
-        setdontCreateDataCenter(value);
-    }
-
-    public boolean getDontCreateCluster() {
-        return getdontCreateCluster() & !isEditedFlag;
-    }
-
-    public void setDontCreateCluster(boolean value) {
-        setdontCreateCluster(value);
-    }
-
-    public boolean getDontChangeHostCluster() {
-        return getdontChangeHostCluster() & !isEditedFlag;
-    }
-
-    public void setDontChangeHostCluster(boolean value) {
-        setdontChangeHostCluster(value);
+    public void setCandidateCluster(VDSGroup value) {
+        candidateCluster = value;
     }
 
     private String privateCommonName;
@@ -170,6 +123,7 @@ public class ConfigureLocalStorageModel extends Model {
         }
     }
 
+    private String frontendHash = getHashName() + new Date();
 
     public ConfigureLocalStorageModel() {
 
@@ -182,6 +136,18 @@ public class ConfigureLocalStorageModel extends Model {
         getCluster().Init(false);
 
         setFormattedStorageName(new EntityModel());
+
+        // Subscribe to the Frontend events.
+        Frontend.getQueryStartedEvent().addListener(this);
+        Frontend.getQueryCompleteEvent().addListener(this);
+        Frontend.Subscribe(new VdcQueryType[] {
+            VdcQueryType.Search,
+            VdcQueryType.GetVdsGroupsByStoragePoolId,
+            VdcQueryType.GetAllVdsGroups,
+            VdcQueryType.GetVdsGroupById,
+            VdcQueryType.GetStoragePoolById,
+        });
+
 
         // Set the storage type to be Local.
         ListModel storageTypeListModel = getDataCenter().getStorageTypeList();
@@ -203,6 +169,10 @@ public class ConfigureLocalStorageModel extends Model {
 
         if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getDataCenter().getVersion()) {
             DataCenterVersion_SelectedItemChanged();
+        } else if (ev.equals(Frontend.QueryStartedEventDefinition) && StringHelper.stringsEqual(Frontend.getCurrentContext(), frontendHash)) {
+            Frontend_QueryStarted();
+        } else if (ev.equals(Frontend.QueryCompleteEventDefinition) && StringHelper.stringsEqual(Frontend.getCurrentContext(), frontendHash)) {
+            Frontend_QueryComplete();
         }
     }
 
@@ -229,11 +199,11 @@ public class ConfigureLocalStorageModel extends Model {
 
         boolean isStorageValid = getStorage().Validate() && getFormattedStorageName().getIsValid();
         boolean isDataCenterValid = true;
-        if (!getDontCreateDataCenter()) {
+        if (getCandidateDataCenter() == null) {
             isDataCenterValid = getDataCenter().Validate();
         }
         boolean isClusterValid = true;
-        if (!getDontCreateCluster()) {
+        if (getCandidateCluster() == null) {
             isClusterValid = getCluster().Validate(false);
         }
 
@@ -282,7 +252,7 @@ public class ConfigureLocalStorageModel extends Model {
             }
         }
 
-        ArrayList<String> listNames;
+        ArrayList<String> names;
 
         // In case we found a suitable candidate for re-use:
         if (candidate != null) {
@@ -295,7 +265,7 @@ public class ConfigureLocalStorageModel extends Model {
             getDataCenter().getVersion().setSelectedItem(version);
             getCluster().getVersion().setSelectedItem(version);
 
-            setDontCreateDataCenter(true);
+            setCandidateDataCenter(candidate);
 
             // If we use current settings there is no need to create cluster.
             if (useCurrentSettings) {
@@ -314,8 +284,7 @@ public class ConfigureLocalStorageModel extends Model {
                     getCluster().getCPU().setSelectedItem(cpu);
                 }
 
-                setDontCreateCluster(true);
-                setDontChangeHostCluster(true);
+                setCandidateCluster(cluster);
             }
             // Use different cluster
             else {
@@ -326,14 +295,14 @@ public class ConfigureLocalStorageModel extends Model {
                 // No clusters available - pick up new name.
                 if (clusters == null || clusters.isEmpty()) {
 
-                    listNames = new ArrayList<String>();
+                    names = new ArrayList<String>();
 
                     ArrayList<VDSGroup> listClusters = context.clusterList;
                     for (VDSGroup cluster : listClusters) {
-                        listNames.add(cluster.getname());
+                        names.add(cluster.getname());
                     }
 
-                    getCluster().getName().setEntity(AvailableName(listNames));
+                    getCluster().getName().setEntity(AvailableName(names));
                 } else {
 
                     // Use the DC cluster.
@@ -352,23 +321,19 @@ public class ConfigureLocalStorageModel extends Model {
                         getCluster().getCPU().setSelectedItem(cpu);
                     }
 
-                    setDontCreateCluster(true);
-
-                    if (host.getvds_group_id().getValue().equals(getCluster().getClusterId())) {
-                        setDontChangeHostCluster(true);
-                    }
+                    setCandidateCluster(cluster);
                 }
             }
         } else {
 
             // Didn't found DC to re-use, so we select new names.
-            listNames = new ArrayList<String>();
+            names = new ArrayList<String>();
 
-            for (storage_pool storagePool : dataCenters) {
-                listNames.add(storagePool.getname());
+            for (storage_pool dataCenter : dataCenters) {
+                names.add(dataCenter.getname());
             }
 
-            getDataCenter().getName().setEntity(AvailableName(listNames));
+            getDataCenter().getName().setEntity(AvailableName(names));
 
 
             // Choose a Data Center version corresponding to the host.
@@ -396,15 +361,15 @@ public class ConfigureLocalStorageModel extends Model {
                 }
             }
 
-            listNames = new ArrayList<String>();
+            names = new ArrayList<String>();
             if (clusters == null) {
                 clusters = context.clusterList;
             }
 
             for (VDSGroup cluster : clusters) {
-                listNames.add(cluster.getname());
+                names.add(cluster.getname());
             }
-            getCluster().getName().setEntity(AvailableName(listNames));
+            getCluster().getName().setEntity(AvailableName(names));
         }
 
         // Choose default CPU name to match host.
@@ -414,12 +379,12 @@ public class ConfigureLocalStorageModel extends Model {
 
         // Always choose a available storage name.
         ArrayList<storage_domains> storages = context.storageList;
-        listNames = new ArrayList<String>();
+        names = new ArrayList<String>();
 
         for (storage_domains storageDomain : storages) {
-            listNames.add(storageDomain.getstorage_name());
+            names.add(storageDomain.getstorage_name());
         }
-        getFormattedStorageName().setEntity(AvailableName(listNames));
+        getFormattedStorageName().setEntity(AvailableName(names));
     }
 
     private void SetDefaultNames7() {
@@ -433,7 +398,8 @@ public class ConfigureLocalStorageModel extends Model {
                     context.storageList = (ArrayList<storage_domains>) returnValue;
                     SetDefaultNames8();
                 }
-            }));
+            },
+            frontendHash));
     }
 
     public void SetDefaultNames6() {
@@ -468,7 +434,8 @@ public class ConfigureLocalStorageModel extends Model {
                     context.clusterListByDataCenterMap.put(item, (ArrayList<VDSGroup>) value);
                     return false;
                 }
-            }
+            },
+            frontendHash
         );
     }
 
@@ -504,7 +471,8 @@ public class ConfigureLocalStorageModel extends Model {
                     context.localStorageHostByDataCenterMap.put(item, (VDS) value);
                     return false;
                 }
-            }
+            },
+            frontendHash
         );
     }
 
@@ -519,7 +487,8 @@ public class ConfigureLocalStorageModel extends Model {
                     context.dataCenterList = (ArrayList<storage_pool>) returnValue;
                     SetDefaultNames5();
                 }
-            }),
+            },
+            frontendHash),
             getCommonName() + "*");
     }
 
@@ -534,7 +503,8 @@ public class ConfigureLocalStorageModel extends Model {
                     context.clusterList = (ArrayList<VDSGroup>) returnValue;
                     SetDefaultNames4();
                 }
-            }));
+            },
+            frontendHash));
     }
 
     public void SetDefaultNames2() {
@@ -551,7 +521,8 @@ public class ConfigureLocalStorageModel extends Model {
                         context.hostCluster = (VDSGroup) returnValue;
                         SetDefaultNames3();
                     }
-                }),
+                },
+                frontendHash),
                 host.getvds_group_id());
         } else {
             SetDefaultNames3();
@@ -572,7 +543,8 @@ public class ConfigureLocalStorageModel extends Model {
                         context.hostDataCenter = (storage_pool) returnValue;
                         SetDefaultNames2();
                     }
-                }),
+                },
+                frontendHash),
                 host.getstorage_pool_id());
         } else {
             SetDefaultNames2();
@@ -810,6 +782,22 @@ public class ConfigureLocalStorageModel extends Model {
         }
 
         return commonName;
+    }
+
+    private int queryCounter;
+
+    private void Frontend_QueryStarted() {
+        queryCounter++;
+        if (getProgress() == null) {
+            StartProgress(null);
+        }
+    }
+
+    private void Frontend_QueryComplete() {
+        queryCounter--;
+        if (queryCounter == 0) {
+            StopProgress();
+        }
     }
 
 

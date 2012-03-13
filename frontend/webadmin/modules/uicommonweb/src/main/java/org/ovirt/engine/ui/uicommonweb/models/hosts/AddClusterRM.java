@@ -14,7 +14,11 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
-import org.ovirt.engine.ui.uicompat.*;
+import org.ovirt.engine.ui.uicompat.Enlistment;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEnlistmentNotification;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.PreparingEnlistment;
 
 @SuppressWarnings("unused")
 public class AddClusterRM implements IEnlistmentNotification {
@@ -61,10 +65,11 @@ public class AddClusterRM implements IEnlistmentNotification {
         HostListModel model = enlistmentContext.getModel();
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
-        if (!configureModel.getDontCreateCluster()) {
+        VDSGroup candidate = configureModel.getCandidateCluster();
+        ClusterModel clusterModel = configureModel.getCluster();
+        String clusterName = (String) clusterModel.getName().getEntity();
 
-            ClusterModel clusterModel = configureModel.getCluster();
-            String clusterName = (String) clusterModel.getName().getEntity();
+        if (candidate == null || candidate.getname() != clusterName) {
 
             // Try to find existing cluster with the specified name.
             VDSGroup cluster = context.clusterFoundByName;
@@ -103,7 +108,6 @@ public class AddClusterRM implements IEnlistmentNotification {
             }
 
         } else {
-            //TODO: Check whether the getValue is necessary.
             enlistmentContext.setClusterId(configureModel.getCluster().getClusterId().getValue());
 
             context.enlistment = null;

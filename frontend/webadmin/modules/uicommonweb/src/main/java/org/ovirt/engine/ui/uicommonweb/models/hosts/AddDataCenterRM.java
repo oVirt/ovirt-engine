@@ -1,7 +1,16 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
+import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
+import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -11,7 +20,11 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterModel;
-import org.ovirt.engine.ui.uicompat.*;
+import org.ovirt.engine.ui.uicompat.Enlistment;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEnlistmentNotification;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.PreparingEnlistment;
 
 @SuppressWarnings("unused")
 public class AddDataCenterRM implements IEnlistmentNotification {
@@ -58,10 +71,11 @@ public class AddDataCenterRM implements IEnlistmentNotification {
         HostListModel model = enlistmentContext.getModel();
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
-        if (!configureModel.getDontCreateDataCenter()) {
+        storage_pool candidate = configureModel.getCandidateDataCenter();
+        DataCenterModel dataCenterModel = configureModel.getDataCenter();
+        String dataCenterName = (String) dataCenterModel.getName().getEntity();
 
-            DataCenterModel dataCenterModel = configureModel.getDataCenter();
-            String dataCenterName = (String) dataCenterModel.getName().getEntity();
+        if (candidate == null || candidate.getname() != dataCenterName) {
 
             // Try to find existing data center with the specified name.
             storage_pool dataCenter = context.dataCenterFoundByName;
@@ -93,7 +107,6 @@ public class AddDataCenterRM implements IEnlistmentNotification {
                     });
             }
         } else {
-            //TODO: Check whether the getValue is necessary.
             enlistmentContext.setDataCenterId(configureModel.getDataCenter().getDataCenterId().getValue());
 
             context.enlistment = null;
@@ -150,7 +163,7 @@ public class AddDataCenterRM implements IEnlistmentNotification {
                 }),
                 enlistmentContext.getDataCenterId());
         } else {
-            rollback2();
+            rollback3();
         }
     }
 
@@ -159,17 +172,36 @@ public class AddDataCenterRM implements IEnlistmentNotification {
         Enlistment enlistment = context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
         HostListModel model = enlistmentContext.getModel();
+
+        VDS host = (VDS) model.getSelectedItem();
+
+        // Retrieve host to make sure we have an updated status etc.
+        AsyncDataProvider.GetHostById(new AsyncQuery(this,
+            new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object model, Object returnValue) {
+
+                    context.hostFoundById = (VDS) returnValue;
+                    rollback3();
+                }
+            }),
+            host.getId());
+    }
+
+    public void rollback3() {
+
+        Enlistment enlistment = context.enlistment;
+        EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
+        HostListModel model = enlistmentContext.getModel();
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
-        VDS host = null;
+        VDS host = context.hostFoundById;
 
         boolean abort = false;
         if (model != null && model.getSelectedItem() != null) {
 
-            host = (VDS) model.getSelectedItem();
-
             // Perform rollback only when the host is in maintenance.
-            if (host.getstatus() == VDSStatus.Maintenance) {
+            if (host.getstatus() != VDSStatus.Maintenance) {
                 abort = true;
             }
         } else {
@@ -194,8 +226,7 @@ public class AddDataCenterRM implements IEnlistmentNotification {
             return;
         }
 
-        if (enlistmentContext.getOldClusterId() != null
-            && !host.getvds_group_id().getValue().equals(enlistmentContext.getOldClusterId().getValue())) {
+        if (enlistmentContext.getOldClusterId() != null) {
 
             // Switch host back to previous cluster.
             Frontend.RunAction(VdcActionType.ChangeVDSCluster, new ChangeVDSClusterParameters(enlistmentContext.getOldClusterId(), host.getId()),
@@ -206,7 +237,7 @@ public class AddDataCenterRM implements IEnlistmentNotification {
                         VdcReturnValueBase returnValue = result.getReturnValue();
 
                         context.changeVDSClusterReturnValue = returnValue;
-                        rollback3();
+                        rollback4();
                     }
                 });
 
@@ -216,7 +247,7 @@ public class AddDataCenterRM implements IEnlistmentNotification {
         }
     }
 
-    private void rollback3() {
+    private void rollback4() {
 
         Enlistment enlistment = context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
@@ -235,7 +266,7 @@ public class AddDataCenterRM implements IEnlistmentNotification {
                             VdcReturnValueBase returnValue = result.getReturnValue();
 
                             context.removeVDSGroupReturnValue = returnValue;
-                            rollback4();
+                            rollback5();
                         }
                     });
             }
@@ -245,7 +276,7 @@ public class AddDataCenterRM implements IEnlistmentNotification {
         }
     }
 
-    private void rollback4() {
+    private void rollback5() {
 
         Enlistment enlistment = context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
@@ -364,6 +395,7 @@ public class AddDataCenterRM implements IEnlistmentNotification {
         public Enlistment enlistment;
         public storage_pool dataCenterFoundByName;
         public storage_pool dataCenterFoundById;
+        public VDS hostFoundById;
         public VdcReturnValueBase addDataCenterReturnValue;
         public VdcReturnValueBase changeVDSClusterReturnValue;
         public VdcReturnValueBase removeVDSGroupReturnValue;
