@@ -2,11 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -67,54 +65,72 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
 
     @Override
     protected boolean canDoAction() {
-        // Set the template images from the Export domain and change each image id storage is to the import domain
-        GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(getParameters()
-                .getStoragePoolId(), getParameters().getSourceDomainId());
-        tempVar.setGetAll(true);
-        VdcQueryReturnValue qretVal = getBackend().runInternalQuery(
-                VdcQueryType.GetTemplatesFromExportDomain, tempVar);
-        boolean retVal = qretVal.getSucceeded();
-        Set<Guid> targetDomains = Collections.emptySet();
-        if (retVal) {
-            Map<VmTemplate, DiskImageList> templates = (Map) qretVal.getReturnValue();
-            DiskImageList images = templates.get(LinqUtils.firstOrNull(templates.keySet(),
-                    new Predicate<VmTemplate>() {
-                        @Override
-                        public boolean eval(VmTemplate t) {
-                            return t.getId().equals(getParameters().getVmTemplate().getId());
-                        }
-                    }));
-            List<DiskImage> list = Arrays.asList(images.getDiskImages());
-            getParameters().setImages(list);
-            ensureDomainMap(getParameters().getImages(), getParameters().getDestDomainId());
-            targetDomains = getTargetDomains();
-            storage_domain_static storageDomain =
-                    getStorageDomainStaticDAO().get(getParameters().getDestDomainId());
-            Map<String, DiskImage> imageMap = new HashMap<String, DiskImage>();
-            for (DiskImage image : list) {
-                storage_domain_static targetDomain = (imageToDestinationDomainMap.get(image.getId()) == null)
-                    ? storageDomain
-                    : getStorageDomain(imageToDestinationDomainMap.get(image.getId())).getStorageStaticData();
-                changeRawToCowIfSparseOnBlockDevice(targetDomain.getstorage_type(), image);
-                retVal = ImagesHandler.CheckImageConfiguration(storageDomain, image,
-                        getReturnValue().getCanDoActionMessages());
-                if (!retVal) {
-                    break;
-                } else {
-                    image.setstorage_pool_id(getParameters().getStoragePoolId());
-                    image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getSourceDomainId())));
-                    imageMap.put(image.getId().toString(), image);
-                }
-            }
-            getVmTemplate().setDiskImageMap(imageMap);
-        }
-
-
+        boolean retVal = true;
         if (getVmTemplate() == null) {
             retVal = false;
         } else {
             setDescription(getVmTemplateName());
         }
+        // check that the storage pool is valid
+        retVal = retVal && ImportExportCommon.checkStoragePool(getStoragePool(), getReturnValue()
+                    .getCanDoActionMessages());
+
+        if (retVal) {
+            // set the source domain and check that it is ImportExport type and active
+            SetSourceDomainId(getParameters().getSourceDomainId());
+            StorageDomainValidator sourceDomainValidator = new StorageDomainValidator(getSourceDomain());
+            retVal = sourceDomainValidator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages());
+        }
+        if (retVal && getSourceDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            retVal = false;
+        }
+
+        if (retVal) {
+            // Set the template images from the Export domain and change each image id storage is to the import domain
+            GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(getParameters()
+                    .getStoragePoolId(), getParameters().getSourceDomainId());
+            tempVar.setGetAll(true);
+            VdcQueryReturnValue qretVal = getBackend().runInternalQuery(
+                    VdcQueryType.GetTemplatesFromExportDomain, tempVar);
+            retVal = qretVal.getSucceeded();
+            if (retVal) {
+                Map<VmTemplate, DiskImageList> templates = (Map) qretVal.getReturnValue();
+                DiskImageList images = templates.get(LinqUtils.firstOrNull(templates.keySet(),
+                        new Predicate<VmTemplate>() {
+                            @Override
+                            public boolean eval(VmTemplate t) {
+                                return t.getId().equals(getParameters().getVmTemplate().getId());
+                            }
+                        }));
+                List<DiskImage> list = Arrays.asList(images.getDiskImages());
+                getParameters().setImages(list);
+                ensureDomainMap(getParameters().getImages(), getParameters().getDestDomainId());
+                Map<String, DiskImage> imageMap = new HashMap<String, DiskImage>();
+                for (DiskImage image : list) {
+                    storage_domains storageDomain = getStorageDomain(imageToDestinationDomainMap.get(image.getId()));
+                    StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
+                    retVal = validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages()) &&
+                            validator.domainIsValidDestination(getReturnValue().getCanDoActionMessages());
+                    if(!retVal) {
+                        break;
+                    }
+                    storage_domain_static targetDomain = storageDomain.getStorageStaticData();
+                    changeRawToCowIfSparseOnBlockDevice(targetDomain.getstorage_type(), image);
+                    retVal = ImagesHandler.CheckImageConfiguration(targetDomain, image,
+                            getReturnValue().getCanDoActionMessages());
+                    if (!retVal) {
+                        break;
+                    } else {
+                        image.setstorage_pool_id(getParameters().getStoragePoolId());
+                        image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getSourceDomainId())));
+                        imageMap.put(image.getId().toString(), image);
+                    }
+                }
+                getVmTemplate().setDiskImageMap(imageMap);
+            }
+        }
+
         if (retVal) {
             VmTemplate duplicateTemplate = getVmTemplateDAO()
                     .get(getParameters().getVmTemplate().getId());
@@ -130,74 +146,12 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
             }
         }
 
-        // check that the source domain is valid
-        if (retVal) {
-            retVal = ImportExportCommon.CheckStorageDomain(getParameters().getSourceDomainId(), getReturnValue()
-                    .getCanDoActionMessages());
-        }
-        // check that the destination domain is valid
-        if (retVal) {
-            retVal = ImportExportCommon.CheckStorageDomain(getParameters().getDestDomainId(), getReturnValue()
-                    .getCanDoActionMessages());
-            for(Guid domainId : targetDomains) {
-                retVal = ImportExportCommon.CheckStorageDomain(domainId, getReturnValue().getCanDoActionMessages());
-                if (!retVal) break;
-            }
-
-        }
-
-
-
-        // check that the storage pool is valid
-        if (retVal) {
-            retVal = ImportExportCommon.checkStoragePool(getStoragePool(), getReturnValue()
-                    .getCanDoActionMessages());
-        }
-
         // check that template has images
-        if (retVal) {
-            if (getParameters().getImages() == null || getParameters().getImages().size() <= 0) {
+        if (retVal && (getParameters().getImages() == null || getParameters().getImages().size() == 0)) {
                 retVal = false;
                 addCanDoActionMessage(VdcBllMessages.TEMPLATE_IMAGE_NOT_EXIST);
-            }
         }
 
-        // check if domains are active
-        if (retVal) {
-            retVal =
-                    (IsDomainActive(getParameters().getSourceDomainId(), getParameters().getStoragePoolId()) && IsDomainActive(
-                            getParameters().getDestDomainId(), getParameters().getStoragePoolId()));
-        }
-
-        if (retVal) {
-            for(Guid domainId : targetDomains) {
-                retVal = IsDomainActive(domainId, getParameters().getStoragePoolId());
-                if (!retVal) break;
-            }
-        }
-        // check that the destination domain is not ISO and not Export domain
-        if (retVal) {
-            for(Guid domainId : targetDomains) {
-                StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain(domainId));
-                retVal = validator.domainIsValidDestination(getReturnValue().getCanDoActionMessages());
-                if (!retVal) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-                    break;
-                }
-            }
-        }
-        // set the source domain and check that it is ImportExport type
-        if (retVal) {
-            SetSourceDomainId(getParameters().getSourceDomainId());
-            if (getSourceDomain() == null) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
-                retVal = false;
-            }
-            if (getSourceDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-                retVal = false;
-            }
-        }
         if (retVal) {
             Map<storage_domains, Integer> domainMap = getSpaceRequirementsForStorageDomains(
                     new ArrayList<DiskImage>(getVmTemplate().getDiskImageMap().values()));
@@ -210,7 +164,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
                 }
                 domainMap.put(getStorageDomain(), sz);
             }
-            for(Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
+            for (Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
                 retVal = StorageDomainSpaceChecker.hasSpaceForRequest(entry.getKey(), entry.getValue());
                 if (!retVal) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);

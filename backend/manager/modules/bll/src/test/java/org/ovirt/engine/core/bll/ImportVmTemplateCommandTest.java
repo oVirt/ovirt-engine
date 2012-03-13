@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -159,6 +160,7 @@ public class ImportVmTemplateCommandTest {
 
         final storage_domains srcDomain = new storage_domains();
         srcDomain.setstorage_domain_type(StorageDomainType.ImportExport);
+        srcDomain.setstatus(StorageDomainStatus.Active);
         when(dao.getForStoragePool(parameters.getSourceDomainId(), parameters.getStoragePoolId()))
                 .thenReturn(srcDomain);
 
@@ -166,6 +168,7 @@ public class ImportVmTemplateCommandTest {
         destDomain.setstorage_domain_type(StorageDomainType.Data);
         destDomain.setused_disk_size(0);
         destDomain.setavailable_disk_size(1000);
+        destDomain.setstatus(StorageDomainStatus.Active);
         when(dao.getForStoragePool(parameters.getDestDomainId(), parameters.getStoragePoolId()))
                 .thenReturn(destDomain);
 
@@ -233,7 +236,6 @@ public class ImportVmTemplateCommandTest {
 
     protected static void mockImportExportCommonAlwaysTrue() {
         ImportExportCommonMocker mocker = new ImportExportCommonMocker();
-        mocker.mockCheckStorageDomain(true);
         mocker.mockCheckStoragePool(true);
     }
 

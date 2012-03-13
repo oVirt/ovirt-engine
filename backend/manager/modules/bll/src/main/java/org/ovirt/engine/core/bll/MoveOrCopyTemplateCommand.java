@@ -299,14 +299,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         return StorageDomainValidator.getSpaceRequirementsForStorageDomains(spaceMap);
     }
 
-    protected Set<Guid> getTargetDomains() {
-        Set<Guid> retVal = new HashSet<Guid>();
-        for (Guid guid : imageToDestinationDomainMap.values()) {
-            retVal.add(guid);
-        }
-        return retVal;
-    }
-
     protected void ensureDomainMap(Collection<DiskImage> images, Guid defaultDomainId) {
         if (imageToDestinationDomainMap == null) {
             imageToDestinationDomainMap = new HashMap<Guid, Guid>();

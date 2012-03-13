@@ -12,6 +12,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
@@ -23,7 +24,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
@@ -37,11 +37,6 @@ public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
     }
 
     @Override
-    public boolean IsDomainActive(final Guid g1, final NGuid g2) {
-        return true;
-    }
-
-    @Override
     protected BusinessEntitySnapshotDAO getBusinessEntitySnapshotDAO() {
         return null;
     }
@@ -50,6 +45,7 @@ public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
     public StorageDomainDAO getStorageDomainDAO() {
         final storage_domains destination = new storage_domains();
         destination.setstorage_domain_type(StorageDomainType.Data);
+        destination.setstatus(StorageDomainStatus.Active);
 
         final StorageDomainDAO d = mock(StorageDomainDAO.class);
         when(d.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(destination);
@@ -89,6 +85,7 @@ public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
     protected storage_domains getSourceDomain() {
         storage_domains source = new storage_domains();
         source.setstorage_domain_type(StorageDomainType.ImportExport);
+        source.setstatus(StorageDomainStatus.Active);
         return source;
     }
 
