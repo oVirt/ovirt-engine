@@ -132,8 +132,10 @@ public class TemplateInterfaceListModel extends SearchableListModel
         }
 
         VmInterfaceModel model = new VmInterfaceModel();
+        model.getMAC().setIsAvailable(false);
         setWindow(model);
         model.setTitle("New Network Interface");
+
         model.setIsNew(true);
 
         AsyncDataProvider.GetClusterNetworkList(new AsyncQuery(this,
@@ -192,6 +194,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         }
 
         VmInterfaceModel model = new VmInterfaceModel();
+        model.getMAC().setIsAvailable(false);
         setWindow(model);
         model.setTitle("Edit Network Interface");
 
@@ -329,6 +332,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle("Remove Network Interface(s)");
+        model.setHashName("remove_network_interface_tmps");
         model.setMessage("Network Interface(s)");
 
         java.util.ArrayList<String> items = new java.util.ArrayList<String>();

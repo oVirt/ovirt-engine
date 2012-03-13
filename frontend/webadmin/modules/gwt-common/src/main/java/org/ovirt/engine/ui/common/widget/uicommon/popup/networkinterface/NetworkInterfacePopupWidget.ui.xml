@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+	<ui:style>
+		.macExample {
+			color: gray;
+			float: right;
+		}
+		
+	</ui:style>
+
+	<g:FlowPanel>
+		<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+		<e:ListModelListBoxEditor ui:field="networkEditor" />
+		<e:ListModelListBoxEditor ui:field="nicTypeEditor" />
+		<g:HorizontalPanel>
+			<g:CheckBox ui:field="enableManualMacCheckbox"
+				addStyleNames="isTemplatePrivateEditor" />
+			<g:Label ui:field="enableManualMacCheckboxLabel" />
+		</g:HorizontalPanel>
+		<e:EntityModelTextBoxEditor ui:field="MACEditor" />
+		<g:Label ui:field="macExample" addStyleNames="{style.macExample}">Example: 00:14:4a:23:67:55</g:Label>
+	</g:FlowPanel>
+</ui:UiBinder>
