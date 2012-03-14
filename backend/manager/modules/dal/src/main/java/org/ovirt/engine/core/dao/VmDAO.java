@@ -23,6 +23,8 @@ public interface VmDAO extends DAO {
 
     /**
      * Retrieves the VM with the specified id.
+     * <b>Note:</b> Unlike {@link #get(Guid)}, this method also fills the network interfaces.
+     * If you do not need them, call {@link #get(Guid)} instead, for better performance.
      *
      * @param id
      *            the vm id
@@ -169,7 +171,6 @@ public interface VmDAO extends DAO {
      *            the VM
      */
     void save(VM vm);
-
 
     /**
      * Removes the VM with the specified id.
