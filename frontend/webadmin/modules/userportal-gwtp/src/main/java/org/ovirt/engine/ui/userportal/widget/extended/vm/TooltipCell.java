@@ -10,7 +10,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
- * Decorates a column with a tooltip which is given from a tooltip provider
+ * Decorates a cell with a tooltip which is given from a tooltip provider
+ * @param <C> the type that this Cell represents
  */
 public class TooltipCell<T> extends CompositeCell<T> {
 
@@ -26,7 +27,7 @@ public class TooltipCell<T> extends CompositeCell<T> {
 
     @Override
     public void render(Context context, T value, SafeHtmlBuilder sb) {
-        sb.appendHtmlConstant("<div title=\"" + SafeHtmlUtils.htmlEscape(provider.getTooltip(value)) + "\" />");
+        sb.appendHtmlConstant("<div title=\"" + SafeHtmlUtils.htmlEscape(provider.getTooltip(value)) + "\" >");
         render(context, value, sb, hasCell);
         sb.appendHtmlConstant("</div>");
     }

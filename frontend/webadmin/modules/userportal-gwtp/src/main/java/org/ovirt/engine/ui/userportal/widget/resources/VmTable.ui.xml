@@ -7,9 +7,8 @@
 
 	<ui:style>
 		.vmTable {
-			width: 100%;
-			height: 100%;
 			float: left;
+			width: 100%;
 			padding-top: 10px;
 		}
 		
@@ -20,7 +19,6 @@
 		
 		.vmTableContent {
 			width: 100%;
-			min-height: 400px;
 		}
 				
 		.vmTableContent table {
@@ -34,15 +32,19 @@
 		
 		.vmTableContentHolder {
 			overflow-y: auto;
-			height: 100%;
 		}
 	</ui:style>
 
-	<g:FlowPanel addStyleNames="{style.vmTable}" >
-		<t:ActionCellTable ui:field="tableHeader" addStyleNames="{style.vmTableHeader}" />
-		<g:FlowPanel addStyleNames="{style.vmTableContentHolder}">
-			<g:Tree ui:field="vmTree" addStyleNames="{style.vmTableContent}" />
-		</g:FlowPanel>
-	</g:FlowPanel>
+	<g:DockLayoutPanel addStyleNames="{style.vmTable}" >
+		<g:north size="25">
+			<t:ActionCellTable ui:field="tableHeader" addStyleNames="{style.vmTableHeader}" />
+		</g:north>
+		
+		<g:center>
+			<g:FlowPanel addStyleNames="{style.vmTableContentHolder}">
+				<g:Tree ui:field="vmTree" addStyleNames="{style.vmTableContent}" />
+			</g:FlowPanel>
+		</g:center>
+	</g:DockLayoutPanel>
 
 </ui:UiBinder>

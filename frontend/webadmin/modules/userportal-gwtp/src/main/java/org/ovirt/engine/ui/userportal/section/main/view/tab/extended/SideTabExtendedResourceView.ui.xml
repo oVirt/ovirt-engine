@@ -42,7 +42,7 @@
 		}
 		
 		.infoBoxLeft, .infoBoxMiddle, .infoBoxRight {
-			width: 280px;
+			width: 300px;
 			height: 92px;
 			border-style: solid;
 			border-width: 1px;
@@ -139,122 +139,127 @@
 		
 	</ui:style>
 
-	<g:FlowPanel addStyleNames="{style.mainPanel}">
-
-		<g:FlowPanel addStyleNames="{style.infoContainerContainer}">
-			<g:FlowPanel addStyleNames="{style.infoContainerLeft}">
-				<g:FlowPanel addStyleNames="{style.infoBoxLeft}">
-					<g:FlowPanel>
+	<g:DockLayoutPanel addStyleNames="{style.mainPanel}">
+		<g:north size='130'>
+			<g:FlowPanel addStyleNames="{style.infoContainerContainer}">
+				<g:FlowPanel addStyleNames="{style.infoContainerLeft}">
+					<g:FlowPanel addStyleNames="{style.infoBoxLeft}">
+						<g:FlowPanel>
+							<g:FlowPanel addStyleNames="{style.iconImageContainer}">
+								<g:Image resource='{resources.vmIcon}' />
+							</g:FlowPanel>
+							<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
+								<g:Label text="Virtual Machines:" addStyleNames="{style.resourcesGeneralLabel}" />
+								<w:PercentageProgressBar ui:field="vmsProgressBar" />
+		
+								<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
+									<g:Label text="Defined VMs:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+									<w:ToStringEntityModelLabel
+										ui:field="definedVms" addStyleNames="{style.infoBoxDetailsRowValue}" />
+								</g:FlowPanel>
+		
+								<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
+									<g:Label text="Running VMs:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+									<w:ToStringEntityModelLabel
+										ui:field="runningVms" addStyleNames="{style.infoBoxDetailsRowValue}" />
+								</g:FlowPanel>
+							</g:FlowPanel>
+		
+						</g:FlowPanel>
+					</g:FlowPanel>
+				</g:FlowPanel>
+		
+				<g:FlowPanel addStyleNames="{style.infoContainerMiddle}">
+					<g:FlowPanel addStyleNames="{style.infoBoxMiddle}">
+						<g:FlowPanel>
+							<g:FlowPanel addStyleNames="{style.iconImageContainer}">
+								<g:Image resource='{resources.cpuIcon}' />
+							</g:FlowPanel>
+							<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
+								<g:Label text="Virtual CPUs:" addStyleNames="{style.resourcesGeneralLabel}" />
+								<w:PercentageProgressBar ui:field="cpusProgressBar" />
+		
+								<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
+									<g:Label text="Defined vCPUs:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+									<w:ToStringEntityModelLabel
+										ui:field="definedCpus" addStyleNames="{style.infoBoxDetailsRowValue}" />
+								</g:FlowPanel>
+		
+								<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
+									<g:Label text="Used vCPUs: " addStyleNames="{style.infoBoxDetailsRowLabel}" />
+									<w:ToStringEntityModelLabel
+										ui:field="usedCpus" addStyleNames="{style.infoBoxDetailsRowValue}" />
+								</g:FlowPanel>
+							</g:FlowPanel>
+		
+						</g:FlowPanel>
+					</g:FlowPanel>
+				</g:FlowPanel>
+		
+				<g:FlowPanel addStyleNames="{style.infoContainerRight}">
+					<g:FlowPanel addStyleNames="{style.infoBoxRight}">
+						<g:FlowPanel>
+							<g:FlowPanel addStyleNames="{style.iconImageContainer}">
+								<g:Image resource='{resources.vmIcon}' />
+							</g:FlowPanel>
+							<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
+								<g:Label text="Memory:" addStyleNames="{style.resourcesGeneralLabel}" />
+								<w:PercentageProgressBar ui:field="memoryProgressBar" />
+		
+								<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
+									<g:Label text="Defined Memory:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+									<w:ToStringEntityModelLabel
+										ui:field="definedMemory" addStyleNames="{style.infoBoxDetailsRowValue}" />
+								</g:FlowPanel>
+		
+								<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
+									<g:Label text="Memory Usage:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+									<w:ToStringEntityModelLabel
+										ui:field="memoryUsage" addStyleNames="{style.infoBoxDetailsRowValue}" />
+								</g:FlowPanel>
+							</g:FlowPanel>
+		
+						</g:FlowPanel>
+					</g:FlowPanel>
+				</g:FlowPanel>
+			</g:FlowPanel>
+		</g:north>
+		
+		<g:center>
+			<g:DockLayoutPanel addStyleNames="{style.bottomBorder}">
+				<g:north size='130'>
+					<g:FlowPanel addStyleNames="{style.storageBox}">
 						<g:FlowPanel addStyleNames="{style.iconImageContainer}">
-							<g:Image resource='{resources.vmIcon}' />
+							<g:Image resource='{resources.storageIcon}' />
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
-							<g:Label text="Virtual Machines:" addStyleNames="{style.resourcesGeneralLabel}" />
-							<w:PercentageProgressBar ui:field="vmsProgressBar" />
-	
-							<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
-								<g:Label text="Defined VMs:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
-								<w:ToStringEntityModelLabel
-									ui:field="definedVms" addStyleNames="{style.infoBoxDetailsRowValue}" />
-							</g:FlowPanel>
-	
-							<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
-								<g:Label text="Running VMs:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
-								<w:ToStringEntityModelLabel
-									ui:field="runningVms" addStyleNames="{style.infoBoxDetailsRowValue}" />
-							</g:FlowPanel>
-						</g:FlowPanel>
-	
-					</g:FlowPanel>
-				</g:FlowPanel>
-			</g:FlowPanel>
-	
-			<g:FlowPanel addStyleNames="{style.infoContainerMiddle}">
-				<g:FlowPanel addStyleNames="{style.infoBoxMiddle}">
-					<g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.iconImageContainer}">
-							<g:Image resource='{resources.cpuIcon}' />
-						</g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
-							<g:Label text="Virtual CPUs:" addStyleNames="{style.resourcesGeneralLabel}" />
-							<w:PercentageProgressBar ui:field="cpusProgressBar" />
-	
-							<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
-								<g:Label text="Defined vCPUs:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
-								<w:ToStringEntityModelLabel
-									ui:field="definedCpus" addStyleNames="{style.infoBoxDetailsRowValue}" />
-							</g:FlowPanel>
-	
-							<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
-								<g:Label text="Used vCPUs: " addStyleNames="{style.infoBoxDetailsRowLabel}" />
-								<w:ToStringEntityModelLabel
-									ui:field="usedCpus" addStyleNames="{style.infoBoxDetailsRowValue}" />
-							</g:FlowPanel>
-						</g:FlowPanel>
-	
-					</g:FlowPanel>
-				</g:FlowPanel>
-			</g:FlowPanel>
-	
-			<g:FlowPanel addStyleNames="{style.infoContainerRight}">
-				<g:FlowPanel addStyleNames="{style.infoBoxRight}">
-					<g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.iconImageContainer}">
-							<g:Image resource='{resources.vmIcon}' />
-						</g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
-							<g:Label text="Memory:" addStyleNames="{style.resourcesGeneralLabel}" />
-							<w:PercentageProgressBar ui:field="memoryProgressBar" />
-	
-							<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
-								<g:Label text="Defined Memory:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
-								<w:ToStringEntityModelLabel
-									ui:field="definedMemory" addStyleNames="{style.infoBoxDetailsRowValue}" />
-							</g:FlowPanel>
-	
-							<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
-								<g:Label text="Memory Usage:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
-								<w:ToStringEntityModelLabel
-									ui:field="memoryUsage" addStyleNames="{style.infoBoxDetailsRowValue}" />
-							</g:FlowPanel>
-						</g:FlowPanel>
-	
-					</g:FlowPanel>
-				</g:FlowPanel>
-			</g:FlowPanel>
-		</g:FlowPanel>
-	
-		<g:FlowPanel addStyleNames="{style.bottomBorder}">
-			<g:FlowPanel addStyleNames="{style.storageBox}">
-				<g:FlowPanel addStyleNames="{style.iconImageContainer}">
-					<g:Image resource='{resources.storageIcon}' />
-				</g:FlowPanel>
-				<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
-					<g:Label text="Storage:" addStyleNames="{style.resourcesGeneralLabel}" />
-	
-					<g:FlowPanel addStyleNames="{style.storageDetailsRow}">
-						<g:Label text="Total Size:" addStyleNames="{style.detailsBoxRowLabel}" />
-						<w:ToStringEntityModelLabel
-							ui:field="totalSize" addStyleNames="{style.detailsBoxRowValue}" />
-					</g:FlowPanel>
-	
-					<g:FlowPanel addStyleNames="{style.storageDetailsRow}">
-						<g:Label text="Number of Snapshots:" addStyleNames="{style.detailsBoxRowLabel}" />
-						<w:ToStringEntityModelLabel
-							ui:field="numOfSnapshots" addStyleNames="{style.detailsBoxRowValue}" />
-					</g:FlowPanel>
-	
-					<g:FlowPanel addStyleNames="{style.storageDetailsRow}">
-						<g:Label text="Total Size of Snapshots:" addStyleNames="{style.detailsBoxRowLabel}" />
-						<w:ToStringEntityModelLabel
-							ui:field="totalSizeOfSnapshots" addStyleNames="{style.detailsBoxRowValue}" />
-					</g:FlowPanel>
-				</g:FlowPanel>
-			</g:FlowPanel>
+							<g:Label text="Storage:" addStyleNames="{style.resourcesGeneralLabel}" />
 			
-			<r:VmTable ui:field="vmTable" />
-	
-		</g:FlowPanel>
-	</g:FlowPanel>
+							<g:FlowPanel addStyleNames="{style.storageDetailsRow}">
+								<g:Label text="Total Size:" addStyleNames="{style.detailsBoxRowLabel}" />
+								<w:ToStringEntityModelLabel
+									ui:field="totalSize" addStyleNames="{style.detailsBoxRowValue}" />
+							</g:FlowPanel>
+			
+							<g:FlowPanel addStyleNames="{style.storageDetailsRow}">
+								<g:Label text="Number of Snapshots:" addStyleNames="{style.detailsBoxRowLabel}" />
+								<w:ToStringEntityModelLabel
+									ui:field="numOfSnapshots" addStyleNames="{style.detailsBoxRowValue}" />
+							</g:FlowPanel>
+			
+							<g:FlowPanel addStyleNames="{style.storageDetailsRow}">
+								<g:Label text="Total Size of Snapshots:" addStyleNames="{style.detailsBoxRowLabel}" />
+								<w:ToStringEntityModelLabel
+									ui:field="totalSizeOfSnapshots" addStyleNames="{style.detailsBoxRowValue}" />
+							</g:FlowPanel>
+						</g:FlowPanel>
+					</g:FlowPanel>
+				</g:north>
+				<g:center>
+					<r:VmTable ui:field="vmTable" />
+				</g:center>
+			</g:DockLayoutPanel>
+		</g:center>
+	</g:DockLayoutPanel>
 
 </ui:UiBinder>

@@ -22,6 +22,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/general/tvlayout_disabled_mask.png")
     ImageResource disabledMask();
 
+    @Source("images/general/tvlayout_disabled_mask_small.png")
+    ImageResource disabledSmallMask();
+
     @Source("images/general/basic_cpu_icon.png")
     ImageResource basicCpuIcon();
 

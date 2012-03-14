@@ -21,15 +21,24 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  */
 public abstract class ImageButtonCell<T> extends AbstractCell<T> {
 
-    public ImageButtonCell() {
+    private String enabledCss;
+    private String disabledCss;
+
+    public ImageButtonCell(String enabledCss,
+            String disabledCss) {
         super("click");
+        this.enabledCss = enabledCss;
+        this.disabledCss = disabledCss;
     }
 
+    @Override
     public void onBrowserEvent(Context context,
             Element parent,
             T value,
             NativeEvent event,
-            ValueUpdater<T> valueUpdater) {
+            ValueUpdater<T> valueUpdater
+            ) {
+
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
 
         EventTarget eventTarget = event.getEventTarget();
@@ -54,8 +63,10 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
     public void render(Context context, T data, SafeHtmlBuilder sb) {
 
         UserPortalImageButtonDefinition<T> buttonDefinition = createButtonDefinition(data);
-        sb.appendHtmlConstant("<span title=\"" + SafeHtmlUtils.htmlEscape(buttonDefinition.getTitle()) + "\">");
-        if (buttonDefinition.isEnabled(cast(data))) {
+        boolean isEnabled = buttonDefinition.isEnabled(cast(data));
+        sb.appendHtmlConstant("<span class=\"" + (isEnabled ? enabledCss : disabledCss) + "\" title=\""
+                + SafeHtmlUtils.htmlEscape(buttonDefinition.getTitle()) + "\">");
+        if (isEnabled) {
             sb.append(buttonDefinition.getEnabledHtml());
         } else {
             sb.append(buttonDefinition.getDisabledHtml());

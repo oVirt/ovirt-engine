@@ -23,6 +23,7 @@
 		margin-bottom: 10px;
 		width: 95%;
 		height: 95%;
+		min-width: 500px;
 		}
 		
 		.refreshPanel {
@@ -37,6 +38,17 @@
 		.refreshPanelWrapper {
 			text-align: right;
 		}
+
+		.vmDetailPanelStyle {
+			overflow: auto;
+		}
+		
+<!-- 		There is no other possibility to configure the layer of the layout panel -->
+		.vmDetailPanelStyle>div {
+			min-width: 500px;
+			min-height: 400px;
+		}
+
 	</ui:style>
 
 	<g:DockLayoutPanel addStyleNames="{style.borderPanelStyle}">
@@ -53,7 +65,7 @@
 				</g:west>
 
 				<g:center>
-					<g:LayoutPanel ui:field="vmDetailPanel" />
+					<g:SimpleLayoutPanel addStyleNames="{style.vmDetailPanelStyle}" ui:field="vmDetailPanel" />
 				</g:center>
 			</g:SplitLayoutPanel>
 		</g:center>

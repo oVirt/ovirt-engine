@@ -15,4 +15,8 @@ public interface SideTabExtendedVmStyle extends CssResource {
     String enabledEditConsoleButton();
 
     String disabledEditConsoleButton();
+
+    String vmButtonEnabled();
+
+    String vmButtonDisabled();
 }

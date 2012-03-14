@@ -1,33 +1,35 @@
 div.enabledConsoleButton:hover {
-	background-image: url("images/actions/console_Over.png")
+	background-image: url("images/actions/console_Over.png");
+	cursor: pointer;
 }
 
 div.enabledConsoleButton {
 	width: 80px;
 	height: 27px;
-	background-image: url("images/actions/console.png")
+	background-image: url("images/actions/console.png");
 }
 
 div.disabledConsoleButton {
 	width: 80px;
 	height: 27px;
-	background-image: url("images/actions/console_Disabled.png")
+	background-image: url("images/actions/console_Disabled.png");
 }
 
 div.enabledEditConsoleButton:hover {
-	background-image: url("images/actions/console_edit_Over.png")
+	background-image: url("images/actions/console_edit_Over.png");
+	cursor: pointer;
 }
 
 div.enabledEditConsoleButton {
 	width: 15px;
 	height: 27px;
-	background-image: url("images/actions/console_edit.png")
+	background-image: url("images/actions/console_edit.png");
 }
 
 div.disabledEditConsoleButton {
 	width: 15px;
 	height: 27px;
-	background-image: url("images/actions/console_edit_Disabled.png")
+	background-image: url("images/actions/console_edit_Disabled.png");
 }
 
 .vmUpRow {
@@ -44,4 +46,11 @@ div.disabledEditConsoleButton {
 
 .vmDownRow:hover {
 	background-color: #b5c5d7;	
+}
+
+.vmButtonEnabled:hover {
+	cursor: pointer;
+}
+
+.vmButtonDisabled:hover {
 }

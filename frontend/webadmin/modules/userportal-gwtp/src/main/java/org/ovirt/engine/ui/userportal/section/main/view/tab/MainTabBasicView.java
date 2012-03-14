@@ -12,7 +12,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -23,10 +23,10 @@ public class MainTabBasicView extends AbstractView implements MainTabBasicPresen
     }
 
     @UiField
-    LayoutPanel vmListPanel;
+    Panel vmListPanel;
 
     @UiField
-    LayoutPanel vmDetailPanel;
+    Panel vmDetailPanel;
 
     @UiField(provided = true)
     RefreshPanel refreshPanel;

@@ -130,9 +130,10 @@
 		    padding-top: 5px;
 		}
 		
-		.basicInfoDetailsLinkDisabled {
+		.basicInfoDetailsLinkDisabled, .basicInfoDetailsLinkDisabled:hover {
  		 	text-decoration: underline;
 			color: #AAAAAA;
+			cursor: default;
 		}
 
 		.basicInfoDetailsLink {
@@ -144,16 +145,17 @@
 
 	<g:DockLayoutPanel addStyleNames="{style.mainPanel}">
 		<g:north size='80'>
-			<g:FlowPanel addStyleNames="{style.detailsHeaderPanel}">
-				<e:OsTypeImage ui:field="osImage" addStyleNames="{style.osImage}" resources="{itemResources}" nameUniquePart="Small" />
-				<e:VmTypeImage ui:field="vmImage" addStyleNames="{style.vmImage}" resources="{itemResources}" />
-				
-				<g:FlowPanel>
-					<g:Label ui:field="vmName" addStyleNames="{style.basicInfoVmNameLabel}" />
-					<g:Label ui:field="vmDescription" addStyleNames="{style.basicInfoVmDescriptionLabel}" />
+			<g:SimpleLayoutPanel>
+				<g:FlowPanel addStyleNames="{style.detailsHeaderPanel}">
+					<e:OsTypeImage ui:field="osImage" addStyleNames="{style.osImage}" resources="{itemResources}" nameUniquePart="Small" />
+					<e:VmTypeImage ui:field="vmImage" addStyleNames="{style.vmImage}" resources="{itemResources}" />
+					
+					<g:FlowPanel>
+						<g:Label ui:field="vmName" addStyleNames="{style.basicInfoVmNameLabel}" />
+						<g:Label ui:field="vmDescription" addStyleNames="{style.basicInfoVmDescriptionLabel}" />
+					</g:FlowPanel>
 				</g:FlowPanel>
-			</g:FlowPanel>
-
+			</g:SimpleLayoutPanel>
 		</g:north>
 		<g:center>
 			<g:LayoutPanel>
