@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
@@ -42,13 +43,21 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
 
     @Override
     protected void executeCommand() {
+        VDSGroup vdsGroup = getVdsGroup();
+
+        if (vdsGroup.supportsVirtService()) {
+            initVirtResources();
+        }
+        setSucceeded(true);
+    }
+
+    private void initVirtResources() {
         if (InitializeStorage()) {
             processFencing();
             processStoragePoolStatus();
         } else {
             setNonOperational(NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE);
         }
-        setSucceeded(true);
     }
 
     private void processFencing() {
