@@ -8,8 +8,8 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.Roles;
 import org.ovirt.engine.api.model.User;
+import org.ovirt.engine.api.resource.AssignedRoleResource;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
-import org.ovirt.engine.api.resource.RoleResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -50,7 +50,7 @@ public class BackendAssignedRolesResource
 
     @Override
     @SingleEntityResource
-    public RoleResource getRoleSubResource(String id) {
+    public AssignedRoleResource getRoleSubResource(String id) {
         return inject(new BackendRoleResource(id, principalId));
     }
 
