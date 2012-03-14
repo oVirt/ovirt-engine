@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AdGroupConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
 
     public AdGroupConditionFieldAutoCompleter() {
@@ -17,9 +20,9 @@ public class AdGroupConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         mColumnNameDict.put("NAME", "$CN");
 
         // Building the validation dict
-        valueValidationFunction charValidation = new valueValidationFunction(validCahracters);
+        ValueValidationFunction charValidation = validCahracters;
         for (String key : mVerbs.keySet()) {
-            java.util.ArrayList<valueValidationFunction> curList = new java.util.ArrayList<valueValidationFunction>();
+            List<ValueValidationFunction> curList = new ArrayList<ValueValidationFunction>(1);
             curList.add(charValidation);
             mValidationDict.put(key, curList);
         }

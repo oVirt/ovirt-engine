@@ -22,7 +22,6 @@
 		<include name="searchbackend/AdGroupConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/IAutoCompleter.java" />
 		<include name="searchbackend/IConditionValueAutoCompleter.java" />
-		<include name="searchbackend/valueValidationFunction.java" />
 		<include name="searchbackend/StringConditionRelationAutoCompleter.java" />
 		<include name="searchbackend/PagingType.java" />
 		<include name="searchbackend/SyntaxCheckerFactory.java" />
@@ -59,6 +58,7 @@
 		<include name="searchbackend/DateUtils.java" />
 		<include name="searchbackend/SqlInjectionChecker.java" />
 		<include name="searchbackend/PostgresSqlInjectionChecker.java" />
+		<include name="searchbackend/ValueValidationFunction.java" />
 		<!--======================SEARCHBACKEND/GLUSTER====================== -->
 		<include name="searchbackend/gluster/GlusterVolumeConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/gluster/GlusterVolumeCrossRefAutoCompleter.java" />

@@ -30,8 +30,8 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     public static final int DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
 
-    protected final Map<String, List<valueValidationFunction>> mValidationDict =
-            new HashMap<String, List<valueValidationFunction>>();
+    protected final Map<String, List<ValueValidationFunction>> mValidationDict =
+            new HashMap<String, List<ValueValidationFunction>>();
     private Map<String, Class<?>> mTypeDict = new HashMap<String, Class<?>>();
     protected Map<String, String> mColumnNameDict = new HashMap<String, String>();
     protected List<String> mNotFreeTextSearchableFieldsList = new java.util.ArrayList<String>();
@@ -69,16 +69,16 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     }
 
     protected void buildBasicValidationTable() {
-        valueValidationFunction charValidation = validCahracters;
-        valueValidationFunction intValidationFunc = validInteger;
-        valueValidationFunction decimalValidationFunction = validDecimal;
-        valueValidationFunction dateValidationFunc = validDateTime;
-        valueValidationFunction timeSpanValidationFunc = validTimeSpan;
-        valueValidationFunction valueValidationFunc = validateFieldValueByValueAC;
-        valueValidationFunction dateEnumValidationFunc = validateDateEnumValueByValueAC;
+        ValueValidationFunction charValidation = validCahracters;
+        ValueValidationFunction intValidationFunc = validInteger;
+        ValueValidationFunction decimalValidationFunction = validDecimal;
+        ValueValidationFunction dateValidationFunc = validDateTime;
+        ValueValidationFunction timeSpanValidationFunc = validTimeSpan;
+        ValueValidationFunction valueValidationFunc = validateFieldValueByValueAC;
+        ValueValidationFunction dateEnumValidationFunc = validateDateEnumValueByValueAC;
 
         for (String key : mVerbs.keySet()) {
-            List<valueValidationFunction> curList = new java.util.ArrayList<valueValidationFunction>();
+            List<ValueValidationFunction> curList = new java.util.ArrayList<ValueValidationFunction>();
             Class<?> curType = mTypeDict.get(key);
             if (curType == java.math.BigDecimal.class) {
                 curList.add(decimalValidationFunction);
@@ -105,8 +105,8 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     public boolean validateFieldValue(String fieldName, String fieldValue) {
         if (mValidationDict.containsKey(fieldName)) {
-            List<valueValidationFunction> validationList = mValidationDict.get(fieldName);
-            for (valueValidationFunction curValidationFunc : validationList) {
+            List<ValueValidationFunction> validationList = mValidationDict.get(fieldName);
+            for (ValueValidationFunction curValidationFunc : validationList) {
                 if (!curValidationFunc.invoke(fieldName, fieldValue)) {
                     return false;
                 }
@@ -163,15 +163,14 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         return sb.toString();
     }
 
-    public valueValidationFunction validCahracters = new valueValidationFunction() {
+    public ValueValidationFunction validCahracters = new ValueValidationFunction() {
         public boolean invoke(String field, String value) {
             Regex validChar = new Regex("^[^\\<\\>&^#!']*$");
-            // Regex validChar = new Regex("^[a-zA-Z0-9%-_@:\\*\\. ]*$");
             return validChar.IsMatch(value);
         }
     };
 
-    public valueValidationFunction validDateTime = new valueValidationFunction() {
+    public ValueValidationFunction validDateTime = new ValueValidationFunction() {
         public boolean invoke(String field, String value) {
             Date test = DateUtils.parse(value);
             if (test != null) {
@@ -197,7 +196,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         }
     };
 
-    public valueValidationFunction validTimeSpan = new valueValidationFunction() {
+    public ValueValidationFunction validTimeSpan = new ValueValidationFunction() {
         public boolean invoke(String field, String value) {
             TimeSpan test = new TimeSpan();
             boolean retval = false;
@@ -211,7 +210,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         }
     };
 
-    public valueValidationFunction validInteger = new valueValidationFunction() {
+    public ValueValidationFunction validInteger = new ValueValidationFunction() {
         public boolean invoke(String field, String value) {
             Integer test = new Integer(0);
             boolean retval = false;
@@ -225,7 +224,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         }
     };
 
-    public valueValidationFunction validDecimal = new valueValidationFunction() {
+    public ValueValidationFunction validDecimal = new ValueValidationFunction() {
         public boolean invoke(String field, String value) {
             BigDecimal test = new BigDecimal(0);
             boolean retval = false;
@@ -239,7 +238,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         }
     };
 
-    public valueValidationFunction validateDateEnumValueByValueAC = new valueValidationFunction() {
+    public ValueValidationFunction validateDateEnumValueByValueAC = new ValueValidationFunction() {
         public boolean invoke(String field, String value) {
             boolean retval = true;
             IConditionValueAutoCompleter vlaueAc = getFieldValueAutoCompleter(field);
@@ -266,7 +265,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         }
     };
 
-    public valueValidationFunction validateFieldValueByValueAC = new valueValidationFunction() {
+    public ValueValidationFunction validateFieldValueByValueAC = new ValueValidationFunction() {
         public boolean invoke(String field, String value) {
             boolean retval = true;
             IConditionValueAutoCompleter vlaueAc = getFieldValueAutoCompleter(field);

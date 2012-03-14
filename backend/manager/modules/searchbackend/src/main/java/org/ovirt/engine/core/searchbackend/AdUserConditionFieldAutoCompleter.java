@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.Collections;
+
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class AdUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
@@ -33,9 +35,9 @@ public class AdUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCom
             mColumnNameDict.put("TITLE", "$TITLE");
         }
         // Building the validation dict
-        valueValidationFunction charValidation = new valueValidationFunction(validCahracters);
+        ValueValidationFunction charValidation = validCahracters;
         for (String key : mVerbs.keySet()) {
-            java.util.ArrayList<valueValidationFunction> curList = new java.util.ArrayList<valueValidationFunction>();
+            List<ValueValidationFunction> curList = new ArrayList<ValueValidationFunction>(1);
             curList.add(charValidation);
             mValidationDict.put(key, curList);
         }
