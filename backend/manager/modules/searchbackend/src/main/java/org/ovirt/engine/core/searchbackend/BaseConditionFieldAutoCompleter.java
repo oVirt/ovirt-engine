@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,9 +33,9 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     protected final Map<String, List<ValueValidationFunction>> mValidationDict =
             new HashMap<String, List<ValueValidationFunction>>();
-    private Map<String, Class<?>> mTypeDict = new HashMap<String, Class<?>>();
-    protected Map<String, String> mColumnNameDict = new HashMap<String, String>();
-    protected List<String> mNotFreeTextSearchableFieldsList = new java.util.ArrayList<String>();
+    private final Map<String, Class<?>> mTypeDict = new HashMap<String, Class<?>>();
+    protected final Map<String, String> mColumnNameDict = new HashMap<String, String>();
+    protected final List<String> mNotFreeTextSearchableFieldsList = new ArrayList<String>();
 
     /**
      * Gets the LIKE clause syntax for non case-sensitive search
@@ -69,34 +70,26 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     }
 
     protected void buildBasicValidationTable() {
-        ValueValidationFunction charValidation = validCahracters;
-        ValueValidationFunction intValidationFunc = validInteger;
-        ValueValidationFunction decimalValidationFunction = validDecimal;
-        ValueValidationFunction dateValidationFunc = validDateTime;
-        ValueValidationFunction timeSpanValidationFunc = validTimeSpan;
-        ValueValidationFunction valueValidationFunc = validateFieldValueByValueAC;
-        ValueValidationFunction dateEnumValidationFunc = validateDateEnumValueByValueAC;
-
         for (String key : mVerbs.keySet()) {
-            List<ValueValidationFunction> curList = new java.util.ArrayList<ValueValidationFunction>();
-            Class<?> curType = mTypeDict.get(key);
+            final List<ValueValidationFunction> curList = new ArrayList<ValueValidationFunction>();
+            final Class<?> curType = mTypeDict.get(key);
             if (curType == java.math.BigDecimal.class) {
-                curList.add(decimalValidationFunction);
+                curList.add(validDecimal);
             } else if (curType == Integer.class) {
-                curList.add(intValidationFunc);
-            } else if (curType == java.util.Date.class) {
-                curList.add(dateValidationFunc);
+                curList.add(validInteger);
+            } else if (curType == Date.class) {
+                curList.add(validDateTime);
             } else if (curType == TimeSpan.class) {
-                curList.add(timeSpanValidationFunc);
+                curList.add(validTimeSpan);
             } else {
-                curList.add(charValidation);
+                curList.add(validCharacters);
             }
-            IConditionValueAutoCompleter tmp = getFieldValueAutoCompleter(key);
+            final IConditionValueAutoCompleter tmp = getFieldValueAutoCompleter(key);
             if (tmp != null) {
                 if (tmp.getClass() == DateEnumValueAutoCompleter.class) {
-                    curList.add(dateEnumValidationFunc);
+                    curList.add(validateDateEnumValueByValueAC);
                 } else {
-                    curList.add(valueValidationFunc);
+                    curList.add(validateFieldValueByValueAC);
                 }
             }
             mValidationDict.put(key, curList);
@@ -105,9 +98,9 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     public boolean validateFieldValue(String fieldName, String fieldValue) {
         if (mValidationDict.containsKey(fieldName)) {
-            List<ValueValidationFunction> validationList = mValidationDict.get(fieldName);
+            final List<ValueValidationFunction> validationList = mValidationDict.get(fieldName);
             for (ValueValidationFunction curValidationFunc : validationList) {
-                if (!curValidationFunc.invoke(fieldName, fieldValue)) {
+                if (!curValidationFunc.isValid(fieldName, fieldValue)) {
                     return false;
                 }
             }
@@ -163,22 +156,19 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         return sb.toString();
     }
 
-    public ValueValidationFunction validCahracters = new ValueValidationFunction() {
-        public boolean invoke(String field, String value) {
-            Regex validChar = new Regex("^[^\\<\\>&^#!']*$");
+    final static Regex validChar = new Regex("^[^\\<\\>&^#!']*$");
+
+    public final static ValueValidationFunction validCharacters = new ValueValidationFunction() {
+        public boolean isValid(String field, String value) {
             return validChar.IsMatch(value);
         }
     };
 
-    public ValueValidationFunction validDateTime = new ValueValidationFunction() {
-        public boolean invoke(String field, String value) {
+    public final static ValueValidationFunction validDateTime = new ValueValidationFunction() {
+        public boolean isValid(String field, String value) {
             Date test = DateUtils.parse(value);
             if (test != null) {
-                // For some reason this is the oldest possible time in SQL server
-                Date dbOldestPossibleDate = new Date(Date.parse("01/01/1753 00:00:00"));
-                if (test.compareTo(dbOldestPossibleDate) >= 0) {
-                    return true;
-                }
+                return true;
             } else { // check for enum
                 for (DateEnumForSearch val : DateEnumForSearch.values()) {
                     if (StringHelper.EqOp(value.toUpperCase(), val.name().toUpperCase())) {
@@ -196,50 +186,26 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         }
     };
 
-    public ValueValidationFunction validTimeSpan = new ValueValidationFunction() {
-        public boolean invoke(String field, String value) {
-            TimeSpan test = new TimeSpan();
-            boolean retval = false;
-            RefObject<TimeSpan> tempRefObject = new RefObject<TimeSpan>(test);
-            boolean tempVar = TimeSpan.TryParse(value, tempRefObject);
-            test = tempRefObject.argvalue;
-            if (tempVar) {
-                retval = true;
-            }
-            return retval;
+    public final static ValueValidationFunction validTimeSpan = new ValueValidationFunction() {
+        public boolean isValid(String field, String value) {
+            return TimeSpan.TryParse(value, new RefObject<TimeSpan>());
         }
     };
 
-    public ValueValidationFunction validInteger = new ValueValidationFunction() {
-        public boolean invoke(String field, String value) {
-            Integer test = new Integer(0);
-            boolean retval = false;
-            RefObject<Integer> tempRefObject = new RefObject<Integer>(test);
-            boolean tempVar = IntegerCompat.TryParse(value, tempRefObject);
-            test = tempRefObject.argvalue;
-            if (tempVar) {
-                retval = true;
-            }
-            return retval;
+    public final static ValueValidationFunction validInteger = new ValueValidationFunction() {
+        public boolean isValid(String field, String value) {
+            return IntegerCompat.TryParse(value, new RefObject<Integer>());
         }
     };
 
-    public ValueValidationFunction validDecimal = new ValueValidationFunction() {
-        public boolean invoke(String field, String value) {
-            BigDecimal test = new BigDecimal(0);
-            boolean retval = false;
-            RefObject<java.math.BigDecimal> tempRefObject = new RefObject<java.math.BigDecimal>(test);
-            boolean tempVar = DoubleCompat.TryParse(value, tempRefObject);
-            test = tempRefObject.argvalue;
-            if (tempVar) {
-                retval = true;
-            }
-            return retval;
+    public final static ValueValidationFunction validDecimal = new ValueValidationFunction() {
+        public boolean isValid(String field, String value) {
+            return DoubleCompat.TryParse(value, new RefObject<BigDecimal>());
         }
     };
 
-    public ValueValidationFunction validateDateEnumValueByValueAC = new ValueValidationFunction() {
-        public boolean invoke(String field, String value) {
+    public final ValueValidationFunction validateDateEnumValueByValueAC = new ValueValidationFunction() {
+        public boolean isValid(String field, String value) {
             boolean retval = true;
             IConditionValueAutoCompleter vlaueAc = getFieldValueAutoCompleter(field);
             if (vlaueAc != null) // check if this enum first
@@ -265,8 +231,8 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         }
     };
 
-    public ValueValidationFunction validateFieldValueByValueAC = new ValueValidationFunction() {
-        public boolean invoke(String field, String value) {
+    public final ValueValidationFunction validateFieldValueByValueAC = new ValueValidationFunction() {
+        public boolean isValid(String field, String value) {
             boolean retval = true;
             IConditionValueAutoCompleter vlaueAc = getFieldValueAutoCompleter(field);
             if (vlaueAc != null) {
