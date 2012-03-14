@@ -49,7 +49,6 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     DisksAllocationView disksAllocationView;
 
     @UiField(provided = true)
-    @Ignore
     @Path(value = "quota.selectedItem")
     ListModelListBoxEditor<Object> quotaEditor;
 
