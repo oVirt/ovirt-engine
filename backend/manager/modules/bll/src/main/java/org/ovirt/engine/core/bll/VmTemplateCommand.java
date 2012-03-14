@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
@@ -242,8 +242,10 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getVmTemplateId(),
+        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        permissionList.add(new PermissionSubject(getVmTemplateId(),
                 VdcObjectType.VmTemplate,
                 getActionType().getActionGroup()));
+        return permissionList;
     }
 }
