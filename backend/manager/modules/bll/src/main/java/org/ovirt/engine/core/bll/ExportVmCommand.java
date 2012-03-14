@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -78,10 +79,9 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         }
 
         // check that target domain exists
-        if (retVal) {
-            retVal = ImportExportCommon.CheckStorageDomain(getParameters().getStorageDomainId(), getReturnValue()
+        StorageDomainValidator targetstorageDomainValidator = new StorageDomainValidator(getStorageDomain());
+        retVal = retVal && targetstorageDomainValidator.isDomainExistAndActive(getReturnValue()
                     .getCanDoActionMessages());
-        }
 
         // load the disks of vm from database
         VmHandler.updateDisksFromDb(getVm());
@@ -146,16 +146,10 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             }
         }
 
-        // check destination storage is active
-        if (retVal) {
-            retVal = IsDomainActive(getStorageDomain().getId(), getVm().getstorage_pool_id());
-        }
         // check destination storage is Export domain
-        if (retVal) {
-            if (getStorageDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN);
-                retVal = false;
-            }
+        if (retVal && getStorageDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN);
+            retVal = false;
         }
         // check destination storage have free space
         if (retVal) {

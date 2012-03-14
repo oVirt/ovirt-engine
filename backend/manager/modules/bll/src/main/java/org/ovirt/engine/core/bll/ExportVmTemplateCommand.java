@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
@@ -76,8 +77,8 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
         if (getVmTemplate() != null) {
             setDescription(getVmTemplateName());
         }
-        boolean retVal = ImportExportCommon.CheckStorageDomain(getParameters().getStorageDomainId(), getReturnValue()
-                .getCanDoActionMessages());
+        StorageDomainValidator storageDomainValidator = new StorageDomainValidator(getStorageDomain());
+        boolean retVal = storageDomainValidator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages());
 
         if (retVal) {
             // export must be to export domain
@@ -87,14 +88,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
             }
         }
 
-        if (retVal) {
-            retVal = super.canDoAction();
-        }
-
-        // check destination storage
-        if (retVal) {
-            retVal = IsDomainActive(getStorageDomain().getId(), getVmTemplate().getstorage_pool_id().getValue());
-        }
+        retVal = retVal && super.canDoAction();
 
         if (retVal) {
             // check that we have at least one disk
