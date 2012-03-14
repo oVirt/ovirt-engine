@@ -9,6 +9,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -339,6 +340,47 @@ public class VmHandler {
         return true;
     }
 
+    /**
+     * Checks number of monitors validation according to VM  and Display types.
+     * @param displayType
+     *     Display type : Spice or Vnc
+     * @param numOfMonitors
+     *     Number of monitors
+     * @param messages
+     *     Messages for CanDoAction().
+     * @return
+     */
+    public static boolean isNumOfMonitorsLegal(DisplayType displayType, int numOfMonitors, List<String> reasons) {
+        boolean legal=true;
+        if (displayType == DisplayType.vnc) {
+            legal = (numOfMonitors <= 1);
+        }
+        else { //Spice
+            legal = (numOfMonitors <= getMaxNumberOfMonitors());
+        }
+        if (!legal) {
+            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS.toString());
+        }
+        return legal;
+    }
+
+    /**
+     * get max of allowed monitors fron config
+     * config value is a comma separated list of integers
+     * @return
+     */
+    private static int getMaxNumberOfMonitors() {
+        int max = 0;
+        String numOfMonitorsStr=Config.GetValue(ConfigValues.ValidNumOfMonitors).toString().replaceAll("[\\[\\]]", "");;
+        String values[] = numOfMonitorsStr.split(",");
+        for (String val : values) {
+            val = val.trim();
+            if (Integer.valueOf(val) > max) {
+                max = Integer.valueOf(val);
+            }
+        }
+        return max;
+    }
 
     private static Log log = LogFactory.getLog(VmHandler.class);
 

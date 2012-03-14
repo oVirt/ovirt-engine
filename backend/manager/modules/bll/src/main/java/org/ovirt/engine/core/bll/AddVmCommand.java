@@ -199,6 +199,13 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected boolean CanDoAddVmCommand() {
         boolean returnValue = false;
         returnValue = areParametersLegal(getReturnValue().getCanDoActionMessages());
+        // Check if number of monitors passed is legal
+        returnValue =
+                returnValue
+                        && VmHandler.isNumOfMonitorsLegal(getParameters().getVmStaticData().getdefault_display_type(),
+                                getParameters().getVmStaticData().getnum_of_monitors(),
+                                getReturnValue().getCanDoActionMessages());
+
         returnValue =
                 returnValue
                         && CheckPCIAndIDELimit(getParameters().getVmStaticData().getnum_of_monitors(),

@@ -203,6 +203,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                                 retValue = false;
                             }
                         }
+                        // Check if number of monitors passed is legal
+                        if (!VmHandler.isNumOfMonitorsLegal(vmStaticDataFromParams.getdefault_display_type(),
+                                vmStaticDataFromParams.getnum_of_monitors(),
+                                getReturnValue().getCanDoActionMessages())) {
+                            retValue = false;
+                        }
                         if (vm.getnum_of_monitors() < vmStaticDataFromParams.getnum_of_monitors()) {
                             // LINQ 29456
                             // List<DiskImageBase> allDisks =
@@ -218,7 +224,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                             List allDisks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVmId());
                             List<VmNetworkInterface> interfaces = DbFacade.getInstance()
                                     .getVmNetworkInterfaceDAO().getAllForVm(getVmId());
-                            retValue = CheckPCIAndIDELimit(vmStaticDataFromParams.getnum_of_monitors(), interfaces,
+                            retValue = retValue && CheckPCIAndIDELimit(vmStaticDataFromParams.getnum_of_monitors(), interfaces,
                                     allDisks, getReturnValue().getCanDoActionMessages());
                         }
                         if (!VmTemplateCommand.IsVmPriorityValueLegal(vmStaticDataFromParams.getpriority(),
