@@ -370,13 +370,15 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                     quotaVdsGroup = new QuotaVdsGroup();
                                     quotaVdsGroup.setVdsGroupId(vdsGroup.getId());
                                     quotaVdsGroup.setVdsGroupName(vdsGroup.getname());
+                                    quotaVdsGroup.setQuotaId(quota.getId());
                                     boolean containCluster = false;
-                                    for (QuotaVdsGroup clusterQuota : quota.getQuotaVdsGroups()) {
-                                        if (quotaVdsGroup.getVdsGroupId().equals(clusterQuota.getVdsGroupId())) {
-                                            quotaVdsGroup.setMemSizeMB(clusterQuota.getMemSizeMB());
-                                            quotaVdsGroup.setVirtualCpu(clusterQuota.getVirtualCpu());
-                                            quotaVdsGroup.setMemSizeMBUsage(clusterQuota.getMemSizeMBUsage());
-                                            quotaVdsGroup.setVirtualCpuUsage(clusterQuota.getVirtualCpuUsage());
+                                    for (QuotaVdsGroup iter : quota.getQuotaVdsGroups()) {
+                                        if (quotaVdsGroup.getVdsGroupId().equals(iter.getVdsGroupId())) {
+                                            quotaVdsGroup.setQuotaVdsGroupId(iter.getQuotaVdsGroupId());
+                                            quotaVdsGroup.setMemSizeMB(iter.getMemSizeMB());
+                                            quotaVdsGroup.setVirtualCpu(iter.getVirtualCpu());
+                                            quotaVdsGroup.setMemSizeMBUsage(iter.getMemSizeMBUsage());
+                                            quotaVdsGroup.setVirtualCpuUsage(iter.getVirtualCpuUsage());
                                             containCluster = true;
                                             break;
                                         }
@@ -407,11 +409,13 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                     quotaStorage = new QuotaStorage();
                                     quotaStorage.setStorageId(storage.getId());
                                     quotaStorage.setStorageName(storage.getstorage_name());
+                                    quotaStorage.setQuotaId(quota.getId());
                                     boolean containStorage = false;
-                                    for (QuotaStorage clusterQuota : quota.getQuotaStorages()) {
-                                        if (quotaStorage.getStorageId().equals(clusterQuota.getStorageId())) {
-                                            quotaStorage.setStorageSizeGB(clusterQuota.getStorageSizeGB());
-                                            quotaStorage.setStorageSizeGBUsage(clusterQuota.getStorageSizeGBUsage());
+                                    for (QuotaStorage iter : quota.getQuotaStorages()) {
+                                        if (quotaStorage.getStorageId().equals(iter.getStorageId())) {
+                                            quotaStorage.setQuotaStorageId(iter.getQuotaStorageId());
+                                            quotaStorage.setStorageSizeGB(iter.getStorageSizeGB());
+                                            quotaStorage.setStorageSizeGBUsage(iter.getStorageSizeGBUsage());
                                             containStorage = true;
                                             break;
                                         }

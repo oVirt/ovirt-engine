@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -608,6 +609,10 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         template.setkernel_url((String) model.getKernel_path().getEntity());
         template.setkernel_params((String) model.getKernel_parameters().getEntity());
         template.setinitrd_url((String) model.getInitrd_path().getEntity());
+
+        if (model.getQuota().getIsAvailable()) {
+            template.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+        }
 
         EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
         template.setdefault_display_type((DisplayType) displayProtocolSelectedItem.getEntity());
