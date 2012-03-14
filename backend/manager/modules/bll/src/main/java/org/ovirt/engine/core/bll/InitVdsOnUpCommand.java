@@ -43,42 +43,48 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
     @Override
     protected void executeCommand() {
         if (InitializeStorage()) {
-            // VDSReturnValue returnValue =
-            // Backend.getInstance().getResourceManager().RunVdsCommand(
-            // VDSCommandType.SetVdsStatus,
-            // new SetVdsStatusVDSCommandParameters(Vds.vds_id, VDSStatus.Up));
-            // Succeeded = returnValue.Succeeded;
-            FencingExecutor executor = new FencingExecutor(getVds(), FenceActionType.Status);
-            // check first if we have any VDS to act as the proxy for fencing
-            // actions.
-            if (getVds().getpm_enabled() && executor.FindVdsToFence()) {
-                VDSReturnValue returnValue = executor.Fence();
-                _fencingSucceeded = returnValue.getSucceeded();
-                _fenceStatusReturnValue = (FenceStatusReturnValue) returnValue.getReturnValue();
-                _vdsProxyFound = true;
-            }
-            if (getVds().getspm_status() != VdsSpmStatus.None) {
-                storage_pool pool = DbFacade.getInstance().getStoragePoolDAO().get(getVds().getstorage_pool_id());
-                if (pool != null && pool.getstatus() == StoragePoolStatus.NotOperational) {
-                    pool.setstatus(StoragePoolStatus.Problematic);
-                    DbFacade.getInstance().getStoragePoolDAO().updateStatus(pool.getId(), pool.getstatus());
-                    StoragePoolStatusHandler.PoolStatusChanged(pool.getId(), pool.getstatus());
-                }
-            }
+            processFencing();
+            processStoragePoolStatus();
         } else {
-            SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVds().getId(),
-                    NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE);
-            tempVar.setSaveToDb(true);
-            Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar);
+            setNonOperational(NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE);
         }
         setSucceeded(true);
+    }
+
+    private void processFencing() {
+        FencingExecutor executor = new FencingExecutor(getVds(), FenceActionType.Status);
+        // check first if we have any VDS to act as the proxy for fencing
+        // actions.
+        if (getVds().getpm_enabled() && executor.FindVdsToFence()) {
+            VDSReturnValue returnValue = executor.Fence();
+            _fencingSucceeded = returnValue.getSucceeded();
+            _fenceStatusReturnValue = (FenceStatusReturnValue) returnValue.getReturnValue();
+            _vdsProxyFound = true;
+        }
+    }
+
+    private void processStoragePoolStatus() {
+        if (getVds().getspm_status() != VdsSpmStatus.None) {
+            storage_pool pool = DbFacade.getInstance().getStoragePoolDAO().get(getVds().getstorage_pool_id());
+            if (pool != null && pool.getstatus() == StoragePoolStatus.NotOperational) {
+                pool.setstatus(StoragePoolStatus.Problematic);
+                DbFacade.getInstance().getStoragePoolDAO().updateStatus(pool.getId(), pool.getstatus());
+                StoragePoolStatusHandler.PoolStatusChanged(pool.getId(), pool.getstatus());
+            }
+        }
+    }
+
+    private void setNonOperational(NonOperationalReason reason) {
+        SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVds().getId(), reason);
+        tempVar.setSaveToDb(true);
+        Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar);
     }
 
     private boolean InitializeStorage() {
         boolean returnValue = false;
         setStoragePoolId(getVds().getstorage_pool_id());
 
-        // if no pool or pool is unitialized or in maintaince mode no need to
+        // if no pool or pool is uninitialized or in maintenance mode no need to
         // connect any storage
         if (getStoragePool() == null || StoragePoolStatus.Uninitialized == getStoragePool().getstatus()
                 || StoragePoolStatus.Maintanance == getStoragePool().getstatus()) {
