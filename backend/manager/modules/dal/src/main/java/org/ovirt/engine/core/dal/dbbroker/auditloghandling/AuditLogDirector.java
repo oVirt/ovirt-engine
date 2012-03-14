@@ -323,10 +323,10 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_DELETE_QUOTA, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_FAILED_DELETE_QUOTA, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_GRACE_LIMIT, AuditLogSeverity.ERROR);
-        mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_LIMIT, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_LIMIT, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_THRESHOLD, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT, AuditLogSeverity.ERROR);
-        mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_LIMIT, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_LIMIT, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_THRESHOLD, AuditLogSeverity.WARNING);
     }
 

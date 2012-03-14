@@ -88,7 +88,7 @@ public class QuotaManager {
                 log.debugFormat("Found delta quota storage with id {0} for command id {0}",
                         vdsGroupId,
                         commandId);
-                commandDeltaMap.get(vdsGroupId).remove(quotaVdsGroup.getQuotaVdsGroupId());
+                commandDeltaMap.get(quotaVdsGroup.getQuotaVdsGroupId()).remove(commandId);
                 return;
             }
         } finally {
@@ -111,9 +111,10 @@ public class QuotaManager {
                     vdsGroupId);
             return;
         }
+        QuotaVdsGroup quotaVdsGroup = getQuotaVdsGroupForVdsGroupId(quotaId, vdsGroupId);
         getLockForQuotaId(quotaId).lock();
         try {
-            Map<Guid, QuotaDeltaValue> quotaDeltaMap = commandDeltaMap.get(vdsGroupId);
+            Map<Guid, QuotaDeltaValue> quotaDeltaMap = commandDeltaMap.get(quotaVdsGroup.getQuotaVdsGroupId());
             if (quotaDeltaMap == null) {
                 log.errorFormat("Quota id {0} for vds group id {1} has no associated command map",
                         quotaId,
@@ -264,8 +265,8 @@ public class QuotaManager {
         }
 
         Quota quota = getQuotaDAO().getById(quotaId);
-        double graceVdsGroupPercentage = 1 + new Double(quota.getGraceVdsGroupPercentage() / 100);
-        double thresholdVdsGroupPercentage = new Double(quota.getThresholdVdsGroupPercentage() / 100);
+        double graceVdsGroupPercentage = 1 + new Double(quota.getGraceVdsGroupPercentage()) / 100;
+        double thresholdVdsGroupPercentage = new Double(quota.getThresholdVdsGroupPercentage()) / 100;
         String quotaName = quota.getQuotaName();
 
         // Get limitation and usage of quota which is enforced on the vds group domain, if the limitation is
@@ -278,8 +279,8 @@ public class QuotaManager {
             if (!validateVdsGroupForEnforcedStoragePool(quotaVdsGroup,
                     desiredCpu,
                     desiredMem,
-                    graceVdsGroupPercentage,
                     thresholdVdsGroupPercentage,
+                    graceVdsGroupPercentage,
                     quotaName,
                     quotaEnforcedType,
                     canDoActionMessages)) {
@@ -535,10 +536,6 @@ public class QuotaManager {
         } else if (limitCpuUsedType == LimitQuotaUsedType.GRACE_LIMIT
                 || limitMemUsedType == LimitQuotaUsedType.GRACE_LIMIT) {
             AuditLogDirector.log(auditLogableBase, AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_LIMIT);
-            if (quotaEnforceType == QuotaEnforcmentTypeEnum.HARD_ENFORCEMENT) {
-                canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_VDS_GROUP_LIMIT_EXCEEDED.toString());
-                return false;
-            }
         } else if (limitCpuUsedType == LimitQuotaUsedType.THRESHOLD_LIMIT
                 || limitMemUsedType == LimitQuotaUsedType.THRESHOLD_LIMIT) {
             AuditLogDirector.log(auditLogableBase, AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_THRESHOLD);
@@ -582,10 +579,6 @@ public class QuotaManager {
             }
         } else if (limitStorageUsedType == LimitQuotaUsedType.GRACE_LIMIT) {
             AuditLogDirector.log(auditLogableBase, AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_LIMIT);
-            if (quotaEnforceType == QuotaEnforcmentTypeEnum.HARD_ENFORCEMENT) {
-                canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_STORAGE_LIMIT_EXCEEDED.toString());
-                return false;
-            }
         } else if (limitStorageUsedType == LimitQuotaUsedType.THRESHOLD_LIMIT) {
             AuditLogDirector.log(auditLogableBase, AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_THRESHOLD);
         }
