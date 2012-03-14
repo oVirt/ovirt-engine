@@ -152,6 +152,11 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
 
    private Guid quotaId;
 
+   /**
+    * Transient field for GUI presentation purposes.
+    */
+   private String quotaName;
+
     public VmBase(Guid id,
             Guid vds_group_id,
             VmOsType mOs,
@@ -677,5 +682,13 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
 
     public void setQuotaId(Guid quotaId) {
         this.quotaId = quotaId;
+    }
+
+    public String getQuotaName() {
+        return quotaName;
+    }
+
+    public void setQuotaName(String quotaName) {
+        this.quotaName = quotaName;
     }
 }

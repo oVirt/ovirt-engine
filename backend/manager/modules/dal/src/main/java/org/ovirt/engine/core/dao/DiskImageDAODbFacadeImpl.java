@@ -281,6 +281,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setwrite_rate(rs.getInt("write_rate"));
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             entity.setactive((Boolean) rs.getObject("active"));
+            entity.setQuotaName(rs.getString("quota_name"));
             String entityType = rs.getString("entity_type");
             handleEntityType(entityType, entity);
         }

@@ -199,7 +199,7 @@ public class BasicTestSetup {
                         ImageStatus.OK,
                         now,
                         "",
-                        VmEntityType.VM, null);
+                        VmEntityType.VM, null,null);
         disk.setvolume_type(VolumeType.Sparse);
         disk.setvolume_format(VolumeFormat.COW);
         disk.setdisk_type(DiskType.Data);

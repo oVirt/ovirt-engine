@@ -36,6 +36,11 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
      */
     private Guid quotaId;
 
+    /**
+     * Transient field for GUI presentation purposes.
+     */
+    private String quotaName;
+
     public DiskImageBase() {
         size = 0;
         volumeType = VolumeType.Sparse;
@@ -155,5 +160,13 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
 
     public void setPlugged(Boolean plugged) {
         this.plugged = plugged;
+    }
+
+    public String getQuotaName() {
+        return quotaName;
+    }
+
+    public void setQuotaName(String quotaName) {
+        this.quotaName = quotaName;
     }
 }

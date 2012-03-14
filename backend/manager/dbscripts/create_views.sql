@@ -64,6 +64,7 @@ SELECT DISTINCT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
          ELSE NULL
     END AS propagate_errors,
     images.quota_id as quota_id,
+    quota.quota_name as quota_name,
     disk_image_dynamic.actual_size as actual_size,
     disk_image_dynamic.read_rate as read_rate,
     disk_image_dynamic.write_rate as write_rate
@@ -74,6 +75,7 @@ LEFT OUTER JOIN disks ON images.image_group_id = disks.disk_id left outer JOIN v
 LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
 LEFT OUTER JOIN storage_domain_static_view ON image_storage_domain_map.storage_domain_id = storage_domain_static_view.id
 LEFT OUTER JOIN snapshots ON images.vm_snapshot_id = snapshots.snapshot_id
+LEFT OUTER JOIN quota ON images.quota_id = quota.id
 WHERE images.image_guid != '00000000-0000-0000-0000-000000000000';
 
 
@@ -109,7 +111,7 @@ SELECT     images_storage_domain_view.storage_path as storage_path, images_stora
                       images_storage_domain_view.volume_type as volume_type, images_storage_domain_view.image_group_id as image_group_id, images_storage_domain_view.vm_guid as vm_guid,
                       images_storage_domain_view.active as active, images_storage_domain_view.volume_format as volume_format, images_storage_domain_view.disk_type as disk_type,
                       images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors,
-                      images_storage_domain_view.entity_type as entity_type,images_storage_domain_view.quota_id as quota_id, disks.disk_alias as disk_alias, disks.disk_description as disk_description
+                      images_storage_domain_view.entity_type as entity_type,images_storage_domain_view.quota_id as quota_id, images_storage_domain_view.quota_name as quota_name, disks.disk_alias as disk_alias, disks.disk_description as disk_description
 FROM         images_storage_domain_view
 INNER JOIN disk_image_dynamic ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id
 INNER JOIN disks ON images_storage_domain_view.image_group_id = disks.disk_id
@@ -198,12 +200,15 @@ vm_templates.vm_guid as vmt_guid,
        vm_templates.initrd_url as initrd_url,
        vm_templates.kernel_url as kernel_url,
        vm_templates.kernel_params as kernel_params,
-       vm_templates.quota_id as quota_id
+       vm_templates.quota_id as quota_id,
+       quota.quota_name as quota_name
 
 FROM       vm_static AS vm_templates  INNER JOIN
 vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id
 left outer JOIN
 storage_pool ON storage_pool.id = vds_groups.storage_pool_id
+left outer JOIN
+quota ON vm_templates.quota_id = quota.id
 WHERE entity_type = 'TEMPLATE';
 
 
@@ -346,7 +351,7 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_dynamic.run_on_vds as run_on_vds, vm_dynamic.migrating_to_vds as migrating_to_vds, vm_dynamic.app_list as app_list, vm_dynamic.display as display, vm_dynamic.hibernation_vol_handle as hibernation_vol_handle,
                       vm_pool_map_view.vm_pool_name as vm_pool_name, vm_pool_map_view.vm_pool_id as vm_pool_id, vm_static.vm_guid as vm_guid, vm_static.num_of_monitors as num_of_monitors, vm_static.is_initialized as is_initialized,
                       vm_static.is_auto_suspend as is_auto_suspend, vm_static.num_of_sockets as num_of_sockets, vm_static.cpu_per_socket as cpu_per_socket, vm_static.usb_policy as usb_policy, vm_dynamic.acpi_enable as acpi_enable, vm_dynamic.session as session,
-                      vm_static.num_of_sockets*vm_static.cpu_per_socket as num_of_cpus, vm_static.quota_id as quota_id,
+                      vm_static.num_of_sockets*vm_static.cpu_per_socket as num_of_cpus, vm_static.quota_id as quota_id, quota.quota_name as quota_name,
                       vm_dynamic.display_ip as display_ip, vm_dynamic.display_type as display_type, vm_dynamic.kvm_enable as kvm_enable, vm_dynamic.boot_sequence as boot_sequence,
                       vm_dynamic.display_secure_port as display_secure_port, vm_dynamic.utc_diff as utc_diff, vm_dynamic.last_vds_run_on as last_vds_run_on,
 					  vm_dynamic.client_ip as client_ip,vm_dynamic.guest_requested_memory as guest_requested_memory, vm_static.time_zone as time_zone, vm_statistics.cpu_user as cpu_user, vm_statistics.cpu_sys as cpu_sys,
@@ -361,6 +366,7 @@ vm_statistics ON vm_static.vm_guid = vm_statistics.vm_guid INNER JOIN
 vds_groups ON vm_static.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN
 storage_pool ON vm_static.vds_group_id = vds_groups.vds_group_id
 and vds_groups.storage_pool_id = storage_pool.id LEFT OUTER JOIN
+quota ON vm_static.quota_id = quota.id LEFT OUTER JOIN
 vds_static ON vm_dynamic.run_on_vds = vds_static.vds_id LEFT OUTER JOIN
 vm_pool_map_view ON vm_static.vm_guid = vm_pool_map_view.vm_guid
 WHERE vm_static.entity_type = 'VM';

@@ -20,7 +20,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     public DiskImage(Boolean active, java.util.Date creation_date, java.util.Date last_modified_date, long actual_size,
             String description, Guid image_guid, String internal_drive_mapping, Guid it_guid, long size, Guid vm_guid,
-            Guid parentId, ImageStatus imageStatus, java.util.Date lastModified, String appList,VmEntityType vmEntityType, Guid quotaId) {
+            Guid parentId, ImageStatus imageStatus, java.util.Date lastModified, String appList,VmEntityType vmEntityType, Guid quotaId, String quotaName) {
         this.activeField = active;
         this.creation_dateField = creation_date;
         this.setlast_modified_date(last_modified_date);
@@ -37,6 +37,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         this.setappList(appList);
         this.setVmEntityType(vmEntityType);
         this.setQuotaId(quotaId);
+        this.setQuotaName(quotaName);
     }
 
     private VmEntityType vmEntityType;
@@ -446,6 +447,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         setwipe_after_delete(diskImageBase.getwipe_after_delete());
         setpropagate_errors(diskImageBase.getpropagate_errors());
         setQuotaId(diskImageBase.getQuotaId());
+        setQuotaName(diskImageBase.getQuotaName());
     }
 
     private double _actualDiskWithSnapthotsSize;
