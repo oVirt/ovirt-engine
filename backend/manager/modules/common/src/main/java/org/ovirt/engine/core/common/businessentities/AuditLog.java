@@ -38,6 +38,9 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     private String correlationId;
     private NGuid jobId;
 
+    private NGuid glusterVolumeId;
+    private String glusterVolumeName;
+
     public AuditLog() {
     }
 
@@ -501,5 +504,21 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         } else if (!jobId.equals(other.jobId))
             return false;
         return true;
+    }
+
+    public NGuid getGlusterVolumeId() {
+        return glusterVolumeId;
+    }
+
+    public void setGlusterVolumeId(NGuid value) {
+        glusterVolumeId = value;
+    }
+
+    public String getGlusterVolumeName() {
+        return glusterVolumeName;
+    }
+
+    public void setGlusterVolumeName(String value) {
+        glusterVolumeName = value;
     }
 }

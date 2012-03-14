@@ -66,6 +66,8 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
         newAuditLog.setstorage_domain_name("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk");
         newAuditLog.setQuotaId(FixturesTool.DEFAULT_QUOTA_GENERAL);
         newAuditLog.setQuotaName("General Quota");
+        newAuditLog.setGlusterVolumeId(new Guid("0e0abdbc-2a0f-4df0-8b99-cc577a7a9bb5"));
+        newAuditLog.setGlusterVolumeName("gluster_volume_name-1");
 
         existingAuditLog = dao.get(EXISTING_ENTRY_ID);
     }

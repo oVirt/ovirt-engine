@@ -672,6 +672,8 @@ public final class AuditLogDirector {
                     tempVar.setJobId(auditLogable.getJobId());
                     tempVar.setQuotaId(auditLogable.getQuotaId());
                     tempVar.setQuotaName(auditLogable.getQuotaName());
+                    tempVar.setGlusterVolumeId(auditLogable.getGlusterVolumeId());
+                    tempVar.setGlusterVolumeName(auditLogable.getGlusterVolumeName());
                     auditLog = tempVar;
                 } else {
                     auditLog = new AuditLog(logType, severity, resolvedMessage, null, null, null, null, null, null,

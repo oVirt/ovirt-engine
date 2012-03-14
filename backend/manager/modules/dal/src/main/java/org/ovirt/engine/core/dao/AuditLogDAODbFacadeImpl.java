@@ -121,7 +121,9 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
                 .addValue("correlation_id", event.getCorrelationId())
                 .addValue("job_id", event.getJobId())
                 .addValue("quota_id", event.getQuotaId())
-                .addValue("quota_name", event.getQuotaName());
+                .addValue("quota_name", event.getQuotaName())
+                .addValue("gluster_volume_id", event.getGlusterVolumeId())
+                .addValue("gluster_volume_name", event.getGlusterVolumeName());
     }
 
     @Override
@@ -212,6 +214,8 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
             entity.setJobId(NGuid.createGuidFromString(rs.getString("job_id")));
             entity.setQuotaId(NGuid.createGuidFromString(rs.getString("quota_id")));
             entity.setQuotaName(rs.getString("quota_name"));
+            entity.setGlusterVolumeId(NGuid.createGuidFromString(rs.getString("gluster_volume_id")));
+            entity.setGlusterVolumeName(rs.getString("gluster_volume_name"));
             return entity;
         }
     }
