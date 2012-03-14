@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -53,6 +54,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean canDoAction() {
         ArrayList<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
         return isImageExist()
+                && isImageIsNotLocked()
                 && checkOperationIsCorrect()
                 && canFindVmOrTemplate()
                 && isSourceAndDestTheSame()
@@ -78,6 +80,18 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean isImageExist() {
         if (getImage() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean isImageIsNotLocked() {
+        if (getImage().getimageStatus() == ImageStatus.LOCKED) {
+            if (getParameters().getOperation() == ImageOperation.Move) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED);
+            } else {
+                addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
+            }
             return false;
         }
         return true;
