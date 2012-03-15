@@ -187,7 +187,7 @@ public class BackendApiResource
         // which is the canonical form according to:
         // http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
         //
-        StringBuffer header = new StringBuffer();
+        final StringBuilder header = new StringBuilder(response.getLinks().size() * 16);
 
         for (Link l : response.getLinks()) {
             header.append(addPath(uriBuilder, l)).append(",");

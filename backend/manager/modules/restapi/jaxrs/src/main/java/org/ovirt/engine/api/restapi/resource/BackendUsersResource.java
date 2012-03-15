@@ -103,7 +103,7 @@ public class BackendUsersResource extends AbstractBackendCollectionResource<User
 
     protected String getSearchPattern(String username, String domain) {
         String constraint = QueryHelper.getConstraint(getUriInfo(), DbUser.class, false);
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder(128);
 
         sb.append(MessageFormat.format(AD_SEARCH_TEMPLATE,
                   parent!=null?

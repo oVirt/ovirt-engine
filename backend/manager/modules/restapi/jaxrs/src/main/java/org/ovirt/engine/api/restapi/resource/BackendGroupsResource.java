@@ -123,7 +123,7 @@ public class BackendGroupsResource extends AbstractBackendCollectionResource<Gro
 
     protected String getSearchPattern(String param) {
         String constraint = QueryHelper.getConstraint(getUriInfo(), ad_groups.class, false);
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder(128);
 
         sb.append(MessageFormat.format(AD_SEARCH_TEMPLATE,
                   parent!=null?

@@ -173,7 +173,7 @@ public class BackendHostNicResource
     }
 
     private String getBondingOptions(List<Option> options) {
-        StringBuffer bufOptions = new StringBuffer();
+        final StringBuilder bufOptions = new StringBuilder(options.size() * 32);
         for(Option opt : options){
             bufOptions.append(opt.getName() + "=" + opt.getValue() + " ");
         }
