@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 
@@ -7,8 +10,8 @@ public class SyntaxCheckerFactory {
     private static final String UISyntaxChecker = "UISyntaxChecker";
     private static final String BackendSyntaxChecker = "BackendSyntaxChecker";
     private static final String ADSyntaxChecker = "ADSyntaxChecker";
-    private static final java.util.HashMap<String, ISyntaxChecker> syntaxCheckers =
-            new java.util.HashMap<String, ISyntaxChecker>();
+    private static final Map<String, ISyntaxChecker> syntaxCheckers =
+            new HashMap<String, ISyntaxChecker>();
 
     private static String ConfigAuthenticationMethod;
 
