@@ -354,6 +354,11 @@ public final class ImagesHandler {
             if (messages != null) {
                 messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.toString());
             }
+        } else if (returnValue && checkVmInPreview && isVmInPreview(vm.getId())) {
+            returnValue = false;
+            if (messages != null) {
+                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString());
+            }
         } else if (returnValue && isValid) {
             List<DiskImage> images;
             if (diskImageList == null) {
@@ -369,7 +374,6 @@ public final class ImagesHandler {
                                 diskSpaceCheck,
                                 checkImagesIllegal,
                                 checkImagesExist,
-                                checkVmInPreview,
                                 checkStorageDomain,
                                 vm,
                                 images);
@@ -389,7 +393,6 @@ public final class ImagesHandler {
             boolean diskSpaceCheck,
             boolean checkImagesIllegal,
             boolean checkImagesExist,
-            boolean checkVmInPreview,
             boolean checkStorageDomain,
             VM vm,
             List<DiskImage> images) {
@@ -410,12 +413,6 @@ public final class ImagesHandler {
         }
         if (returnValue && checkImagesIllegal) {
             returnValue = CheckImagesLegality(messages, images, vm, irsImages);
-        }
-        if (returnValue && checkVmInPreview && isVmInPreview(vm.getId())) {
-            returnValue = false;
-            if (messages != null) {
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString());
-            }
         }
         if (returnValue && (diskSpaceCheck || checkStorageDomain)) {
             Set<Guid> domainsIds = new HashSet<Guid>();
