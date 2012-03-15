@@ -6,7 +6,7 @@ public class CreateSnapshotFromTemplateParameters extends ImagesActionsParameter
     private static final long serialVersionUID = -3841623510039174546L;
 
     private Guid privateVmId = Guid.Empty;
-    private Guid destSorageDomainId;
+    private Guid destStorageDomainId;
 
     public CreateSnapshotFromTemplateParameters(Guid imageId, Guid vmId) {
         super(imageId);
@@ -16,12 +16,12 @@ public class CreateSnapshotFromTemplateParameters extends ImagesActionsParameter
     public CreateSnapshotFromTemplateParameters() {
     }
 
-    public void setDestSorageDomainId(Guid destSorageDomainId) {
-        this.destSorageDomainId = destSorageDomainId;
+    public void setDestStorageDomainId(Guid destSorageDomainId) {
+        this.destStorageDomainId = destSorageDomainId;
     }
 
-    public Guid getDestSorageDomainId() {
-        return destSorageDomainId;
+    public Guid getDestStorageDomainId() {
+        return destStorageDomainId;
     }
 
     public Guid getVmId() {

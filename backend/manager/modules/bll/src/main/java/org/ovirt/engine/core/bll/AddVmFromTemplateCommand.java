@@ -58,7 +58,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 CreateCloneOfTemplateParameters p = new CreateCloneOfTemplateParameters(dit.getId(),
                         getParameters().getVmStaticData().getId(), diskInfo);
                 p.setStorageDomainId(dit.getstorage_ids().get(0));
-                p.setDestSorageDomainId(imageToDestinationDomainMap.get(dit.getId()));
+                p.setDestStorageDomainId(imageToDestinationDomainMap.get(dit.getId()));
                 p.setVmSnapshotId(getVmSnapshotId());
                 p.setParentCommand(VdcActionType.AddVmFromTemplate);
                 p.setEntityId(getParameters().getEntityId());

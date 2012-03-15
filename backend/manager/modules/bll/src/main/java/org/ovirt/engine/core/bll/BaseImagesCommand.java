@@ -73,6 +73,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         return DbFacade.getInstance().getDiskImageDAO();
     }
 
+    protected void setImage(DiskImage image) {
+        mImage = image;
+    }
+
     protected Guid getImageId() {
         return mImageId;
     }
@@ -366,9 +370,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             vm = DbFacade.getInstance().getVmDAO().getById(getVmId());
         }
 
-        StringBuilder vmLabel = new StringBuilder("ActiveImage");
-        vmLabel = (vm == null) ? vmLabel : vmLabel.append("_").append(vm.getvm_name());
-        return String.format("_%1$s_%2$s", vmLabel, new java.util.Date());
+        return ImagesHandler.calculateImageDescription(vm);
     }
 
     protected static void CompleteAdvancedDiskData(DiskImage from, DiskImage to) {

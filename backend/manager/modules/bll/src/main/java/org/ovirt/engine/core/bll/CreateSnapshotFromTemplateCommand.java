@@ -42,9 +42,9 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
 
     @Override
     protected Guid getDestinationStorageDomainId() {
-        Guid storageDomainId = getParameters().getDestSorageDomainId();
+        Guid storageDomainId = getParameters().getDestStorageDomainId();
         if (getParameters().getDestinationImageId() == null
-                || Guid.Empty.equals(getParameters().getDestSorageDomainId())) {
+                || Guid.Empty.equals(getParameters().getDestStorageDomainId())) {
             storageDomainId = getParameters().getStorageDomainId();
         }
         storageDomainId = (storageDomainId == null) ? Guid.Empty : storageDomainId;

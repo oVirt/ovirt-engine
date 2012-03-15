@@ -52,6 +52,8 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.utils.linq.All;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -149,6 +151,14 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     private Guid _vmSnapshotId = Guid.Empty;
+
+    protected VmDynamicDAO getVmDynamicDao() {
+        return DbFacade.getInstance().getVmDynamicDAO();
+    }
+
+    protected VmStaticDAO getVmStaticDao() {
+        return DbFacade.getInstance().getVmStaticDAO();
+    }
 
     protected Guid getVmSnapshotId() {
         return _vmSnapshotId;
@@ -332,9 +342,13 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
         }
 
-        return returnValue && AddVmCommand.CheckCpuSockets(getParameters().getVmStaticData().getnum_of_sockets(),
-                    getParameters().getVmStaticData().getcpu_per_socket(), getVdsGroup().getcompatibility_version()
-                            .toString(), getReturnValue().getCanDoActionMessages());
+        return returnValue && checkCpuSockets();
+    }
+
+    protected boolean checkCpuSockets() {
+        return AddVmCommand.CheckCpuSockets(getParameters().getVmStaticData().getnum_of_sockets(),
+                getParameters().getVmStaticData().getcpu_per_socket(), getVdsGroup().getcompatibility_version()
+                        .toString(), getReturnValue().getCanDoActionMessages());
     }
 
     protected boolean buildAndCheckDestStorageDomains() {
@@ -530,7 +544,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             vmStatic.setPredefinedProperties(predefinedProperties);
             vmStatic.setUserDefinedProperties(userDefinedProperties);
         }
-        DbFacade.getInstance().getVmStaticDAO().save(vmStatic);
+        getVmStaticDao().save(vmStatic);
         getCompensationContext().snapshotNewEntity(vmStatic);
     }
 
@@ -563,7 +577,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
                 CreateSnapshotFromTemplateParameters tempVar = new CreateSnapshotFromTemplateParameters(
                         dit.getId(), getParameters().getVmStaticData().getId());
-                tempVar.setDestSorageDomainId(imageToDestinationDomainMap.get(dit.getId()));
+                tempVar.setDestStorageDomainId(imageToDestinationDomainMap.get(dit.getId()));
                 tempVar.setStorageDomainId(dit.getstorage_ids().get(0));
                 tempVar.setVmSnapshotId(getVmSnapshotId());
                 tempVar.setParentCommand(VdcActionType.AddVm);
@@ -626,13 +640,15 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         if (getVm() != null) {
             RemoveVmInSpm(getVm().getstorage_pool_id(), getVmId());
         }
+        removeVmRelatedEntitiesFromDb();
+        setSucceeded(true);
+    }
 
+    protected void removeVmRelatedEntitiesFromDb() {
         RemoveVmUsers();
         RemoveVmNetwork();
         new SnapshotsManager().removeSnapshots(getVmId());
         RemoveVmStatic();
-
-        setSucceeded(true);
     }
 
     @Override

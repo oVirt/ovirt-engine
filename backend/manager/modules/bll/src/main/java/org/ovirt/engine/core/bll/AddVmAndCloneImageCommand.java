@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskImageDAO;
 
 /**
  * This abstract class holds helper methods for concrete command classes that require to add a VM and clone an image in
@@ -39,7 +41,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         super(parameters);
     }
 
-    protected void copyDiskImage(Guid destVmId,
+    protected void copyDiskImage(
             DiskImage diskImage,
             Guid srcStorageDomainId,
             Guid destStorageDomainId,
@@ -57,6 +59,25 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         handleCopyResult(newDiskImage, parameters, result);
     }
 
+    @Override
+    protected void removeVmRelatedEntitiesFromDb() {
+        removeVmImages();
+        super.removeVmRelatedEntitiesFromDb();
+    }
+
+    private void removeVmImages() {
+        // Remove vm images, in case they were not already removed by child commands
+        ArrayList<VdcActionParametersBase> imageParams = getParameters().getImagesParameters();
+        if (imageParams != null) {
+            for (VdcActionParametersBase param : imageParams) {
+                DiskImage diskImage = getDiskImageToRemoveByParam((MoveOrCopyImageGroupParameters) param);
+                if (diskImage != null) {
+                    ImagesHandler.removeDiskImage(diskImage);
+                }
+            }
+        }
+    }
+
     protected MoveOrCopyImageGroupParameters createCopyParameters(DiskImage diskImage,
             Guid srcStorageDomainId,
             Guid srcImageGroupId,
@@ -67,7 +88,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
                         srcImageId,
                         diskImage.getimage_group_id(),
                         diskImage.getId(),
-                        ImagesHandler.getStorageDomainId(diskImage),
+                        diskImage.getstorage_ids().get(0),
                         ImageOperation.Copy);
         params.setAddImageDomainMapping(false);
         params.setCopyVolumeType(CopyVolumeType.LeafVol);
@@ -85,7 +106,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
     protected boolean canDoAction() {
         boolean retValue = false;
         if (super.canDoAction()) {
-            for (DiskImage diskImage : getDiskMap().values()) {
+            for (DiskImage diskImage : getDiskImagesToBeCloned()) {
                 retValue = checkImageConfiguration(diskImage);
                 if (!retValue) {
                     break;
@@ -108,13 +129,16 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         retDiskImage.setdescription(ImagesHandler.calculateImageDescription(getParameters().getVmStaticData()
                 .getvm_name()));
         retDiskImage.setParentId(Guid.Empty);
-        retDiskImage.setvm_snapshot_id(Guid.Empty);
+        retDiskImage.setit_guid(Guid.Empty);
+        retDiskImage.setvm_snapshot_id(getVmSnapshotId());
         retDiskImage.setvm_guid(newVmId);
         retDiskImage.setimage_group_id(newImageGroupId);
         retDiskImage.setlast_modified_date(new Date());
         retDiskImage.setvolume_format(srcDiskImage.getvolume_format());
         retDiskImage.setvolume_type(srcDiskImage.getvolume_type());
-        ImagesHandler.setStorageDomainId(retDiskImage, storageDomainId);
+        ArrayList<Guid> storageIds = new ArrayList<Guid>();
+        storageIds.add(storageDomainId);
+        retDiskImage.setstorage_ids(storageIds);
         return retDiskImage;
     }
 
@@ -132,9 +156,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
             VdcActionParametersBase parameters,
             VdcReturnValueBase result) {
         getParameters().getImagesParameters().add(parameters);
-        /**
-         * if couldnt create copy, abort
-         */
+        // If a copy cannot be made, abort
         if (!result.getSucceeded()) {
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
         } else {
@@ -163,7 +185,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
             List<storage_domains> domains =
                     DbFacade.getInstance()
                             .getStorageDomainDAO()
-                            .getAllForStoragePool(getVmTemplate().getstorage_pool_id().getValue());
+                            .getAllForStoragePool(getStoragePoolId().getValue());
             Map<Guid, storage_domains> storageDomainsMap = new HashMap<Guid, storage_domains>();
             for (storage_domains storageDomain : domains) {
                 StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
@@ -172,7 +194,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
                     storageDomainsMap.put(storageDomain.getId(), storageDomain);
                 }
             }
-            for (DiskImage image : getDiskMap().values()) {
+            for (DiskImage image : getDiskImagesToBeCloned()) {
                 for (Guid storageId : image.getstorage_ids()) {
                     if (storageDomainsMap.containsKey(storageId)) {
                         imageToDestinationDomainMap.put(image.getId(), storageId);
@@ -180,7 +202,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
                     }
                 }
             }
-            if (getDiskMap().values().size() != imageToDestinationDomainMap.size()) {
+            if (getDiskImagesToBeCloned().size() != imageToDestinationDomainMap.size()) {
                 logErrorOneOrMoreActiveDomainsAreMissing();
                 return false;
             }
@@ -202,19 +224,30 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
      *
      * @return
      */
-    protected abstract Map<String, DiskImage> getDiskMap();
+    protected abstract Collection<DiskImage> getDiskImagesToBeCloned();
 
-    @Override
-    protected DiskImage getDiskImageToRemoveByParam(VdcActionParametersBase param) {
-        MoveOrCopyImageGroupParameters moveOrCopyImageGroupParams = (MoveOrCopyImageGroupParameters) param;
-        Guid imageGroupId = moveOrCopyImageGroupParams.getDestImageGroupId();
-        Guid imageId = moveOrCopyImageGroupParams.getDestinationImageId();
-        Guid vmId = moveOrCopyImageGroupParams.getContainerId();
+    protected DiskImage getDiskImageToRemoveByParam(MoveOrCopyImageGroupParameters param) {
+        Guid imageGroupId = param.getDestImageGroupId();
+        Guid imageId = param.getDestinationImageId();
+        Guid vmId = param.getContainerId();
         DiskImage diskImage = new DiskImage();
         diskImage.setvm_guid(vmId);
         diskImage.setimage_group_id(imageGroupId);
         diskImage.setId(imageId);
         return diskImage;
+    }
+
+    protected DiskImageDAO getDiskImageDao() {
+        return DbFacade.getInstance().getDiskImageDAO();
+    }
+
+
+    @Override
+    protected void ExecuteVmCommand() {
+        super.ExecuteVmCommand();
+        setVm(null);
+        getVm().setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
+        getVmStaticDao().update(getVm().getStaticData());
     }
 
 }
