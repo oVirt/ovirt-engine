@@ -51,6 +51,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected Map<Guid, Guid> imageToDestinationDomainMap;
 
     /**
+     * A list of the new disk images which were saved for the Template.
+     */
+    private List<DiskImage> newDiskImages = new ArrayList<DiskImage>();
+
+    /**
      * Constructor for command creation when compensation is applied on startup
      *
      * @param commandId
@@ -117,7 +122,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 addPermission();
                 AddVmTemplateImages();
                 AddVmInterfaces();
-                VmDeviceUtils.copyVmDevices(getVmId(),getVmTemplateId());
+                VmDeviceUtils.copyVmDevices(getVmId(),getVmTemplateId(), newDiskImages);
                 setSucceeded(true);
                 return null;
             }
@@ -354,6 +359,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
 
             getReturnValue().getTaskIdList().addAll(retValue.getInternalTaskIdList());
+            newDiskImages.add((DiskImage) retValue.getActionReturnValue());
         }
     }
 

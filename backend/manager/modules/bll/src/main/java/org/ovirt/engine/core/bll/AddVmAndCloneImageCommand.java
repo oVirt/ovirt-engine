@@ -162,6 +162,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         } else {
             ImagesHandler.addDiskImageWithNoVmDevice(copiedDiskImage);
             getTaskIdList().addAll(result.getInternalTaskIdList());
+            newDiskImages.add(copiedDiskImage);
         }
     }
 

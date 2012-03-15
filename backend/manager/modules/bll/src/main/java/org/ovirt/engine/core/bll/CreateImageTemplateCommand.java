@@ -94,6 +94,8 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         diskDynamic.setactual_size(getDiskImage().getactual_size());
         DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
 
+        setActionReturnValue(newImage);
+
         // set source image as locked:
         LockImage();
         setSucceeded(true);

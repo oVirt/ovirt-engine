@@ -61,10 +61,9 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                  */
                 ProcessOldImageFromDb();
                 AddDiskImageToDb(mNewCreatedDiskImage);
+                setActionReturnValue(mNewCreatedDiskImage);
                 setSucceeded(true);
             }
-        } else {
-            setActionReturnValue(Guid.Empty);
         }
 
     }

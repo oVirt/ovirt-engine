@@ -70,6 +70,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
     protected String newMac = "";
 
+    /**
+     * A list of the new disk images which were saved for the VM.
+     */
+    protected List<DiskImage> newDiskImages = new ArrayList<DiskImage>();
+
     public AddVmCommand(T parameters) {
         super(parameters);
         // if we came from EndAction the VmId is not null
@@ -474,7 +479,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected void copyVmDevices() {
-        VmDeviceUtils.copyVmDevices(getVmTemplateId(), getVmId());
+        VmDeviceUtils.copyVmDevices(getVmTemplateId(), getVmId(), newDiskImages);
     }
 
     protected static boolean IsLegalClusterId(Guid clusterId, java.util.ArrayList<String> reasons) {
@@ -597,6 +602,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     throw new VdcBLLException(result.getFault().getError());
                 } else {
                     getTaskIdList().addAll(result.getInternalTaskIdList());
+                    newDiskImages.add((DiskImage) result.getActionReturnValue());
                 }
             }
         }

@@ -107,6 +107,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                             // erased after the snapshot was created.
                             // Create a disk to reflect the fact the disk existed during snapshot
                             saveNewDiskAndImage(diskImage);
+                            newDiskImages.add(diskImage);
                         }
                     } else {// Only legal images can be copied
                         copyDiskImage(diskImage,
@@ -191,7 +192,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     protected void copyVmDevices() {
-        VmDeviceUtils.copyVmDevices(getVmIdFromSnapshot(), getVmId());
+        VmDeviceUtils.copyVmDevices(getVmIdFromSnapshot(), getVmId(), newDiskImages);
     }
 
     @Override

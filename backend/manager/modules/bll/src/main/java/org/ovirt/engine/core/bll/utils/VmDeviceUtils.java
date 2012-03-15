@@ -61,13 +61,15 @@ public class VmDeviceUtils {
 
     /**
      * Copies relevamt entries on Vm from Template or Tempalte from VM creation.
+     *
      * @param srcId
      * @param dstId
+     * @param disks
+     *            The disks which were saved for the destination VM.
      */
-    public static void copyVmDevices(Guid srcId, Guid dstId) {
+    public static void copyVmDevices(Guid srcId, Guid dstId, List<DiskImage> disks) {
         Guid id;
         VmBase vmBase = DbFacade.getInstance().getVmStaticDAO().get(dstId);
-        List<DiskImage> disks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(dstId);
         List<VmNetworkInterface> ifaces;
         int diskCount = 0;
         int ifaceCount = 0;
