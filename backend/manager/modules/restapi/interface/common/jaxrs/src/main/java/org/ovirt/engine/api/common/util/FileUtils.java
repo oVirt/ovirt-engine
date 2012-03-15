@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-
 public class FileUtils {
     /**
      * Locates specified file in given package
@@ -24,22 +23,40 @@ public class FileUtils {
         String path = packageName.replace('.', '/');
         List<URL> dirs = ReflectionHelper.getDirectories(path);
         ClassLoader loader = URLClassLoader.newInstance(dirs.toArray(new URL[0]),
-                                                        Thread.currentThread().getContextClassLoader());
+                Thread.currentThread().getContextClassLoader());
 
         for (URL directory : dirs) {
-            String resource = directory.getPath().replace("/"+path+"/", "");
+            String resource = directory.getPath().replace("/" + path + "/", "");
             if (resource.endsWith(".jar")) {
-                JarInputStream jarFileInputStream = new JarInputStream(new FileInputStream(resource));
-                while (true) {
-                    jarEntry = jarFileInputStream.getNextJarEntry();
-                    if (jarEntry == null) break;
-                    if (jarEntry.getName().equals(fileName)) {
-                        InputStream str = loader.getResourceAsStream(loader.getResource(jarEntry.getName()).getFile());
-                        if (str != null) return str;
+                JarInputStream jarFileInputStream = null;
+                try{
+                    jarFileInputStream = new JarInputStream(new FileInputStream(resource));
+                    while (true) {
+                        jarEntry = jarFileInputStream.getNextJarEntry();
+                        if (jarEntry == null)
+                            break;
+                        if (jarEntry.getName().equals(fileName)) {
+                            InputStream str = loader.getResourceAsStream(loader.getResource(jarEntry.getName()).getFile());
+                            if (str != null) {
+                                return str;
+                            }
+                        }
                     }
+                } finally {
+                    closeQuietly(jarFileInputStream);
                 }
             }
         }
         return null;
+    }
+
+    private static void closeQuietly(InputStream stream) {
+        if(stream != null) {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                //ignore exception
+            }
+        }
     }
 }
