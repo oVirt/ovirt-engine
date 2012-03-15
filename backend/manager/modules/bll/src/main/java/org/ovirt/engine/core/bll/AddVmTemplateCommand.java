@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.permissions;
@@ -66,13 +67,16 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     public AddVmTemplateCommand(T parameters) {
         super(parameters);
-        super.setVmId(parameters.getMasterVm().getId());
         super.setVmTemplateName(parameters.getName());
-        setVdsGroupId(parameters.getMasterVm().getvds_group_id());
+        VmStatic parameterMasterVm = parameters.getMasterVm();
+        if (parameterMasterVm != null) {
+            super.setVmId(parameterMasterVm.getId());
+            setVdsGroupId(parameterMasterVm.getvds_group_id());
+            setQuotaId(parameterMasterVm.getQuotaId());
+        }
         if (getVm() != null) {
             VmHandler.updateDisksFromDb(getVm());
             setStoragePoolId(getVm().getstorage_pool_id());
-            setQuotaId(parameters.getMasterVm().getQuotaId());
         }
         imageToDestinationDomainMap = parameters.getImageToDestinationDomainMap();
     }
