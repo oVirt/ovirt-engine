@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
-
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
@@ -10,14 +8,13 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.TypeDef;
-
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 @Entity
 @Table(name = "image_storage_domain_map")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class image_storage_domain_map implements Serializable {
+public class image_storage_domain_map implements BusinessEntity<image_storage_domain_map_id> {
     private static final long serialVersionUID = 8459502119344718863L;
 
     @EmbeddedId
@@ -31,32 +28,31 @@ public class image_storage_domain_map implements Serializable {
     }
 
     public image_storage_domain_map(Guid image_id, Guid storage_domain_id) {
-        this.id.imageId = image_id;
-        this.id.storageDomainId = storage_domain_id;
+        this.id.setImageId(image_id);
+        this.id.setStorageDomainId(storage_domain_id);
     }
 
     public Guid getstorage_domain_id() {
-        return this.id.storageDomainId;
+        return this.id.getStorageDomainId();
     }
 
     public void setstorage_domain_id(Guid value) {
-        this.id.storageDomainId = value;
+        this.id.setStorageDomainId(value);
     }
 
     public Guid getimage_id() {
-        return this.id.imageId;
+        return this.id.getImageId();
     }
 
     public void setimage_id(Guid value) {
-        this.id.imageId = value;
+        this.id.setImageId(value);
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id.imageId == null) ? 0 : id.imageId.hashCode());
-        result = prime * result + ((id.storageDomainId == null) ? 0 : id.storageDomainId.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 
@@ -69,16 +65,22 @@ public class image_storage_domain_map implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         image_storage_domain_map other = (image_storage_domain_map) obj;
-        if (id.imageId == null) {
-            if (other.id.imageId != null)
+        if (id == null) {
+            if (other.id != null) {
                 return false;
-        } else if (!id.imageId.equals(other.id.imageId))
-            return false;
-        if (id.storageDomainId == null) {
-            if (other.id.storageDomainId != null)
+            } else if (!id.equals(id))
                 return false;
-        } else if (!id.storageDomainId.equals(other.id.storageDomainId))
-            return false;
+        }
         return true;
+    }
+
+    @Override
+    public image_storage_domain_map_id getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(image_storage_domain_map_id id) {
+        this.id = id;
     }
 }
