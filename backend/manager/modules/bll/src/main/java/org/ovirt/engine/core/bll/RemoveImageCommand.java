@@ -10,26 +10,33 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
- * This command responcible to removing image, contains all created snapshots.
+ * This command responsible to removing image, contains all created snapshots.
  */
 @InternalCommandAttribute
 public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseImagesCommand<T> {
+
     public RemoveImageCommand(T parameters) {
         super(parameters);
         setDiskImage(((getParameters().getDiskImage()) != null) ? getParameters().getDiskImage() : getDiskImage());
-        if (getStoragePoolId() == null
-                || (getStoragePoolId() != null && getStoragePoolId().getValue().equals(Guid.Empty))) {
+        if (getStoragePoolId() == null || Guid.Empty.equals(getStoragePoolId())) {
             setStoragePoolId(getDiskImage() != null && getDiskImage().getstorage_pool_id() != null ? getDiskImage()
                     .getstorage_pool_id().getValue() : Guid.Empty);
+        }
+        if ((getParameters().getStorageDomainId() == null || Guid.Empty.equals(getParameters().getStorageDomainId()))
+                && getDiskImage() != null) {
+            setStorageDomainId(getDiskImage().getstorage_ids().get(0));
         }
     }
 
@@ -48,17 +55,14 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     protected void executeCommand() {
         if (getDiskImage() != null) {
             VDSReturnValue vdsReturnValue = performImageVdsmOperation();
-            if (vdsReturnValue.getSucceeded()) {
-                getReturnValue().getInternalTaskIdList().add(
+            getReturnValue().getInternalTaskIdList().add(
                         CreateTask(vdsReturnValue.getCreationInfo(), getParameters().getParentCommand()));
 
-                if (getParameters().getParentCommand() != VdcActionType.RemoveDisksFromVm
+            if (getParameters().getParentCommand() != VdcActionType.RemoveDisksFromVm
                         && getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
-                        && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport) {
-                    RemoveImageFromDB();
-                }
-            } else {
-                return;
+                        && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport
+                        && getParameters().getParentCommand() != VdcActionType.RemoveDisk) {
+                removeImageFromDB();
             }
         } else {
             log.warn("RemoveImageCommand::ExecuteCommand: DiskImage is null, nothing to remove");
@@ -77,71 +81,90 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         return ret;
     }
 
-    private void RemoveImageFromDB() {
-        DiskImage diskImage = getDiskImage();
-        if (diskImage != null) {
-            DbFacade.getInstance().getDiskImageDynamicDAO().remove(diskImage.getId());
-            Guid imageTemplate = diskImage.getit_guid();
-            Guid currentGuid = diskImage.getId();
-            // next 'while' statement removes snapshots from DB only (the
-            // 'DeleteImageGroup'
-            // VDS Command should take care of removing all the snapshots from
-            // the storage).
-            while (!imageTemplate.equals(currentGuid) && !currentGuid.equals(Guid.Empty)) {
-                RemoveChildren(currentGuid);
+    private void removeImageFromDB() {
+        TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                new TransactionMethod<Object>() {
+                    @Override
+                    public Object runInTransaction() {
+                        DiskImage diskImage = getDiskImage();
+                        if (diskImage != null) {
+                            DbFacade.getInstance().getDiskImageDynamicDAO().remove(diskImage.getId());
+                            Guid imageTemplate = diskImage.getit_guid();
+                            Guid currentGuid = diskImage.getId();
+                            // next 'while' statement removes snapshots from DB only (the
+                            // 'DeleteImageGroup'
+                            // VDS Command should take care of removing all the snapshots from
+                            // the storage).
+                            while (!imageTemplate.equals(currentGuid) && !currentGuid.equals(Guid.Empty)) {
+                                RemoveChildren(currentGuid);
 
-                // DiskImage image = IrsBroker.getImageInfo(currentGuid);
-                DiskImage image = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(currentGuid);
-                if (image != null) {
-                    RemoveSnapshot(image);
-                    currentGuid = image.getParentId();
-                }
+                                // DiskImage image = IrsBroker.getImageInfo(currentGuid);
+                                DiskImage image = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(currentGuid);
+                                if (image != null) {
+                                    RemoveSnapshot(image);
+                                    currentGuid = image.getParentId();
+                                }
 
-                else {
-                    currentGuid = Guid.Empty;
-                    log.warnFormat(
-                            "RemoveImageCommand::RemoveImageFromDB: 'image' (snapshot of image '{0}') is null, cannot remove it.",
-                            diskImage.getId());
-                }
-            }
+                                else {
+                                    currentGuid = Guid.Empty;
+                                    log.warnFormat(
+                                            "RemoveImageCommand::RemoveImageFromDB: 'image' (snapshot of image '{0}') is null, cannot remove it.",
+                                            diskImage.getId());
+                                }
+                            }
 
-            getDiskDao().remove(diskImage.getimage_group_id());
-            DbFacade.getInstance()
-                    .getVmDeviceDAO()
-                    .remove(new VmDeviceId(diskImage.getimage_group_id(), getParameters().getContainerId()));
-        } else {
-            log.warn("RemoveImageCommand::RemoveImageFromDB: DiskImage is null, nothing to remove.");
-        }
+                            getDiskDao().remove(diskImage.getimage_group_id());
+                            DbFacade.getInstance()
+                                    .getVmDeviceDAO()
+                                    .remove(new VmDeviceId(diskImage.getimage_group_id(),
+                                            getParameters().getContainerId()));
+                        } else {
+                            log.warn("RemoveImageCommand::RemoveImageFromDB: DiskImage is null, nothing to remove.");
+                        }
+                        return null;
+                    }
+                });
     }
 
     @Override
     protected void EndSuccessfully() {
-        if (getParameters() != null && getParameters().getParentCommand() == VdcActionType.RemoveDisksFromVm) {
-            RemoveImageFromDB();
-        }
-        setSucceeded(true);
+        endCommand();
     }
 
     @Override
     protected void EndWithFailure() {
-        if (getParameters() != null && getParameters().getParentCommand() == VdcActionType.RemoveDisksFromVm) {
-            RemoveImageFromDB();
+        endCommand();
+    }
+
+    private void endCommand() {
+        if (getParameters().getRemoveFromDB()) {
+            removeImageFromDB();
+        } else {
+            DbFacade.getInstance().getStorageDomainDAO().removeImageStorageDomainMap(
+                    new image_storage_domain_map(getParameters().getImageId(), getParameters().getStorageDomainId()));
         }
         setSucceeded(true);
     }
 
-    private static Log log = LogFactory.getLog(RemoveImageCommand.class);
-
     @Override
     protected VDSReturnValue performImageVdsmOperation() {
-        return Backend
-        .getInstance()
-        .getResourceManager()
-        .RunVdsCommand(
-                VDSCommandType.DeleteImageGroup,
-                new DeleteImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
-                        getDiskImage().getstorage_ids().get(0), getDiskImage().getimage_group_id()
-                                .getValue(), getDiskImage().getwipe_after_delete(), getParameters()
-                                .getForceDelete(), getStoragePool().getcompatibility_version().toString()));
+        boolean isShouldBeLocked = getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
+                && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport;
+        if (isShouldBeLocked) {
+            LockImage();
+        }
+        try {
+            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
+                    new DeleteImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
+                            getStorageDomainId().getValue(), getDiskImage().getimage_group_id()
+                                    .getValue(), getDiskImage().getwipe_after_delete(), getParameters()
+                                    .getForceDelete(), getStoragePool().getcompatibility_version().toString()));
+            return returnValue;
+        } catch (VdcBLLException e) {
+            if (isShouldBeLocked) {
+                UnLockImage();
+            }
+            throw e;
+        }
     }
 }

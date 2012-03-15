@@ -34,7 +34,6 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
         List<DiskImage> imageTemplates = DbFacade.getInstance().getDiskImageDAO().getAllForVm(
                 getVmTemplateId());
         boolean noImagesRemovedYet = true;
-        boolean changeStorageInImagesTable = false;
         for (DiskImage template : imageTemplates) {
             // get disk
             // remove this disk in all domain that were sent
@@ -66,10 +65,6 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                             vdcReturnValue.getFault().getMessage());
                 }
 
-                // if removing from the domain saved in images table, set value to change it to another domain
-                if (!changeStorageInImagesTable) {
-                    changeStorageInImagesTable = domain.equals(template.getstorage_ids().get(0));
-                }
                 DbFacade.getInstance().getStorageDomainDAO().removeImageStorageDomainMap(
                         new image_storage_domain_map(template.getId(), domain));
                 noImagesRemovedYet = false;

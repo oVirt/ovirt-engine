@@ -12,10 +12,9 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveDisksFromVmCommand<T extends RemoveDisksFromVmParameters> extends VmCommand<T> {
@@ -70,32 +69,25 @@ public class RemoveDisksFromVmCommand<T extends RemoveDisksFromVmParameters> ext
 
     @Override
     protected void ExecuteVmCommand() {
-        VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
-
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                for (Guid imageId : getParameters().getImageIds()) {
-                    RemoveImageParameters tempVar = new RemoveImageParameters(imageId, getVmId());
-                    tempVar.setParentCommand(VdcActionType.RemoveDisksFromVm);
-                    tempVar.setEntityId(getParameters().getEntityId());
-                    RemoveImageParameters p = tempVar;
-                    p.setParentParemeters(getParameters());
-                    VdcReturnValueBase vdcReturnValue =
+        for (Guid imageId : getParameters().getImageIds()) {
+            RemoveImageParameters p = new RemoveImageParameters(imageId, getVmId());
+            p.setParentCommand(VdcActionType.RemoveDisksFromVm);
+            p.setEntityId(getParameters().getEntityId());
+            p.setParentParemeters(getParameters());
+            p.setTransactionScopeOption(TransactionScopeOption.Suppress);
+            p.setRemoveFromDB(true);
+            VdcReturnValueBase vdcReturnValue =
                             Backend.getInstance().runInternalAction(VdcActionType.RemoveImage,
                                     p,
                                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-                    getParameters().getImagesParameters().add(p);
-                    getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
-                    if (!vdcReturnValue.getSucceeded()) {
-                        setSucceeded(false);
-                        break;
-                    }
-                    setSucceeded(vdcReturnValue.getSucceeded());
-                }
-                return null;
+            getParameters().getImagesParameters().add(p);
+            getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+            if (!vdcReturnValue.getSucceeded()) {
+                setSucceeded(false);
+                break;
             }
-        });
+            setSucceeded(vdcReturnValue.getSucceeded());
+        }
     }
 
     @Override

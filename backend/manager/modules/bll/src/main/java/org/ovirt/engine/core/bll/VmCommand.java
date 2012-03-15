@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -273,10 +275,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         EndActionOnDisks();
 
         if (getVm() != null) {
-            VmHandler.unlockVm(getVm().getDynamicData(), getCompensationContext());
+            if (getVm().getstatus() == VMStatus.ImageLocked) {
+                VmHandler.unlockVm(getVm().getDynamicData(), getCompensationContext());
+            }
 
-            UpdateVmInSpm(getVm().getstorage_pool_id(),
-                    new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { getVm() })));
+            UpdateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(getVm()));
         }
 
         else {
