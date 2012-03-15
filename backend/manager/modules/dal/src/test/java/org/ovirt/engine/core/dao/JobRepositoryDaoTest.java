@@ -41,9 +41,20 @@ public class JobRepositoryDaoTest extends BaseDAOTestCase {
     }
 
     @Test
-    public void prettyPrint() {
+    public void getJobWithSteps() {
         Job jobWithSteps = jobRepository.getJobWithSteps(EXISTING_JOB_ID);
         assertNotNull(jobWithSteps);
+        assertNotNull(jobWithSteps.getSteps());
+        assertTrue(!jobWithSteps.getSteps().isEmpty());
+    }
+
+    @Test
+    public void loadJobSteps() {
+        Job jobWithSteps = jobDao.get(EXISTING_JOB_ID);
+        jobRepository.loadJobSteps(jobWithSteps);
+        assertNotNull(jobWithSteps);
+        assertNotNull(jobWithSteps.getSteps());
+        assertTrue(!jobWithSteps.getSteps().isEmpty());
     }
 
     @Test

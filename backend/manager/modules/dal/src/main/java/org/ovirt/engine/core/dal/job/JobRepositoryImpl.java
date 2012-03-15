@@ -136,13 +136,17 @@ public class JobRepositoryImpl implements JobRepository {
             Map<Guid, VdcObjectType> jobSubjectEntity =
                     jobSubjectEntityDao.getJobSubjectEntityByJobId(jobId);
             job.setJobSubjectEntities(jobSubjectEntity);
-
-            List<Step> steps = stepDao.getStepsByJobId(jobId);
-            if (!steps.isEmpty()) {
-                job.setSteps(buildStepsTree(steps));
-            }
+            loadJobSteps(job);
         }
         return job;
+    }
+
+    @Override
+    public void loadJobSteps(final Job job) {
+        List<Step> steps = stepDao.getStepsByJobId(job.getId());
+        if (!steps.isEmpty()) {
+            job.setSteps(buildStepsTree(steps));
+        }
     }
 
     /**
