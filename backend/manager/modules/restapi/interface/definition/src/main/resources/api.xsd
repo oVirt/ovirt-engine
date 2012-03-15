@@ -1787,6 +1787,7 @@
           <xs:element name="disks" type="Disks" minOccurs="0" maxOccurs="1"/>
           <xs:element name="nics" type="Nics" minOccurs="0" maxOccurs="1"/>
           <xs:element name="tags" type="Tags" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="snapshots" type="Snapshots" minOccurs="0" maxOccurs="1"/>
           <xs:element name="placement_policy" type="VmPlacementPolicy" minOccurs="0" maxOccurs="1"/>
           <xs:element name="memory_policy" type="MemoryPolicy" minOccurs="0" maxOccurs="1"/>
           <xs:element name="guest_info" type="GuestInfo" minOccurs="0" maxOccurs="1"/>

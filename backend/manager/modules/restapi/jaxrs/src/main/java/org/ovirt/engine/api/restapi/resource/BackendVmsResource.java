@@ -1,8 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
@@ -14,6 +16,7 @@ import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.common.util.DetailHelper.Detail;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Nics;
+import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Tags;
 import org.ovirt.engine.api.model.VM;
@@ -22,6 +25,7 @@ import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
 
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
+import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -37,6 +41,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -87,7 +92,27 @@ public class BackendVmsResource extends
 
         Response response = null;
         Guid storageDomainId = ( vm.isSetStorageDomain() && vm.getStorageDomain().isSetId() ) ? asGuid(vm.getStorageDomain().getId()) : Guid.Empty;
-        if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()){
+        if (vm.isSetSnapshots() && vm.getSnapshots().getSnapshots() != null
+                && !vm.getSnapshots().getSnapshots().isEmpty()) {
+            // If Vm has snapshots collection - this is a clone vm from snapshot operation
+            String snapshotId = getSnapshotId(vm.getSnapshots());
+            org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getVmConfiguration(snapshotId);
+            getMapper(VM.class, VmStatic.class).map(vm, vmConfiguration.getStaticData());
+            // If vm passed in the call has disks attached on them,
+            // merge their data with the data of the disks on the configuration
+            // The parameters to AddVmFromSnapshot hold an array list of Disks
+            // and not List of Disks, as this is a GWT serialization limitation,
+            // and this parameter class serves GWT clients as well.
+            ArrayList<DiskImage> changedDisks = null;
+            if (vm.isSetDisks()) {
+                Map<Guid, DiskImage> diskImagesById = getDiskImagesByIdMap(vmConfiguration.getDiskMap().values());
+                changedDisks = getDiskImagesForCloneFromSnapshotParams(vm.getDisks(), diskImagesById);
+            }
+            response =
+                        cloneVmFromSnapshot(vmConfiguration.getStaticData(),
+                                snapshotId,
+                                changedDisks);
+        } else if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()) {
             //disks are always cloned on the storage-domain, which contains the disk from which they are cloned.
             //therefore, even if user passed storage-domain, it is ignored in this context.
             response = cloneVmFromTemplate(staticVm, vm.getDisks(), templateId);
@@ -99,8 +124,56 @@ public class BackendVmsResource extends
         return response;
     }
 
+    protected org.ovirt.engine.core.common.businessentities.VM getVmConfiguration(String snapshotId) {
+        org.ovirt.engine.core.common.businessentities.VM vmConfiguration =
+                getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
+                        VdcQueryType.GetVmConfigurationBySnapshot,
+                        new GetVmConfigurationBySnapshotQueryParams(asGuid(snapshotId)),
+                        "");
+        return vmConfiguration;
+    }
+
+    private ArrayList<DiskImage> getDiskImagesForCloneFromSnapshotParams(Disks disks,
+            Map<Guid, DiskImage> imagesFromConfiguration) {
+        ArrayList<DiskImage> result = null;
+        if (disks.getDisks() != null) {
+            result = new ArrayList<DiskImage>();
+            for (Disk disk : disks.getDisks()) {
+                DiskImage diskImageFromConfig = imagesFromConfiguration.get(asGuid(disk.getId()));
+                DiskImage diskImage = getMapper(Disk.class, DiskImage.class).map(disk, diskImageFromConfig);
+                result.add(diskImage);
+            }
+        }
+        return result;
+    }
+
+    private Map<Guid, DiskImage> getDiskImagesByIdMap(Collection<DiskImage> values) {
+        Map<Guid, DiskImage> result = new HashMap<Guid, DiskImage>();
+        for (DiskImage diskImage : values) {
+            result.put(diskImage.getId(), diskImage);
+        }
+        return result;
+    }
+
+    private String getSnapshotId(Snapshots snapshots) {
+        return (snapshots.getSnapshots() != null && !snapshots.getSnapshots().isEmpty()) ? snapshots.getSnapshots()
+                .get(0)
+                .getId() : Guid.Empty.toString();
+    }
+
     private String getHostId(String hostName) {
         return getEntity(VDS.class, SearchType.VDS, "Hosts: name=" + hostName).getId().toString();
+    }
+
+    private Response cloneVmFromSnapshot(VmStatic staticVm,
+            String snapshotId,
+            ArrayList<DiskImage> diskInfoList) {
+        Guid sourceSnapshotId = asGuid(snapshotId);
+        AddVmFromSnapshotParameters params =
+                new AddVmFromSnapshotParameters(staticVm, diskInfoList, sourceSnapshotId);
+        return performCreation(VdcActionType.AddVmFromSnapshot,
+                                params,
+                                new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
     }
 
     private Response cloneVmFromTemplate(VmStatic staticVm, Disks disks, Guid templateId) {
