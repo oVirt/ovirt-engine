@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.gin;
 
 import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
 import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
+import org.ovirt.engine.ui.userportal.auth.LoggedInExtendedPlaceGatekeeper;
 
 import com.google.gwt.inject.client.GinModules;
 import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
@@ -13,6 +14,8 @@ import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 public interface ClientGinjector extends BaseClientGinjector, ManagedComponents {
 
     @DefaultGatekeeper
-    LoggedInGatekeeper getDefaultGatekeeper();
+    LoggedInExtendedPlaceGatekeeper getDefaultGatekeeper();
+
+    LoggedInGatekeeper getLoggedInGatekeeper();
 
 }

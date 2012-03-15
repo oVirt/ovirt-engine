@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.presenter;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetHandler;
+import org.ovirt.engine.ui.userportal.auth.CurrentUserRole;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -23,19 +24,22 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
 
         HasClickHandlers getAboutLink();
 
+        void setMainTabPanelVisible(boolean visible);
+
     }
 
     private final CurrentUser user;
+    private final CurrentUserRole userRole;
+
     private final AboutPopupPresenterWidget aboutPopup;
 
     @Inject
-    public HeaderPresenterWidget(
-            EventBus eventBus,
-            ViewDef view,
-            CurrentUser user,
+    public HeaderPresenterWidget(EventBus eventBus, ViewDef view,
+            CurrentUser user, CurrentUserRole userRole,
             AboutPopupPresenterWidget aboutPopup) {
         super(eventBus, view);
         this.user = user;
+        this.userRole = userRole;
         this.aboutPopup = aboutPopup;
     }
 
@@ -52,6 +56,8 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
     @Override
     protected void onBind() {
         super.onBind();
+
+        getView().setMainTabPanelVisible(userRole.isExtendedUser());
 
         registerHandler(getView().getLogoutLink().addClickHandler(new ClickHandler() {
             @Override

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.tab;
 
+import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
@@ -24,6 +25,7 @@ import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
+import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
@@ -32,6 +34,7 @@ public class MainTabBasicPresenter extends AbstractModelActivationPresenter<User
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.basicMainTabPlace)
+    @UseGatekeeper(LoggedInGatekeeper.class)
     public interface ProxyDef extends TabContentProxyPlace<MainTabBasicPresenter> {
     }
 

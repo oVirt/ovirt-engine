@@ -81,4 +81,10 @@ public class ApplicationPlaces {
     public static final String extendedTempplatePersmissionsSubTabPlace = extendedTemplateSideTabPlace
             + SUB_TAB_PREFIX + "permissions";
 
+    // Default places
+
+    public static final String DEFAULT_LOGIN_SECTION_PLACE = loginPlace;
+    public static final String DEFAULT_MAIN_SECTION_BASIC_PLACE = basicMainTabPlace;
+    public static final String DEFAULT_MAIN_SECTION_EXTENDED_PLACE = extendedVirtualMachineSideTabPlace;
+
 }

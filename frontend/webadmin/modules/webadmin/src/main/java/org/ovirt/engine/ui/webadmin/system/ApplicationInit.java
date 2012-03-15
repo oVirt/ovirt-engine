@@ -17,7 +17,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class ApplicationInit extends BaseApplicationInit {
+public class ApplicationInit extends BaseApplicationInit<LoginModel> {
 
     @Inject
     public ApplicationInit(ITypeResolver typeResolver,
@@ -36,21 +36,23 @@ public class ApplicationInit extends BaseApplicationInit {
 
     @Override
     public void onLogout() {
+        // Logout operation happens within the CommonModel SignOut event handler
         CommonModelManager.instance().SignOut();
         AsyncDataProvider.clearCache();
     }
 
     @Override
     protected void onLogin(final LoginModel loginModel) {
-        // init reports
+        // Initialize reports
         ReportInit.getInstance().init();
 
+        // Perform login only after reports have been initialized
         ReportInit.getInstance().getReportsInitEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                ApplicationInit.super.onLogin(loginModel);
+                performLogin(loginModel);
             }
         });
     }
+
 }

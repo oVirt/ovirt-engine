@@ -222,4 +222,9 @@ public class ApplicationPlaces {
     public static final String quotaVmSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX
             + "vms";;
 
+    // Default places
+
+    public static final String DEFAULT_LOGIN_SECTION_PLACE = loginPlace;
+    public static final String DEFAULT_MAIN_SECTION_PLACE = virtualMachineMainTabPlace;
+
 }

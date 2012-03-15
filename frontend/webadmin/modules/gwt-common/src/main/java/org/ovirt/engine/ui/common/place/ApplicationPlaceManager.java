@@ -21,9 +21,9 @@ public class ApplicationPlaceManager extends PlaceManagerImpl implements UserLog
 
     private static final Logger logger = Logger.getLogger(ApplicationPlaceManager.class.getName());
 
-    private final PlaceRequest defaultLoginSectionRequest;
-    private final PlaceRequest defaultMainSectionRequest;
-    private final CurrentUser user;
+    protected final PlaceRequest defaultLoginSectionRequest;
+    protected final PlaceRequest defaultMainSectionRequest;
+    protected final CurrentUser user;
 
     private PlaceRequest autoLoginRequest;
 
@@ -44,7 +44,7 @@ public class ApplicationPlaceManager extends PlaceManagerImpl implements UserLog
         revealPlace(getDefaultPlace());
     }
 
-    PlaceRequest getDefaultPlace() {
+    protected PlaceRequest getDefaultPlace() {
         return user.isLoggedIn() ? defaultMainSectionRequest : defaultLoginSectionRequest;
     }
 

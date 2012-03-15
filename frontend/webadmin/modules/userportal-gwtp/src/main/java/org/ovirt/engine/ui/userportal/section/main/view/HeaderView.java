@@ -80,4 +80,9 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
         return aboutLink;
     }
 
+    @Override
+    public void setMainTabPanelVisible(boolean visible) {
+        mainTabBarPanel.setVisible(visible);
+    }
+
 }

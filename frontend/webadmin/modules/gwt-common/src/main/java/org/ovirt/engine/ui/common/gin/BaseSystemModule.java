@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
-import org.ovirt.engine.ui.common.place.ApplicationPlaceManager;
 import org.ovirt.engine.ui.common.section.DefaultLoginSectionPlace;
 import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
 import org.ovirt.engine.ui.common.system.ApplicationFocusManager;
@@ -21,7 +20,6 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.RootPresenter;
 import com.gwtplatform.mvp.client.proxy.ParameterTokenFormatter;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 
 /**
@@ -32,7 +30,6 @@ public abstract class BaseSystemModule extends AbstractGinModule {
     protected void bindCommonInfrastructure() {
         bind(EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
         bind(TokenFormatter.class).to(ParameterTokenFormatter.class).in(Singleton.class);
-        bind(PlaceManager.class).to(ApplicationPlaceManager.class).in(Singleton.class);
         bind(RootPresenter.class).asEagerSingleton();
         bind(CurrentUser.class).in(Singleton.class);
         bind(LoggedInGatekeeper.class).in(Singleton.class);

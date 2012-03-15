@@ -22,8 +22,11 @@ import com.google.inject.Provider;
 
 /**
  * Contains initialization logic that gets executed at application startup.
+ *
+ * @param <T>
+ *            Login model type.
  */
-public abstract class BaseApplicationInit implements LogoutHandler {
+public abstract class BaseApplicationInit<T extends LoginModel> implements LogoutHandler {
 
     private final ITypeResolver typeResolver;
     private final FrontendEventsHandlerImpl frontendEventsHandler;
@@ -33,12 +36,12 @@ public abstract class BaseApplicationInit implements LogoutHandler {
     protected final EventBus eventBus;
 
     // Using Provider because any UiCommon model will fail before TypeResolver is initialized
-    private final Provider<? extends LoginModel> loginModelProvider;
+    private final Provider<T> loginModelProvider;
 
     public BaseApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
             FrontendFailureEventListener frontendFailureEventListener,
-            CurrentUser user, Provider<? extends LoginModel> loginModelProvider,
+            CurrentUser user, Provider<T> loginModelProvider,
             EventBus eventBus) {
         this.typeResolver = typeResolver;
         this.frontendEventsHandler = frontendEventsHandler;
@@ -56,8 +59,14 @@ public abstract class BaseApplicationInit implements LogoutHandler {
         handleAutoLogin();
     }
 
-    void initLoginModel() {
-        final LoginModel loginModel = loginModelProvider.get();
+    protected T getLoginModel() {
+        return loginModelProvider.get();
+    }
+
+    protected void initLoginModel() {
+        final T loginModel = getLoginModel();
+
+        // Add model login event handler
         loginModel.getLoggedInEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -67,18 +76,29 @@ public abstract class BaseApplicationInit implements LogoutHandler {
     }
 
     /**
-     * Called right before {@link UiCommonInitEvent} gets fired.
-     * <p>
-     * Any remaining UiCommon initialization logic should be performed here.
+     * Called right after the model fires its login event.
      */
-    protected abstract void beforeUiCommonInitEvent(LoginModel loginModel);
+    protected abstract void onLogin(T loginModel);
 
     @Override
     public void onLogout() {
-        // No-op, override as necessary
+        user.onUserLogout();
     }
 
-    protected void clearPassword(LoginModel loginModel) {
+    protected void performLogin(T loginModel) {
+        VdcUser loggedUser = loginModel.getLoggedUser();
+
+        // UiCommon login preparation
+        Frontend.setLoggedInUser(loggedUser);
+        beforeUiCommonInitEvent(loginModel);
+        UiCommonInitEvent.fire(eventBus);
+
+        // UI login actions
+        user.onUserLogin(loggedUser.getUserName());
+        clearPassword(loginModel);
+    }
+
+    void clearPassword(T loginModel) {
         String password = (String) loginModel.getPassword().getEntity();
 
         if (password != null) {
@@ -88,6 +108,13 @@ public abstract class BaseApplicationInit implements LogoutHandler {
 
         loginModel.getPassword().setEntity(password);
     }
+
+    /**
+     * Called right before {@link UiCommonInitEvent} gets fired.
+     * <p>
+     * Any remaining UiCommon initialization logic should be performed here.
+     */
+    protected abstract void beforeUiCommonInitEvent(T loginModel);
 
     void initUiCommon() {
         // Set up UiCommon type resolver
@@ -121,7 +148,7 @@ public abstract class BaseApplicationInit implements LogoutHandler {
             Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                 @Override
                 public void execute() {
-                    loginModelProvider.get().AutoLogin(vdcUser);
+                    getLoginModel().AutoLogin(vdcUser);
                 }
             });
 
@@ -130,14 +157,4 @@ public abstract class BaseApplicationInit implements LogoutHandler {
         }
     }
 
-    protected void onLogin(LoginModel loginModel) {
-        // UiCommon login preparation
-        Frontend.setLoggedInUser(loginModel.getLoggedUser());
-        beforeUiCommonInitEvent(loginModel);
-        UiCommonInitEvent.fire(eventBus);
-
-        // UI login actions
-        user.onUserLogin(loginModel.getLoggedUser().getUserName());
-        clearPassword(loginModel);
-    }
 }
