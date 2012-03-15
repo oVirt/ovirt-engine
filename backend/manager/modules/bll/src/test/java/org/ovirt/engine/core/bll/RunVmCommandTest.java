@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -316,6 +317,7 @@ public class RunVmCommandTest {
         disks.add(diskImage);
         final VmDevice vmDevice = new VmDevice();
         vmDevice.setIsPlugged(true);
+        vmDevice.setId(new VmDeviceId(diskImage.getId(), Guid.NewGuid()));
         initMocks(disks, new HashMap<VDSCommandType, Boolean>(), Collections.singletonList(vmDevice));
         final VM vm = new VM();
         vm.setstatus(VMStatus.Up);
@@ -336,6 +338,7 @@ public class RunVmCommandTest {
         disks.add(diskImage);
         final VmDevice vmDevice = new VmDevice();
         vmDevice.setIsPlugged(true);
+        vmDevice.setId(new VmDeviceId(diskImage.getId(), Guid.NewGuid()));
         initMocks(disks, new HashMap<VDSCommandType, Boolean>(), Collections.singletonList(vmDevice));
         final VM vm = new VM();
         final ArrayList<String> messages = new ArrayList<String>();
@@ -360,6 +363,7 @@ public class RunVmCommandTest {
         disks.add(diskImage);
         final VmDevice vmDevice = new VmDevice();
         vmDevice.setIsPlugged(true);
+        vmDevice.setId(new VmDeviceId(diskImage.getId(), Guid.NewGuid()));
         final HashMap<VDSCommandType, Boolean> calls = new HashMap<VDSCommandType, Boolean>();
 
         final VdsSelector vdsSelector = Mockito.mock(VdsSelector.class);

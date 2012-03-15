@@ -628,8 +628,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             // Block from running a VM with no HDD when its first boot device is
             // HD
             // and no other boot devices are configured
-            List<DiskImage> vmImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
-            if (boot_sequence == BootSequence.C && !checkVmHasPluggedDisk(vm)) {
+            List<DiskImage> vmImages = getPluggedImages(vm);
+            if (boot_sequence == BootSequence.C && vmImages.size() == 0) {
                 String messageStr = !vmImages.isEmpty() ?
                             VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_PLUGGED_DISK.toString() :
                             VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK.toString();
@@ -741,21 +741,32 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         return retValue;
     }
 
-    private static boolean checkVmHasPluggedDisk(VM vm) {
+    /**
+     * The following method should return only plugged images which are attached to VM,
+     * only those images are relevant for the RunVmCommand
+     * @param vm
+     * @return
+     */
+    private static List<DiskImage> getPluggedImages(VM vm) {
+        List<DiskImage> diskImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
         List<VmDevice> diskVmDevices =
-                    DbFacade.getInstance()
-                            .getVmDeviceDAO()
+                DbFacade.getInstance()
+                        .getVmDeviceDAO()
                         .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                    VmDeviceType.DISK.getName(),
-                                    VmDeviceType.DISK.getName());
-        boolean existPlugged = false;
-        for (VmDevice diskVmDevice : diskVmDevices) {
-            if (diskVmDevice.getIsPlugged()) {
-                existPlugged = true;
-                break;
+                                VmDeviceType.DISK.getName(),
+                                VmDeviceType.DISK.getName());
+        List<DiskImage> result = new ArrayList<DiskImage>();
+        for (DiskImage diskImage : diskImages) {
+            for (VmDevice diskVmDevice : diskVmDevices) {
+                if (diskImage.getId().equals(diskVmDevice.getDeviceId())) {
+                    if (diskVmDevice.getIsPlugged()) {
+                        result.add(diskImage);
+                    }
+                    break;
+                }
             }
         }
-        return existPlugged;
+        return result;
     }
 
     @SuppressWarnings("unchecked")
