@@ -44,6 +44,8 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
         setVolumeType(VolumeType.Unassigned);
         setPostZero(false);
         setForceOverride(false);
+        setDestinationImageId(leafSnapshotID);
+        setDestImageGroupId(imageGroupId);
     }
 
     public MoveOrCopyImageGroupParameters(Guid containerId,

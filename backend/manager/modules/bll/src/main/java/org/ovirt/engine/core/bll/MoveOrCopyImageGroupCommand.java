@@ -59,16 +59,6 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         return getParameters().getOperation();
     }
 
-    protected Guid getDestImageGroupId() {
-        return (getParameters().getDestImageGroupId() != null) ? getParameters().getDestImageGroupId()
-                : getImageGroupId();
-    }
-
-    protected Guid getDestImageId() {
-        return (getParameters().getDestinationImageId() != null) ? getParameters().getDestinationImageId()
-                : getImage().getId();
-    }
-
     @Override
     protected void executeCommand() {
         LockImage();
@@ -90,8 +80,8 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                                             getParameters().getImageGroupID(),
                                             getImage()
                                                     .getId(),
-                                            getDestImageGroupId(),
-                                            getDestImageId(),
+                                            getParameters().getDestImageGroupId(),
+                                            getParameters().getDestinationImageId(),
                                             StringUtils.defaultString(getImage()
                                                     .getdescription()),
                                             getParameters().getStorageDomainId(),
