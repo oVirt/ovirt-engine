@@ -52,7 +52,6 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomAuditLogKeys;
 import org.ovirt.engine.core.dal.dbbroker.generic.RepositoryException;
 import org.ovirt.engine.core.dao.MassOperationsDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -542,52 +541,11 @@ public class VdsUpdateRunTimeInfo {
         try {
             for (VdsNetworkInterface iface : _vds.getInterfaces()) {
                 // Handle nics that are non bonded and not vlan over bond
-                if (iface.getStatistics().getStatus() != InterfaceStatus.Up
-                        && iface.getNetworkName() != null
-                        && iface.getBonded() == null
-                        && !isBondOrVlanOverBond(iface)) {
-                    // check if the network require by the cluster
-                    for (network net : clusterNetworks) {
-                        if (net.getStatus() == NetworkStatus.Operational &&
-                                net.getname().equals(iface.getNetworkName()) &&
-                                (iface.getVlanId() == null || !isVlanInterfaceUp(iface))) {
-                            setHostDown = true;
-                            networks.add(iface.getNetworkName());
-                            nics.add(iface.getName());
-                            break;
-                        }
-                    }
-                }
+                setHostDown = isInteraceDown(clusterNetworks, networks, nics, iface);
 
                 // Handle bond nics
                 if (iface.getBondName() != null) {
-                    Pair<Boolean, String> retVal =
-                            IsNetworkInCluster(iface.getBondName(), clusterNetworks);
-                    String networkName = retVal.getSecond();
-                    if (retVal.getFirst()) {
-                        if (!activeBonds.containsKey(iface.getBondName())) {
-                            activeBonds.put(iface.getBondName(), false);
-                        }
-                        activeBonds.put(iface.getBondName(),
-                                activeBonds.get(iface.getBondName())
-                                        || (iface.getStatistics().getStatus() == InterfaceStatus.Up));
-
-                        if (!networks.contains(networkName)
-                                && !activeBonds.containsKey(iface.getName())) {
-                            networks.add(networkName);
-                        }
-                        // we remove the network from the audit log if the bond
-                        // is active
-                        else if (networks.contains(networkName)
-                                && activeBonds.containsKey(iface.getBondName())) {
-                            networks.remove(networkName);
-                        }
-                        if (!bondNics.containsKey(iface.getBondName())) {
-                            bondNics.put(iface.getBondName(),
-                                    new ArrayList<String>());
-                        }
-                        bondNics.get(iface.getBondName()).add(iface.getName());
-                    }
+                    poplate(activeBonds, clusterNetworks, networks, bondNics, iface);
                 }
             }
 
