@@ -7,13 +7,6 @@ public class StorageDomainHelper {
 
 
     public static storage_server_connections getConnection(StorageType storageType, String address, String target, String userName, String password, Integer port) {
-        String portal;
-        if (port!=null && port != 0) {
-            portal = address + ":" + port;
-        } else {
-            portal = address;
-        }
-
         return new storage_server_connections(address,
                     null,
                     target,
@@ -21,6 +14,6 @@ public class StorageDomainHelper {
                     storageType,
                     userName,
                     port==null ? null : Integer.toString(port),
-                    portal);
+                    "0");//TODO: when VSDM and Backend will support this, we will need to externalize portal to the user
     }
 }

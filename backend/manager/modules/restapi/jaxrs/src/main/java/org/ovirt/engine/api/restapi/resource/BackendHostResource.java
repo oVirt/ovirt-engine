@@ -159,7 +159,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         if (iscsiDetails.isSetPassword()) {
             cnx.setpassword(iscsiDetails.getPassword());
         }
-        cnx.setportal(iscsiDetails.getAddress());
+        cnx.setportal("0");//TODO: when VSDM and Backend will support this, we will need to externalize this parameter to the user
         StorageServerConnectionParametersBase connectionParms = new StorageServerConnectionParametersBase(cnx, guid);
         return doAction(VdcActionType.ConnectStorageToVds, connectionParms, action);
     }

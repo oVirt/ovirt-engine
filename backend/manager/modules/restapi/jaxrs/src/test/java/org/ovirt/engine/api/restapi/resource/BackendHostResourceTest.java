@@ -312,7 +312,7 @@ public class BackendHostResourceTest
                                                           "StorageServerConnection.password" },
                                            new Object[] { GUIDS[0],
                                                           ISCSI_SERVER_ADDRESS,
-                                                          ISCSI_SERVER_ADDRESS,
+                                                          "0",//TODO: right now hard-coded, but this should change when VDSM and Backend support portal
                                                           ISCSI_IQN,
                                                           ISCSI_PORT_STRING,
                                                           ISCSI_STORAGE_TYPE,
