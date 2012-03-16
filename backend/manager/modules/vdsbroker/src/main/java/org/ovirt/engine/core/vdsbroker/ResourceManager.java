@@ -2,7 +2,11 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.ovirt.engine.core.common.AuditLogType;
@@ -31,8 +35,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -42,6 +44,8 @@ import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
 
@@ -56,22 +60,14 @@ public class ResourceManager implements IVdsEventListener {
     private ResourceManager() {
         log.info("ResourceManager::ResourceManager::Entered");
         List<VDS> allVdsList = DbFacade.getInstance().getVdsDAO().getAll();
-        // get all vds_id of non responsive vds
-        // LINQ 29456 fixed
-        // HashSet<int> nonResponsiveVdss = new HashSet<int>(
-        // allVdsList.Where<VDS>(a => a.status ==
-        // VDSStatus.NonResponsive).Select<VDS, int>(a => a.vds_id));
-        java.util.HashSet<Guid> nonResponsiveVdss = new java.util.HashSet<Guid>(); // LINQ
-                                                                                   // 29456
-                                                                                   // fix
-        for (VDS helper_vds : allVdsList) // LINQ 29456 fix
-        { // LINQ 29456 fix
-            if (helper_vds.getstatus() == VDSStatus.NonResponsive) // LINQ 29456
-                                                                   // fix
+        HashSet<Guid> nonResponsiveVdss = new HashSet<Guid>();
+        for (VDS helper_vds : allVdsList)
+        {
+            if (helper_vds.getstatus() == VDSStatus.NonResponsive)
             {
-                nonResponsiveVdss.add(helper_vds.getId()); // LINQ 29456 fix
+                nonResponsiveVdss.add(helper_vds.getId());
             }
-        } // LINQ 29456 fix
+        }
 
         // Cleanup all vms dynamic data. This is defencive code on power crash
         List<VM> vms = DbFacade.getInstance().getVmDAO().getAll();
@@ -84,10 +80,9 @@ public class ResourceManager implements IVdsEventListener {
                     DbFacade.getInstance().getVmStatisticsDAO().update(vm.getStatisticsData());
                 } else {
                     if (vm.getrun_on_vds() != null) {
-                        java.util.HashSet<Guid> vmsList = null;
-                        // if vmsList == null
+                        HashSet<Guid> vmsList = null;
                         if (!((vmsList = _vdsAndVmsList.get(vm.getrun_on_vds())) != null)) {
-                            vmsList = new java.util.HashSet<Guid>();
+                            vmsList = new HashSet<Guid>();
                         }
                         vmsList.add(vm.getId());
                         _vdsAndVmsList.put(new Guid(vm.getrun_on_vds().toString()), vmsList);
@@ -112,9 +107,9 @@ public class ResourceManager implements IVdsEventListener {
         IrsBrokerCommand.Init();
     }
 
-    private final java.util.HashMap<Guid, java.util.HashSet<Guid>> _vdsAndVmsList =
-            new java.util.HashMap<Guid, java.util.HashSet<Guid>>();
-    private final java.util.Map<Guid, VdsManager> _vdsManagersDict = new ConcurrentHashMap<Guid, VdsManager>();
+    private final HashMap<Guid, HashSet<Guid>> _vdsAndVmsList =
+            new HashMap<Guid, HashSet<Guid>>();
+    private final Map<Guid, VdsManager> _vdsManagersDict = new ConcurrentHashMap<Guid, VdsManager>();
     private final ConcurrentHashMap<Guid, IVdsEventListener> _asyncRunningVms =
             new ConcurrentHashMap<Guid, IVdsEventListener>();
 
@@ -157,14 +152,14 @@ public class ResourceManager implements IVdsEventListener {
     }
 
     public void RemoveVmFromDownVms(Guid vdsId, Guid vmId) {
-        java.util.HashSet<Guid> vms = null;
+        HashSet<Guid> vms = null;
         if ((vms = _vdsAndVmsList.get(vdsId)) != null) {
             vms.remove(vmId);
         }
     }
 
     public void HandleVdsFinishedInit(Guid vdsId) {
-        java.util.HashSet<Guid> vms = null;
+        HashSet<Guid> vms = null;
         if ((vms = _vdsAndVmsList.get(vdsId)) != null) {
             for (Guid vmId : vms) {
                 getEventListener().processOnVmStop(vmId);
@@ -537,7 +532,7 @@ public class ResourceManager implements IVdsEventListener {
     }
 
     public void UpdateVdsDomainsData(Guid vdsId, String vdsName, Guid storagePoolId,
-            java.util.ArrayList<VDSDomainsData> vdsDomainData) {
+            ArrayList<VDSDomainsData> vdsDomainData) {
         IrsBrokerCommand.UpdateVdsDomainsData(vdsId, vdsName, storagePoolId, vdsDomainData);
     }
 
