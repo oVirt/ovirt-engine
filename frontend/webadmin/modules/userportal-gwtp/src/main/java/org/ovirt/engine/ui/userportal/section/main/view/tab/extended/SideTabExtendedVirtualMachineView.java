@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
@@ -59,6 +60,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
 
     private static final VmTableResources vmTableResources = GWT.create(VmTableResources.class);
     private final MainTabBasicListItemMessagesTranslator statusTranslator;
+    private final ApplicationConstants constants;
 
     @Inject
     public SideTabExtendedVirtualMachineView(UserPortalListProvider modelProvider,
@@ -69,7 +71,8 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             ErrorPopupManager errorPopupManager,
             ConsolePopupPresenterWidget consolePopup,
             EventBus eventBus,
-            MainTabBasicListItemMessagesTranslator translator) {
+            MainTabBasicListItemMessagesTranslator translator,
+            ApplicationConstants constants) {
         super(modelProvider);
         this.applicationResources = applicationResources;
         this.consoleManager = consoleManager;
@@ -77,6 +80,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         this.consolePopup = consolePopup;
         this.eventBus = eventBus;
         this.statusTranslator = translator;
+        this.constants = constants;
         applicationResources.sideTabExtendedVmStyle().ensureInjected();
         initTable(templates, consoleUtils);
     }
@@ -169,7 +173,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                 consoleUtils,
                 applicationResources.sideTabExtendedVmStyle().enabledConsoleButton(),
                 applicationResources.sideTabExtendedVmStyle().disabledConsoleButton(),
-                "Open Console",
+                constants.openConsoleLabel(),
                 new ConsoleButtonCommand() {
 
                     @Override
@@ -188,7 +192,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                 consoleUtils,
                 applicationResources.sideTabExtendedVmStyle().enabledEditConsoleButton(),
                 applicationResources.sideTabExtendedVmStyle().disabledEditConsoleButton(),
-                "Edit Console Options",
+                constants.editConsoleLabel(),
                 new ConsoleButtonCommand() {
 
                     @Override
@@ -268,6 +272,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                     }
                 }
 
+                @SuppressWarnings("unchecked")
                 List<UserPortalItemModel> selectedModels = (List<UserPortalItemModel>) getModel().getSelectedItems();
 
                 if (selectedModels == null) {
@@ -291,7 +296,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             @Override
             protected UserPortalImageButtonDefinition<UserPortalItemModel> createButtonDefinition(final UserPortalItemModel data) {
                 return new UserPortalImageButtonDefinition<UserPortalItemModel>(
-                        data.getIsPool() ? "Take VM" : "Run",
+                        data.getIsPool() ? constants.takeVmLabel() : constants.runVmLabel(),
                         applicationResources.playIcon(),
                         applicationResources.playDisabledIcon()
                 ) {
@@ -310,7 +315,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             @Override
             protected UserPortalImageButtonDefinition<UserPortalItemModel> createButtonDefinition(final UserPortalItemModel data) {
                 return new UserPortalImageButtonDefinition<UserPortalItemModel>(
-                        data.getIsPool() ? "Return VM" : "Shutdown",
+                        data.getIsPool() ? constants.returnVmLabel() : constants.shutdownVmLabel(),
                         applicationResources.stopIcon(),
                         applicationResources.stopDisabledIcon()
                 ) {
@@ -324,12 +329,12 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             }
         };
 
-        ImageButtonCell<UserPortalItemModel> pauseCell = new VmButtonsImageButtonCell() {
+        ImageButtonCell<UserPortalItemModel> suspendCell = new VmButtonsImageButtonCell() {
 
             @Override
             protected UserPortalImageButtonDefinition<UserPortalItemModel> createButtonDefinition(final UserPortalItemModel data) {
                 return new UserPortalImageButtonDefinition<UserPortalItemModel>(
-                        "Pause",
+                        constants.suspendVmLabel(),
                         applicationResources.pauseIcon(),
                         applicationResources.pauseDisabledIcon()
                 ) {
@@ -348,7 +353,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             @Override
             protected UserPortalImageButtonDefinition<UserPortalItemModel> createButtonDefinition(final UserPortalItemModel data) {
                 return new UserPortalImageButtonDefinition<UserPortalItemModel>(
-                        "Stop",
+                        constants.stopVmLabel(),
                         applicationResources.powerIcon(),
                         applicationResources.powerDisabledIcon()
                 ) {
@@ -368,7 +373,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                                 Arrays.asList(
                                         new UserPortalItemSimpleColumn(runCell),
                                         new UserPortalItemSimpleColumn(shutdownCell),
-                                        new UserPortalItemSimpleColumn(pauseCell),
+                                        new UserPortalItemSimpleColumn(suspendCell),
                                         new UserPortalItemSimpleColumn(stopCell)
                                         )
                         )
