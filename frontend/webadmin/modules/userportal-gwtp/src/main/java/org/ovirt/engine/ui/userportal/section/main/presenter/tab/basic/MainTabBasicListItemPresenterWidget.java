@@ -124,7 +124,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         getView().edit(model);
 
         if (sameEntity((UserPortalItemModel) listModel.getSelectedItem(), model)) {
-            getView().setSelected();
+            setSelectedItem();
         }
 
     }
@@ -189,10 +189,14 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     @Override
     public void onClick(ClickEvent event) {
         if (!isSelected()) {
-            listModel.setSelectedItem(model);
-            modelProvider.setSelectedItems(Arrays.asList(model));
-            getView().setSelected();
+            setSelectedItem();
         }
+    }
+
+    protected void setSelectedItem() {
+        listModel.setSelectedItem(model);
+        modelProvider.setSelectedItems(Arrays.asList(model));
+        getView().setSelected();
     }
 
     private boolean canShowConsole() {
