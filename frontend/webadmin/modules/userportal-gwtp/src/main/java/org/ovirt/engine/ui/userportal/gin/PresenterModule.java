@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskPopu
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
@@ -59,6 +60,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDiskPopupView
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmMakeTemplatePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmRunOncePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmServerNewPopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmSnapshotCreatePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabBasicView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabExtendedView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicDetailsView;
@@ -265,6 +267,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmDiskPopupPresenterWidget.class,
                 VmDiskPopupPresenterWidget.ViewDef.class,
                 VmDiskPopupView.class);
+        bindPresenterWidget(VmSnapshotCreatePopupPresenterWidget.class,
+                VmSnapshotCreatePopupPresenterWidget.ViewDef.class,
+                VmSnapshotCreatePopupView.class);
 
         // Template popups
         bindPresenterWidget(TemplateNewPopupPresenterWidget.class,

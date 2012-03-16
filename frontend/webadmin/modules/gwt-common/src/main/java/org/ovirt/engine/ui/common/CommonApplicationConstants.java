@@ -112,4 +112,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Make Private")
     String makeTemplateIsTemplatePrivateEditorLabel();
 
+    @DefaultStringValue("Description")
+    String virtualMachineSnapshotCreatePopupDescriptionLabel();
+
 }

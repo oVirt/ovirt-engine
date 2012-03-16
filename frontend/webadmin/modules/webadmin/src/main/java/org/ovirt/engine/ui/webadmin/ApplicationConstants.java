@@ -241,9 +241,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Events")
     String virtualMachineEventSubTabLabel();
 
-    @DefaultStringValue("Description")
-    String virtualMachineSnapshotCreatePopupDescriptionLabel();
-
     @DefaultStringValue("General")
     String hostGeneralSubTabLabel();
 
