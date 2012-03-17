@@ -9,6 +9,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.spy;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,7 +29,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
@@ -36,8 +36,7 @@ import org.ovirt.engine.core.dao.TagDAO;
 
 public class TagsDirectorTest {
 
-    @Spy
-    private TagsDirector tagsDirector = new TagsDirector();
+    private TagsDirector tagsDirector;
 
     @Mock
     private TagDAO tagDao;
@@ -56,6 +55,7 @@ public class TagsDirectorTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        tagsDirector = spy(TagsDirector.getInstance());
         when(tagDao.getAllForParent(any(Guid.class))).thenReturn((List<tags>) Collections.EMPTY_LIST);
         doReturn(tagDao).when(tagsDirector).getTagDAO();
         doNothing().when(tagsDirector).updateTagInBackend(any(tags.class));

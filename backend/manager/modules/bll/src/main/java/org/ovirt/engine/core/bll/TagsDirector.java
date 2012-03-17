@@ -7,12 +7,12 @@ import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.utils.collections.CopyOnAccessMap;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 enum TagReturnValueIndicator {
     ID,
@@ -40,9 +40,9 @@ public class TagsDirector {
     private final java.util.Map<String, tags> tagsMapByName =
             new CopyOnAccessMap<String, tags>(new java.util.HashMap<String, tags>());
 
-    private static TagsDirector instance = null;
+    private static TagsDirector instance = new TagsDirector();
 
-    protected TagsDirector() {
+    private TagsDirector() {
     }
 
     /**
@@ -51,6 +51,8 @@ public class TagsDirector {
 
     protected void init() {
         log.info("TagsDirector initialization");
+        tagsMapByID.clear();
+        tagsMapByName.clear();
         tags root = new tags("root", null, true, ROOT_TAG_ID, "root");
         AddTagToHash(root);
         AddChildren(root);
@@ -118,12 +120,6 @@ public class TagsDirector {
     }
 
     public static TagsDirector getInstance() {
-        // ASSUMPTION: this is not a thread-safe call. We assume first call is run
-        // from Backend.Initialize
-        if (instance == null) {
-            instance = new TagsDirector();
-            instance.init();
-        }
         return instance;
     }
 

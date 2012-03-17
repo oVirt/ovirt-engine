@@ -181,7 +181,7 @@ public class Backend implements BackendInternal, BackendRemote {
         AuditLogCleanupManager.getInstance();
         log.infoFormat("AuditLogCleanupManager: {0}", new Date());
 
-        TagsDirector.getInstance();
+        TagsDirector.getInstance().init();
         log.infoFormat("TagsDirector: {0}", new Date());
         IsoDomainListSyncronizer.getInstance();
         log.infoFormat("IsoDomainListSyncronizer: {0}", new Date());
