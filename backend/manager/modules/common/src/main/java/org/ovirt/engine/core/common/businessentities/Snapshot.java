@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * The snapshot represents a "frozen" point in time of a VM.<br>
  * <br>
- * The snapshot contains the VM's configuration:
+ * The snapshot contains the VM's configuration (or an indicator if such configuration exists):
  * <ul>
  * <li>The VM's own configuration</li>
  * <li>The disks which were attached</li>
@@ -44,9 +44,10 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
     private String vmConfiguration;
 
     /**
-     * Read-only (calculated field) to see if the VM configuration is available or not.
+     * Read-only (calculated field) to see if the VM configuration is available or not.<br>
+     * <b>Note: </b>Only indicative in cases where VM configuration is <b>NOT</b> returned.
      */
-    private final boolean vmConfigurationAvailable;
+    private boolean vmConfigurationAvailable;
 
     /**
      * The type of snapshot taken (regular, live, etC).
