@@ -538,8 +538,14 @@ public class VdsUpdateRunTimeInfo {
         List<String> nics = new ArrayList<String>();
         Map<String, List<String>> bondNics = new HashMap<String, List<String>>();
 
+        ArrayList<VdsNetworkInterface> interfaces = _vds.getInterfaces();
+        Map<String, network> networksByName = NetworkUtils.networksByName(clusterNetworks);
+
         try {
-            for (VdsNetworkInterface iface : _vds.getInterfaces()) {
+            for (VdsNetworkInterface iface : interfaces) {
+                // report if MTU value differ from cluster
+                logMTUDifferences(networksByName, iface);
+
                 // Handle nics that are non bonded and not vlan over bond
                 setHostDown = isInteraceDown(clusterNetworks, networks, nics, iface);
 
@@ -620,10 +626,16 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
+    /**
+     * audit networks which have different values from what the logical network dictates. logical network MTU = 0 is for
+     * using the host default MTU so no need to warn the admin.
+     * @param clusterNetworkByName
+     * @param interfaces
+     */
     public void logMTUDifferences(Map<String, network> clusterNetworkByName,
-            List<VdsNetworkInterface> interfaces) {
-        for (VdsNetworkInterface iface : interfaces) {
+            VdsNetworkInterface iface) {
             if (iface.getNetworkName() != null && clusterNetworkByName.containsKey(iface.getNetworkName()) &&
+                    clusterNetworkByName.get(iface.getNetworkName()).getMtu() != 0 &&
                     iface.getMtu() != clusterNetworkByName.get(iface.getNetworkName()).getMtu()) {
                 AuditLogableBase logable = new AuditLogableBase();
                 logable.AddCustomValue(NetworkName, iface.getNetworkName());
@@ -631,7 +643,6 @@ public class VdsUpdateRunTimeInfo {
                 logable.AddCustomValue(LogicalNetworkMTU,
                         String.valueOf(clusterNetworkByName.get(iface.getNetworkName()).getMtu()));
                 AuditLogDirector.log(logable, AuditLogType.VDS_NETWORK_MTU_DIFFER_FROM_LOGICAL_NETWORK);
-            }
         }
     }
 

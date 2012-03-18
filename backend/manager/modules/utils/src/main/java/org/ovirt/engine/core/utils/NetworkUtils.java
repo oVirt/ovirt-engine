@@ -1,8 +1,12 @@
 package org.ovirt.engine.core.utils;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.IntegerCompat;
@@ -87,5 +91,17 @@ public final class NetworkUtils {
             }
         }
         return false;
+    }
+
+    public static Map<String, network> networksByName(List<network> networks) {
+        if (!networks.isEmpty()) {
+            Map<String, network> byName = new HashMap<String, network>();
+            for (network net : networks) {
+                byName.put(net.getname(), net);
+            }
+            return byName;
+        } else {
+            return Collections.emptyMap();
+        }
     }
 }
