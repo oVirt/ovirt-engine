@@ -72,8 +72,6 @@ Summary: Jboss dependencies of oVirt Engine
 Group: Virtualization/Management
 Requires: ovirt-engine-jbossas
 Requires: %{name} = %{version}-%{release}
-Requires: hsqldb >= 1:1.8.0.10-9
-Requires: jakarta-commons-discovery >= 1:0.4-7
 
 %description jboss-deps
 The JBOSS dependencies of oVirt Engine
