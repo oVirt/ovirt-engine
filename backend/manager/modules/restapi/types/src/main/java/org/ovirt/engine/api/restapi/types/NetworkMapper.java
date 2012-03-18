@@ -53,6 +53,9 @@ public class NetworkMapper {
         if (model.isSetDisplay()) {
             entity.setis_display(model.isDisplay());
         }
+        if (model.isSetMtu()) {
+            entity.setMtu(model.getMtu());
+        }
         return entity;
     }
 
@@ -84,6 +87,7 @@ public class NetworkMapper {
         }
         model.setStp(entity.getstp());
         model.setDisplay(entity.getis_display());
+        model.setMtu(entity.getMtu());
         return model;
     }
 

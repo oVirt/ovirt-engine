@@ -127,6 +127,7 @@ public class HostNicMapper {
         if(bootProtocol!=null){
             model.setBootProtocol(bootProtocol.value());
         }
+        model.setMtu(entity.getMtu());
         return model;
     }
 

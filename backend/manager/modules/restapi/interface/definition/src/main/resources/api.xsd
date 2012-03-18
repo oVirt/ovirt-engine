@@ -1457,6 +1457,7 @@
           <xs:element name="stp" type="xs:boolean" minOccurs="0"/>
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
           <xs:element name="display" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="mtu" type="xs:int" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2115,6 +2116,7 @@
           <xs:element name="check_connectivity" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="speed" type="xs:long" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="mtu" type="xs:int" minOccurs="0"/>
           <!-- Also a rel="master" link for bonded nics -->
         </xs:sequence>
       </xs:extension>

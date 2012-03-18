@@ -1212,6 +1212,7 @@ actions:
           hostnic.mac: xs:string
           hostnic.ip.address: xs:string
           hostnic.ip.netmask: xs:string
+          hostnic.ip.mtu: xs:int
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {Content-Type: application/xml|json}
@@ -1403,7 +1404,7 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {network.description: 'xs:string', network.vlan.id: 'xs:string',
           network.ip.address: 'xs:string', network.ip.gateway: 'xs:string', network.ip.netmask: 'xs:string',
-          network.display: 'xs:boolean', network.stp: 'xs:boolean'}
+          network.display: 'xs:boolean', network.stp: 'xs:boolean', network.mtu: 'xs:int'}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/networks|rel=add
@@ -1414,7 +1415,7 @@ actions:
       - mandatoryArguments: {network.data_center.id|name: 'xs:string', network.name: 'xs:string'}
         optionalArguments: {network.description: 'xs:string', network.vlan.id: 'xs:string',
           network.ip.address: 'xs:string', network.ip.gateway: 'xs:string', network.ip.netmask: 'xs:string',
-          network.display: 'xs:boolean', network.stp: 'xs:boolean'}
+          network.display: 'xs:boolean', network.stp: 'xs:boolean', network.mtu: 'xs:int'}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/roles|rel=get
