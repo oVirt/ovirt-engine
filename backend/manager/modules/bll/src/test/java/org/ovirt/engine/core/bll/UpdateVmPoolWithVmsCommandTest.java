@@ -8,13 +8,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, Backend.class, Config.class, VmHandler.class, VmTemplateHandler.class })
+@PrepareForTest({ DbFacade.class, Backend.class, Config.class, VmHandler.class, VmTemplateHandler.class})
 public class UpdateVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestAbstract {
     /**
      * The command under test.
@@ -24,7 +23,7 @@ public class UpdateVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTe
     protected UpdateVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> createCommand() {
         AddVmPoolWithVmsParameters param = new AddVmPoolWithVmsParameters(vmPools, testVm,
                 VM_COUNT, DISK_SIZE);
-        param.setStorageDomainId(Guid.Empty);
+        param.setStorageDomainId(firstStorageDomainId);
         command = new UpdateVmPoolWithVmsCommand<AddVmPoolWithVmsParameters>(param);
         return spy(command);
     }

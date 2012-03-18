@@ -76,9 +76,6 @@ public class VmHandler {
                                       int vmsCount,
                                       VmTemplate vmTemplate,
                                       Guid storagePoolId,
-                                      Guid storageDomainId,
-                                      boolean checkVmTemplateImages,
-                                      boolean checkTemplateLock,
                                       int vmPriority) {
         boolean returnValue = true;
         if (MacPoolManager.getInstance().getavailableMacsCount() < vmsCount) {
@@ -93,15 +90,9 @@ public class VmHandler {
             if (isValid) {
                 if (!VmTemplateCommand.IsVmPriorityValueLegal(vmPriority, reasons)) {
                     returnValue = false;
-                } else if (checkVmTemplateImages) {
-                    returnValue = VmTemplateCommand.isVmTemplateImagesReady(vmTemplate, storageDomainId,
-                            reasons, true, checkTemplateLock, true, true, null);
                 }
-            } else {
-                if (reasons != null) {
-                    reasons.add(VdcBllMessages.IMAGE_REPOSITORY_NOT_FOUND.toString());
-                }
-                returnValue = false;
+            } else if (reasons != null) {
+                reasons.add(VdcBllMessages.IMAGE_REPOSITORY_NOT_FOUND.toString());
             }
         }
         return returnValue;

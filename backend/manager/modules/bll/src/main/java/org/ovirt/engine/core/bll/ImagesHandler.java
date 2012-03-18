@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
@@ -44,6 +45,58 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public final class ImagesHandler {
     public static final Guid BlankImageTemplateId = new Guid("00000000-0000-0000-0000-000000000000");
     public static final String DefaultDriveName = "1";
+
+    /**
+     * The following method will find all images and storages where they located for provide template and will fill an
+     * imageToDestinationDomainMap by imageId mapping on active storage id where image is located. The second map is
+     * mapping of founded storage ids to storage object
+     * @param template
+     * @param imageToDestinationDomainMap
+     * @param destStorages
+     */
+    public static void fillImagesMapBasedOnTemplate(VmTemplate template,
+            Map<Guid, Guid> imageToDestinationDomainMap,
+            Map<Guid, storage_domains> destStorages) {
+        List<storage_domains> domains =
+                DbFacade.getInstance()
+                        .getStorageDomainDAO()
+                        .getAllForStoragePool(template.getstorage_pool_id().getValue());
+        Map<Guid, storage_domains> storageDomainsMap = new HashMap<Guid, storage_domains>();
+        for (storage_domains storageDomain : domains) {
+            StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
+            ArrayList<String> messages = new ArrayList<String>();
+            if (validator.isDomainExistAndActive(messages) && validator.domainIsValidDestination(messages)
+                    && StorageDomainSpaceChecker.isBelowThresholds(storageDomain)) {
+                storageDomainsMap.put(storageDomain.getId(), storageDomain);
+            }
+        }
+        for (DiskImage image : template.getDiskMap().values()) {
+            for (Guid storageId : image.getstorage_ids()) {
+                if (storageDomainsMap.containsKey(storageId)) {
+                    imageToDestinationDomainMap.put(image.getId(), storageId);
+                    break;
+                }
+            }
+        }
+        for (Guid storageDomainId : new HashSet<Guid>(imageToDestinationDomainMap.values())) {
+            destStorages.put(storageDomainId, storageDomainsMap.get(storageDomainId));
+        }
+    }
+
+    public static Map<Guid, List<DiskImage>> buildStorageToDiskMap(Collection<DiskImage> images,
+            Map<Guid, Guid> imageToDestinationDomainMap) {
+        Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
+        for (DiskImage disk : images) {
+            Guid storageDomainId = imageToDestinationDomainMap.get(disk.getId());
+            List<DiskImage> diskList = storageToDisksMap.get(storageDomainId);
+            if (diskList == null) {
+                diskList = new ArrayList<DiskImage>();
+                storageToDisksMap.put(storageDomainId, diskList);
+            }
+            diskList.add(disk);
+        }
+        return storageToDisksMap;
+    }
 
     /**
      * Adds a disk image (Adds image, disk and relevant entities)

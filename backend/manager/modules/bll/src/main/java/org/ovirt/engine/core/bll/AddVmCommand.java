@@ -67,7 +67,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected Map<Guid, Guid> imageToDestinationDomainMap;
     protected Map<Guid, storage_domains> destStorages = new HashMap<Guid, storage_domains>();
-    protected Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
+    protected Map<Guid, List<DiskImage>> storageToDisksMap;
     protected String newMac = "";
 
     /**
@@ -321,7 +321,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
         returnValue = buildAndCheckDestStorageDomains();
         if (returnValue) {
-            buildStorageToDiskMap();
+            storageToDisksMap =
+                    ImagesHandler.buildStorageToDiskMap(getVmTemplate().getDiskMap().values(),
+                            imageToDestinationDomainMap);
             returnValue = CanDoAddVmCommand();
         }
 
@@ -375,18 +377,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return returnValue;
     }
 
-    protected void buildStorageToDiskMap() {
-        for (DiskImage disk : getVmTemplate().getDiskMap().values()) {
-            Guid storageDomainId = imageToDestinationDomainMap.get(disk.getId());
-            List<DiskImage> diskList = storageToDisksMap.get(storageDomainId);
-            if (diskList == null) {
-                diskList = new ArrayList<DiskImage>();
-                storageToDisksMap.put(storageDomainId, diskList);
-            }
-            diskList.add(disk);
-        }
-    }
-
     private void ensureDomainMap() {
         if (imageToDestinationDomainMap.isEmpty()) {
             for (DiskImage image : getVmTemplate().getDiskMap().values()) {
@@ -435,9 +425,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
         boolean checkTemplateLock = getParameters().getParentCommand() == VdcActionType.AddVmPoolWithVms ? false : true;
 
-        returnValue = VmHandler.VerifyAddVm(reasons, vmsCount, getVmTemplate(), storagePoolId, null, false, checkTemplateLock, vmPriority);
+        returnValue = VmHandler.VerifyAddVm(reasons, vmsCount, getVmTemplate(), storagePoolId, vmPriority);
 
-        if (!getParameters().getDontCheckTemplateImages()) {
+        if (returnValue && !getParameters().getDontCheckTemplateImages()) {
             for (storage_domains storage : destStorages.values()) {
                 if (!VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), storage.getId(),
                         reasons, false, checkTemplateLock, true, true, storageToDisksMap.get(storage.getId()))) {

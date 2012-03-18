@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -17,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -382,6 +382,7 @@ public class AddVmCommandTest {
         diskImage.setactual_size(diskSize);
         diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID)));
         diskImageMap.put(Guid.NewGuid().toString(), diskImage);
+        cmd.storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
         cmd.storageToDisksMap.put(STORAGE_DOMAIN_ID, new ArrayList<DiskImage>(diskImageMap.values()));
     }
 
@@ -528,9 +529,6 @@ public class AddVmCommandTest {
                         anyInt(),
                         Matchers.<VmTemplate> anyObject(),
                         Matchers.<Guid> any(Guid.class),
-                        Matchers.<Guid> any(Guid.class),
-                        anyBoolean(),
-                        anyBoolean(),
                         anyInt()
                         )).thenReturn(Boolean.TRUE);
 

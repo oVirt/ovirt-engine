@@ -1,38 +1,45 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "AddVmAndAttachToPoolParameters")
-public class AddVmAndAttachToPoolParameters extends AddVmFromScratchParameters implements java.io.Serializable {
+import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.compat.Guid;
+
+public class AddVmAndAttachToPoolParameters extends AddVmFromScratchParameters {
     private static final long serialVersionUID = -2676528333942591702L;
 
-    @XmlElement
-    private Guid _poolId;
+    private Guid poolId;
+    private String currentVmName;
 
-    @XmlElement
-    private String _currentVmName;
+    public AddVmAndAttachToPoolParameters() {
+    }
 
     public AddVmAndAttachToPoolParameters(VmStatic currVm, Guid poolId, String currentVmName, Guid storageDomainId) {
-        super(currVm, new java.util.ArrayList<DiskImageBase>(
-                java.util.Arrays.asList(new DiskImageBase[] { new DiskImageBase() })), storageDomainId);
-        _poolId = poolId;
-        _currentVmName = currentVmName;
+        super(currVm, new ArrayList<DiskImageBase>(
+                Arrays.asList(new DiskImageBase())), storageDomainId);
+        this.poolId = poolId;
+        this.currentVmName = currentVmName;
+    }
+
+    public AddVmAndAttachToPoolParameters(VmStatic currVm,
+            Guid poolId,
+            String currentVmName,
+            HashMap<Guid, Guid> imageToDestinationDomainMap) {
+        super(currVm, new ArrayList<DiskImageBase>(
+                Arrays.asList(new DiskImageBase())), Guid.Empty);
+        this.poolId = poolId;
+        this.currentVmName = currentVmName;
+        setImageToDestinationDomainMap(imageToDestinationDomainMap);
     }
 
     public Guid getPoolId() {
-        return _poolId;
+        return poolId;
     }
 
     public String getCurrentVmName() {
-        return _currentVmName;
-    }
-
-    public AddVmAndAttachToPoolParameters() {
+        return currentVmName;
     }
 }

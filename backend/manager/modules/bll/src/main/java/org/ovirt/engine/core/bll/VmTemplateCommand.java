@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -69,12 +70,13 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
 
     public static boolean isVmTemplateImagesReady(VmTemplate vmTemplate,
                                                   Guid storageDomainId,
-                                                  java.util.ArrayList<String> reasons,
+                                                  ArrayList<String> reasons,
                                                   boolean checkImagesExists,
                                                   boolean checkLocked,
                                                   boolean checkIllegal,
                                                   boolean checkStorageDomain, List<DiskImage> providedVmtImages) {
         boolean returnValue = true;
+        List<DiskImage> vmtImages = providedVmtImages;
         if (checkStorageDomain) {
             StorageDomainValidator storageDomainValidator =
                     new StorageDomainValidator(DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
@@ -82,11 +84,8 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             returnValue = storageDomainValidator.isDomainExistAndActive(reasons);
         }
         if (returnValue && checkImagesExists) {
-            List<DiskImage> vmtImages;
-            if (providedVmtImages == null) {
+            if (vmtImages == null) {
                 vmtImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmTemplate.getId());
-            } else {
-                vmtImages = providedVmtImages;
             }
             if (vmtImages.size() > 0
                     && !ImagesHandler.isImagesExists(vmtImages, vmtImages.get(0).getstorage_pool_id().getValue(),
@@ -95,14 +94,26 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
                 returnValue = false;
             }
         }
-        if (returnValue) {
-            if (checkLocked && (vmTemplate.getstatus() == VmTemplateStatus.Locked)) {
+        if (returnValue && checkLocked) {
+            if (vmTemplate.getstatus() == VmTemplateStatus.Locked) {
                 returnValue = false;
-                reasons.add(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED.toString());
-            } else if (checkIllegal && (vmTemplate.getstatus() == VmTemplateStatus.Illegal)) {
-                returnValue = false;
-                reasons.add(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_ILLEGAL.toString());
+            } else {
+                if (vmtImages != null) {
+                    for (DiskImage image : vmtImages) {
+                        if (image.getimageStatus() == ImageStatus.LOCKED) {
+                            returnValue = false;
+                            break;
+                        }
+                    }
+                }
             }
+            if (!returnValue) {
+                reasons.add(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED.toString());
+            }
+        }
+        if (returnValue && checkIllegal && (vmTemplate.getstatus() == VmTemplateStatus.Illegal)) {
+            returnValue = false;
+            reasons.add(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_ILLEGAL.toString());
         }
         return returnValue;
     }

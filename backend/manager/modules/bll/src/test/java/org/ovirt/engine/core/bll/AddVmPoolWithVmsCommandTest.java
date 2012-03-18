@@ -5,22 +5,18 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
-import java.util.Map;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, Backend.class, Config.class, VmHandler.class, VmTemplateHandler.class })
+@PrepareForTest({ DbFacade.class, Backend.class, Config.class, VmHandler.class, VmTemplateHandler.class})
 public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestAbstract {
     /**
      * The command under test.
@@ -30,7 +26,7 @@ public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestA
     protected AddVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> createCommand() {
         AddVmPoolWithVmsParameters param = new AddVmPoolWithVmsParameters(vmPools, testVm,
                 VM_COUNT, DISK_SIZE);
-        param.setStorageDomainId(Guid.Empty);
+        param.setStorageDomainId(firstStorageDomainId);
         command = new AddVmPoolWithVmsCommand<AddVmPoolWithVmsParameters>(param);
         return spy(command);
     }
@@ -48,16 +44,15 @@ public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestA
     @Test
     public void validateFreeSpaceOnDestinationDomains() {
         setupMocks();
-        assertTrue(createCommand().CheckFreeSpaceOnDestinationDomains());
+        assertTrue(createCommand().checkFreeSpaceAndTypeOnDestDomains());
     }
 
     @Test
     public void validateMultiDisksWithNotEnoughSpaceOnDomains() {
         setupMocks();
         AddVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> cmd = createCommand();
-        when(Config.<Integer> GetValue(ConfigValues.FreeSpaceCriticalLowInGB)).thenReturn(80);
-        setNewDisksForTemplate(10, cmd.getVmTemplate().getDiskMap());
-        assertFalse(cmd.CheckFreeSpaceOnDestinationDomains());
+        when(Config.<Integer> GetValue(ConfigValues.FreeSpaceCriticalLowInGB)).thenReturn(95);
+        assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
@@ -68,7 +63,7 @@ public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestA
         setupMocks();
         AddVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> cmd = createCommand();
         when(Config.<Integer> GetValue(ConfigValues.FreeSpaceCriticalLowInGB)).thenReturn(100);
-        assertFalse(cmd.CheckFreeSpaceOnDestinationDomains());
+        assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
@@ -80,16 +75,9 @@ public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestA
         mockGetImageDomainsListVdsCommand(2, 2);
         AddVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> cmd = createCommand();
         when(Config.<Integer> GetValue(ConfigValues.FreeSpaceLow)).thenReturn(50);
-        assertFalse(cmd.CheckFreeSpaceOnDestinationDomains());
+        assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
-    }
-
-    private void setNewDisksForTemplate(int numberOfNewDisks, Map<String, DiskImage> disksMap) {
-        for (int newDiskInd = 0; newDiskInd < numberOfNewDisks; newDiskInd++) {
-            DiskImage diskImageTempalte = new DiskImage();
-            disksMap.put(Guid.NewGuid().toString(), diskImageTempalte);
-        }
     }
 }

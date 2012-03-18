@@ -1,29 +1,25 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.HashMap;
+
 import javax.validation.Valid;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "AddVmPoolWithVmsParameters")
 public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
     private static final long serialVersionUID = 4826143612049185740L;
 
     @Valid
-    @XmlElement
     private VM _vm;
-
-    @XmlElement
     private int _vmsCount;
-
-    @XmlElement
     private int _diskSize;
+    private HashMap<Guid, Guid> imageToDestinationDomainMap;
+
+    public AddVmPoolWithVmsParameters() {
+    }
 
     public AddVmPoolWithVmsParameters(vm_pools vmPool, VM vm, int count, int diskSize) {
         super(vmPool);
@@ -45,6 +41,11 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
         return _diskSize;
     }
 
-    public AddVmPoolWithVmsParameters() {
+    public void setImageToDestinationDomainMap(HashMap<Guid, Guid> imageToDestinationDomainMap) {
+        this.imageToDestinationDomainMap = imageToDestinationDomainMap;
+    }
+
+    public HashMap<Guid, Guid> getImageToDestinationDomainMap() {
+        return imageToDestinationDomainMap;
     }
 }

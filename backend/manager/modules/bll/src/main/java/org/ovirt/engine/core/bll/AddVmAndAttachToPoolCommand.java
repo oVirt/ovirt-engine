@@ -36,9 +36,9 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         } else {
             VmManagementParametersBase tempVar2 = new VmManagementParametersBase(vmStatic);
             tempVar2.setSessionId(getParameters().getSessionId());
-            tempVar2.setStorageDomainId(getParameters().getStorageDomainId());
             tempVar2.setDontCheckTemplateImages(true);
             tempVar2.setDontAttachToDefaultTag(true);
+            tempVar2.setImageToDestinationDomainMap(getParameters().getImageToDestinationDomainMap());
             returnValueFromAddVm =
                     Backend.getInstance().runInternalAction(VdcActionType.AddVm,
                             tempVar2,

@@ -1,13 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -15,10 +10,10 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 
@@ -84,33 +79,12 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     @Override
     protected boolean buildAndCheckDestStorageDomains() {
         if (imageToDestinationDomainMap.isEmpty()) {
-            List<storage_domains> domains =
-                    DbFacade.getInstance()
-                            .getStorageDomainDAO()
-                            .getAllForStoragePool(getVmTemplate().getstorage_pool_id().getValue());
-            Map<Guid, storage_domains> storageDomainsMap = new HashMap<Guid, storage_domains>();
-            for (storage_domains storageDomain : domains) {
-                StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
-                ArrayList<String> messages = new ArrayList<String>();
-                if (validator.isDomainExistAndActive(messages) && validator.domainIsValidDestination(messages)) {
-                    storageDomainsMap.put(storageDomain.getId(), storageDomain);
-                }
-            }
-            for (DiskImage image : getVmTemplate().getDiskMap().values()) {
-                for (Guid storageId : image.getstorage_ids()) {
-                    if (storageDomainsMap.containsKey(storageId)) {
-                        imageToDestinationDomainMap.put(image.getId(), storageId);
-                        break;
-                    }
-                }
-            }
+            ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(), imageToDestinationDomainMap, destStorages);
             if (getVmTemplate().getDiskMap().values().size() != imageToDestinationDomainMap.size()) {
                 log.errorFormat("Can not found any default active domain for one of the disks of template with id : {0}",
-                        getVmTemplateId());
+                        getVmTemplate().getId());
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
                 return false;
-            }
-            for (Guid storageDomainId : new HashSet<Guid>(imageToDestinationDomainMap.values())) {
-                destStorages.put(storageDomainId, storageDomainsMap.get(storageDomainId));
             }
             return true;
         }

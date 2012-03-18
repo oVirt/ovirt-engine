@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -17,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -43,7 +43,7 @@ import org.ovirt.engine.core.dao.VmTemplateDAO;
 public class CommonVmPoolWithVmsCommandTestAbstract {
 
     private final Guid vdsGroupId = Guid.NewGuid();
-    private final Guid firstStorageDomainId = Guid.NewGuid();
+    protected final Guid firstStorageDomainId = Guid.NewGuid();
     private final Guid secondStorageDomainId = Guid.NewGuid();
     private final Guid storagePoolId = Guid.NewGuid();
     private final Guid vmTemplateId = Guid.NewGuid();
@@ -126,9 +126,6 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
                         anyInt(),
                         Matchers.<VmTemplate> anyObject(),
                         Matchers.<Guid> any(Guid.class),
-                        Matchers.<Guid> any(Guid.class),
-                        anyBoolean(),
-                        anyBoolean(),
                         anyInt()
                         )).thenReturn(Boolean.TRUE);
     }
@@ -207,6 +204,7 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         storageDomain.setavailable_disk_size(availabeDiskSize);
         storageDomain.setstatus(StorageDomainStatus.Active);
         storageDomain.setId(firstStorageDomainId);
+        storageDomain.setstorage_domain_type(StorageDomainType.Data);
         return storageDomain;
     }
 
@@ -215,6 +213,7 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         storageDomain.setavailable_disk_size(availabeDiskSize);
         storageDomain.setstatus(StorageDomainStatus.Active);
         storageDomain.setId(secondStorageDomainId);
+        storageDomain.setstorage_domain_type(StorageDomainType.Data);
         return storageDomain;
     }
 
@@ -271,9 +270,11 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         List<DiskImage> diskList = new ArrayList<DiskImage>();
         DiskImage diskImage = new DiskImage();
         diskImage.setimage_group_id(Guid.NewGuid());
+        diskImage.setstorage_ids(new ArrayList<Guid>());
         diskList.add(diskImage);
         diskImage = new DiskImage();
         diskImage.setimage_group_id(Guid.NewGuid());
+        diskImage.setstorage_ids(new ArrayList<Guid>());
         diskList.add(diskImage);
         return diskList;
     }
@@ -282,9 +283,11 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         Map<String, DiskImage> diskTemplateList = new HashMap<String, DiskImage>();
         DiskImage diskImageTemplate = new DiskImage();
         diskImageTemplate.setId(Guid.NewGuid());
+        diskImageTemplate.setstorage_ids(new ArrayList<Guid>());
         diskTemplateList.put(diskImageTemplate.getId().toString(), diskImageTemplate);
         diskImageTemplate = new DiskImage();
         diskImageTemplate.setId(Guid.NewGuid());
+        diskImageTemplate.setstorage_ids(new ArrayList<Guid>());
         diskTemplateList.put(diskImageTemplate.getId().toString(), diskImageTemplate);
         return diskTemplateList;
     }
@@ -296,7 +299,7 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         when(Config.<Integer> GetValue(ConfigValues.VMMinMemorySizeInMB)).thenReturn(256);
         when(Config.<Integer> GetValue(ConfigValues.VM32BitMaxMemorySizeInMB)).thenReturn(2048);
         when(Config.<Integer> GetValue(ConfigValues.VM64BitMaxMemorySizeInMB)).thenReturn(262144);
-        when(Config.<Integer> GetValue(ConfigValues.FreeSpaceLow)).thenReturn(95);
+        when(Config.<Integer> GetValue(ConfigValues.FreeSpaceLow)).thenReturn(10);
         when(Config.<Integer> GetValue(ConfigValues.FreeSpaceCriticalLowInGB)).thenReturn(1);
         when(Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB)).thenReturn(1);
     }
