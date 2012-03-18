@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -46,7 +47,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateCommand<T> {
 
-    private List<DiskImage> mImages = new ArrayList<DiskImage>();
+    private final List<DiskImage> mImages = new ArrayList<DiskImage>();
     private Map<Pair<Guid, Guid>, Double> quotaForStorageConsumption;
     private List<PermissionSubject> permissionCheckSubject;
     protected Map<Guid, Guid> imageToDestinationDomainMap;
@@ -54,7 +55,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     /**
      * A list of the new disk images which were saved for the Template.
      */
-    private List<DiskImage> newDiskImages = new ArrayList<DiskImage>();
+    private final List<DiskImage> newDiskImages = new ArrayList<DiskImage>();
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -126,7 +127,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 addPermission();
                 AddVmTemplateImages();
                 AddVmInterfaces();
-                VmDeviceUtils.copyVmDevices(getVmId(),getVmTemplateId(), newDiskImages);
+                VmDeviceUtils.copyVmDevices(getVmId(), getVmTemplateId(), newDiskImages);
                 setSucceeded(true);
                 return null;
             }
@@ -146,7 +147,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         if (!isInternalExecution()) {
             return QuotaManager.validateMultiStorageQuota(getStoragePool().getQuotaEnforcementType(),
-                     getQuotaConsumeMap(),
+                    getQuotaConsumeMap(),
                     getCommandId(),
                     getReturnValue().getCanDoActionMessages());
         }
@@ -163,7 +164,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     @Override
     protected void removeQuotaCommandLeftOver() {
         if (!isInternalExecution()) {
-            QuotaManager.removeMultiStorageDeltaQuotaCommand(getQuotaConsumeMap(), getStoragePool().getQuotaEnforcementType(), getCommandId());
+            QuotaManager.removeMultiStorageDeltaQuotaCommand(getQuotaConsumeMap(),
+                    getStoragePool().getQuotaEnforcementType(),
+                    getCommandId());
         }
     }
 
@@ -186,7 +189,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
         if (!IsVmPriorityValueLegal(getParameters().getMasterVm().getpriority(), getReturnValue()
-                    .getCanDoActionMessages())) {
+                .getCanDoActionMessages())) {
             return false;
         }
 
@@ -209,12 +212,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             imageToDestinationDomainMap = new HashMap<Guid, Guid>();
         }
         for (DiskImage image : mImages) {
-            List<DiskImage> diskImageList = sourceImageDomainsImageMap.get(image.getstorage_ids().get(0));
-            if(diskImageList == null) {
-                diskImageList = new ArrayList<DiskImage>();
-                sourceImageDomainsImageMap.put(image.getstorage_ids().get(0), diskImageList);
-            }
-            diskImageList.add(image);
+            MultiValueMapUtils.addToMap(image.getstorage_ids().get(0), image, sourceImageDomainsImageMap);
             if (!imageToDestinationDomainMap.containsKey(image.getId())) {
                 Guid destImageId =
                         getParameters().getDestinationStorageDomainId() != null ? getParameters().getDestinationStorageDomainId()
@@ -263,7 +261,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
 
             if (storage.getstorage_domain_type() == StorageDomainType.ImportExport
-                            || storage.getstorage_domain_type() == StorageDomainType.ISO) {
+                    || storage.getstorage_domain_type() == StorageDomainType.ISO) {
 
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                 return false;
@@ -273,13 +271,13 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // update vm snapshots for storage free space check
         for (DiskImage diskImage : getVm().getDiskMap().values()) {
             diskImage.getSnapshots().addAll(
-                                    ImagesHandler.getAllImageSnapshots(diskImage.getId(),
-                                            diskImage.getit_guid()));
+                    ImagesHandler.getAllImageSnapshots(diskImage.getId(),
+                            diskImage.getit_guid()));
         }
 
         Map<storage_domains, Integer> domainMap =
                 StorageDomainValidator.getSpaceRequirementsForStorageDomains(
-                                        getVmTemplate().getDiskImageMap().values(),
+                        getVmTemplate().getDiskImageMap().values(),
                         storageDomains,
                         imageToDestinationDomainMap);
         for (Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
@@ -289,8 +287,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         }
         return AddVmCommand.CheckCpuSockets(getParameters().getMasterVm().getnum_of_sockets(),
-                    getParameters().getMasterVm().getcpu_per_socket(), getVdsGroup()
-                            .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
+                getParameters().getMasterVm().getcpu_per_socket(), getVdsGroup()
+                        .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
     }
 
     protected void AddVmTemplateToDb() {
@@ -345,7 +343,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         for (DiskImage diskImage : mImages) {
             CreateImageTemplateParameters createParams = new CreateImageTemplateParameters(diskImage.getId(),
-                        getVmTemplateId(), getVmTemplateName(), getVmId());
+                    getVmTemplateId(), getVmTemplateName(), getVmId());
             createParams.setStorageDomainId(diskImage.getstorage_ids().get(0));
             createParams.setVmSnapshotId(vmSnapshotId);
             createParams.setEntityId(getParameters().getEntityId());
@@ -354,9 +352,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             getParameters().getImagesParameters().add(createParams);
             // The return value of this action is the 'copyImage' task GUID:
             VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(
-                            VdcActionType.CreateImageTemplate,
-                            createParams,
-                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                    VdcActionType.CreateImageTemplate,
+                    createParams,
+                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
             if (!retValue.getSucceeded()) {
                 throw new VdcBLLException(retValue.getFault().getError(), retValue.getFault().getMessage());

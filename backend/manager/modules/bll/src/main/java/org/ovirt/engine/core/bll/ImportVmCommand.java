@@ -57,6 +57,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
+import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -250,10 +251,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         // (backup) domain
         if (retVal && getParameters().getCopyCollapse() && !TemplateExistsOnExportDomain()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMPORTED_TEMPLATE_IS_MISSING);
-            addCanDoActionMessage(
-                    String.format("$DomainName %1$s",
-                            getStorageDomainStaticDAO().get(getParameters().getSourceDomainId())
-                                    .getstorage_name()));
+            addCanDoActionMessage(String.format("$DomainName %1$s",
+                    getStorageDomainStaticDAO().get(getParameters().getSourceDomainId())
+                            .getstorage_name()));
             retVal = false;
         }
 
@@ -441,7 +441,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             public Void runInTransaction() {
                 addVmImagesAndSnapshots();
                 MoveOrCopyAllImageGroups();
-                VmDeviceUtils.addImportedDevices(getVm().getStaticData(), getVm().getId(), new ArrayList<VmDevice>(), new ArrayList<VmDevice>());
+                VmDeviceUtils.addImportedDevices(getVm().getStaticData(),
+                        getVm().getId(),
+                        new ArrayList<VmDevice>(),
+                        new ArrayList<VmDevice>());
                 VmHandler.LockVm(getVm().getId());
                 return null;
 
@@ -476,9 +479,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
             p.setParentParemeters(getParameters());
             VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
-                            VdcActionType.MoveOrCopyImageGroup,
-                            p,
-                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                    VdcActionType.MoveOrCopyImageGroup,
+                    p,
+                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             if (!vdcRetValue.getSucceeded()) {
                 throw new VdcBLLException(vdcRetValue.getFault().getError(),
                         "ImportVmCommand::MoveOrCopyAllImageGroups: Failed to copy disk!");
@@ -570,13 +573,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     public static Map<String, List<DiskImage>> GetImagesLeaf(List<DiskImage> images) {
         Map<String, List<DiskImage>> retVal = new HashMap<String, List<DiskImage>>();
         for (DiskImage image : images) {
-            if (!retVal.keySet().contains(image.getinternal_drive_mapping())) {
-                retVal.put(image.getinternal_drive_mapping(),
-                        new ArrayList<DiskImage>(Arrays.asList(new DiskImage[]{image})));
-            } else {
-                retVal.get(image.getinternal_drive_mapping()).add(image);
-            }
+            MultiValueMapUtils.addToMap(image.getinternal_drive_mapping(), image, retVal);
         }
+
         for (String key : retVal.keySet()) {
             SortImageList(retVal.get(key));
         }
@@ -694,6 +693,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     protected boolean macAdded = false;
+
     protected void AddVmNetwork() {
         addInterfacesFromTemplate();
     }
@@ -739,8 +739,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     @Override
     protected void EndWithFailure() {
-        setVm(null); //Going to try and refresh the VM by re-loading
-        //it form DB
+        setVm(null); // Going to try and refresh the VM by re-loading
+        // it form DB
         VM vmFromParams = getParameters().getVm();
         if (getVm() != null) {
             VmHandler.UnLockVm(getVm().getId());
@@ -760,8 +760,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             DbFacade.getInstance().getVmStaticDAO().remove(getVmId());
             setSucceeded(true);
         } else {
-            setVm(vmFromParams); //Setting VM from params, for logging purposes
-            //No point in trying to end action again, as the imported VM does not exist in the DB.
+            setVm(vmFromParams); // Setting VM from params, for logging purposes
+            // No point in trying to end action again, as the imported VM does not exist in the DB.
             getReturnValue().setEndActionTryAgain(false);
         }
     }

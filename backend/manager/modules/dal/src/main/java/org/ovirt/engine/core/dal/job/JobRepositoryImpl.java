@@ -13,12 +13,13 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.StepDao;
+import org.ovirt.engine.core.utils.MultiValueMapUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -161,12 +162,7 @@ public class JobRepositoryImpl implements JobRepository {
             if (step.getParentStepId() == null) {
                 jobDirectSteps.add(step);
             } else {
-                List<Step> childStepsList = parentStepMap.get(step.getParentStepId());
-                if (childStepsList == null) {
-                    childStepsList = new ArrayList<Step>();
-                    parentStepMap.put(step.getParentStepId(), childStepsList);
-                }
-                childStepsList.add(step);
+                MultiValueMapUtils.addToMap(step.getParentStepId(), step, parentStepMap);
             }
         }
 

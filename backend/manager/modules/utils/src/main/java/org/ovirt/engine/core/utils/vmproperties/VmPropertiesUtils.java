@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.utils.MultiValueMapUtils;
 
 /**
  * Helper methods to help parse and validate predefined and UserDefined(user defined) properties. These methods are used
@@ -61,8 +62,8 @@ public class VmPropertiesUtils {
     };
 
     public static class ValidationError {
-        private ValidationFailureReason reason;
-        private String keyName;
+        private final ValidationFailureReason reason;
+        private final String keyName;
 
         public ValidationError(ValidationFailureReason reason, String keyName) {
             this.reason = reason;
@@ -111,8 +112,8 @@ public class VmPropertiesUtils {
     }
 
     public static class VMCustomProperties {
-        private String predefinedProperties;
-        private String userDefinedProperties;
+        private final String predefinedProperties;
+        private final String userDefinedProperties;
 
         public VMCustomProperties(String predefinedProperties, String userDefinedProperties) {
             this.predefinedProperties = predefinedProperties;
@@ -402,12 +403,7 @@ public class VmPropertiesUtils {
         }
 
         for (ValidationError error : errorsList) {
-            List<ValidationError> errorsForReason = resultMap.get(error.getReason());
-            if (errorsForReason == null) {
-                errorsForReason = new ArrayList<VmPropertiesUtils.ValidationError>();
-                resultMap.put(error.getReason(), errorsForReason);
-            }
-            errorsForReason.add(error);
+            MultiValueMapUtils.addToMap(error.getReason(), error, resultMap);
         }
     }
 

@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.MultiValueMapUtils;
 
 public class UserMessageController {
     private final static UserMessageController _instance = new UserMessageController();
@@ -17,14 +18,7 @@ public class UserMessageController {
     }
 
     public void AddUserMessage(Guid user, String userMessage) {
-        List<String> userMessages;
-        if (mUsersMessages.containsKey(user)) {
-            userMessages = mUsersMessages.get(user);
-        } else {
-            userMessages = new LinkedList<String>();
-            mUsersMessages.put(user, userMessages);
-        }
-        userMessages.add(userMessage);
+        MultiValueMapUtils.addToMap(user, userMessage, mUsersMessages);
     }
 
     public void AddUserMessageByVds(Guid vdsId, String userMessage) {

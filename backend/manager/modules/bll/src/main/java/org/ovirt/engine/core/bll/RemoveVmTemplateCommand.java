@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -29,7 +30,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends VmTemplateCommand<T> {
 
     private List<DiskImage> imageTemplates;
-    private Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
+    private final Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
 
     public RemoveVmTemplateCommand(T parameters) {
         super(parameters);
@@ -106,8 +107,14 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         // check template images for selected domains
         ArrayList<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
         for (Guid domainId : getParameters().getStorageDomainsList()) {
-            if (!isVmTemplateImagesReady(getVmTemplate(), domainId,
-                        canDoActionMessages, getParameters().getCheckDisksExists(), true, false, true, storageToDisksMap.get(domainId))) {
+            if (!isVmTemplateImagesReady(getVmTemplate(),
+                    domainId,
+                    canDoActionMessages,
+                    getParameters().getCheckDisksExists(),
+                    true,
+                    false,
+                    true,
+                    storageToDisksMap.get(domainId))) {
                 return false;
             }
         }
@@ -147,12 +154,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                 domainsList.addAll(disk.getstorage_ids());
                 if (isFillStorageTodDiskMap) {
                     for (Guid storageDomainId : disk.getstorage_ids()) {
-                        List<DiskImage> diskList = storageToDisksMap.get(storageDomainId);
-                        if (diskList == null) {
-                            diskList = new ArrayList<DiskImage>();
-                            storageToDisksMap.put(storageDomainId, diskList);
-                        }
-                        diskList.add(disk);
+                        MultiValueMapUtils.addToMap(storageDomainId, disk, storageToDisksMap);
                     }
                 }
             }
@@ -193,9 +195,9 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     protected boolean RemoveVmTemplateImages() {
         getParameters().setEntityId(getParameters().getEntityId());
         VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
-                        VdcActionType.RemoveAllVmTemplateImageTemplates,
-                        getParameters(),
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                VdcActionType.RemoveAllVmTemplateImageTemplates,
+                getParameters(),
+                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
         if (!vdcReturnValue.getSucceeded()) {
             setSucceeded(false);

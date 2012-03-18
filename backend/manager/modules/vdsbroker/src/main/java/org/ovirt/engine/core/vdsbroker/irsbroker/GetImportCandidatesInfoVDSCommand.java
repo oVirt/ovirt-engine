@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -195,16 +197,11 @@ public class GetImportCandidatesInfoVDSCommand<P extends GetImportCandidatesVDSC
         }
     }
 
-    protected java.util.HashMap<String, List<DiskImage>> GetListOfImageListsByDrive(
-            java.util.ArrayList<DiskImage> allDrivesImages) {
-        java.util.HashMap<String, List<DiskImage>> ret = new java.util.HashMap<String, List<DiskImage>>();
+    protected HashMap<String, List<DiskImage>> GetListOfImageListsByDrive(List<DiskImage> allDrivesImages) {
+        HashMap<String, List<DiskImage>> ret = new HashMap<String, List<DiskImage>>();
         if (allDrivesImages != null && allDrivesImages.size() > 0) {
             for (DiskImage image : allDrivesImages) {
-                if (!ret.containsKey(image.getinternal_drive_mapping())) {
-                    ret.put(image.getinternal_drive_mapping(), new java.util.ArrayList<DiskImage>());
-                }
-
-                ret.get(image.getinternal_drive_mapping()).add(image);
+                MultiValueMapUtils.addToMap(image.getinternal_drive_mapping(), image, ret);
             }
         }
 

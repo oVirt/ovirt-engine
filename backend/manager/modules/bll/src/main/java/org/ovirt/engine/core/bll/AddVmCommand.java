@@ -83,7 +83,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         parameters.setEntityId(getVmId());
         if (getVdsGroup() != null) {
             setStoragePoolId(getVdsGroup().getstorage_pool_id() != null ? getVdsGroup().getstorage_pool_id()
-                        .getValue() : Guid.Empty);
+                    .getValue() : Guid.Empty);
         }
         imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
         if (imageToDestinationDomainMap == null) {
@@ -212,7 +212,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     public static boolean CheckCpuSockets(int num_of_sockets, int cpu_per_socket, String compatibility_version,
-                                          java.util.ArrayList<String> CanDoActionMessages) {
+            java.util.ArrayList<String> CanDoActionMessages) {
         boolean retValue = true;
         if (retValue
                 && (num_of_sockets * cpu_per_socket) > Config.<Integer> GetValue(ConfigValues.MaxNumOfVmCpus,
@@ -282,7 +282,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
 
         if (returnValue && Config.<Boolean> GetValue(ConfigValues.LimitNumberOfNetworkInterfaces,
-                                        getVdsGroup().getcompatibility_version().toString())) {
+                getVdsGroup().getcompatibility_version().toString())) {
             // check that we have no more then 8 interfaces (kvm limitation in version 2.x)
             if (!validateNumberOfNics(getVmInterfaces(), null)) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_EXITED_MAX_INTERFACES);
@@ -359,17 +359,18 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                             getStoragePool()));
         }
         if (!isInternalExecution()) {
-            // TODO: Should be changed when multiple storage domain will be implemented and the desired quotas will be transferred.
+            // TODO: Should be changed when multiple storage domain will be implemented and the desired quotas will be
+            // transferred.
             return QuotaManager.validateMultiStorageQuota(getStoragePool().getQuotaEnforcementType(),
-                        QuotaHelper.getInstance().getQuotaConsumeMap(getVmTemplate().getDiskList()),
-                        getCommandId(),
-                        getReturnValue().getCanDoActionMessages());
+                    QuotaHelper.getInstance().getQuotaConsumeMap(getVmTemplate().getDiskList()),
+                    getCommandId(),
+                    getReturnValue().getCanDoActionMessages());
         }
         return true;
     }
 
     protected boolean canAddVm(ArrayList<String> reasons, int vmsCount, String name,
-                            Guid storagePoolId, int vmPriority) {
+            Guid storagePoolId, int vmPriority) {
         boolean returnValue;
         // Checking if a desktop with same name already exists
         boolean exists = (Boolean) Backend.getInstance()
@@ -486,7 +487,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected void AddVmStatic() {
         VmStatic vmStatic = getParameters().getVmStaticData();
         if (vmStatic.getorigin() == null) {
-            vmStatic.setorigin(OriginType.valueOf(Config.<String>GetValue(ConfigValues.OriginType)));
+            vmStatic.setorigin(OriginType.valueOf(Config.<String> GetValue(ConfigValues.OriginType)));
         }
         vmStatic.setId(getVmId());
         vmStatic.setQuotaId(getParameters().getQuotaId());
@@ -560,6 +561,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return true;
     }
 
+    @Override
     protected void removeQuotaCommandLeftOver() {
         if (!isInternalExecution()) {
             QuotaManager.removeMultiStorageDeltaQuotaCommand(QuotaHelper.getInstance()
@@ -611,9 +613,14 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
-        permissionList.add(new PermissionSubject(getVdsGroupId(), VdcObjectType.VdsGroups, getActionType().getActionGroup()));
-        permissionList.add(new PermissionSubject(getVmTemplateId(), VdcObjectType.VmTemplate, getActionType().getActionGroup()));
-        permissionList = QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList, getStoragePool(), getQuotaId());
+        permissionList.add(new PermissionSubject(getVdsGroupId(),
+                VdcObjectType.VdsGroups,
+                getActionType().getActionGroup()));
+        permissionList.add(new PermissionSubject(getVmTemplateId(),
+                VdcObjectType.VmTemplate,
+                getActionType().getActionGroup()));
+        permissionList =
+                QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList, getStoragePool(), getQuotaId());
         return permissionList;
     }
 

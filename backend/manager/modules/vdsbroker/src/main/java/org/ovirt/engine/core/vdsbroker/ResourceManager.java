@@ -39,6 +39,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
@@ -80,12 +81,10 @@ public class ResourceManager implements IVdsEventListener {
                     DbFacade.getInstance().getVmStatisticsDAO().update(vm.getStatisticsData());
                 } else {
                     if (vm.getrun_on_vds() != null) {
-                        HashSet<Guid> vmsList = null;
-                        if (!((vmsList = _vdsAndVmsList.get(vm.getrun_on_vds())) != null)) {
-                            vmsList = new HashSet<Guid>();
-                        }
-                        vmsList.add(vm.getId());
-                        _vdsAndVmsList.put(new Guid(vm.getrun_on_vds().toString()), vmsList);
+                        MultiValueMapUtils.addToMap(vm.getrun_on_vds().getValue(),
+                                vm.getId(),
+                                _vdsAndVmsList,
+                                new MultiValueMapUtils.HashSetCreator<Guid>());
                     }
                     if (vm.getrun_on_vds() != null && nonResponsiveVdss.contains(vm.getrun_on_vds())) {
                         SetVmUnknown(vm);
@@ -107,8 +106,7 @@ public class ResourceManager implements IVdsEventListener {
         IrsBrokerCommand.Init();
     }
 
-    private final HashMap<Guid, HashSet<Guid>> _vdsAndVmsList =
-            new HashMap<Guid, HashSet<Guid>>();
+    private final HashMap<Guid, HashSet<Guid>> _vdsAndVmsList = new HashMap<Guid, HashSet<Guid>>();
     private final Map<Guid, VdsManager> _vdsManagersDict = new ConcurrentHashMap<Guid, VdsManager>();
     private final ConcurrentHashMap<Guid, IVdsEventListener> _asyncRunningVms =
             new ConcurrentHashMap<Guid, IVdsEventListener>();
@@ -382,7 +380,7 @@ public class ResourceManager implements IVdsEventListener {
                     (Class<FutureVDSCommand>) java.lang.Class.forName(commandType.getFullyQualifiedClassName());
             Constructor<FutureVDSCommand> constructor =
                     ReflectionUtils.findConstructor(type,
-                    parameters.getClass());
+                            parameters.getClass());
 
             if (constructor != null) {
                 return constructor.newInstance(new Object[] { parameters });

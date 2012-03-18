@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.queries.GetAdGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -269,29 +270,18 @@ public final class TimeLeasedVmPoolManager {
                 command.ExecuteAction();
             }
         } else {
-            /**
+            /*
              * Add new action to start queue. If action must be scheduled before
-             * first scheduled action - recalculate timer's timout
+             * first scheduled action - recalculate timer's timeout
              */
-            List<time_lease_vm_pool_map> list = _startQueue.get(map.getstart_time());
-
-            if (list == null) {
-                list = new java.util.ArrayList<time_lease_vm_pool_map>();
-                _startQueue.put(map.getstart_time(), list);
-            }
-            list.add(map);
+            MultiValueMapUtils.addToMap(map.getstart_time(), map, _startQueue);
         }
 
-        /**
+        /*
          * Add new action to end queue. If action must be scheduled before first
-         * scheduled action - recalculate timer's timout
+         * scheduled action - recalculate timer's timeout
          */
-        List<time_lease_vm_pool_map> endlist = _endQueue.get(map.getend_time());
-        if (endlist == null) {
-            endlist = new java.util.ArrayList<time_lease_vm_pool_map>();
-            _endQueue.put(map.getend_time(), endlist);
-        }
-        endlist.add(map);
+        MultiValueMapUtils.addToMap(map.getend_time(), map, _endQueue);
     }
 
     /**
