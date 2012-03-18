@@ -1360,10 +1360,12 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                     }
                                 }
 
-                                templateDisk.setvolume_type((VolumeType) disk.getVolumeType().getSelectedItem());
-                                templateDisk.setvolume_format(DataProvider.GetDiskVolumeFormat((VolumeType) disk.getVolumeType()
-                                        .getSelectedItem(),
-                                        getstorageDomain().getstorage_type()));
+                                if (disk != null) {
+                                    templateDisk.setvolume_type((VolumeType) disk.getVolumeType().getSelectedItem());
+                                    templateDisk.setvolume_format(DataProvider.GetDiskVolumeFormat((VolumeType) disk.getVolumeType()
+                                            .getSelectedItem(),
+                                            getstorageDomain().getstorage_type()));
+                                }
                             }
 
                             java.util.HashMap<String, DiskImageBase> dict =

@@ -1149,14 +1149,7 @@ public class VmModel extends Model
             }
         }
 
-        if (dataCenter.getstorage_pool_type() == StorageType.LOCALFS)
-        {
-            setIsHostAvailable(false);
-        }
-        else
-        {
-            setIsHostAvailable(true);
-        }
+        setIsHostAvailable(dataCenter == null || dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
     }
 
     private void Template_SelectedItemChanged()

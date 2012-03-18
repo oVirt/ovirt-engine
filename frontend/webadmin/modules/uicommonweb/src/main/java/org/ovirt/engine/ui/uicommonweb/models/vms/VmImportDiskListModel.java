@@ -108,10 +108,8 @@ public class VmImportDiskListModel extends VmDiskListModel
         {
             setItems(null);
         }
-        // SetDisksVolumeTypeAvailability();
 
-        Guid templateGuid = vm.getvmt_guid();
-        if (!templateGuid.equals(NGuid.Empty)) {
+        if (vm != null && !NGuid.Empty.equals(vm.getvmt_guid())) {
             AsyncDataProvider.GetTemplateDiskList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
@@ -132,7 +130,7 @@ public class VmImportDiskListModel extends VmDiskListModel
 
                             setDiskStorageMap(diskStorageMap);
                         }
-                    }), templateGuid);
+                    }), vm.getvmt_guid());
         }
     }
 

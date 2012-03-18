@@ -2452,10 +2452,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                                 storage_domains storageDomain = Linq.getStorageById(
                                         imageToDestinationDomainMap.get(templateDisk.getId()), activeStorageDomains);
 
-                                templateDisk.setvolume_type((VolumeType) disk.getVolumeType().getSelectedItem());
-                                templateDisk.setvolume_format(DataProvider.GetDiskVolumeFormat(
-                                        (VolumeType) disk.getVolumeType().getSelectedItem(),
-                                        storageDomain.getstorage_type()));
+                                if (disk != null) {
+                                    templateDisk.setvolume_type((VolumeType) disk.getVolumeType().getSelectedItem());
+                                    templateDisk.setvolume_format(DataProvider.GetDiskVolumeFormat(
+                                            (VolumeType) disk.getVolumeType().getSelectedItem(),
+                                            storageDomain.getstorage_type()));
+                                }
                             }
 
                             HashMap<String, DiskImageBase> dict = new HashMap<String, DiskImageBase>();

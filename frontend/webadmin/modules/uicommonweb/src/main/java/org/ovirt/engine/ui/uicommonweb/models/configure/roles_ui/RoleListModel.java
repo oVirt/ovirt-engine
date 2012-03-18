@@ -470,7 +470,6 @@ public class RoleListModel extends ListWithDetailsModel
 
     public void OnReset()
     {
-        roles role = (roles) getSelectedItem();
         RoleModel model = (RoleModel) getWindow();
 
         java.util.ArrayList<ActionGroup> attachedActions =

@@ -144,7 +144,7 @@ public class AsyncIterator<T> {
         }
 
         public void setValue(Object value) {
-            value = value;
+            this.value = value;
         }
 
 
@@ -155,4 +155,3 @@ public class AsyncIterator<T> {
         }
     }
 }
-

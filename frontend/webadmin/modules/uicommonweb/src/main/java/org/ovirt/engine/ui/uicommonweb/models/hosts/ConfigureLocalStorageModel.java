@@ -1,5 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -29,12 +35,6 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class ConfigureLocalStorageModel extends Model {
@@ -364,10 +364,10 @@ public class ConfigureLocalStorageModel extends Model {
             names = new ArrayList<String>();
             if (clusters == null) {
                 clusters = context.clusterList;
-            }
-
-            for (VDSGroup cluster : clusters) {
-                names.add(cluster.getname());
+            } else {
+                for (VDSGroup cluster : clusters) {
+                    names.add(cluster.getname());
+                }
             }
             getCluster().getName().setEntity(AvailableName(names));
         }

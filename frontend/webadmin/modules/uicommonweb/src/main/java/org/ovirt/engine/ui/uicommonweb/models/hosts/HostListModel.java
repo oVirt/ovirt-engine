@@ -1,16 +1,44 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.action.AddVdsActionParameters;
+import org.ovirt.engine.core.common.action.ApproveVdsParameters;
+import org.ovirt.engine.core.common.action.AttachVdsToTagParameters;
+import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
+import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
+import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
+import org.ovirt.engine.core.common.action.MaintananceNumberOfVdssParameters;
+import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.RoleType;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.NotifyCollectionChangedEventArgs;
+import org.ovirt.engine.core.compat.ObservableCollection;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -19,13 +47,23 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.*;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
-import org.ovirt.engine.ui.uicompat.*;
-
-import java.util.ArrayList;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendQueryAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendQueryAsyncCallback;
+import org.ovirt.engine.ui.uicompat.ReversibleFlow;
 
 @SuppressWarnings("unused")
 public class HostListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
@@ -1012,12 +1050,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         if (dataCenters != null)
         {
             model.getDataCenter().setItems(dataCenters);
-        }
-        model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters,
-                new Linq.DataCenterPredicate(vds.getstorage_pool_id())));
-        if (model.getDataCenter().getSelectedItem() == null)
-        {
-            Linq.FirstOrDefault(dataCenters);
+            model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters,
+                    new Linq.DataCenterPredicate(vds.getstorage_pool_id())));
+            if (model.getDataCenter().getSelectedItem() == null) {
+                model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
+            }
         }
 
         java.util.ArrayList<VDSGroup> clusters;
@@ -1035,7 +1072,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 new Linq.ClusterPredicate(vds.getvds_group_id())));
         if (model.getCluster().getSelectedItem() == null)
         {
-            Linq.FirstOrDefault(clusters);
+            model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
         }
 
         if (vds.getstatus() != VDSStatus.Maintenance && vds.getstatus() != VDSStatus.PendingApproval)
