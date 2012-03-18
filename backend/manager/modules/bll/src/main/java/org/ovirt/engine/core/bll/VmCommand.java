@@ -181,7 +181,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return UpdateVmInSpm(storagePoolId, vmsList, Guid.Empty);
     }
 
-    public static boolean UpdateVmInSpm(Guid storagePoolId, List<VM> vmsList, Guid storageDomainId) {
+    public static boolean UpdateVmInSpm(Guid storagePoolId,
+            List<VM> vmsList,
+            Guid storageDomainId) {
         java.util.HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary =
                 new java.util.HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>(
                         vmsList.size());

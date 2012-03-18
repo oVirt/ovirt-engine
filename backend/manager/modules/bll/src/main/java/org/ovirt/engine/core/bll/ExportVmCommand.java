@@ -19,6 +19,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -417,8 +419,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     protected boolean UpdateVmImSpm() {
         return VmCommand.UpdateVmInSpm(getVm().getstorage_pool_id(),
-                Arrays.asList(getVm()), getParameters()
-                        .getStorageDomainId());
+                Arrays.asList(getVm()),
+                getParameters().getStorageDomainId());
     }
 
     @Override
@@ -434,10 +436,14 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             if (getParameters().getCopyCollapse()) {
                 vm.setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
                 vm.setvmt_name(null);
+                Snapshot activeSnapshot = DbFacade.getInstance().getSnapshotDao().get(
+                        DbFacade.getInstance().getSnapshotDao().getId(vm.getId(), SnapshotType.ACTIVE));
+                vm.setSnapshots(Arrays.asList(activeSnapshot));
                 UpdateCopyVmInSpm(getVm().getstorage_pool_id(),
                         Arrays.asList(vm), getParameters()
                                 .getStorageDomainId());
             } else {
+                vm.setSnapshots(DbFacade.getInstance().getSnapshotDao().getAllWithConfiguration(getVm().getId()));
                 UpdateVmImSpm();
             }
         }

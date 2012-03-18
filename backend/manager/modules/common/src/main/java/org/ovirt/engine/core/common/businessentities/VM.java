@@ -28,6 +28,8 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     private VmDynamic mVmDynamic;
     private VmStatistics mVmStatistics;
 
+    private List<Snapshot> snapshots = new ArrayList<Snapshot>();
+
     public String getUserDefinedProperties() {
         return mVmStatic.getUserDefinedProperties();
     }
@@ -1651,4 +1653,11 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatic.setUnmanagedDeviceList(list);
     }
 
+    public List<Snapshot> getSnapshots() {
+        return snapshots;
+    }
+
+    public void setSnapshots(List<Snapshot> snapshots) {
+        this.snapshots = snapshots;
+    }
 }

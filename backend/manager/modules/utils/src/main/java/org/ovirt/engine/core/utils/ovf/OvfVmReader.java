@@ -2,12 +2,18 @@ package org.ovirt.engine.core.utils.ovf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
@@ -225,6 +231,8 @@ public class OvfVmReader extends OvfReader {
             }
             else if (StringHelper.EqOp(value, "ovf:VirtualHardwareSection_Type")) {
                 ReadHardwareSection(section);
+            } else if (StringUtils.equals(value, "ovf:SnapshotsSection_Type")) {
+                readSnapshotsSection(section);
             }
         }
 
@@ -346,5 +354,37 @@ public class OvfVmReader extends OvfReader {
             return node.InnerText;
         }
         return null;
+    }
+
+    private void readSnapshotsSection(XmlNode section) {
+        XmlNodeList list = section.SelectNodes("Snapshot");
+        ArrayList<Snapshot> snapshots = new ArrayList<Snapshot>();
+        _vm.setSnapshots(snapshots);
+
+        for (XmlNode node : list) {
+            XmlNode vmConfiguration = node.SelectSingleNode("VmConfiguration", _xmlNS);
+            Snapshot snapshot = new Snapshot(vmConfiguration != null);
+            snapshot.setId(new Guid(node.Attributes.get("ovf:id").getValue()));
+            snapshot.setVmId(_vm.getId());
+            snapshot.setType(SnapshotType.valueOf(node.SelectSingleNode("Type", _xmlNS).InnerText));
+            snapshot.setStatus(SnapshotStatus.OK);
+            snapshot.setDescription(node.SelectSingleNode("Description", _xmlNS).InnerText);
+
+            RefObject<Date> creationDateRef = new RefObject<Date>(new Date());
+            if (OvfParser.UtcDateStringToLocaDate(node.SelectSingleNode("CreationDate", _xmlNS).InnerText,
+                    creationDateRef)) {
+                snapshot.setCreationDate(creationDateRef.argvalue);
+            }
+
+            snapshot.setVmConfiguration(vmConfiguration == null
+                    ? null : new String(Base64.decodeBase64(vmConfiguration.InnerText)));
+
+            XmlNode appList = node.SelectSingleNode("ApplicationList", _xmlNS);
+            if (appList != null) {
+                snapshot.setAppList(appList.InnerText);
+            }
+
+            snapshots.add(snapshot);
+        }
     }
 }

@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -19,7 +22,7 @@ import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 public class OvfVmWriter extends OvfWriter {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
 
-    public OvfVmWriter(RefObject<XmlDocument> document, VM vm, java.util.ArrayList<DiskImage> images) {
+    public OvfVmWriter(RefObject<XmlDocument> document, VM vm, List<DiskImage> images) {
         super(document, vm.getStaticData(), images);
         _vm = vm;
     }
@@ -336,5 +339,44 @@ public class OvfVmWriter extends OvfWriter {
         writeCd(vmBase);
         // ummanged devices
         writeUnmanagedDevices(vmBase, _writer);
+
+        // End hardware section
+        _writer.WriteEndElement();
+
+        writeSnapshotsSection();
+    }
+
+    /**
+     * Write the snapshots of the VM.<br>
+     * If no snapshots were set to be written, this section will not be written.
+     */
+    private void writeSnapshotsSection() {
+        List<Snapshot> snapshots = _vm.getSnapshots();
+        if (snapshots == null || snapshots.isEmpty()) {
+            return;
+        }
+
+        _writer.WriteStartElement("Section");
+        _writer.WriteAttributeString("xsi", "type", null, "ovf:SnapshotsSection_Type");
+
+        for (Snapshot snapshot : snapshots) {
+            _writer.WriteStartElement("Snapshot");
+            _writer.WriteAttributeString("ovf", "id", null, snapshot.getId().toString());
+            _writer.writeElement("Type", snapshot.getType().name());
+            _writer.writeElement("Description", snapshot.getDescription());
+            _writer.writeElement("CreationDate", OvfParser.LocalDateToUtcDateString(snapshot.getCreationDate()));
+            if (snapshot.getAppList() != null) {
+                _writer.writeElement("ApplicationList", snapshot.getAppList());
+            }
+
+            if (snapshot.getVmConfiguration() != null) {
+                _writer.writeElement("VmConfiguration",
+                        Base64.encodeBase64String(snapshot.getVmConfiguration().getBytes()));
+            }
+
+            _writer.WriteEndElement();
+        }
+
+        _writer.WriteEndElement();
     }
 }

@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.compat.backendcompat;
 
+import java.io.FileOutputStream;
+
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.ovirt.engine.core.compat.Encoding;
-
-import java.io.FileOutputStream;
 
 public class XmlTextWriter {
 
@@ -69,6 +69,24 @@ public class XmlTextWriter {
         } catch (XMLStreamException e) {
             throw new RuntimeException("Failed to write CDATA", e);
         }
+    }
+
+    /**
+     * Write out an entire element in a simple format:
+     *
+     * <pre>
+     * &lt;name>content&lt;/name>
+     * </pre>
+     *
+     * @param name
+     *            The name of the element.
+     * @param content
+     *            The content to write inside the element.
+     */
+    public void writeElement(String name, String content) {
+        WriteStartElement(name);
+        WriteRaw(content);
+        WriteEndElement();
     }
 
     public void close() {

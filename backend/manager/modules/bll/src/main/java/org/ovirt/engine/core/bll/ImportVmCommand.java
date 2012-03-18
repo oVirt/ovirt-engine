@@ -440,6 +440,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             @Override
             public Void runInTransaction() {
                 addVmImagesAndSnapshots();
+                updateSnapshotsFromExport();
                 MoveOrCopyAllImageGroups();
                 VmDeviceUtils.addImportedDevices(getVm().getStaticData(),
                         getVm().getId(),
@@ -567,6 +568,22 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                             "Active VM snapshot",
                             new Date(),
                             null));
+        }
+    }
+
+    /**
+     * Go over the snapshots that were read from the export data. If the snapshot exists (since it was added for the
+     * images), it will be updated. If it doesn't exist, it will be saved.
+     */
+    private void updateSnapshotsFromExport() {
+        if (getVm().getSnapshots() != null) {
+            for (Snapshot snapshot : getVm().getSnapshots()) {
+                if (DbFacade.getInstance().getSnapshotDao().exists(getVm().getId(), snapshot.getId())) {
+                    DbFacade.getInstance().getSnapshotDao().update(snapshot);
+                } else {
+                    DbFacade.getInstance().getSnapshotDao().save(snapshot);
+                }
+            }
         }
     }
 
