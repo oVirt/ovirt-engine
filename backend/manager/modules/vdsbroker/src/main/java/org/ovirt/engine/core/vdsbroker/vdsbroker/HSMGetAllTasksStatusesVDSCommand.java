@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -58,22 +61,26 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
         return task;
     }
 
-    protected java.util.HashMap<Guid, AsyncTaskStatus> ParseTaskStatusList(XmlRpcStruct taskStatusList) {
-        java.util.HashMap<Guid, AsyncTaskStatus> result = new java.util.HashMap<Guid, AsyncTaskStatus>(
+    protected HashMap<Guid, AsyncTaskStatus> ParseTaskStatusList(XmlRpcStruct taskStatusList) {
+        HashMap<Guid, AsyncTaskStatus> result = new HashMap<Guid, AsyncTaskStatus>(
                 taskStatusList.getCount());
-        for (java.util.Map.Entry<String, ?> entry : taskStatusList.getEntries()) {
+        for (Map.Entry<String, ?> entry : taskStatusList.getEntries()) {
             try {
                 Guid taskGuid = new Guid(entry.getKey().toString());
-                java.util.Map xrsTaskStatusAsMAp = (java.util.Map)  entry.getValue();
-                XmlRpcStruct xrsTaskStatus = (xrsTaskStatusAsMAp != null) ? new XmlRpcStruct(xrsTaskStatusAsMAp) : null;
-                TaskStatusForXmlRpc tempVar = new TaskStatusForXmlRpc();
-                tempVar.mCode = Integer.parseInt(xrsTaskStatus.getItem("code").toString());
-                tempVar.mMessage = xrsTaskStatus.getItem("message").toString();
-                tempVar.mTaskResult = xrsTaskStatus.getItem("taskResult").toString();
-                tempVar.mTaskState = xrsTaskStatus.getItem("taskState").toString();
-                TaskStatusForXmlRpc taskStatus = tempVar;
-                AsyncTaskStatus task = ParseTaskStatus(taskStatus);
-                result.put(taskGuid, task);
+                Map<String, Object> xrsTaskStatusAsMAp = (Map<String, Object>) entry.getValue();
+                if (xrsTaskStatusAsMAp == null) {
+                    log.errorFormat("Task ID {0} has no task data", entry.getKey().toString());
+                } else {
+                    XmlRpcStruct xrsTaskStatus = new XmlRpcStruct(xrsTaskStatusAsMAp);
+                    TaskStatusForXmlRpc tempVar = new TaskStatusForXmlRpc();
+                    tempVar.mCode = Integer.parseInt(xrsTaskStatus.getItem("code").toString());
+                    tempVar.mMessage = xrsTaskStatus.getItem("message").toString();
+                    tempVar.mTaskResult = xrsTaskStatus.getItem("taskResult").toString();
+                    tempVar.mTaskState = xrsTaskStatus.getItem("taskState").toString();
+                    TaskStatusForXmlRpc taskStatus = tempVar;
+                    AsyncTaskStatus task = ParseTaskStatus(taskStatus);
+                    result.put(taskGuid, task);
+                }
             } catch (RuntimeException exp) {
                 log.error(
                         String.format(
