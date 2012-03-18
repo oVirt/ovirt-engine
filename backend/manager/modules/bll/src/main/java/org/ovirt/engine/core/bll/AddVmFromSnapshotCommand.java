@@ -140,7 +140,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         // If disk image information was passed from client , use its volume information
         // In case the disk image information was not passed from client, use the volume information of the ancestral
         // image
-        if (diskImagesFromClientMap.containsKey(srcDiskImage.getId())) {
+        if (diskImagesFromClientMap != null && diskImagesFromClientMap.containsKey(srcDiskImage.getId())) {
             DiskImage diskImageFromClient = diskImagesFromClientMap.get(srcDiskImage.getId());
             changeVolumeInfo(clonedDiskImage, diskImageFromClient);
         } else {

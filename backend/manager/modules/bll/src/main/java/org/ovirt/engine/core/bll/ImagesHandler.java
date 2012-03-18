@@ -546,8 +546,7 @@ public final class ImagesHandler {
     public static void removeImage(DiskImage diskImage) {
         DbFacade.getInstance()
                 .getStorageDomainDAO()
-                .removeImageStorageDomainMap(new image_storage_domain_map(diskImage.getId(),
-                        diskImage.getstorage_ids().get(0)));
+                .removeImageStorageDomainMap(diskImage.getId());
         DbFacade.getInstance().getDiskImageDynamicDAO().remove(diskImage.getId());
         DbFacade.getInstance().getDiskImageDAO().remove(diskImage.getId());
     }
