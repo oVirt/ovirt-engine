@@ -868,7 +868,7 @@ public class MinaInstallWrapper implements IVdsInstallWrapper {
                 sb.append(':');
             }
         }
-        log.debug("Converted bytes " + b.toString() + "to hexString " + sb.toString().toLowerCase());
+        log.debug("Converted bytes " + Arrays.toString(b) + "to hexString " + sb.toString().toLowerCase());
         return sb.toString().toLowerCase();
     }
 
