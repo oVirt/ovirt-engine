@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.ReflectionUtils;
 
 public final class CommandsFactory {
     private static final String CLASS_NAME_FORMAT = "%1$s.%2$s%3$s";
@@ -102,8 +102,8 @@ public final class CommandsFactory {
             String className = String.format(CLASS_NAME_FORMAT, commandPackage, name, suffix);
             Class<CommandBase<?>> type = loadClass(className);
             if (type != null) {
-                commandsCache.putIfAbsent(key, type); // update cache
-                return type;
+                Class<CommandBase<?>> cachedType = commandsCache.putIfAbsent(key, type); // update cache
+                return cachedType == null ? type : cachedType;
             }
         }
 
