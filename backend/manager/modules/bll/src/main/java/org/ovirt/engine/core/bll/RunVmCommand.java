@@ -758,7 +758,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         List<DiskImage> result = new ArrayList<DiskImage>();
         for (DiskImage diskImage : diskImages) {
             for (VmDevice diskVmDevice : diskVmDevices) {
-                if (diskImage.getId().equals(diskVmDevice.getDeviceId())) {
+                if (diskImage.getimage_group_id().equals(diskVmDevice.getDeviceId())) {
                     if (diskVmDevice.getIsPlugged()) {
                         result.add(diskImage);
                     }
