@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
@@ -30,12 +31,15 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCommand<T> {
+
+    private static final long serialVersionUID = -3746344133983175272L;
+
     public RemoveBondCommand(T parameters) {
         super(parameters);
     }
 
     private String _network;
-    private java.util.ArrayList<String> _interfaces;
+    private ArrayList<String> _interfaces;
 
     @Override
     protected void executeCommand() {
@@ -49,14 +53,24 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
             }
         }
 
-        NetworkVdsmVDSCommandParameters parameters = new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
-                _network, NetworkUtils.GetVlanId(bond.getName()),
-                NetworkUtils.StripVlan(getParameters().getBondName()), _interfaces.toArray(new String[] {}), null,
-                null, null, false, null, NetworkBootProtocol.None);
-        VDSReturnValue retVal = Backend.getInstance().getResourceManager()
-                .RunVdsCommand(VDSCommandType.RemoveNetwork, parameters);
+        VDSReturnValue retVal = null;
+        if (bond != null) {
+            NetworkVdsmVDSCommandParameters parameters =
+                    new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
+                            _network,
+                            NetworkUtils.GetVlanId(bond.getName()),
+                            NetworkUtils.StripVlan(getParameters().getBondName()),
+                            _interfaces.toArray(new String[] {}),
+                            null,
+                            null,
+                            null,
+                            false,
+                            null,
+                            NetworkBootProtocol.None);
+            retVal = Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.RemoveNetwork, parameters);
+        }
 
-        if (retVal.getSucceeded()) {
+        if (retVal != null && retVal.getSucceeded()) {
             // update vds network data
             retVal = Backend
                     .getInstance()
@@ -76,8 +90,6 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
                 DbFacade.getInstance().getInterfaceDAO().getAllInterfacesForVds(getParameters().getVdsId());
 
         // check that bond exists
-        // Interface bond = null; //LINQ 31899 interfaces.FirstOrDefault(i =>
-        // i.name == BondParameters.BondName);
         final VdsNetworkInterface bond = LinqUtils.firstOrNull(vdsInterfaces, new Predicate<VdsNetworkInterface>() {
             @Override
             public boolean eval(VdsNetworkInterface i) {
@@ -101,8 +113,6 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
             return false;
         }
 
-        // interfaces = null; //LINQ interfaces.Where(i => i.bond_name ==
-        // NetworkUtils.StripVlan(bond.name)).ToList();
         vdsInterfaces = LinqUtils.filter(vdsInterfaces, new Predicate<VdsNetworkInterface>() {
             @Override
             public boolean eval(VdsNetworkInterface i) {
@@ -112,7 +122,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
                 return false;
             }
         });
-        _interfaces = new java.util.ArrayList<String>();
+        _interfaces = new ArrayList<String>();
         for (VdsNetworkInterface iface : vdsInterfaces) {
             _interfaces.add(iface.getName());
         }
@@ -122,8 +132,6 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
         if (vds.getstatus() == VDSStatus.Up || vds.getstatus() == VDSStatus.Installing) {
             List<network> networks = DbFacade.getInstance().getNetworkDAO()
                     .getAllForCluster(vds.getvds_group_id());
-            // if (true) //LINQ 31899 null != networks.FirstOrDefault(n =>
-            // n.name == bond.network_name))
             if (null != LinqUtils.firstOrNull(networks, new Predicate<network>() {
                 @Override
                 public boolean eval(network n) {
@@ -137,22 +145,18 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
 
         // check if network in use by vm
         String query = "Vms: cluster = " + vds.getvds_group_name();
-
         SearchParameters searchParams = new SearchParameters(query, SearchType.VM);
 
         searchParams.setMaxCount(Integer.MAX_VALUE);
         VdcQueryReturnValue tempVar = Backend.getInstance().runInternalQuery(VdcQueryType.Search, searchParams);
         SearchReturnValue ret = (SearchReturnValue) ((tempVar instanceof SearchReturnValue) ? tempVar : null);
-        if (ret.getSucceeded()) {
+        if (ret != null && ret.getSucceeded()) {
             Iterable<IVdcQueryable> vmList = (Iterable<IVdcQueryable>) ret.getReturnValue();
             for (IVdcQueryable vm_helper : vmList) {
                 VM vm = (VM) vm_helper;
                 if (vm.getstatus() != VMStatus.Down) {
                     List<VmNetworkInterface> vmInterfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
                             .getAllForVm(vm.getId());
-                    // Interface iface = null; //LINQ 31899
-                    // interfaces.FirstOrDefault(i => i.network_name ==
-                    // bond.network_name);
                     VmNetworkInterface iface = LinqUtils.firstOrNull(vmInterfaces, new Predicate<VmNetworkInterface>() {
                         @Override
                         public boolean eval(VmNetworkInterface i) {
