@@ -135,20 +135,19 @@ public class SnapshotsManager {
      * @return A String containing the VM configuration.
      */
     protected String generateVmConfiguration(VM vm) {
-        ArrayList<DiskImage> allVmImages = new java.util.ArrayList<DiskImage>();
         if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
             vm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
         }
-        for (DiskImage diskImage : getDiskImageDao().getAllForVm(vm.getId())) {
-            allVmImages.addAll(ImagesHandler.getAllImageSnapshots(diskImage.getId(), diskImage.getit_guid()));
-        }
+
         if (StringHelper.isNullOrEmpty(vm.getvmt_name())) {
             VmTemplate t = getVmTemplateDao().get(vm.getvmt_guid());
             vm.setvmt_name(t.getname());
         }
 
         RefObject<String> tempRefObject = new RefObject<String>("");
-        new OvfManager().ExportVm(tempRefObject, vm, allVmImages);
+        new OvfManager().ExportVm(tempRefObject,
+                vm,
+                new ArrayList<DiskImage>(getDiskImageDao().getAllForVm(vm.getId())));
         return tempRefObject.argvalue;
     }
 
@@ -271,22 +270,16 @@ public class SnapshotsManager {
      *            The VM ID is needed to re-add disks.
      * @param snapshotId
      *            The snapshot ID is used to find only the VM disks at the time.
-     * @param imagesFromSnapshot
-     *            The images that existed in the snapshot.
+     * @param disksFromSnapshot
+     *            The disks that existed in the snapshot.
      */
-    protected void synchronizeDisksFromSnapshot(Guid vmId, Guid snapshotId, List<DiskImage> imagesFromSnapshot) {
-        List<DiskImage> disksFromSnapshot = new ArrayList<DiskImage>();
+    protected void synchronizeDisksFromSnapshot(Guid vmId, Guid snapshotId, List<DiskImage> disksFromSnapshot) {
         List<Guid> diskIdsFromSnapshot = new ArrayList<Guid>();
-        for (DiskImage image : imagesFromSnapshot) {
-            if (snapshotId.equals(image.getvm_snapshot_id())) {
-                diskIdsFromSnapshot.add(image.getimage_group_id());
-                disksFromSnapshot.add(image);
-            }
-        }
 
         // Sync disks that exist or existed in the snapshot.
         Guid activeSnapshotId = null;
         for (DiskImage diskImage : disksFromSnapshot) {
+            diskIdsFromSnapshot.add(diskImage.getimage_group_id());
             Disk disk = diskImage.getDisk();
             if (getDiskDao().exists(disk.getId())) {
                 getDiskDao().update(disk);
@@ -308,9 +301,9 @@ public class SnapshotsManager {
         }
 
         // Remove all disks that didn't exist in the snapshot.
-        for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmId(vmId)) {
-            if (VmDeviceType.DISK.getName().equals(vmDevice.getType())
-                    && !diskIdsFromSnapshot.contains(vmDevice.getDeviceId())) {
+        for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
+                vmId, VmDeviceType.DISK.getName(), VmDeviceType.DISK.getName())) {
+            if (!diskIdsFromSnapshot.contains(vmDevice.getDeviceId())) {
                 getDiskDao().remove(vmDevice.getDeviceId());
                 getVmDeviceDao().remove(vmDevice.getId());
             }
