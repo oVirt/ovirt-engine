@@ -129,8 +129,8 @@ public class QuotaManager {
                 Integer cpuDeltaForCommandVal = quotaDeltaValue.getCpuSizeToBeUsed();
                 Double memDeltaForCommandVal = quotaDeltaValue.getMemSizeToBeUsed();
 
-                if ((cpuDeltaForCommandVal == null) && (memDeltaForCommandVal == null)) {
-                    log.errorFormat("Quota id {0} for vds group id {1} and command id (2) does not have cpu and memory delta parameters.",
+                if (cpuDeltaForCommandVal == null || memDeltaForCommandVal == null) {
+                    log.errorFormat("Quota id {0} for vds group id {1} and command id (2) does not have cpu or memory delta parameters.",
                             quotaId,
                             vdsGroupId,
                             commandId);
