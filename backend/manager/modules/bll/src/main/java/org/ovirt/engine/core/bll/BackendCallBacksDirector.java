@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -15,27 +16,25 @@ import org.ovirt.engine.core.common.interfaces.IBackendCallBackServer;
 import org.ovirt.engine.core.common.queries.AsyncQueryResults;
 import org.ovirt.engine.core.common.queries.RegisterQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 /**
- * Class, responcible to backend callbacks treatment. Contains proxies to
- * frontends, registerd to backend events
+ * Responsible for backend callbacks treatment. Contains proxies to frontends, registered to backend events
  */
 public final class BackendCallBacksDirector {
     private static final BackendCallBacksDirector _instance = new BackendCallBacksDirector();
+    private static Log log = LogFactory.getLog(BackendCallBacksDirector.class);
+    private static final HashMap<String, CallBackData> _callBacks = new HashMap<String, CallBackData>();
 
     public static BackendCallBacksDirector getInstance() {
         return _instance;
     }
-
-    private static final java.util.HashMap<String, CallBackData> _callBacks =
-            new java.util.HashMap<String, CallBackData>();
 
     private BackendCallBacksDirector() {
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this, "QueriesRefreshTimer_Elapsed", new Class[0],
@@ -162,13 +161,16 @@ public final class BackendCallBacksDirector {
             }
         }
 
-        synchronized (callBack) {
-            final QueryData queryData = QueryData.CreateQueryData(parameters.getQueryID(), parameters.getQueryType(),
-                    parameters.getQueryParams());
-            callBack.RegisterQuery(queryData.getQueryId(), queryData);
-            if (Config.<Boolean> GetValue(ConfigValues.DebugSearchLogging)) {
-                log.infoFormat("Frontend {0} has registered to query. Query Id: {1}, Query type: {2}.",
-                                callBack.getSessionId(), queryData.getQueryId(), queryData.getQueryType());
+        if (callBack != null) {
+            synchronized (callBack) {
+                final QueryData queryData =
+                        QueryData.CreateQueryData(parameters.getQueryID(), parameters.getQueryType(),
+                                parameters.getQueryParams());
+                callBack.RegisterQuery(queryData.getQueryId(), queryData);
+                if (Config.<Boolean> GetValue(ConfigValues.DebugSearchLogging)) {
+                    log.infoFormat("Frontend {0} has registered to query. Query Id: {1}, Query type: {2}.",
+                            callBack.getSessionId(), queryData.getQueryId(), queryData.getQueryType());
+                }
             }
         }
     }
@@ -275,5 +277,4 @@ public final class BackendCallBacksDirector {
         }
     }
 
-    private static Log log = LogFactory.getLog(BackendCallBacksDirector.class);
 }
