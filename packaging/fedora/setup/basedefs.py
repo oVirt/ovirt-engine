@@ -13,17 +13,18 @@ DB_PASS_FILE="/root/.pgpass"
 PGPASS_FILE_TEMPLATE="hostname:port:database:username:password"
 JBOSS_SECURITY_DOMAIN="EncryptDBPassword"
 JBOSS_KERB_AUTH="EngineKerberosAuth"
+JBOSS_SERVICE_NAME="jboss-as"
+NFS_SERVICE_NAME="nfs-server"
 
 JBOSS_PROFILE_NAME="default"
 VDC_OPTION_CVER="general"
 ENGINE_RPM_NAME="ovirt-engine"
 
-JBOSS_SHARE_FOLDER="/usr/share/jboss-as"
-
 INTERNAL_ADMIN="admin"
 INTERNAL_DOMAIN="internal"
 
 DIR_ETC_SYSCONFIG="/etc/sysconfig"
+DIR_ETC_INITD="/etc/init.d"
 DIR_USR_SHARE="/usr/share"
 DIR_VAR_LOG="/var/log"
 DIR_VAR_LIB="/var/lib"
@@ -31,7 +32,7 @@ DIR_LOG="%s/ovirt-engine/" % DIR_VAR_LOG
 DIR_CONFIG="%s/ovirt-engine/conf" % DIR_USR_SHARE
 DIR_JBOSS_RESOURCES="%s/ovirt-engine/resources/jboss" % DIR_USR_SHARE
 DIR_KERBEROS="%s/ovirt-engine/kerberos" % DIR_USR_SHARE
-DIR_JBOSS="/usr/share/jboss-as"
+DIR_JBOSS="/usr/share/%s" % (JBOSS_SERVICE_NAME)
 DIR_PLUGINS="%s/ovirt-engine/scripts/plugins" % DIR_USR_SHARE
 
 DIR_JBOSS_ROOT_WAR_IMAGES_SRC="%s/%s" % (DIR_JBOSS_RESOURCES, "images/")
@@ -59,7 +60,7 @@ FILE_KRB_CONF="%s/deployments/configuration/krb5.conf" % DIR_JBOSS
 FILE_CA_CRT_SRC="/etc/pki/ovirt-engine/ca.pem"
 FILE_CA_CRT_TEMPLATE="/etc/pki/ovirt-engine/cacert.template"
 FILE_CERT_TEMPLATE="/etc/pki/ovirt-engine/cert.template"
-FILE_JBOSSAS_CONF="/etc/jboss-as/jboss-as.conf"
+FILE_JBOSSAS_CONF="/etc/%s/%s.conf" % (JBOSS_SERVICE_NAME, JBOSS_SERVICE_NAME)
 FILE_JBOSS_STANDALONE="%s/standalone/configuration/standalone.xml" % DIR_JBOSS
 FILE_JBOSS_ROOT_WAR_HTML="engine_index.html"
 FILE_JBOSS_ROOT_WAR_HTML_DEST="%s/%s" % (DIR_JBOSS_ROOT_WAR, FILE_JBOSS_ROOT_WAR_HTML)
@@ -105,6 +106,7 @@ EXEC_EXPORTFS="/usr/sbin/exportfs"
 EXEC_SEMANAGE="/usr/sbin/semanage"
 EXEC_RESTORECON="/sbin/restorecon"
 EXEC_SERVICE="/sbin/service"
+EXEC_CHKCONFIG="/sbin/chkconfig"
 EXEC_LSOF="/usr/sbin/lsof"
 EXEC_ENCRYPT_PASS="/etc/pki/ovirt-engine/encryptpasswd.sh"
 EXEC_RPM="/bin/rpm"

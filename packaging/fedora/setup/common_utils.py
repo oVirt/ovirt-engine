@@ -712,13 +712,13 @@ def clearDbConnections(dbName):
     logging.info("Closing DB '%s' for new connections" % dbName)
     query = "update pg_database set datallowconn = 'false' where datname = '%s';" % dbName
     cmd = [basedefs.EXEC_PSQL, "-U", getDbAdminUser(), "-c", query]
-    execCmd(cmd, None, True, output_messages.ERROR_BLOCK_DB_CONNECTIONS)
+    execCmd(cmd, None, True, output_messages.ERR_DB_CONNECTIONS_BLOCK)
 
     # Disconnect active connections
     logging.info("Disconnect active connections from DB '%s'" % dbName)
     query = "SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname = '%s'" % dbName
     cmd = [basedefs.EXEC_PSQL, "-U", getDbAdminUser(), "-c", query]
-    execCmd(cmd, None, True, output_messages.ERROR_CLEAR_DB_CONNECTIONS)
+    execCmd(cmd, None, True, output_messages.ERR_DB_CONNECTIONS_CLEAR)
 
 def listTempDbs():
     """ Create a list of temp DB's on the server with regex 'engine_*' """
@@ -739,57 +739,62 @@ def listTempDbs():
 
 # TODO: Support SystemD services
 class Service():
-    def __init__(self, serviceName):
+    def __init__(self, name):
         self.wasStopped = False
         self.wasStarted = False
-        self.serviceName = serviceName
+        self.name = name
 
     def isServiceAvailable(self):
-        if os.path.exists("/etc/init.d/%s" % self.serviceName):
+        if os.path.exists("/etc/init.d/%s" % self.name):
             return True
         return False
 
     def start(self, raiseFailure = False):
-        logging.debug("starting %s", self.serviceName)
-        (output, rc) = self._serviceFacility(self.serviceName, "start")
+        logging.debug("starting %s", self.name)
+        (output, rc) = self._serviceFacility("start")
         if rc == 0:
             self.wasStarted = True
         elif raiseFailure:
-            raise Exception(output_messages.ERR_FAILED_START_SERVICE % self.serviceName)
+            raise Exception(output_messages.ERR_FAILED_START_SERVICE % self.name)
 
         return (output, rc)
 
     def stop(self, raiseFailure = False):
-        logging.debug("stopping %s", self.serviceName)
-        (output, rc) = self._serviceFacility(self.serviceName, "stop")
+        logging.debug("stopping %s", self.name)
+        (output, rc) = self._serviceFacility("stop")
         if rc == 0:
             self.wasStopped = True
         elif raiseFailure:
-                raise Exception(output_messages.ERR_FAILED_STOP_SERVICE % self.serviceName)
+                raise Exception(output_messages.ERR_FAILED_STOP_SERVICE % self.name)
 
         return (output, rc)
+
+    def autoStart(self, start=True):
+        mode = "on" if start else "off"
+        cmd = [basedefs.EXEC_CHKCONFIG, self.name, mode]
+        execCmd(cmd, None, True)
 
     def conditionalStart(self, raiseFailure = False):
         """
         Will only start if wasStopped is set to True
         """
         if self.wasStopped:
-            logging.debug("Service %s was stopped. starting it again"%self.serviceName)
+            logging.debug("Service %s was stopped. starting it again"%self.name)
             return self.start(raiseFailure)
         else:
             logging.debug("Service was not stopped. there for we're not starting it")
             return (False, False)
 
     def status(self):
-        logging.debug("getting status for %s", self.serviceName)
-        (output, rc) = self._serviceFacility(self.serviceName, "status")
+        logging.debug("getting status for %s", self.name)
+        (output, rc) = self._serviceFacility("status")
         return (output, rc)
 
-    def _serviceFacility(self, serviceName, action):
+    def _serviceFacility(self, action):
         """
-        Execute the command "service serviceName action"
+        Execute the command "service NAME action"
         returns: output, rc
         """
-        logging.debug("executing action %s on service %s", serviceName, action)
-        cmd = [basedefs.EXEC_SERVICE, serviceName, action]
+        logging.debug("executing action %s on service %s", self.name, action)
+        cmd = [basedefs.EXEC_SERVICE, self.name, action]
         return execCmd(cmdList=cmd, usePipeFiles=True)

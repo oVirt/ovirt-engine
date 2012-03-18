@@ -1254,7 +1254,7 @@ def _encryptDBPass():
 
         # The encrypt tool needs the jboss home env set
         # Since we cant use the bash way, we need to set it as environ
-        os.environ["JBOSS_HOME"] = basedefs.JBOSS_SHARE_FOLDER
+        os.environ["JBOSS_HOME"] = basedefs.DIR_JBOSS
         output, rc = utils.execCmd(cmd, None, True, output_messages.ERR_EXP_ENCRYPT_PASS, masked_value_set)
 
         #parse the encrypted password from the tool
@@ -1565,9 +1565,10 @@ def _displaySummary():
 
 def _startJboss():
     logging.debug("using chkconfig to enable jboss to load on system startup.")
-    output, rc = utils.execExternalCmd("/sbin/chkconfig jboss-as on", True, output_messages.ERR_FAILED_CHKCFG_JBOSS)
-    _handleJbossService('stop', output_messages.INFO_STOP_JBOSS, output_messages.ERR_FAILED_STP_JBOSS_SERVICE, False)
-    _handleJbossService('start', output_messages.INFO_START_JBOSS, output_messages.ERR_FAILED_START_JBOSS_SERVICE, False)
+    srv = utils.Service(basedefs.JBOSS_SERVICE_NAME)
+    srv.autoStart(True)
+    srv.stop(True)
+    srv.start(True)
 
 def _configNfsShare():
     #ISO_DOMAIN_NAME, NFS_MP
@@ -1641,13 +1642,11 @@ def _addIsoDomaintoDB(uuid, description):
 def _startNfsServices():
     logging.debug("Enabling the rpcbind & nfs services")
     try:
-        for service in ["rpcbind", "nfs-server"]:
-            cmd = "/sbin/chkconfig %s on"%(service)
-            utils.execExternalCmd(cmd, True, output_messages.ERR_FAILED_CHKCFG_NFS%(service))
-            cmd = "/sbin/service %s stop"%(service)
-            utils.execExternalCmd(cmd, False)
-            cmd = "/sbin/service %s start"%(service)
-            utils.execExternalCmd(cmd, True, output_messages.ERR_RESTARTING_NFS_SERVICE%(service))
+        for service in ["rpcbind", basedefs.NFS_SERVICE_NAME]:
+            srv = utils.Service(service)
+            srv.autoStart(True)
+            srv.stop(False)
+            srv.start(True)
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_FAILED_TO_START_NFS_SERVICE)
@@ -1690,35 +1689,26 @@ def _addFinalInfoMsg():
 
 def _checkJbossService(configFile):
     logging.debug("checking the status of jboss")
-    cmd = "%s jboss-as status" % (basedefs.EXEC_SERVICE)
-    output, rc = utils.execExternalCmd(cmd)
+    jservice = utils.Service(basedefs.JBOSS_SERVICE_NAME)
+    output, rc = jservice.status()
     if 0 == rc:
-        logging.debug("jboss-as is up and running")
+        logging.debug("jboss is up and running")
 
         #if we don't use an answer file, we need to ask the user if to stop jboss
         if not configFile:
             print output_messages.INFO_NEED_STOP_JBOSS
             answer = _askYesNo(output_messages.INFO_Q_STOP_JBOSS)
             if answer:
-                _handleJbossService('stop', output_messages.INFO_STOP_JBOSS, output_messages.ERR_FAILED_STP_JBOSS_SERVICE, True)
+                print output_messages.INFO_STOP_JBOSS,
+                jservice.stop(True)
             else:
                 logging.debug("User chose not to stop jboss")
                 return False
         else:
             #we stop the jboss service on a silent install
-            _handleJbossService('stop', output_messages.INFO_STOP_JBOSS, output_messages.ERR_FAILED_STP_JBOSS_SERVICE, True)
+            print output_messages.INFO_STOP_JBOSS,
+            jservice.stop(True)
     return True
-
-def _handleJbossService(action, infoMsg, errMsg, printToStdout=False):
-    ''' stop or start the jbossas service
-        according to action param
-    '''
-#    cmd = "%s jboss %s"  % (basedefs.EXEC_SERVICE, action)
-    cmd = ["%s" % basedefs.EXEC_SERVICE, "jboss-as", "%s" % action]
-    logging.debug(infoMsg)
-    if printToStdout:
-        print infoMsg
-    utils.execCmd(cmdList=cmd,failOnError=True, msg=errMsg, usePipeFiles=True)
 
 def _lockRpmVersion():
     """

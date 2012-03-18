@@ -39,7 +39,6 @@ LOG_FILE = "ovirt-engine-upgrade.log"
 
 YUM_EXEC = "/usr/bin/yum"
 ETL_SERVICE="/etc/init.d/ovirt-engine-etl"
-JBOSS_SERVICE_NAME="jboss-as"
 
 #MSGS
 MSG_ERROR_USER_NOT_ROOT = "Error: insufficient permissions for user %s, you must run with user root."
@@ -161,7 +160,7 @@ def checkJbossService():
     false otherwise
     """
     logging.debug("checking the status of jbossas service")
-    cmd = [basedefs.EXEC_SERVICE, JBOSS_SERVICE_NAME, "status"]
+    cmd = [basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "status"]
     output, rc = utils.execCmd(cmd, None, False)
 
     if rc == 0:
@@ -476,7 +475,7 @@ class DB():
 
 def stopJboss():
     logging.debug("stopping jboss service.")
-    cmd = [basedefs.EXEC_SERVICE, JBOSS_SERVICE_NAME, "stop"]
+    cmd = [basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "stop"]
     output, rc = utils. execCmd(cmd, None, True, MSG_ERR_FAILED_STP_JBOSS_SERVICE)
 
     # JBoss service sometimes return zero rc even if service is still up
@@ -485,7 +484,7 @@ def stopJboss():
 
 def startJboss():
     logging.debug("starting jboss service.")
-    cmd = [basedefs.EXEC_SERVICE, JBOSS_SERVICE_NAME, "start"]
+    cmd = [basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "start"]
     output, rc = utils.execCmd(cmd, None, True, MSG_ERR_FAILED_START_JBOSS_SERVICE)
 
 def runPost():

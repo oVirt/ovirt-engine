@@ -3,7 +3,6 @@
 # Imports
 import sys
 import os
-import re
 import logging
 import traceback
 import tempfile
@@ -290,7 +289,7 @@ class DB():
 def stopJboss():
     logging.debug("stoping jboss service.")
 
-    cmd = [basedefs.EXEC_SERVICE, "jboss-as", "stop"]
+    cmd = [basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "stop"]
     output, rc = utils.execCmd(cmd, None, True, MSG_ERR_FAILED_STP_JBOSS_SERVICE, [])
 
     # JBoss service sometimes return zero rc even if service is still up
