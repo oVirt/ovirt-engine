@@ -21,10 +21,12 @@ import com.google.gwt.user.client.ui.PopupPanel;
 public class MenuBar extends com.google.gwt.user.client.ui.MenuBar {
     public MenuBar() {
         super();
+        setAutoOpen(true);
     }
 
     public MenuBar(boolean vertical) {
         super(vertical);
+        setAutoOpen(true);
     }
 
     private native PopupPanel getSubMenuPopup() /*-{
