@@ -258,6 +258,7 @@ actions:
           disk.bootable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.storage_domains--COLLECTION: {storage_domain.id|name: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/vms/{vm:id}/nics|rel=get
