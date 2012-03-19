@@ -134,9 +134,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 .getAllSnapshotsForStorageDomain(getStorageDomain().getId())
                 .size() != 0
                 || DbFacade.getInstance()
-                        .getStorageDomainDAO()
-                        .getAllImageStorageDomainMapsForStorageDomain(getStorageDomain().getId())
-                        .size() != 0;
+                        .getImageStorageDomainMapDao().getAllByStorageDomainId(getStorageDomain().getId()).size() != 0;
     }
 
     private storage_pool_iso_map getStoragePoolIsoMap() {

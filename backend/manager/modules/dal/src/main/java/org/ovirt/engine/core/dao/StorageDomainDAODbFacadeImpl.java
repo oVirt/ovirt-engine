@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -115,59 +114,6 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     public void remove(Guid id) {
         getCallsHandler().executeModification("Force_Delete_storage_domain", getCustomMapSqlParameterSource()
                 .addValue("storage_domain_id", id));
-    }
-
-    @Override
-    public void addImageStorageDomainMap(image_storage_domain_map image_group_storage_domain_map) {
-        getCallsHandler().executeModification("Insertimage_storage_domain_map",
-                getCustomMapSqlParameterSource().addValue("image_id",
-                        image_group_storage_domain_map.getimage_id()).addValue("storage_domain_id",
-                        image_group_storage_domain_map.getstorage_domain_id()));
-    }
-
-    @Override
-    public void removeImageStorageDomainMap(image_storage_domain_map image_group_storage_domain_map) {
-        getCallsHandler().executeModification("Deleteimage_storage_domain_map",
-                getCustomMapSqlParameterSource().addValue("image_id",
-                        image_group_storage_domain_map.getimage_id()).addValue("storage_domain_id",
-                        image_group_storage_domain_map.getstorage_domain_id()));
-    }
-
-    @Override
-    public List<image_storage_domain_map> getAllImageStorageDomainMapsForStorageDomain(Guid storage_domain_id) {
-        return getCallsHandler().executeReadList("Getimage_storage_domain_mapBystorage_domain_id",
-                new ImageStorageDomainRowMapper(),
-                getCustomMapSqlParameterSource().addValue("storage_domain_id",
-                        storage_domain_id));
-    }
-
-    @Override
-    public void removeImageStorageDomainMap(Guid image_id) {
-        getCallsHandler().executeModification("Deleteimage_storage_domain_map_by_image_id",
-                getCustomMapSqlParameterSource().addValue("image_id",
-                        image_id));
-    }
-
-    @Override
-    public List<image_storage_domain_map> getAllImageStorageDomainMapsForImage(Guid image_id) {
-        return getCallsHandler().executeReadList("Getimage_storage_domain_mapByimage_id",
-                new ImageStorageDomainRowMapper(),
-                getCustomMapSqlParameterSource().addValue("image_id",
-                        image_id));
-    }
-
-    /**
-     * Row mapper to map a returned row to a {@link image_storage_domain_map} object.
-     */
-    private final class ImageStorageDomainRowMapper implements ParameterizedRowMapper<image_storage_domain_map> {
-        @Override
-        public image_storage_domain_map mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            image_storage_domain_map entity = new image_storage_domain_map();
-            entity.setimage_id(Guid.createGuidFromString(rs.getString("image_id")));
-            entity.setstorage_domain_id(Guid.createGuidFromString(rs.getString("storage_domain_id")));
-            return entity;
-        }
     }
 
     /**

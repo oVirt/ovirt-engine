@@ -219,9 +219,7 @@ public final class ImagesHandler {
         diskDynamic.setactual_size(image.getactual_size());
         DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
         if (imageStorageDomainMap != null) {
-            DbFacade.getInstance()
-                    .getStorageDomainDAO()
-                    .addImageStorageDomainMap(imageStorageDomainMap);
+            DbFacade.getInstance().getImageStorageDomainMapDao().save(imageStorageDomainMap);
         }
     }
 
@@ -545,8 +543,8 @@ public final class ImagesHandler {
 
     public static void removeImage(DiskImage diskImage) {
         DbFacade.getInstance()
-                .getStorageDomainDAO()
-                .removeImageStorageDomainMap(diskImage.getId());
+                .getImageStorageDomainMapDao()
+                .remove(diskImage.getId());
         DbFacade.getInstance().getDiskImageDynamicDAO().remove(diskImage.getId());
         DbFacade.getInstance().getDiskImageDAO().remove(diskImage.getId());
     }

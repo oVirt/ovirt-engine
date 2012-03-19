@@ -392,8 +392,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             diskDynamic.setactual_size(image.getactual_size());
             DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
             DbFacade.getInstance()
-                    .getStorageDomainDAO()
-                    .addImageStorageDomainMap(new image_storage_domain_map(image.getId(),
+                    .getImageStorageDomainMapDao()
+                    .save(new image_storage_domain_map(image.getId(),
                             image.getstorage_ids().get(0)));
             saveDiskIfNotExists(image);
         } catch (RuntimeException ex) {
@@ -505,7 +505,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected void RemoveSnapshotFromDB(DiskImage snapshot) {
-        DbFacade.getInstance().getStorageDomainDAO().removeImageStorageDomainMap(snapshot.getId());
+        DbFacade.getInstance().getImageStorageDomainMapDao().remove(snapshot.getId());
         getDiskImageDao().remove(snapshot.getId());
         List<DiskImage> imagesForDisk =
                 getDiskImageDao().getAllSnapshotsForImageGroup(snapshot.getimage_group_id());
@@ -545,8 +545,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     static public void saveDiskImage(DiskImage diskImage) {
         DbFacade.getInstance().getDiskImageDAO().save(diskImage);
         DbFacade.getInstance()
-                .getStorageDomainDAO()
-                .addImageStorageDomainMap(new image_storage_domain_map(diskImage.getId(),
+                .getImageStorageDomainMapDao()
+                .save(new image_storage_domain_map(diskImage.getId(),
                         diskImage.getstorage_ids()
                                 .get(0)));
     }

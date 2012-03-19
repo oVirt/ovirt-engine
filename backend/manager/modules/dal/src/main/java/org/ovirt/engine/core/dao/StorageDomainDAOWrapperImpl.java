@@ -6,7 +6,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -158,33 +157,8 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
     }
 
     @Override
-    public void addImageStorageDomainMap(image_storage_domain_map map) {
-
-    }
-
-    @Override
-    public void removeImageStorageDomainMap(image_storage_domain_map map) {
-    }
-
-    @Override
-    public List<image_storage_domain_map> getAllImageStorageDomainMapsForStorageDomain(Guid storage_domain_id) {
-        return null;
-    }
-
-    @Override
-    public List<image_storage_domain_map> getAllImageStorageDomainMapsForImage(Guid image_group_id) {
-        return null;
-    }
-
-    @Override
     public List<storage_domains> getAllByStoragePoolAndConnection(Guid storagePoolId, String connection) {
         return null;
-    }
-
-    @Override
-    public void removeImageStorageDomainMap(Guid imageId) {
-        // TODO Auto-generated method stub
-
     }
 
     public Guid getStorageDomainIdForPoolByType(Guid pool, StorageDomainType type) {

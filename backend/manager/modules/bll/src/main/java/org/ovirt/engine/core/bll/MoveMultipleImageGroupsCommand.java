@@ -76,10 +76,10 @@ public class MoveMultipleImageGroupsCommand<T extends MoveMultipleImageGroupsPar
 
             // unlock and change to new domain
             for (DiskImage snapshot : snapshots) {
-                DbFacade.getInstance().getStorageDomainDAO().removeImageStorageDomainMap(snapshot.getId());
+                DbFacade.getInstance().getImageStorageDomainMapDao().remove(snapshot.getId());
                 DbFacade.getInstance()
-                        .getStorageDomainDAO()
-                        .addImageStorageDomainMap(new image_storage_domain_map(snapshot.getId(),
+                        .getImageStorageDomainMapDao()
+                        .save(new image_storage_domain_map(snapshot.getId(),
                                 getParameters().getStorageDomainId()));
                 SetImageStatus(snapshot, ImageStatus.OK);
             }

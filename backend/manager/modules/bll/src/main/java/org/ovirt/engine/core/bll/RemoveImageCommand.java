@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map_id;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -140,8 +140,11 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         if (getParameters().getRemoveFromDB()) {
             removeImageFromDB();
         } else {
-            DbFacade.getInstance().getStorageDomainDAO().removeImageStorageDomainMap(
-                    new image_storage_domain_map(getParameters().getImageId(), getParameters().getStorageDomainId()));
+            DbFacade.getInstance()
+                    .getImageStorageDomainMapDao()
+                    .remove(
+                            new image_storage_domain_map_id(getParameters().getImageId(),
+                                    getParameters().getStorageDomainId()));
         }
         setSucceeded(true);
     }

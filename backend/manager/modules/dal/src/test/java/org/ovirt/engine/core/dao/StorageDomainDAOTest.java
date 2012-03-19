@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
@@ -18,7 +17,6 @@ import org.ovirt.engine.core.utils.RandomUtils;
 
 public class StorageDomainDAOTest extends BaseDAOTestCase {
     private static final String EXISTING_DOMAIN_ID = "72e3a666-89e1-4005-a7ca-f7548004a9ab";
-    private static final Guid EXISTING_IMAGE_GROUP_ID = new Guid("c9a559d9-8666-40d1-9967-759502b19f0b");
     private static final Guid EXISTING_STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
     private static final String EXISTING_CONNECTION = "10.35.64.25";
 
@@ -317,27 +315,4 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         assertEquals(result.get(0), existingDomain.getId());
     }
 
-    @Test
-    public void testGetAllImageGroupStorageDomainMapsForStorageDomain() {
-        List<image_storage_domain_map> result =
-                dao.getAllImageStorageDomainMapsForStorageDomain(existingDomain.getId());
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (image_storage_domain_map mapping : result) {
-            assertEquals(existingDomain.getId(), mapping.getstorage_domain_id());
-        }
-    }
-
-    @Test
-    public void testGetAllImageGroupStorageDomainMapsForImageGroup() {
-        List<image_storage_domain_map> result =
-                dao.getAllImageStorageDomainMapsForImage(EXISTING_IMAGE_GROUP_ID);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (image_storage_domain_map mapping : result) {
-            assertEquals(EXISTING_IMAGE_GROUP_ID, mapping.getimage_id());
-        }
-    }
 }

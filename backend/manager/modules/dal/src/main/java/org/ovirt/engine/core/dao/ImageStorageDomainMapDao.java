@@ -1,0 +1,40 @@
+package org.ovirt.engine.core.dao;
+
+import java.util.List;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map_id;
+import org.ovirt.engine.core.compat.Guid;
+
+/**
+ * Interface for having DB related operations on {@link image_storage_domain_map} entities
+ *
+ */
+public interface ImageStorageDomainMapDao extends ModificationDao<image_storage_domain_map, image_storage_domain_map_id> {
+
+    /**
+     * Removes the {@link image_storage_domain_map} entries that have the given image Id
+     *
+     * @param imageId
+     *            Id of {@link DiskImage} that the removed entries were created for
+     */
+    void remove(Guid imageId);
+
+    /**
+     * Gets a list of {@link image_storage_domain_map} entries that have the given id of {@link storage_domains}
+     *
+     * @param storageDomainId
+     *            ID of {@link storage_domains} entity that the returned entities are associated with
+     * @return list of entities
+     */
+    List<image_storage_domain_map> getAllByStorageDomainId(Guid storageDomainId);
+
+    /**
+     * Gets a list of {@link image_storage_domain_map} entries that have the given id of {@link DiskImage} entity
+     *
+     * @param imageId
+     *            ID of {@link DiskImage} entity that the returned entities are associated with
+     * @return list of entities
+     */
+    List<image_storage_domain_map> getAllByImageId(Guid imageId);
+
+}

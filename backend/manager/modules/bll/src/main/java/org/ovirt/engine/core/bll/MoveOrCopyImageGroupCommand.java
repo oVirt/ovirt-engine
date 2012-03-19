@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map_id;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MoveImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -122,18 +123,16 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                         .getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
                 for (DiskImage snapshot : snapshots) {
                     DbFacade.getInstance()
-                            .getStorageDomainDAO()
-                            .removeImageStorageDomainMap(new image_storage_domain_map(snapshot.getId(),
-                                    snapshot.getstorage_ids().get(0)));
+                            .getImageStorageDomainMapDao()
+                            .remove(new image_storage_domain_map_id(snapshot.getId(), snapshot.getstorage_ids().get(0)));
                     DbFacade.getInstance()
-                            .getStorageDomainDAO()
-                            .addImageStorageDomainMap(new image_storage_domain_map(snapshot.getId(),
+                            .getImageStorageDomainMapDao().save(new image_storage_domain_map(snapshot.getId(),
                                     getParameters().getStorageDomainId()));
                 }
             } else if (getParameters().getAddImageDomainMapping()) {
-                DbFacade.getInstance().getStorageDomainDAO().addImageStorageDomainMap(
-                        new image_storage_domain_map(getParameters().getImageId(), getParameters()
-                                .getStorageDomainId()));
+                DbFacade.getInstance()
+                        .getImageStorageDomainMapDao().save(new image_storage_domain_map(getParameters().getImageId(),
+                        getParameters().getStorageDomainId()));
             }
 
             setSucceeded(true);
@@ -158,9 +157,10 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
             UnLockImage();
             if (getParameters().getAddImageDomainMapping()) {
                 // remove iamge-storage mapping
-                DbFacade.getInstance().getStorageDomainDAO().removeImageStorageDomainMap(
-                        new image_storage_domain_map(getParameters().getImageId(), getParameters()
-                                .getStorageDomainId()));
+                DbFacade.getInstance()
+                        .getImageStorageDomainMapDao()
+                        .remove(new image_storage_domain_map_id(getParameters().getImageId(),
+                                getParameters().getStorageDomainId()));
             }
             RevertTasks();
         }

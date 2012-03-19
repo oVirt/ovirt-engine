@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -126,18 +125,6 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      *            the storage domain
      */
     void remove(Guid id);
-
-    void addImageStorageDomainMap(image_storage_domain_map image_group_storage_domain_map);
-
-    void removeImageStorageDomainMap(image_storage_domain_map image_group_storage_domain_map);
-
-    void removeImageStorageDomainMap(Guid image_id);
-
-    List<image_storage_domain_map> getAllImageStorageDomainMapsForStorageDomain(
-            Guid storage_domain_id);
-
-    List<image_storage_domain_map> getAllImageStorageDomainMapsForImage(
-            Guid image_id);
 
     /**
      * Retrieves all storage domains for the specified connection.
