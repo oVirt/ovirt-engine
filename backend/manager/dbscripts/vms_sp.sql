@@ -719,14 +719,12 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmByImageId(v_image_guid UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetVmsByImageId(v_image_guid UUID) RETURNS SETOF vms_with_plug_info
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT DISTINCT vms.*
-      FROM vms
-      INNER JOIN vm_device vd ON vd.vm_id = vms.vm_guid
-      INNER JOIN images ON images.image_group_id = vd.device_id AND images.active = TRUE
-      WHERE images.image_guid = v_image_guid;
+      RETURN QUERY SELECT DISTINCT vms_with_plug_info.*
+      FROM vms_with_plug_info
+      WHERE image_guid = v_image_guid;
 END; $procedure$
 LANGUAGE plpgsql;
 

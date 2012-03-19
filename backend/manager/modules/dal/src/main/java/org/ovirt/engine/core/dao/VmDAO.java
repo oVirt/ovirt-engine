@@ -42,13 +42,13 @@ public interface VmDAO extends DAO {
     VM getForHibernationImage(Guid hibernationImage);
 
     /**
-     * Retrieves the VM with the specified image id.
+     * Retrieves the VMs with the specified image id.
      *
      * @param image
      *            the image id
-     * @return the VM
+     * @return A {@link Map} from the image's plug status to a {@link List} of the VMs associated with it.
      */
-    VM getForImage(Guid image);
+    Map<Boolean, List<VM>> getForImage(Guid image);
 
     /**
      * Retrieves the VM for the specified image group.

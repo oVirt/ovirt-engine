@@ -26,6 +26,7 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
@@ -60,9 +61,17 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
-    public VM getForImage(Guid id) {
-        return getCallsHandler().executeRead("GetVmByImageId", VMRowMapper.instance, getCustomMapSqlParameterSource()
-                .addValue("image_guid", id));
+    public Map<Boolean, List<VM>> getForImage(Guid id) {
+        Map<Boolean, List<VM>> result = new HashMap<Boolean, List<VM>>();
+        List<VMWithPlugInfo> vms =
+                getCallsHandler().executeReadList
+                        ("GetVmsByImageId",
+                                VMWithPlugInfoRowMapper.instance,
+                                getCustomMapSqlParameterSource().addValue("image_guid", id));
+        for (VMWithPlugInfo vm : vms) {
+            MultiValueMapUtils.addToMap(vm.isPlugged(), vm.getVM(), result);
+        }
+        return result;
     }
 
     @Override
@@ -320,6 +329,42 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setCustomProperties(VmPropertiesUtils.customProperties(predefinedProperties, userDefinedProperties));
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
             entity.setHash(rs.getString("hash"));
+            return entity;
+        }
+    }
+
+    private static class VMWithPlugInfo {
+
+        public VM getVM() {
+            return vm;
+        }
+
+        public void setVM(VM vm) {
+            this.vm = vm;
+        }
+
+        public boolean isPlugged() {
+            return isPlugged;
+        }
+
+        public void setPlugged(boolean isPlugged) {
+            this.isPlugged = isPlugged;
+        }
+
+        private VM vm;
+        private boolean isPlugged;
+    }
+
+    private static final class VMWithPlugInfoRowMapper implements ParameterizedRowMapper<VMWithPlugInfo> {
+        public static final VMWithPlugInfoRowMapper instance = new VMWithPlugInfoRowMapper();
+
+        @Override
+        public VMWithPlugInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
+            @SuppressWarnings("synthetic-access")
+            VMWithPlugInfo entity = new VMWithPlugInfo();
+
+            entity.setPlugged(rs.getBoolean("is_plugged"));
+            entity.setVM(VMRowMapper.instance.mapRow(rs, rowNum));
             return entity;
         }
     }

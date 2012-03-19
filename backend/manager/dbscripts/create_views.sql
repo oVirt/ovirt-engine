@@ -408,6 +408,17 @@ WHERE vm_type = '1';
 
 
 
+
+
+CREATE OR REPLACE VIEW vms_with_plug_info
+as
+SELECT vms.*, image_guid, image_group_id, is_plugged
+FROM vms
+INNER JOIN vm_device vd ON vd.vm_id = vms.vm_guid
+INNER JOIN images ON images.image_group_id = vd.device_id AND images.active = TRUE;
+
+
+
 CREATE OR REPLACE VIEW desktop_vms
 as
 SELECT * FROM vms

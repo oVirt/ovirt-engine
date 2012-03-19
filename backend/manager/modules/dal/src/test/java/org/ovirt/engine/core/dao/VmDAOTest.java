@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -30,7 +29,6 @@ public class VmDAOTest extends BaseDAOTestCase {
     private VM existingVm;
     private VmStatic newVmStatic;
     private VM newVm;
-    private VmStatistics newVmStatistics;
     private VmTemplate vmtemplate;
     private VmTemplate existingTemplate;
 
@@ -55,8 +53,6 @@ public class VmDAOTest extends BaseDAOTestCase {
         newVmStatic.setvm_name("New Virtual Machine");
         newVmStatic.setvds_group_id(VDS_GROUP_ID);
         newVmStatic.setvmt_guid(vmtemplate.getId());
-
-        newVmStatistics = new VmStatistics();
     }
 
     /**
@@ -80,8 +76,6 @@ public class VmDAOTest extends BaseDAOTestCase {
         assertEquals(result, existingVm);
     }
 
-
-
     /**
      * Ensures the correct VM is returned.
      */
@@ -98,9 +92,11 @@ public class VmDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetForImage() {
-        VM result = dao.getForImage(IMAGE_ID);
+        Map<Boolean, List<VM>> result = dao.getForImage(IMAGE_ID);
 
         assertNotNull(result);
+        assertEquals("wrong number of VMs with plugged image", 2, result.get(true).size());
+        assertEquals("wrong number of VMs with unplugged image", 1, result.get(false).size());
     }
 
     /**
@@ -229,7 +225,6 @@ public class VmDAOTest extends BaseDAOTestCase {
         assertFalse(result.isEmpty());
     }
 
-
     /**
      * Ensures the VMs related to the specified template are returned.
      */
@@ -244,7 +239,6 @@ public class VmDAOTest extends BaseDAOTestCase {
             assertEquals(existingTemplate.getId(), vm.getvmt_guid());
         }
     }
-
 
     /**
      * Ensures removing a vm works as expected.
@@ -262,6 +256,5 @@ public class VmDAOTest extends BaseDAOTestCase {
 
         assertNull(after);
     }
-
 
 }
