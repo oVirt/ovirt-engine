@@ -2,7 +2,15 @@ package org.ovirt.engine.ui.userportal;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 
+import com.google.gwt.i18n.client.Constants.DefaultStringValue;
+
 public interface ApplicationConstants extends CommonApplicationConstants {
+
+    @DefaultStringValue("About")
+    String aboutPopupCaption();
+
+    @DefaultStringValue("")
+    String copyRightNotice();
 
     // Login section
 

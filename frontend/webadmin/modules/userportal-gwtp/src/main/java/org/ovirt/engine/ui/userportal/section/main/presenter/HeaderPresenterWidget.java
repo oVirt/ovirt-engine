@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
 public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget.ViewDef> implements TabWidgetHandler {
 
@@ -20,18 +21,22 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
 
         HasClickHandlers getLogoutLink();
 
-        HasClickHandlers getGuideLink();
-
         HasClickHandlers getAboutLink();
 
     }
 
     private final CurrentUser user;
+    private final AboutPopupPresenterWidget aboutPopup;
 
     @Inject
-    public HeaderPresenterWidget(EventBus eventBus, ViewDef view, CurrentUser user) {
+    public HeaderPresenterWidget(
+            EventBus eventBus,
+            ViewDef view,
+            CurrentUser user,
+            AboutPopupPresenterWidget aboutPopup) {
         super(eventBus, view);
         this.user = user;
+        this.aboutPopup = aboutPopup;
     }
 
     @Override
@@ -52,6 +57,13 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
             @Override
             public void onClick(ClickEvent event) {
                 user.logout();
+            }
+        }));
+
+        registerHandler(getView().getAboutLink().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, aboutPopup);
             }
         }));
     }

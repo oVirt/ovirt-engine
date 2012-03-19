@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.userportal.section.login.presenter.LoginPopupPresente
 import org.ovirt.engine.ui.userportal.section.login.presenter.LoginSectionPresenter;
 import org.ovirt.engine.ui.userportal.section.login.view.LoginPopupView;
 import org.ovirt.engine.ui.userportal.section.login.view.LoginSectionView;
+import org.ovirt.engine.ui.userportal.section.main.presenter.AboutPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.HeaderPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
@@ -43,6 +44,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.Sub
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmPermissionPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmSnapshotPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmVirtualDiskPresenter;
+import org.ovirt.engine.ui.userportal.section.main.view.AboutPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.HeaderView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainTabPanelView;
@@ -109,6 +111,9 @@ public class PresenterModule extends BasePresenterModule {
         bindSingletonPresenterWidget(HeaderPresenterWidget.class,
                 HeaderPresenterWidget.ViewDef.class,
                 HeaderView.class);
+        bindSingletonPresenterWidget(AboutPopupPresenterWidget.class,
+                AboutPopupPresenterWidget.ViewDef.class,
+                AboutPopupView.class);
 
         // Main section: main tabs
         bindPresenter(MainTabPanelPresenter.class,

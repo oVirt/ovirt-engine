@@ -76,11 +76,6 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
     }
 
     @Override
-    public HasClickHandlers getGuideLink() {
-        return guideLink;
-    }
-
-    @Override
     public HasClickHandlers getAboutLink() {
         return aboutLink;
     }

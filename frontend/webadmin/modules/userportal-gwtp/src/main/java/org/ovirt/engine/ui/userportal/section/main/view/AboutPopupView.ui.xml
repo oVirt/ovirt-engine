@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
+
+	<ui:style>
+		.content {
+		}
+
+		.copyrightNotice {
+			font-weight: bold;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="500px" height="300px">
+		<d:header>
+			<g:Label ui:field="titleLabel" />
+		</d:header>
+
+		<d:content>
+			<g:VerticalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.content}">
+				<g:HorizontalPanel horizontalAlignment="ALIGN_CENTER" width="100%">
+					<g:HTMLPanel>
+						<div>
+							oVirt Enterprise Virtualization Engine Manager Version:
+							<g:InlineLabel ui:field="versionLabel" />
+						</div>
+						<div>
+							<g:Label ui:field="copyrightNotice" addStyleNames="{style.copyrightNotice}"/>
+						</div>
+					</g:HTMLPanel>
+				</g:HorizontalPanel>
+			</g:VerticalPanel>
+		</d:content>
+
+		<d:footerButton>
+			<d:SimpleDialogButton ui:field="closeButton" />
+		</d:footerButton>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>
