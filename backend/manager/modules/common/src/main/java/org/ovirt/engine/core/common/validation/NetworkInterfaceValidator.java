@@ -39,7 +39,7 @@ public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetwo
         }
 
         if (!Config.<String> GetValue(ConfigValues.ManagementNetwork).equals(iface.getNetworkName())
-                && !isNullOrEmpty(iface.getGateway())) {
+                && !isNullOrEmpty(iface.getGateway()) && !"0.0.0.0".equals(iface.getGateway())) {
             context.buildConstraintViolationWithTemplate("NETWORK_ATTACH_ILLEGAL_GATEWAY")
                     .addNode("gateway").addConstraintViolation();
             return false;
