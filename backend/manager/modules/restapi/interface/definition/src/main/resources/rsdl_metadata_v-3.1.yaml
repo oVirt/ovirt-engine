@@ -1158,14 +1158,16 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {action.iscsi.address: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/iscsilogin|rel=iscsilogin
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {action.iscsi.address: 'xs:string', action.iscsi.target: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/hosts/{host:id}/nics|rel=get
