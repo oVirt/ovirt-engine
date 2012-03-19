@@ -147,6 +147,9 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     @Column(name = "initrd_url", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String initrdUrl;
 
+    // not persist to db
+    private java.util.Date exportDate;
+
    public VmBase() {
    }
 
@@ -497,6 +500,14 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
 
     public void setinitrd_url(String value) {
         initrdUrl = value;
+    }
+
+    public void setExportDate(java.util.Date value) {
+        this.exportDate = value;
+    }
+
+    public java.util.Date getExportDate() {
+        return this.exportDate;
     }
 
     @Override

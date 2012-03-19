@@ -190,6 +190,14 @@ public class OvfTemplateReader extends OvfReader {
         if (tempVar) {
             _vmTemplate.setcreation_date(creationDate);
         }
+        node = content.SelectSingleNode("ExportDate");
+        java.util.Date exportDate = new java.util.Date(0);
+        tempRefObject = new RefObject<java.util.Date>(exportDate);
+        tempVar = node != null && OvfParser.UtcDateStringToLocaDate(node.InnerText, tempRefObject);
+        exportDate = tempRefObject.argvalue;
+        if (tempVar) {
+            _vmTemplate.setExportDate(exportDate);
+        }
         node = content.SelectSingleNode("IsAutoSuspend");
         if (node != null) {
             _vmTemplate.setis_auto_suspend(Boolean.parseBoolean(node.InnerText));

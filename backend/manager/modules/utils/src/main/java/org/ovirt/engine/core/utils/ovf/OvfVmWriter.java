@@ -44,6 +44,9 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteStartElement("CreationDate");
         _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(vmBase.getcreation_date()));
         _writer.WriteEndElement();
+        _writer.WriteStartElement("ExportDate");
+        _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(new java.util.Date()));
+        _writer.WriteEndElement();
         _writer.WriteStartElement("IsInitilized");
         _writer.WriteRaw((new Boolean(_vm.getStaticData().getis_initialized())).toString());
         _writer.WriteEndElement();

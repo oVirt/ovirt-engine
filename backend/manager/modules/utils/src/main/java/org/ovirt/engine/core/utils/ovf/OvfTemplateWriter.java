@@ -37,6 +37,9 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteStartElement("CreationDate");
         _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(_vmTemplate.getcreation_date()));
         _writer.WriteEndElement();
+        _writer.WriteStartElement("ExportDate");
+        _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(new java.util.Date()));
+        _writer.WriteEndElement();
         _writer.WriteStartElement("IsAutoSuspend");
         _writer.WriteRaw((new Boolean(_vmTemplate.getis_auto_suspend())).toString());
         _writer.WriteEndElement();

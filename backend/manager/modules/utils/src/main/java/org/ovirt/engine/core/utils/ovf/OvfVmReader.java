@@ -190,6 +190,14 @@ public class OvfVmReader extends OvfReader {
         if (tempVar) {
             _vm.getStaticData().setcreation_date(creationDate);
         }
+        node = content.SelectSingleNode("ExportDate");
+        java.util.Date exportDate = new java.util.Date(0);
+        tempRefObject = new RefObject<java.util.Date>(exportDate);
+        tempVar = node != null && OvfParser.UtcDateStringToLocaDate(node.InnerText, tempRefObject);
+        exportDate = tempRefObject.argvalue;
+        if (tempVar) {
+            _vm.getStaticData().setExportDate(exportDate);
+        }
         node = content.SelectSingleNode("IsInitilized");
         if (node != null) {
             _vm.getStaticData().setis_initialized(Boolean.parseBoolean(node.InnerText));

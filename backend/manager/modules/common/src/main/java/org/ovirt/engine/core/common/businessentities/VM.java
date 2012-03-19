@@ -1073,6 +1073,14 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.sethibernation_vol_handle(value);
     }
 
+    public void setExportDate(java.util.Date value) {
+        this.mVmStatic.setExportDate(value);
+    }
+
+    public java.util.Date getExportDate() {
+        return this.mVmStatic.getExportDate();
+    }
+
     private Guid storage_pool_idField = new Guid();
 
     @Override
