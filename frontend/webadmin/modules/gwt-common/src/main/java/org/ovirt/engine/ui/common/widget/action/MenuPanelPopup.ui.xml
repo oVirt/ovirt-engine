@@ -17,7 +17,7 @@
 		background-color: white;
 		cursor: hand;
 		cursor: pointer;
-		border-bottom: 2px solid #E0E9F2;
+		border-bottom: 1px solid #E0E9F2;
 		}
 
 		@external .menuItem-selected;

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.action;
 
+import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
@@ -10,15 +11,15 @@ public abstract class WebAdminButtonDefinition<T> extends UiCommandButtonDefinit
     public WebAdminButtonDefinition(String title,
             boolean implInWebAdmin,
             boolean implInUserPortal,
-            boolean availableOnlyFromContext,
+            CommandLocation commandLocation,
             boolean subTitledAction,
             String toolTip) {
         super(getEventBus(), title, implInWebAdmin, implInUserPortal,
-                availableOnlyFromContext, subTitledAction, toolTip);
+                commandLocation, subTitledAction, toolTip);
     }
 
-    public WebAdminButtonDefinition(String title, boolean availableOnlyFromContext) {
-        super(getEventBus(), title, availableOnlyFromContext);
+    public WebAdminButtonDefinition(String title, CommandLocation commandLocation) {
+        super(getEventBus(), title, commandLocation);
     }
 
     public WebAdminButtonDefinition(String title) {

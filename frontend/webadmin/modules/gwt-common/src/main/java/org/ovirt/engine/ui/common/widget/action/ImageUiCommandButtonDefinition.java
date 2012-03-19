@@ -30,8 +30,8 @@ public abstract class ImageUiCommandButtonDefinition<T> extends UiCommandButtonD
             ImageResource enabledImage,
             ImageResource disabledImage,
             boolean showTitle,
-            boolean imageAfterTitle, boolean availableOnlyFromContext) {
-        super(eventBus, title, availableOnlyFromContext);
+            boolean imageAfterTitle, CommandLocation commandLocation) {
+        super(eventBus, title, commandLocation);
         this.enabledImage = enabledImage != null
                 ? SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(enabledImage).getHTML()) : null;
         this.disabledImage = disabledImage != null
@@ -56,7 +56,13 @@ public abstract class ImageUiCommandButtonDefinition<T> extends UiCommandButtonD
             ImageResource disabledImage,
             boolean showTitle,
             boolean imageAfterTitle) {
-        this(eventBus, title, enabledImage, disabledImage, showTitle, imageAfterTitle, false);
+        this(eventBus,
+                title,
+                enabledImage,
+                disabledImage,
+                showTitle,
+                imageAfterTitle,
+                CommandLocation.ContextAndToolBar);
     }
 
     public ImageUiCommandButtonDefinition(EventBus eventBus,

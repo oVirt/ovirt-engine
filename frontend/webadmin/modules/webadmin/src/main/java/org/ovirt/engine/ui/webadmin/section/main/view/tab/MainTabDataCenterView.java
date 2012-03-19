@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
+import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
@@ -126,7 +127,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>("Re-Initialize Data Center", true) {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>("Re-Initialize Data Center", CommandLocation.OnlyFromFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRecoveryStorageCommand();

@@ -58,7 +58,7 @@ public class ReportActionsHelper {
         List<ActionButtonDefinition<T>> subActions = new LinkedList<ActionButtonDefinition<T>>();
 
         for (final URI uri : category.getUriList()) {
-            subActions.add(new WebAdminButtonDefinition<T>(uri.getName(), true, false, true, true, uri.getDescription()) {
+            subActions.add(new WebAdminButtonDefinition<T>(uri.getName(), true, false, null, true, uri.getDescription()) {
 
                 @Override
                 public boolean isVisible(List<T> selectedItems) {

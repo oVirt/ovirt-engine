@@ -5,6 +5,8 @@ import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -44,6 +46,9 @@ public class MenuPanelPopup extends Composite {
         };
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         panel.setWidget(menu);
+
+        NodeList<Element> table = menu.getElement().getElementsByTagName("table");
+        table.getItem(0).getStyle().setProperty("width", "100%");
     }
 
     public PopupPanel asPopupPanel() {

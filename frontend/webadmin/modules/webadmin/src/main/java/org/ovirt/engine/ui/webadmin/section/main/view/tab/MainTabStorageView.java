@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
+import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -118,7 +119,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
                 return getMainModel().getRemoveCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Destroy", true) {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Destroy", CommandLocation.OnlyFromFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getDestroyCommand();

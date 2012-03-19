@@ -50,7 +50,7 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
     private final boolean implInUserPortal;
 
     // Indicates whether the given feature is available only from a context menu
-    private final boolean availableOnlyFromContext;
+    private final CommandLocation commandLocation;
 
     // Indicates whether this action button has a title action
     private final boolean subTitledAction;
@@ -61,13 +61,13 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
             String title,
             boolean implInWebAdmin,
             boolean implInUserPortal,
-            boolean availableOnlyFromContext,
+            CommandLocation commandLocation,
             boolean subTitledAction, String toolTip) {
         this.eventBus = eventBus;
         this.title = SafeHtmlUtils.fromSafeConstant(title);
         this.implInWebAdmin = implInWebAdmin;
         this.implInUserPortal = implInUserPortal;
-        this.availableOnlyFromContext = availableOnlyFromContext;
+        this.commandLocation = commandLocation;
         this.subTitledAction = subTitledAction;
         this.toolTip = toolTip;
         update();
@@ -85,24 +85,24 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
      * Creates a new button with the given title.
      */
     public UiCommandButtonDefinition(EventBus eventBus, String title) {
-        this(eventBus, title, true, false, false, false, null);
+        this(eventBus, title, true, false, CommandLocation.ContextAndToolBar, false, null);
     }
 
     /**
      * Creates a new button with the given title.
      * <p>
-     * If {@code availableOnlyFromContext} is {@code true}, the button will only be available from the corresponding
-     * context menu.
+     * The button will be available from the top tool bar or the corresponding
+     * context menu or both, depends on the {@code commandLocation} value.
      */
-    public UiCommandButtonDefinition(EventBus eventBus, String title, boolean availableOnlyFromContext) {
-        this(eventBus, title, true, false, availableOnlyFromContext, false, null);
+    public UiCommandButtonDefinition(EventBus eventBus, String title, CommandLocation commandLocation) {
+        this(eventBus, title, true, false, commandLocation, false, null);
     }
 
     /**
      * TODO This constructor will be removed when all WebAdmin features are implemented.
      */
     public UiCommandButtonDefinition(EventBus eventBus, String title, boolean implInWebAdmin, boolean implInUserPortal) {
-        this(eventBus, title, implInWebAdmin, implInUserPortal, false, false, null);
+        this(eventBus, title, implInWebAdmin, implInUserPortal, CommandLocation.ContextAndToolBar, false, null);
     }
 
     /**
@@ -204,8 +204,8 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
     }
 
     @Override
-    public boolean isAvailableOnlyFromContext() {
-        return availableOnlyFromContext;
+    public CommandLocation getCommandLocation() {
+        return commandLocation;
     }
 
     @Override

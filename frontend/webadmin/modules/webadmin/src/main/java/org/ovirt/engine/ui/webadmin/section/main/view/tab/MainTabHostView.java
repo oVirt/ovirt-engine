@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -8,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
+import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
@@ -151,7 +153,8 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return getMainModel().getMaintenanceCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Confirm 'Host has been Rebooted'", true) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Confirm 'Host has been Rebooted'",
+                CommandLocation.OnlyFromFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getManualFenceCommand();
@@ -170,6 +173,34 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return getMainModel().getConfigureLocalStorageCommand();
             }
         });
+
+        List<ActionButtonDefinition<VDS>> pmSubActions = new LinkedList<ActionButtonDefinition<VDS>>();
+
+        pmSubActions.add(new WebAdminButtonDefinition<VDS>("Restart") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRestartCommand();
+            }
+        });
+
+        pmSubActions.add(new WebAdminButtonDefinition<VDS>("Start") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getStartCommand();
+            }
+        });
+
+        pmSubActions.add(new WebAdminButtonDefinition<VDS>("Stop") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getStopCommand();
+            }
+        });
+
+        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>("Power Management",
+                pmSubActions,
+                CommandLocation.OnlyFromToolBar));
+
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Assign Tags") {
             @Override
             protected UICommand resolveCommand() {

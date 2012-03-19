@@ -77,7 +77,7 @@ public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandl
     /**
      * Indicates whether this action button is available only from the corresponding context menu.
      */
-    boolean isAvailableOnlyFromContext();
+    CommandLocation getCommandLocation();
 
     /**
      * Updates the state of this action button.

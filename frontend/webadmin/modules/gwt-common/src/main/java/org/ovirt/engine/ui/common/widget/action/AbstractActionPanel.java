@@ -93,6 +93,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
      * Adds a new button to the action panel.
      */
     public void addActionButton(final ActionButtonDefinition<T> buttonDef) {
+
         final ActionButton newActionButton = createNewActionButton(buttonDef);
 
         // Configure the button according to its definition
@@ -106,11 +107,16 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
                 ElementIdUtils.createElementId(elementId, buttonDef.getUniqueId()));
 
         // Add the button to the action panel
-        if (!buttonDef.isAvailableOnlyFromContext()) {
+        if (buttonDef.getCommandLocation().equals(CommandLocation.ContextAndToolBar)
+                || buttonDef.getCommandLocation().equals(CommandLocation.OnlyFromToolBar)) {
             actionPanel.add(newActionButton.asWidget());
         }
 
-        actionButtonList.add(buttonDef);
+        // Add the button to the context menu
+        if (buttonDef.getCommandLocation().equals(CommandLocation.ContextAndToolBar)
+                || buttonDef.getCommandLocation().equals(CommandLocation.OnlyFromFromContext)) {
+            actionButtonList.add(buttonDef);
+        }
 
         actionPanelPopupPanel.asPopupPanel()
                 .addCloseHandler(new CloseHandler<com.google.gwt.user.client.ui.PopupPanel>() {

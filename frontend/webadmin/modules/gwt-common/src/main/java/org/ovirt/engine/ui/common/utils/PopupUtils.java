@@ -102,8 +102,8 @@ public class PopupUtils {
             left = relativeTarget - offsetWidthDiff;
 
             // If the suggestion popup is not as wide as the relative object, always
-            // align to the right edge of the relative object. Otherwise, figure out whether
-            // to right-align or left-align the popup.
+            // align to the right edge of the relative object and change the width to the relative object width.
+            // Otherwise, figure out whether to right-align or left-align the popup.
             if (offsetWidthDiff > 0) {
 
                 // Make sure scrolling is taken into account, since
@@ -133,6 +133,8 @@ public class PopupUtils {
                     // Align with the left edge of the relative object.
                     left = relativeTarget;
                 }
+            }else{
+                style.setWidth(relativeWidth, Unit.PX);
             }
         } else { // LTR case
 
@@ -140,8 +142,8 @@ public class PopupUtils {
             left = relativeLeft;
 
             // If the suggestion popup is not as wide as the relative object, always align to
-            // the left edge of the relative object. Otherwise, figure out whether to
-            // left-align or right-align the popup.
+            // the left edge of the relative object and change the width to the relative object width.
+            // Otherwise, figure out whether to left-align or right-align the popup.
             if (offsetWidthDiff > 0) {
                 // Make sure scrolling is taken into account, since
                 // relativeTarget.getAbsoluteLeft() takes scrolling into account.
@@ -166,6 +168,8 @@ public class PopupUtils {
                     // Align with the right edge of the relative object.
                     left -= offsetWidthDiff;
                 }
+            }else{
+                style.setWidth(relativeWidth, Unit.PX);
             }
         }
 

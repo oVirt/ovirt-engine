@@ -35,10 +35,10 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
 
     public UiMenuBarButtonDefinition(EventBus eventBus,
             String title, List<ActionButtonDefinition<T>> subActions,
-            boolean subTitledAction, boolean availableOnlyFromContext,
+            boolean subTitledAction, CommandLocation commandLocation,
             boolean asTitle, Resources resources) {
         super(eventBus, title, resources.triangle_down(), resources.triangle_down(),
-                true, true, availableOnlyFromContext);
+                true, true, commandLocation);
         this.subActions = subActions;
         this.subTitledAction = subTitledAction;
         this.asTitle = asTitle;
@@ -52,8 +52,14 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
 
     public UiMenuBarButtonDefinition(EventBus eventBus,
             String title, List<ActionButtonDefinition<T>> subActions,
+            CommandLocation commandLocation, Resources resources) {
+        this(eventBus, title, subActions, false, commandLocation, false, resources);
+    }
+
+    public UiMenuBarButtonDefinition(EventBus eventBus,
+            String title, List<ActionButtonDefinition<T>> subActions,
             boolean asTitle, Resources resources) {
-        this(eventBus, title, subActions, false, false, asTitle, resources);
+        this(eventBus, title, subActions, false, CommandLocation.ContextAndToolBar, asTitle, resources);
     }
 
     @Override

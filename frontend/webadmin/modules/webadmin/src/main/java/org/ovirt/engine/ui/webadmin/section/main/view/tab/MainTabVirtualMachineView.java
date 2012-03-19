@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
+import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
@@ -200,7 +201,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return getMainModel().getShutdownCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Stop", true) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Stop", CommandLocation.OnlyFromFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStopCommand();
