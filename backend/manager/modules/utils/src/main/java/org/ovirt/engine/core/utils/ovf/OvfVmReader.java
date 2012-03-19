@@ -122,14 +122,7 @@ public class OvfVmReader extends OvfReader {
                 }
                 readVmDevice(node, _vm.getStaticData(), image.getimage_group_id(), Boolean.TRUE);
             } else if (StringHelper.EqOp(resourceType, OvfHardware.Network)) {
-                final Guid guid = new Guid(node.SelectSingleNode("rasd:InstanceId", _xmlNS).InnerText);
-                VmNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
-                    @Override
-                    public boolean eval(VmNetworkInterface iface) {
-                        return iface.getId().equals(guid);
-                    }
-                });
-
+                VmNetworkInterface iface = getNetwotkInterface(node);
                 if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText)) {
                     iface.setType(Integer.parseInt(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText));
                 }

@@ -41,8 +41,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -93,13 +91,14 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
             retVal = qretVal.getSucceeded();
             if (retVal) {
                 Map<VmTemplate, DiskImageList> templates = (Map) qretVal.getReturnValue();
-                DiskImageList images = templates.get(LinqUtils.firstOrNull(templates.keySet(),
-                        new Predicate<VmTemplate>() {
-                            @Override
-                            public boolean eval(VmTemplate t) {
-                                return t.getId().equals(getParameters().getVmTemplate().getId());
-                            }
-                        }));
+                DiskImageList images = new DiskImageList();
+                for (VmTemplate t : templates.keySet()) {
+                    if (t.getId().equals(getVmTemplate().getId())) {
+                        images =templates.get(t);
+                        getVmTemplate().setInterfaces(t.getInterfaces());
+                        break;
+                    }
+                }
                 ArrayList<DiskImage> list = new ArrayList<DiskImage>(Arrays.asList(images.getDiskImages()));
                 getParameters().setImages(list);
                 getVmTemplate().setImages(list);
@@ -307,6 +306,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
             iDynamic.setStatistics(iStat);
             iDynamic.setId(iface.getId());
             iStat.setId(iface.getId());
+            iStat.setVmId(getVmTemplateId());
             iDynamic.setVmTemplateId(getVmTemplateId());
             iDynamic.setName(iface.getName());
             iDynamic.setNetworkName(iface.getNetworkName());

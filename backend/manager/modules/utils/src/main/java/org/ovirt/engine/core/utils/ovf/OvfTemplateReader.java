@@ -115,14 +115,7 @@ public class OvfTemplateReader extends OvfReader {
 
             // Network
             case 10:
-                final Guid interfaceId = new Guid(node.SelectSingleNode("rasd:InstanceId", _xmlNS).InnerText);
-                VmNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
-                    @Override
-                    public boolean eval(VmNetworkInterface iface) {
-                        return iface.getId().equals(interfaceId);
-                    }
-                });
-
+                VmNetworkInterface iface = getNetwotkInterface(node);
                 if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText)) {
                     iface.setType(Integer.parseInt(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText));
                 }

@@ -72,8 +72,8 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
                         shouldAdd = getParameters().getGetAll() ? shouldAdd :
                                 (!existsVmDictionary.containsKey(template.getId()) && diskImages != null);
                         if (shouldAdd) {
-                            templates.put(template, new DiskImageList(diskImages));
                             template.setInterfaces(interfaces);
+                            templates.put(template, new DiskImageList(diskImages));
                         }
                     }
                 } catch (OvfReaderException ex) {

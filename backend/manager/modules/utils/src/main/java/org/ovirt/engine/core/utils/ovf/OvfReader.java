@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils.ovf;
 
 import java.util.ArrayList;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DiskType;
@@ -9,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -67,23 +69,8 @@ public abstract class OvfReader implements IOvfBuilder {
 
     @Override
     public void BuildReference() {
-        XmlNodeList list = _document.SelectNodes("//*/File", _xmlNS);
-        for (XmlNode node : list) {
-            DiskImage image = new DiskImage();
-            image.setId(new Guid(node.Attributes.get("ovf:id").getValue()));
-            image.setimage_group_id(OvfParser.GetImageGrupIdFromImageFile(node.Attributes.get("ovf:href").getValue()));
-            // Default values:
-            image.setactive(true);
-            image.setimageStatus(ImageStatus.OK);
-            image.setdescription(node.Attributes.get("ovf:description").getValue());
-            _images.add(image);
-        }
-        list = _document.SelectNodes("//*/Nic", _xmlNS);
-        for (XmlNode node : list) {
-            VmNetworkInterface iface = new VmNetworkInterface();
-            iface.setId(new Guid(node.Attributes.get("ovf:id").getValue()));
-            interfaces.add(iface);
-        }
+        buildImageReference();
+        buildNicReference();
     }
 
     @Override
@@ -195,13 +182,14 @@ public abstract class OvfReader implements IOvfBuilder {
                 && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
             vmDevice.setType(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText));
         } else {
-            vmDevice.setType(String.valueOf(VmDeviceType.UNKNOWN));
+            int resourceType = getResourceType(node, vmDevice, OvfProperties.VMD_RESOURCE_TYPE);
+            vmDevice.setType(VmDeviceType.getoVirtDevice(resourceType).getName());
         }
         if (node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS) != null
                 && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText)) {
             vmDevice.setDevice(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText));
         } else {
-            vmDevice.setDevice(String.valueOf(VmDeviceType.UNKNOWN));
+            setDeviceByResource(node, vmDevice);
         }
         if (node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS) != null
                 && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS).InnerText)) {
@@ -219,7 +207,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_IS_READONLY, _xmlNS).InnerText)) {
             vmDevice.setIsReadOnly(Boolean.valueOf(node.SelectSingleNode(OvfProperties.VMD_IS_READONLY, _xmlNS).InnerText));
         } else {
-            vmDevice.setIsPlugged(Boolean.FALSE);
+            vmDevice.setIsReadOnly(Boolean.FALSE);
         }
         if (isManaged) {
             vmBase.getManagedVmDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
@@ -228,9 +216,121 @@ public abstract class OvfReader implements IOvfBuilder {
         }
     }
 
+    /**
+     * gets the VM interface
+     *
+     * @param node
+     *            the xml node
+     * @return VmNetworkInterface
+     */
+    public VmNetworkInterface getNetwotkInterface(XmlNode node) {
+        // prior to 3.0 the instanceId is int , in 3.1 and on this is Guid
+        String str = node.SelectSingleNode("rasd:InstanceId", _xmlNS).InnerText;
+        final Guid guid;
+        VmNetworkInterface iface;
+        if (!StringUtils.isNumeric(str)) { // 3.1 and above OVF format
+            guid = new Guid(str);
+            iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
+                @Override
+                public boolean eval(VmNetworkInterface iface) {
+                    return iface.getId().equals(guid);
+                }
+            });
+        } else { // 3.0 and below OVF format
+            iface = new VmNetworkInterface();
+        }
+        return iface;
+    }
+
     protected abstract void ReadOsSection(XmlNode section);
 
     protected abstract void ReadHardwareSection(XmlNode section);
 
     protected abstract void ReadGeneralData();
+
+    private void buildNicReference() {
+        XmlNodeList list = _document.SelectNodes("//*/Nic", _xmlNS);
+        for (XmlNode node : list) {
+            VmNetworkInterface iface = new VmNetworkInterface();
+            iface.setId(new Guid(node.Attributes.get("ovf:id").getValue()));
+            interfaces.add(iface);
+        }
+        if (!list.iterator().hasNext()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("//*/Item[");
+            sb.append(OvfProperties.VMD_RESOURCE_TYPE);
+            sb.append("=");
+            sb.append(OvfHardware.Network);
+            sb.append("]");
+            list = _document.SelectNodes(sb.toString(), _xmlNS);
+            for (XmlNode node : list) {
+                VmNetworkInterface iface = new VmNetworkInterface();
+                iface.setId(Guid.NewGuid());
+                iface.setName(node.SelectSingleNode(OvfProperties.VMD_NAME, _xmlNS).InnerText);
+                iface.setNetworkName(node.SelectSingleNode(OvfProperties.VMD_CONNECTION, _xmlNS).InnerText);
+                interfaces.add(iface);
+            }
+        }
+    }
+
+    private void buildImageReference() {
+        XmlNodeList list = _document.SelectNodes("//*/File", _xmlNS);
+        for (XmlNode node : list) {
+            DiskImage image = new DiskImage();
+            image.setId(new Guid(node.Attributes.get("ovf:id").getValue()));
+            image.setimage_group_id(OvfParser.GetImageGrupIdFromImageFile(node.Attributes.get("ovf:href").getValue()));
+            // Default values:
+            image.setactive(true);
+            image.setimageStatus(ImageStatus.OK);
+            image.setdescription(node.Attributes.get("ovf:description").getValue());
+            _images.add(image);
+        }
+    }
+
+    private int getResourceType(XmlNode node, VmDevice vmDevice, String resource) {
+        if (node.SelectSingleNode(resource, _xmlNS) != null
+                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(resource, _xmlNS).InnerText)) {
+            return Integer.valueOf(node.SelectSingleNode(resource, _xmlNS).InnerText);
+        }
+        return -1;
+    }
+
+    private void setDeviceByResource(XmlNode node, VmDevice vmDevice) {
+        int resourceType = getResourceType(node, vmDevice, OvfProperties.VMD_RESOURCE_TYPE);
+        int resourceSubType = getResourceType(node, vmDevice, OvfProperties.VMD_SUB_RESOURCE_TYPE);
+        if (resourceSubType == -1) {
+            // we need special handling for Monitor to define it as vnc or spice
+            if (Integer.valueOf(OvfHardware.Monitor) == resourceType) {
+                // get number of monitors from VirtualQuantity in OVF
+                if (node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS) != null
+                        && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY,
+                                _xmlNS).InnerText)) {
+                    int virtualQuantity =
+                            Integer.valueOf(node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS).InnerText);
+                    if (virtualQuantity > 1) {
+                        vmDevice.setDevice(VmDeviceType.QXL.getName());
+                    } else {
+                        vmDevice.setDevice(VmDeviceType.CIRRUS.getName());
+                    }
+                } else { // default to spice if quantity not found
+                    vmDevice.setDevice(VmDeviceType.QXL.getName());
+                }
+            } else {
+                vmDevice.setDevice(VmDeviceType.getoVirtDevice(resourceType).getName());
+            }
+        } else if (Integer.valueOf(OvfHardware.Network) == resourceType) {
+            // handle interfaces with different sub types : we have 0-3 as the VmInterfaceType enum
+            boolean isKnownType = false;
+            for (VmInterfaceType vmInterfaceType : VmInterfaceType.values()) {
+                if ((Integer.valueOf(vmInterfaceType.getValue()) == resourceSubType)) {
+                    vmDevice.setDevice(VmDeviceType.BRIDGE.getName());
+                    isKnownType = true;
+                    break;
+                }
+            }
+            if (!isKnownType) {
+                vmDevice.setDevice(VmDeviceType.getoVirtDevice(resourceType).getName());
+            }
+        }
+    }
 }
