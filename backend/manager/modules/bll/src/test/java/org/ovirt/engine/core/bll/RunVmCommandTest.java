@@ -114,6 +114,20 @@ public class RunVmCommandTest {
                 Matchers.any(VdsAndVmIDVDSParametersBase.class), Matchers.any(IVdsAsyncCommand.class))).thenReturn(returnValue);
     }
 
+    private DiskImage createImage() {
+        final DiskImage diskImage = new DiskImage();
+        diskImage.setimage_group_id(Guid.NewGuid());
+        diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid())));
+        return diskImage;
+    }
+
+    private VmDevice createDiskVmDevice(final DiskImage diskImage) {
+        final VmDevice vmDevice = new VmDevice();
+        vmDevice.setIsPlugged(true);
+        vmDevice.setId(new VmDeviceId(diskImage.getimage_group_id(), Guid.NewGuid()));
+        return vmDevice;
+    }
+
     /**
      * Set the Iso prefix.
      *
@@ -312,12 +326,9 @@ public class RunVmCommandTest {
     @Test
     public void canRunVmFailVmRunning() {
         final ArrayList<DiskImage> disks = new ArrayList<DiskImage>();
-        final DiskImage diskImage = new DiskImage();
-        diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid())));
+        final DiskImage diskImage = createImage();
         disks.add(diskImage);
-        final VmDevice vmDevice = new VmDevice();
-        vmDevice.setIsPlugged(true);
-        vmDevice.setId(new VmDeviceId(diskImage.getId(), Guid.NewGuid()));
+        final VmDevice vmDevice = createDiskVmDevice(diskImage);
         initMocks(disks, new HashMap<VDSCommandType, Boolean>(), Collections.singletonList(vmDevice));
         final VM vm = new VM();
         vm.setstatus(VMStatus.Up);
@@ -333,12 +344,9 @@ public class RunVmCommandTest {
     @Test
     public void canRunVmFailVmDuringSnapshot() {
         final ArrayList<DiskImage> disks = new ArrayList<DiskImage>();
-        final DiskImage diskImage = new DiskImage();
-        diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid())));
+        final DiskImage diskImage = createImage();
         disks.add(diskImage);
-        final VmDevice vmDevice = new VmDevice();
-        vmDevice.setIsPlugged(true);
-        vmDevice.setId(new VmDeviceId(diskImage.getId(), Guid.NewGuid()));
+        final VmDevice vmDevice = createDiskVmDevice(diskImage);
         initMocks(disks, new HashMap<VDSCommandType, Boolean>(), Collections.singletonList(vmDevice));
         final VM vm = new VM();
         final ArrayList<String> messages = new ArrayList<String>();
@@ -358,12 +366,9 @@ public class RunVmCommandTest {
             Boolean isStatelessParam,
             boolean shouldPass) {
         final ArrayList<DiskImage> disks = new ArrayList<DiskImage>();
-        final DiskImage diskImage = new DiskImage();
-        diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList((new Guid()))));
+        final DiskImage diskImage = createImage();
         disks.add(diskImage);
-        final VmDevice vmDevice = new VmDevice();
-        vmDevice.setIsPlugged(true);
-        vmDevice.setId(new VmDeviceId(diskImage.getId(), Guid.NewGuid()));
+        final VmDevice vmDevice = createDiskVmDevice(diskImage);
         final HashMap<VDSCommandType, Boolean> calls = new HashMap<VDSCommandType, Boolean>();
 
         final VdsSelector vdsSelector = Mockito.mock(VdsSelector.class);
