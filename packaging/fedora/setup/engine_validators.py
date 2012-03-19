@@ -12,6 +12,7 @@ import os
 import os.path
 import tempfile
 import cracklib
+from setup_controller import Controller
 
 def validateMountPoint(param, options=[]):
     logging.info("validating %s as a valid mount point" % (param))
@@ -46,18 +47,66 @@ def validateInteger(param, options=[]):
 def validatePort(param, options=[]):
     #TODO: add actual port check with socket open
     logging.debug("Validating %s as a valid TCP Port" % (param))
-    if validateInteger(param, options):
-        port = int(param)
-        if (port > 1024 and port < 65535):
-            (portOpen, process, pid) = utils.isTcpPortOpen(param)
-            if portOpen:
-                print output_messages.INFO_VAL_PORT_OCCUPIED % (param, process, pid)
-                return False
-            return True
-        else:
-            logging.warn("validatePort('%s') - failed" %(param))
-            print output_messages.INFO_VAL_PORT_NOT_RANGE
+    minVal = 0
+    controller = Controller()
+    isProxyEnabled = utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes")
+    if not isProxyEnabled:
+        minVal = 1024
+    if not validateInteger(param, options):
+        return False
+    port = int(param)
+    if not (port > minVal and port < 65535) :
+        logging.warn(output_messages.INFO_VAL_PORT_NOT_RANGE %(minVal))
+        print output_messages.INFO_VAL_PORT_NOT_RANGE %(minVal)
+        return False
+    if isProxyEnabled and param in[basedefs.JBOSS_HTTP_PORT, basedefs.JBOSS_HTTPS_PORT, basedefs.JBOSS_AJP_PORT]:
+        logging.warn(output_messages.INFO_VAL_PORT_OCCUPIED_BY_JBOSS %(param))
+        print output_messages.INFO_VAL_PORT_OCCUPIED_BY_JBOSS %(param)
+        return False
+    (portOpen, process, pid) = utils.isTcpPortOpen(param)
+    if portOpen:
+        logging.warn(output_messages.INFO_VAL_PORT_OCCUPIED % (param, process, pid))
+        print output_messages.INFO_VAL_PORT_OCCUPIED % (param, process, pid)
+        return False
+    if isProxyEnabled and not checkAndSetHttpdPortPolicy(param):
+        logging.warn(output_messages.INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY %(port))
+        print output_messages.INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY %(port)
+        return False
+    return True
+
+def checkAndSetHttpdPortPolicy(port):
+    def parsePorts(portsStr):
+        ports = []
+        for part in portsStr.split(","):
+            part = part.strip().split("-")
+            if len(part) > 1:
+                for port in range(int(part[0]),int(part[1])):
+                    ports.append(port)
+            else:
+                ports.append(int(part[0]))
+        return ports
+
+    newPort = int(port)
+    out, rc = utils.execCmd([basedefs.EXEC_SEMANAGE, "port", "-l"]) #, "-t", "http_port_t"])
+    if rc:
+        return False
+    httpPortsList = []
+    pattern = re.compile("^http_port_t\s*tcp\s*([0-9, \-]*)$")
+    for line in out.splitlines():
+        httpPortPolicy = re.match(pattern, line)
+        if httpPortPolicy:
+            httpPortsList = parsePorts(httpPortPolicy.groups()[0])
+    logging.debug("http_port_t = %s"%(httpPortsList))
+    if newPort in httpPortsList:
+        return True
+    else:
+        out, rc = utils.execCmd([basedefs.EXEC_SEMANAGE, "port", "-a", "-t", "http_port_t", "-p", "tcp", "%d"%(newPort)], None, False, "", [], False, True)
+        if rc:
+            logging.error(out)
             return False
+    return True
+
+
 
 def validateStringNotEmpty(param, options=[]):
     if type(param) != types.StringType or len(param) == 0:
@@ -88,6 +137,27 @@ def validateOptions(param, options=[]):
         return True
     print output_messages.INFO_VAL_NOT_IN_OPTIONS % (", ".join(options))
     return False
+
+def validateOverrideHttpdConfAndChangePortsAccordingly(param, options=[]):
+    """
+    This validation function is specific for the OVERRIDE_HTTPD_CONF param and it does more than validating the answer.
+    It actually changes the default HTTP/S ports in case the user choose not to override the httpd configuration.
+    """
+    logging.info("validateOverrideHttpdConfAndChangePortsAccordingly %s as part of %s"%(param, options))
+    retval = validateOptions(param, options)
+    if retval and param.lower() == "no":
+        logging.debug("Changing HTTP_PORT & HTTPS_PORT to the default jboss values (8080 & 8443)")
+        controller = Controller()
+        httpParam = controller.getParamByName("HTTP_PORT")
+        httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTP_PORT)
+        httpParam = controller.getParamByName("HTTPS_PORT")
+        httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTPS_PORT)
+    elif retval:
+        #stopping httpd service (in case it's up) when the configuration can be overridden
+        logging.debug("stopping httpd service")
+        utils.Service(basedefs.HTTPD_SERVICE_NAME).stop()
+    return retval
+
 
 def validateDomain(param, options=[]):
     """

@@ -140,6 +140,12 @@ def initSequences():
                                               { 'title'     : output_messages.INFO_START_JBOSS,
                                                 'functions' : [_startJboss] } ]
                        },
+                      { 'description'     : 'Handling httpd',
+                        'condition'       : [utils.compareStrIgnoreCase, controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes"],
+                        'condition_match' : [True],
+                        'steps'           : [ { 'title'     : output_messages.INFO_CONFIG_HTTPD,
+                                                'functions' : [_configureSelinuxBoolean, _backupOldHttpdConfig, _configureHttpdSslKeys, _configureHttpdPort, _configureHttpdSslPort, _redirectUrl, _startHttpd]}]
+                       },
                      ]
 
     for item in sequences_conf:
@@ -180,13 +186,26 @@ def initConfig():
                 "NEED_CONFIRM"    : False,
                 "CONDITION"       : False} ]
          ,
-         "ALL_PARAMS" : [
+         "PORTS" : [
+            {   "CMD_OPTION"      :"override-httpd-config",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_PROMPT,
+                "OPTION_LIST"     :["yes","no"],
+                "VALIDATION_FUNC" :validate.validateOverrideHttpdConfAndChangePortsAccordingly,
+                "DEFAULT_VALUE"   :"yes",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "OVERRIDE_HTTPD_CONFIG",
+                "USE_DEFAULT"     : True,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},
+
             {   "CMD_OPTION"      :"http-port",
                 "USAGE"           :output_messages.INFO_CONF_PARAMS_HTTP_PORT_USAGE,
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_HTTP_PORT_PROMPT,
                 "OPTION_LIST"     :[],
                 "VALIDATION_FUNC" :validate.validatePort,
-                "DEFAULT_VALUE"   :"8080",
+                "DEFAULT_VALUE"   :"80",
                 "MASK_INPUT"      : False,
                 "LOOSE_VALIDATION": False,
                 "CONF_NAME"       : "HTTP_PORT",
@@ -199,14 +218,15 @@ def initConfig():
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_HTTPS_PORT_PROMPT,
                 "OPTION_LIST"     :[],
                 "VALIDATION_FUNC" :validate.validatePort,
-                "DEFAULT_VALUE"   :"8443",
+                "DEFAULT_VALUE"   :"443",
                 "MASK_INPUT"      : False,
                 "LOOSE_VALIDATION": False,
                 "CONF_NAME"       : "HTTPS_PORT",
                 "USE_DEFAULT"     : False,
                 "NEED_CONFIRM"    : False,
-                "CONDITION"       : False},
-
+                "CONDITION"       : False}]
+         ,
+         "ALL_PARAMS" : [
              {  "CMD_OPTION"      :"mac-range",
                 "USAGE"           :output_messages.INFO_CONF_PARAMS_MAC_RANGE_USAGE,
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_MAC_RANG_PROMPT,
@@ -416,6 +436,12 @@ def initConfig():
     POST_CONDITION_MATCH - Value to match condition with
     """
     conf_groups = (
+                    { "GROUP_NAME"            : "PORTS",
+                      "DESCRIPTION"           : output_messages.INFO_GRP_PORTS,
+                      "PRE_CONDITION"         : _wereHttpdConfFilesChanged,
+                      "PRE_CONDITION_MATCH"   : True,
+                      "POST_CONDITION"        : False,
+                      "POST_CONDITION_MATCH"  : True},
                     { "GROUP_NAME"            : "ALL_PARAMS",
                       "DESCRIPTION"           : output_messages.INFO_GRP_ALL,
                       "PRE_CONDITION"         : False,
@@ -710,6 +736,106 @@ def _addMimeMapNode(webXmlHandler):
     #set content to mime type node
     logging.debug("setting value of mime-type to application/x-x509-ca-cert")
     utils.setXmlContent(webXmlHandler, "/web-app/mime-mapping/mime-type", "application/x-x509-ca-cert")
+
+def _backupOldHttpdConfig():
+    logging.debug("Backup old httpd configuration files")
+    dateTimeSuffix = utils.getCurrentDateTime()
+    #1. Backup httpd.conf file
+    backupFile = "%s.%s.%s" % (basedefs.FILE_HTTPD_CONF, "BACKUP", dateTimeSuffix)
+    logging.debug("Backing up %s into %s", basedefs.FILE_HTTPD_CONF, backupFile)
+    utils.copyFile(basedefs.FILE_HTTPD_CONF, backupFile)
+
+    #2. Backup ssl.conf file
+    backupFile = "%s.%s.%s" % (basedefs.FILE_HTTPD_SSL_CONFIG, "BACKUP", dateTimeSuffix)
+    logging.debug("Backing up %s into %s", basedefs.FILE_HTTPD_SSL_CONFIG, backupFile)
+    utils.copyFile(basedefs.FILE_HTTPD_SSL_CONFIG, backupFile)
+
+
+def _configureSelinuxBoolean():
+    logging.debug("Enable httpd_can_network_connect boolean")
+    cmd = [basedefs.EXEC_SETSEBOOL,"-P","httpd_can_network_connect","1"]
+    out, rc = utils.execCmd(cmd, None, True, output_messages.ERR_FAILED_UPDATING_SELINUX_BOOLEAN)
+
+def _configureHttpdSslKeys():
+    try:
+        logging.debug("Update %s to use engine_id_rsa private key in mod_ssl directives"%(basedefs.FILE_HTTPD_SSL_CONFIG))
+        # Use the engine_id_rsa key in mod_ssl directives
+        handler = utils.TextConfigFileHandler(basedefs.FILE_HTTPD_SSL_CONFIG, " ")
+        handler.open()
+        handler.editParam("SSLCertificateFile", basedefs.FILE_ENGINE_CERT)
+        handler.editParam("SSLCertificateKeyFile", basedefs.FILE_PRIVATE_SSH_KEY)
+        handler.editParam("SSLCertificateChainFile", basedefs.FILE_CA_CRT_SRC)
+        handler.close()
+    except:
+        logging.error(traceback.format_exc())
+        raise Exception(output_messages.ERR_EXP_UPD_HTTPD_SSL_CONFIG%(basedefs.FILE_HTTPD_SSL_CONFIG))
+
+
+
+def _wereHttpdConfFilesChanged(conf):
+    """
+    This function serve as a pre-condition to the ports group. This function will always return True,
+    Therefore the ports group will always be handled, but this function may changes the flow dynamically
+    according to the httpd status.
+    So, the real purpose of this function is to check whether the relevant httpd configuration files were changed.
+    This is an indication for the setup that the httpd application is being actively used,
+    Therefore we may need to ask (dynamic change) the user whether to override this configuration.
+
+    """
+    logging.debug("checking whether HTTPD config files were changed")
+    conf_files = [basedefs.FILE_HTTPD_SSL_CONFIG, basedefs.FILE_HTTPD_CONF]
+    cmd = [basedefs.EXEC_RPM, "-V", "--nomtime", "httpd", "mod_ssl"]
+    (output, rc) = utils.execCmd(cmdList=cmd)
+    for line in output.split(os.linesep):
+        if len(line) > 0:
+            changed_file = line.split()[-1]
+            if changed_file in conf_files:
+                logging.debug("HTTPD config file %s was changed" %(changed_file))
+                paramToChange = controller.getParamByName("OVERRIDE_HTTPD_CONFIG")
+                paramToChange.setKey("USE_DEFAULT", False)
+                break
+    return True
+
+
+def _redirectUrl():
+    try:
+        # Redirect everything to the application server using the AJP protocol
+        logging.debug("Redirect oVirt URLs using AJP protocol")
+        redirectStr="ProxyPass / ajp://localhost:%s/"%(basedefs.JBOSS_AJP_PORT)
+
+        fd = open(basedefs.FILE_OVIRT_HTTPD_CONF, 'w')
+        fd.write(redirectStr)
+        fd.close()
+    except:
+        logging.error(traceback.format_exc())
+        raise Exception(output_messages.ERR_CREATE_OVIRT_HTTPD_CONF%(basedefs.FILE_OVIRT_HTTPD_CONF))
+
+def _configureHttpdPort():
+    try:
+        logging.debug("Update %s to listen in the new HTTP port"%(basedefs.FILE_HTTPD_CONF))
+        # Listen in the new http port
+        handler = utils.TextConfigFileHandler(basedefs.FILE_HTTPD_CONF, " ")
+        handler.open()
+        handler.editParam("Listen", controller.CONF["HTTP_PORT"])
+        handler.close()
+    except:
+        logging.error(traceback.format_exc())
+        raise Exception(output_messages.ERR_EXP_UPD_HTTP_LISTEN_PORT%(basedefs.FILE_HTTPD_CONF))
+
+def _configureHttpdSslPort():
+    try:
+        logging.debug("Update %s to listen in the new HTTPS port"%(basedefs.FILE_HTTPD_SSL_CONFIG))
+        # Listen in the new https port
+        handler = utils.TextConfigFileHandler(basedefs.FILE_HTTPD_SSL_CONFIG, " ")
+        handler.open()
+        handler.editParam("Listen", controller.CONF["HTTPS_PORT"])
+        handler.editLine("\s*<VirtualHost _default_:", "<VirtualHost _default_:%s>"%(controller.CONF["HTTPS_PORT"]),
+                         True, output_messages.ERR_EXP_UPD_HTTPS_LISTEN_PORT%(basedefs.FILE_HTTPD_SSL_CONFIG))
+        handler.close()
+    except:
+        logging.error(traceback.format_exc())
+        raise Exception(output_messages.ERR_EXP_UPD_HTTPS_LISTEN_PORT%(basedefs.FILE_HTTPD_SSL_CONFIG))
+
 
 def _handleJbossCertFile():
     """
@@ -1559,6 +1685,15 @@ def _displaySummary():
     else:
         logging.debug("user chose to accept user parameters")
 
+def _startHttpd():
+    logging.debug("Handling the %s service"%(basedefs.HTTPD_SERVICE_NAME))
+    srv = utils.Service(basedefs.HTTPD_SERVICE_NAME)
+    srv.autoStart(True)
+    srv.stop(False)
+    srv.start(True)
+
+
+
 def _startJboss():
     logging.debug("using chkconfig to enable jboss to load on system startup.")
     srv = utils.Service(basedefs.JBOSS_SERVICE_NAME)
@@ -1991,6 +2126,9 @@ def configJbossXml():
         configJbossDatasource(xmlObj)
         configJbossNetwork(xmlObj)
         configJbossSSL(xmlObj)
+        isProxyEnabled = utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes")
+        if isProxyEnabled:
+            configJbossAjpConnector(xmlObj)
         logging.debug("Jboss has been configured")
 
         xmlObj.close()
@@ -2003,6 +2141,24 @@ def configJbossXml():
         logging.error("ERROR Editing jboss's configuration file")
         logging.error(traceback.format_exc())
         raise output_messages.ERR_EXP_FAILED_CONFIG_JBOSS
+
+def configJbossAjpConnector(xmlObj):
+    """
+    Configure AJP connector for jboss
+    """
+    logging.debug("Configuring ajp connector")
+    xmlObj.registerNs('web', 'urn:jboss:domain:web:1.1')
+    ajpConnectorStr='<connector name="ajp" protocol="AJP/1.3" scheme="http" socket-binding="ajp"/>'
+    xmlObj.removeNodes("//web:subsystem/web:connector[@name='ajp']")
+    xmlObj.addNodes("//web:subsystem", ajpConnectorStr)
+
+    logging.debug("Configuring ajp socket")
+    xmlObj.registerNs('domain', 'urn:jboss:domain:1.1')
+    ajpSocketStr='<socket-binding name="ajp" port="%s"/>'%(basedefs.JBOSS_AJP_PORT)
+    xmlObj.removeNodes("//domain:socket-binding-group/domain:socket-binding[@name='ajp']")
+    xmlObj.addNodes("//domain:socket-binding-group", ajpSocketStr)
+
+    logging.debug("AJP has been configured for jboss")
 
 def configJbossLogging(xmlObj):
     """
@@ -2214,10 +2370,10 @@ def configJbossNetwork(xmlObj):
 
     logging.debug("Setting ports")
     httpNode = xmlObj.xpathEval("//domain:server/domain:socket-binding-group[@name='standard-sockets']/domain:socket-binding[@name='http']")[0]
-    httpNode.setProp("port", controller.CONF["HTTP_PORT"])
+    httpNode.setProp("port", "%s" %(basedefs.JBOSS_HTTP_PORT))
 
     httpsNode = xmlObj.xpathEval("//domain:server/domain:socket-binding-group[@name='standard-sockets']/domain:socket-binding[@name='https']")[0]
-    httpsNode.setProp("port", controller.CONF["HTTPS_PORT"])
+    httpsNode.setProp("port", "%s" %(basedefs.JBOSS_HTTPS_PORT))
 
     logging.debug("Network has been configured for jboss")
 

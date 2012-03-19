@@ -46,6 +46,8 @@ Requires: bind-utils
 Requires: postgresql-server >= 8.4.7
 Requires: postgresql-contrib >= 8.4.7
 Requires: postgresql-jdbc
+Requires: httpd
+Requires: mod_ssl
 Requires: %{name}-setup
 Requires: %{name}-jboss-deps
 Requires: %{name}-backend

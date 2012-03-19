@@ -31,6 +31,7 @@ INFO_INSTALL="Installing:"
 INFO_SET_DB_SECURITY="Setting Database Security"
 INFO_SET_DB_CONFIGURATION="Setting Database Configuration"
 INFO_CONFIG_OVIRT_ENGINE="Configuring oVirt-engine"
+INFO_CONFIG_HTTPD="Handling HTTPD"
 INFO_CREATE_CA="Creating CA"
 INFO_CREATE_DB="Creating Database"
 INFO_UPGRADE_DB="Upgrading Database Schema"
@@ -39,6 +40,7 @@ INFO_UPD_JBOSS_CONF="Editing JBoss Configuration"
 INFO_UPD_RHEVM_CONF="Editing %s Configuration" % MY_NAME
 INFO_CFG_NFS="Configuring the Default ISO Domain"
 INFO_START_JBOSS="Starting JBoss Service"
+INFO_START_HTTPD="Starting HTTPD Service"
 INFO_CFG_IPTABLES="Configuring Firewall (iptables)"
 INFO_DSPLY_PARAMS="\n%s will be installed using the following configuration:" % MY_NAME
 INFO_USE_PARAMS="Proceed with the configuration listed above"
@@ -57,6 +59,7 @@ INFO_DONE="DONE"
 INFO_ERROR="ERROR"
 
 # Group descriptions
+INFO_GRP_PORTS="Ports configuration"
 INFO_GRP_ALL="General configuration parameters"
 INFO_GRP_REMOTE_DB="Remote DB parameters"
 INFO_GRP_LOCAL_DB="Local DB parameters"
@@ -93,6 +96,16 @@ INFO_CONF_PARAMS_IPTABLES_PROMPT="Firewall ports need to be opened.\n\
 You can let the installer configure iptables automatically overriding the current configuration. The old configuration will be backed up.\n\
 Alternately you can configure the firewall later using an example iptables file found under /usr/share/ovirt-engine/conf/iptables.example\n\
 Configure iptables ?"
+
+
+INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_USAGE="Should the installer configure the ports, overriding the current httpd configuration"
+INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_PROMPT="ovirt uses httpd to proxy requests to the application server.\n\
+It looks like the httpd installed locally is being actively used.\n\
+The installer can override current configuration .\n\
+Alternately you can use JBoss directly (on ports higher than 1024)\n\
+Do you wish to override current httpd configuration and restart the service?"
+
+
 
 INFO_CONF_PARAMS_HTTP_PORT_USAGE="Configures HTTP service port"
 INFO_CONF_PARAMS_HTTP_PORT_PROMPT="HTTP Port"
@@ -144,12 +157,14 @@ INFO_VAL_PATH_NOT_WRITEABLE="ERROR: mount point is not writeable"
 INFO_VAR_PATH_NOT_EMPTY="ERROR: directory %s is not empty"
 INFO_VAL_PATH_SPACE="ERROR: mount point contains only %s megabytes of available space while a minimum of %s megabytes is required"
 INFO_VAL_NOT_INTEGER="ERROR: value is not an integer"
-INFO_VAL_PORT_NOT_RANGE="ERROR: port is outside the range of 1024 - 65535"
+INFO_VAL_PORT_NOT_RANGE="ERROR: port is outside the range of %i - 65535"
+INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY="Failed adding port %d to " + basedefs.HTTP_PORT_POLICY
 INFO_VAL_STRING_EMPTY="ERROR: can't accept an empty answer for param"
 INFO_VAL_NOT_IN_OPTIONS="ERROR: response is not part of the following accepted answers: %s"
 INFO_VAL_NOT_DOMAIN="ERROR: domain is not a valid domain name"
 INFO_VAL_NOT_USER="ERROR: user name contains illegal characters"
 INFO_VAL_PORT_OCCUPIED="ERROR: TCP Port %s is already open by %s (pid: %s)"
+INFO_VAL_PORT_OCCUPIED_BY_JBOSS="ERROR: TCP Port %s is used by JBoss"
 INFO_VAL_PASSWORD_DONT_MATCH="ERROR: passwords don't match"
 INFO_VAL_ISO_DOMAIN_TOO_LONG="ERROR: ISO domain name length is limited to %s characters"%(basedefs.CONST_STORAGE_DOMAIN_NAME_SIZE_LIMIT)
 INFO_VAL_ISO_DOMAIN_ILLEGAL_CHARS="ERROR: ISO domain name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters"
@@ -212,7 +227,7 @@ ERR_FAILED_START_JBOSS_SERVICE="Failed starting JBoss service"
 ERR_FAILED_STATUS_JBOSS_SERVICE="Failed getting the status of the JBoss service"
 ERR_FAILED_START_SERVICE = "Error: Can't start the %s service"
 ERR_FAILED_STOP_SERVICE = "Error: Can't stop the %s service"
-
+ERR_FAILED_TO_RESTART_JBOSS_SERVICE = "Failed restarting JBoss service"
 
 #START NFS SERVICE
 ERR_FAILED_TO_START_NFS_SERVICE="Failed to start the NFS services"
@@ -334,6 +349,7 @@ ERR_CANT_FIND_PGPASS_FILE="Could not find DB password file %s" % (basedefs.DB_PA
 #general errors
 ERR_RC_CODE="Return Code is not zero"
 ERR_SQL_CODE="Failed running sql query"
+ERR_FAILURE="General failure"
 
 #encrypt password
 ERR_EXP_PARSING_ENCRYPT_PASS="Error while parsing encrypted jboss password"
@@ -367,3 +383,26 @@ ERR_EXP_EDIT_PSQL_CONF="Error: failed editing %s" % basedefs.FILE_PSQL_CONF
 ERR_EXP_FAILED_LIMITS="Error: Could not edit %s" % basedefs.FILE_LIMITS_CONF
 
 ERR_EXP_FAILED_KERNEL_PARAMS="Error: failed setting the kernel parameters"
+
+# Prerequisites Packages
+ERR_HTTPD_NOT_INSTALLED="Error: Httpd is not installed in the system"
+ERR_MOD_SSL_NOT_INSTALLED="Error: mod_ssl is not installed in the system"
+
+# edit ssl.conf
+ERR_EXP_UPD_HTTPD_SSL_CONFIG="Failed updating ssl configuration file %s"
+
+# create ovirt-engine.conf
+ERR_CREATE_OVIRT_HTTPD_CONF="Failed creating ovirt-engine.conf file %s"
+
+# start httpd
+ERR_FAILED_CHKCFG_HTTPD="Failed to configure httpd service to start on boot"
+ERR_RESTARTING_HTTPD_SERVICE="Failed to restart httpd service"
+ERR_FAILED_START_SERVICE="Error: Can't restart the httpd service"
+ERR_FAILED_TO_START_HTTPD_SERVICE="Error: Can't start the httpd service"
+
+# enable selinux boolean
+ERR_FAILED_UPDATING_SELINUX_BOOLEAN="Failed to enable SELinux boolean"
+
+# update listen ports
+ERR_EXP_UPD_HTTP_LISTEN_PORT="Error: can't update http listen port in file %s"
+ERR_EXP_UPD_HTTPS_LISTEN_PORT="Error: can't update https listen port in file %s"
