@@ -164,6 +164,21 @@ public class SnapshotsManager {
     }
 
     /**
+     * Remove all illegal disks which were associated with the given snapshot. This is done in order to be able to
+     * switch correctly between snapshots where illegal images might be present.
+     *
+     * @param snapshotId
+     *            The ID of the snapshot for who to remove illegal images for.
+     */
+    public void removeAllIllegalDisks(Guid snapshotId) {
+        for (DiskImage diskImage : getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId)) {
+            if (diskImage.getimageStatus() == ImageStatus.ILLEGAL) {
+                ImagesHandler.removeDiskImage(diskImage);
+            }
+        }
+    }
+
+    /**
      * Attempt to read the configuration that is stored in the snapshot, and restore the VM from it.<br>
      * The NICs and Disks will be restored from the configuration (if available).<br>
      * <br>
@@ -175,6 +190,7 @@ public class SnapshotsManager {
      */
     public void attempToRestoreVmConfigurationFromSnapshot(VM vm,
             Snapshot snapshot,
+            Guid activeSnapshotId,
             CompensationContext compensationContext) {
         if (snapshot.getVmConfiguration() == null || !updateVmFromConfiguration(vm, snapshot.getVmConfiguration())) {
             vm.setImages(new ArrayList<DiskImage>(getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshot.getId())));
@@ -185,7 +201,7 @@ public class SnapshotsManager {
         getVmStaticDao().update(vm.getStaticData());
         getVmDynamicDao().update(vm.getDynamicData());
         synchronizeNics(vm.getId(), vm.getInterfaces(), compensationContext);
-        synchronizeDisksFromSnapshot(vm.getId(), snapshot.getId(), vm.getImages());
+        synchronizeDisksFromSnapshot(vm.getId(), snapshot.getId(), activeSnapshotId, vm.getImages());
     }
 
     /**
@@ -273,11 +289,13 @@ public class SnapshotsManager {
      * @param disksFromSnapshot
      *            The disks that existed in the snapshot.
      */
-    protected void synchronizeDisksFromSnapshot(Guid vmId, Guid snapshotId, List<DiskImage> disksFromSnapshot) {
+    protected void synchronizeDisksFromSnapshot(Guid vmId,
+            Guid snapshotId,
+            Guid activeSnapshotId,
+            List<DiskImage> disksFromSnapshot) {
         List<Guid> diskIdsFromSnapshot = new ArrayList<Guid>();
 
         // Sync disks that exist or existed in the snapshot.
-        Guid activeSnapshotId = null;
         for (DiskImage diskImage : disksFromSnapshot) {
             diskIdsFromSnapshot.add(diskImage.getimage_group_id());
             Disk disk = diskImage.getDisk();
@@ -287,8 +305,6 @@ public class SnapshotsManager {
 
                 // If can't find the image, insert it as illegal so that it can't be used and make the device unplugged.
                 if (getDiskImageDao().getSnapshotById(diskImage.getId()) == null) {
-                    activeSnapshotId = (activeSnapshotId == null)
-                            ? getSnapshotDao().getId(vmId, SnapshotType.ACTIVE) : activeSnapshotId;
                     diskImage.setimageStatus(ImageStatus.ILLEGAL);
                     diskImage.setvm_snapshot_id(activeSnapshotId);
 

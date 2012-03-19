@@ -66,6 +66,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
             snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
                     getSnapshotDao().get(getParameters().getDstSnapshotId()),
+                    getSnapshotDao().getId(getVm().getId(), SnapshotType.ACTIVE),
                     getCompensationContext());
             UpdateVmInSpm(getVm().getstorage_pool_id(),
                     new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { getVm() })));
@@ -79,10 +80,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected void ExecuteVmCommand() {
-        List<DiskImage> images = DbFacade
-                .getInstance()
-                .getDiskImageDAO()
-                .getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId());
         Guid previousActiveSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
         getSnapshotDao().remove(previousActiveSnapshotId);
         snapshotsManager.addSnapshot(previousActiveSnapshotId,
@@ -92,7 +89,12 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                         getCompensationContext());
         Guid newActiveSnapshotId = Guid.NewGuid();
         snapshotsManager.addActiveSnapshot(newActiveSnapshotId, getVm(), getCompensationContext());
+        snapshotsManager.removeAllIllegalDisks(previousActiveSnapshotId);
 
+        List<DiskImage> images = DbFacade
+                .getInstance()
+                .getDiskImageDAO()
+                .getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId());
         if (images.size() > 0) {
             VmHandler.checkStatusAndLockVm(getVmId(), getCompensationContext());
             for (DiskImage image : images) {

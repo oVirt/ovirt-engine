@@ -205,12 +205,14 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      */
     private void restoreConfiguration(Snapshot targetSnapshot) {
         SnapshotsManager snapshotsManager = new SnapshotsManager();
-        snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
-                targetSnapshot,
-                getCompensationContext());
-
         removedSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
         snapshotsToRemove.add(removedSnapshotId);
+        snapshotsManager.removeAllIllegalDisks(removedSnapshotId);
+
+        snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
+                targetSnapshot,
+                targetSnapshot.getId(),
+                getCompensationContext());
         getSnapshotDao().remove(targetSnapshot.getId());
         snapshotsManager.addActiveSnapshot(targetSnapshot.getId(), getVm(), getCompensationContext());
     }
