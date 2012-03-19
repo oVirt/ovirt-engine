@@ -1499,7 +1499,7 @@
             <value>14</value>
             <value>14</value>
         </row>
-        
+
     </table>
 
     <table name="storage_pool_iso_map">
@@ -2757,7 +2757,7 @@
             <value>103cfd1d-18b1-4790-8a0c-1e52621b0076</value>
         </row>
     </table>
-    
+
     <table name="repo_file_meta_data">
         <column>repo_domain_id</column>
         <column>repo_file_name</column>
@@ -2791,7 +2791,7 @@
             <value>0</value>
             <value>1300701900171</value>
             <value>0</value>
-        </row>        
+        </row>
     </table>
 
     <table name="business_entity_snapshot">
@@ -2804,7 +2804,7 @@
         <column>snapshot_class</column>
 		<column>snapshot_type</column>
 		<column>insertion_order</column>
-	
+
         <row>
             <value>1f5c320e-b46b-414b-8fbd-ad1c0c9e71c4</value>
             <value>48e85ac4-17cc-40d1-8b4e-37edcea8d78a</value>
@@ -3168,4 +3168,152 @@
         </row>
     </table>
 
+    <table name="gluster_volumes">
+        <column>id</column>
+        <column>cluster_id</column>
+        <column>vol_name</column>
+        <column>vol_type</column>
+        <column>transport_type</column>
+        <column>status</column>
+        <column>replica_count</column>
+        <column>stripe_count</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>test-vol-distribute-1</value>
+            <value>DISTRIBUTE</value>
+            <value>ETHERNET</value>
+            <value>UP</value>
+            <value>0</value>
+            <value>0</value>
+            <value>2010-10-21 03:38:22</value>
+            <value>2010-11-29 15:57:10</value>
+        </row>
+        <row>
+            <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>test-vol-replicate-1</value>
+            <value>DISTRIBUTED_REPLICATE</value>
+            <value>ETHERNET</value>
+            <value>UP</value>
+            <value>2</value>
+            <value>0</value>
+            <value>2010-10-21 03:38:22</value>
+            <value>2010-11-29 15:57:10</value>
+        </row>
+    </table>
+
+    <table name="gluster_volume_bricks">
+        <column>volume_id</column>
+        <column>server_id</column>
+        <column>brick_dir</column>
+        <column>status</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+
+        <!-- Bricks for volume 0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8 -->
+        <row>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>/export/test-vol-distribute-1/dir1</value>
+            <value>UP</value>
+            <value>2010-10-21 03:38:22</value>
+            <value>2010-11-29 15:57:10</value>
+        </row>
+        <row>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>/export/test-vol-distribute-1/dir2</value>
+            <value>UP</value>
+            <value>2010-10-22 03:38:22</value>
+            <value>2010-11-29 15:57:10</value>
+        </row>
+
+        <!-- Bricks for volume b2cb2f73-fab3-4a42-93f0-d5e4c069a43e -->
+        <row>
+            <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>/export/test-vol-replicate-1/r1dir1</value>
+            <value>UP</value>
+            <value>2010-10-21 03:38:22</value>
+            <value>2010-11-29 15:57:10</value>
+        </row>
+        <row>
+            <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>/export/test-vol-replicate-1/r1dir2</value>
+            <value>UP</value>
+            <value>2010-10-21 03:38:23</value>
+            <value>2010-11-29 15:57:10</value>
+        </row>
+        <row>
+            <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>/export/test-vol-replicate-1/r2dir1</value>
+            <value>UP</value>
+            <value>2010-10-22 03:38:22</value>
+            <value>2010-11-29 15:57:10</value>
+        </row>
+        <row>
+            <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>/export/test-vol-replicate-1/r2dir2</value>
+            <value>UP</value>
+            <value>2010-10-22 03:38:23</value>
+            <value>2010-11-29 15:57:10</value>
+        </row>
+    </table>
+
+    <table name="gluster_volume_options">
+        <column>volume_id</column>
+        <column>option_key</column>
+        <column>option_val</column>
+
+        <!-- Options for volume 0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8 -->
+        <row>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>auth.allow</value>
+            <value>*</value>
+        </row>
+        <row>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>nfs.disable</value>
+            <value>on</value>
+        </row>
+
+        <!-- Options for volume b2cb2f73-fab3-4a42-93f0-d5e4c069a43e -->
+        <row>
+            <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
+            <value>auth.allow</value>
+            <value>*</value>
+        </row>
+        <row>
+            <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
+            <value>nfs.disable</value>
+            <value>off</value>
+        </row>
+    </table>
+
+    <table name="gluster_volume_access_protocols">
+        <column>volume_id</column>
+        <column>access_protocol</column>
+
+        <!-- Access Protocols for volume 0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8 -->
+        <row>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>GLUSTER</value>
+        </row>
+
+        <!-- Access Protocols for volume b2cb2f73-fab3-4a42-93f0-d5e4c069a43e -->
+        <row>
+            <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
+            <value>GLUSTER</value>
+        </row>
+        <row>
+            <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
+            <value>NFS</value>
+        </row>
+    </table>
 </dataset>
