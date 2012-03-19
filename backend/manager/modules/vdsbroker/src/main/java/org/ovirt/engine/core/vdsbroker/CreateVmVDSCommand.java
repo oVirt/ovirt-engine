@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -17,6 +18,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVmFromSysPrepVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVmFromSysPrepVDSCommandParameters;
@@ -33,7 +36,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         CreateVDSCommand<?> command = null;
         try {
             if (_vdsManager != null) {
-                VM vm = getParameters().getVm();
+                final VM vm = getParameters().getVm();
                 if (CanExecute()) {
                     boolean canExecute = true;
                     if (ResourceManager.getInstance().getBackendCallback() != null) {
@@ -71,10 +74,16 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                         }
 
                         if (command.getVDSReturnValue().getSucceeded()) {
-                            HandleVdsInformation();
-
-                            vm.setrun_on_vds(getVdsId());
-                            DbFacade.getInstance().getVmDynamicDAO().update(vm.getDynamicData());
+                            TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                                    new TransactionMethod<Object>() {
+                                        @Override
+                                        public Object runInTransaction() {
+                                            HandleVdsInformation();
+                                            vm.setrun_on_vds(getVdsId());
+                                            DbFacade.getInstance().getVmDynamicDAO().update(vm.getDynamicData());
+                                            return null;
+                                        }
+                                    });
                         } else {
                             ResourceManager.getInstance().RemoveAsyncRunningVm(getParameters().getVmId());
                         }
