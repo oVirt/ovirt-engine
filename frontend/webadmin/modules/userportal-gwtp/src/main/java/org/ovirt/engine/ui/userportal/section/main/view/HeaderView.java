@@ -8,6 +8,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -43,6 +44,12 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
     public HeaderView(ApplicationConstants constants) {
         this.logoutLink = new Anchor(constants.logoutLinkLabel());
         this.guideLink = new Anchor(constants.guideLinkLabel());
+        String href = Location.getProtocol()
+                + "//"
+                + Location.getHost()
+                + "/rhev-docs/en-US/html/User_Portal_Guide/index.html";
+        this.guideLink.setHref(href);
+        this.guideLink.setTarget("_blank");
         this.aboutLink = new Anchor(constants.aboutLinkLabel());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         mainTabBarPanel.getElement().getStyle().setZIndex(1);
