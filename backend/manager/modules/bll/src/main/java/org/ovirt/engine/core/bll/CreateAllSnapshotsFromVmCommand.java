@@ -240,6 +240,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         if (disksList.size() > 0) {
             result = validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
                     && validate(vmNotDuringMigration())
+                    && validate(vmNotRunningStateless())
                     && ImagesHandler.PerformImagesChecks(getVm(),
                             getReturnValue().getCanDoActionMessages(),
                             getVm().getstorage_pool_id(),
@@ -274,6 +275,16 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private ValidationResult vmNotDuringMigration() {
         if (getVm().getstatus() == VMStatus.MigratingFrom || getVm().getstatus() == VMStatus.MigratingTo) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
+        }
+
+        return new ValidationResult();
+    }
+
+    private ValidationResult vmNotRunningStateless() {
+        if (getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS)) {
+            VdcBllMessages message = getVm().isStatusUp() ? VdcBllMessages.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS :
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_STATELESS_SNAPSHOT_LEFTOVER;
+            return new ValidationResult(message);
         }
 
         return new ValidationResult();
