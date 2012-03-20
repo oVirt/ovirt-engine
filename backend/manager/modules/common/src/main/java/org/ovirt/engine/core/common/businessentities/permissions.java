@@ -61,6 +61,10 @@ public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
     @Transient
     private RoleType roleType;
 
+    @Column(name = "grant_mode")
+    @Enumerated
+    private PermissionGrantMode grantMode = PermissionGrantMode.Manual;
+
     public permissions() {
         this.id = Guid.NewGuid();
     }
@@ -176,6 +180,14 @@ public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
         return roleType;
     }
 
+    public void setGrantMode(PermissionGrantMode grantMode) {
+        this.grantMode = grantMode;
+    }
+
+    public PermissionGrantMode getGrantMode() {
+        return grantMode;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -201,6 +213,8 @@ public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
                 + ((roleType == null) ? 0 : roleType.hashCode());
         result = prime * result
                 + ((roleId == null) ? 0 : roleId.hashCode());
+        result = prime * result
+                + ((grantMode == null) ? 0 : grantMode.hashCode());
         return result;
     }
 
@@ -239,6 +253,8 @@ public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
             if (other.roleId != null)
                 return false;
         } else if (!roleId.equals(other.roleId))
+            return false;
+        if (grantMode != other.grantMode)
             return false;
         return true;
     }

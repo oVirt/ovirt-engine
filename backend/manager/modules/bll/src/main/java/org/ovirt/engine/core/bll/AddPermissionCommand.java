@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.businessentities.PermissionGrantMode;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.permissions;
@@ -24,9 +25,14 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
 
     @Override
     protected boolean canDoAction() {
-        permissions perm = getParameters().getPermission();
+        final permissions perm = getParameters().getPermission();
         if (perm == null) {
             addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_PERMISSION_NOT_SENT);
+            return false;
+        }
+
+        if (perm.getGrantMode() != PermissionGrantMode.Manual && !isInternalExecution()) {
+            addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_ILLEGAL_GRANT_MODE);
             return false;
         }
 

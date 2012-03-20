@@ -595,7 +595,7 @@ CREATE OR REPLACE VIEW permissions_view
 AS
 
 SELECT     permissions.id as id, permissions.role_id as role_id, permissions.ad_element_id as ad_element_id, permissions.object_id as object_id, permissions.object_type_id as object_type_id,
-	       roles.name as role_name, roles.role_type as role_type, fn_get_entity_name(permissions.object_id,permissions.object_type_id) as object_name,
+	       permissions.grant_mode as grant_mode, roles.name as role_name, roles.role_type as role_type, fn_get_entity_name(permissions.object_id,permissions.object_type_id) as object_name,
 			fn_get_ad_element_name(permissions.ad_element_id) as owner_name
 FROM         permissions INNER JOIN
 roles ON permissions.role_id = roles.id;

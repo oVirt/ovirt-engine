@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.PermissionGrantMode;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
@@ -141,8 +142,8 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
                 .addValue("id", permission.getId())
                 .addValue("role_id", permission.getrole_id())
                 .addValue("object_id", permission.getObjectId())
-                .addValue("object_type_id",
-                        permission.getObjectType().getValue());
+                .addValue("object_type_id", permission.getObjectType().getValue())
+                .addValue("grant_mode", PermissionGrantMode.nullSafeValueOf(permission.getGrantMode()).name());
 
         getCallsHandler().executeModification("InsertPermission", parameterSource);
     }
@@ -188,6 +189,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
             entity.setObjectName(rs.getString("object_name"));
             entity.setOwnerName(rs.getString("owner_name"));
             entity.setRoleType(RoleType.getById(rs.getInt("role_type")));
+            entity.setGrantMode(PermissionGrantMode.valueOf(rs.getString("grant_mode")));
             return entity;
         }
     }

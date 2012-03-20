@@ -841,6 +841,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String PERMISSION_ADD_FAILED_VM_IN_POOL();
 
+    String PERMISSION_ADD_FAILED_ILLEGAL_GRANT_MODE();
+
     String ROLE_WITH_ROLE_ID_DO_NOT_EXIST();
 
     String VDS_GROUP_CPU_UTILIZATION_MUST_BE_IN_VALID_RANGE();
