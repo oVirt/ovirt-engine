@@ -1100,6 +1100,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("3")
     VmPoolMonitorMaxAttempts(347),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    LiveSnapshotEnabled(348),
+
     Invalid(65535);
 
     private int intValue;

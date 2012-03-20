@@ -18,6 +18,8 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -247,7 +249,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                             true,
                             true,
                             true,
-                            false,
+                            checkVmIsDown(),
                             true, true, disksList);
         }
 
@@ -256,6 +258,14 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
         }
         return result;
+    }
+
+    /**
+     * @return Check for VM down only if DC level does not support live snapshots.
+     */
+    private boolean checkVmIsDown() {
+        return !Config.<Boolean> GetValue(
+                ConfigValues.LiveSnapshotEnabled, getStoragePool().getcompatibility_version().getValue());
     }
 
     /**
