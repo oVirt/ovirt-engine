@@ -238,7 +238,7 @@ public class QuotaHelper {
      * @param messages
      * @return
      */
-    private boolean validateQuotaStorageLimitation(Quota quota, List<String> messages) {
+    private static boolean validateQuotaStorageLimitation(Quota quota, List<String> messages) {
         boolean isValid = true;
         List<QuotaStorage> quotaStorageList = quota.getQuotaStorages();
         if (quotaStorageList != null && !quotaStorageList.isEmpty() && isGlobalLimitExist(quota.getStorageSizeGB())) {
@@ -257,7 +257,7 @@ public class QuotaHelper {
      *            - Messages of can do action.
      * @return Boolean value if the quota is valid or not.
      */
-    private boolean validateQuotaVdsGroupLimitation(Quota quota, List<String> messages) {
+    private static boolean validateQuotaVdsGroupLimitation(Quota quota, List<String> messages) {
         boolean isValid = true;
         List<QuotaVdsGroup> quotaVdsGroupList = quota.getQuotaVdsGroups();
         if (quotaVdsGroupList != null && !quotaVdsGroupList.isEmpty()) {
@@ -283,7 +283,7 @@ public class QuotaHelper {
         return isValid;
     }
 
-    private boolean isGlobalLimitExist(Object globalStorageLimit) {
+    private static boolean isGlobalLimitExist(Object globalStorageLimit) {
         return globalStorageLimit != null;
     }
 

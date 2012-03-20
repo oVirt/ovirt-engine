@@ -58,16 +58,16 @@ public class QuotaHelperTest {
     @Mock
     private StorageDomainDynamicDAO storageDomainDynamicDAO;
 
-    private Guid storagePoolUUID = Guid.NewGuid();
-    private String storagePoolName = "Storage pool name";
+    private final Guid storagePoolUUID = Guid.NewGuid();
+    private final String storagePoolName = "Storage pool name";
 
-    private Guid firstStorageDomainUUID = Guid.NewGuid();
-    private String firstStorageDomainName = "First storage domain name";
-    private Guid secondStorageDomainUUID = Guid.NewGuid();
-    private String secondStorageDomainName = "Second storage domain name";
-    private Guid firstVdsGroupUUID = Guid.NewGuid();
-    private Guid secondVdsGroupUUID = Guid.NewGuid();
-    private String quotaName = "New Quota Name";
+    private final Guid firstStorageDomainUUID = Guid.NewGuid();
+    private final String firstStorageDomainName = "First storage domain name";
+    private final Guid secondStorageDomainUUID = Guid.NewGuid();
+    private final String secondStorageDomainName = "Second storage domain name";
+    private final Guid firstVdsGroupUUID = Guid.NewGuid();
+    private final Guid secondVdsGroupUUID = Guid.NewGuid();
+    private final String quotaName = "New Quota Name";
     storage_pool storagePool = new storage_pool();
     storage_domains firstStorageDomains = new storage_domains();
     storage_domains secondStorageDomains = new storage_domains();
@@ -84,7 +84,7 @@ public class QuotaHelperTest {
         mockConfig();
     }
 
-    private void mockConfig() {
+    private static void mockConfig() {
         mockStatic(Config.class);
         when(Config.<Integer> GetValue(ConfigValues.QuotaThresholdVdsGroup)).thenReturn(80);
         when(Config.<Integer> GetValue(ConfigValues.QuotaThresholdStorage)).thenReturn(80);
@@ -114,7 +114,7 @@ public class QuotaHelperTest {
         when(storagePoolDAO.get(storagePoolUUID)).thenReturn(mockStoragePool());
     }
 
-    private ArrayList<storage_domains> getEmptyStorageDomainList() {
+    private static List<storage_domains> getEmptyStorageDomainList() {
         return new ArrayList<storage_domains>();
     }
 
@@ -423,7 +423,7 @@ public class QuotaHelperTest {
         Assert.assertFalse(isQuotaValid);
     }
 
-    private QuotaHelper getQuotaHelper() {
+    private static QuotaHelper getQuotaHelper() {
         QuotaHelper quotaHelper = QuotaHelper.getInstance();
         return spy(quotaHelper);
     }
@@ -541,21 +541,6 @@ public class QuotaHelperTest {
         quotaStorageList.add(firstQuotaStorage);
         quotaStorageList.add(secondQuotaStorage);
 
-        quotaSpecific.setQuotaStorages(quotaStorageList);
-        return quotaSpecific;
-    }
-
-    private Quota mockSpecificStorageQuota() {
-        Quota quotaSpecific = mockGeneralStorageQuota();
-        quotaSpecific.setStorageSizeGB(null);
-        List<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
-
-        // Set second quota Storage.
-        QuotaStorage firstQuotaStorage = new QuotaStorage();
-        firstQuotaStorage.setStorageSizeGB(50l);
-        firstQuotaStorage.setStorageSizeGBUsage(0d);
-        firstQuotaStorage.setStorageId(firstStorageDomainUUID);
-        quotaStorageList.add(firstQuotaStorage);
         quotaSpecific.setQuotaStorages(quotaStorageList);
         return quotaSpecific;
     }
