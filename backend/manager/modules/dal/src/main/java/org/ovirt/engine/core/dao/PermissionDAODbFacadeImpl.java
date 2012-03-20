@@ -16,35 +16,15 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  * <code>PermissionsDAODbFacadeImpl</code> provides a concrete implementation of {@link PermissionDAO} using code from
  * DbFacade.
  */
-@SuppressWarnings("synthetic-access")
 public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements PermissionDAO {
-    private class PermissionRowMapper implements
-            ParameterizedRowMapper<permissions> {
-        @Override
-        public permissions mapRow(ResultSet rs, int rowNum) throws SQLException {
-            permissions entity = new permissions();
-            entity.setad_element_id(Guid.createGuidFromString(rs
-                    .getString("ad_element_id")));
-            entity.setId(Guid.createGuidFromString(rs.getString("id")));
-            entity.setrole_id(Guid.createGuidFromString(rs.getString("role_id")));
-            entity.setObjectId(Guid.createGuidFromString(rs
-                    .getString(("object_id"))));
-            entity.setObjectType(VdcObjectType.forValue(rs
-                    .getInt(("object_type_id"))));
-            entity.setRoleName(rs.getString("role_name"));
-            entity.setObjectName(rs.getString("object_name"));
-            entity.setOwnerName(rs.getString("owner_name"));
-            entity.setRoleType(RoleType.getById(rs.getInt("role_type")));
-            return entity;
-        }
-    }
+    private static PermissionRowMapper permissionRowMapper = new PermissionRowMapper();
 
     @Override
     public permissions get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
 
-        return getCallsHandler().executeRead("GetPermissionsByid", new PermissionRowMapper(), parameterSource);
+        return getCallsHandler().executeRead("GetPermissionsByid", permissionRowMapper, parameterSource);
     }
 
     @Override
@@ -52,7 +32,9 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("quota_id", quotaId);
 
-        return getCallsHandler().executeReadList("GetConsumedPermissionsForQuotaId", new PermissionRowMapper(), parameterSource);
+        return getCallsHandler().executeReadList("GetConsumedPermissionsForQuotaId",
+                permissionRowMapper,
+                parameterSource);
     }
 
     @Override
@@ -64,7 +46,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
                 .addValue("object_id", objectid);
 
         return getCallsHandler().executeRead("GetPermissionsByRoleIdAndAdElementIdAndObjectId",
-                new PermissionRowMapper(),
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -77,7 +59,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
                 .addValue("object_id", objectid);
 
         return getCallsHandler().executeRead("GetForRoleAndAdElementAndObject_wGroupCheck",
-                new PermissionRowMapper(),
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -89,11 +71,11 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     @Override
     public List<permissions> getAllForAdElement(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("ad_element_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
+                .addValue("ad_element_id", id).
+                addValue("user_id", userID).
+                addValue("is_filtered", isFiltered);
 
-        ParameterizedRowMapper<permissions> mapper = new PermissionRowMapper();
-
-        return getCallsHandler().executeReadList("GetPermissionsByAdElementId", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetPermissionsByAdElementId", permissionRowMapper, parameterSource);
     }
 
     @Override
@@ -102,7 +84,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
                 .addValue("ad_element_id", id);
 
         return getCallsHandler().executeReadList("GetDirectPermissionsByAdElementId",
-                new PermissionRowMapper(),
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -111,9 +93,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("role_id", id);
 
-        ParameterizedRowMapper<permissions> mapper = new PermissionRowMapper();
-
-        return getCallsHandler().executeReadList("GetPermissionsByRoleId", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetPermissionsByRoleId", permissionRowMapper, parameterSource);
     }
 
     @Override
@@ -124,7 +104,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
                         elementid);
 
         return getCallsHandler().executeReadList("GetPermissionsByRoleIdAndAdElementId",
-                new PermissionRowMapper(),
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -134,7 +114,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
                 .addValue("role_id", roleid).addValue("object_id", objectid);
 
         return getCallsHandler().executeReadList("GetPermissionsByRoleIdAndObjectId",
-                new PermissionRowMapper(),
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -142,7 +122,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     public List<permissions> getAllForEntity(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
-        return getCallsHandler().executeReadList("GetPermissionsByEntityId", new PermissionRowMapper(), parameterSource);
+        return getCallsHandler().executeReadList("GetPermissionsByEntityId", permissionRowMapper, parameterSource);
     }
 
     @Override
@@ -150,7 +130,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id).addValue("object_type_id", type.getValue());
         return getCallsHandler().executeReadList("GetPermissionsTreeByEntityId",
-                new PermissionRowMapper(),
+                permissionRowMapper,
                 parameterSource);
     }
 
@@ -191,4 +171,25 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     public void update(permissions entity) {
         throw new NotImplementedException();
     }
+
+    private static class PermissionRowMapper implements ParameterizedRowMapper<permissions> {
+        @Override
+        public permissions mapRow(ResultSet rs, int rowNum) throws SQLException {
+            permissions entity = new permissions();
+            entity.setad_element_id(Guid.createGuidFromString(rs
+                    .getString("ad_element_id")));
+            entity.setId(Guid.createGuidFromString(rs.getString("id")));
+            entity.setrole_id(Guid.createGuidFromString(rs.getString("role_id")));
+            entity.setObjectId(Guid.createGuidFromString(rs
+                    .getString(("object_id"))));
+            entity.setObjectType(VdcObjectType.forValue(rs
+                    .getInt(("object_type_id"))));
+            entity.setRoleName(rs.getString("role_name"));
+            entity.setObjectName(rs.getString("object_name"));
+            entity.setOwnerName(rs.getString("owner_name"));
+            entity.setRoleType(RoleType.getById(rs.getInt("role_type")));
+            return entity;
+        }
+    }
+
 }
