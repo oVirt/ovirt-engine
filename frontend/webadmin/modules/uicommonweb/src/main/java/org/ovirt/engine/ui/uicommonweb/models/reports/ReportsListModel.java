@@ -184,4 +184,11 @@ public class ReportsListModel extends SearchableListModel {
             return "hidden_";
         }
     }
+
+    @Override
+    public boolean IsSearchStringMatch(String searchString)
+    {
+        return searchString.trim().toLowerCase().startsWith("reports");
+    }
+
 }

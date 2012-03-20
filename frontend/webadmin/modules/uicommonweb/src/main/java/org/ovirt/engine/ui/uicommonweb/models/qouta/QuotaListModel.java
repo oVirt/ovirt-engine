@@ -544,4 +544,10 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         return "QuotaListModel";
     }
 
+    @Override
+    public boolean IsSearchStringMatch(String searchString)
+    {
+        return searchString.trim().toLowerCase().startsWith("quota");
+    }
+
 }
