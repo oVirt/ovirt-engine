@@ -31,7 +31,7 @@ public class VmTemplateHandler {
                 "is_auto_suspend", "interfaces", "mem_size_mb", "num_of_sockets", "cpu_per_socket", "num_of_cpus",
                 "vds_group_id", "num_of_monitors", "usb_policy", "time_zone", "diskMap", "default_boot_sequence",
                 "iso_path", "diskImageMap", "default_display_type", "priority", "auto_startup", "is_stateless",
-                "initrd_url", "kernel_url", "kernel_params", "images", "interfaces", "quotaId" });
+                "initrd_url", "kernel_url", "kernel_params", "images", "interfaces", "quotaId", "quotaName" });
     }
 
     public static List<DiskImage> UpdateDisksFromDb(VmTemplate vmt) {
