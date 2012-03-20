@@ -103,4 +103,14 @@ public class FixturesTool {
      * <li>Action group ids : 4, 901</li></ul>
      */
     protected static final Guid USER_EXISTING_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
+
+    /**
+     * Predefined image for testing.
+     */
+    protected static final Guid IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
+
+    /**
+     * Predefined image group for testing.
+     */
+    protected static final Guid IMAGE_GROUP_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a35");
 }
