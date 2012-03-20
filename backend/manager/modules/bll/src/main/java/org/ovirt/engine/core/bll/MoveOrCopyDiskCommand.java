@@ -283,6 +283,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         } else {
             getParameters().setUseCopyCollapse(false);
         }
+        getParameters().setDestinationImageId(getImageId());
         getParameters().setImageGroupID(getImageGroupId());
         getParameters().setDestImageGroupId(getImageGroupId());
         getParameters().setVolumeFormat(getDiskImage().getvolume_format());
