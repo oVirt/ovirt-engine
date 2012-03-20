@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -47,4 +48,13 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
      * @return list of templates
      */
     List<VmTemplate> getTemplatesWithPermittedAction(Guid userId, ActionGroup actionGroup);
+
+    /**
+     * Retrieves the templates with the specified image id.
+     *
+     * @param image
+     *            the image id
+     * @return A {@link Map} from the image's plug status to a {@link List} of the templates associated with it.
+     */
+    Map<Boolean, List<VmTemplate>> getAllForImage(Guid imageId);
 }

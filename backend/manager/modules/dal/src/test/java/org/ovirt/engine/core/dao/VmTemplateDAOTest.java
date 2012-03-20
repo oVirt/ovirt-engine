@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -92,7 +93,6 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
         assertFalse(result.isEmpty());
     }
 
-
     /**
      * Ensures that the templates for the given vds group are returned.
      */
@@ -104,6 +104,19 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
         assertFalse(result.isEmpty());
         for (VmTemplate template : result) {
             assertEquals(VDS_GROUP_ID, template.getvds_group_id());
+        }
+    }
+
+    /**
+     * Ensures that the templates for the give image are returned.
+     */
+    @Test
+    public void testGetAllForImage() {
+        Map<Boolean, List<VmTemplate>> result = dao.getAllForImage(FixturesTool.IMAGE_ID);
+
+        assertEquals("Wrong number of key", 2, result.size());
+        for (List<VmTemplate> templates : result.values()) {
+            assertEquals("Wrong number of templates", 1, templates.size());
         }
     }
 
@@ -134,7 +147,6 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertEquals(existingTemplate, result);
     }
-
 
     /**
      * Ensures updating the status aspect of the VM Template works.

@@ -2,7 +2,9 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -12,7 +14,9 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.AbstractVmRowMapper;
+import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
@@ -62,6 +66,21 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 VMTemplateRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("quota_id", quotaId));
+    }
+
+    @Override
+    public Map<Boolean, List<VmTemplate>> getAllForImage(Guid imageId) {
+        List<VMTemplateWithPlugInfo> plugInfoList =
+                getCallsHandler().executeReadList("GetVmTemplatesByImageId",
+                        VMTemplateWithPlugInfoRowMapper.instance,
+                        getCustomMapSqlParameterSource().addValue("image_guid", imageId));
+
+        Map<Boolean, List<VmTemplate>> result = new HashMap<Boolean, List<VmTemplate>>();
+        for (VMTemplateWithPlugInfo plugInfo : plugInfoList) {
+            MultiValueMapUtils.addToMap(plugInfo.isPlugged(), plugInfo.getVmTemplate(), result);
+        }
+
+        return result;
     }
 
     @Override
@@ -156,6 +175,42 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setdefault_display_type(DisplayType.forValue(rs.getInt("default_display_type")));
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             entity.setQuotaName(rs.getString("quota_name"));
+            return entity;
+        }
+    }
+
+    private static class VMTemplateWithPlugInfo {
+
+        public VmTemplate getVmTemplate() {
+            return vmTemplate;
+        }
+
+        public void setVmTemplate(VmTemplate vmTemplate) {
+            this.vmTemplate = vmTemplate;
+        }
+
+        public boolean isPlugged() {
+            return isPlugged;
+        }
+
+        public void setPlugged(boolean isPlugged) {
+            this.isPlugged = isPlugged;
+        }
+
+        private VmTemplate vmTemplate;
+        private boolean isPlugged;
+    }
+
+    private static final class VMTemplateWithPlugInfoRowMapper implements ParameterizedRowMapper<VMTemplateWithPlugInfo> {
+        public static final VMTemplateWithPlugInfoRowMapper instance = new VMTemplateWithPlugInfoRowMapper();
+
+        @Override
+        public VMTemplateWithPlugInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
+            @SuppressWarnings("synthetic-access")
+            VMTemplateWithPlugInfo entity = new VMTemplateWithPlugInfo();
+
+            entity.setPlugged(rs.getBoolean("is_plugged"));
+            entity.setVmTemplate(VMTemplateRowMapper.instance.mapRow(rs, rowNum));
             return entity;
         }
     }

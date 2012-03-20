@@ -213,6 +213,17 @@ WHERE entity_type = 'TEMPLATE';
 
 
 
+CREATE OR REPLACE VIEW vm_templates_with_plug_info
+as
+SELECT vm_templates_view.*, image_guid, image_group_id, is_plugged
+FROM vm_templates_view
+INNER JOIN vm_device vd ON vd.vm_id = vm_templates_view.vmt_guid
+INNER JOIN images ON images.image_group_id = vd.device_id AND images.active = TRUE;
+
+
+
+
+
 CREATE OR REPLACE VIEW vm_templates_storage_domain
 AS
 	SELECT            vm_templates.vm_guid AS vmt_guid, vm_templates.vm_name AS name, vm_templates.mem_size_mb,

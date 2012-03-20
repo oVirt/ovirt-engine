@@ -269,14 +269,12 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmTemplateByImageId(v_image_guid UUID) RETURNS SETOF vm_templates_view
+Create or replace FUNCTION GetVmTemplatesByImageId(v_image_guid UUID) RETURNS SETOF vm_templates_with_plug_info
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT vm_templates.*
-      FROM vm_templates_view vm_templates
-      INNER JOIN vm_device vd ON vd.vm_id = vm_templates.vmt_guid
-      INNER JOIN images i ON i.image_group_id = vd.device_id AND i.active = TRUE
-      WHERE i.image_guid = v_image_guid;
+      RETURN QUERY SELECT * 
+      FROM vm_templates_with_plug_info t
+      WHERE t.image_guid = v_image_guid;
 END; $procedure$
 LANGUAGE plpgsql;
 
