@@ -41,6 +41,7 @@ public class MenuBar extends com.google.gwt.user.client.ui.MenuBar {
     public void onBrowserEvent(Event event) {
         super.onBrowserEvent(event);
         switch (DOM.eventGetType(event)) {
+        case Event.ONMOUSEOVER:
         case Event.ONCLICK: {
             MenuItem item = findItem(DOM.eventGetTarget(event));
 
