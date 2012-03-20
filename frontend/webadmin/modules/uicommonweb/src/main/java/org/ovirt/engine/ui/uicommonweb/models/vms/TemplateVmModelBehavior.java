@@ -172,7 +172,10 @@ public class TemplateVmModelBehavior extends IVmModelBehavior
     private void InitCdImage()
     {
         getModel().getCdImage().setSelectedItem(template.getiso_path());
-        getModel().getCdImage().setIsChangable(!StringHelper.isNullOrEmpty(template.getiso_path()));
+
+        boolean hasCd = !StringHelper.isNullOrEmpty(template.getiso_path());
+        getModel().getCdImage().setIsChangable(hasCd);
+        getModel().getCdAttached().setEntity(hasCd);
 
         UpdateCdImage();
     }

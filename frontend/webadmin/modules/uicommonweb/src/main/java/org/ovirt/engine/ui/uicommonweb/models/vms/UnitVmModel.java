@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -596,6 +597,16 @@ public class UnitVmModel extends Model
         privateCdImage = value;
     }
 
+    private EntityModel cdAttached;
+
+    public EntityModel getCdAttached() {
+        return cdAttached;
+    }
+
+    public void setCdAttached(EntityModel value) {
+        cdAttached = value;
+    }
+
     private EntityModel privateInitrd_path;
 
     public EntityModel getInitrd_path()
@@ -905,7 +916,20 @@ public class UnitVmModel extends Model
         setMinAllocatedMemory(new EntityModel());
         setUsbPolicy(new ListModel());
         setIsStateless(new EntityModel());
+
         setCdImage(new ListModel());
+        getCdImage().setIsChangable(false);
+
+        setCdAttached(new EntityModel());
+        getCdAttached().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+
+                getCdImage().setIsChangable((Boolean) getCdAttached().getEntity());
+            }
+        });
+        getCdAttached().setEntity(false);
+
         setIsHighlyAvailable(new EntityModel());
         setDontMigrateVM(new EntityModel());
         setIsTemplatePublic(new EntityModel());

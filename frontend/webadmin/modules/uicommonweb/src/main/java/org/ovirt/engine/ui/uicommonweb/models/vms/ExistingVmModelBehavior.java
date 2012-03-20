@@ -269,7 +269,10 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
     public void InitCdImage()
     {
         getModel().getCdImage().setSelectedItem(vm.getiso_path());
-        getModel().getCdImage().setIsChangable(!StringHelper.isNullOrEmpty(vm.getiso_path()));
+
+        boolean hasCd = !StringHelper.isNullOrEmpty(vm.getiso_path());
+        getModel().getCdImage().setIsChangable(hasCd);
+        getModel().getCdAttached().setEntity(hasCd);
 
         UpdateCdImage();
     }

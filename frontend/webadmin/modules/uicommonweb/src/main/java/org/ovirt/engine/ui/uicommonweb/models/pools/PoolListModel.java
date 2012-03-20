@@ -443,8 +443,8 @@ public class PoolListModel extends ListWithDetailsModel
 
                         boolean hasCd = !StringHelper.isNullOrEmpty(cdImage);
                         model.getCdImage().setIsChangable(hasCd);
-                        if (hasCd)
-                        {
+                        model.getCdAttached().setEntity(hasCd);
+                        if (hasCd) {
                             model.getCdImage().setSelectedItem(cdImage);
                         }
 

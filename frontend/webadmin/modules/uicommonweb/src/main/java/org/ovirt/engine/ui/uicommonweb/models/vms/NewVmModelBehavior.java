@@ -98,9 +98,11 @@ public class NewVmModelBehavior extends IVmModelBehavior
                 getModel().getIsStateless().setEntity(template.getis_stateless());
             }
 
-            getModel().getCdImage().setIsChangable(!StringHelper.isNullOrEmpty(template.getiso_path()));
-            if (getModel().getCdImage().getIsChangable())
-            {
+            boolean hasCd = !StringHelper.isNullOrEmpty(template.getiso_path());
+
+            getModel().getCdImage().setIsChangable(hasCd);
+            getModel().getCdAttached().setEntity(hasCd);
+            if (hasCd) {
                 getModel().getCdImage().setSelectedItem(template.getiso_path());
             }
 

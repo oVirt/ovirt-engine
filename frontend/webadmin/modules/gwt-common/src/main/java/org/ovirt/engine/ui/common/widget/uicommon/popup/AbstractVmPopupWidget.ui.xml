@@ -15,84 +15,88 @@
 			padding-top: 6px;
 			padding-bottom: 6px;
 		}
-		
+
 		.sectionPanel {
 			margin-bottom: 20px;
 		}
-		
+
 		.sectionLabel {
 			font-weight: bold;
 			margin-top: 10px;
 			margin-bottom: 5px;
 		}
-		
+
 		.sectionComment {
 			margin-top: 10px;
 			margin-left: 5px;
 			font-style: italic;
 		}
-		
+
 		.checkboxWithLongLabel,.checkbox {
 			margin-left: -9px;
 		}
-		
+
 		.checkboxWithLongLabel label {
 			margin-left: 26px;
 			margin-top: -26px;
 			display: block;
 			line-height: 20px;
 		}
-		
+
 		.longCheckboxContent {
 			width: 90%;
 		}
-		
+
 		.provisioningEditor {
 			padding-right: 25px;
 		}
-		
+
 		.provisioningEditorContent  {
 			display: none;
 		}
-		
+
 		.provisioningRadioContent  {
-			padding-top: 3px;			
+			padding-top: 3px;
 			width: 60px;
 		}
-		
+
 		.disksAllocation {
 			padding-left: 5px;
 			padding-top: 10px;
 		}
-		
+
 		.disksAllocationPanel {
 			width: 490px;
 			padding-top: 5px;
 			padding-bottom: 10px;
 		}
-		
+
 		.radioButton {
-			
+
 		}
-		
+
 		.label {
 			width: 350px;
 		}
-		
+
 		.runHostPanel {
-			
+
 		}
-		
+
 		.attachCdPanel {
 			width: 100%;
 		}
-		
+
+	        .cdAttachedLabelWidth {
+	            width: 30px;
+	        }
+
 		.hostRunMigrationOptions {
 			margin-left: 6px;
 		}
-		
+
 		label {
-			
+
 		}
 	</ui:style>
 
@@ -212,12 +216,12 @@
 								<e:EntityModelRadioButtonEditor ui:field="provisioningCloneEditor"/>
 							</g:HorizontalPanel>
 							<g:FlowPanel ui:field="disksAllocationPanel">
-								<g:Label ui:field="disksAllocationLabel" text="{constants.disksAllocation}"  addStyleNames="{style.disksAllocation}" visible="false" />									
+							<g:Label ui:field="disksAllocationLabel" text="{constants.disksAllocation}"  addStyleNames="{style.disksAllocation}" visible="false" />									
 								<g:VerticalPanel>
 									<s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="490px" showVolumeType="true" addStyleNames="{style.disksAllocationPanel}" />
 								</g:VerticalPanel>
 							</g:FlowPanel>
-						</g:FlowPanel>	
+						</g:FlowPanel>
 					</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>
@@ -231,7 +235,7 @@
 							<e:ListModelListBoxEditor ui:field="firstBootDeviceEditor" />
 							<e:ListModelListBoxEditor ui:field="secondBootDeviceEditor" />
 							<g:HorizontalPanel addStyleNames="{style.attachCdPanel}" verticalAlignment="ALIGN_MIDDLE">
-								<g:CheckBox text="Attach CD" ui:field="cdImageIsChangable" />
+								<e:EntityModelCheckBoxEditor label="Attach CD" ui:field="cdAttachedEditor" />
 								<e:ListModelListBoxEditor ui:field="cdImageEditor" />
 							</g:HorizontalPanel>
 						</g:FlowPanel>

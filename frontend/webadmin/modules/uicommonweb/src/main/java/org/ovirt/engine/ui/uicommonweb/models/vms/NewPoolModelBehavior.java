@@ -122,9 +122,11 @@ public class NewPoolModelBehavior extends IVmModelBehavior
             getModel().setBootSequence(template.getdefault_boot_sequence());
             getModel().getIsHighlyAvailable().setEntity(template.getauto_startup());
 
-            getModel().getCdImage().setIsChangable(!StringHelper.isNullOrEmpty(template.getiso_path()));
-            if (getModel().getCdImage().getIsChangable())
-            {
+            boolean hasCd = !StringHelper.isNullOrEmpty(template.getiso_path());
+
+            getModel().getCdImage().setIsChangable(hasCd);
+            getModel().getCdAttached().setEntity(hasCd);
+            if (hasCd) {
                 getModel().getCdImage().setSelectedItem(template.getiso_path());
             }
 

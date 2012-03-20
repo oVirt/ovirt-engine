@@ -449,8 +449,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
     {
         VmTemplate template = (VmTemplate) getSelectedItem();
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
@@ -462,14 +461,18 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 
         model.Initialize(this.getSystemTreeSelectedItem());
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
-        tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
+
+        UICommand command;
+
+        command = new UICommand("OnSave", this);
+        command.setTitle("OK");
+        command.setIsDefault(true);
+        model.getCommands().add(command);
+
+        command = new UICommand("Cancel", this);
+        command.setTitle("Cancel");
+        command.setIsCancel(true);
+        model.getCommands().add(command);
     }
 
     private void remove()

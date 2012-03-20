@@ -1,8 +1,19 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
-import java.util.ArrayList;
-import java.util.Map.Entry;
-
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RadioButton;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -36,22 +47,9 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlowPanel;
+import java.util.ArrayList;
+import java.util.Map.Entry;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RadioButton;
 
 public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidget<UnitVmModel> {
 
@@ -69,6 +67,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         String provisioningEditorContent();
 
         String provisioningRadioContent();
+
+        String cdAttachedLabelWidth();
     }
 
     @UiField
@@ -258,12 +258,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Path(value = "cdImage.selectedItem")
     ListModelListBoxEditor<Object> cdImageEditor;
 
-    @UiField
-    // EntityModelCheckBoxEditor cdImageIsChangable;
-    // TODO: Should be handeled in a more generic way!
-    // @Path(value = "cdImage.isChangable")
-    @Ignore
-    CheckBox cdImageIsChangable;
+    @UiField(provided = true)
+    @Path(value = "cdAttached.entity")
+    EntityModelCheckBoxEditor cdAttachedEditor;
 
     @UiField
     protected FlowPanel linuxBootOptionsPanel;
@@ -309,6 +306,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         dontMigrateVMEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        cdAttachedEditor = new EntityModelCheckBoxEditor(Align.LEFT);
 
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
@@ -511,6 +509,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         provisioningEditor.addContentWidgetStyleName(style.provisioningEditorContent());
         provisioningThinEditor.addContentWidgetStyleName(style.provisioningRadioContent());
         provisioningCloneEditor.addContentWidgetStyleName(style.provisioningRadioContent());
+        cdAttachedEditor.addContentWidgetStyleName(style.cdAttachedLabelWidth());
     }
 
     @Override
@@ -658,13 +657,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         isStatelessEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
         numOfMonitorsEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
 
-        // TODO: Should be handled in a more generic way!
-        cdImageIsChangable.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                vm.getCdImage().setIsChangable(cdImageIsChangable.getValue());
-            }
-        });
 
         defaultHostEditor.setEnabled(false);
         specificHost.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
