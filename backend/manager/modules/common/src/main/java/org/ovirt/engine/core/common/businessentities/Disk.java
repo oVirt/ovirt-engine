@@ -3,7 +3,9 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -42,6 +44,8 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * The alias name of the disk.
      */
+    @Size(min = 0, max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE, groups = { CreateEntity.class })
+    @ValidName(message = "VALIDATION.DISK.ALIAS.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String diskAlias;
 
     /**

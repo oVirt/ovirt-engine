@@ -80,6 +80,7 @@ public final class BusinessEntitiesDefinitions {
     public static final int GENERAL_DOMAIN_SIZE = 40;
     public static final int GENERAL_VERSION_SIZE = 40;
     public static final int GENERAL_MAX_SIZE = 4000;
+    public static final int GENERAL_NAME_SIZE = 255;
 
     // Jobs
     public static final int CORRELATION_ID_SIZE = 50;
