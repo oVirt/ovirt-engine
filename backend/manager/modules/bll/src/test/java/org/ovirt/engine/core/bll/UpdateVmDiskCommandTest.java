@@ -226,6 +226,7 @@ public class UpdateVmDiskCommandTest {
         disk.setdisk_interface(DiskInterface.IDE);
         disk.setdisk_type(DiskType.Data);
         disk.setactive(true);
+        disk.setvm_guid(vmId);
         disk.setimage_group_id(diskImageGuid);
         doReturn(diskImageDao).when(command).getDiskImageDao();
         when(diskImageDao.get(diskImageGuid)).thenReturn(disk);
@@ -243,6 +244,7 @@ public class UpdateVmDiskCommandTest {
         disk.setdisk_type(DiskType.Data);
         disk.setPlugged(false);
         disk.setactive(true);
+        disk.setvm_guid(vmId);
         disk.setimage_group_id(diskImageGuid);
         doReturn(diskImageDao).when(command).getDiskImageDao();
         when(diskImageDao.get(diskImageGuid)).thenReturn(disk);

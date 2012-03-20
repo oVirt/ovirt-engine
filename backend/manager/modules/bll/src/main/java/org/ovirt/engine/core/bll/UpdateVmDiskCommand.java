@@ -54,10 +54,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends VmCom
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         } else {
-            DiskImage image = getDiskImageDao().get(getParameters().getImageId());
             _oldDisk = getDiskImageDao().get(getParameters().getImageId());
-            if (image == null || !image.getactive() || !image.getimage_group_id().equals(_oldDisk.getId())
-                    || _oldDisk == null) {
+            if (_oldDisk == null || !_oldDisk.getactive() || !getVmId().equals(_oldDisk.getvm_guid())) {
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
             } else {
