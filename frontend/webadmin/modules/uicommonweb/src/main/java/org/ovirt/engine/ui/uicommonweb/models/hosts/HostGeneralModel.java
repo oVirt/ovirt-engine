@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
-import java.util.ArrayList;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -34,6 +32,8 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+
+import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class HostGeneralModel extends EntityModel
@@ -671,15 +671,22 @@ public class HostGeneralModel extends EntityModel
 
     private Version GetVersionFromOS(String os) {
 
-        String[] parts = os.split("-");
-        if (parts.length == 3) {
+        try {
+            if (!StringHelper.isNullOrEmpty(os)) {
 
-            parts = parts[2].trim().split("\\.");
+                String[] parts = os.split("-");
+                if (parts.length == 3) {
 
-            return new Version(parts[0] + "." + parts[1] + "." + parts[2] + "." + parts[3]);
+                    parts = parts[2].trim().split("\\.");
+
+                    return new Version(parts[0] + "." + parts[1] + "." + parts[2] + "." + parts[3]);
+                }
+            }
+        } catch (Exception ex) {
+            // Do nothing.
+        } finally {
+            return new Version(0, 0, 0, 0);
         }
-
-        return new Version();
     }
 
     public void Install() {
