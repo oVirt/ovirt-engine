@@ -915,6 +915,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VALIDATION_DISK_TYPE_NOT_NULL();
 
+    String VALIDATION_DISK_ALIAS_INVALID();
+
     String VALIDATION_VOLUME_FORMAT_NOT_NULL();
 
     String VALIDATION_DISK_IMAGE_DESCRIPTION_NOT_EMPTY();
