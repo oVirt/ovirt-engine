@@ -21,6 +21,9 @@ public class EnumTranslator<T> extends Translator {
 	@Override
 	public String get(Object key) {
 	    //FIXME: hack: due to java restriction for method names with chars that are not letters, digits, and underscores, replace . with 0
+	    if(key == null){
+	        return null;
+	    }
 	    String enumName = type.toString();
 	    enumName = enumName.substring(enumName.lastIndexOf(".")+1,enumName.length());
 	    String trasnlatedEnum = enums.getString(enumName + "___" + key.toString());

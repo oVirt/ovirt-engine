@@ -6,6 +6,9 @@ public class Translator extends HashMap<Object, String> {
 
 	@Override
 	public String get(Object key) {
+	    if(key == null) {
+	        return null;
+	    }
 		return key.toString();
 	}
 
