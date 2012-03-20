@@ -773,6 +773,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     protected void EndImportCommand() {
         setVm(null);
 
+        EndActionOnAllImageGroups();
         if (getVm() != null) {
             VmHandler.UnLockVm(getVm().getId());
 
