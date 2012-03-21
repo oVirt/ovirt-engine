@@ -100,8 +100,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
                                 return t.getId().equals(getParameters().getVmTemplate().getId());
                             }
                         }));
-                List<DiskImage> list = Arrays.asList(images.getDiskImages());
+                ArrayList<DiskImage> list = new ArrayList<DiskImage>(Arrays.asList(images.getDiskImages()));
                 getParameters().setImages(list);
+                getVmTemplate().setImages(list);
                 ensureDomainMap(getParameters().getImages(), getParameters().getDestDomainId());
                 Map<String, DiskImage> imageMap = new HashMap<String, DiskImage>();
                 for (DiskImage image : list) {

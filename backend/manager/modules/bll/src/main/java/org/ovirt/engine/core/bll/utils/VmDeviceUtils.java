@@ -460,13 +460,7 @@ public class VmDeviceUtils {
      */
     private static <T extends VmBase> void addImportedDisks(T entity, List<VmDevice> vmDeviceToUpdate) {
         final Guid id = entity.getId();
-        List<DiskImage> disks;
-        if (entity instanceof VmTemplate) {
-            disks = entity.getDiskList();
-        } else {
-            disks = entity.getImages();
-        }
-        for (DiskImage disk : disks) {
+        for (DiskImage disk : entity.getImages()) {
             Guid deviceId = disk.getDisk().getId();
             String specParams = appendDeviceIdToSpecParams(deviceId, "");
             VmDevice vmDevice =
