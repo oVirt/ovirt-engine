@@ -110,9 +110,9 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.vm.os.initRd: 'xs:string', action.vm.domain.name: 'xs:string',
-          action.host.id|name: 'xs:string', action.async: 'xs:boolean', action.vm.display.type: 'xs:string',
-          action.vm.os.kernel: 'xs:string', action.grace_period.expiry: 'xs:long',
-          action.display.type: 'xs:string', action.vm.stateless: 'xs:boolean', action.vm.os.cmdline: 'xs:string',
+          action.vm.placement_policy.host.id|name: 'xs:string', action.vm.placement_policy.affinity: 'xs:string',
+          action.async: 'xs:boolean', action.vm.os.kernel: 'xs:string', action.grace_period.expiry: 'xs:long',
+          action.vm.display.type: 'xs:string', action.vm.stateless: 'xs:boolean', action.vm.os.cmdline: 'xs:string',
           action.vm.domain.user.username: 'xs:string', action.pause: 'xs:boolean',
           action.vm.os.boot.dev: 'xs:string', action.vm.domain.user.password: 'xs:string'}
     urlparams: {}
