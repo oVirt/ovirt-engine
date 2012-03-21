@@ -26,8 +26,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -35,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
@@ -45,10 +42,7 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
-import org.ovirt.engine.core.common.vdscommands.GetImageDomainsListVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -100,61 +94,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         super(commandId);
     }
 
-    @Override
-    public NGuid getStorageDomainId() {
-        if (getParameters() != null) {
-            if (getParameters().getStorageDomainId().equals(Guid.Empty)
-                    && getVmTemplate() != null
-                    && getVmTemplate().getDiskMap().size() > 0
-                    && !LinqUtils.firstOrNull(getVmTemplate().getDiskMap().values(), new All<DiskImage>())
-                            .getId().equals(VmTemplateHandler.BlankVmTemplateId)) {
-                getParameters().setStorageDomainId(SelectStorageDomain(getVmTemplate()));
-            }
-            return getParameters().getStorageDomainId();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Select storage domain according to the given template - with most
-     * available disk size. must initialize template disks before using this
-     * method
-     *
-     * @param vmTemplate
-     * @return
-     */
-    public static Guid SelectStorageDomain(VmTemplate vmTemplate) {
-        Guid selectedDomainId = Guid.Empty;
-        if (vmTemplate != null && vmTemplate.getDiskMap().size() > 0) {
-            int size = -1;
-            DiskImage disk = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(
-                    LinqUtils.firstOrNull(vmTemplate.getDiskMap().values(), new All<DiskImage>())
-                            .getId());
-            ArrayList<Guid> domainsList = (ArrayList<Guid>) Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.GetImageDomainsList,
-                            new GetImageDomainsListVDSCommandParameters(vmTemplate.getstorage_pool_id().getValue(),
-                                    disk.getimage_group_id().getValue())).getReturnValue();
-            for (Guid domainId : domainsList) {
-                storage_domains domain = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(domainId,
-                        vmTemplate.getstorage_pool_id());
-                if (domain != null
-                        && domain.getstorage_domain_type() != StorageDomainType.ImportExport
-                        && domain.getstatus() == StorageDomainStatus.Active
-                        && StorageDomainSpaceChecker.isBelowThresholds(domain)) {
-                    if (domain.getavailable_disk_size() != null && domain.getavailable_disk_size() > size) {
-                        selectedDomainId = domainId;
-                        size = domain.getavailable_disk_size();
-                    }
-                }
-            }
-        }
-        return selectedDomainId;
-    }
-
     private Guid _vmSnapshotId = Guid.Empty;
 
     protected VmDynamicDAO getVmDynamicDao() {
@@ -173,9 +112,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected List<VmNetworkInterface> getVmInterfaces() {
         if (_vmInterfaces == null) {
+            List<VmNetworkInterface> vmNetworkInterfaces =
+                    DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(getVmTemplate().getId());
             _vmInterfaces =
-                    ((DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(getVmTemplate().getId())) != null) ? DbFacade
-                            .getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(getVmTemplate().getId())
+                    (vmNetworkInterfaces != null) ? vmNetworkInterfaces
                             : new ArrayList<VmNetworkInterface>();
         }
         return _vmInterfaces;
@@ -359,8 +299,23 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected boolean buildAndCheckDestStorageDomains() {
-        boolean returnValue = true;
-        ensureDomainMap();
+        boolean retValue = true;
+        if (imageToDestinationDomainMap.isEmpty()) {
+            retValue = fillDestMap();
+        } else {
+            retValue = validateProvidedDestinations();
+        }
+        if (retValue && getVmTemplate().getDiskMap().values().size() != imageToDestinationDomainMap.size()) {
+            log.errorFormat("Can not found any default active domain for one of the disks of template with id : {0}",
+                    getVmTemplate().getId());
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
+            retValue = false;
+        }
+
+        return retValue;
+    }
+
+    private boolean validateProvidedDestinations() {
         Set<Guid> destStorageDomains = new HashSet<Guid>(imageToDestinationDomainMap.values());
         for (Guid destStorageDomain : destStorageDomains) {
             storage_domains storage = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
@@ -369,21 +324,26 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     new StorageDomainValidator(storage);
             if (!validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages())
                     || !validator.domainIsValidDestination(getReturnValue().getCanDoActionMessages())) {
-                returnValue = false;
-                break;
+                return false;
             }
             destStorages.put(storage.getId(), storage);
         }
-        return returnValue;
+        return true;
     }
 
-    private void ensureDomainMap() {
-        if (imageToDestinationDomainMap.isEmpty()) {
+    private boolean fillDestMap() {
+        if (getParameters().getStorageDomainId() != null
+                && !Guid.Empty.equals(getParameters().getStorageDomainId())) {
+            Guid storageId = getParameters().getStorageDomainId();
             for (DiskImage image : getVmTemplate().getDiskMap().values()) {
-                imageToDestinationDomainMap.put(image.getId(), getStorageDomainId().getValue());
+                imageToDestinationDomainMap.put(image.getId(), storageId);
             }
+            return validateProvidedDestinations();
         }
-
+        ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
+                    imageToDestinationDomainMap,
+                    destStorages);
+        return true;
     }
 
     @Override

@@ -138,32 +138,6 @@ public class AddVmCommandTest {
     }
 
     @Test
-    public void selectStorageDomainNoneUnderSpaceThreshold() {
-        final int domainSpaceGB = 5;
-        final VmTemplate template = setupSelectStorageDomainTests(domainSpaceGB, 10, 0);
-        assertTrue("acceptable storage domains were found",
-                Guid.Empty.equals(AddVmCommand.SelectStorageDomain(template)));
-    }
-
-    @Test
-    public void selectStorageDomainNoneUnderPctThreshold() {
-        final int sizeRequired = 0;
-        final int pctRequired = 95;
-        final int totalDiskGB = 50;
-        final int domainSpaceGB = totalDiskGB - USED_SPACE_GB; // results in 92% free space
-        final VmTemplate template = setupSelectStorageDomainTests(domainSpaceGB, sizeRequired, pctRequired);
-        assertTrue("acceptable storage domains were found",
-                Guid.Empty.equals(AddVmCommand.SelectStorageDomain(template)));
-    }
-
-    @Test
-    public void selectStorageDomain() {
-        final VmTemplate template = setupSelectStorageDomainTests(AVAILABLE_SPACE_GB, 0, 0);
-        assertFalse("no acceptable storage domains were found",
-                Guid.Empty.equals(AddVmCommand.SelectStorageDomain(template)));
-    }
-
-    @Test
     public void canAddVm() {
         ArrayList<String> reasons = new ArrayList<String>();
         final int domainSizeGB = 20;

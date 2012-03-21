@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 
@@ -74,21 +73,6 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
             }
         }
         return true;
-    }
-
-    @Override
-    protected boolean buildAndCheckDestStorageDomains() {
-        if (imageToDestinationDomainMap.isEmpty()) {
-            ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(), imageToDestinationDomainMap, destStorages);
-            if (getVmTemplate().getDiskMap().values().size() != imageToDestinationDomainMap.size()) {
-                log.errorFormat("Can not found any default active domain for one of the disks of template with id : {0}",
-                        getVmTemplate().getId());
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
-                return false;
-            }
-            return true;
-        }
-        return super.buildAndCheckDestStorageDomains();
     }
 
     @Override
