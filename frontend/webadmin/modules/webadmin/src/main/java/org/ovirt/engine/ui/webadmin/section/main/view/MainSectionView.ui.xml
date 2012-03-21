@@ -38,6 +38,11 @@
 		  z-index: 1;
 		}
 
+		@external .gwt-MenuBarPopup;
+		.gwt-MenuBarPopup{
+			margin: 0;
+		}
+
 		@external .gwt-MenuBarPopup .menuPopupMiddleLeft;
 		.gwt-MenuBarPopup .menuPopupMiddleLeft {
 			background: white;

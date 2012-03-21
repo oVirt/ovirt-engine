@@ -25,7 +25,7 @@ public class PopupUtils {
         style.setProperty("width", "auto");
 
         popup.show();
-        adjustPopupLocationToFitScreenAndShow(popup, left, top, -parentMenu.getOffsetWidth() - 10, 0);
+        adjustPopupLocationToFitScreenAndShow(popup, left, top, -parentMenu.getOffsetWidth(), 0);
     }
 
     private static void adjustPopupLocationToFitScreenAndShow(final PopupPanel popup,
@@ -167,6 +167,7 @@ public class PopupUtils {
                         && distanceFromWindowLeft >= offsetWidthDiff) {
                     // Align with the right edge of the relative object.
                     left -= offsetWidthDiff;
+
                 }
             }else{
                 style.setWidth(relativeWidth, Unit.PX);
