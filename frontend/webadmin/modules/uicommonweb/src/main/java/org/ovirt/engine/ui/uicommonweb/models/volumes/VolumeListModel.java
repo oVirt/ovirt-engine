@@ -330,4 +330,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         updateActionAvailability();
     }
 
+    @Override
+    public boolean IsSearchStringMatch(String searchString) {
+        return searchString.trim().toLowerCase().startsWith("volume");
+    }
+
 }
