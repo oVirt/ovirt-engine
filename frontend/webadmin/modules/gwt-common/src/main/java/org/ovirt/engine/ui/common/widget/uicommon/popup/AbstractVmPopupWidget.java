@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -48,6 +49,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 
@@ -209,6 +211,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField
     protected FlowPanel storageAllocationPanel;
+
+    @UiField
+    protected HorizontalPanel provisionSelectionPanel;
+
+    @UiField
+    protected FlowPanel disksAllocationPanel;
 
     @UiField
     @Ignore
@@ -526,22 +534,24 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         object.getProvisioning().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean isAllocationConfigureChangable = object.getProvisioning().getIsChangable();
-                provisioningThinEditor.setEnabled(isAllocationConfigureChangable);
-                provisioningCloneEditor.setEnabled(isAllocationConfigureChangable);
-                disksAllocationLabel.setVisible(isAllocationConfigureChangable);
-                disksAllocationView.setVisible(isAllocationConfigureChangable);
+                boolean isProvisioningChangable = object.getProvisioning().getIsChangable();
+                provisioningThinEditor.setEnabled(isProvisioningChangable);
+                provisioningCloneEditor.setEnabled(isProvisioningChangable);
 
-                boolean isAllocationConfigureAvailable = object.getProvisioning().getIsAvailable();
-                provisioningThinEditor.setVisible(isAllocationConfigureAvailable);
-                provisioningCloneEditor.setVisible(isAllocationConfigureAvailable);
-                storageAllocationPanel.setVisible(isAllocationConfigureAvailable);
+                boolean isProvisioningAvailable = object.getProvisioning().getIsAvailable();
+                provisionSelectionPanel.setVisible(isProvisioningAvailable);
+
+                boolean isDisksAvailable = object.getIsDisksAvailable();
+                disksAllocationPanel.setVisible(isDisksAvailable);
+
+                storageAllocationPanel.setVisible(isProvisioningAvailable || isDisksAvailable);
             }
         });
     }
 
     private void addDiskAllocation(UnitVmModel model) {
-        if (!model.getIsDisksAvailable() || !model.getStorageDomain().getItems().iterator().hasNext()) {
+        ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) model.getStorageDomain().getItems();
+        if (!model.getIsDisksAvailable() || !storageDomains.iterator().hasNext()) {
             return;
         }
         disksAllocationView.edit(model.getDisksAllocationModel());
@@ -619,6 +629,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                     } else {
                         customPropertiesTab.markAsInvalid(null);
                     }
+                }
+                else if ("IsDisksAvailable".equals(propName)) {
+                    boolean isDisksAvailable = vm.getIsDisksAvailable();
+                    disksAllocationPanel.setVisible(isDisksAvailable);
+
+                    boolean isProvisioningAvailable = vm.getProvisioning().getIsAvailable();
+                    storageAllocationPanel.setVisible(isProvisioningAvailable || isDisksAvailable);
                 }
             }
         });

@@ -12,7 +12,7 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
     @Inject
     public AbstractVmPopupView(EventBus eventBus, CommonApplicationResources resources,
             AbstractVmPopupWidget popupWidget) {
-        super(eventBus, resources, popupWidget, "640px", "460px");
+        super(eventBus, resources, popupWidget, "670px", "480px");
     }
 
 }

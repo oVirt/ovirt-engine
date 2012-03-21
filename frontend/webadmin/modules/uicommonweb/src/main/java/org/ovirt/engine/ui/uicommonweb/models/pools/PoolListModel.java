@@ -180,10 +180,6 @@ public class PoolListModel extends ListWithDetailsModel
         model.setVmType(VmType.Desktop);
         model.Initialize(null);
 
-        // model.DataCenter.Value = model.DataCenter.Options.Cast<storage_pool>().FirstOrDefault();
-        // TODO
-        // model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(Linq.<storage_pool>Cast(model.getDataCenter().getItems())));
-
         UICommand tempVar = new UICommand("OnSave", this);
         tempVar.setTitle("OK");
         tempVar.setIsDefault(true);
@@ -642,15 +638,19 @@ public class PoolListModel extends ListWithDetailsModel
                                 (EntityModel) model.getDisplayProtocol().getSelectedItem();
                         desktop.setdefault_display_type((DisplayType) displayProtocolSelectedItem.getEntity());
 
-                        AddVmPoolWithVmsParameters tempVar2 =
-                                new AddVmPoolWithVmsParameters(pool,
-                                        desktop,
-                                        model.getIsAddVMMode() ? Integer.parseInt(model.getNumOfDesktops()
-                                                .getEntity()
-                                                .toString()) : 0,
-                                        0);
-                        tempVar2.setStorageDomainId(((storage_domains) model.getStorageDomain().getSelectedItem()).getId());
-                        AddVmPoolWithVmsParameters param = tempVar2;
+                        AddVmPoolWithVmsParameters param =
+                                new AddVmPoolWithVmsParameters(pool, desktop, model.getIsAddVMMode() ?
+                                        Integer.parseInt(model.getNumOfDesktops().getEntity().toString()) : 0, 0);
+
+                        if ((Boolean) model.getDisksAllocationModel().getIsSingleStorageDomain().getEntity()) {
+                            param.setStorageDomainId(
+                                    ((storage_domains) model.getStorageDomain().getSelectedItem()).getId());
+                        }
+                        else {
+                            param.setStorageDomainId(Guid.Empty);
+                            param.setImageToDestinationDomainMap(
+                                    model.getDisksAllocationModel().getImageToDestinationDomainMap());
+                        }
 
                         model.StartProgress(null);
 
@@ -661,10 +661,8 @@ public class PoolListModel extends ListWithDetailsModel
                                     new IFrontendMultipleActionAsyncCallback() {
                                         @Override
                                         public void Executed(FrontendMultipleActionAsyncResult result) {
-
                                             Cancel();
                                             StopProgress();
-
                                         }
                                     },
                                     this);
@@ -676,10 +674,8 @@ public class PoolListModel extends ListWithDetailsModel
                                     new IFrontendMultipleActionAsyncCallback() {
                                         @Override
                                         public void Executed(FrontendMultipleActionAsyncResult result) {
-
                                             Cancel();
                                             StopProgress();
-
                                         }
                                     },
                                     this);

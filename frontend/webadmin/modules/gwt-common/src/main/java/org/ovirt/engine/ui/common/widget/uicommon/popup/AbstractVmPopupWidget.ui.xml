@@ -66,7 +66,7 @@
 		}
 		
 		.disksAllocationPanel {
-			width: 460px;
+			width: 490px;
 			padding-top: 5px;
 			padding-bottom: 10px;
 		}
@@ -206,15 +206,17 @@
 								<g:Label addStyleNames="{style.sectionLabel}">Storage Allocation:</g:Label>
 								<g:Label addStyleNames="{style.sectionComment}">(Available only when a template is selected)</g:Label>
 							</g:HorizontalPanel>
-							<g:HorizontalPanel>
+							<g:HorizontalPanel ui:field="provisionSelectionPanel">
 								<e:ListModelListBoxEditor ui:field="provisioningEditor" addStyleNames="{style.provisioningEditor}" />
 								<e:EntityModelRadioButtonEditor ui:field="provisioningThinEditor"/>
 								<e:EntityModelRadioButtonEditor ui:field="provisioningCloneEditor"/>
 							</g:HorizontalPanel>
-							<g:Label ui:field="disksAllocationLabel" text="{constants.disksAllocation}"  addStyleNames="{style.disksAllocation}" visible="false" />									
-							<g:VerticalPanel>
-								<s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" showVolumeType="true" addStyleNames="{style.disksAllocationPanel}" />
-							</g:VerticalPanel>
+							<g:FlowPanel ui:field="disksAllocationPanel">
+								<g:Label ui:field="disksAllocationLabel" text="{constants.disksAllocation}"  addStyleNames="{style.disksAllocation}" visible="false" />									
+								<g:VerticalPanel>
+									<s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="490px" showVolumeType="true" addStyleNames="{style.disksAllocationPanel}" />
+								</g:VerticalPanel>
+							</g:FlowPanel>
 						</g:FlowPanel>	
 					</g:FlowPanel>
 				</t:content>
