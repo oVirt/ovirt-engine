@@ -19,8 +19,6 @@ import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * This command responsible to creating a copy of template image. Usually it
@@ -58,6 +56,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     protected VDSReturnValue performImageVdsmOperation() {
         setDestinationImageId(Guid.NewGuid());
         mNewCreatedDiskImage = CloneDiskImage(getDestinationImageId());
+        mNewCreatedDiskImage.setimage_group_id(Guid.NewGuid());
         Guid storagePoolID = mNewCreatedDiskImage.getstorage_pool_id() != null ? mNewCreatedDiskImage
                 .getstorage_pool_id().getValue() : Guid.Empty;
 
@@ -70,7 +69,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                             VDSCommandType.CopyImage,
                             new CopyImageVDSCommandParameters(storagePoolID, getDiskImage().getstorage_ids().get(0),
                                     getVmTemplateId(), getDiskImage().getimage_group_id().getValue(), getImage()
-                                            .getId(), getImageGroupId(), getDestinationImageId(),
+                                            .getId(), mNewCreatedDiskImage.getimage_group_id(), getDestinationImageId(),
                                     CalculateImageDescription(), getDestinationStorageDomainId(),
                                     CopyVolumeType.LeafVol, mNewCreatedDiskImage.getvolume_format(),
                                     mNewCreatedDiskImage.getvolume_type(), getDiskImage().getwipe_after_delete(),
@@ -80,7 +79,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                 getReturnValue().getInternalTaskIdList().add(
                         CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.AddVmFromTemplate));
             }
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             log.errorFormat(
                     "CreateCloneOfTemplateCommand::CreateSnapshotInIrsServer::Failed creating snapshot from image id -'{0}'",
                     getImage().getId());
@@ -99,6 +98,4 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
 
         return ret;
     }
-
-    private static Log log = LogFactory.getLog(CreateCloneOfTemplateCommand.class);
 }
