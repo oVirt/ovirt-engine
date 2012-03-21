@@ -9,10 +9,12 @@ import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.auth.CurrentUserRole;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -27,9 +29,11 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
             CurrentUser user,
             Provider<UserPortalLoginModel> loginModelProvider,
             EventBus eventBus,
-            CurrentUserRole userRole) {
+            CurrentUserRole userRole,
+            ApplicationConstants constants) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user, loginModelProvider, eventBus);
         this.userRole = userRole;
+        Window.setTitle(constants.applicationTitle());
     }
 
     @Override

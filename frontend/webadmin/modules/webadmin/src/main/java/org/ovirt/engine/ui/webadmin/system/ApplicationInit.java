@@ -12,8 +12,10 @@ import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -25,8 +27,10 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
             FrontendFailureEventListener frontendFailureEventListener,
             CurrentUser user,
             Provider<LoginModel> loginModelProvider,
-            EventBus eventBus) {
+            EventBus eventBus,
+            ApplicationConstants constants) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user, loginModelProvider, eventBus);
+        Window.setTitle(constants.applicationTitle());
     }
 
     @Override

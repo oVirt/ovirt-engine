@@ -4,6 +4,9 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 
 public interface ApplicationConstants extends CommonApplicationConstants {
 
+    @DefaultStringValue("oVirt Enterprise Virtualization Engine Web Administration")
+    String applicationTitle();
+
     @DefaultStringValue("About")
     String aboutPopupCaption();
 

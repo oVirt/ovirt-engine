@@ -50,12 +50,15 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
         this.loginModelProvider = loginModelProvider;
         this.eventBus = eventBus;
 
+        // Handle UI logout requests
         user.setLogoutHandler(this);
 
+        // Initialize UiCommon infrastructure
         initUiCommon();
         initLoginModel();
         initFrontend();
 
+        // Check if the user should be logged in automatically
         handleAutoLogin();
     }
 

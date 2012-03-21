@@ -47,7 +47,6 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         writer.append("<!DOCTYPE html><html><head>");
         writer.append("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
         writer.append("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\"/>");
-        writer.append("<title>" + getPageTitle() + "</title>");
 
         writer.append("<script type=\"text/javascript\">");
         writeAdditionalJsData(request, writer);
@@ -75,11 +74,6 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
             writer.append(" };");
         }
     }
-
-    /**
-     * @return HTML page title.
-     */
-    protected abstract String getPageTitle();
 
     /**
      * @return Name of the GWT selector script, e.g. {@code myapp.nocache.js}.
