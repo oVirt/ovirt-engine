@@ -499,6 +499,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 }, model);
     }
 
+    boolean updateOverrideIpTables = true;
+    boolean clusterChanging = false;
+
     public void New()
     {
         if (getWindow() != null)
@@ -506,7 +509,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        HostModel hostModel = new HostModel();
+        final HostModel hostModel = new HostModel();
         setWindow(hostModel);
         hostModel.setTitle("New Host");
         hostModel.setHashName("new_host");
@@ -514,28 +517,39 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         hostModel.getPmType().setSelectedItem(null);
         hostModel.getOverrideIpTables().setIsAvailable(false);
 
-        hostModel.getCluster().getSelectedItemChangedEvent().addListener(
-                new IEventListener() {
-                    @Override
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+        // Make sure not to set override IP tables flag back true when it was set false once.
+        hostModel.getOverrideIpTables().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
 
-                        HostModel localModel = (HostModel) ev.getContext();
-                        ListModel clusterModel = localModel.getCluster();
+                if (!clusterChanging) {
+                    updateOverrideIpTables = (Boolean) hostModel.getOverrideIpTables().getEntity();
+                }
+            }
+        });
 
-                        if (clusterModel.getSelectedItem() != null) {
+        // Set override IP tables flag true for v3.0 clusters.
+        hostModel.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
 
-                            Version v3 = new Version(3, 0);
-                            VDSGroup cluster = (VDSGroup) clusterModel.getSelectedItem();
+                clusterChanging = true;
+                ListModel clusterModel = hostModel.getCluster();
 
-                            boolean isLessThan3 = cluster.getcompatibility_version().compareTo(v3) < 0;
+                if (clusterModel.getSelectedItem() != null) {
 
-                            localModel.getOverrideIpTables().setIsAvailable(!isLessThan3);
-                            localModel.getOverrideIpTables().setEntity(!isLessThan3);
-                        }
-                    }
-                },
-                hostModel
-                );
+                    Version v3 = new Version(3, 0);
+                    VDSGroup cluster = (VDSGroup) clusterModel.getSelectedItem();
+
+                    boolean isLessThan3 = cluster.getcompatibility_version().compareTo(v3) < 0;
+
+                    hostModel.getOverrideIpTables().setIsAvailable(!isLessThan3);
+                    hostModel.getOverrideIpTables().setEntity(!isLessThan3 && updateOverrideIpTables);
+                }
+
+                clusterChanging = false;
+            }
+        });
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
