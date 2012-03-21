@@ -4,7 +4,6 @@
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel.Style">
 		.wrapper {
-			height: 30px;
 			line-height: 30px;
 			text-align: left;
 		}
