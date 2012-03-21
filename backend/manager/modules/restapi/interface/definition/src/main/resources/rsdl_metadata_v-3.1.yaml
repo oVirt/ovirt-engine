@@ -54,6 +54,7 @@ actions:
           vm.stateless: xs:boolean
           vm.cpu.topology.sockets: xs:int
           vm.placement_policy.affinity: xs:string
+          vm.placement_policy.host.id|name: xs:string
           vm.origin: xs:string
           vm.os.kernel: xs:string
     urlparams: {}
@@ -84,6 +85,7 @@ actions:
           vm.stateless: 'xs:boolean'
           vm.cpu.topology.sockets: xs:int
           vm.placement_policy.affinity: xs:string
+          vm.placement_policy.host.id|name: xs:string
           vm.origin: xs:string
           vm.os.kernel: xs:string
           vm.disks.clone: 'xs:boolean'
