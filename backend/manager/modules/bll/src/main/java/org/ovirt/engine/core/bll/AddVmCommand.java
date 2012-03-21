@@ -75,6 +75,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         setVmId((parameters.getVmId().equals(Guid.Empty)) ? Guid.NewGuid() : parameters.getVmId());
         parameters.setVmId(getVmId());
         setVmTemplateId(parameters.getVmStaticData().getvmt_guid());
+        setStorageDomainId(getParameters().getStorageDomainId());
 
         if (getVmTemplate() != null) {
             VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());

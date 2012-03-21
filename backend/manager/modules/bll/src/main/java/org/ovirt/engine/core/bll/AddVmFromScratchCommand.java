@@ -36,9 +36,11 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
     protected AddVmFromScratchCommand(Guid commandId) {
         super(commandId);
     }
+
     @Override
     public NGuid getStorageDomainId() {
-        if (super.getStorageDomainId().equals(Guid.Empty)) {
+        NGuid storageDomainId = super.getStorageDomainId();
+        if (Guid.Empty.equals(storageDomainId) || storageDomainId == null) {
             List<storage_domains> storagesInPool =
                     LinqUtils.filter(DbFacade.getInstance()
                             .getStorageDomainDAO().getAllForStoragePool(getStoragePoolId().getValue()),
@@ -49,20 +51,13 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                                             && (a.getstatus() != null) && (a.getstatus() == StorageDomainStatus.Active);
                                 }
                             });
-            // LINQ
-            // DbFacade.Instance.GetStorageDomainsByStoragePoolId(StoragePoolId.Value).
-            // LINQ Where(a => ((a.storage_domain_type != StorageDomainType.ISO
-            // && a.storage_domain_type != StorageDomainType.ImportExport) &&
-            // LINQ (a.status.HasValue) && (a.status.Value ==
-            // StorageDomainStatus.Active))
-            // LINQ ).ToList();
+            storageDomainId = (storagesInPool.size() > 0) ? storagesInPool.get(0).getId() : Guid.Empty;
 
             getParameters()
-                    .setStorageDomainId((storagesInPool.size() > 0) ? storagesInPool.get(0).getId() : Guid.Empty);
-            // LINQ 32934 VmManagementParameters.StorageDomainId =
-            // (storagesInPool.Count > 0) ? storagesInPool[0].id : Guid.Empty;
+                    .setStorageDomainId(storageDomainId.getValue());
+            setStorageDomainId(storageDomainId);
         }
-        return getParameters().getStorageDomainId();
+        return storageDomainId;
     }
 
     @Override
