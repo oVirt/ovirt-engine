@@ -13,6 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmDAO;
 
 /**
  * This class implements the logic of the query responsible for
@@ -21,6 +22,8 @@ import org.ovirt.engine.core.dao.SnapshotDao;
  * @param <P>
  */
 public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySnapshotQueryParams> extends QueriesCommandBase<P> {
+
+    private Snapshot snapshot;
 
     public GetVmConfigurationBySnapshotQuery(P parameters) {
         super(parameters);
@@ -41,8 +44,7 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
     }
 
     protected VM getVmFromConfiguration(String configuration) {
-        VM result;
-        result = new VM();
+        VM result = getVmDao().get(snapshot.getVmId());
         getSnapshotManager().updateVmFromConfiguration(result,configuration);
         return result;
     }
@@ -72,6 +74,11 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
         return DbFacade.getInstance().getDiskImageDAO();
     }
 
+    protected VmDAO getVmDao() {
+        return DbFacade.getInstance().getVmDAO();
+    }
+
+
     protected SnapshotsManager getSnapshotManager() {
         return new SnapshotsManager();
     }
@@ -81,7 +88,7 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
     }
 
     private String getConfigurationFromDb(Guid snapshotSourceId, Guid userId, boolean isFiltered) {
-        Snapshot snapshot = getSnapshotDao().get(snapshotSourceId, userId, isFiltered);
+        snapshot = getSnapshotDao().get(snapshotSourceId, userId, isFiltered);
         if (snapshot == null) {
             log.error(String.format("Snapshot %1$s does not exist",snapshotSourceId));
             return null;

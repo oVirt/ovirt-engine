@@ -238,6 +238,7 @@ public class SnapshotsManager {
             if (vmStaticFromDb != null) {
                 VDSGroup vdsGroup = getVdsGroupDao().get(vmStaticFromDb.getvds_group_id());
                 if (vdsGroup != null) {
+                    vm.setstorage_pool_id(vdsGroup.getstorage_pool_id().getValue());
                     vm.setvds_group_compatibility_version(vdsGroup.getcompatibility_version());
                     vm.setvds_group_name(vdsGroup.getname());
                     vm.setvds_group_cpu_name(vdsGroup.getcpu_name());
