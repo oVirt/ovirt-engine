@@ -112,9 +112,9 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForImage() {
-        Map<Boolean, List<VmTemplate>> result = dao.getAllForImage(FixturesTool.IMAGE_ID);
+        Map<Boolean, List<VmTemplate>> result = dao.getAllForImage(FixturesTool.TEMPLATE_IMAGE_ID);
 
-        assertEquals("Wrong number of key", 2, result.size());
+        assertEquals("Wrong number of keys", 1, result.size());
         for (List<VmTemplate> templates : result.values()) {
             assertEquals("Wrong number of templates", 1, templates.size());
         }

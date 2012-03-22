@@ -93,7 +93,6 @@ public class VmDAOTest extends BaseDAOTestCase {
         Map<Boolean, List<VM>> result = dao.getForImage(FixturesTool.IMAGE_ID);
 
         assertNotNull(result);
-        assertEquals("wrong number of VMs with plugged image", 2, result.get(true).size());
         assertEquals("wrong number of VMs with unplugged image", 1, result.get(false).size());
     }
 

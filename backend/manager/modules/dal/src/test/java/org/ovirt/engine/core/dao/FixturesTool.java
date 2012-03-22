@@ -110,6 +110,11 @@ public class FixturesTool {
     protected static final Guid IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
 
     /**
+     * Predefined image on a VM template for testing.
+     */
+    protected static final Guid TEMPLATE_IMAGE_ID = new Guid("52058975-3d5e-484a-80c1-01c31207f578");
+
+    /**
      * Predefined image group for testing.
      */
     protected static final Guid IMAGE_GROUP_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a35");
