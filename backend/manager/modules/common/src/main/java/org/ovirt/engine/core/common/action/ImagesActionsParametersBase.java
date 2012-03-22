@@ -20,6 +20,7 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
 
     public ImagesActionsParametersBase(Guid imageId) {
         super(Guid.Empty);
+        setEntityId(imageId);
         this.imageId = imageId;
     }
 
