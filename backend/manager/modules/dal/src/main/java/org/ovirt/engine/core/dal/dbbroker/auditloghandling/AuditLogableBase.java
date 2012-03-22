@@ -474,6 +474,10 @@ public class AuditLogableBase extends TimeoutBase {
         customValues.put(name.toLowerCase(), value);
     }
 
+    public void AddCustomValue(CustomAuditLogKeys key, final String value) {
+        AddCustomValue(key.name(), value);
+    }
+
     public void AppendCustomValue(final String name, final String value, final String separator) {
         final String key = name.toLowerCase();
         String newValue = value;
