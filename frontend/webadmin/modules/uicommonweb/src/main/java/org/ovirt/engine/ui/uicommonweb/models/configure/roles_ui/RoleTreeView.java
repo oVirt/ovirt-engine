@@ -114,6 +114,11 @@ public class RoleTreeView
                                                 "Allow to define/configure roles in the System"),
                                         new RoleNode(ActionGroup.CONFIGURE_ENGINE,
                                                 "Allow to get or set System Configuration") })),
+                                // new RoleNode("Gluster", new RoleNode("Configure Volumes", new RoleNode[] {
+                                // new RoleNode(ActionGroup.GLUSTER_CREATE_VOLUME,
+                                // "Allow to create Gluster Volumes"),
+                                // new RoleNode(ActionGroup.GLUSTER_VOLUME_OPERATIONS,
+                                // "Allow to manipulate Gluster Volumes") })),
                                 new RoleNode("Data Center", new RoleNode("Configure Data Center", new RoleNode[] {
                                         new RoleNode(ActionGroup.CREATE_STORAGE_POOL, "Allow to create Data Center"),
                                         new RoleNode(ActionGroup.DELETE_STORAGE_POOL, "Allow to remove Data Center"),

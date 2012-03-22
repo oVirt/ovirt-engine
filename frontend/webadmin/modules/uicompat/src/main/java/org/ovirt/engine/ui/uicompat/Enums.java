@@ -734,4 +734,8 @@ public interface Enums extends ConstantsWithLookup {
     String Snapshot$SnapshotType___STATELESS();
 
     String Snapshot$SnapshotType___PREVIEW();
+
+//    String ActionGroup___GLUSTER_CREATE_VOLUME();
+//
+//    String ActionGroup___GLUSTER_VOLUME_OPERATIONS();
 }
