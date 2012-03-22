@@ -172,6 +172,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         // }
         // });
         // }
+        // else {
+        // setItems(new ArrayList<GlusterVolumeEntity>());
+        // }
         // setIsQueryFirstTime(false);
     }
 

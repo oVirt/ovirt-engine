@@ -28,7 +28,7 @@ public class SubTabVolumePermissionPresenter extends AbstractSubTabPresenter<Glu
     @TabInfo(container = VolumeSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
         return new ModelBoundTabData(ginjector.getApplicationConstants().volumePermissionSubTabLabel(), 3,
-                ginjector.getSubTabVolumeParameterModelProvider());
+                ginjector.getSubTabVolumePermissionModelProvider());
     }
 
     @Inject
