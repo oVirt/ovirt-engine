@@ -56,6 +56,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.linq.Function;
@@ -531,8 +532,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 disk.setactive(false);
                 BaseImagesCommand.saveDiskImage(disk);
                 snapshotId = disk.getvm_snapshot_id().getValue();
-                if (!DbFacade.getInstance().getSnapshotDao().exists(getVm().getId(), snapshotId)) {
-                    DbFacade.getInstance().getSnapshotDao().save(
+                if (!getSnapshotDao().exists(getVm().getId(), snapshotId)) {
+                    getSnapshotDao().save(
                             new Snapshot(snapshotId,
                                     SnapshotStatus.OK,
                                     getVm().getId(),
@@ -559,7 +560,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
 
             // Update active snapshot's data, since it was inserted as a regular snapshot.
-            DbFacade.getInstance().getSnapshotDao().update(
+            getSnapshotDao().update(
                     new Snapshot(snapshotId,
                             SnapshotStatus.OK,
                             getVm().getId(),
@@ -578,13 +579,17 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     private void updateSnapshotsFromExport() {
         if (getVm().getSnapshots() != null) {
             for (Snapshot snapshot : getVm().getSnapshots()) {
-                if (DbFacade.getInstance().getSnapshotDao().exists(getVm().getId(), snapshot.getId())) {
-                    DbFacade.getInstance().getSnapshotDao().update(snapshot);
+                if (getSnapshotDao().exists(getVm().getId(), snapshot.getId())) {
+                    getSnapshotDao().update(snapshot);
                 } else {
-                    DbFacade.getInstance().getSnapshotDao().save(snapshot);
+                    getSnapshotDao().save(snapshot);
                 }
             }
         }
+    }
+
+    protected SnapshotDao getSnapshotDao() {
+        return DbFacade.getInstance().getSnapshotDao();
     }
 
     // the last image in each list is the leaf
