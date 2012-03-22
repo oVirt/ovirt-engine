@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.*;
+import org.ovirt.engine.core.common.vdscommands.GetVmsInfoVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.log.Logged;
+import org.ovirt.engine.core.utils.log.Logged.LogLevel;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
-import org.ovirt.engine.core.common.vdscommands.*;
 
+@Logged(returnLevel = LogLevel.TRACE)
 public class GetVmsInfoVDSCommand<P extends GetVmsInfoVDSCommandParameters> extends IrsBrokerCommand<P> {
     private GetVmsInfoReturnForXmlRpc _vmsInfo;
 
