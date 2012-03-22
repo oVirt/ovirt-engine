@@ -79,6 +79,21 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Volumes")
     String volumeMainTabLabel();
 
+    @DefaultStringValue("Summary")
+    String volumeGeneralSubTabLabel();
+
+    @DefaultStringValue("Volume Options")
+    String volumeParameterSubTabLabel();
+
+    @DefaultStringValue("Bricks")
+    String volumeBrickSubTabLabel();
+
+    @DefaultStringValue("Permissions")
+    String volumePermissionSubTabLabel();
+
+    @DefaultStringValue("Events")
+    String volumeEventSubTabLabel();
+
     @DefaultStringValue("Storage")
     String dataCenterStorageSubTabLabel();
 

@@ -20,7 +20,9 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOption;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -39,6 +41,10 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkListM
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterQuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHooksListModel;
@@ -125,6 +131,12 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTab
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStoragePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeEventPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeParameterPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumePermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralPresenter;
@@ -527,5 +539,32 @@ public interface ManagedComponents {
     AsyncProvider<MainTabVolumePresenter> getMainTabVolumePresenter();
 
     MainModelProvider<GlusterVolumeEntity, VolumeListModel> getMainTabVolumeModelProvider();
+
+    AsyncProvider<VolumeSubTabPanelPresenter> getVolumeSubTabPanelPresenter();
+
+    // volume - general
+    AsyncProvider<SubTabVolumeGeneralPresenter> getSubTabVolumeGeneralPresenter();
+
+    DetailModelProvider<VolumeListModel, VolumeGeneralModel> getSubTabVolumeGeneralModelProvider();
+
+    // volume - bricks
+    AsyncProvider<SubTabVolumeBrickPresenter> getSubTabVolumeBrickPresenter();
+
+    SearchableDetailModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> getSubTabVolumeBrickModelProvider();
+
+    // volume - parameters
+    AsyncProvider<SubTabVolumeParameterPresenter> getSubTabVolumeParameterPresenter();
+
+    SearchableDetailModelProvider<GlusterVolumeOption, VolumeListModel, VolumeParameterListModel> getSubTabVolumeParameterModelProvider();
+
+    // volume - permission
+    AsyncProvider<SubTabVolumePermissionPresenter> getSubTabVolumePermissionPresenter();
+
+    SearchableDetailModelProvider<permissions, VolumeListModel, PermissionListModel> getSubTabVolumePermissionModelProvider();
+
+    // volume - events
+    AsyncProvider<SubTabVolumeEventPresenter> getSubTabVolumeEventPresenter();
+
+    SearchableDetailModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> getSubTabVolumeEventModelProvider();
 
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
+
+	<ui:style>
+	</ui:style>
+
+	<d:SimpleDialogPanel width="400px" height="500px">
+		<d:content>
+			<g:VerticalPanel>
+				<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+				<e:ListModelListBoxEditor ui:field="typeListEditor" />
+				<g:HorizontalPanel>
+					<!--g:PushButton>Add Bricks</g:PushButton>-->
+					<e:EntityModelTextBoxEditor ui:field="bricksEditor" />
+				</g:HorizontalPanel>
+				<e:EntityModelCheckBoxEditor ui:field="gluster_accecssProtocolEditor"/>
+				<e:EntityModelCheckBoxEditor ui:field="nfs_accecssProtocolEditor"/>
+				<e:EntityModelCheckBoxEditor ui:field="cifs_accecssProtocolEditor"/>
+				<e:EntityModelTextBoxEditor ui:field="usersEditor" />
+				<g:Label>(Comma separated list user names)</g:Label>
+				<e:EntityModelTextBoxEditor ui:field="allowAccessEditor" />
+			</g:VerticalPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+</ui:UiBinder>
