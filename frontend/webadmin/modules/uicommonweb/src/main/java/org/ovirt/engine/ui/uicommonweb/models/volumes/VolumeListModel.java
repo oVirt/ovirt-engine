@@ -1,13 +1,24 @@
 package org.ovirt.engine.ui.uicommonweb.models.volumes;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.ObservableCollection;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
@@ -15,7 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
 
-public class VolumeListModel extends ListWithDetailsModel {
+public class VolumeListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
     private UICommand createVolumeCommand;
 
     public UICommand getCreateVolumeCommand()
@@ -71,14 +82,66 @@ public class VolumeListModel extends ListWithDetailsModel {
         VolumeModel volumeModel = new VolumeModel();
         volumeModel.setTitle("Create Volume");
         setWindow(volumeModel);
-        UICommand command = new UICommand("onCreateVolume", this);
-        command.setTitle("OK");
-        command.setIsDefault(true);
-        volumeModel.getCommands().add(command);
-        command = new UICommand("Cancel", this);
-        command.setTitle("Cancel");
-        command.setIsDefault(true);
-        volumeModel.getCommands().add(command);
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            public void OnSuccess(Object model, Object result)
+            {
+                VolumeListModel volumeListModel = (VolumeListModel) model;
+                VolumeModel innerVolumeModel = (VolumeModel) volumeListModel.getWindow();
+                java.util.ArrayList<storage_pool> dataCenters = (java.util.ArrayList<storage_pool>) result;
+
+                innerVolumeModel.getDataCenter().setItems(dataCenters);
+                innerVolumeModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
+
+                if (volumeListModel.getSystemTreeSelectedItem() != null)
+                {
+                    switch (volumeListModel.getSystemTreeSelectedItem().getType())
+                    {
+                    case Hosts:
+                    case Cluster:
+                        VDSGroup cluster = (VDSGroup) volumeListModel.getSystemTreeSelectedItem().getEntity();
+                        for (storage_pool dc : (java.util.ArrayList<storage_pool>) innerVolumeModel.getDataCenter()
+                                .getItems())
+                        {
+                            if (dc.getId().equals(cluster.getstorage_pool_id()))
+                            {
+                                innerVolumeModel.getDataCenter()
+                                        .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dc })));
+                                innerVolumeModel.getDataCenter().setSelectedItem(dc);
+                                break;
+                            }
+                        }
+                        innerVolumeModel.getDataCenter().setIsChangable(false);
+                        innerVolumeModel.getDataCenter().setInfo("Cannot choose Host's Data Center in tree context");
+                        innerVolumeModel.getCluster().setIsChangable(false);
+                        innerVolumeModel.getCluster().setInfo("Cannot choose Host's Cluster in tree context");
+                        break;
+                    case DataCenter:
+                        storage_pool selectDataCenter =
+                                (storage_pool) volumeListModel.getSystemTreeSelectedItem().getEntity();
+                        innerVolumeModel.getDataCenter()
+                                .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { selectDataCenter })));
+                        innerVolumeModel.getDataCenter().setSelectedItem(selectDataCenter);
+                        innerVolumeModel.getDataCenter().setIsChangable(false);
+                        innerVolumeModel.getDataCenter().setInfo("Cannot choose Host's Data Center in tree context");
+                        break;
+                    default:
+                        break;
+                    }
+                }
+
+                UICommand command = new UICommand("onCreateVolume", volumeListModel);
+                command.setTitle("OK");
+                command.setIsDefault(true);
+                innerVolumeModel.getCommands().add(command);
+                command = new UICommand("Cancel", volumeListModel);
+                command.setTitle("Cancel");
+                command.setIsDefault(true);
+                innerVolumeModel.getCommands().add(command);
+            }
+        };
+        AsyncDataProvider.GetDataCenterList(_asyncQuery);
 
     }
 
@@ -123,12 +186,56 @@ public class VolumeListModel extends ListWithDetailsModel {
         }
         else if (command.getName().equals("Cancel")) {
             cancel();
+        } else if (command.getName().equals("onCreateVolume")) {
+            onCreateVolume();
         }
 
+    }
+
+    private void onCreateVolume() {
+        VolumeModel model = (VolumeModel) getWindow();
+        Guid clusterId = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
+        GlusterVolumeEntity volume = new GlusterVolumeEntity();
+        volume.setName((String) model.getName().getEntity());
+        volume.setVolumeType((GlusterVolumeType) model.getTypeList().getSelectedItem());
+        volume.setBricks((List<GlusterBrickEntity>) model.getBricks().getItems());
+        // CreateGlusterVolumeParameters parameter = new CreateGlusterVolumeParameters(clusterId, volume);
+        //
+        // Frontend.RunAction(VdcActionType.CreateGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
+        //
+        // @Override
+        // public void Executed(FrontendActionAsyncResult result) {
+        // int x =10;
+        // x;
+        //
+        // }
+        // });
     }
 
     @Override
     protected String getListName() {
         return "VolumeListModel";
     }
+
+    private SystemTreeItemModel systemTreeSelectedItem;
+
+    public SystemTreeItemModel getSystemTreeSelectedItem()
+    {
+        return systemTreeSelectedItem;
+    }
+
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
+    {
+        if (systemTreeSelectedItem != value)
+        {
+            systemTreeSelectedItem = value;
+            OnSystemTreeSelectedItemChanged();
+        }
+    }
+
+    private void OnSystemTreeSelectedItemChanged()
+    {
+        updateActionAvailability();
+    }
+
 }

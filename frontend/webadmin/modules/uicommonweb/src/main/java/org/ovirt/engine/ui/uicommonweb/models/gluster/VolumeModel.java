@@ -3,7 +3,16 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -11,14 +20,41 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 public class VolumeModel extends Model {
     EntityModel name;
     ListModel typeList;
-    EntityModel bricks;
+    ListModel dataCenter;
+    ListModel cluster;
+    ListModel bricks;
     EntityModel gluster_accecssProtocol;
     EntityModel nfs_accecssProtocol;
     EntityModel cifs_accecssProtocol;
     EntityModel users;
     EntityModel allowAccess;
 
+    public ListModel getDataCenter() {
+        return dataCenter;
+    }
+
+    public void setDataCenter(ListModel dataCenter) {
+        this.dataCenter = dataCenter;
+    }
+
+    public ListModel getCluster() {
+        return cluster;
+    }
+
+    public void setCluster(ListModel cluster) {
+        this.cluster = cluster;
+    }
+
     public VolumeModel() {
+        setDataCenter(new ListModel());
+        getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                dataCenter_SelectedItemChanged();
+            }
+        });
+        setCluster(new ListModel());
         setName(new EntityModel());
 
         setTypeList(new ListModel());
@@ -28,7 +64,7 @@ public class VolumeModel extends Model {
         getTypeList().setItems(list);
         getTypeList().setSelectedItem(GlusterVolumeType.DISTRIBUTE);
 
-        setBricks(new EntityModel());
+        setBricks(new ListModel());
 
         setGluster_accecssProtocol(new EntityModel());
         getGluster_accecssProtocol().setEntity(true);
@@ -62,11 +98,11 @@ public class VolumeModel extends Model {
         this.typeList = typeList;
     }
 
-    public EntityModel getBricks() {
+    public ListModel getBricks() {
         return bricks;
     }
 
-    public void setBricks(EntityModel bricks) {
+    public void setBricks(ListModel bricks) {
         this.bricks = bricks;
     }
 
@@ -113,4 +149,53 @@ public class VolumeModel extends Model {
     public boolean Validate() {
         return true;
     }
+
+    private void dataCenter_SelectedItemChanged()
+    {
+        storage_pool dataCenter = (storage_pool) getDataCenter().getSelectedItem();
+        if (dataCenter != null)
+        {
+            AsyncQuery _asyncQuery = new AsyncQuery();
+            _asyncQuery.setModel(this);
+            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+                public void OnSuccess(Object model, Object result)
+                {
+                    VolumeModel volumeModel = (VolumeModel) model;
+                    java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) result;
+                    VDSGroup oldCluster = (VDSGroup) volumeModel.getCluster().getSelectedItem();
+                    storage_pool selectedDataCenter = (storage_pool) getDataCenter().getSelectedItem();
+
+                    // Update selected cluster only if the returned cluster list is indeed the selected datacenter's
+                    // clusters
+                    if (clusters.isEmpty()
+                            || clusters.size() > 0
+                            && clusters.get(0)
+                                    .getstorage_pool_id()
+                                    .getValue()
+                                    .equals(selectedDataCenter.getId().getValue()))
+                    {
+                        volumeModel.getCluster().setItems(clusters);
+
+                        if (oldCluster != null)
+                        {
+                            VDSGroup newSelectedItem =
+                                    Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(oldCluster.getId()));
+                            if (newSelectedItem != null)
+                            {
+                                volumeModel.getCluster().setSelectedItem(newSelectedItem);
+                            }
+                        }
+
+                        if (volumeModel.getCluster().getSelectedItem() == null)
+                        {
+                            volumeModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+                        }
+                    }
+                }
+            };
+
+            AsyncDataProvider.GetClusterList(_asyncQuery, dataCenter.getId());
+        }
+    }
+
 }

@@ -6,11 +6,23 @@
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
 
 	<ui:style>
+	.generalTabTopDecorator {
+			background-color: #D3D3D3;
+			margin-bottom: 8px;
+			margin-top: 4px;
+			margin-right: 3px;
+			padding-top: 6px;
+			padding-bottom: 6px;
+		}
 	</ui:style>
 
 	<d:SimpleDialogPanel width="400px" height="500px">
 		<d:content>
 			<g:VerticalPanel>
+				<g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
+					<e:ListModelListBoxEditor ui:field="dataCenterEditor" />
+					<e:ListModelListBoxEditor ui:field="clusterEditor" />
+				</g:FlowPanel>
 				<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 				<e:ListModelListBoxEditor ui:field="typeListEditor" />
 				<g:HorizontalPanel>
