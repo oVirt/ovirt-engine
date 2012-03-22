@@ -50,12 +50,43 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         removeVolumeCommand = value;
     }
 
+    private UICommand startCommand;
+    private UICommand stopCommand;
+    private UICommand rebalanceCommand;
+
+    public UICommand getRebalanceCommand() {
+        return rebalanceCommand;
+    }
+
+    public void setRebalanceCommand(UICommand rebalanceCommand) {
+        this.rebalanceCommand = rebalanceCommand;
+    }
+
+    public UICommand getStartCommand() {
+        return startCommand;
+    }
+
+    public void setStartCommand(UICommand startCommand) {
+        this.startCommand = startCommand;
+    }
+
+    public UICommand getStopCommand() {
+        return stopCommand;
+    }
+
+    public void setStopCommand(UICommand stopCommand) {
+        this.stopCommand = stopCommand;
+    }
+
     public VolumeListModel() {
         setTitle("Volumes");
 
         setDefaultSearchString("Volumes:");
         setCreateVolumeCommand(new UICommand("Create Volume", this));
         setRemoveVolumeCommand(new UICommand("Remove", this));
+        setStartCommand(new UICommand("Start", this));
+        setStopCommand(new UICommand("Stop", this));
+        setRebalanceCommand(new UICommand("Rebalance", this));
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
@@ -186,6 +217,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
     private void updateActionAvailability() {
         getRemoveVolumeCommand().setIsExecutionAllowed(getSelectedItem() != null);
+        getStartCommand().setIsExecutionAllowed(getSelectedItem() != null);
+        getStopCommand().setIsExecutionAllowed(getSelectedItem() != null);
+        getRebalanceCommand().setIsExecutionAllowed(getSelectedItem() != null);
     }
 
     private void cancel() {
@@ -205,8 +239,42 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             cancel();
         } else if (command.getName().equals("onCreateVolume")) {
             onCreateVolume();
+        } else if (command.equals(getStartCommand())) {
+            start();
+        } else if (command.equals(getStopCommand())) {
+            stop();
+        } else if (command.equals(getRebalanceCommand())) {
+            rebalance();
         }
+    }
 
+    private void rebalance() {
+        if (getSelectedItem() == null) {
+            return;
+        }
+        GlusterVolumeEntity volume = (GlusterVolumeEntity) getSelectedItem();
+        // Frontend.RunAction(VdcActionType.RebalanceGlusterVolumeStart,
+        // new GlusterVolumeParameters(clusterId, volume.getName()));
+
+    }
+
+    private void stop() {
+        if (getSelectedItem() == null) {
+            return;
+        }
+        GlusterVolumeEntity volume = (GlusterVolumeEntity) getSelectedItem();
+        // Frontend.RunAction(VdcActionType.StopGlusterVolume, new GlusterVolumeParameters(clusterId,
+        // volume.getName()));
+
+    }
+
+    private void start() {
+        if (getSelectedItem() == null) {
+            return;
+        }
+        GlusterVolumeEntity volume = (GlusterVolumeEntity) getSelectedItem();
+        // Frontend.RunAction(VdcActionType.StartGlusterVolume, new GlusterVolumeParameters(clusterId,
+        // volume.getName()));
     }
 
     private void onCreateVolume() {

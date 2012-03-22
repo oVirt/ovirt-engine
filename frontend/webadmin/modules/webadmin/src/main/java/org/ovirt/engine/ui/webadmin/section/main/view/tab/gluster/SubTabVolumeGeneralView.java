@@ -6,7 +6,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
+import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
+import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -30,6 +32,11 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     @UiField(provided = true)
     GeneralFormPanel formPanel;
 
+    TextBoxLabel name = new TextBoxLabel();
+    TextBoxLabel volumeType = new TextBoxLabel();
+    TextBoxLabel replicaCount = new TextBoxLabel();
+    TextBoxLabel numOfBricks = new TextBoxLabel();
+
     FormBuilder formBuilder;
 
     @Inject
@@ -46,11 +53,11 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         Driver.driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 3, 6);
-        // formBuilder.setColumnsWidth("230px", "120px", "270px");
-        // formBuilder.addFormItem(new FormItem("OS Version", oS, 0, 0));
-        // formBuilder.addFormItem(new FormItem("Kernel Version", kernelVersion, 1, 0));
-        // formBuilder.addFormItem(new FormItem("KVM Version", kvmVersion, 2, 0));
+        formBuilder = new FormBuilder(formPanel, 2, 4);
+        formBuilder.addFormItem(new FormItem("Name", name, 0, 0));
+        formBuilder.addFormItem(new FormItem("Volume Type", volumeType, 1, 0));
+        formBuilder.addFormItem(new FormItem("Replica Count", replicaCount, 2, 0));
+        formBuilder.addFormItem(new FormItem("Num of Bricks", numOfBricks, 3, 0));
     }
 
     @SuppressWarnings("unchecked")

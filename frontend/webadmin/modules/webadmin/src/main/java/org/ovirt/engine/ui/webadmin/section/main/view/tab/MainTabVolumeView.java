@@ -93,5 +93,23 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 return getMainModel().getRemoveVolumeCommand();
             }
         });
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>("Start") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getStartCommand();
+            }
+        });
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>("Stop") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getStopCommand();
+            }
+        });
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>("Rebalance") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRebalanceCommand();
+            }
+        });
     }
 }
