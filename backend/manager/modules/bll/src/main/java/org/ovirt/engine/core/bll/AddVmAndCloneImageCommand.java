@@ -227,6 +227,10 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
      */
     protected abstract Collection<DiskImage> getDiskImagesToBeCloned();
 
+    protected Collection<DiskImage> getImagesForMultipleStoragesDomainsCheck() {
+        return getDiskImagesToBeCloned();
+    }
+
     protected DiskImage getDiskImageToRemoveByParam(MoveOrCopyImageGroupParameters param) {
         Guid imageGroupId = param.getDestImageGroupId();
         Guid imageId = param.getDestinationImageId();
