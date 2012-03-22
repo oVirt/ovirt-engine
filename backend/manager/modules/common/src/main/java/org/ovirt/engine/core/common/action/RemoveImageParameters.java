@@ -7,12 +7,12 @@ public class RemoveImageParameters extends ImagesContainterParametersBase implem
     private static final long serialVersionUID = -7905125604587768041L;
 
     private DiskImage diskImage;
-
-    private boolean forceDelete;
+    private boolean removeFromDB;
 
     public RemoveImageParameters(Guid imageId, Guid containerID) {
         super(imageId, "", containerID);
         setForceDelete(false);
+        removeFromDB = false;
     }
 
     public RemoveImageParameters() {
@@ -26,11 +26,11 @@ public class RemoveImageParameters extends ImagesContainterParametersBase implem
         diskImage = value;
     }
 
-    public boolean getForceDelete() {
-        return forceDelete;
+    public void setRemoveFromDB(boolean removeFromDB) {
+        this.removeFromDB = removeFromDB;
     }
 
-    public void setForceDelete(boolean value) {
-        forceDelete = value;
+    public boolean getRemoveFromDB() {
+        return removeFromDB;
     }
 }

@@ -41,6 +41,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VM_TEMPLATE_IMAGE_IS_ILLEGAL();
 
+    String VM_TEMPLATE_IMAGE_LAST_DOMAIN();
+
     String VM_NAME_CANNOT_BE_EMPTY();
 
     String VM_CANNOT_UPDATE_ILLEGAL_FIELD();
@@ -198,6 +200,8 @@ public interface AppErrors extends ConstantsWithLookup {
     String VM_NOT_FOUND();
 
     String ACTION_TYPE_FAILED_VM_IN_PREVIEW();
+
+    String ACTION_TYPE_FAILED_STOARGE_DOMAIN_IS_WRONG();
 
     String ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED();
 

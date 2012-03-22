@@ -119,6 +119,7 @@ public enum VdcActionType {
     RemoveSnapshotSingleDisk(227),
     MoveMultipleImageGroups(228),
     CreateCloneOfTemplate(229),
+    RemoveDisk(230),
     // VmPoolCommands
     AddVmPool(301),
     UpdateUserVm(303),
