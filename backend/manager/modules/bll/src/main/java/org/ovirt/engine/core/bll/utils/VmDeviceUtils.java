@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.bll.utils;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -460,8 +463,8 @@ public class VmDeviceUtils {
      */
     private static <T extends VmBase> void addImportedDisks(T entity, List<VmDevice> vmDeviceToUpdate) {
         final Guid id = entity.getId();
-        for (DiskImage disk : entity.getImages()) {
-            Guid deviceId = disk.getDisk().getId();
+        for (Disk disk : getDisks(entity.getImages())) {
+            Guid deviceId = disk.getId();
             String specParams = appendDeviceIdToSpecParams(deviceId, "");
             VmDevice vmDevice =
                     addManagedDevice(new VmDeviceId(deviceId, id),
@@ -472,6 +475,21 @@ public class VmDeviceUtils {
                             false);
             updateVmDevice(entity, vmDevice, deviceId, vmDeviceToUpdate);
         }
+    }
+
+    /**
+     * Gets a set of disks from disk images. For VM with snapshots, several DiskImage elements may contain the same Disk
+     *
+     * @param diskImages
+     *            collection DiskImage objects to get a set of Disks from
+     * @return set of disks of the images collection
+     */
+    protected static Set<Disk> getDisks(Collection<DiskImage> diskImages) {
+        Set<Disk> disks = new HashSet<Disk>();
+        for (DiskImage diskImage : diskImages) {
+            disks.add(diskImage.getDisk());
+        }
+        return disks;
     }
 
     private static <T extends VmBase> void updateVmDevice(T entity, VmDevice vmDevice, Guid deviceId, List<VmDevice> vmDeviceToUpdate) {
