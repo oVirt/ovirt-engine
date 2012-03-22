@@ -18,7 +18,7 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
     private static final ParameterizedRowMapper<Snapshot> ROW_MAPPER = new SnapshotRowMapper();
 
     private static final ParameterizedRowMapper<Snapshot> NO_CONFIG_ROW_MAPPER =
-            new SnapshotRowMapperWithoutConfiguration();
+            new SnapshotRowMapperWithConfigurationAvailable();
 
     @Override
     protected String getProcedureNameForUpdate() {
@@ -106,15 +106,25 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
     }
 
     @Override
+    public List<Snapshot> getAllWithConfiguration(Guid vmId) {
+        return getAll(vmId, null, false, true);
+    }
+
+    @Override
     public List<Snapshot> getAll(Guid vmId) {
         return getAll(vmId, null, false);
     }
 
     @Override
     public List<Snapshot> getAll(Guid vmId, Guid userId, boolean isFiltered) {
+        return getAll(vmId, userId, isFiltered, false);
+    }
+
+    private List<Snapshot> getAll(Guid vmId, Guid userId, boolean isFiltered, boolean fillConfiguration) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_id", vmId)
                 .addValue("user_id", userId)
-                .addValue("is_filtered", isFiltered);
+                .addValue("is_filtered", isFiltered)
+                .addValue("fill_configuration", fillConfiguration);
 
         return getCallsHandler().executeReadList("GetAllFromSnapshotsByVmId", NO_CONFIG_ROW_MAPPER, parameterSource);
     }
@@ -158,17 +168,6 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
         public Snapshot mapRow(ResultSet rs, int rowNum) throws SQLException {
             Snapshot snapshot = createInitialSnapshotEntity(rs);
 
-            mapPropertiesWithoutConfiguration(rs, snapshot);
-            mapConfiguration(rs, snapshot);
-
-            return snapshot;
-        }
-
-        protected Snapshot createInitialSnapshotEntity(ResultSet rs) throws SQLException {
-            return new Snapshot();
-        }
-
-        private void mapPropertiesWithoutConfiguration(ResultSet rs, Snapshot snapshot) throws SQLException {
             snapshot.setId(Guid.createGuidFromString(rs.getString("snapshot_id")));
             snapshot.setVmId(new Guid(rs.getString("vm_id")));
             snapshot.setType(SnapshotType.valueOf(rs.getString("snapshot_type")));
@@ -176,29 +175,24 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
             snapshot.setDescription(rs.getString("description"));
             snapshot.setCreationDate(new Date(rs.getTimestamp("creation_date").getTime()));
             snapshot.setAppList(rs.getString("app_list"));
+            snapshot.setVmConfiguration(rs.getString("vm_configuration"));
+
+            return snapshot;
         }
 
-        protected void mapConfiguration(ResultSet rs, Snapshot snapshot) throws SQLException {
-            snapshot.setVmConfiguration(rs.getString("vm_configuration"));
+        protected Snapshot createInitialSnapshotEntity(ResultSet rs) throws SQLException {
+            return new Snapshot();
         }
     }
 
     /**
-     * Mapper that will not map the {@link Snapshot#getVmConfiguration()} field, but instead will map the
-     * {@link Snapshot#isVmConfigurationAvailable()} field.
+     * Mapper that will also map the {@link Snapshot#isVmConfigurationAvailable()} field.
      */
-    private static class SnapshotRowMapperWithoutConfiguration extends SnapshotRowMapper {
+    private static class SnapshotRowMapperWithConfigurationAvailable extends SnapshotRowMapper {
 
         @Override
         protected Snapshot createInitialSnapshotEntity(ResultSet rs) throws SQLException {
             return new Snapshot(rs.getBoolean("vm_configuration_available"));
-        }
-
-        /**
-         * Nothing to map, since the read only field was mapped when entity was created.
-         */
-        @Override
-        protected void mapConfiguration(ResultSet rs, Snapshot snapshot) throws SQLException {
         }
     }
 

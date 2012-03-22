@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -23,7 +24,7 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid EXISTING_SNAPSHOT_ID = new Guid("a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89");
-    private static final int TOTAL_SNAPSHOTS = 1;
+    private static final int TOTAL_SNAPSHOTS = 2;
 
     @Override
     protected Guid generateNonExistingId() {
@@ -142,6 +143,15 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
         assertEquals(null, dao.getId(EXISTING_VM_ID, SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW));
     }
 
+    @Test
+    public void getAllByVmWithConfiguration() {
+        List<Snapshot> snapshots = dao.getAllWithConfiguration(FixturesTool.VM_RHEL5_POOL_50);
+        assertEquals("VM should have a snapshot", 1, snapshots.size());
+        for (Snapshot snapshot : snapshots) {
+            assertEquals("Snapshot should have configuration", "test!", snapshot.getVmConfiguration());
+            assertTrue("Snapshot should have configuration available", snapshot.isVmConfigurationAvailable());
+        }
+    }
 
     @Test
     public void getAllByVm() {
@@ -197,9 +207,10 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
      *            The result to check
      */
     private static void assertFullGetAllByVmResult(List<Snapshot> snapshots) {
-        assertEquals("VM should have " + TOTAL_SNAPSHOTS + " snapshots", TOTAL_SNAPSHOTS, snapshots.size());
+        assertEquals("VM should have a snapshot", 1, snapshots.size());
         for (Snapshot snapshot : snapshots) {
             assertFalse("Snapshot shouldn't have configuration available", snapshot.isVmConfigurationAvailable());
+            assertTrue("Snapshot should have no configuration", StringUtils.isEmpty(snapshot.getVmConfiguration()));
         }
     }
 
