@@ -13,6 +13,11 @@ import com.google.gwt.core.client.GWT;
 @SuppressWarnings("unused")
 public class Configurator
 {
+    public enum GlusterModeEnum {
+        ONLY_OVIRT,
+        OVIRT_GLUSTER
+    }
+
     private static final String DOCUMENTATION_LANG_PATH = "/en-US/";
     private static final String DOCUMENTATION_LIB_PATH = "html/";
 
@@ -218,6 +223,7 @@ public class Configurator
     public void Configure(SearchableListModel searchableListModel)
     {
         searchableListModel.setIsAsync(getIsAsync());
+        searchableListModel.setGlusterModeEnum(GlusterModeEnum.OVIRT_GLUSTER);
     }
 
     public void Configure(ISpice spice)
