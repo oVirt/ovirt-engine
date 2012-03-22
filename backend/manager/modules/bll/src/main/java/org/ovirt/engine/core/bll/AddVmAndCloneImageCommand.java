@@ -78,6 +78,11 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         }
     }
 
+    @Override
+    protected Collection<DiskImage> getImagesToCheckDestinationStorageDomains() {
+        return getDiskImagesToBeCloned();
+    }
+
     protected MoveOrCopyImageGroupParameters createCopyParameters(DiskImage diskImage,
             Guid srcStorageDomainId,
             Guid srcImageGroupId,

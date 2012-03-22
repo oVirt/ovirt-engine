@@ -71,6 +71,14 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         return storageDomainId;
     }
 
+    protected Guid getStoragePoolIdFromSourceImageContainer() {
+        return sourceVmFromDb.getstorage_pool_id().getValue();
+    }
+
+    protected boolean shouldCheckSpaceInStorageDomains() {
+        return !getImagesToCheckDestinationStorageDomains().isEmpty();
+    }
+
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();

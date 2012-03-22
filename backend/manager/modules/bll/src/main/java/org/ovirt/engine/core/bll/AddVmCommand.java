@@ -157,10 +157,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
         }
         if (returnValue
-                && getVmTemplate().getDiskMap().size() > 0
-                && !LinqUtils.firstOrNull(getVmTemplate().getDiskMap().values(), new All<DiskImage>())
-                        .getId().equals(VmTemplateHandler.BlankVmTemplateId)) {
-            if (!getStoragePoolId().equals(getVmTemplate().getstorage_pool_id().getValue())) {
+                && shouldCheckSpaceInStorageDomains()) {
+            if (!getStoragePoolId().equals(getStoragePoolIdFromSourceImageContainer())) {
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH.toString());
                 returnValue = false;
             } else {
@@ -182,6 +180,16 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             returnValue = isDedicatedVdsOnSameCluster(vmStaticFromParams);
         }
         return returnValue;
+    }
+
+    protected boolean shouldCheckSpaceInStorageDomains() {
+        return !getImagesToCheckDestinationStorageDomains().isEmpty()
+        && !LinqUtils.firstOrNull(getImagesToCheckDestinationStorageDomains(), new All<DiskImage>())
+                        .getId().equals(VmTemplateHandler.BlankVmTemplateId);
+    }
+
+    protected Guid getStoragePoolIdFromSourceImageContainer() {
+        return getVmTemplate().getstorage_pool_id().getValue();
     }
 
     protected int getNeededDiskSize(Guid domainId) {
@@ -263,7 +271,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         returnValue = buildAndCheckDestStorageDomains();
         if (returnValue) {
             storageToDisksMap =
-                    ImagesHandler.buildStorageToDiskMap(getVmTemplate().getDiskMap().values(),
+                    ImagesHandler.buildStorageToDiskMap(getImagesToCheckDestinationStorageDomains(),
                             imageToDestinationDomainMap);
             returnValue = CanDoAddVmCommand();
         }
@@ -306,7 +314,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         } else {
             retValue = validateProvidedDestinations();
         }
-        if (retValue && getVmTemplate().getDiskMap().values().size() != imageToDestinationDomainMap.size()) {
+        if (retValue && getImagesToCheckDestinationStorageDomains().size() != imageToDestinationDomainMap.size()) {
             log.errorFormat("Can not found any default active domain for one of the disks of template with id : {0}",
                     getVmTemplate().getId());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
@@ -314,6 +322,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
 
         return retValue;
+    }
+
+    protected Collection<DiskImage> getImagesToCheckDestinationStorageDomains() {
+        return getVmTemplate().getDiskMap().values();
     }
 
     private boolean validateProvidedDestinations() {
@@ -336,7 +348,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         if (getParameters().getStorageDomainId() != null
                 && !Guid.Empty.equals(getParameters().getStorageDomainId())) {
             Guid storageId = getParameters().getStorageDomainId();
-            for (DiskImage image : getVmTemplate().getDiskMap().values()) {
+            for (DiskImage image : getImagesToCheckDestinationStorageDomains()) {
                 imageToDestinationDomainMap.put(image.getId(), storageId);
             }
             return validateProvidedDestinations();
@@ -353,7 +365,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getVmStaticData()
                 .getQuotaId(),
                 getStoragePool()));
-        for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
+        for (DiskImage dit : getImagesToCheckDestinationStorageDomains()) {
             dit.setQuotaId(QuotaHelper.getInstance()
                     .getQuotaIdToConsume(getParameters().getVmStaticData().getQuotaId(),
                             getStoragePool()));
@@ -531,7 +543,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
             VmHandler.LockVm(getVmId());
-            for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
+            for (DiskImage dit : getImagesToCheckDestinationStorageDomains()) {
                 CreateSnapshotFromTemplateParameters tempVar = new CreateSnapshotFromTemplateParameters(
                         dit.getId(), getParameters().getVmStaticData().getId());
                 tempVar.setDestStorageDomainId(imageToDestinationDomainMap.get(dit.getId()));
