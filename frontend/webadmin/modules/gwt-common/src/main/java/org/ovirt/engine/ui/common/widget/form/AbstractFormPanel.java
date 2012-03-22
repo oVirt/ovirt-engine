@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.common.widget.form;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 
@@ -20,6 +22,8 @@ public abstract class AbstractFormPanel extends Composite {
 
     // A list of detail viewers - every viewer represents a column of form items
     public List<Grid> detailViewers = new ArrayList<Grid>();
+
+    private final Map<String, TextBoxLabel> valueLabelToItsTextBox = new HashMap<String, TextBoxLabel>();
 
     public void addFormDetailView(int numOfRows) {
         // Create a new column of form items
@@ -49,6 +53,14 @@ public abstract class AbstractFormPanel extends Composite {
         if (widget instanceof TextBoxLabel) {
             value = (TextBoxLabel) widget;
         } else if (widget instanceof ValueLabel<?>) {
+            // this ensures, that the same item will use the same instance of it's TextBoxLabel
+            String itemName = item.getName();
+            if (valueLabelToItsTextBox.containsKey(itemName)) {
+                value = valueLabelToItsTextBox.get(itemName);
+            } else {
+                valueLabelToItsTextBox.put(itemName, value);
+            }
+
             value.setText(((ValueLabel<?>) widget).getElement().getInnerHTML());
         }
 
