@@ -150,15 +150,16 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 pending_vm_count = _vds_pending_vm_count.get(curVds.getId());
             }
 
-            if ((curVds.getvm_count() + pending_vm_count + 1) > Config
-                    .<Integer> GetValue(ConfigValues.PowerClientMaxNumberOfConcurrentVMs)) {
+            final int powerClientMaxNumberOfConcurrentVMs = Config
+            .<Integer> GetValue(ConfigValues.PowerClientMaxNumberOfConcurrentVMs);
+            if ((curVds.getvm_count() + pending_vm_count + 1) > powerClientMaxNumberOfConcurrentVMs) {
                 log.infoFormat(
                         "No capacity for a power client - id:{0}, name:{1}, host_name(ip):{2}, vds.vm_count:{3}, PowerClientMaxNumberOfConcurrentVMs:{4}",
                         curVds.getId(),
                         curVds.getvds_name(),
                         curVds.gethost_name(),
                         curVds.getvm_count(),
-                        Config.<Integer> GetValue(ConfigValues.PowerClientMaxNumberOfConcurrentVMs));
+                        powerClientMaxNumberOfConcurrentVMs);
                 hasCapacity = false;
             }
         }

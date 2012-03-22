@@ -554,7 +554,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             int bestToolVer = 0;
             for (RepoFileMetaData map : repoFilesMap) {
                 String fileName = map.getRepoFileName() != null ? map.getRepoFileName() : "";
-                Matcher matchToolPattern = Pattern.compile(IsoDomainListSyncronizer.regexToolPattern).matcher(fileName);
+                Matcher matchToolPattern = Pattern.compile(IsoDomainListSyncronizer.getRegexToolPattern()).matcher(fileName);
                 if (matchToolPattern.find()) {
                     // Get cluster version and tool version of Iso tool.
                     // TODO: Should be group name string support in java7.
@@ -598,7 +598,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             // revision,
             // minimalVdsRev);
             String qumranetToolsPath =
-                    String.format("%1$s%2$s_%3$s.iso", IsoDomainListSyncronizer.guestToolsSetupIsoPrefix,
+                    String.format("%1$s%2$s_%3$s.iso", IsoDomainListSyncronizer.getGuestToolsSetupIsoPrefix(),
                             selectedToolsClusterVersion, selectedToolsVersion);
 
             String isoDir = (String) Backend

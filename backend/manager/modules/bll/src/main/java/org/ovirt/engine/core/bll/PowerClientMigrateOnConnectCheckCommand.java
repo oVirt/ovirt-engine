@@ -55,31 +55,33 @@ public class PowerClientMigrateOnConnectCheckCommand<T extends PowerClientMigrat
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
+        final boolean powerClientAutoMigrateToPowerClientOnConnect = Config.<Boolean>
+        GetValue(ConfigValues.PowerClientAutoMigrateToPowerClientOnConnect);
+        final boolean powerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient =
+            Config.<Boolean> GetValue(ConfigValues
+                    .PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient);
 
         // check if any chance we need to do something (reduce code and prevent
         // from getting exceptions on optional code...)
-        if (!Config.<Boolean>
-                GetValue(ConfigValues.PowerClientAutoMigrateToPowerClientOnConnect)
-                && !Config.<Boolean> GetValue(ConfigValues.PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient)) {
+        if (!powerClientAutoMigrateToPowerClientOnConnect
+                && !powerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient) {
             addCanDoActionMessage(VdcBllMessages.AUTO_MIGRATE_DISABLED);
             returnValue = false;
         } else if (getVds() == null) {
             addCanDoActionMessage(VdcBllMessages.AUTO_MIGRATE_VDS_NOT_FOUND);
             returnValue = false;
-        } else if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoMigrateToPowerClientOnConnect)
-                && !Config
-                        .<Boolean> GetValue(ConfigValues.PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient)
+        } else if (powerClientAutoMigrateToPowerClientOnConnect
+                && !powerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient
                 && getPowerClient() == null) {
             addCanDoActionMessage(VdcBllMessages.AUTO_MIGRATE_POWERCLIENT_NOT_FOUND);
             returnValue = false;
         } else if (getPowerClient() != null
-                && Config.<Boolean> GetValue(ConfigValues.PowerClientAutoMigrateToPowerClientOnConnect)
+                && powerClientAutoMigrateToPowerClientOnConnect
                 && getPowerClient().getId().equals(getVdsId())) {
             getReturnValue().getCanDoActionMessages()
                     .add(VdcBllMessages.AUTO_MIGRATE_ALREADY_ON_POWERCLIENT.toString());
             returnValue = false;
-        } else if (Config
-                .<Boolean> GetValue(ConfigValues.PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient)) {
+        } else if (powerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient) {
             log.infoFormat("VdcBll.PowerClientMigrateOnConnectCheck - checking PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient");
             if (getVds().getvds_type() != VDSType.PowerClient) {
                 addCanDoActionMessage(VdcBllMessages.AUTO_MIGRATE_ALREADY_RUNNING_ON_VDS);

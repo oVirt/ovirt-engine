@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -96,7 +95,7 @@ public class RepoIsoFileTest extends AbstractBackendTest{
 
     private boolean isValidToolName(String toolName)
     {
-        Pattern pattern  = Pattern.compile(IsoDomainListSyncronizer.regexToolPattern);
+        Pattern pattern  = Pattern.compile(IsoDomainListSyncronizer.getRegexToolPattern());
         String toolNameValid = toolName != null ? toolName : new String();
         Matcher matchToolPattern = pattern.matcher(toolNameValid);
         return matchToolPattern.find();
@@ -104,7 +103,7 @@ public class RepoIsoFileTest extends AbstractBackendTest{
 
     private String getToolCluster(String toolName)
     {
-        Pattern pattern  = Pattern.compile(IsoDomainListSyncronizer.regexToolPattern);
+        Pattern pattern  = Pattern.compile(IsoDomainListSyncronizer.getRegexToolPattern());
         Matcher matchToolPattern = pattern.matcher(toolName);
         if (matchToolPattern.find())
         {
@@ -116,7 +115,7 @@ public class RepoIsoFileTest extends AbstractBackendTest{
 
     private int getToolVersion(String toolName)
     {
-        Pattern pattern  = Pattern.compile(IsoDomainListSyncronizer.regexToolPattern);
+        Pattern pattern  = Pattern.compile(IsoDomainListSyncronizer.getRegexToolPattern());
         Matcher matchToolPattern = pattern.matcher(toolName);
         if (matchToolPattern.find())
         {

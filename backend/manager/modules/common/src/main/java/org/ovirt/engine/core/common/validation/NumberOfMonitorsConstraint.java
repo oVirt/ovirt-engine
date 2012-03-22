@@ -11,15 +11,14 @@ import org.ovirt.engine.core.common.validation.annotation.NumberOfMonitors;
 
 public class NumberOfMonitorsConstraint implements ConstraintValidator<NumberOfMonitors, Integer> {
 
-    private List<String> validValues;
-
     @Override
     public void initialize(NumberOfMonitors constraintAnnotation) {
-        validValues = Config.<List<String>> GetValue(ConfigValues.ValidNumOfMonitors);
     }
 
     @Override
     public boolean isValid(Integer value, ConstraintValidatorContext context) {
+        // Is fetched every time to support the reloadability of the config value
+        final List<String> validValues = Config.<List<String>> GetValue(ConfigValues.ValidNumOfMonitors);
         if (value == null || validValues == null) {
             return false;
         }

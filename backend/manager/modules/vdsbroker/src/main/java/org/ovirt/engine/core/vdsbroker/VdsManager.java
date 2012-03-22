@@ -25,14 +25,14 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.FileUtil;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -98,8 +98,6 @@ public class VdsManager {
 
     private static final int VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES = Config
             .<Integer> GetValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes);
-    private static final int VDS_RECOVERY_TIMEOUT_IN_MINUTES = Config
-            .<Integer> GetValue(ConfigValues.VdsRecoveryTimeoutInMintues);
     private String duringFailureJobId;
     private boolean privateInitialized;
 
@@ -182,7 +180,6 @@ public class VdsManager {
 
     private void InitVdsBroker() {
         log.infoFormat("vdsBroker({0},{1})", _vds.gethost_name(), _vds.getport());
-
         int clientTimeOut = Config.<Integer> GetValue(ConfigValues.vdsTimeout) * 1000;
         KeyValuePairCompat<VdsServerConnector, HttpClient> returnValue =
                 XmlRpcUtils.getConnection(_vds.gethost_name(),
@@ -340,7 +337,7 @@ public class VdsManager {
                     _vds.getId(),
                     _vds.getvds_name(),
                     ex.getMessage());
-
+            final int VDS_RECOVERY_TIMEOUT_IN_MINUTES = Config.<Integer> GetValue(ConfigValues.VdsRecoveryTimeoutInMintues);
             String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "onTimerHandleVdsRecovering", new Class[0],
                     new Object[0], VDS_RECOVERY_TIMEOUT_IN_MINUTES, TimeUnit.MINUTES);
             recoveringJobIdMap.put(_vds.getId(), jobId);

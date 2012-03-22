@@ -27,14 +27,14 @@ import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.RepoFileMetaDataDAO;
 import org.ovirt.engine.core.utils.Pair;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -50,13 +50,22 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  */
 public class IsoDomainListSyncronizer {
     private List<RepoFileMetaData> problematicRepoFileList = new ArrayList<RepoFileMetaData>();
-    public static final String guestToolsSetupIsoPrefix = Config.<String> GetValue(ConfigValues.GuestToolsSetupIsoPrefix);
-    public static final String regexToolPattern = guestToolsSetupIsoPrefix + "([0-9]{1,}.[0-9])(_{1})([0-9]{1,}).[i|I][s|S][o|O]$";
     private final int MIN_TO_MILLISECONDS = 60 * 1000;
     private static final IsoDomainListSyncronizer isoDomainListSyncronizer = new IsoDomainListSyncronizer();;
     private int isoDomainRefreshRate;
     RepoFileMetaDataDAO repoStorageDom;
     private static ConcurrentMap<Object,Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<Object,Lock>();
+
+    // Not kept as static member to enable reloading the config value
+    public static String getGuestToolsSetupIsoPrefix() {
+        return Config.<String> GetValue(ConfigValues.GuestToolsSetupIsoPrefix);
+    }
+
+    // Not kept as static member to enable reloading the config value
+    public static String getRegexToolPattern() {
+        final String guestToolsSetupIsoPrefix = getGuestToolsSetupIsoPrefix();
+        return guestToolsSetupIsoPrefix + "([0-9]{1,}.[0-9])(_{1})([0-9]{1,}).[i|I][s|S][o|O]$";
+    }
 
     /**
      * private constructor to initialize the quartz scheduler

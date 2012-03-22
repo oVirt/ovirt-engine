@@ -48,8 +48,6 @@ import org.ovirt.engine.core.utils.list.ListUtils.Filter;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
     private static final HashMap<String, QueryData2> mQueriesCache = new HashMap<String, QueryData2>();
-    private static final ISyntaxChecker _defaultSyntaxChecker =
-            SyntaxCheckerFactory.CreateBackendSyntaxChecker(Config.<String> GetValue(ConfigValues.AuthenticationMethod));
 
     public SearchQuery(P parameters) {
         super(parameters);
@@ -309,7 +307,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     curSyntaxChecker = SyntaxCheckerFactory.CreateADSyntaxChecker(Config
                             .<String> GetValue(ConfigValues.AuthenticationMethod));
                 } else {
-                    curSyntaxChecker = _defaultSyntaxChecker;
+                    curSyntaxChecker = SyntaxCheckerFactory
+                    .CreateBackendSyntaxChecker(Config.<String> GetValue(ConfigValues.AuthenticationMethod));
                 }
                 SyntaxContainer searchObj = curSyntaxChecker.analyzeSyntaxState(searchText, true);
                 // set the case-sensitive flag

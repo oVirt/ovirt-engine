@@ -17,17 +17,6 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
 
-    private static VdsSelectionAlgorithm defaultSelectionAlgorithm;
-
-    static {
-        try {
-            defaultSelectionAlgorithm =
-                    VdsSelectionAlgorithm.valueOf(Config.<String> GetValue(ConfigValues.VdsSelectionAlgorithm));
-        } catch (Exception e) {
-            defaultSelectionAlgorithm = VdsSelectionAlgorithm.EvenlyDistribute;
-        }
-    }
-
     public VmCountVdsLoadBalancingAlgorithm(VDSGroup group) {
         super(group);
     }
@@ -35,7 +24,8 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
     @Override
     protected void InitOverUtilizedList() {
         int vmCount = 0;
-        switch (defaultSelectionAlgorithm) {
+
+        switch (getDefaultSelectionAlgorithm()) {
         case EvenlyDistribute: {
             vmCount = Config.<Integer> GetValue(ConfigValues.HighUtilizationForEvenlyDistribute);
             break;
@@ -67,10 +57,21 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
         }));
     }
 
+    private VdsSelectionAlgorithm getDefaultSelectionAlgorithm() {
+        VdsSelectionAlgorithm defaultSelectionAlgorithm;
+        try {
+            defaultSelectionAlgorithm =
+                    VdsSelectionAlgorithm.valueOf(Config.<String> GetValue(ConfigValues.VdsSelectionAlgorithm));
+        } catch (Exception e) {
+            defaultSelectionAlgorithm = VdsSelectionAlgorithm.EvenlyDistribute;
+        }
+        return defaultSelectionAlgorithm;
+    }
+
     @Override
     protected void InitUnderUtilizedList() {
         int vmCount = 0;
-        switch (defaultSelectionAlgorithm) {
+        switch (getDefaultSelectionAlgorithm()) {
         case EvenlyDistribute: {
             vmCount = Config.<Integer> GetValue(ConfigValues.LowUtilizationForEvenlyDistribute);
             break;
@@ -108,7 +109,7 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
         int lowVdsCount = 0;
         int afterThreasholdInPercent = Config.<Integer> GetValue(ConfigValues.UtilizationThresholdInPercent);
 
-        switch (defaultSelectionAlgorithm) {
+        switch (getDefaultSelectionAlgorithm()) {
         case EvenlyDistribute: {
             highVdsCount = Math.min(
                     afterThreasholdInPercent

@@ -75,25 +75,27 @@ public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmComm
                     : "physical");
             return;
         }
-        if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoAdjustMemoryLog)) {
+
+        final boolean powerClientAutoAdjustMemoryLog =
+            Config.<Boolean> GetValue(ConfigValues.PowerClientAutoAdjustMemoryLog);
+
+        if (powerClientAutoAdjustMemoryLog) {
             log.infoFormat("VdcBll.RunVmCommand.AutoMemoryAdjust - Basing on VDS {0} - {1}MB", Config
                     .<Boolean> GetValue(ConfigValues.PowerClientAutoAdjustMemoryBaseOnAvailableMemory) ? "available"
                     : "physical", memory);
         }
 
         memory = memory - Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemoryGeneralReserve);
-        if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoAdjustMemoryLog)) {
+        if (powerClientAutoAdjustMemoryLog) {
             log.infoFormat("VdcBll.RunVmCommand.AutoMemoryAdjust - After reducing general reserve {0} - {1}MB",
                     Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemoryGeneralReserve), memory);
         }
 
-        int powerClientAutoAdjustMemorySpicePerSessionReserve =
-                Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemorySpicePerSessionReserve);
-        if (powerClientAutoAdjustMemorySpicePerSessionReserve != 0) {
-            if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoAdjustMemoryLog)) {
+        if (Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemorySpicePerSessionReserve) != 0) {
+            if (powerClientAutoAdjustMemoryLog) {
                 log.infoFormat(
                         "VdcBll.RunVmCommand.AutoMemoryAdjust - Checking Spice per session reserve of {0}MB per session",
-                        powerClientAutoAdjustMemorySpicePerSessionReserve);
+                        Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemorySpicePerSessionReserve));
             }
             log.infoFormat("VdcBll.RunVmCommand.AutoMemoryAdjust - Checking number of VMs and Pools");
             if (getParameters().getRequestingUser() == null) {
@@ -120,27 +122,29 @@ public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmComm
                 // vmList.Remove(vm);
                 // }
                 memory = memory
-                        - ((vmList.size() + vmPools.size()) * powerClientAutoAdjustMemorySpicePerSessionReserve);
-                if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoAdjustMemoryLog)) {
+                        - ((vmList.size() + vmPools.size()) * Config
+                                .<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemorySpicePerSessionReserve));
+                if (powerClientAutoAdjustMemoryLog) {
                     log.infoFormat("VdcBll.RunVmCommand.AutoMemoryAdjust - Reducing {0}MB for {1} VMs and {2} Pools",
-                            powerClientAutoAdjustMemorySpicePerSessionReserve, vmList.size(), vmPools.size());
+                            Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemorySpicePerSessionReserve),
+                            vmList.size(), vmPools.size());
                 }
             }
         }
 
-        int powerClientAutoAdjustMemorySpicePerMonitorReserve = Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemorySpicePerMonitorReserve);
-        if (powerClientAutoAdjustMemorySpicePerMonitorReserve != 0) {
-            if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoAdjustMemoryLog)) {
+        if (Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemorySpicePerMonitorReserve) != 0) {
+            if (powerClientAutoAdjustMemoryLog) {
                 log.infoFormat(
                         "VdcBll.RunVmCommand.AutoMemoryAdjust - Reducing Spice per monitor reserve of {0}MB per monitor. {1} monitors",
-                        powerClientAutoAdjustMemorySpicePerMonitorReserve, vm.getnum_of_monitors());
+                        Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemorySpicePerMonitorReserve),
+                        vm.getnum_of_monitors());
             }
             memory = memory
-                    - (vm.getnum_of_monitors() * powerClientAutoAdjustMemorySpicePerMonitorReserve);
+                    - (vm.getnum_of_monitors() * Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemorySpicePerMonitorReserve));
         }
         int maxMemory = Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemoryMaxMemory);
         if (memory > maxMemory) {
-            if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoAdjustMemoryLog)) {
+            if (powerClientAutoAdjustMemoryLog) {
                 log.infoFormat("VdcBll.RunVmCommand.AutoMemoryAdjust - VM memory fixed to max allowed memory: {0}",
                         maxMemory);
             }
@@ -150,7 +154,7 @@ public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmComm
         int modulus = Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemoryModulus);
         int modulusMemory = (memory / modulus) * modulus;
         if (modulusMemory != memory) {
-            if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoAdjustMemoryLog)) {
+            if (powerClientAutoAdjustMemoryLog) {
                 log.infoFormat("VdcBll.RunVmCommand.AutoMemoryAdjust - VM memory adjusted to modulus {0}: {1}",
                         modulus, modulusMemory);
             }
@@ -158,7 +162,7 @@ public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmComm
         }
 
         if (memory < vm.getStaticData().getmem_size_mb()) {
-            if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoAdjustMemoryLog)) {
+            if (powerClientAutoAdjustMemoryLog) {
                 log.infoFormat(
                         "VdcBll.RunVmCommand.AutoMemoryAdjust - VM memory adjusted to oriignal value as the result was lower than predefined value: {0}",
                         vm.getStaticData().getmem_size_mb());
@@ -166,7 +170,7 @@ public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmComm
             memory = vm.getStaticData().getmem_size_mb();
         }
 
-        if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoAdjustMemoryLog)) {
+        if (powerClientAutoAdjustMemoryLog) {
             log.infoFormat("VdcBll.RunVmCommand.AutoMemoryAdjust - VM memory will be: {0}", memory);
         }
         vm.getStaticData().setmem_size_mb(memory);
