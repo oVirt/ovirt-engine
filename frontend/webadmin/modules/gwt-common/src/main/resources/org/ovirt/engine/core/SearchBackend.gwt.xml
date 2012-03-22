@@ -46,6 +46,7 @@
 		<include name="searchbackend/StoragePoolFieldAutoCompleter.java" />
 		<include name="searchbackend/StorageDomainFieldAutoCompleter.java" />
 		<include name="searchbackend/EnumValueAutoCompleter.java" />
+		<include name="searchbackend/EnumNameAutoCompleter.java" />
 		<include name="searchbackend/NumericConditionRelationAutoCompleter.java" />
 		<include
 			name="searchbackend/StringOnlyEqualConditionRelationAutoCompleter.java" />
@@ -57,6 +58,10 @@
 		<include name="searchbackend/DateUtils.java" />
 		<include name="searchbackend/SqlInjectionChecker.java" />
 		<include name="searchbackend/PostgresSqlInjectionChecker.java" />
+
+		<!--======================SEARCHBACKEND/GLUSTER====================== -->
+		<include name="searchbackend/gluster/GlusterVolumeConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/gluster/GlusterVolumeCrossRefAutoCompleter.java" />
 	</source>
 
 	<super-source path="ui/uioverrides" />

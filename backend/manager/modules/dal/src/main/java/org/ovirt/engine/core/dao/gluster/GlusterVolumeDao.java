@@ -9,11 +9,12 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOption
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DAO;
+import org.ovirt.engine.core.dao.SearchDAO;
 
 /**
  * Interface for DB operations on Gluster Volumes.
  */
-public interface GlusterVolumeDao extends DAO {
+public interface GlusterVolumeDao extends DAO, SearchDAO<GlusterVolumeEntity> {
 
     public void save(GlusterVolumeEntity volume);
 
@@ -23,6 +24,7 @@ public interface GlusterVolumeDao extends DAO {
 
     public List<GlusterVolumeEntity> getByClusterId(Guid clusterId);
 
+    @Override
     public List<GlusterVolumeEntity> getAllWithQuery(String query);
 
     public void remove(Guid id);

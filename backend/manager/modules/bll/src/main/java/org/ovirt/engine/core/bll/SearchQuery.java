@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.SearchEngineIllegalCharacterException;
@@ -119,6 +120,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         }
         case DiskImage: {
             returnValue = searchDiskImage();
+            break;
+        }
+        case GlusterVolume: {
+            returnValue = searchGlusterVolumes();
             break;
         }
         default: {
@@ -251,6 +256,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     private List<DiskImage> searchDiskImage() {
         return genericSearch(DbFacade.getInstance().getDiskImageDAO(), true, null);
+    }
+
+    private List<GlusterVolumeEntity> searchGlusterVolumes() {
+        return genericSearch(DbFacade.getInstance().getGlusterVolumeDao(), true, null);
     }
 
     private QueryData2 InitQueryData(boolean useCache) {

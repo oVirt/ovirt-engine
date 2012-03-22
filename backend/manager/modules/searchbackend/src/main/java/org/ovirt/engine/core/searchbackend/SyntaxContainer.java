@@ -16,7 +16,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
 
     private boolean mValid = false;
     private SyntaxError mError = SyntaxError.NO_ERROR;
-    private int[] mErrorPos = new int[2];
+    private final int[] mErrorPos = new int[2];
     private int privateMaxCount;
     private long searchFrom = 0;
     private boolean caseSensitive=true;
@@ -205,6 +205,10 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             retval = obj;
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
+            retval = SearchObjects.GLUSTER_VOLUME_OBJ_NAME;
         } else {
             retval = obj;
 
@@ -270,6 +274,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         return mObjList.listIterator(index);
     }
 
+    @Override
     public java.util.Iterator<SyntaxObject> iterator() {
         return mObjList.iterator();
     }

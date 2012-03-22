@@ -261,6 +261,11 @@
 		<include name="common/validation/annotation/HostnameOrIp.java" />
 		<include name="common/validation/group/**" />
 
+		<!-- Gluster -->
+		<include name="common/businessentities/gluster/GlusterVolumeEntity.java" />
+		<include name="common/businessentities/gluster/GlusterVolumeType.java" />
+		<include name="common/businessentities/gluster/GlusterVolumeStatus.java" />
+		<include name="common/businessentities/gluster/TransportType.java" />
 
 	</source>
 

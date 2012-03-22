@@ -2,6 +2,8 @@ package org.ovirt.engine.core.searchbackend;
 
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.searchbackend.gluster.GlusterVolumeConditionFieldAutoCompleter;
+import org.ovirt.engine.core.searchbackend.gluster.GlusterVolumeCrossRefAutoCompleter;
 
 public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
     private final java.util.HashMap<String, String[]> mJoinDictionary = new java.util.HashMap<String, String[]>();
@@ -20,6 +22,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.put(SearchObjects.DISK_IMAGE_PLU_OBJ_NAME, SearchObjects.DISK_IMAGE_PLU_OBJ_NAME);
         mVerbs.put(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME);
         mVerbs.put(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
+        mVerbs.put(SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME);
 
         buildCompletions();
         mVerbs.put(SearchObjects.VM_OBJ_NAME, SearchObjects.VM_OBJ_NAME);
@@ -32,93 +35,54 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.put(SearchObjects.AUDIT_OBJ_NAME, SearchObjects.AUDIT_OBJ_NAME);
         mVerbs.put(SearchObjects.VDC_USER_OBJ_NAME, SearchObjects.VDC_USER_OBJ_NAME);
         mVerbs.put(SearchObjects.VDC_CLUSTER_OBJ_NAME, SearchObjects.VDC_CLUSTER_OBJ_NAME);
+        mVerbs.put(SearchObjects.GLUSTER_VOLUME_OBJ_NAME, SearchObjects.GLUSTER_VOLUME_OBJ_NAME);
 
         // vms - vds
-        mJoinDictionary.put(StringFormat.format("%1$s.%2$s", SearchObjects.VM_OBJ_NAME, SearchObjects.VDS_OBJ_NAME),
-                new String[] { "run_on_vds", "vds_id" });
-        mJoinDictionary.put(StringFormat.format("%2$s.%1$s", SearchObjects.VM_OBJ_NAME, SearchObjects.VDS_OBJ_NAME),
-                new String[] { "vds_id", "run_on_vds" });
+        addJoin(SearchObjects.VM_OBJ_NAME, "run_on_vds", SearchObjects.VDS_OBJ_NAME, "vds_id");
 
         // vms - vmt
-        mJoinDictionary.put(StringFormat.format("%1$s.%2$s", SearchObjects.VM_OBJ_NAME, SearchObjects.TEMPLATE_OBJ_NAME),
-                new String[] { "vmt_guid", "vmt_guid" });
-        mJoinDictionary.put(StringFormat.format("%2$s.%1$s", SearchObjects.VM_OBJ_NAME, SearchObjects.TEMPLATE_OBJ_NAME),
-                new String[] { "vmt_guid", "vmt_guid" });
+        addJoin(SearchObjects.VM_OBJ_NAME, "vmt_guid", SearchObjects.TEMPLATE_OBJ_NAME, "vmt_guid");
 
         // vms - users
-        mJoinDictionary.put(StringFormat.format("%1$s.%2$s", SearchObjects.VM_OBJ_NAME, SearchObjects.VDC_USER_OBJ_NAME),
-                new String[] { "vm_guid", "vm_guid" });
-        mJoinDictionary.put(StringFormat.format("%2$s.%1$s", SearchObjects.VM_OBJ_NAME, SearchObjects.VDC_USER_OBJ_NAME),
-                new String[] { "vm_guid", "vm_guid" });
+        addJoin(SearchObjects.VM_OBJ_NAME, "vm_guid", SearchObjects.VDC_USER_OBJ_NAME, "vm_guid");
 
         // vms - audit
-        mJoinDictionary.put(StringFormat.format("%1$s.%2$s", SearchObjects.VM_OBJ_NAME, SearchObjects.AUDIT_OBJ_NAME),
-                new String[] { "vm_guid", "vm_id" });
-        mJoinDictionary.put(StringFormat.format("%2$s.%1$s", SearchObjects.VM_OBJ_NAME, SearchObjects.AUDIT_OBJ_NAME),
-                new String[] { "vm_id", "vm_guid" });
+        addJoin(SearchObjects.VM_OBJ_NAME, "vm_guid", SearchObjects.AUDIT_OBJ_NAME, "vm_id");
 
         // vms - storage domain
-        mJoinDictionary.put(StringFormat.format("%1$s.%2$s", SearchObjects.VM_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME),
-                new String[] { "storage_id", "id" });
-        mJoinDictionary.put(StringFormat.format("%2$s.%1$s", SearchObjects.VM_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME),
-                new String[] { "id", "storage_id" });
+        addJoin(SearchObjects.VM_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
 
         // templates - storage domain
-        mJoinDictionary.put(StringFormat.format("%1$s.%2$s", SearchObjects.TEMPLATE_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME),
-                new String[] { "storage_id", "id" });
-        mJoinDictionary.put(StringFormat.format("%2$s.%1$s", SearchObjects.TEMPLATE_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME),
-                new String[] { "id", "storage_id" });
+        addJoin(SearchObjects.TEMPLATE_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
 
         // vds - storage domain
-        mJoinDictionary.put(StringFormat.format("%1$s.%2$s", SearchObjects.VDS_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME),
-                new String[] { "storage_id", "id" });
-        mJoinDictionary.put(StringFormat.format("%2$s.%1$s", SearchObjects.VDS_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME),
-                new String[] { "id", "storage_id" });
+        addJoin(SearchObjects.VDS_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
 
         // cluster - storage domain
-        mJoinDictionary.put(StringFormat.format("%1$s.%2$s", SearchObjects.VDC_CLUSTER_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME),
-                new String[] { "storage_id", "id" });
-        mJoinDictionary.put(StringFormat.format("%2$s.%1$s", SearchObjects.VDC_CLUSTER_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME),
-                new String[] { "id", "storage_id" });
+        addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
 
         // vds - audit
-        mJoinDictionary.put(StringFormat.format("%1$s.%2$s", SearchObjects.VDS_OBJ_NAME, SearchObjects.AUDIT_OBJ_NAME),
-                new String[] { "vds_id", "vds_id" });
-        mJoinDictionary.put(StringFormat.format("%2$s.%1$s", SearchObjects.VDS_OBJ_NAME, SearchObjects.AUDIT_OBJ_NAME),
-                new String[] { "vds_id", "vds_id" });
+        addJoin(SearchObjects.VDS_OBJ_NAME, "vds_id", SearchObjects.AUDIT_OBJ_NAME, "vds_id");
 
         // users - audit
-        mJoinDictionary.put(StringFormat.format("%1$s.%2$s",
-                SearchObjects.VDC_USER_OBJ_NAME,
-                SearchObjects.AUDIT_OBJ_NAME),
-                new String[] { "user_id", "user_id" });
-        mJoinDictionary.put(StringFormat.format("%2$s.%1$s",
-                SearchObjects.VDC_USER_OBJ_NAME,
-                SearchObjects.AUDIT_OBJ_NAME),
-                new String[] { "user_id", "user_id" });
+        addJoin(SearchObjects.VDC_USER_OBJ_NAME, "user_id", SearchObjects.AUDIT_OBJ_NAME, "user_id");
 
         // Datacenter(Storage_pool) - Cluster(vds group)
-        mJoinDictionary
-                .put(StringFormat.format("%1$s.%2$s", SearchObjects.VDC_STORAGE_POOL_OBJ_NAME,
-                        SearchObjects.VDC_CLUSTER_OBJ_NAME), new String[] { "id", "storage_pool_id" });
-        mJoinDictionary
-                .put(StringFormat.format("%2$s.%1$s", SearchObjects.VDC_STORAGE_POOL_OBJ_NAME,
-                        SearchObjects.VDC_CLUSTER_OBJ_NAME), new String[] { "storage_pool_id", "id" });
+        addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, "id", SearchObjects.VDC_CLUSTER_OBJ_NAME, "storage_pool_id");
 
         // Datacenter(Storage_pool) - Storage Domain
-        mJoinDictionary
-                .put(StringFormat.format("%1$s.%2$s", SearchObjects.VDC_STORAGE_POOL_OBJ_NAME,
-                        SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME), new String[] { "id", "storage_pool_id" });
-        mJoinDictionary
-                .put(StringFormat.format("%2$s.%1$s", SearchObjects.VDC_STORAGE_POOL_OBJ_NAME,
-                        SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME), new String[] { "storage_pool_id", "id" });
+        addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, "id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "storage_pool_id");
 
         // audit - cluster
-        mJoinDictionary.put(StringFormat.format("%1$s.%2$s", SearchObjects.VDC_CLUSTER_OBJ_NAME, SearchObjects.AUDIT_OBJ_NAME),
-                new String[] { "vds_group_id", "vds_group_id" });
-        mJoinDictionary.put(StringFormat.format("%2$s.%1$s", SearchObjects.VDC_CLUSTER_OBJ_NAME, SearchObjects.AUDIT_OBJ_NAME),
-                new String[] { "vds_group_id", "vds_group_id" });
+        addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME, "vds_group_id", SearchObjects.AUDIT_OBJ_NAME, "vds_group_id");
 
+        // gluster volume - cluster
+        addJoin(SearchObjects.GLUSTER_VOLUME_OBJ_NAME, "cluster_id", SearchObjects.VDC_CLUSTER_OBJ_NAME, "vds_group_id");
+    }
+
+    private void addJoin(String firstObj, String firstColumnName, String secondObj, String secondColumnName) {
+        mJoinDictionary.put(firstObj + "." + secondObj, new String[] {firstColumnName, secondColumnName});
+        mJoinDictionary.put(secondObj + "." + firstObj, new String[] {secondColumnName, firstColumnName});
     }
 
     public IAutoCompleter getCrossRefAutoCompleter(String obj) {
@@ -153,7 +117,6 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
             return new ClusterCrossRefAutoCompleter();
-
         }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
             return new StoragePoolCrossRefAutoCompleter();
@@ -165,10 +128,14 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
             // SearchObjects.VDC_POOL_OBJ_NAME:
             // no need for empty case before default: case
             // SearchObjects.VDC_POOL_PLU_OBJ_NAME:
-        } else {
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
+            return GlusterVolumeCrossRefAutoCompleter.INSTANCE;
+        }
+        else {
             return null;
         }
-
     }
 
     public boolean isCrossReferece(String text, String obj) {
@@ -231,8 +198,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             retval = new StorageDomainFieldAutoCompleter();
-
-        } else {
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
+            retval = GlusterVolumeConditionFieldAutoCompleter.INSTANCE;
         }
         return retval;
     }
@@ -324,7 +293,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             retval = "storage_domains_with_hosts_view";
 
-        } else {
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
+            retval = "gluster_volumes";
         }
         return retval;
     }
@@ -368,8 +340,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             retval = "id";
-
-        } else {
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
+            retval = "id";
         }
         return retval;
     }
@@ -438,7 +412,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
             retval = "name ASC ";
-        } else {
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
+            retval = "vol_name ASC ";
         }
         return retval;
     }

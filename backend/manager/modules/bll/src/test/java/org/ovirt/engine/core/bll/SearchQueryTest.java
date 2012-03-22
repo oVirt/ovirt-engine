@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.searchbackend.SearchObjectAutoCompleter;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -45,6 +47,7 @@ public class SearchQueryTest {
     List<VDS> vdsResultList = new ArrayList<VDS>();
     List<VDSGroup> vdsGroupResultList = new ArrayList<VDSGroup>();
     List<storage_pool> storagePoolResultList = new ArrayList<storage_pool>();
+    List<GlusterVolumeEntity> glusterVolumeList = new ArrayList<GlusterVolumeEntity>();
 
     public SearchQueryTest() {
         MockitoAnnotations.initMocks(this);
@@ -66,6 +69,7 @@ public class SearchQueryTest {
         final VdsDAO vdsDAO = Mockito.mock(VdsDAO.class);
         final VdsGroupDAO vdsGroupDAO = Mockito.mock(VdsGroupDAO.class);
         final StoragePoolDAO storagePoolDAO = Mockito.mock(StoragePoolDAO.class);
+        final GlusterVolumeDao glusterVolumeDao = Mockito.mock(GlusterVolumeDao.class);
         final DbEngineDialect dbEngineDialect = Mockito.mock(DbEngineDialect.class);
         final DbFacade facadeMock = new DbFacade() {
             @Override
@@ -93,8 +97,14 @@ public class SearchQueryTest {
                 return storagePoolDAO;
             }
 
+            @Override
             public DbEngineDialect getDbEngineDialect() {
                 return dbEngineDialect;
+            }
+
+            @Override
+            public GlusterVolumeDao getGlusterVolumeDao() {
+                return glusterVolumeDao;
             }
         };
 
@@ -107,6 +117,7 @@ public class SearchQueryTest {
         mockVdsDAO(vdsDAO);
         mockVdsGroupDAO(vdsGroupDAO);
         mockStoragePoolDAO(storagePoolDAO);
+        mockGlusterVolumeDao(glusterVolumeDao);
     }
 
     /**
@@ -152,6 +163,21 @@ public class SearchQueryTest {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
         Mockito.when(storagePoolDAO.getAllWithQuery(Matchers.matches(getStoragePoolRegexString(search))))
                 .thenReturn(storagePoolResultList);
+    }
+
+    /**
+     * Mock Gluster Volume DAO so that when getAllWithQuery will be called with the appropriate query string, a unique
+     * list will be returned. <BR/>
+     * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
+     * API.
+     *
+     * @param glusterVolumeDao
+     *            - The dao to be used
+     */
+    private void mockGlusterVolumeDao(final GlusterVolumeDao glusterVolumeDao) {
+        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
+        Mockito.when(glusterVolumeDao.getAllWithQuery(Matchers.matches(getGlusterVolumeRegexString(search))))
+                .thenReturn(glusterVolumeList);
     }
 
     /**
@@ -237,6 +263,17 @@ public class SearchQueryTest {
         return ".*" + search.getDefaultSort(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME) + ".*"
                 + search.getRelatedTableNameWithOutTags(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME) + ".* "
                 + search.getPrimeryKeyName(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME) + ".*";
+    }
+
+    /**
+     * Regex string which contains all of the Gluster Volume properties.
+     *
+     * @param search
+     */
+    private String getGlusterVolumeRegexString(SearchObjectAutoCompleter search) {
+        return ".*" + search.getDefaultSort(SearchObjects.GLUSTER_VOLUME_OBJ_NAME) + ".*"
+                + search.getRelatedTableNameWithOutTags(SearchObjects.GLUSTER_VOLUME_OBJ_NAME) + ".* "
+                + search.getPrimeryKeyName(SearchObjects.GLUSTER_VOLUME_OBJ_NAME) + ".*";
     }
 
     /**
@@ -336,5 +373,13 @@ public class SearchQueryTest {
         SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
         searchQuery.executeQueryCommand();
         assertTrue(storagePoolResultList == searchQuery.getQueryReturnValue().getReturnValue());
+    }
+
+    @Test
+    public void testGetAllGlusterVolumesSearch() throws Exception {
+        SearchParameters searchParam = new SearchParameters("Volumes:", SearchType.GlusterVolume);
+        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        searchQuery.executeQueryCommand();
+        assertTrue(glusterVolumeList == searchQuery.getQueryReturnValue().getReturnValue());
     }
 }
