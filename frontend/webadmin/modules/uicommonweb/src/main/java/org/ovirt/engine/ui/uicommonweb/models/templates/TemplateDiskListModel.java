@@ -8,18 +8,16 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.DiskModelByNameComparer;
+import org.ovirt.engine.ui.uicommonweb.Linq.DiskByInternalDriveMappingComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
 @SuppressWarnings("unused")
 public class TemplateDiskListModel extends SearchableListModel
@@ -41,6 +39,16 @@ public class TemplateDiskListModel extends SearchableListModel
         return (VmTemplate) ((super.getEntity() instanceof VmTemplate) ? super.getEntity() : null);
     }
 
+    ArrayList<storage_domains> storageDomains;
+
+    public ArrayList<storage_domains> getStorageDomains() {
+        return storageDomains;
+    }
+
+    public void setStorageDomains(ArrayList<storage_domains> storageDomains) {
+        this.storageDomains = storageDomains;
+    }
+
     public TemplateDiskListModel()
     {
         setTitle("Virtual Disks");
@@ -48,6 +56,18 @@ public class TemplateDiskListModel extends SearchableListModel
         setCopyCommand(new UICommand("Copy", this));
 
         UpdateActionAvailability();
+
+        setStorageDomains(new ArrayList<storage_domains>());
+
+        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        TemplateDiskListModel model = (TemplateDiskListModel) target;
+                        ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
+                        model.storageDomains = storageDomains;
+                    }
+                }));
     }
 
     @Override
@@ -94,51 +114,14 @@ public class TemplateDiskListModel extends SearchableListModel
         setItems(getAsyncResult().getData());
     }
 
-    ArrayList<DiskModel> diskModels;
-    Iterable value;
-
     @Override
     public void setItems(Iterable value)
     {
-        if (diskModels != null)
-        {
-            ItemsChanging(value, items);
-            Linq.Sort(diskModels, new DiskModelByNameComparer());
-            items = diskModels;
-            getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
+        ArrayList<DiskImage> disks =
+                value != null ? Linq.<DiskImage> Cast(value) : new ArrayList<DiskImage>();
 
-            diskModels = null;
-        }
-        else
-        {
-            this.value = value;
-
-            VmTemplate template = (VmTemplate) getEntity();
-            AsyncDataProvider.GetStorageDomainListByTemplate(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object target, Object returnValue) {
-                            TemplateDiskListModel templateDiskListModel = (TemplateDiskListModel) target;
-                            ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
-
-                            ArrayList<DiskImage> disks = Linq.<DiskImage> Cast(templateDiskListModel.value);
-                            ArrayList<DiskModel> diskModels = new ArrayList<DiskModel>();
-
-                            for (DiskImage diskImage : disks) {
-                                DiskModel diskModel = new DiskModel();
-                                diskModel.setDiskImage(diskImage);
-                                diskModel.setName(diskImage.getinternal_drive_mapping());
-                                diskModel.getStorageDomain().setItems(
-                                        Linq.getStorageDomainsByIds(diskImage.getstorage_ids(), storageDomains));
-                                diskModels.add(diskModel);
-                            }
-
-                            templateDiskListModel.diskModels = diskModels;
-                            setItems(templateDiskListModel.value);
-                        }
-                    }), template.getId());
-        }
+        Linq.Sort(disks, new DiskByInternalDriveMappingComparer());
+        super.setItems(disks);
 
         UpdateActionAvailability();
     }

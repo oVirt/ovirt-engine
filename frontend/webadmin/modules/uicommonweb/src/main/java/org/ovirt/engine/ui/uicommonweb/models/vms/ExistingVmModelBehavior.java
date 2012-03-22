@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
@@ -10,14 +9,12 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetQuotaByStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -34,6 +31,14 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
 
     public ExistingVmModelBehavior(VM vm)
     {
+        this.vm = vm;
+    }
+
+    public VM getVm() {
+        return vm;
+    }
+
+    public void setVm(VM vm) {
         this.vm = vm;
     }
 
@@ -62,6 +67,8 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
                             VDSGroup tempVar = new VDSGroup();
                             tempVar.setId(currentVm.getvds_group_id());
                             tempVar.setname(currentVm.getvds_group_name());
+                            tempVar.setcompatibility_version(currentVm.getvds_group_compatibility_version());
+                            tempVar.setstorage_pool_id(currentVm.getstorage_pool_id());
                             VDSGroup cluster = tempVar;
                             model.getCluster()
                                     .setItems(new java.util.ArrayList<VDSGroup>(java.util.Arrays.asList(new VDSGroup[] { cluster })));
@@ -190,28 +197,7 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
         // Storage domain and provisioning are not available for an existing VM.
         getModel().getStorageDomain().setIsChangable(false);
         getModel().getProvisioning().setIsAvailable(false);
-
-        // If a VM has at least one disk, present its storage domain.
-        AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-
-                        ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) target;
-                        java.util.ArrayList<DiskImage> disks = new java.util.ArrayList<DiskImage>();
-                        Iterable disksEnumerable = (Iterable) returnValue;
-                        java.util.Iterator disksIterator = disksEnumerable.iterator();
-                        while (disksIterator.hasNext())
-                        {
-                            disks.add((DiskImage) disksIterator.next());
-                        }
-                        if (disks.size() > 0)
-                        {
-                            behavior.InitStorageDomains(disks.get(0).getstorage_ids().get(0));
-                        }
-
-                    }
-                }, getModel().getHash()), vm.getId(), true);
+        getModel().getProvisioning().setEntity(Guid.Empty.equals(vm.getvmt_guid()));
 
         // Select display protocol.
         for (Object item : getModel().getDisplayProtocol().getItems())
@@ -317,29 +303,5 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
         getModel().getCdImage().setIsChangable(!StringHelper.isNullOrEmpty(vm.getiso_path()));
 
         UpdateCdImage();
-    }
-
-    public void InitStorageDomains(NGuid storageDomainId)
-    {
-        if (storageDomainId == null)
-        {
-            return;
-        }
-
-        AsyncDataProvider.GetStorageDomainById(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-
-                        UnitVmModel model = (UnitVmModel) target;
-                        storage_domains storageDomain = (storage_domains) returnValue;
-                        model.getStorageDomain()
-                                .setItems(new java.util.ArrayList<storage_domains>(java.util.Arrays.asList(new storage_domains[] { storageDomain })));
-                        model.getStorageDomain().setSelectedItem(storageDomain);
-
-                    }
-                },
-                getModel().getHash()),
-                storageDomainId.getValue());
     }
 }

@@ -208,6 +208,8 @@ public class VmDiskListModel extends SearchableListModel
 
         Linq.Sort(disks, new DiskByInternalDriveMappingComparer());
         super.setItems(disks);
+
+        UpdateActionAvailability();
     }
 
     private void New()
@@ -544,7 +546,6 @@ public class VmDiskListModel extends SearchableListModel
         setWindow(model);
         model.setTitle("Move Disk(s)");
         model.setHashName("move_disk");
-        model.setIsVolumeFormatAvailable(false);
         model.setIsSourceStorageDomainNameAvailable(true);
         model.setEntity(this);
         model.init(disks);
@@ -585,14 +586,15 @@ public class VmDiskListModel extends SearchableListModel
     {
         VM vm = (VM) getEntity();
         DiskImage disk = (DiskImage) getSelectedItem();
+        boolean isDiskLocked = disk != null && disk.getimageStatus() == ImageStatus.LOCKED;
 
         getNewCommand().setIsExecutionAllowed(isVmDown());
 
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && getSelectedItems() != null
-                && getSelectedItems().size() == 1 && isVmDown());
+                && getSelectedItems().size() == 1 && isVmDown() && !isDiskLocked);
 
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
-                && isVmDown());
+                && isVmDown() && isRemoveCommandAvailable());
 
         getMoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
                 && isVmDown() && isMoveCommandAvailable());
@@ -625,7 +627,8 @@ public class VmDiskListModel extends SearchableListModel
 
         for (DiskImage disk : disks)
         {
-            if (disk.getPlugged() == plug)
+            if (disk.getPlugged() == plug || disk.getdisk_interface() == DiskInterface.IDE ||
+                    disk.getimageStatus() == ImageStatus.LOCKED)
             {
                 return false;
             }
@@ -641,6 +644,21 @@ public class VmDiskListModel extends SearchableListModel
         for (DiskImage disk : disks)
         {
             if (disk.getimageStatus() != ImageStatus.OK)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean isRemoveCommandAvailable() {
+        ArrayList<DiskImage> disks =
+                getSelectedItems() != null ? Linq.<DiskImage> Cast(getSelectedItems()) : new ArrayList<DiskImage>();
+
+        for (DiskImage disk : disks)
+        {
+            if (disk.getimageStatus() == ImageStatus.LOCKED)
             {
                 return false;
             }

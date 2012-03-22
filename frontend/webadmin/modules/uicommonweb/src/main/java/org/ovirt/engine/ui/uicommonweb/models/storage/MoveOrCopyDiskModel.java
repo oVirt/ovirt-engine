@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -9,18 +8,19 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -77,7 +77,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     protected ArrayList<storage_domains> activeStorageDomains;
-    protected ArrayList<storage_domains> disjointStorageDomains;
+    protected ArrayList<storage_domains> intersectStorageDomains;
     protected ArrayList<storage_domains> unionStorageDomains;
 
     public abstract void init(ArrayList<DiskImage> diskImages);
@@ -98,7 +98,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         ArrayList<DiskModel> disks = new ArrayList<DiskModel>();
         for (DiskImage disk : getDiskImages())
         {
-            disks.add(diskImageToModel(disk));
+            disks.add(Linq.DiskImageToModel(disk));
         }
         setDisks(disks);
 
@@ -108,29 +108,8 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     protected void onInitTemplateDisks(ArrayList<DiskImage> diskImages) {
         for (DiskImage disk : diskImages)
         {
-            templateDisks.add(diskImageToModel(disk));
+            templateDisks.add(Linq.DiskImageToModel(disk));
         }
-    }
-
-    protected DiskModel diskImageToModel(DiskImage disk) {
-        DiskModel diskModel = new DiskModel();
-        diskModel.setIsNew(true);
-        diskModel.setName(disk.getinternal_drive_mapping());
-
-        EntityModel sizeEntity = new EntityModel();
-        sizeEntity.setEntity(disk.getSizeInGigabytes());
-        diskModel.setSize(sizeEntity);
-
-        ListModel volumeList = new ListModel();
-        volumeList.setItems((disk.getvolume_type() == VolumeType.Preallocated ?
-                new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
-                : DataProvider.GetVolumeTypeList()));
-        volumeList.setSelectedItem(disk.getvolume_type());
-        diskModel.setVolumeType(volumeList);
-
-        diskModel.setDiskImage(disk);
-
-        return diskModel;
     }
 
     protected void onInitStorageDomains(ArrayList<storage_domains> storages) {
@@ -142,13 +121,24 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
         Collections.sort(storageDomains, new Linq.StorageDomainByNameComparer());
 
-        postInitStorageDomains();
+        if (!storageDomains.isEmpty()) {
+            AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object target, Object returnValue) {
+                    MoveOrCopyDiskModel model = (MoveOrCopyDiskModel) target;
+                    storage_pool dataCenter = (storage_pool) returnValue;
+
+                    model.setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
+                    model.postInitStorageDomains();
+                }
+            }), storageDomains.get(0).getstorage_pool_id().getValue());
+        }
     }
 
     protected void postInitStorageDomains() {
         activeStorageDomains = getStorageDomains();
-        disjointStorageDomains = new ArrayList<storage_domains>();
-        unionStorageDomains = new ArrayList<storage_domains>();
+
+        ArrayList<ArrayList<storage_domains>> allSourceStorages = new ArrayList<ArrayList<storage_domains>>();
 
         ArrayList<storage_domains> missingStorageDomains = new ArrayList<storage_domains>();
 
@@ -159,9 +149,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             ArrayList<storage_domains> diskMissingStorageDomains = new ArrayList<storage_domains>();
 
             disk.getSourceStorageDomain().setItems(diskStorageDomains);
-
-            disjointStorageDomains = Linq.Disjoint(disjointStorageDomains, diskStorageDomains);
-            unionStorageDomains = Linq.Union(unionStorageDomains, diskStorageDomains);
+            allSourceStorages.add(diskStorageDomains);
 
             ArrayList<storage_domains> destStorageDomains = Linq.Except(activeStorageDomains, diskStorageDomains);
 
@@ -176,12 +164,14 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             disk.getStorageDomain().setItems(destStorageDomains);
         }
 
-        ArrayList<storage_domains> destStorageDomains = Linq.Except(activeStorageDomains, disjointStorageDomains);
+        intersectStorageDomains = Linq.Intersection(allSourceStorages);
+        unionStorageDomains = Linq.Union(allSourceStorages);
+
+        ArrayList<storage_domains> destStorageDomains = Linq.Except(activeStorageDomains, intersectStorageDomains);
         destStorageDomains = Linq.Except(destStorageDomains, missingStorageDomains);
         Collections.sort(destStorageDomains, new Linq.StorageDomainByNameComparer());
 
         getStorageDomain().setItems(destStorageDomains);
-        getSourceStorageDomain().setItems(disjointStorageDomains);
         setDisks(getDisks());
 
         postCopyOrMoveInit();
@@ -236,8 +226,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                     (storage_domains) getStorageDomain().getSelectedItem() :
                     (storage_domains) diskModel.getStorageDomain().getSelectedItem();
 
-            storage_domains sourceStorageDomain = iSingleStorageDomain ?
-                    (storage_domains) getSourceStorageDomain().getSelectedItem() :
+            storage_domains sourceStorageDomain =
                     (storage_domains) diskModel.getSourceStorageDomain().getSelectedItem();
 
             Guid sourceStorageDomainGuid = sourceStorageDomain != null ? sourceStorageDomain.getId() : Guid.Empty;

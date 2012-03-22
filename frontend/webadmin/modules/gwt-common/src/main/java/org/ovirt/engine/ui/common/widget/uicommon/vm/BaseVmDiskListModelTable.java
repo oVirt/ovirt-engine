@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.DiskImageStatusColumn;
+import org.ovirt.engine.ui.common.widget.table.column.DiskImagePlugStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
@@ -28,7 +28,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
 
     @Override
     public void initTable() {
-        getTable().addColumn(new DiskImageStatusColumn(), "", "30px");
+        getTable().addColumn(new DiskImagePlugStatusColumn(), "", "30px");
 
         TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
@@ -36,7 +36,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
                 return "Disk " + object.getinternal_drive_mapping();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, "Alias");
 
         DiskSizeColumn<DiskImage> sizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override

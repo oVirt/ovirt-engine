@@ -266,20 +266,20 @@ public class ImportVmModel extends ListWithDetailsModel {
                                 ImportVmModel importVmModel = (ImportVmModel) target;
                                 ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
 
-                                ArrayList<Guid> storageDomainsDisjoint = new ArrayList<Guid>();
-                                ArrayList<Guid> storageDomainsUnion = new ArrayList<Guid>();
+                                ArrayList<ArrayList<Guid>> allSourceStorages = new ArrayList<ArrayList<Guid>>();
+
                                 for (DiskImage disk : disks) {
-                                    storageDomainsDisjoint =
-                                            Linq.Disjoint(storageDomainsDisjoint, disk.getstorage_ids());
-                                    storageDomainsUnion =
-                                            Linq.Union(storageDomainsUnion, disk.getstorage_ids());
+                                    allSourceStorages.add(disk.getstorage_ids());
                                 }
 
+                                ArrayList<Guid> intersectStorageDomains = Linq.Intersection(allSourceStorages);
+                                ArrayList<Guid> unionStorageDomains = Linq.Union(allSourceStorages);
+
                                 uniqueDomains++;
-                                templateGuidUniqueStorageDomainDic.put(
-                                        importVmModel.templateGuid, storageDomainsDisjoint);
-                                templateGuidAllStorageDomainDic.put(
-                                        importVmModel.templateGuid, storageDomainsUnion);
+                                templateGuidUniqueStorageDomainDic.put(importVmModel.templateGuid,
+                                        intersectStorageDomains);
+                                templateGuidAllStorageDomainDic.put(importVmModel.templateGuid,
+                                        unionStorageDomains);
                                 templateGuidDiskImagesDic.put(importVmModel.templateGuid, disks);
 
                                 importVmModel.postInitStorageDomains();

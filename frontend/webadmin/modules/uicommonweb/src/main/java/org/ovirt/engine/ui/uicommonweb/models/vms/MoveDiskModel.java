@@ -67,10 +67,6 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
     protected void postCopyOrMoveInit() {
         ICommandTarget target = (ICommandTarget) getEntity();
 
-        if (getDisks().size() == 1) {
-            getIsSingleStorageDomain().setEntity(true);
-        }
-
         if (!getStorageDomain().getItems().iterator().hasNext())
         {
             setMessage("The system could not find available target Storage Domain.\nPossible reasons:\n  - No active Storage Domain available\n  - The Template that the VM is based on does not exist on active Storage Domain");

@@ -1,18 +1,29 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 
 @SuppressWarnings("unused")
 public abstract class IVmModelBehavior
@@ -478,6 +489,132 @@ public abstract class IVmModelBehavior
         }
 
         getModel().getTotalCPUCores().setIsAllValuesSet(true);
+    }
+
+    public void InitDisks()
+    {
+        VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
+
+        AsyncDataProvider.GetTemplateDiskList(new AsyncQuery(getModel(),
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+
+                        UnitVmModel model = (UnitVmModel) target;
+                        java.util.ArrayList<DiskImage> disks = (java.util.ArrayList<DiskImage>) returnValue;
+                        Collections.sort(disks, new Linq.DiskByInternalDriveMappingComparer());
+                        java.util.ArrayList<DiskModel> list = new java.util.ArrayList<DiskModel>();
+                        for (DiskImage a : disks)
+                        {
+                            DiskModel diskModel = new DiskModel();
+                            diskModel.setIsNew(true);
+                            diskModel.setName(a.getinternal_drive_mapping());
+                            EntityModel tempVar = new EntityModel();
+                            tempVar.setEntity(a.getSizeInGigabytes());
+                            diskModel.setSize(tempVar);
+                            ListModel tempVar2 = new ListModel();
+                            tempVar2.setItems((a.getvolume_type() == VolumeType.Preallocated ? new java.util.ArrayList<VolumeType>(java.util.Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
+                                    : DataProvider.GetVolumeTypeList()));
+                            tempVar2.setSelectedItem(a.getvolume_type());
+                            diskModel.setVolumeType(tempVar2);
+                            diskModel.setDiskImage(a);
+                            diskModel.getVolumeType().setIsAvailable(false);
+                            list.add(diskModel);
+                        }
+                        model.setDisks(list);
+                        UpdateIsDisksAvailable();
+                        InitStorageDomains();
+                    }
+                },
+                getModel().getHash()),
+                template.getId());
+    }
+
+    public void UpdateIsDisksAvailable() {
+
+    }
+
+    public void InitStorageDomains()
+    {
+        if (getModel().getDisks() == null) {
+            return;
+        }
+
+        VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
+
+        if (template != null && !template.getId().equals(NGuid.Empty))
+        {
+            storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+
+            AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object target, Object returnValue) {
+                    IVmModelBehavior behavior = (IVmModelBehavior) target;
+                    ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
+                    ArrayList<storage_domains> activeStorageDomains = FilterStorageDomains(storageDomains);
+                    DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
+
+                    boolean provisioning = (Boolean) behavior.getModel().getProvisioning().getEntity();
+                    ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
+                    Linq.Sort(activeStorageDomains, new Linq.StorageDomainByNameComparer());
+                    disksAllocationModel.setActiveStorageDomains(activeStorageDomains);
+
+                    for (DiskModel diskModel : disks) {
+                        ArrayList<storage_domains> availableDiskStorageDomains;
+                        if (provisioning) {
+                            availableDiskStorageDomains = activeStorageDomains;
+                        }
+                        else
+                        {
+                            ArrayList<Guid> storageIds = diskModel.getDiskImage().getstorage_ids();
+                            availableDiskStorageDomains =
+                                    Linq.getStorageDomainsByIds(storageIds, activeStorageDomains);
+                        }
+                        Linq.Sort(availableDiskStorageDomains, new Linq.StorageDomainByNameComparer());
+                        diskModel.getStorageDomain().setItems(availableDiskStorageDomains);
+                    }
+
+                    ArrayList<storage_domains> storageDomainsDisjoint =
+                            Linq.getStorageDomainsDisjoint(disks, activeStorageDomains);
+
+                    Linq.Sort(storageDomainsDisjoint, new Linq.StorageDomainByNameComparer());
+
+                    ArrayList<storage_domains> singleDestDomains =
+                            provisioning ? activeStorageDomains : storageDomainsDisjoint;
+                    getModel().getStorageDomain().setItems(singleDestDomains);
+                    getModel().getStorageDomain().setSelectedItem(Linq.FirstOrDefault(singleDestDomains));
+                }
+            }, getModel().getHash()), dataCenter.getId());
+        }
+        else
+        {
+            getModel().getStorageDomain().setItems(new java.util.ArrayList<storage_domains>());
+            getModel().getStorageDomain().setSelectedItem(null);
+            getModel().getStorageDomain().setIsChangable(false);
+        }
+    }
+
+    public ArrayList<storage_domains> FilterStorageDomains(ArrayList<storage_domains> storageDomains)
+    {
+        // filter only the Active storage domains (Active regarding the relevant storage pool).
+        ArrayList<storage_domains> list = new ArrayList<storage_domains>();
+        for (storage_domains a : storageDomains)
+        {
+            if (Linq.IsDataActiveStorageDomain(a))
+            {
+                list.add(a);
+            }
+        }
+
+        // Filter according to system tree selection.
+        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
+        {
+            storage_domains selectStorage = (storage_domains) getSystemTreeSelectedItem().getEntity();
+            storage_domains sd = Linq.FirstOrDefault(list, new Linq.StoragePredicate(selectStorage.getId()));
+            list = new ArrayList<storage_domains>(Arrays.asList(new storage_domains[] { sd }));
+        }
+
+        return list;
     }
 
 }

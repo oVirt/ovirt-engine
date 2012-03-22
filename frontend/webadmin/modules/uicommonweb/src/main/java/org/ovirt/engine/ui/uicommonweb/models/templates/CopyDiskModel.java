@@ -57,13 +57,9 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
     protected void postCopyOrMoveInit() {
         ICommandTarget target = (ICommandTarget) getEntity();
 
-        if (getDisks().size() == 1) {
-            getIsSingleStorageDomain().setEntity(true);
-        }
-
         boolean noSingleStorageDomain = !getStorageDomain().getItems().iterator().hasNext();
         boolean noDestStorageDomain =
-                activeStorageDomains.isEmpty() || disjointStorageDomains.containsAll(activeStorageDomains);
+                activeStorageDomains.isEmpty() || intersectStorageDomains.containsAll(activeStorageDomains);
 
         if (noSingleStorageDomain || noDestStorageDomain) {
             if (noSingleStorageDomain) {
