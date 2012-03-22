@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -74,31 +75,67 @@ public class DisksAllocationModel extends EntityModel
 
     public void setDisks(List<DiskModel> value)
     {
-        if (disks != value)
-        {
-            disks = value;
-            Linq.Sort(disks, new DiskModelByNameComparer());
-            OnPropertyChanged(new PropertyChangedEventArgs("Disks"));
-        }
+        disks = value;
+        Linq.Sort(disks, new DiskModelByNameComparer());
+        OnPropertyChanged(new PropertyChangedEventArgs("Disks"));
     }
 
     private HashMap<Guid, Guid> imageToDestinationDomainMap;
 
-    public HashMap<Guid, Guid> getImageToDestinationDomainMap() {
+    public HashMap<Guid, Guid> getImageToDestinationDomainMap()
+    {
         updateImageToDestinationDomainMap();
         return imageToDestinationDomainMap;
     }
 
-    public void setImageToDestinationDomainMap(HashMap<Guid, Guid> imageToDestinationDomainMap) {
+    public void setImageToDestinationDomainMap(HashMap<Guid, Guid> imageToDestinationDomainMap)
+    {
         this.imageToDestinationDomainMap = imageToDestinationDomainMap;
+    }
+
+    private ArrayList<storage_domains> activeStorageDomains;
+
+    public ArrayList<storage_domains> getActiveStorageDomains()
+    {
+        return activeStorageDomains;
+    }
+
+    public void setActiveStorageDomains(ArrayList<storage_domains> activeStorageDomains)
+    {
+        this.activeStorageDomains = activeStorageDomains;
+    }
+
+    private QuotaEnforcmentTypeEnum quotaEnforcementType;
+
+    public void setQuotaEnforcementType(QuotaEnforcmentTypeEnum value) {
+        this.quotaEnforcementType = value;
+        OnPropertyChanged(new PropertyChangedEventArgs("QuotaEnforcmentType"));
+    }
+
+    public QuotaEnforcmentTypeEnum getQuotaEnforcementType() {
+        return quotaEnforcementType;
+    }
+
+    private ListModel quota;
+
+    public ListModel getQuota()
+    {
+        return quota;
+    }
+
+    public void setQuota(ListModel value)
+    {
+        quota = value;
     }
 
     private boolean isSingleDiskMove;
     private boolean isSingleDiskCopy;
     private boolean isVolumeFormatAvailable;
+    private boolean isVolumeFormatChangable;
     private boolean isSourceStorageDomainAvailable;
     private boolean isSourceStorageDomainChangable;
     private boolean isSourceStorageDomainNameAvailable;
+
 
     public DisksAllocationModel()
     {
@@ -108,6 +145,9 @@ public class DisksAllocationModel extends EntityModel
 
         setStorageDomain(new ListModel());
         getStorageDomain().getItemsChangedEvent().addListener(this);
+
+        setQuota(new ListModel());
+        getQuota().getItemsChangedEvent().addListener(this);
 
         setSourceStorageDomain(new ListModel());
         getSourceStorageDomain().getItemsChangedEvent().addListener(this);
@@ -144,12 +184,14 @@ public class DisksAllocationModel extends EntityModel
         if (e.PropertyName.equals("Disks"))
         {
             UpdateStorageDomainsAvailability();
+            UpdateQuotaAvailability();
         }
     }
 
     private void UpdateSingleStorageDomainsAvailability()
     {
-        boolean isStorageDomainsEmpty = ((ArrayList) getStorageDomain().getItems()).isEmpty();
+        boolean isStorageDomainsEmpty =
+                getStorageDomain().getItems() != null && ((ArrayList) getStorageDomain().getItems()).isEmpty();
         getIsSingleStorageDomain().setIsChangable(!isStorageDomainsEmpty);
         if (isStorageDomainsEmpty) {
             getIsSingleStorageDomain().setEntity(false);
@@ -163,6 +205,7 @@ public class DisksAllocationModel extends EntityModel
         if (getStorageDomain().getItems() != null) {
             boolean isStorageDomainsEmpty = ((ArrayList) getStorageDomain().getItems()).isEmpty();
             getStorageDomain().setIsChangable(isSingleStorageDomain && !isStorageDomainsEmpty);
+            getQuota().setIsChangable(isSingleStorageDomain && !isStorageDomainsEmpty);
         }
 
         if (disks == null) {
@@ -173,18 +216,20 @@ public class DisksAllocationModel extends EntityModel
             boolean isDestStoragesEmpty = diskModel.getStorageDomain().getItems() != null ?
                     ((ArrayList) diskModel.getStorageDomain().getItems()).isEmpty() : true;
 
-            diskModel.getVolumeType().setIsAvailable(isVolumeFormatAvailable);
             diskModel.getSourceStorageDomain().setIsAvailable(isSourceStorageDomainAvailable);
-            diskModel.getStorageDomain().setIsChangable(!isSingleStorageDomain && !isDestStoragesEmpty);
             diskModel.getSourceStorageDomain().setIsChangable(!isSingleStorageDomain && isSourceStorageDomainChangable);
+            diskModel.getStorageDomain().setIsChangable(!isSingleStorageDomain && !isDestStoragesEmpty);
+            diskModel.getQuota().setIsChangable(!isSingleStorageDomain && !isDestStoragesEmpty);
+            diskModel.getVolumeType().setIsAvailable(isVolumeFormatAvailable);
+            diskModel.getVolumeType().setIsChangable(isVolumeFormatChangable);
 
             if (diskModel.getSourceStorageDomain().getItems() != null
                     && diskModel.getSourceStorageDomain().getItems().iterator().hasNext()) {
                 storage_domains sourceStorage =
                         ((storage_domains) diskModel.getSourceStorageDomain().getItems().iterator().next());
                 String sourceStorageName = sourceStorage != null ? sourceStorage.getstorage_name() : "";
-                diskModel.getSourceStorageDomainName().setEntity(sourceStorageName);
                 diskModel.getSourceStorageDomainName().setIsAvailable(isSourceStorageDomainNameAvailable);
+                diskModel.getSourceStorageDomainName().setEntity(sourceStorageName);
             }
         }
     }
@@ -197,8 +242,26 @@ public class DisksAllocationModel extends EntityModel
         }
     }
 
+    private void UpdateQuotaAvailability() {
+        getQuota().setIsAvailable(quotaEnforcementType != QuotaEnforcmentTypeEnum.DISABLED);
+
+        if (disks != null) {
+            for (DiskModel diskModel : disks) {
+                diskModel.getQuota().setIsAvailable(quotaEnforcementType != QuotaEnforcmentTypeEnum.DISABLED);
+            }
+        }
+    }
+
     public void setIsVolumeFormatAvailable(boolean isVolumeFormatAvailable) {
         this.isVolumeFormatAvailable = isVolumeFormatAvailable;
+    }
+
+    public boolean getIsVolumeFormatAvailable() {
+        return isVolumeFormatAvailable;
+    }
+
+    public void setIsVolumeFormatChangable(boolean isVolumeFormatChangable) {
+        this.isVolumeFormatChangable = isVolumeFormatChangable;
     }
 
     public void setIsSourceStorageDomainAvailable(boolean isSourceStorageDomainAvailable) {

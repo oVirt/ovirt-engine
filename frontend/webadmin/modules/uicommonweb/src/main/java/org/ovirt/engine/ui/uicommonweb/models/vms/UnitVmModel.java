@@ -892,7 +892,7 @@ public class UnitVmModel extends Model
                 VdcQueryType.GetStorageDomainById, VdcQueryType.GetDataCentersWithPermittedActionOnClusters,
                 VdcQueryType.GetClustersWithPermittedAction, VdcQueryType.GetVmTemplatesWithPermittedAction,
                 VdcQueryType.GetVdsGroupById, VdcQueryType.GetStoragePoolById, VdcQueryType.GetAllDisksByVmId,
-                VdcQueryType.GetVmTemplate, VdcQueryType.Search });
+                VdcQueryType.GetVmTemplate, VdcQueryType.GetVmConfigurationBySnapshot, VdcQueryType.Search });
 
         this.behavior = behavior;
         this.behavior.setModel(this);
@@ -943,7 +943,7 @@ public class UnitVmModel extends Model
         setFirstBootDevice(new ListModel());
         getFirstBootDevice().getSelectedItemChangedEvent().addListener(this);
 
-        setProvisioning(new ListModel());
+        setProvisioning(new EntityModel());
         getProvisioning().getEntityChangedEvent().addListener(this);
 
         setMemSize(new EntityModel());
@@ -1263,6 +1263,11 @@ public class UnitVmModel extends Model
     private void DataCenter_SelectedItemChanged(Object sender, EventArgs args)
     {
         behavior.DataCenter_SelectedItemChanged();
+
+        storage_pool dataCenter = (storage_pool) getDataCenter().getSelectedItem();
+        if (dataCenter != null) {
+            getDisksAllocationModel().setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
+        }
     }
 
     private void Template_SelectedItemChanged(Object sender, EventArgs args)
@@ -1273,8 +1278,6 @@ public class UnitVmModel extends Model
     private void Cluster_SelectedItemChanged(Object sender, EventArgs args)
     {
         behavior.Cluster_SelectedItemChanged();
-
-        UpdateMaximalVmMemSize();
     }
 
     private void TimeZone_SelectedItemChanged(Object sender, EventArgs args)

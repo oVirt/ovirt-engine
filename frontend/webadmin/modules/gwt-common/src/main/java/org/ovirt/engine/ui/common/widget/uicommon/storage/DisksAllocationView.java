@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -9,6 +10,7 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupSimpleTableResources;
+import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -31,9 +33,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DisksAllocationView extends Composite implements HasEditorDriver<DisksAllocationModel> {
@@ -57,11 +57,15 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     @Path(value = "storageDomain.selectedItem")
     ListModelListBoxEditor<Object> singleStorageEditor;
 
+    @UiField(provided = true)
+    @Path(value = "quota.selectedItem")
+    ListModelListBoxEditor<Object> singleQuotaEditor;
+
     @UiField
     FlowPanel singleStoragePanel;
 
     @UiField
-    ScrollPanel diskListPanel;
+    FlowPanel diskListPanel;
 
     @UiField
     SimplePanel diskListHeaderPanel;
@@ -69,8 +73,9 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     @Ignore
     EntityModelCellTable<ListModel> listHeader;
 
-    boolean showListHeader;
     boolean showVolumeType;
+    boolean showSource;
+    boolean showQuota;
 
     @Ignore
     IVdcQueryableCellTable<storage_domains, ListModel> storageTable;
@@ -85,7 +90,6 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         this.constants = constants;
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        initListHeader();
         localize(constants);
         addStyles();
         Driver.driver.initialize(this);
@@ -100,29 +104,60 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
                 return ((storage_domains) object).getstorage_name();
             }
         });
+
+        singleQuotaEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((storage_domains) object).getstorage_name();
+            }
+        });
     }
 
-    void initListHeader() {
-        listHeader =
-                new EntityModelCellTable(false, (Resources) GWT.create(PopupSimpleTableResources.class), true);
-        listHeader.addColumn(new EmptyColumn(), "Alias", "100px");
-        listHeader.addColumn(new EmptyColumn(), "Provisioned Size", "100px");
-        listHeader.addColumn(new EmptyColumn(), "Source", "100px");
-        listHeader.addColumn(new EmptyColumn(), "Destination", "110px");
+    void updateListHeader(DisksAllocationModel model) {
+        listHeader = new EntityModelCellTable(false, (Resources) GWT.create(
+                PopupSimpleTableResources.class), true);
+        listHeader.addColumn(new EmptyColumn(), "Alias");
+        listHeader.addColumn(new EmptyColumn(), "Size");
+
+        if (showVolumeType)
+            listHeader.addColumn(new EmptyColumn(), "Allocation", "125px");
+
+        if (showSource)
+            listHeader.addColumn(new EmptyColumn(), "Source", "125px");
+
+        listHeader.addColumn(new EmptyColumn(), "Destination", "125px");
+
+        if (showQuota)
+            listHeader.addColumn(new EmptyColumn(), "Quota", "125px");
+
         listHeader.setRowData(new ArrayList());
         listHeader.setWidth("100%", true);
+
+        diskListHeaderPanel.setWidget(listHeader);
+    }
+
+    void updateColumnsAvailability(DisksAllocationModel model) {
+        setShowVolumeType(model.getIsVolumeFormatAvailable());
+        setShowQuota(model.getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED);
+        localize(constants);
     }
 
     void addStyles() {
         isSingleStorageEditor.addContentWidgetStyleName(style.isSingleStorageEditorContent());
 
-        singleStorageEditor.setLabelStyleName(style.editorLabel());
-        singleStorageEditor.addContentWidgetStyleName(style.editorContent());
-        singleStorageEditor.addWrapperStyleName(style.editorWrapper());
+        updateEditorStyle(singleStorageEditor);
+        updateEditorStyle(singleQuotaEditor);
+    }
+
+    private void updateEditorStyle(AbstractValidatedWidgetWithLabel editor) {
+        editor.addContentWidgetStyleName(style.editorContent());
+        editor.addWrapperStyleName(style.editorWrapper());
+        editor.setLabelStyleName(style.editorLabel());
     }
 
     void localize(CommonApplicationConstants constants) {
-        isSingleStorageEditor.setLabel(constants.singleDestinationStorage());
+        isSingleStorageEditor.setLabel(!showQuota ? constants.singleDestinationStorage() :
+                constants.singleDestinationStorage() + constants.singleQuota());
     }
 
     @Override
@@ -130,10 +165,8 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         Driver.driver.edit(model);
         initListerners(model);
         InitStorageTable(model.getIsSingleDiskCopy());
-
-        if (showListHeader && !model.getIsSingleDiskMove() && !model.getIsSingleDiskCopy()) {
-            diskListHeaderPanel.setWidget(listHeader);
-        }
+        updateColumnsAvailability(model);
+        updateListHeader(model);
     }
 
     private void initListerners(final DisksAllocationModel model) {
@@ -145,31 +178,28 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
                     if ("Disks".equals(changedArgs.PropertyName)) {
                         addDiskList(model);
                     }
+                    else if ("QuotaEnforcmentType".equals(changedArgs.PropertyName)) {
+                        updateColumnsAvailability(model);
+                        updateListHeader(model);
+                    }
                 }
             }
         });
     }
 
     void addDiskList(DisksAllocationModel model) {
-        VerticalPanel container = new VerticalPanel();
-        container.setWidth("100%");
+        diskListPanel.clear();
+
+        for (final DiskModel diskModel : model.getDisks()) {
+            DisksAllocationItemView disksAllocationItemView = new DisksAllocationItemView(constants);
+            disksAllocationItemView.edit(diskModel);
+            diskListPanel.add(disksAllocationItemView);
+        }
 
         if (model.getIsSingleDiskMove() || model.getIsSingleDiskCopy()) {
             singleStoragePanel.setVisible(false);
-            storageTable.edit(model.getDisks().get(0).getStorageDomain());
-            container.add(storageTable);
-            diskListPanel.addStyleName(style.listPanelSingleDisk());
-        } else {
-            for (final DiskModel diskModel : model.getDisks()) {
-                DisksAllocationItemView disksAllocationItemView = new DisksAllocationItemView(constants);
-                disksAllocationItemView.edit(diskModel);
-                container.add(disksAllocationItemView);
-            }
-            setListHeight("170px");
+            model.getIsSingleStorageDomain().setEntity(false);
         }
-
-        diskListPanel.clear();
-        diskListPanel.add(container);
     }
 
     public void InitStorageTable(boolean multiSelection) {
@@ -205,17 +235,29 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         diskListPanel.setHeight(listHeight);
     }
 
-    public void setShowListHeader(boolean showListHeader) {
-        this.showListHeader = showListHeader;
+    public void setListWidth(String listWidth) {
+        diskListPanel.setWidth(listWidth);
     }
 
     public void setShowVolumeType(boolean showVolumeType) {
         this.showVolumeType = showVolumeType;
     }
 
+    public void setShowSource(boolean showSource) {
+        this.showSource = showSource;
+    }
+
+    public void setShowQuota(boolean showQuota) {
+        this.showQuota = showQuota;
+    }
+
     public void setEnabled(boolean enabled) {
         isSingleStorageEditor.setEnabled(enabled);
         singleStorageEditor.setEnabled(enabled);
+    }
+
+    public void addDiskListPanelStyle(String style) {
+        diskListPanel.addStyleName(style);
     }
 
     interface WidgetStyle extends CssResource {
@@ -226,8 +268,6 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         String editorContent();
 
         String editorWrapper();
-
-        String listPanelSingleDisk();
     }
 
 }

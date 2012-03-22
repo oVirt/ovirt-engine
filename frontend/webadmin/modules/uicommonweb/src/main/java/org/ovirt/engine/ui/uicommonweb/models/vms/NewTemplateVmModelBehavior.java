@@ -49,7 +49,6 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
     {
         super.Initialize(systemTreeSelectedItem);
         getModel().getTemplate().setIsChangable(false);
-        getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(false);
 
         AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -320,7 +319,8 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
                                     + currentStorageDomain.getstorage_name() + ") is not accessible.");
                         }
 
-                        ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
+                        ArrayList<DiskModel> disks =
+                                (ArrayList<DiskModel>) behavior.getModel().getDisksAllocationModel().getDisks();
                         for (DiskModel diskModel : disks) {
                             diskModel.getStorageDomain().setItems(activeStorageDomainList);
                         }

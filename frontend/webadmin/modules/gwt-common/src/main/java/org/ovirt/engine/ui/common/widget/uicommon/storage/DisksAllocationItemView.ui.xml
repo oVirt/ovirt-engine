@@ -4,40 +4,35 @@
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationItemView.WidgetStyle">
-	
-		.container {
-			width: 100%;
-		}
-		
+
 		.editorLabel {
 			display: none;
 		}
 		
+		.editorLabelContent {
+			width: 100%;
+			float: none;
+		}
+		
 		.editorContent {
-			width: 100px;
+			width: 110px;
+			float: right;
 		}
 		
 		.editorWrapper {
-			display: inline-block;
-		}
-		
-		.editorsPanel {
-			float: right;
+			display: block;
 		}
 			
 	</ui:style>	
 	
-	<g:HorizontalPanel addStyleNames="{style.container}">
-		<g:HorizontalPanel>
-			<e:EntityModelLabelEditor ui:field="diskNameLabel" />
-			<e:EntityModelLabelEditor ui:field="diskSizeLabel" />
-		</g:HorizontalPanel>
-		<g:HorizontalPanel addStyleNames="{style.editorsPanel}">
-			<e:EntityModelLabelEditor ui:field="sourceStorageLabel" />
-			<e:ListModelListBoxEditor ui:field="volumeTypeListEditor" />
-			<e:ListModelListBoxEditor ui:field="sourceStorageListEditor" />
-			<e:ListModelListBoxEditor ui:field="storageListEditor" />
-		</g:HorizontalPanel>
+	<g:HorizontalPanel width="100%">
+		<e:EntityModelLabelEditor ui:field="diskNameLabel" />
+		<e:EntityModelLabelEditor ui:field="diskSizeLabel" />
+		<e:EntityModelLabelEditor ui:field="sourceStorageLabel" />
+		<e:ListModelListBoxEditor ui:field="volumeTypeListEditor" />
+		<e:ListModelListBoxEditor ui:field="sourceStorageListEditor" />
+		<e:ListModelListBoxEditor ui:field="storageListEditor" />
+		<e:ListModelListBoxEditor ui:field="quotaListEditor" />
 	</g:HorizontalPanel>
 
 </ui:UiBinder>

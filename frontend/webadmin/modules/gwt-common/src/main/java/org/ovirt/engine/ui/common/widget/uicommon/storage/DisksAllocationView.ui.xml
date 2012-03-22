@@ -9,7 +9,7 @@
 		}		
 			
 		.isSingleStorageEditorContent {
-			width: 190px;
+			width: 250px;
 			padding: 0px;
 		}
 		
@@ -22,7 +22,7 @@
 		}
 		
 		.editorContent {
-			width: 150px;
+			width: 110px;
 		}
 		
 		.editorWrapper {
@@ -36,11 +36,9 @@
 		}
 		
 		.diskListPanel {
-			overflow-y: scroll !important;
-		}
-		
-		.listPanelSingleDisk {
-			overflow: auto !important;
+			overflow: auto;
+			position: absolute;
+			width: 100%;
 		}
 		
 	</ui:style>	
@@ -50,10 +48,11 @@
 			<e:EntityModelCheckBoxEditor ui:field="isSingleStorageEditor" addStyleNames="{style.isSingleStorageEditor}"/>				
 			<g:FlowPanel addStyleNames="{style.container}">
 				<e:ListModelListBoxEditor ui:field="singleStorageEditor" />
+				<e:ListModelListBoxEditor ui:field="singleQuotaEditor" />
 			</g:FlowPanel>
 		</g:FlowPanel>
 		<g:SimplePanel ui:field="diskListHeaderPanel" />
-		<g:ScrollPanel ui:field="diskListPanel" addStyleNames="{style.diskListPanel}"/>
+		<g:FlowPanel ui:field="diskListPanel" addStyleNames="{style.diskListPanel}"/>
 	</g:FlowPanel>
 
 </ui:UiBinder>

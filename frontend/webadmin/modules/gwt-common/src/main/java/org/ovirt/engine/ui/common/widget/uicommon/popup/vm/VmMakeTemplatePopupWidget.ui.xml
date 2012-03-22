@@ -10,16 +10,17 @@
 		
 		.errorMessageLabel {
 			color: #CD2127;
-			margin-top: 5px;
-			margin-left: 5px;
+			position: absolute;
+			bottom: 10px;
 		}
 		
 		.isTemplatePrivateEditor {
-			margin-top: 5px;
+			position: absolute;
+			bottom: 30px;
 		}
 		
 		.disksAllocationPanel {
-			width: 360px;
+			width: 100%;
 			float: right;
 		}
 		
@@ -36,7 +37,7 @@
 		<e:ListModelListBoxEditor ui:field="clusterEditor" />
 		<e:ListModelListBoxEditor ui:field="quotaEditor" />
 		<g:Label ui:field="disksAllocationLabel" addStyleNames="{style.disksAllocationLabel}" />
-		<w:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" addStyleNames="{style.disksAllocationPanel}" />
+		<w:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="445px" addStyleNames="{style.disksAllocationPanel}" />			
 		<g:VerticalPanel>
 			<e:EntityModelCheckBoxEditor ui:field="isTemplatePrivateEditor" addStyleNames="{style.isTemplatePrivateEditor}" />
 			<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />

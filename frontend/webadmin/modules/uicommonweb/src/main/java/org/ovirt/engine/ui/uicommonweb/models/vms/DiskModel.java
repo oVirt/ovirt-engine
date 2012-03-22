@@ -231,6 +231,18 @@ public class DiskModel extends Model
         sourceStorageDomainName = value;
     }
 
+    private ListModel quota;
+
+    public ListModel getQuota()
+    {
+        return quota;
+    }
+
+    public void setQuota(ListModel value)
+    {
+        quota = value;
+    }
+
     public DiskModel()
     {
         setSize(new EntityModel());
@@ -238,6 +250,7 @@ public class DiskModel extends Model
 
         setInterface(new ListModel());
         setStorageDomain(new ListModel());
+        setQuota(new ListModel());
 
         setSourceStorageDomain(new ListModel());
         getSourceStorageDomain().setIsAvailable(false);
