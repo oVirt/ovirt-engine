@@ -10,6 +10,7 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 /**
  * <code>QuotaStorage</code> is a business entity that reflects storage limitation.
  */
+@SuppressWarnings("unused")
 public class QuotaStorage extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
 
     /**
@@ -38,7 +39,7 @@ public class QuotaStorage extends IVdcQueryable implements INotifyPropertyChange
     private String storageName;
 
     /**
-     * The storage limitation indicated in Giga byte.
+     * The storage limitation indicated in gigabytes.
      */
     @Min(-1)
     private Long storageLimitGigaByte;
