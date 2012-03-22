@@ -527,6 +527,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         } else {
             Guid snapshotId = null;
             for (DiskImage disk : getVm().getImages()) {
+                disk.setactive(false);
                 BaseImagesCommand.saveDiskImage(disk);
                 snapshotId = disk.getvm_snapshot_id().getValue();
                 if (!DbFacade.getInstance().getSnapshotDao().exists(getVm().getId(), snapshotId)) {
