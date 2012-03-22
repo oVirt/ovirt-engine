@@ -4,6 +4,7 @@
 
 	<ui:style>
 		.contentPanel {
+			width: 100%;
 		}
 		
 		@external formPanel_viewerSeparator;
@@ -43,6 +44,7 @@
 		@external formPanel_viewerValuesColumn;
 		.formPanel_viewerValuesColumn {
 			min-width: 100px;
+			width: 100%;
 		}
 	</ui:style>
 	
