@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.volumes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -153,12 +152,27 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     @Override
     protected void SyncSearch() {
         super.SyncSearch();
-        ArrayList<GlusterVolumeEntity> list = new ArrayList<GlusterVolumeEntity>();
-        GlusterVolumeEntity glusterVolume = new GlusterVolumeEntity();
-        glusterVolume.setName("Vol1");
-        glusterVolume.setId(new Guid());
-        list.add(glusterVolume);
-        setItems(list);
+        // if (getSystemTreeSelectedItem() != null
+        // && getSystemTreeSelectedItem().getType().equals(SystemTreeItemType.Cluster)) {
+        // VDSGroup cluster = (VDSGroup) getSystemTreeSelectedItem().getEntity();
+        // Frontend.RunAction(VdcActionType.ListGlusterVolumes,
+        // new VdsGroupParametersBase(cluster.getId()),
+        // new IFrontendActionAsyncCallback() {
+        //
+        // @Override
+        // public void Executed(FrontendActionAsyncResult result) {
+        // if (result.getReturnValue().getActionReturnValue() != null) {
+        // ArrayList<GlusterVolumeEntity> volumes =
+        // new ArrayList<GlusterVolumeEntity>(Arrays.asList((GlusterVolumeEntity[]) result.getReturnValue()
+        // .getActionReturnValue()));
+        // setItems(volumes);
+        // } else {
+        // setItems(new ArrayList<GlusterVolumeEntity>());
+        // }
+        // }
+        // });
+        // }
+        // setIsQueryFirstTime(false);
     }
 
     @Override
@@ -197,7 +211,14 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         Guid clusterId = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
         GlusterVolumeEntity volume = new GlusterVolumeEntity();
         volume.setName((String) model.getName().getEntity());
-        volume.setVolumeType((GlusterVolumeType) model.getTypeList().getSelectedItem());
+        GlusterVolumeType type = (GlusterVolumeType) model.getTypeList().getSelectedItem();
+
+        if (type == GlusterVolumeType.STRIPE) {
+            volume.setStripeCount(4);
+        } else if (type == GlusterVolumeType.REPLICATE) {
+            volume.setReplicaCount(2);
+        }
+        volume.setVolumeType(type);
         volume.setBricks((List<GlusterBrickEntity>) model.getBricks().getItems());
         // CreateGlusterVolumeParameters parameter = new CreateGlusterVolumeParameters(clusterId, volume);
         //
