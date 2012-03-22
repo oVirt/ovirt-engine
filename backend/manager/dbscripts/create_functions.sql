@@ -20,7 +20,7 @@ RETURNS UUID
 BEGIN
    if (v_name = 'system') then
       v_id := 'AAA00000-0000-0000-0000-123456789AAA';
-   else 
+   else
       if (v_name = 'everyone') then
          v_id := 'EEE00000-0000-0000-0000-123456789EEE';
       end if;
@@ -154,7 +154,8 @@ $function$
 		User = 15,
 		Role = 16,
 		Quota = 17,
-		GlusterVolume = 18
+		GlusterVolume = 18,
+        Disk = 19
 */
 DECLARE
 	v_entity_type int4 := v_object_type;
@@ -163,6 +164,7 @@ DECLARE
 	ds_id uuid;
 	v_image_id uuid;
 	v_storage_id uuid;
+    v_vm_id uuid;
 
 BEGIN
 
@@ -258,6 +260,30 @@ BEGIN
 			SELECT cluster_id AS id
 			UNION
 			SELECT v_entity_id AS id;
+
+	WHEN v_entity_type = 19 THEN -- Disk
+
+        -- get data center, storage domain and vm
+        SELECT INTO ds_id, v_storage_id, v_vm_id
+                    storage_pool_id, storage_id, vm_guid
+        FROM images_storage_domain_view
+        WHERE image_group_id = v_entity_id;
+
+        -- get cluster
+        cluster_id := ( SELECT vds_group_id FROM vm_static WHERE vm_guid = v_vm_id );
+
+        RETURN QUERY
+            SELECT system_root_id AS id
+            UNION
+            SELECT ds_id AS id
+            UNION
+            SELECT v_storage_id AS id
+            UNION
+            SELECT v_vm_id AS id
+            UNION
+            SELECT cluster_id AS id
+            UNION
+            SELECT v_entity_id AS id;
 	ELSE
 		IF v_entity_type IN ( 1,14,11,15,16 ) THEN -- Data Center, storage, users and roles are under system
 			RETURN QUERY
@@ -308,7 +334,7 @@ BEGIN
    BEGIN
       CREATE GLOBAL TEMPORARY TABLE tt_TEMP22
       (
-         status INTEGER, 
+         status INTEGER,
          count INTEGER
       ) WITH OIDS;
       exception when others then
@@ -329,7 +355,7 @@ BEGIN
       else
          v_result := 0;
       end if;
-   else 
+   else
       if (v_rowsCount = 1) then
          select   status INTO v_status from tt_TEMP22    LIMIT 1;
 			-- if 1 row and status active (3) then domain is active (1)
@@ -339,7 +365,7 @@ BEGIN
          else
             v_result := 2;
          end if;
-	-- else (if return more then 1 row) 
+	-- else (if return more then 1 row)
       else
          select   count(*) INTO v_rowsCount from tt_TEMP22 where status = 3;
          if (v_rowsCount > 0) then
@@ -393,14 +419,16 @@ $function$
         ImportExport XXX,
         StoragePool = 14,
         User = 15,
-        Role = 16
+        Role = 16,
+        Quota = 17,
+        Disk = 19
 */
 DECLARE
     v_entity_type int4 := v_object_type;
     result text;
 
 BEGIN
-  
+
     CASE
     WHEN v_entity_type = 1 THEN
         result := 'System';
@@ -424,6 +452,10 @@ BEGIN
         result := ( SELECT username FROM users WHERE user_id = v_entity_id );
     WHEN v_entity_type = 16 THEN
         result := ( SELECT name FROM roles WHERE id = v_entity_id );
+    WHEN v_entity_type = 17 THEN
+        result := ( SELECT quota_name FROM quota WHERE id = v_entity_id );
+    WHEN v_entity_type = 19 THEN
+        result := ( SELECT disk_alias FROM disks WHERE disk_id = v_entity_id );
     ELSE
         result := 'Unknown type ' ||  v_entity_type;
     END CASE;
