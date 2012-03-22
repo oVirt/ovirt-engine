@@ -564,8 +564,6 @@ public class VmSnapshotListModel extends SearchableListModel
 
                 CloneVmFromSnapshotModelBehavior behavior = (CloneVmFromSnapshotModelBehavior) model.getBehavior();
                 VM vm = (VM) returnValue;
-                vm.setstorage_pool_id(selectedVm.getstorage_pool_id());
-                vm.setvds_group_id(selectedVm.getvds_group_id());
                 behavior.setVm(vm);
 
                 model.setTitle("Clone VM from Snapshot");
@@ -728,6 +726,7 @@ public class VmSnapshotListModel extends SearchableListModel
         boolean isLocked = getIsLocked();
         boolean isSelected = snapshot != null && snapshot.getType() != SnapshotType.ACTIVE;
         boolean isStateless = getIsStateless();
+        boolean isCloneVmSupported = getIsCloneVmSupported();
 
         getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless);
         getNewCommand().setIsExecutionAllowed(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless);
@@ -735,8 +734,8 @@ public class VmSnapshotListModel extends SearchableListModel
         getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
         getUndoCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
         getRemoveCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
-        getCloneVmCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown
-                && !isVmImageLocked && !isStateless);
+        getCloneVmCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing
+                && !isVmImageLocked && !isStateless && isCloneVmSupported);
     }
 
     public boolean getIsPreviewing() {

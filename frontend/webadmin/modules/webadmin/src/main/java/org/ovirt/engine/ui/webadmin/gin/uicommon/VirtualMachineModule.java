@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -20,7 +21,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
@@ -36,6 +36,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
@@ -251,14 +252,18 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<SnapshotModel, VmListModel, VmSnapshotListModel> getVmSnapshotListProvider(ClientGinjector ginjector,
-            final Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider) {
-        return new SearchableDetailTabModelProvider<SnapshotModel, VmListModel, VmSnapshotListModel>(ginjector,
+    public SearchableDetailModelProvider<Snapshot, VmListModel, VmSnapshotListModel> getVmSnapshotListProvider(ClientGinjector ginjector,
+            final Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider,
+            final Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider) {
+        return new SearchableDetailTabModelProvider<Snapshot, VmListModel, VmSnapshotListModel>(ginjector,
                 VmListModel.class, VmSnapshotListModel.class) {
             @Override
             protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getNewCommand()) {
                     return createPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getCloneVmCommand()) {
+                    getModel().setSystemTreeSelectedItem(this.getMainModel().getSystemTreeSelectedItem());
+                    return cloneVmPopupProvider.get();
                 } else {
                     return super.getModelPopup(lastExecutedCommand);
                 }
